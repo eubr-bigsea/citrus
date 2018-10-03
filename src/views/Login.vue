@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+        <div class="col-sm-3 col-md-3 col-lg-3 mx-auto">
             <div class="card-wrapper">
                 <div class="brand">
                     <img src="img/logo.jpg">

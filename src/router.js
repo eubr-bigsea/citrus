@@ -8,7 +8,11 @@ import Register from './views/Register.vue'
 
 import DataSourceList from './views/DataSourceList.vue'
 import DataSourceEdit from './views/DataSourceEdit.vue'
+
+import JobList from './views/JobList.vue'
+
 import WorkflowList from './views/WorkflowList.vue'
+import WorkflowEdit from './views/WorkflowEdit.vue'
 
 import store from './store.js'
 
@@ -41,6 +45,22 @@ let router = new Router({
             }
         },
         {
+            path: '/jobs',
+            name: 'jobs',
+            component: JobList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        // {
+        //     path: '/data-sources/:id',
+        //     name: 'editDataSource',
+        //     component: DataSourceEdit,
+        //     meta: {
+        //         requiresAuth: true
+        //     }
+        // },
+        {
             path: '/workflows',
             name: 'workflows',
             component: WorkflowList,
@@ -49,9 +69,9 @@ let router = new Router({
             }
         },
         {
-            path: '/workflows/:id',
+            path: '/workflows/:platform/:id',
             name: 'editWorkflow',
-            component: WorkflowList,
+            component: WorkflowEdit,
             meta: {
                 requiresAuth: true
             }

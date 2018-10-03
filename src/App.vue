@@ -28,6 +28,11 @@
                     </li>
                     <li class="divider-vertical nav-item"></li>
                     <li class="nav-item">
+                            <router-link :to="{name: 'jobs'}" 
+                            class="nav-link">Jobs</router-link>
+                    </li>
+                    <li class="divider-vertical nav-item"></li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#">Dashboards</a>
                     </li>
                     <li class="divider-vertical nav-item"></li>

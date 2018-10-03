@@ -6,7 +6,7 @@
             </div>
             <div class="col-md-2 pull-right">
                 <a href="#/data-source/add" class="btn btn-primary" role="button">
-                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> Add/configure a new data source</a>
+                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type: $tc('titles.dataSource').toLowerCase()})}}</a>
             </div>
         </div>
         <div class="row">
@@ -48,10 +48,24 @@
                 tableData: [],
                 showSideBar: false,
                 options: {
+                    columnsClasses: {
+                        name: 'th-20',
+                        description: 'th-20',
+                        actions: 'th-10'
+                    },
+                    texts: {
+                        count: this.$t('common.pagerShowing'),
+                        filter: this.$t('common.filter'),
+                        limit: this.$t('common.limit'),
+                    },
                     headings: {
                         id: 'ID',
-                        name: 'Name',
-                        description: 'Description'
+                        name: this.$tc('common.name', 1),
+                        description: this.$tc('common.description', 1),
+                        format: this.$tc('dataSource.format', 1),
+                        created: this.$t('common.created'),
+                        tags: this.$t('common.tags'),
+                        user: this.$t('common.user'),
                     },
                     sortable: ['name', 'id', 'created'],
                     sortIcon: {
@@ -117,22 +131,15 @@
     }
 </script>
 <style>
-    tr th:nth-child(1) {
-        width: 100px;
-    }
-    tr th:nth-child(2) {
+    .th-5 {
         width: 5%;
     }
-
-    tr th:nth-child(3) {
-        width: 25%;
+    .th-10 {
+        width: 10%;
     }
-
-    tr th:nth-child(4) {
-        width: 35%;
+    .th-20 {
+        width: 20%;
     }
-
-
     .form-inline {
         width: 450px;
         float: left;

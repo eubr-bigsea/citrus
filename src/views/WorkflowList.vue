@@ -13,7 +13,7 @@
             <div class="col-md-12">
                 <v-server-table :columns="columns" :options="options" ref="listTable" name="workflowList">
                     <template slot="id" slot-scope="props">
-                        <router-link :to="{name: 'editWorkflow', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+                        <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.id}}</router-link>
                     </template>
                     <template slot="platform" slot-scope="props">
                         {{props.row.platform.name}}
