@@ -54,6 +54,7 @@ export default {
             dashboard: 'Dashboard | Dashboards',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
             jobs: 'Jobs',
+            property: 'Property | Properties'
         },
         privacy: {
             anonymizationTechnique: 'Anonymization technique',

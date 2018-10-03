@@ -6,7 +6,7 @@
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
                     <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="task.id" :show-decoration="showTaskDecoration || showTaskDecorationInternal"
                     />
-                    <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance"></flow-component>
+                    <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" :key="flow.id"></flow-component>
 
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
@@ -17,7 +17,7 @@
                     -->
 
                     <div v-for="group in groups">
-                        <group-component :group="group" :instance="instance" />
+                        <group-component :group="group" :instance="instance" :key="group.id"/>
                     </div>
                 </div>
             </VuePerfectScrollbar>
@@ -1040,33 +1040,33 @@
                 }
             },
             _customUpdateConnectionsForGroup(_jsPlumb) {
-                return function (group) {
-                    var members = group.getMembers();
-                    var c1 = _jsPlumb.getConnections({ source: members, scope: '*' }, true);
-                    var c2 = _jsPlumb.getConnections({ target: members, scope: '*' }, true);
-                    var processed = {};
-                    group.connections.source.length = 0;
-                    group.connections.target.length = 0;
-                    var oneSet = function (c) {
-                        for (var i = 0; i < c.length; i++) {
-                            if (processed[c[i].id]) {
-                                continue;
-                            }
-                            processed[c[i].id] = true;
-                            if (c[i].source._jsPlumbGroup === group) {
-                                if (c[i].target._jsPlumbGroup !== group) {
-                                    group.connections.source.push(c[i]);
-                                }
-                                _connectionSourceMap[c[i].id] = group;
-                            }
-                            else if (c[i].target._jsPlumbGroup === group) {
-                                group.connections.target.push(c[i]);
-                                _connectionTargetMap[c[i].id] = group;
-                            }
-                        }
-                    };
-                    oneSet(c1); oneSet(c2);
-                }
+                // return function (group) {
+                //     var members = group.getMembers();
+                //     var c1 = _jsPlumb.getConnections({ source: members, scope: '*' }, true);
+                //     var c2 = _jsPlumb.getConnections({ target: members, scope: '*' }, true);
+                //     var processed = {};
+                //     group.connections.source.length = 0;
+                //     group.connections.target.length = 0;
+                //     var oneSet = function (c) {
+                //         for (var i = 0; i < c.length; i++) {
+                //             if (processed[c[i].id]) {
+                //                 continue;
+                //             }
+                //             processed[c[i].id] = true;
+                //             if (c[i].source._jsPlumbGroup === group) {
+                //                 if (c[i].target._jsPlumbGroup !== group) {
+                //                     group.connections.source.push(c[i]);
+                //                 }
+                //                 _connectionSourceMap[c[i].id] = group;
+                //             }
+                //             else if (c[i].target._jsPlumbGroup === group) {
+                //                 group.connections.target.push(c[i]);
+                //                 _connectionTargetMap[c[i].id] = group;
+                //             }
+                //         }
+                //     };
+                //     oneSet(c1); oneSet(c2);
+                // }
             },
             _bindJsPlumbEvents() {
                 let self = this;
@@ -1114,7 +1114,7 @@
                 self.instance.bind('connection', (info, originalEvent) => {
                     let con = info.connection;
                     var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                    if (false && arr.length > 1) { // @FIXME Review
+                    if (arr.length < 0 && arr.length > 1) { // @FIXME Review
                         // self.instance.detach(con);
                         //} else if (con.targetId === con.sourceId) {
                         //    self.instance.detach(con);
@@ -1163,7 +1163,7 @@
     }
 
     .ghost-select {
-        xdisplay: none;
+        display: none;
         width: 100px;
         height: 100px;
         z-index: 100000;

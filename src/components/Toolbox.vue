@@ -7,10 +7,10 @@
                         <small>MAIN MENU</small>
                     </li>
                     <div v-for="(group, index) in groupedOperations" class="unstyled">
-                        <b-link v-b-toggle="'submenu' + index" class="bg-dark text-white list-group-item list-group-item-action flex-column align-items-start">
+                        <b-link data-parent="submenus" v-b-toggle="'submenu' + index" class="bg-dark text-white list-group-item list-group-item-action flex-column align-items-start">
                             <span class="fa fa-layer-group"></span> {{group[0]}}
                         </b-link>
-                        <b-collapse :id="'submenu' + index">
+                        <b-collapse :id="'submenu' + index" data-parent="submenus">
                             <div v-for="(subgroup, index2) in group[1]">
                                 <div v-if="subgroup[0] && subgroup[0].split('#')[1].length">
                                     <b-link v-b-toggle="'subsubmenu' + index2" class="bg-secondary text-white list-group-item list-group-item-action flex-column align-items-start">

@@ -4,7 +4,6 @@
             <b-button-toolbar>
                 <b-btn size="sm" variant="outline-success mr-" @click.prevent="saveWorkflow">
                     <span class="fa fa-cogs"></span>
-                    </button>
                 </b-btn>
                 <b-button-group size="sm" class="mx-1">
                     <b-btn size="sm" variant="primary mr-" @click.prevent="saveWorkflow" :title="$t('actions.save')">
