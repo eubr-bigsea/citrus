@@ -7,6 +7,8 @@ export default {
             alignRight: 'Align right',
             alignTop: 'Align top',
             alignBottom: 'Align bottom',
+            changeOption: 'Change option...',
+            chooseOption: 'Choose option...',
             cancel: 'Cancel',
             delete: 'Delete',
             distributeHorizontally: 'Distribute horizontally',
@@ -38,6 +40,7 @@ export default {
             precision: 'Precision',
             scale: 'Scale',
             size: 'Size',
+            tag: 'Tag | Tags',
             tags: 'Tags',
             title: 'Title',
             type: 'Type | Types',
@@ -77,6 +80,9 @@ export default {
             public: 'Public',
             recordDelimiter: 'Record delimiter (CSV only)',
             textDelimiter: 'Text delimiter (CSV only)'
+        },
+        property: {
+            taskName: 'Task name (optional)'
         }
     },
     pt: {

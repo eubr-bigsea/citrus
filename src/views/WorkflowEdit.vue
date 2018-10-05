@@ -8,10 +8,27 @@
             <button @click="showProperties=!showProperties">Exibir</button>
         </div>
         <div class="col-md-10" style="position: relative">
-            <diagram :workflow="workflow" :operations="operations" ref="diagram"></diagram>
+            <diagram :workflow="workflow" ref="diagram"></diagram>
             <slideout-panel :opened="showProperties">
-                <property-window></property-window>
+                <property-window :task="selectedTask.task"></property-window>
             </slideout-panel>
+            <!--
+            <slideout-panel :opened="showProperties" style="position: absolute; right:360px; height:100px">
+                <div class="p-3" style="font-size: .8rem; border: 1px solid; background: #fff; width: 500px; height: 400px; z-index: 0">
+                    <VuePerfectScrollbar>
+                        <div style="margin-right:20px">
+                            <h5>{{selectedTask.task.operation.name}}</h5>
+                            <div v-for="form in selectedTask.task.operation.forms">
+                                <dl v-for="field in form.fields">
+                                    <dt>{{field.label}}</dt>
+                                    <dd>{{field.help}}</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </VuePerfectScrollbar>
+                </div>
+            </slideout-panel>
+        -->
         </div>
     </div>
 </template>
@@ -43,13 +60,14 @@
                 operations: [],
                 operationsLookup: new Map(),
                 showProperties: false,
+                selectedTask: { task: { operation: {} } },
                 propertyStyles: [
                     {
                         top: '112px',
                         height: 'calc(92vh - 112px)'
                     },
                     {
-                        
+
                         backgroundColor: '#fff',
                         paddingTop: '2rem',
                         paddingBottom: '1rem',
@@ -59,7 +77,7 @@
                         overflow: 'hidden'
                     },
                     {
-                        
+
                         color: '#555',
                         textDecoration: 'none',
                         top: '8px',
@@ -70,6 +88,14 @@
         },
         mounted() {
             let self = this
+            this.$root.$on('onclick-task', (taskComponent) => {
+                this.showProperties = true;
+                this.selectedTask = taskComponent;
+            });
+            this.$root.$on('onblur-selection', () => {
+                this.showProperties = false;
+                this.selectedTask = { task: {} };
+            });
             this.$root.$on('onalign-tasks', (pos, fn) => {
                 this.$refs.diagram.align(pos, fn)
             });

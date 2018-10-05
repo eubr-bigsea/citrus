@@ -688,7 +688,7 @@
                     self.selectedTask = null;
                     self.selectedFlow = null;
                 });
-                this.$emit('onblur-selection');
+                this.$root.$emit('onblur-selection');
             },
             doChangeWorkflowName(ev) {
                 this.changeWorkflowName(ev.target.value);
