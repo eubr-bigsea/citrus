@@ -1,5 +1,5 @@
 <template>
-    <div class="mb-3">
+    <div class="mb-1">
         <LabelComponent :field="field"></LabelComponent>
         <!--
         {{selected}}
@@ -8,10 +8,7 @@
             <option v-for="opt in options" :value="opt.key">{{opt.key}} - {{opt.value}}</option>
         </select>
     -->
-        <br/>
-        {{selected}} {{value}}
-        <span v-if="label != ''">{{label}}</span>
-        <br/>
+        <input disabled v-if="label != ''" :value="selected + ' - ' + label" class="form-control"/>
         <b-link v-b-modal="'lookupModal'" variant="sm">
              <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
              <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
@@ -86,8 +83,8 @@
                             };
                         });
                         this.label = this.options.find((item) => {
-                            return item.key === this.value;
-                        })
+                            return Number(item.key) === Number(self.value)
+                        }).value
                     }
                 ).catch(function (e) {
                     this.dispatch('error', e);

@@ -1,6 +1,6 @@
 <template>
     <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms.comment)? task.forms.comment.value || '': '')"
-        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="{zIndex: task.z_index, top: task.top + 'px', left: task.left + 'px', background: (task.forms.color && task.forms.color.value ? task.forms.color.value.background: '#fff')}"
+        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="{zIndex: task.z_index < 99? 100: task.z_index, top: task.top + 'px', left: task.left + 'px', background: (task.forms.color && task.forms.color.value ? task.forms.color.value.background: '#fff')}"
         v-on:click="click" @contextmenu.prevent="openMenu">
         <div v-if="!isComment" v-bind:style="{borderTop: '0px solid ' + (task.forms.color && task.forms.color.value ? task.forms.color.value.background: '#fff')}"
             class="title">

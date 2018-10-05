@@ -29,8 +29,9 @@
                             </div>
                             <div class="card-body">
                                 <div v-for="field in form.fields" class="mb-2">
-                                    <component v-if="['checkbox', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)" :is="field.suggested_widget + '-component'"
-                                        :field="field" value="getValue(field.name)" language="language" context="context"></component>
+                                    <component v-if="['checkbox', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                        :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
+                                        language="language" context="context"></component>
                                     <span v-else>{{field.name}} {{field.suggested_widget}} {{['checkbox', 'color', 'textarea', 'code'].includes(field.suggested_widget)}}
                                     </span>
                                     <keep-alive>
@@ -67,7 +68,9 @@
     import CodeComponent from './widgets/Code.vue'
     import ColorComponent from './widgets/Color.vue'
     import DropDownComponent from './widgets/DropDown.vue'
+    import IntegerComponent from './widgets/Integer.vue'
     import LookupComponent from './widgets/Lookup.vue'
+    import RangeComponent from './widgets/Range.vue'
     import TextComponent from './widgets/Text.vue'
     import TextAreaComponent from './widgets/TextArea.vue'
     export default {
@@ -77,7 +80,9 @@
             'code-component': CodeComponent,
             'color-component': ColorComponent,
             'dropdown-component': DropDownComponent,
+            'integer-component': IntegerComponent,
             'lookup-component': LookupComponent,
+            'range-component': RangeComponent,
             'text-component': TextComponent,
             'textarea-component': TextAreaComponent,
             // 'code-component': CodeComponent,
@@ -112,6 +117,12 @@
             }
         },
         methods: {
+            getValue(name) {
+                return this.task 
+                    && this.task.forms 
+                    && this.task.forms[name] 
+                        ? this.task.forms[name].value : null;
+            },
             update() {
                 let self = this;
                 let callback = () => {
@@ -158,15 +169,16 @@
         border: 1px solid #aaa;
         height: calc(80vh + 20px);
         zoom: 100%;
-        font-size:.75rem
+        font-size: .75rem
     }
-    
 </style>
 <style>
     .props .form-control {
-        font-size:.7rem !important;
+        font-size: .7rem !important;
     }
-    .props select, .props input {
+
+    .props select,
+    .props input {
         height: calc(1.6rem + 2px);
     }
 </style>
