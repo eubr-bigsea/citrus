@@ -14,10 +14,11 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import { ClientTable, ServerTable } from 'vue-tables-2'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faCoffee, faCopy, faCogs, faHistory,  faImage, faLayerGroup, faArrowsAltV,faArrowsAltH,
-        faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
-        faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk,
-        } from '@fortawesome/free-solid-svg-icons'
+import {
+    faCoffee, faCopy, faCogs, faHistory, faImage, faLayerGroup, faArrowsAltV, faArrowsAltH,
+    faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
+    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import Toastr from 'vue-toastr';
@@ -27,6 +28,7 @@ import './assets/main.css'
 // import toastr scss file: need webpack sass-loader
 require('vue-toastr/src/vue-toastr.scss');
 // Register plugin
+Vue.component('vue-toastr', Toastr)
 Vue.use(Toastr);
 
 /**
@@ -43,11 +45,11 @@ config.autoReplaceSvg = "nest";
 import { dom } from '@fortawesome/fontawesome-svg-core'
 dom.watch();
 
-library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup,faArrowsAltH, faArrowsAltV,
+library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, faArrowsAltH, faArrowsAltV,
     faHome, faUser, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
-    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk), 
+    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk),
 
-Vue.use(ClientTable);
+    Vue.use(ClientTable);
 Vue.use(ServerTable, { useVuex: true, theme: 'bootstrap4' });
 
 Vue.use(VueAxios, axios)

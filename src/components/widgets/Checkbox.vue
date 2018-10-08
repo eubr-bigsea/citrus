@@ -1,7 +1,7 @@
 <template>
     <div ref="fieldElement">
         <div class="float-left">
-            <SwitchComponent class="float-left" v-model="checked">{{field.label}}</SwitchComponent>
+            <SwitchComponent class="float-left"  :checked="checked">{{field.label}}</SwitchComponent>
         </div>
         <div class="float-right">
             <span class="fa fa-question-circle float-right" :title="field.help"></span>

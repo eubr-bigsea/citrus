@@ -20,34 +20,30 @@
                 <ul class="navbar-nav mr-auto" v-if="isLoggedIn">
                     <li class="divider-vertical nav-item"></li>
                     <li class="nav-item">
-                        <router-link :to="{name: 'dataSources'}" class="nav-link">Data sources</router-link>
+                        <router-link :to="{name: 'dataSources'}" class="nav-link">{{$tc('titles.dataSource', 2)}}</router-link>
                     </li>
                     <li class="divider-vertical nav-item"></li>
                     <li class="nav-item">
-                        <router-link :to="{name: 'workflows'}" class="nav-link">Workflows</router-link>
+                        <router-link :to="{name: 'workflows'}" class="nav-link">{{$tc('titles.workflow', 2)}}</router-link>
                     </li>
                     <li class="divider-vertical nav-item"></li>
                     <li class="nav-item">
                             <router-link :to="{name: 'jobs'}" 
-                            class="nav-link">Jobs</router-link>
+                            class="nav-link">{{$tc('titles.jobs', 2)}}</router-link>
                     </li>
                     <li class="divider-vertical nav-item"></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Dashboards</a>
+                        <a class="nav-link" href="#">{{$tc('titles.dashboard', 2)}}</a>
                     </li>
                     <li class="divider-vertical nav-item"></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">What if the model?</a>
+                        <a class="nav-link" href="#">{{$tc('titles.whatIfModel', 1)}}</a>
                     </li>
                     <li class="divider-vertical nav-item"></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Administration</a>
+                        <a class="nav-link" href="#">{{$tc('titles.administration', 1)}}</a>
                     </li>
                 </ul>
-                <form class="form-inline mt-2 mt-md-2" v-if="isLoggedIn">
-                    <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
             </div>
             <ul class="nav navbar-nav navbar-right" v-if="isLoggedIn">
                 <b-nav-item-dropdown right>
@@ -65,6 +61,7 @@
         </nav>
 
         <main>
+            <vue-toastr ref="toastr"></vue-toastr>
             <div ref="sideBar" class="sidenav" v-if="isLoggedIn && false">
                 <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
                 <a href="#">

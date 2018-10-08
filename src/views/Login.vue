@@ -3,63 +3,76 @@
         <div class="col-sm-3 col-md-3 col-lg-3 mx-auto">
             <div class="card-wrapper">
                 <div class="brand">
-                    <img src="img/logo.jpg">
                 </div>
                 <div class="card fat">
                     <div class="card-body">
-                        <h4 class="card-title">Login</h4>
+                        <h4 class="card-title float-left">{{$t('titles.login')}}</h4>
+                        <div class="float-right navbar-brand logo"></div>
                         <form @submit.prevent="login">
 
                             <div class="form-group">
-                                <label for="email">E-Mail Address</label>
+                                <label for="email">{{$t('common.email')}}</label>
                                 <input required v-model="email" type="email" class="form-control" 
                                     placeholder="Name" autofocus="">
                             </div>
 
                             <div class="form-group">
-                                <label for="password">Password
+                                <label for="password">{{$t('common.password')}}
                                     <a href="forgot.html" class="float-right">
-                                        Forgot Password?
+                                        {{$t('common.forgotPassword')}}
                                     </a>
                                 </label>
                                 <div style="position:relative">
-                                    <input type="password" class="form-control" v-model="password" 
+                                    <input :type="showingPassword ? 'text' : 'password'" 
+                                        class="form-control" v-model="password" 
                                         required style="padding-right: 60px;" placeholder="Password">
                                     <input type="hidden" id="passeye-0">
-                                    <div class="btn btn-primary btn-sm" id="passeye-toggle-0" style="position:absolute;right:10px;top:50%;transform:translate(0,-50%);-webkit-transform:translate(0,-50%);-o-transform:translate(0,-50%);padding: 2px 7px;font-size:12px;cursor:pointer;">Show</div>
+                                    <div class="show-password btn btn-primary btn btn-sm" @click="showingPassword = !showingPassword"
+                                         v-text="passwordShowText"></div>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>
-                                    <input type="checkbox" v-model="rememberPassword"> Remember Me
+                                    <input type="checkbox" v-model="rememberPassword"> {{$t('common.rememberMe')}}
                                 </label>
                             </div>
 
                             <div class="form-group no-margin text-center ">
                                 <button type="submit" class="btn btn-primary col-md-4">
-                                    Login
+                                    {{$t('common.login')}}
                                 </button>
                             </div>
                             <div class="margin-top20 text-center">
-                                Don't have an account?
-                                <router-link to="/register">Create One</router-link>
+                                {{$t('common.dontHaveAccount')}}
+                                <br/>
+                                <router-link to="/register">{{$t('common.createAccount')}}</router-link>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div class="footer">
+                <div class="footer text-center">
                     Copyright © 2018 — Lemonade Project
                 </div>
             </div>
         </div>
     </div>
 </template>
-<style>
+<style scoped>
     label {
         font-size: .9em;
         text-align: left;
         width: 100%;
+    }
+    .show-password {
+        position:absolute;
+        right:10px;
+        top:50%;
+        transform:translate(0,-50%);
+        -webkit-transform:translate(0,-50%);
+        -o-transform:translate(0,-50%);
+        padding: 2px 7px;font-size:12px;
+        cursor:pointer;
     }
 </style>
 <script>
@@ -69,7 +82,14 @@
             return {
                 email: "waltersf@gmail.com",
                 password: "zooropa",
-                rememberPassword: false
+                rememberPassword: false,
+                showingPassword: false
+            }
+        },
+        computed: {
+            passwordShowText(){
+                return this.$t(
+                    this.showingPassword ? 'common.hide' : 'common.show')
             }
         },
         methods: {

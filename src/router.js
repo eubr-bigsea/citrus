@@ -13,6 +13,7 @@ import JobList from './views/JobList.vue'
 
 import WorkflowList from './views/WorkflowList.vue'
 import WorkflowEdit from './views/WorkflowEdit.vue'
+import WorkflowAdd from './views/WorkflowAdd.vue'
 
 import store from './store.js'
 
@@ -72,6 +73,14 @@ let router = new Router({
             path: '/workflows/:platform/:id',
             name: 'editWorkflow',
             component: WorkflowEdit,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/workflows/add',
+            name: 'addWorkflow',
+            component: WorkflowAdd,
             meta: {
                 requiresAuth: true
             }

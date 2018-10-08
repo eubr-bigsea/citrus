@@ -4,7 +4,11 @@
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHanle">
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="task.id" :show-decoration="showTaskDecoration || showTaskDecorationInternal"
+                    <task-component v-for="task of workflow.tasks" 
+                        :task="task" 
+                        :instance="instance" 
+                        :key="task.id" 
+                        :show-decoration="showTaskDecoration || showTaskDecorationInternal"
                     />
                     <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" :key="flow.id"></flow-component>
 
@@ -16,7 +20,7 @@
                         /ctx-menu-component>
                     -->
 
-                    <div v-for="group in groups">
+                    <div v-for="group in groups" :key="group.id">
                         <group-component :group="group" :instance="instance" :key="group.id"/>
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="row border-bottom border-left pb-2">
+    <div class="row pb-2">
         <div class="col-md-6 col-sm-12">
             <b-button-toolbar>
                 <b-btn size="sm" variant="outline-success mr-" @click.prevent="saveWorkflow">
@@ -77,6 +77,7 @@
     </div>
 </template>
 <script>
+    
     export default {
         name: 'DiagramToolbar',
         data() {
@@ -101,11 +102,11 @@
             align(prop, fn) {
                 this.$root.$emit('onalign-tasks', prop, fn)
             },
-            saveAsImage() {
-
+            saveAsImage(){
+                this.$root.$emit('onsave-as-image')
             },
             saveWorkflow() {
-
+                this.$root.$emit('onsave-workflow')
             },
             saveWorkflowAs() {
 

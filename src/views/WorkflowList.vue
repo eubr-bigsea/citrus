@@ -5,8 +5,8 @@
                 <h2>Workflows</h2>
             </div>
             <div class="col-md-2 pull-right">
-                <a href="#/data-source/add" class="btn btn-primary" role="button">
-                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> Add a new workflow</a>
+                <a href="#/workflows/add" class="btn btn-primary" role="button">
+                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon>  {{$t('actions.add', {type: $tc('titles.workflow').toLowerCase()})}}</a>
             </div>
         </div>
         <div class="row">
@@ -25,7 +25,7 @@
                         <label>Platform:</label>
                         <select class="form-control" v-model="platform">
                             <option></option>
-                            <option v-for="p in platforms" v-bind:value="p.slug">{{p.name}}</option>
+                            <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">{{p.name}}</option>
                         </select>
                         <button type="button" class="ml-1 btn btn-sm btn-success" @click="clearFilters">Clear filters</button>
                     </div>
@@ -48,6 +48,7 @@
 
                 showSideBar: false,
                 options: {
+                    dateColumns: ['created', 'updated'],
                     headings: {
                         id: 'ID',
                         name: 'Name',
@@ -77,7 +78,7 @@
                         }).then(resp => {
                             return { data: resp.data.data, count: resp.data.pagination.total };
                         }).catch(function (e) {
-                            alert(e)
+                            this.$toastr.e(this.$t('messages.errorAjax'))
                         }.bind(this));
                     }
                 }

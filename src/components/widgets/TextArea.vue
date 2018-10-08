@@ -1,8 +1,8 @@
 <template>
     <div>
-        <LabelComponent :field="field" <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field"></LabelComponent>
         <textarea class="form-control input-sm" @keyup="updated" 
-            :value="value === null ? field.default: value" rows="5"></textarea>
+            :value="value === null ? field.default: value" rows="3"></textarea>
     </div>
 </template>
 <script>

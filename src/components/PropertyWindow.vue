@@ -1,8 +1,8 @@
 <template>
     <div class="properties">
-        <VuePerfectScrollbar>
-            <div class="props">
-                <div class="border-bottom mb-2">
+        <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true">
+            <div class="props card text-dark bg-light p0 mb-1">
+                <div class="border-bottom card-header special">
                     <strong>{{task.operation.name}}</strong>
                     <br/>
                     <small>
@@ -11,41 +11,60 @@
                         <em>{{task.operation.description}}</em>
                     </small>
                 </div>
-                <div class="mb-2">
-                    <label>{{$t('property.taskName')}}</label>
-                    <input type="text" maxlength="50" v-model="task.name" class="form-control" />
-                    <div class="checkbox">
+                <div class="card-body">
+                    <div class="row">
+                    <div class="col-md-8">
+                        <label>{{$t('property.taskName')}}</label>
+                        <input type="text" maxlength="50" v-model="task.name" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
                         <label type="checkbox">
-                            <input type="checkbox" v-model="task.enabled" /> {{$t('common.enabled')}}
+                            <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}</SwitchComponent>
                         </label>
+                    </div>
                     </div>
                 </div>
                 <div>
                     <form>
-                        <div class="cart text-dark bg-light p0 mb-1" v-for="form in forms">
+                        <b-card no-body>
+                            <b-tabs card v-model="tabIndex">
+                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name">
+                                    <div v-for="field in form.fields" class="mb-2" v-bind:key="task.id + field.name">
+                                        <keep-alive>
+                                            <component v-if="['checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                                :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
+                                                language="language" context="context">
+                                            </component>
+                                            <span v-else>
+                                                {{field.name}} {{field.suggested_widget}} 
+                                            </span>
+                                        </keep-alive>
+                                    </div>
+                                </b-tab>
+                            </b-tabs>
+                        </b-card>
+                        <!--
+                        <div class="card text-dark bg-light p0 mb-1" v-for="form in forms" v-bind:key="form.id">
                             <div class="card-header">{{form.name}}</div>
                             <div v-if="!form.fields.length">
                                 No parameters to configure.
                             </div>
                             <div class="card-body">
-                                <div v-for="field in form.fields" class="mb-2">
-                                    <component v-if="['checkbox', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                <div v-for="field in form.fields" class="mb-2" v-bind:key="field.name">
+                                    <component v-if="['checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
                                         :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
                                         language="language" context="context"></component>
                                     <span v-else>{{field.name}} {{field.suggested_widget}} {{['checkbox', 'color', 'textarea', 'code'].includes(field.suggested_widget)}}
                                     </span>
                                     <keep-alive>
-                                        <!-- component :is="field.suggested_widget + '-component'" :field="field" value="getValue(field.name)" language="language"
-                                suggestions="getSuggestions(task.id)" context="context" /-->
                                     </keep-alive>
-
                                 </div>
                             </div>
                         </div>
+                        -->
                     </form>
                 </div>
-                </form>
-                <div v-for="form in task.operation.forms">
+                <div v-for="form in task.operation.forms" v-bind:key="form.id">
                     {{form.ca}}
                     <fieldset>
                         <caption>{{form.label}}</caption>
@@ -67,10 +86,12 @@
     import CheckboxComponent from './widgets/Checkbox.vue'
     import CodeComponent from './widgets/Code.vue'
     import ColorComponent from './widgets/Color.vue'
+    import DecimalComponent from './widgets/Decimal.vue'
     import DropDownComponent from './widgets/DropDown.vue'
     import IntegerComponent from './widgets/Integer.vue'
     import LookupComponent from './widgets/Lookup.vue'
     import RangeComponent from './widgets/Range.vue'
+    import SwitchComponent from './widgets/Switch.vue'
     import TextComponent from './widgets/Text.vue'
     import TextAreaComponent from './widgets/TextArea.vue'
     export default {
@@ -79,12 +100,14 @@
             'checkbox-component': CheckboxComponent,
             'code-component': CodeComponent,
             'color-component': ColorComponent,
+            'decimal-component': DecimalComponent,
             'dropdown-component': DropDownComponent,
             'integer-component': IntegerComponent,
             'lookup-component': LookupComponent,
             'range-component': RangeComponent,
             'text-component': TextComponent,
             'textarea-component': TextAreaComponent,
+            SwitchComponent,
             // 'code-component': CodeComponent,
 
             // 'color-component': CodeComponent,
@@ -114,6 +137,7 @@
             return {
                 forms: [],
                 filledForm: [],
+                tabIndex: 0
             }
         },
         methods: {
@@ -137,6 +161,11 @@
                         });
                     });
                 };
+                if (this.$refs.scrollBar){
+                    let container = this.$refs.scrollBar.$el //.querySelector('.ps-container');
+                    container.scrollTop = 0;
+                }
+                this.tabIndex = 0;
                 //if (!TahitiAttributeSuggester.processed) {
                 if (false) {
                     self.updateAttributeSuggestion(callback);
@@ -167,16 +196,21 @@
     .properties {
         background: #fff;
         border: 1px solid #aaa;
-        height: calc(80vh + 20px);
+        height: calc(100vh - 114px);
         zoom: 100%;
         font-size: .75rem
     }
 </style>
 <style>
+    .props .card-body {
+        flex: inherit
+    }
     .props .form-control {
         font-size: .7rem !important;
     }
-
+    .props .card-body, .props .card-header.special {
+        padding: 5px 15px;
+    }
     .props select,
     .props input {
         height: calc(1.6rem + 2px);

@@ -5,10 +5,9 @@
         </div>
         <div class="col-md-2">
             <toolbox :operations="operations"></toolbox>
-            <button @click="showProperties=!showProperties">Exibir</button>
         </div>
-        <div class="col-md-10" style="position: relative">
-            <diagram :workflow="workflow" ref="diagram"></diagram>
+        <div class="col-md-10 pl-0" style="position: relative">
+            <diagram :workflow="workflow" ref="diagram" id="main-diagram"></diagram>
             <slideout-panel :opened="showProperties">
                 <property-window :task="selectedTask.task"></property-window>
             </slideout-panel>
@@ -42,7 +41,7 @@
     import DiagramToolbarComponent from '../components/DiagramToolbar.vue'
     import ToolboxComponent from '../components/Toolbox.vue'
     import SlideOutPanel from '../components/SlideOutPanel.vue'
-
+    import html2canvas from 'html2canvas';
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL
     export default {
         components: {
@@ -92,6 +91,12 @@
                 this.showProperties = true;
                 this.selectedTask = taskComponent;
             });
+            this.$root.$on('onsave-as-image', () => {
+                this.saveAsImage()
+            });
+            this.$root.$on('onsave-workflow', () => {
+                this.saveWorkflow()
+            });
             this.$root.$on('onblur-selection', () => {
                 this.showProperties = false;
                 this.selectedTask = { task: {} };
@@ -101,6 +106,14 @@
             });
             this.$root.$on('ondistribute-tasks', (how, prop) => {
                 this.$refs.diagram.distribute(how, prop)
+            });
+            this.$root.$on('update-form-field-value', (field, value) => {
+                // alert(field + " " + value)
+                if (self.selectedTask.task.forms[field.name]){
+                    self.selectedTask.task.forms[field.name].value = value
+                } else {
+                    self.selectedTask.task.forms[field.name] = {value: value}
+                }
             });
             axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                 (resp) => {
@@ -124,6 +137,133 @@
                 this.dispatch('error', e);
             }.bind(this));
         },
+        methods: {
+            saveAsImage() {
+                let self = this
+                let $elem = this.$refs.diagram.$el.querySelector('.lemonade')
+                html2canvas($elem, {
+                    width: 3000, height: 3000, logging: false, allowTaint: false,
+                    onclone: (clone) => {
+                        let elem = clone.getElementById($elem.id);
+                        elem.parentElement.style.height = '10000px';
+                        elem.style.transform = 'inherit';
+                        elem.parentElement.scrollTop = 0;
+                    }
+                }).then(
+                    (canvas) => {
+                        //inversed, to get smallest 
+                        let x0 = canvas.width, y0 = canvas.height, x1 = 0, y1 = 0;
+                        self.workflow.tasks.forEach((task) => {
+                            let elem = document.getElementById(task.id);
+                            x0 = Math.min(task.left, x0);
+                            x1 = Math.max(task.left + elem.style.width, x1);
+                            y0 = Math.min(task.top, y0);
+                            y1 = Math.max(task.top + elem.style.height, y1);
+                        });
+
+                        let targetCanvas = document.createElement('canvas');
+                        let targetCtx = targetCanvas.getContext('2d');
+                        let padding = 100; 
+                        targetCanvas.width = x1 + 2 * padding;
+                        targetCanvas.height = y1 + 2 * padding;
+                        targetCtx.fillStyle = "white";
+                        targetCtx.fillRect(0, 0, targetCanvas.width, canvas.height);
+
+
+                        let ctx = canvas.getContext('2d');
+                        let $flows = document.getElementsByClassName('jtk-connector'); //'jsplumb-connector'
+                        for (var flow of $flows) {
+                            //let xml = flow.innerHTML.replace(new RegExp('xmlns="http://www.w3.org/\\d+/(xhtml|svg)" ', 'g'), '').replace(
+                            //    new RegExp('version="1.1"', 'g'), '');;
+                            let xml = '<path d="M 0 -0.5 L 0 30.5 L 0 41 A 1 1 0 0,0 1 42 L 1.5 42 A 0.5 0.5 0 0,1 2 42.5 L 2 54.5 L 2 84 " transform="translate(1.9999999999999991,1)" pointer-events="visibleStroke" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#111" style=""></path>'
+                            xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${xml}</svg>`;
+                            console.debug(xml)
+                            let DOMURL = window.URL || window.webkitURL || window;
+                            let img = new Image();
+                            let svg = new Blob([xml], { type: 'image/svg+xml' });
+                            let url = DOMURL.createObjectURL(svg);
+                            let left = parseInt(flow.style.left);
+                            let top = parseInt(flow.style.top);
+                            img.onload = function () {
+                                targetCtx.drawImage(img, left, top);
+                                DOMURL.revokeObjectURL(url);
+                            }
+
+                            img.src = 'data:image/svg+xml;base64, ' + btoa(xml) //url;
+                        }
+                        /**/
+                        let $endpoints = document.querySelectorAll('.jtk-endpoint > svg')
+                        let b64Start = 'data:image/svg+xml;base64,';
+                        for (var endpoint of $endpoints) {
+                            let xml = endpoint.innerHTML.replace(new RegExp('xmlns="http://www.w3.org/1999/xhtml" ', 'g'), '');
+                            xml = `<svg width="25" height="25" xmlns="http://www.w3.org/2000/svg">${xml}</svg>`;
+
+                            let DOMURL = window.URL || window.webkitURL || window;
+                            let img = new Image();
+                            let svg = new Blob([xml], { type: 'image/svg+xml' });
+                            let url = DOMURL.createObjectURL(svg);
+                            let left = endpoint.parentElement.offsetLeft;
+                            let top = endpoint.parentElement.offsetTop;
+                            img.onload = function () {
+                                targetCtx.drawImage(img, left, top);
+                                DOMURL.revokeObjectURL(url);
+                            }
+
+                            img.src = url;
+                        }
+                        window.setTimeout(() => {
+                            //document.body.appendChild(canvas);
+                            //targetCtx.translate(-x0 + 50, -y0 + 50);
+
+
+                            targetCtx.drawImage(canvas, 0, 0);
+
+                            targetCtx.fillStyle = "black";
+                            targetCtx.font = "12pt Verdana";
+                            targetCtx.fillText(`${self.workflow.name}. Image generated at ${new Date()}`,
+                                20, targetCanvas.height - 20);
+                            targetCtx.lineWidth = 4;
+                            targetCtx.strokeStyle = "#000000";
+                            targetCtx.strokeRect(0, 0, targetCanvas.width, targetCanvas.height);
+                            //document.body.appendChild(targetCanvas);
+                            let link = document.createElement('a');
+                            link.setAttribute('download', `workflow_${self.workflow.id}.png`);
+                            link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+                            link.click();
+                        }, 1000);
+                    });
+
+            },
+            saveWorkflow(){
+                let self = this
+                let cloned = JSON.parse(JSON.stringify(self.workflow));
+                let url = `${tahitiUrl}/workflows`;
+                let headers = { 'Content-Type': 'application/json'}
+
+                let method = 'post'
+                if (cloned.id !== 0) {
+                    url = `${url}/${cloned.id}`;
+                    method = 'patch'
+                }
+                cloned.platform_id = this.$route.params.platform;
+                cloned.tasks.forEach((task) => {
+                    task.operation = { id: task.operation.id };
+                    delete task.version; //
+                });
+
+                axios[method](
+                    `${tahitiUrl}/workflows/${this.$route.params.id}`, 
+                    cloned,
+                    {headers}).then(
+                (resp) => {
+                    self.workflow = resp.data.data;
+                }
+            ).catch(function (e) {
+                this.dispatch('error', e);
+            }.bind(this));
+
+            }
+        }
     }
 </script>
 <style>

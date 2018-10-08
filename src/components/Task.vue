@@ -1,10 +1,12 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms.comment)? task.forms.comment.value || '': '')"
-        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="{zIndex: task.z_index < 99? 100: task.z_index, top: task.top + 'px', left: task.left + 'px', background: (task.forms.color && task.forms.color.value ? task.forms.color.value.background: '#fff')}"
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" 
+        class="operation task" :title="task.operation.description + '\n' + ((task.forms.comment)? task.forms.comment.value || '': '')"
+        :data-operation-id="task.operation.id" :id="task.id" ref="task" 
+        v-bind:style="{zIndex: task.z_index < 99? 100: task.z_index, top: task.top + 'px', left: task.left + 'px', background: (task.forms.color && task.forms.color.value ? task.forms.color.value.background: '#fff')}"
         v-on:click="click" @contextmenu.prevent="openMenu">
-        <div v-if="!isComment" v-bind:style="{borderTop: '0px solid ' + (task.forms.color && task.forms.color.value ? task.forms.color.value.background: '#fff')}"
+        <div v-if="!isComment" v-bind:style="{borderTop: getBorder}"
             class="title">
-            {{task.operation.name}}
+            {{task.operation.name}} {{getBorder}}
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="task.status? task.status.toLowerCase(): ''">
@@ -20,7 +22,7 @@
             <ul>
                 <li @click.stop="remove()">Remove</li>
                 <li @click.stop="showResults()">Results</li>
-                <li v-for="item in contextMenuActions" @click="item.action(item.name)">
+                <li v-for="(item, index) in contextMenuActions" @click="item.action(item.name)" :key="index">
                     {{item.label}}
                 </li>
             </ul>
@@ -232,6 +234,13 @@
                 return (this.task.status ? this.task.status.toLowerCase() : '') +
                     (this.isComment ? ' comment ' : '') + 'test';
 
+            },
+            getBorder(){
+                let color = '#fff'
+                if (this.task.forms.color && this.task.forms.color.value){
+                    color = this.task.forms.color.value.background
+                }
+                return `0px solid ${color}`
             },
             inGroup: function () {
                 let elem = this.$refs.task;
@@ -618,7 +627,7 @@
         }
         .task {
             border-width: 1px;
-            font-family: Verdana;
+            font-family: Verdana, Tahoma, Geneva, sans-serif;
             font-size: 10px;
             background: white;
             opacity: 1;
@@ -723,16 +732,13 @@
                     display: none;
                 }
                 em {
-                    font-family: Verdana !important;
+                    font-family: Verdana, Tahoma, Geneva, sans-serif;
                     vertical-align: top !important;
                     bottom: inherit;
                     margin-top: 3px;
                     font-size: 8pt !important;
                     top: 5%;
-                }
-                em:before {
-                    font: normal normal normal 14px/1 FontAwesome;
-                    content: "\f08d     ";
+                    min-height: 200px;
                 }
                 div.title {
                     background: transparent !important;
@@ -747,7 +753,9 @@
                 font-size: 1.2em;
                 color: #000;
                 width: 200px !important;
-                height: 80px !important;
+                min-height: 80px;
+                
+                ;
                 /*
             -moz-transform: rotate(2deg);
             -webkit-transform: rotate(2deg);
