@@ -2,7 +2,7 @@
     <div>
         <div class="row border-bottom border-primary">
             <div class="col-md-10">
-                <h2>Workflows</h2>
+                <h2>{{$tc('titles.workflow', 2)}}</h2>
             </div>
             <div class="col-md-2 pull-right">
                 <a href="#/workflows/add" class="btn btn-primary" role="button">
@@ -19,15 +19,15 @@
                         {{props.row.platform.name}}
                     </template>
                     <template slot="h__name">
-                        Name
+                        {{$tc('common.name')}}
                     </template>
                     <div slot="afterFilter">
-                        <label>Platform:</label>
+                        <label>{{$tc('common.platform')}}:</label>
                         <select class="form-control" v-model="platform">
                             <option></option>
                             <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">{{p.name}}</option>
                         </select>
-                        <button type="button" class="ml-1 btn btn-sm btn-success" @click="clearFilters">Clear filters</button>
+                        <button type="button" class="ml-1 btn btn-sm btn-success" @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
                     </div>
                 </v-server-table>
             </div>
@@ -114,7 +114,7 @@
         padding: 15px 0;
     }
     .form-inline {
-        width: 450px;
+        width: 650px;
         float: left;
         display: block;
     }

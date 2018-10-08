@@ -15,6 +15,8 @@ import WorkflowList from './views/WorkflowList.vue'
 import WorkflowEdit from './views/WorkflowEdit.vue'
 import WorkflowAdd from './views/WorkflowAdd.vue'
 
+import Profile from './views/Profile.vue'
+
 import store from './store.js'
 
 Vue.use(Router)
@@ -81,6 +83,14 @@ let router = new Router({
             path: '/workflows/add',
             name: 'addWorkflow',
             component: WorkflowAdd,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/user/profile',
+            name: 'profile',
+            component: Profile,
             meta: {
                 requiresAuth: true
             }

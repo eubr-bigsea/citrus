@@ -31,9 +31,28 @@ export default new Vuex.Store({
         },
         register_request(user) {
 
+        },
+        change_profile_success(state, {user}){
+            user.email = user.attributes.email
+            user.locale = user.attributes.locale
+            state.status = 'success'
+            state.user = user
         }
     },
     actions: {
+        changeProfile({commit}, params){
+            return new Promise((resolve, reject) => {
+                let url = `${params.thornUrl}/api/users/${params.user.attributes.id}`
+                let headers = { 'Accept': 'application/json; charset=utf-8' }
+                axios({ url, data: {data: params.user}, method: 'PATCH', headers })
+                    .then(resp => {
+                        commit('change_profile_success', {user: resp.data.data})
+                        resolve(resp)
+                    }).catch((err) => {
+                        reject(err)
+                    })
+            });
+        },
         login ({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('auth_request')

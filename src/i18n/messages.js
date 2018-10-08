@@ -7,10 +7,11 @@ export default {
             alignRight: 'Align right',
             alignTop: 'Align top',
             alignBottom: 'Align bottom',
+            cancel: 'Cancel',
             changeOption: 'Change option...',
             choose: 'Choose',
             chooseOption: 'Choose option...',
-            cancel: 'Cancel',
+            clearFilters: 'Clear filters',
             delete: 'Delete',
             distributeHorizontally: 'Distribute horizontally',
             distributeVertically: 'Distribute vertically',
@@ -33,7 +34,7 @@ export default {
             createAccount: 'Sign up',
             description: 'Description',
             dontHaveAccount: 'Don\'t have an account?',
-            email: 'E-mail address',
+            email: 'E-mail',
             enabled: 'Enabled',
             filter: 'Filter:',
             firstName: 'First name',
@@ -41,11 +42,14 @@ export default {
             format: 'Format',
             hide: 'Hide',
             id: 'Id',
+            language: 'Language',
             lastName: 'Last name',
             limit: 'Limit:',
             login: 'Sign in',
+            logout: 'Sign off',
             name: 'Name | Names',
             nullable: 'Nullable',
+            ok: 'OK',
             owner: 'Owner',
             pagerShowing: 'Showing {from} to {to} of {count} records|{count} records, brother|One record',
             password: 'Password',
@@ -74,7 +78,8 @@ export default {
         messages: {
             acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
             confirmRemove: 'Are you sure you want to remove this record?',
-            registeredWithSuccess: 'You were registered with success. Please, sign in again.'
+            registeredWithSuccess: 'You were registered with success. Please, sign in again.',
+           
         },
         titles: {
             action: 'Action | Actions',
@@ -85,8 +90,10 @@ export default {
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
             job: 'Job | Jobs',
             jobs: 'Jobs',
+            lemonade: 'Lemonade',
+            lemonadePlatform: 'Lemonade Platform',
             login: 'Login',
-
+            profile: 'Profile',
             property: 'Property | Properties',
             register: 'Sign up',
             success: 'Success',
@@ -117,6 +124,16 @@ export default {
         },
         property: {
             taskName: 'Task name (optional)'
+        },
+        profile: {
+            alsoChangePassword: 'Also change my password',
+            updated: 'Profile updated'
+        },
+        home: {
+            learnMore: 'Learn more',
+            welcome: `Welcome to Lemonade. 
+            Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) is a visual platform for distributed computing, aimed to enable implementation, experimentation, test and deploying of data processing and machine learning applications. It provides a higher level of abstractions, called operations, to users build processing workflows using a graphical web interface. By using high performance and scalable technologies, such as COMPSs, Ophidia and Spark, Lemonade can process very large amount of data, hiding all backend complexity from the users and allowing them to focus mainly in the construction of the solution.
+            Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`
         }
     },
     pt: {
