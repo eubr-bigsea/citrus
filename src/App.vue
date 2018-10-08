@@ -1,13 +1,15 @@
 <template>
-    <div id="app" class="container-fluid">
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <router-link :to="{name: 'home'}" class="navbar-brand">
-                <div class="navbar-brand logo">
-                    <img/>
-                </div>
-                Lemonade Citrus
-            </router-link>
-            <!--
+    <div>
+        <vue-snotify></vue-snotify>
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                <router-link :to="{name: 'home'}" class="navbar-brand">
+                    <div class="navbar-brand logo">
+                        <img/>
+                    </div>
+                    Lemonade Citrus
+                </router-link>
+                <!--
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse"
                 aria-expanded="false" aria-label="Toggle navigation" v-if="isLoggedIn">
                 <span class="navbar-toggler-icon"></span>
@@ -16,72 +18,70 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
         -->
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav mr-auto" v-if="isLoggedIn">
-                    <li class="divider-vertical nav-item"></li>
-                    <li class="nav-item">
-                        <router-link :to="{name: 'dataSources'}" class="nav-link">{{$tc('titles.dataSource', 2)}}</router-link>
-                    </li>
-                    <li class="divider-vertical nav-item"></li>
-                    <li class="nav-item">
-                        <router-link :to="{name: 'workflows'}" class="nav-link">{{$tc('titles.workflow', 2)}}</router-link>
-                    </li>
-                    <li class="divider-vertical nav-item"></li>
-                    <li class="nav-item">
-                            <router-link :to="{name: 'jobs'}" 
-                            class="nav-link">{{$tc('titles.jobs', 2)}}</router-link>
-                    </li>
-                    <li class="divider-vertical nav-item"></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">{{$tc('titles.dashboard', 2)}}</a>
-                    </li>
-                    <li class="divider-vertical nav-item"></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">{{$tc('titles.whatIfModel', 1)}}</a>
-                    </li>
-                    <li class="divider-vertical nav-item"></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">{{$tc('titles.administration', 1)}}</a>
-                    </li>
-                </ul>
-            </div>
-            <ul class="nav navbar-nav navbar-right" v-if="isLoggedIn">
-                <b-nav-item-dropdown right>
-                    <!-- Using button-content slot -->
-                    <template slot="button-content">
-                        <font-awesome-icon icon="user" size="1x"></font-awesome-icon>
-                        &nbsp;
-                        <em>{{user.email}}</em>
-                    </template>
-                    <b-dropdown-item href="#">Profile</b-dropdown-item>
-                    <b-dropdown-item to="logout">Logout</b-dropdown-item>
-                </b-nav-item-dropdown>
-
-            </ul>
-        </nav>
-
-        <main>
-            <vue-toastr ref="toastr"></vue-toastr>
-            <div ref="sideBar" class="sidenav" v-if="isLoggedIn && false">
-                <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                <a href="#">
-                    <font-awesome-icon icon="coffee" size="1x"></font-awesome-icon> About</a>
-                <a href="#">
-                    <font-awesome-icon icon="home"></font-awesome-icon> Project</a>
-                <a href="#">
-                    <font-awesome-icon icon="home"></font-awesome-icon> Data set</a>
-                <a href="#">
-                    <font-awesome-icon icon="home"></font-awesome-icon> Deployment</a>
-                <a href="#">
-                    <font-awesome-icon icon="home"></font-awesome-icon> Environment</a>
-                <a href="#">
-                    <font-awesome-icon icon="home"></font-awesome-icon> Notebook</a>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <router-view></router-view>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav mr-auto" v-if="isLoggedIn">
+                        <li class="divider-vertical nav-item"></li>
+                        <li class="nav-item">
+                            <router-link :to="{name: 'dataSources'}" class="nav-link">{{$tc('titles.dataSource', 2)}}</router-link>
+                        </li>
+                        <li class="divider-vertical nav-item"></li>
+                        <li class="nav-item">
+                            <router-link :to="{name: 'workflows'}" class="nav-link">{{$tc('titles.workflow', 2)}}</router-link>
+                        </li>
+                        <li class="divider-vertical nav-item"></li>
+                        <li class="nav-item">
+                            <router-link :to="{name: 'jobs'}" class="nav-link">{{$tc('titles.jobs', 2)}}</router-link>
+                        </li>
+                        <li class="divider-vertical nav-item"></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{{$tc('titles.dashboard', 2)}}</a>
+                        </li>
+                        <li class="divider-vertical nav-item"></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{{$tc('titles.whatIfModel', 1)}}</a>
+                        </li>
+                        <li class="divider-vertical nav-item"></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{{$tc('titles.administration', 1)}}</a>
+                        </li>
+                    </ul>
                 </div>
-                <!--
+                <ul class="nav navbar-nav navbar-right" v-if="isLoggedIn">
+                    <b-nav-item-dropdown right>
+                        <!-- Using button-content slot -->
+                        <template slot="button-content">
+                            <font-awesome-icon icon="user" size="1x"></font-awesome-icon>
+                            &nbsp;
+                            <em>{{user.email}}</em>
+                        </template>
+                        <b-dropdown-item href="#">Profile</b-dropdown-item>
+                        <b-dropdown-item to="logout">Logout</b-dropdown-item>
+                    </b-nav-item-dropdown>
+
+                </ul>
+            </nav>
+
+            <main>
+                <div ref="sideBar" class="sidenav" v-if="isLoggedIn && false">
+                    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                    <a href="#">
+                        <font-awesome-icon icon="coffee" size="1x"></font-awesome-icon> About</a>
+                    <a href="#">
+                        <font-awesome-icon icon="home"></font-awesome-icon> Project</a>
+                    <a href="#">
+                        <font-awesome-icon icon="home"></font-awesome-icon> Data set</a>
+                    <a href="#">
+                        <font-awesome-icon icon="home"></font-awesome-icon> Deployment</a>
+                    <a href="#">
+                        <font-awesome-icon icon="home"></font-awesome-icon> Environment</a>
+                    <a href="#">
+                        <font-awesome-icon icon="home"></font-awesome-icon> Notebook</a>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <router-view></router-view>
+                    </div>
+                    <!--
                     <div class="col-md-12 ">
                         <v-client-table :data="tableData" :columns="columns" :options="options">
                             <template slot="symbol" slot-scope="props">
@@ -90,12 +90,13 @@
                         </v-client-table>
                     </div>
                 -->
-            </div>
-        </main>
-        <footer>
+                </div>
+            </main>
+            <footer>
 
-        </footer>
-        <vue-progress-bar></vue-progress-bar>
+            </footer>
+            <vue-progress-bar></vue-progress-bar>
+        </div>
     </div>
 </template>
 
@@ -105,7 +106,7 @@
     export default {
         name: 'app',
         components: {
-            HelloWorld
+            HelloWorld,
         },
         computed: {
             isLoggedIn() {

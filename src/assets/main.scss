@@ -1,3 +1,17 @@
+$snotify-width: 600px !default;
+
+@import '~vue-snotify/styles/dark.scss'; //dark or material.css or simple.css
+
+
+.snotify {
+    .snotifyToast__title {
+        font-size: 1.2rem;
+    }
+    .snotifyToast__body {
+        font-size: .9rem;
+    }
+}
+
 .object-align-left, .object-align-right, .object-align-top, .object-align-bottom {
     background-image: url('align.svg');
     width: 16px;

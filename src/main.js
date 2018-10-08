@@ -21,15 +21,18 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-import Toastr from 'vue-toastr';
 
-import './assets/main.css'
+import './assets/main.scss'
 
-// import toastr scss file: need webpack sass-loader
-require('vue-toastr/src/vue-toastr.scss');
-// Register plugin
-Vue.component('vue-toastr', Toastr)
-Vue.use(Toastr);
+// Snotify
+import Snotify from 'vue-snotify';
+Vue.use(Snotify, {
+    toast: {
+        titleMaxLength: 100,
+        timeout: 5000,
+        position: 'centerTop'
+    }
+});
 
 /**
  * Setting this config so that Vue-tables-2 will be able to replace sort icons with chevrons
@@ -92,11 +95,14 @@ const i18n = new VueI18n({
 })
 
 let newVue = new Vue({
+    el: '#app',
     i18n,
     router,
     store,
-    render: h => h(App)
-}).$mount('#app')
+    render: h => h(App),
+    mounted() {
+    }
+});
 
 axios.interceptors.request.use(config => {
     newVue.$Progress.start()
@@ -105,4 +111,7 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(response => {
     newVue.$Progress.finish()
     return response
+}, (error) => {
+    newVue.$Progress.finish()
+    throw error
 })

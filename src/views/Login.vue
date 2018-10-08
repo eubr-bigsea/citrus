@@ -76,6 +76,7 @@
     }
 </style>
 <script>
+    
     export default {
         name: 'Login',
         data() {
@@ -94,11 +95,21 @@
         },
         methods: {
             login: function () {
+                let self = this;
+                let thornUrl = process.env.VUE_APP_THORN_URL
                 let email = this.email
                 let password = this.password
-                this.$store.dispatch('login', { email, password })
+                this.$store.dispatch('login', {thornUrl, user:{ email, password }})
                     .then(() => this.$router.push('/'))
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        let msg = err.message.startsWith('errors.') 
+                            ? self.$t(err.message) : err.message
+                        self.$snotify.error(
+                            msg,
+                            self.$t('titles.error'),
+                            
+                        );
+                    })
             }
         }
     }
