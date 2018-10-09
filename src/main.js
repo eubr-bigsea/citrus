@@ -17,7 +17,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {
     faCoffee, faCopy, faCogs, faHistory, faImage, faLayerGroup, faArrowsAltV, faArrowsAltH,
     faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
-    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner
+    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -50,7 +50,7 @@ dom.watch();
 
 library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, faArrowsAltH, faArrowsAltV,
     faHome, faUser, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
-    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner),
+    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase),
 
     Vue.use(ClientTable);
 Vue.use(ServerTable, { useVuex: true, theme: 'bootstrap4' });
@@ -77,6 +77,11 @@ const options = {
 Vue.use(VueI18n)
 Vue.use(VueProgressBar, options)
 
+// Date-fns
+import { format, parse } from 'date-fns'
+Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MMM/YYYY HH:MM') } })
+
+
 // Auth
 const token = localStorage.getItem("token")
 const user = JSON.parse(localStorage.getItem('user'), '{}')
@@ -100,7 +105,7 @@ let newVue = new Vue({
     router,
     store,
     render: h => h(App),
-    mounted() {
+    mounted () {
     }
 });
 

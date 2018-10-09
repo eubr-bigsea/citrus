@@ -66,7 +66,7 @@
             }
         },
         props: {
-            operations: { type: Array, default: [] }
+            operations: { type: Array, default(){return []} }
         },
         computed: {
             groupedOperations() {
@@ -86,7 +86,6 @@
         },
         methods: {
             toggle(e) {
-                debugger
                 e.target.nextSibling.removeClass('collapse')
             }
         }

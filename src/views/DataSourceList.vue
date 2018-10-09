@@ -15,7 +15,11 @@
                     <template slot="id" slot-scope="props">
                         <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.id}}</router-link>
                     </template>
-
+                    <template slot="name" slot-scope="props">
+                        <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.name}}</router-link>
+                        <br/>
+                        <em>{{props.row.description}}</em>
+                    </template>
                     <template slot="actions" slot-scope="props">
                         <button class="btn btn-sm mr-2">
                             <font-awesome-icon icon="edit"></font-awesome-icon>
@@ -24,10 +28,12 @@
                                 <font-awesome-icon icon="trash"></font-awesome-icon>
                             </button>
                     </template>
-
+                    <template slot="created" slot-scope="props">
+                        {{props.row.created | formatJsonDate}}
+                    </template>
                     <template slot="tags" slot-scope="props">
                         <div v-if="props.row.tags">
-                            <div v-for="tag in (props.row.tags || '').split(',')" class="badge badge-info mr-1">
+                            <div v-for="tag in (props.row.tags || '').split(',')" class="badge badge-info mr-1" :key="tag">
                                 {{tag}}
                             </div>
                         </div>
@@ -44,7 +50,7 @@
     export default {
         data() {
             return {
-                columns: ['actions', 'id', 'name', 'description', 'format', 'created', 'user_name', 'tags'],
+                columns: ['actions', 'id', 'name', 'format', 'created', 'user_name', 'tags'],
                 tableData: [],
                 showSideBar: false,
                 options: {
@@ -130,7 +136,10 @@
         },
     }
 </script>
-<style>
+<style scoped>
+    em {
+        font-size: .8em;
+    }
     .th-5 {
         width: 5%;
     }

@@ -125,15 +125,15 @@
         mounted() {
             let self = this;
             let workflowFilters = {
-                page: 1, sort: 'updated', asc: false, size: 10,
+                page: 1, sort: 'updated', asc: false, size: 5,
                 fields: 'id,name,platform.id,updated'
             }
             let dataSourceFilters = {
-                page: 1, sort: 'updated', asc: false, size: 10,
+                page: 1, sort: 'updated', asc: false, size: 5,
                 fields: 'id,name,updated'
             }
             let jobFilters = {
-                page: 1, sort: 'created', asc: false, size: 10,
+                page: 1, sort: 'created', asc: false, size: 5,
                 fields: 'id,name,created,workflow.name'
             }
             let listings = new Map([
@@ -156,6 +156,10 @@
     }
 </script>
 <style scoped>
+    .lemonade {
+        height: 85vh;
+        overflow: hidden;
+    }
     .lemonade>div {
         max-height: 95vh;
         overflow: auto;
