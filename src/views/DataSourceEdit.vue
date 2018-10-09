@@ -1,9 +1,9 @@
 <template>
     <div class="row mb-5 pb-5">
         <div class="col-md-12 col-xl-12 mx-auto">
-            <h2>{{$tc('titles.dataSource', 2)}}</h2>
+            <h2>{{$tc('titles.dataSource', 1)}}</h2>
         </div>
-        <div class="col-md-12 col-xg-12 mx-auto">
+        <div class="col-md-12 col-xg-12 mx-auto" v-if="dataSource.id">
             <b-card no-body>
                 <b-tabs card>
                     <b-tab title="Basic information" active>
@@ -100,23 +100,23 @@
                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                 {{$tc('dataSource.inferSchema')}}</button>
                         </div>
-                        <table class="table table-bordered table-stripped" v-if="dataSource.attributes && dataSource.attributes.length > 0">
+                        <table class="table table-bordered table-sm table-stripped" v-if="dataSource.attributes && dataSource.attributes.length > 0">
                             <thead>
                                 <tr>
-                                    <th class="primary text-center">#</th>
-                                    <th class="primary text-center">{{$tc('common.name')}}</th>
-                                    <th class="primary text-center">{{$tc('common.type')}}</th>
-                                    <th class="primary text-center">{{$tc('common.nullable')}}</th>
-                                    <th class="primary text-center">{{$tc('common.size')}}</th>
-                                    <th class="primary text-center">{{$tc('common.precision')}}</th>
-                                    <th class="primary text-center">{{$tc('common.scale')}}</th>
-                                    <th class="primary text-center">{{$tc('dataSource.missingRepresentation')}}</th>
-                                    <th class="primary text-center"></th>
+                                    <th class="primary text-center" style="width:3%">#</th>
+                                    <th class="primary text-center" style="width:25%">{{$tc('common.name')}}</th>
+                                    <th class="primary text-center" style="width:12%">{{$tc('common.type')}}</th>
+                                    <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
+                                    <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
+                                    <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
+                                    <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
+                                    <th class="primary text-center" style="width:20%">{{$tc('dataSource.missingRepresentation')}}</th>
+                                    <th class="primary text-center" style="width:10%"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(attr, index) in dataSource.attributes" :key="attr.id">
-                                    <td>{{index + 1}}</td>
+                                    <td class="text-center">{{index + 1}}</td>
                                     <td>
                                         <input v-model="attr.name" class="form-control" />
                                     </td>
@@ -125,7 +125,7 @@
                                             <option v-for="dt in dataTypes" v-bind:value="dt" :key="dt">{{dt}}</option>
                                         </select>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <SwitchComponent v-model="attr.nullable" :checked="attr.nullable"></SwitchComponent>
                                     </td>
                                     <td class="col-xs-1">
@@ -193,6 +193,9 @@
                 </b-tabs>
             </b-card>
 
+        </div>
+        <div class="col-md-12 mx-auto border-top mt-3 pt-3" v-else>
+            {{$t('common.noData')}}
         </div>
     </div>
 </template>
