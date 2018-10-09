@@ -26,7 +26,7 @@ export default {
         common: {
             action: 'Action | Actions',
             attention: 'Attention',
-            alreadyHaveAccount: 'Already have an account',
+            alreadyHaveAccount: 'Already have an account?',
             attribute: 'Attribute | Attributes',
             command: 'SQL Command',
             confirmPassword: 'Confirm password',
@@ -47,6 +47,7 @@ export default {
             limit: 'Limit:',
             login: 'Sign in',
             logout: 'Sign off',
+            noData: 'No results found.',
             name: 'Name | Names',
             nullable: 'Nullable',
             ok: 'OK',
@@ -79,7 +80,7 @@ export default {
             acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
             confirmRemove: 'Are you sure you want to remove this record?',
             registeredWithSuccess: 'You were registered with success. Please, sign in again.',
-           
+            noMatching: 'Sorry, no matching options'
         },
         titles: {
             action: 'Action | Actions',
@@ -120,7 +121,8 @@ export default {
             privacyAware: 'Privacy aware',
             public: 'Public',
             recordDelimiter: 'Record delimiter (CSV only)',
-            textDelimiter: 'Text delimiter (CSV only)'
+            textDelimiter: 'Text delimiter (CSV only)',
+            treatAsNull: 'Treat these values as null (optional)',
         },
         property: {
             taskName: 'Task name (optional)'
@@ -130,7 +132,9 @@ export default {
             updated: 'Profile updated'
         },
         home: {
+            aPlatformForDataScience: 'A platform for data science',
             learnMore: 'Learn more',
+            recentlyUpdated: 'Recently updated {what}',
             welcome: `Welcome to Lemonade. 
             Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) is a visual platform for distributed computing, aimed to enable implementation, experimentation, test and deploying of data processing and machine learning applications. It provides a higher level of abstractions, called operations, to users build processing workflows using a graphical web interface. By using high performance and scalable technologies, such as COMPSs, Ophidia and Spark, Lemonade can process very large amount of data, hiding all backend complexity from the users and allowing them to focus mainly in the construction of the solution.
             Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`

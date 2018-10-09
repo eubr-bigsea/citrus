@@ -17,7 +17,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {
     faCoffee, faCopy, faCogs, faHistory, faImage, faLayerGroup, faArrowsAltV, faArrowsAltH,
     faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
-    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk,
+    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -50,7 +50,7 @@ dom.watch();
 
 library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, faArrowsAltH, faArrowsAltV,
     faHome, faUser, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
-    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk),
+    faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner),
 
     Vue.use(ClientTable);
 Vue.use(ServerTable, { useVuex: true, theme: 'bootstrap4' });
