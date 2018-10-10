@@ -9,24 +9,32 @@
                     <b-tab title="Basic information" active>
                         <div class="row">
                             <div class="col-md-6">
-                                <label>{{$tc('common.name')}}: </label>
+                                <label class="font-weight-bold">{{$tc('common.name')}}: </label>
                                 <input type="text" class="form-control" v-model="dataSource.name" />
                             </div>
-                            <div class="col-md-2">
-                                <label>{{$tc('common.format')}}: </label>
+                            <div class="col-md-3">
+                                <label class="font-weight-bold">{{$tc('common.format')}}: </label>
                                 <select class="form-control" v-model="dataSource.format">
                                     <option v-for="fmt in formats" v-bind:value="fmt" :key="fmt">{{fmt}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label>{{$t('common.tags')}}</label>
-                                <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTags" :taggable="true" class="custom"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                            <div class="col-md-3">
+                                <label class="font-weight-bold">{{$t('dataSource.storage')}}:</label>
+                                <select v-model="dataSource.storage.id" class="form-control">
+                                    <option v-for="storage in storages" :key="storage.id" :value="storage.id">
+                                        {{storage.name}} ({{storage.type}})
+                                    </option>
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label>{{$tc('common.description')}}:</label>
                                 <textarea class="form-control" v-model="dataSource.description"></textarea>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-3">
+                                <label>{{$t('common.tags')}}:</label>
+                                <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTags" :taggable="true" class="custom"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                            </div>
+                            <div class="col-md-3">
                                 <label>{{$tc('dataSource.treatAsNull')}}: </label>
                                 <v-select multiple style="width: 100%" v-model="dataSource.treat_as_missing" :taggable="true" class="custom"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
                             </div>
@@ -48,11 +56,11 @@
                                 </b-form-checkbox>
                             </div>
 
-                            <div class="col-md-12 mb-3 mt-3 border-bottom pb-3" v-if="dataSource.format === 'JDBC'">
+                            <div class="col-md-12 mt-3 pb-1" v-if="dataSource.format === 'JDBC'">
                                 <label>{{$tc('common.command')}}:</label>
                                 <textarea class="form-control" v-model="dataSource.command"></textarea>
                             </div>
-                            <div class="col-md-12 mt-3 mb-3 mt-3 border-bottom pb-3" v-if="dataSource.format === 'CSV'">
+                            <div class="col-md-12 mt-3 mt-3 pb-1" v-if="dataSource.format === 'CSV'">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <label>{{ $t('dataSource.attributeDelimiter') }}: </label>
@@ -72,12 +80,6 @@
                                     </div>
 
                                 </div>
-                            </div>
-                            <div class="col-md-12 margin-top-10">
-                                <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
-                                    <font-awesome-icon icon="spinner" pulse class="icon" />
-                                    <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
-                                <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">{{$tc('actions.cancel')}}</router-link>
                             </div>
                         </div>
                     </b-tab>
@@ -104,14 +106,13 @@
                             <thead>
                                 <tr>
                                     <th class="primary text-center" style="width:3%">#</th>
-                                    <th class="primary text-center" style="width:25%">{{$tc('common.name')}}</th>
+                                    <th class="primary text-center" style="width:30%">{{$tc('common.name')}}</th>
                                     <th class="primary text-center" style="width:12%">{{$tc('common.type')}}</th>
                                     <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
                                     <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
                                     <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
                                     <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
-                                    <th class="primary text-center" style="width:20%">{{$tc('dataSource.missingRepresentation')}}</th>
-                                    <th class="primary text-center" style="width:10%"></th>
+                                    <th class="primary text-center" style="width:25%">{{$tc('dataSource.missingRepresentation')}}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -140,28 +141,13 @@
                                     <td>
                                         <input class="form-control" v-model="attr.missing_representation" maxlength="200" />
                                     </td>
-                                    <td>
-                                        <button class="btn btn-xs" v-show="index !== 0">
-                                            <span class="fa fa-chevron-up"></span>
-                                        </button>
-                                        <button class="btn btn-xs" v-show="index !== dataSource.attributes.length -1">
-                                            <span class="fa fa-chevron-down"></span>
-                                        </button>
-                                        <button class="btn btn-xs">
-                                            <span class="fa fa-remove"></span>
-                                        </button>
-                                    </td>
+                                    
                                 </tr>
                             </tbody>
                         </table>
                         <div v-else class="border-bottom mb-5 pt-3 pb-3">
                             <div class="alert alert-info">{{ $t("dataSource.noAttributes") }}</div>
                         </div>
-                        <div class="col-md-12 margin-top-10">
-                                <button class="btn btn-primary mr-1" @click.stop="save">
-                                    <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
-                                <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">{{$tc('actions.cancel')}}</router-link>
-                            </div>
                     </b-tab>
                     <b-tab title="Permissions">
                         <div class="card-title">
@@ -191,12 +177,26 @@
 
                     </b-tab>
                 </b-tabs>
+                <div class="col-md-12 mb-4 border-top pt-2">
+                    <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                        <font-awesome-icon icon="spinner" pulse class="icon" />
+                        <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
+                    <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">{{$tc('actions.cancel')}}</router-link>
+                    <button class="btn btn-spinner" @click.stop="preview">
+                        <font-awesome-icon icon="spinner" pulse class="icon" />
+                        <span class="fa fa-eye"></span> {{$t('common.preview')}}
+                    </button>
+                </div>
             </b-card>
 
         </div>
         <div class="col-md-12 mx-auto border-top mt-3 pt-3" v-else>
             {{$t('common.noData')}}
         </div>
+        <b-modal size="lg" ref="preview" :title="$t('common.preview')">
+            <v-client-table :columns="getPreviewColumns" :data="samples" 
+                :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}"></v-client-table>
+        </b-modal>
     </div>
 </template>
 
@@ -211,6 +211,13 @@
             SwitchComponent,
         },
         computed: {
+            getPreviewColumns(){
+                if (this.dataSource && this.dataSource.attributes){
+                    return this.dataSource.attributes.map((a) => a.name)
+                } else {
+                    return []
+                }
+            },
             inferableDataSource(){
                 return ["CSV", "JDBC", "PARQUET"].includes(this.dataSource.format)
             },
@@ -228,6 +235,8 @@
         },
         data() {
             return {
+                samples: [],
+                storages: [],
                 dataSource: {},
                 dataTypes: ['BINARY', 'CHARACTER', 'DOUBLE', 'DECIMAL', 'DATE',
                     'DATETIME', 'FLOAT', 'INTEGER', 'LONG',
@@ -242,8 +251,21 @@
             }
         },
         mounted() {
-            this.load()            
+            this.load()
+            axios.get(`${limoneroUrl}/storages`).then(
+                (resp) => {
+                    this.storages = resp.data;
+                }
+                ).catch(function (e) {
+                    this.error(e);
+                }.bind(this));
         },
+        /*
+        watch: {
+            'dataSource.storage.id': (newVal, oldVal) =>  {
+                alert(oldVal  + " => " +  newVal)
+            }
+        },*/
         /* Methods */
         methods: {
             load(){
@@ -262,7 +284,7 @@
                 );
             },
             error(e){
-                if (e.request && e.request.readyState === 4){
+                if (e.name === 'NetworkError'){
                     this.$snotify.error(
                         this.$t('errors.disconnected'), this.$t('titles.error'),
                     );
@@ -273,8 +295,16 @@
                 }
             },
             save(event) {
-                let url = `${limoneroUrl}/datasources/${this.dataSource.id}`
                 let self = this
+                let storage = self.storages.find((item) => item.id === self.dataSource.storage.id)
+                let inconsistentFormat =  (self.dataSource.format === 'JDBC' && storage.type !== 'JDBC')
+                    || (self.dataSource.format !== 'JDBC' && storage.type !== 'HDFS')
+
+                if (inconsistentFormat){
+                    self.error({message: self.$t('dataSource.inconsistentFormat')})
+                    return
+                }
+                let url = `${limoneroUrl}/datasources/${this.dataSource.id}`
                 event.target.setAttribute('disabled', 'disabled')
                 event.target.classList.remove('btn-spinner')
                 axios.patch(url, this.dataSource)
@@ -286,6 +316,24 @@
                     }
                     ).catch((e) => { self.error(e)})
             },
+            preview(event){
+                let url = `${limoneroUrl}/datasources/sample/${this.dataSource.id}?limit=40`
+                let self = this
+                event.target.setAttribute('disabled', 'disabled')
+                event.target.classList.remove('btn-spinner')
+                axios.get(url, {})
+                    .then((resp) => {
+                           self.samples = resp.data.data
+                           self.$refs.preview.show()
+                        }
+                    ).catch((e) => { 
+                        console.debug(e); self.error(e)}
+                    ).finally(()=>{
+                        event.target.removeAttribute('disabled')
+                        event.target.classList.add('btn-spinner')
+                    })
+            },
+
             infer(event){
                 let url = `${limoneroUrl}/datasources/infer-schema/${this.dataSource.id}`
                 let self = this
@@ -296,10 +344,14 @@
                             self.success(
                                 this.$t('dataSource.inferSuccess'))
                             this.load()
-                            event.target.removeAttribute('disabled')
-                            event.target.classList.add('btn-spinner')
                         }
-                    ).catch((e) => { self.error(e)})
+                    ).catch((e) => { 
+                        console.debug(e); self.error(e)}
+                    ).finally(()=>{
+                        event.target.removeAttribute('disabled')
+                        event.target.classList.add('btn-spinner')
+                    })
+                    
             }
         },
     }
@@ -307,5 +359,8 @@
 <style>
     .v-select .dropdown-toggle::after {
         content: none
+    }
+    .table-smallest {
+        font-size: .8em;
     }
 </style>
