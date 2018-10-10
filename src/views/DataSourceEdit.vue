@@ -20,11 +20,12 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="font-weight-bold">{{$t('dataSource.storage')}}:</label>
-                                <select v-model="dataSource.storage.id" class="form-control">
+                                <input disabled v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'" class="form-control" />
+                                <!-- <select v-model="dataSource.storage.id" class="form-control" disabled>
                                     <option v-for="storage in storages" :key="storage.id" :value="storage.id">
                                         {{storage.name}} ({{storage.type}})
                                     </option>
-                                </select>
+                                </select> -->
                             </div>
                             <div class="col-md-6">
                                 <label>{{$tc('common.description')}}:</label>
@@ -32,11 +33,15 @@
                             </div>
                             <div class="col-md-3">
                                 <label>{{$t('common.tags')}}:</label>
-                                <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTags" :taggable="true" class="custom"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                                <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTags" :taggable="true" class="custom">
+                                    <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                </v-select>
                             </div>
                             <div class="col-md-3">
                                 <label>{{$tc('dataSource.treatAsNull')}}: </label>
-                                <v-select multiple style="width: 100%" v-model="dataSource.treat_as_missing" :taggable="true" class="custom"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                                <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTreatAsMissing" :taggable="true" class="custom">
+                                    <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                </v-select>
                             </div>
                             <div class="col-md-6 mt-3 mb-3 mt-3">
                                 <b-form-checkbox v-model="dataSource.enabled">
@@ -64,19 +69,27 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <label>{{ $t('dataSource.attributeDelimiter') }}: </label>
-                                        <v-select style="width: 100%" v-model="dataSource.attribute_delimiter" :options="delimiters" :taggable="true"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                                        <v-select style="width: 100%" v-model="dataSource.attribute_delimiter" :options="delimiters" :taggable="true">
+                                            <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                        </v-select>
                                     </div>
                                     <div class="col-md-3">
                                         <label>{{ $t('dataSource.recordDelimiter') }}: </label>
-                                        <v-select style="width: 100%" v-model="dataSource.record_delimiter" :options="delimiters" :taggable="true"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                                        <v-select style="width: 100%" v-model="dataSource.record_delimiter" :options="delimiters" :taggable="true">
+                                            <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                        </v-select>
                                     </div>
                                     <div class="col-md-3">
                                         <label>{{ $t('dataSource.textDelimiter') }}: </label>
-                                        <v-select style="width: 100%" v-model="dataSource.text_delimiter" :options="textDelimiters" :taggable="true"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                                        <v-select style="width: 100%" v-model="dataSource.text_delimiter" :options="textDelimiters" :taggable="true">
+                                            <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                        </v-select>
                                     </div>
                                     <div class="col-md-3">
                                         <label>{{ $t('dataSource.encoding') }}: </label>
-                                        <v-select style="width: 100%" v-model="dataSource.encoding" :options="encodings" :taggable="true"><slot name="no-options">{{$t('messages.noMatching')}}.</slot></v-select>
+                                        <v-select style="width: 100%" v-model="dataSource.encoding" :options="encodings" :taggable="true">
+                                            <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                        </v-select>
                                     </div>
 
                                 </div>
@@ -99,8 +112,8 @@
                                 Without this configuration, Lemonade may not work appropriately.
                             </div>
                             <button class="float-right btn-sm btn btn-success mb-2 btn-spinner" @click.stop="infer" v-if="canInfer">
-                                <font-awesome-icon icon="spinner" pulse class="icon" />
-                                {{$tc('dataSource.inferSchema')}}</button>
+                                <font-awesome-icon icon="spinner" pulse class="icon" /> {{$tc('dataSource.inferSchema')}}
+                            </button>
                         </div>
                         <table class="table table-bordered table-sm table-stripped" v-if="dataSource.attributes && dataSource.attributes.length > 0">
                             <thead>
@@ -141,7 +154,7 @@
                                     <td>
                                         <input class="form-control" v-model="attr.missing_representation" maxlength="200" />
                                     </td>
-                                    
+
                                 </tr>
                             </tbody>
                         </table>
@@ -182,9 +195,10 @@
                         <font-awesome-icon icon="spinner" pulse class="icon" />
                         <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
                     <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">{{$tc('actions.cancel')}}</router-link>
-                    <button class="btn btn-spinner" @click.stop="preview">
+                    <button class="btn btn-spinner" @click.stop="preview" :disabled="isDirty">
                         <font-awesome-icon icon="spinner" pulse class="icon" />
-                        <span class="fa fa-eye"></span> {{$t('common.preview')}}
+                        <span class="fa fa-eye"></span> 
+                        &nbsp;<span v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')"></span>
                     </button>
                 </div>
             </b-card>
@@ -194,6 +208,7 @@
             {{$t('common.noData')}}
         </div>
         <b-modal size="lg" ref="preview" :title="$t('common.preview')">
+            {{$t('dataSource.previewExplanation', {amount: 40})}}
             <v-client-table :columns="getPreviewColumns" :data="samples" 
                 :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}"></v-client-table>
         </b-modal>
@@ -201,6 +216,7 @@
 </template>
 
 <script>
+    import Vue from 'vue'
     import axios from 'axios'
     import VueSelect from 'vue-select'
     import SwitchComponent from '../components/widgets/Switch.vue'
@@ -211,22 +227,31 @@
             SwitchComponent,
         },
         computed: {
-            getPreviewColumns(){
-                if (this.dataSource && this.dataSource.attributes){
+            getPreviewColumns() {
+                if (this.dataSource && this.dataSource.attributes) {
                     return this.dataSource.attributes.map((a) => a.name)
                 } else {
                     return []
                 }
             },
-            inferableDataSource(){
+            inferableDataSource() {
                 return ["CSV", "JDBC", "PARQUET"].includes(this.dataSource.format)
             },
             customTags: {
                 get() {
                     return this.dataSource.tags ? this.dataSource.tags.split(',') : []
                 },
-                set(value){
+                set(value) {
                     this.dataSource.tags = value.join(',')
+                }
+            },
+            customTreatAsMissing: {
+                get() {
+                    return this.dataSource.treat_as_missing
+                        ? this.dataSource.treat_as_missing.split(',') : []
+                },
+                set(value) {
+                    this.dataSource.treat_as_missing = value.join(',')
                 }
             },
             canInfer() {
@@ -235,6 +260,7 @@
         },
         data() {
             return {
+                isDirty: false,
                 samples: [],
                 storages: [],
                 dataSource: {},
@@ -242,7 +268,7 @@
                     'DATETIME', 'FLOAT', 'INTEGER', 'LONG',
                     'TEXT', 'TIME', 'TIMESTAMP', 'VECTOR'].sort(),
                 formats: ['XML_FILE', 'NETCDF4', 'HDF5', 'SHAPEFILE', 'TEXT',
-                    'UNKNOWN', 'CUSTOM', 'JSON', 'CSV', 'PARQUET', 'PICKLE', 'JDBC'].sort(),
+                    'UNKNOWN', 'CUSTOM', 'GEO_JSON', 'JSON', 'CSV', 'PARQUET', 'PICKLE', 'JDBC'].sort(),
                 delimiters: [
                     ',', ';', '.', '{tab}', '{new_line}',
                 ],
@@ -251,42 +277,60 @@
             }
         },
         mounted() {
-            this.load()
-            axios.get(`${limoneroUrl}/storages`).then(
-                (resp) => {
-                    this.storages = resp.data;
-                }
-                ).catch(function (e) {
-                    this.error(e);
-                }.bind(this));
+            let self = this
+            this.load().then(() => {
+                // axios.get(`${limoneroUrl}/storages`).then(
+                //     (resp) => {
+                //         self.storages = resp.data;
+                //         Vue.nextTick(() => {
+                //             self.isDirty = false
+                //         })
+                //     }
+                // ).catch(function (e) {
+                //     self.error(e);
+                // });
+                Vue.nextTick(() => {
+                    self.isDirty = false
+                })
+            })
         },
-        /*
         watch: {
-            'dataSource.storage.id': (newVal, oldVal) =>  {
-                alert(oldVal  + " => " +  newVal)
+            'dataSource': {
+                handler(newVal, oldVal) {
+                    this.isDirty = true
+                },
+                deep: true
             }
-        },*/
+        },
         /* Methods */
         methods: {
-            load(){
-                axios.get(`${limoneroUrl}/datasources/${this.$route.params.id}`).then(
-                (resp) => {
-                    this.dataSource = resp.data;
-                }
-                ).catch(function (e) {
-                    this.error(e);
-                }.bind(this));
+            load() {
+                let self = this
+                return new Promise((resolve, reject) => {
+                    axios.get(`${limoneroUrl}/datasources/${this.$route.params.id}`).then(
+                        (resp) => {
+                            self.dataSource = resp.data;
+                            resolve()
+                        }
+                    ).catch(function (e) {
+                        self.error(e);
+                    });
+                });
             },
-            success(msg){
+            success(msg) {
                 this.$snotify.success(
                     msg,
                     this.$t('titles.success'),
                 );
             },
-            error(e){
-                if (e.name === 'NetworkError'){
+            error(e) {
+                if (e.name === 'NetworkError') {
                     this.$snotify.error(
                         this.$t('errors.disconnected'), this.$t('titles.error'),
+                    );
+                } else if (e.response && e.response.data) {
+                    this.$snotify.error(
+                        e.response.data.message, this.$t('titles.error'),
                     );
                 } else {
                     this.$snotify.error(
@@ -296,12 +340,12 @@
             },
             save(event) {
                 let self = this
-                let storage = self.storages.find((item) => item.id === self.dataSource.storage.id)
-                let inconsistentFormat =  (self.dataSource.format === 'JDBC' && storage.type !== 'JDBC')
-                    || (self.dataSource.format !== 'JDBC' && storage.type !== 'HDFS')
+                let inconsistentFormat = (self.dataSource.format === 'JDBC' 
+                        && self.dataSource.storage.type !== 'JDBC')
+                    || (self.dataSource.format !== 'JDBC' && self.dataSource.storage.type !== 'HDFS')
 
-                if (inconsistentFormat){
-                    self.error({message: self.$t('dataSource.inconsistentFormat')})
+                if (inconsistentFormat) {
+                    self.error({ message: self.$t('dataSource.inconsistentFormat') })
                     return
                 }
                 let url = `${limoneroUrl}/datasources/${this.dataSource.id}`
@@ -311,48 +355,52 @@
                     .then((resp) => {
                         event.target.removeAttribute('disabled')
                         event.target.classList.add('btn-spinner')
+                        self.isDirty = false
                         self.success(
-                            this.$t('messages.savedWithSuccess', {what: this.$tc('titles.dataSource', 1)}))
+                            this.$t('messages.savedWithSuccess', { what: this.$tc('titles.dataSource', 1) }))
                     }
-                    ).catch((e) => { self.error(e)})
+                    ).catch((e) => { self.error(e) })
             },
-            preview(event){
+            preview(event) {
                 let url = `${limoneroUrl}/datasources/sample/${this.dataSource.id}?limit=40`
                 let self = this
                 event.target.setAttribute('disabled', 'disabled')
                 event.target.classList.remove('btn-spinner')
                 axios.get(url, {})
                     .then((resp) => {
-                           self.samples = resp.data.data
-                           self.$refs.preview.show()
-                        }
-                    ).catch((e) => { 
-                        console.debug(e); self.error(e)}
-                    ).finally(()=>{
+                        self.samples = resp.data.data
+                        self.$refs.preview.show()
+                    }
+                    ).catch((e) => {
+                        console.debug(e); self.error(e)
+                    }
+                    ).finally(() => {
                         event.target.removeAttribute('disabled')
                         event.target.classList.add('btn-spinner')
                     })
             },
 
-            infer(event){
+            infer(event) {
                 let url = `${limoneroUrl}/datasources/infer-schema/${this.dataSource.id}`
                 let self = this
                 event.target.setAttribute('disabled', 'disabled')
                 event.target.classList.remove('btn-spinner')
                 axios.post(url, {})
                     .then((resp) => {
-                            self.success(
-                                this.$t('dataSource.inferSuccess'))
-                            this.load()
-                        }
-                    ).catch((e) => { 
-                        console.debug(e); self.error(e)}
-                    ).finally(()=>{
+                        self.success(
+                            this.$t('dataSource.inferSuccess'))
+                        this.load()
+                    }
+                    ).catch((e) => {
+                        console.debug(e); self.error(e)
+                    }
+                    ).finally(() => {
                         event.target.removeAttribute('disabled')
                         event.target.classList.add('btn-spinner')
                     })
-                    
-            }
+
+            },
+
         },
     }
 </script>
@@ -360,7 +408,11 @@
     .v-select .dropdown-toggle::after {
         content: none
     }
+
     .table-smallest {
         font-size: .8em;
+    }
+    .table-smallest td {
+        white-space:nowrap;
     }
 </style>

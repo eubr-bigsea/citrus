@@ -5,8 +5,9 @@
                 <h2>{{$tc('titles.dataSource', 2)}}</h2>
             </div>
             <div class="col-md-2 pull-right">
-                <a href="#/data-source/add" class="btn btn-primary" role="button">
-                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type: $tc('titles.dataSource').toLowerCase()})}}</a>
+                <router-link :to="{name: 'addDataSource'}" class="btn btn-primary">
+                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type: $tc('titles.dataSource').toLowerCase()})}}
+                </router-link>
             </div>
         </div>
         <div class="row">
@@ -21,12 +22,12 @@
                         <em>{{props.row.description}}</em>
                     </template>
                     <template slot="actions" slot-scope="props">
-                        <button class="btn btn-sm mr-2">
-                            <font-awesome-icon icon="edit"></font-awesome-icon>
+                        <button class="btn btn-sm danger mr-2">
+                            <font-awesome-icon icon="trash"></font-awesome-icon>
                         </button>
-                        <button class="btn btn-sm danger">
-                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                            </button>
+                        <button class="btn btn-sm ml-1" @click="download(props.row)" :title="$t('actions.download')">
+                            <span class="fa fa-download"></span>
+                        </button>
                     </template>
                     <template slot="created" slot-scope="props">
                         {{props.row.created | formatJsonDate}}
@@ -54,6 +55,7 @@
                 tableData: [],
                 showSideBar: false,
                 options: {
+                    skin: 'table-sm table table-striped',
                     columnsClasses: {
                         name: 'th-20',
                         description: 'th-20',
@@ -132,7 +134,22 @@
                     (error) => {
                         self.$root.$refs.toastr.e(error.body.message);
                     });
-            }
+            },
+            download(dataSource) {
+                axios({
+                    url: `${limoneroUrl}/datasources/${dataSource.id}/download`,
+                    method: 'GET',
+                    responseType: 'blob', // important
+                }).then((response) => {
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.setAttribute('download', `${dataSource.name}.${dataSource.format.toLowerCase()}`);
+                    document.body.appendChild(link);
+                    link.click();
+                });
+            },
+
         },
     }
 </script>
@@ -140,15 +157,19 @@
     em {
         font-size: .8em;
     }
+
     .th-5 {
         width: 5%;
     }
+
     .th-10 {
         width: 10%;
     }
+
     .th-20 {
         width: 20%;
     }
+
     .form-inline {
         width: 450px;
         float: left;

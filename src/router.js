@@ -8,6 +8,7 @@ import Register from './views/Register.vue'
 
 import DataSourceList from './views/DataSourceList.vue'
 import DataSourceEdit from './views/DataSourceEdit.vue'
+import DataSourceAdd from './views/DataSourceAdd.vue'
 
 import JobList from './views/JobList.vue'
 
@@ -35,6 +36,14 @@ let router = new Router({
             path: '/data-sources',
             name: 'dataSources',
             component: DataSourceList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/data-sources/add',
+            name: 'addDataSource',
+            component: DataSourceAdd,
             meta: {
                 requiresAuth: true
             }
