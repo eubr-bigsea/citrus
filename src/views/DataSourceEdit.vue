@@ -209,7 +209,7 @@
         </div>
         <b-modal size="lg" ref="preview" :title="$t('common.preview')">
             {{$t('dataSource.previewExplanation', {amount: 40})}}
-            <v-client-table :columns="getPreviewColumns" :data="samples" 
+            <v-client-table :columns="getPreviewColumns()" :data="samples" 
                 :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}"></v-client-table>
         </b-modal>
     </div>
@@ -227,13 +227,7 @@
             SwitchComponent,
         },
         computed: {
-            getPreviewColumns() {
-                if (this.dataSource && this.dataSource.attributes) {
-                    return this.dataSource.attributes.map((a) => a.name)
-                } else {
-                    return []
-                }
-            },
+            
             inferableDataSource() {
                 return ["CSV", "JDBC", "PARQUET"].includes(this.dataSource.format)
             },
@@ -304,6 +298,16 @@
         },
         /* Methods */
         methods: {
+            getPreviewColumns() {
+                if (this.dataSource && this.dataSource.attributes && 
+                        this.dataSource.attributes.length) {
+                    return this.dataSource.attributes.map((a) => a.name)
+                } else if(this.samples.length) {
+                    return Object.keys(this.samples[0])
+                } else {
+                    return []
+                }
+            },
             load() {
                 let self = this
                 return new Promise((resolve, reject) => {

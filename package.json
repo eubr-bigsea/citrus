@@ -19,6 +19,7 @@
     "jsplumb": "^2.8.0",
     "node-sass": "^4.9.3",
     "perfect-scrollbar": "^1.4.0",
+    "resumablejs": "^1.1.0",
     "sass-loader": "^7.1.0",
     "vue": "^2.5.17",
     "vue-axios": "^2.1.3",

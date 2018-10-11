@@ -11,6 +11,7 @@ import DataSourceEdit from './views/DataSourceEdit.vue'
 import DataSourceAdd from './views/DataSourceAdd.vue'
 
 import JobList from './views/JobList.vue'
+import JobDetail from './views/JobDetail.vue'
 
 import WorkflowList from './views/WorkflowList.vue'
 import WorkflowEdit from './views/WorkflowEdit.vue'
@@ -64,14 +65,14 @@ let router = new Router({
                 requiresAuth: true
             }
         },
-        // {
-        //     path: '/data-sources/:id',
-        //     name: 'editDataSource',
-        //     component: DataSourceEdit,
-        //     meta: {
-        //         requiresAuth: true
-        //     }
-        // },
+        {
+            path: '/jobs/:id',
+            name: 'jobDetail',
+            component: JobDetail,
+            meta: {
+                requiresAuth: true
+            }
+        },
         {
             path: '/workflows',
             name: 'workflows',

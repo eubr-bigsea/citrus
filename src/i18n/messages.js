@@ -49,6 +49,7 @@ export default {
             limit: 'Limit:',
             login: 'Sign in',
             logout: 'Sign off',
+            no: 'No',
             noData: 'No results found.',
             name: 'Name | Names',
             nullable: 'Nullable',
@@ -71,7 +72,12 @@ export default {
             type: 'Type | Types',
             userId: 'User id',
             userLogin: 'User login',
-            userName: 'User name',
+            userName: 'User name', 
+            user: {
+                name: 'User name',
+                login: 'User login'
+            },
+            yes: 'Yes',
         },
         dataSource: {
             alternativeUseDatabase: 'We recommend this option only if you are sure the database connection is correctly configured.',
@@ -120,7 +126,9 @@ export default {
         },
         messages: {
             acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
+            doYouWantToDelete: 'Do you want to delete this record?',
             confirmRemove: 'Are you sure you want to remove this record?',
+            successDeletion: '{what} was successfuly removed',
             registeredWithSuccess: 'You were registered with success. Please, sign in again.',
             savedWithSuccess: '{what} saved with success.',
             noMatching: 'Sorry, no matching options'

@@ -7,13 +7,15 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <v-server-table :data="tableData" :columns="columns" :options="options" name="jobList">
+                <v-server-table :data="tableData" :columns="columns" :options="options" name="jobList" ref="jobList">
                     <template slot="id" slot-scope="props">
-                        <router-link :to="{name: 'showJob', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+                        <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
                     </template>
-
+                    <template slot="name" slot-scope="props">
+                        <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.name}}</router-link>
+                    </template>
                     <template slot="actions" slot-scope="props">
-                        <button class="btn btn-sm danger">
+                        <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
                             <font-awesome-icon icon="trash"></font-awesome-icon>
                         </button>
                     </template>
@@ -22,9 +24,11 @@
                             {{props.row.status}}
                         </div>
                     </template>
-
+                    <template slot="created" slot-scope="props">
+                        {{props.row.created | formatJsonDate}}
+                    </template>
                     <template slot="workflow" slot-scope="props">
-                        <router-link :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id}}">
+                        <router-link :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}">
                             {{props.row.workflow.id}} - {{props.row.workflow.name}}
                         </router-link>
                     </template>
@@ -36,8 +40,10 @@
 
 <script>
     import axios from 'axios'
+    import Notifier from '../mixins/Notifier'
     let standUrl = process.env.VUE_APP_STAND_URL
     export default {
+        mixins: [Notifier],
         data() {
             return {
                 columns: ['actions', 'status',
@@ -55,8 +61,10 @@
                     },
                     headings: {
                         id: 'ID',
-                        name: 'Name',
-                        description: 'Description'
+                        created: this.$t('common.created'),
+                        actions: this.$tc('common.action', 2),
+                        name: this.$tc('common.name'),
+                        'user.name': this.$t('common.user.name'),
                     },
                     sortable: ['name', 'id', 'created'],
                     sortIcon: {
@@ -68,41 +76,59 @@
                     preserveState: true,
                     saveState: true,
                     filterable: ['name', 'album'],
-                    requestFunction: function (data) {
-                        data.sort = data.orderBy
-                        data.asc = data.ascending === 1 ? 'true' : 'false'
-                        data.size = data.limit
-
-                        return axios.get(`${standUrl}/jobs`,
-                            {
-                                params: data
-                            }).then(resp => {
-                                return { data: resp.data.data, count: resp.data.pagination.total };
-                            }).catch(function (e) {
-                                this.dispatch('error', e);
-                            }.bind(this));
-                    }
+                    requestFunction: this.load
                 }
             }
         },
         /* Methods */
         methods: {
+            load(data) {
+                data.sort = data.orderBy
+                data.asc = data.ascending === 1 ? 'true' : 'false'
+                data.size = data.limit
+                data.name = data.query
 
-        },
+                return axios.get(`${standUrl}/jobs`,
+                    {
+                        params: data
+                    }).then(resp => {
+                        return { data: resp.data.data, count: resp.data.pagination.total };
+                    }).catch(function (e) {
+                        this.dispatch('error', e);
+                    }.bind(this));
+            },
+            remove(job) {
+                this.confirm(this.$t('actions.delete'), this.$t('messages.doYouWantToDelete'), () => {
+                    axios.delete(`${standUrl}/jobs/${job.id}`, {}).then(resp => {
+                        this.success(this.$t('messages.successDeletion',
+                            { what: this.$t('titles.job') }));
+                        this.$refs.jobList.refresh();
+                    }).catch(function (e) {
+                        this.dispatch('error', e);
+                    }.bind(this));
+                })
+            }
+        }
     }
 </script>
 <style scoped>
-    .completed, .running, .canceled, .interrupted, .waiting, .error {
+    .completed,
+    .running,
+    .canceled,
+    .interrupted,
+    .waiting,
+    .error {
         color: white;
         font-size: .7em;
         padding: 4px;
     }
+
     .completed {
         background-color: #2ECC40;
     }
 
     .running {
-        background-color:#0074D9;
+        background-color: #0074D9;
     }
 
     .interrupted {
@@ -120,5 +146,18 @@
 
     .error {
         background-color: #FF4136;
+    }
+
+    .slide-leave-active,
+    .slide-enter-active {
+        transition: .5s;
+    }
+
+    .slide-enter {
+        transform: translate(0, 100%);
+    }
+
+    .slide-leave-to {
+        transform: translate(0, -100%);
     }
 </style>

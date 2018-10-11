@@ -183,6 +183,6 @@
 
     .VueTables__sort-icon {
         display: block;
-        float: right;
+        float: left;
     }
 </style>
