@@ -16,6 +16,7 @@ export default {
             delete: 'Delete',
             distributeHorizontally: 'Distribute horizontally',
             distributeVertically: 'Distribute vertically',
+            download: 'Download',
             edit: 'Edit',
             test: 'Test',
             save: 'Save',
@@ -72,7 +73,7 @@ export default {
             type: 'Type | Types',
             userId: 'User id',
             userLogin: 'User login',
-            userName: 'User name', 
+            userName: 'User name',
             user: {
                 name: 'User name',
                 login: 'User login'
