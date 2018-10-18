@@ -22,6 +22,7 @@ export default {
             save: 'Save',
             saveAs: 'Save as',
             saveAsImage: 'Save as image',
+            search: 'Search',
             showHistory: 'Show history',
             show: 'Show',
             toggleTasks: 'Enable/disable tasks'
@@ -44,6 +45,7 @@ export default {
             forgotPassword: 'Forgot password?',
             format: 'Format',
             hide: 'Hide',
+            history: 'History',
             id: 'Id',
             language: 'Language',
             lastName: 'Last name',
@@ -55,6 +57,7 @@ export default {
             name: 'Name | Names',
             nullable: 'Nullable',
             ok: 'OK',
+            operation: 'Operation | Operations',
             owner: 'Owner',
             pagerShowing: 'Showing {from} to {to} of {count} records|{count} records|One record',
             password: 'Password',

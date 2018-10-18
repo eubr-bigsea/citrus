@@ -1,5 +1,6 @@
 <template>
     <div class="row" style="overflow:hidden">
+        <TahitiSuggester/>
         <div class="col-md-12">
             <diagram-toolbar :workflow="workflow"></diagram-toolbar>
         </div>
@@ -9,7 +10,7 @@
         <div class="col-md-10 pl-0" style="position: relative">
             <diagram :workflow="workflow" ref="diagram" id="main-diagram"></diagram>
             <slideout-panel :opened="showProperties">
-                <property-window :task="selectedTask.task"></property-window>
+                <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
             </slideout-panel>
             <!--
             <slideout-panel :opened="showProperties" style="position: absolute; right:360px; height:100px">
@@ -29,10 +30,12 @@
             </slideout-panel>
         -->
         </div>
+
     </div>
 </template>
 
 <script>
+    import Vue from 'vue'
     import axios from 'axios'
     import SlideOut from 'vue-slideout-panel'
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
@@ -42,8 +45,13 @@
     import ToolboxComponent from '../components/Toolbox.vue'
     import SlideOutPanel from '../components/SlideOutPanel.vue'
     import html2canvas from 'html2canvas';
+    import Notifier from '../mixins/Notifier'
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL
+    let limoneroUrl = process.env.VUE_APP_LIMONERO_URL
+
+    // let TahitiAttributeSuggester = undefined;
     export default {
+        mixins: [Notifier],
         components: {
             'diagram': DiagramComponent,
             'diagram-toolbar': DiagramToolbarComponent,
@@ -51,10 +59,25 @@
             'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
             VuePerfectScrollbar,
+            TahitiSuggester: () => {
+
+                let tahitiUrl = process.env.VUE_APP_TAHITI_URL
+                return new Promise((resolve, reject) => {
+                    let script = document.createElement('script')
+                    // script.onload = () => {
+                    //     resolve(import('TahitiAttributeSuggester'))
+                    // }
+                    script.async = true
+                    script.src = `${tahitiUrl}/public/js/tahiti.js`
+                    document.head.appendChild(script)
+                })
+            }
 
         },
         data() {
             return {
+                attributeSuggesterLoaded: false,
+                attributeSuggestion: {},
                 workflow: {},
                 operations: [],
                 operationsLookup: new Map(),
@@ -90,6 +113,7 @@
             this.$root.$on('onclick-task', (taskComponent) => {
                 this.showProperties = true;
                 this.selectedTask = taskComponent;
+                this.updateAttributeSuggestion();
             });
             this.$root.$on('onsave-as-image', () => {
                 this.saveAsImage()
@@ -108,16 +132,16 @@
                 this.$refs.diagram.distribute(how, prop)
             });
             this.$root.$on('update-form-field-value', (field, value) => {
-                // alert(field + " " + value)
-                if (self.selectedTask.task.forms[field.name]){
+                if (self.selectedTask.task.forms[field.name]) {
                     self.selectedTask.task.forms[field.name].value = value
                 } else {
-                    self.selectedTask.task.forms[field.name] = {value: value}
+                    self.selectedTask.task.forms[field.name] = { value: value }
                 }
             });
             axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                 (resp) => {
                     let workflow = resp.data;
+                    this.$Progress.start()
                     axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
                         (resp) => {
                             self.operations = resp.data
@@ -128,6 +152,7 @@
                                 task.operation = self.operationsLookup[task.operation.id]
                             });
                             self.workflow = workflow;
+                            //this.updateAttributeSuggestion();
                         }
                     ).catch(function (e) {
                         this.dispatch('error', e);
@@ -135,9 +160,20 @@
                 }
             ).catch(function (e) {
                 this.dispatch('error', e);
-            }.bind(this));
+            }.bind(this)).finally(() => {
+                Vue.nextTick(() => {
+                    this.$Progress.finish()
+                })
+            });
         },
         methods: {
+            getSuggestions() {
+                if (this.attributeSuggestion && this.selectedTask) {
+                    return this.attributeSuggestion[this.selectedTask.task.id]
+                } else {
+                    return []
+                }
+            },
             saveAsImage() {
                 let self = this
                 let $elem = this.$refs.diagram.$el.querySelector('.lemonade')
@@ -163,7 +199,7 @@
 
                         let targetCanvas = document.createElement('canvas');
                         let targetCtx = targetCanvas.getContext('2d');
-                        let padding = 100; 
+                        let padding = 100;
                         targetCanvas.width = x1 + 2 * padding;
                         targetCanvas.height = y1 + 2 * padding;
                         targetCtx.fillStyle = "white";
@@ -234,11 +270,11 @@
                     });
 
             },
-            saveWorkflow(){
+            saveWorkflow() {
                 let self = this
                 let cloned = JSON.parse(JSON.stringify(self.workflow));
                 let url = `${tahitiUrl}/workflows`;
-                let headers = { 'Content-Type': 'application/json'}
+                let headers = { 'Content-Type': 'application/json' }
 
                 let method = 'post'
                 if (cloned.id !== 0) {
@@ -252,17 +288,76 @@
                 });
 
                 axios[method](
-                    `${tahitiUrl}/workflows/${this.$route.params.id}`, 
+                    `${tahitiUrl}/workflows/${this.$route.params.id}`,
                     cloned,
-                    {headers}).then(
-                (resp) => {
-                    self.workflow = resp.data.data;
-                }
-            ).catch(function (e) {
-                this.dispatch('error', e);
-            }.bind(this));
+                    { headers }).then(
+                    (resp) => {
+                        self.workflow = resp.data.data;
+                    }
+                    ).catch(function (e) {
+                        this.dispatch('error', e);
+                    }.bind(this));
 
-            }
+            },
+            getSuggestions(taskId) {
+                if (window.hasOwnProperty('TahitiAttributeSuggester')) {
+                    if (TahitiAttributeSuggester.processed === undefined) {
+                        this.updateAttributeSuggestion();
+                    }
+                    if (this.attributeSuggestion[taskId]) {
+                        return this._unique(Array.prototype.concat.apply([],
+                            this.attributeSuggestion[taskId].inputs.map(
+                                (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
+                    } else {
+                        return [];
+                    }
+                }
+            },
+            updateAttributeSuggestion(callback) {
+                let self = this;
+                let attributeSuggestion = {};
+                TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
+                    (result) => {
+                        Object.keys(result).forEach(key => {
+                            attributeSuggestion[key] = result[key].uiPorts;
+                        });
+                        Object.assign(self.attributeSuggestion, attributeSuggestion);
+                        TahitiAttributeSuggester.processed = true;
+                        if (callback) {
+                            callback();
+                        }
+                    });
+            },
+            _unique(data) {
+                return Array.from(new Set(data))
+            },
+            _queryDataSource(id, callback) {
+                let attributes = null;
+                let self = this;
+
+                id = parseInt(id);
+                if (TahitiAttributeSuggester.cached === undefined) {
+                    TahitiAttributeSuggester.cached = {};
+                }
+                if (TahitiAttributeSuggester.cached[id]) {
+                    attributes = TahitiAttributeSuggester.cached[id];
+                    callback(attributes);
+                } else {
+                    let url = `${limoneroUrl}/datasources/${id}`;
+                    axios.get(url).then(
+                        (response) => {
+                            let ds = response.data;
+                            attributes = ds.attributes.map(function (attr) { return attr.name });
+                            TahitiAttributeSuggester.cached[id] = attributes;
+                            callback(attributes);
+                        },
+                        (error) => {
+                            self.$root.$refs.toastr.w('At least one data source is invalid in workflow');
+                            callback([]);
+                        }
+                    );
+                }
+            },
         }
     }
 </script>

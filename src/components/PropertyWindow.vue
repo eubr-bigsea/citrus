@@ -13,15 +13,15 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                    <div class="col-md-8">
-                        <label>{{$t('property.taskName')}}</label>
-                        <input type="text" maxlength="50" v-model="task.name" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
-                        <label type="checkbox">
-                            <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}</SwitchComponent>
-                        </label>
-                    </div>
+                        <div class="col-md-8">
+                            <label>{{$t('property.taskName')}}</label>
+                            <input type="text" maxlength="50" v-model="task.name" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label type="checkbox">
+                                <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}</SwitchComponent>
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -31,12 +31,13 @@
                                 <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name">
                                     <div v-for="field in form.fields" class="mb-2" v-bind:key="task.id + field.name">
                                         <keep-alive>
-                                            <component v-if="['checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                            <component v-if="['attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
                                                 :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
+                                                :suggestions="suggestions"
                                                 language="language" context="context">
                                             </component>
                                             <span v-else>
-                                                {{field.name}} {{field.suggested_widget}} 
+                                                {{field.name}} {{field.suggested_widget}}
                                             </span>
                                         </keep-alive>
                                     </div>
@@ -82,7 +83,7 @@
     //     // TextComponent,
     //     // TextAreaComponent
     // } from './Widget.vue'
-
+    import AttributeSelectorComponent from './widgets/AttributeSelector.vue'
     import CheckboxComponent from './widgets/Checkbox.vue'
     import CodeComponent from './widgets/Code.vue'
     import ColorComponent from './widgets/Color.vue'
@@ -91,12 +92,15 @@
     import IntegerComponent from './widgets/Integer.vue'
     import LookupComponent from './widgets/Lookup.vue'
     import RangeComponent from './widgets/Range.vue'
+    import Select2Component from './widgets/Select2.vue'
     import SwitchComponent from './widgets/Switch.vue'
     import TextComponent from './widgets/Text.vue'
     import TextAreaComponent from './widgets/TextArea.vue'
+
     export default {
         name: 'PropertyWindow',
         components: {
+            'attribute-selector-component': AttributeSelectorComponent,
             'checkbox-component': CheckboxComponent,
             'code-component': CodeComponent,
             'color-component': ColorComponent,
@@ -131,7 +135,8 @@
             // Select2Component,
             // TagComponent,
 
-            VuePerfectScrollbar
+            VuePerfectScrollbar,
+            
         },
         data() {
             return {
@@ -142,10 +147,10 @@
         },
         methods: {
             getValue(name) {
-                return this.task 
-                    && this.task.forms 
-                    && this.task.forms[name] 
-                        ? this.task.forms[name].value : null;
+                return this.task
+                    && this.task.forms
+                    && this.task.forms[name]
+                    ? this.task.forms[name].value : null;
             },
             update() {
                 let self = this;
@@ -161,7 +166,7 @@
                         });
                     });
                 };
-                if (this.$refs.scrollBar){
+                if (this.$refs.scrollBar) {
                     let container = this.$refs.scrollBar.$el //.querySelector('.ps-container');
                     container.scrollTop = 0;
                 }
@@ -178,7 +183,8 @@
             this.update()
         },
         props: {
-            task: { type: Object, default: {} }
+            task: { type: Object, default: {} },
+            suggestions: { type: Array, default: [] }
         },
         watch: {
             task() {
@@ -205,14 +211,18 @@
     .props .card-body {
         flex: inherit
     }
+
     .props .form-control {
         font-size: .7rem !important;
     }
-    .props .card-body, .props .card-header.special {
+
+    .props .card-body,
+    .props .card-header.special {
         padding: 5px 15px;
     }
+
     .props select,
     .props input {
-        height: calc(1.6rem + 2px);
+        height: calc(1.6rem + 5px);
     }
 </style>

@@ -1,12 +1,8 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" 
-        class="operation task" :title="task.operation.description + '\n' + ((task.forms.comment)? task.forms.comment.value || '': '')"
-        :data-operation-id="task.operation.id" :id="task.id" ref="task" 
-        v-bind:style="{zIndex: task.z_index < 99? 100: task.z_index, top: task.top + 'px', left: task.left + 'px', background: (task.forms.color && task.forms.color.value ? task.forms.color.value.background: '#fff')}"
-        v-on:click="click" @contextmenu.prevent="openMenu">
-        <div v-if="!isComment" v-bind:style="{borderTop: getBorder}"
-            class="title">
-            {{task.operation.name}} {{getBorder}}
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms.comment)? task.forms.comment.value || '': '')"
+        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:click="click" @contextmenu="openMenu">
+        <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
+            {{task.operation.name}} {{task.name}}
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="task.status? task.status.toLowerCase(): ''">
@@ -230,14 +226,35 @@
 
     const TaskComponent = Vue.extend({
         computed: {
+            getStyle() {
+                let result = {}
+                let task = this.task
+                if (this.enablePositioning) {
+                    result = {
+                        zIndex: task.z_index < 99 ? 100 : task.z_index,
+                        top: task.top + 'px',
+                        left: task.left + 'px',
+                        background: (
+                            task.forms.color && task.forms.color.value
+                                ? task.forms.color.value.background : '#fff')
+                    }
+                } else {
+                    result = {
+                        background: (
+                            task.forms.color && task.forms.color.value
+                                ? task.forms.color.value.background : '#fff')
+                    }
+                }
+                return result
+            },
             'classes': function () {
                 return (this.task.status ? this.task.status.toLowerCase() : '') +
                     (this.isComment ? ' comment ' : '') + 'test';
 
             },
-            getBorder(){
+            getBorder() {
                 let color = '#fff'
-                if (this.task.forms.color && this.task.forms.color.value){
+                if (this.task.forms.color && this.task.forms.color.value) {
                     color = this.task.forms.color.value.background
                 }
                 return `0px solid ${color}`
@@ -249,7 +266,7 @@
         },
         methods: {
             openMenu(e) {
-                if (!this.isComment) {
+                if (!this.isComment && this.enableContextMenu) {
                     this.contextMenuOpened = true;
                     let self = this;
                     Vue.nextTick(function () {
@@ -259,6 +276,7 @@
                     document.addEventListener('click', this.hideMenu);
                     this.zIndex = this.$el.style.zIndex;
                     this.$el.style.zIndex = 100;
+                    e.preventDefault()
                 }
             },
             hideMenu() {
@@ -328,13 +346,18 @@
             instance: null,
             showDecoration: {
                 default: false
+            },
+            enableContextMenu: {default: true},
+            enablePositioning: {
+                default: true
             }
         },
         data() {
             return {
+                contextMenuOpened: false,
                 isComment: false,
                 contextMenuActions: [],
-                contextMenuOpened: false
+
             }
         },
         mounted() {
@@ -343,17 +366,20 @@
             let taskId = this.task.id;
 
             let zIndex = this.task['z_index'];
-
-            let outputs = operation.ports.filter((p) => {
-                return p.type === 'OUTPUT';
-            }).sort((a, b) => {
-                return a.order - b.order;
-            });
-            let inputs = operation.ports.filter((p) => {
-                return p.type === 'INPUT';
-            }).sort((a, b) => {
-                return a.order - b.order;
-            });
+            let inputs = []
+            let outputs = []
+            if (operation.ports) {
+                outputs = operation.ports.filter((p) => {
+                    return p.type === 'OUTPUT';
+                }).sort((a, b) => {
+                    return a.order - b.order;
+                });
+                inputs = operation.ports.filter((p) => {
+                    return p.type === 'INPUT';
+                }).sort((a, b) => {
+                    return a.order - b.order;
+                });
+            }
             var lbls = [
                 // note the cssClass and id parameters here
                 ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 20 }]
@@ -405,24 +431,27 @@
                             }
                         };
                         options.paintStyle.fill = options.paintStyle.fillStyle;
-                        let endpoint = self.instance.addEndpoint(elem, options);
-                        endpoint.canvas.style.zIndex = zIndex - 1;
-                        endpoint._portId = ports[inx].id;
+                        if (self.instance && self.instance.addEndpoint) {
+                            let endpoint = self.instance.addEndpoint(elem, options);
+                            endpoint.canvas.style.zIndex = zIndex - 1;
+                            endpoint._portId = ports[inx].id;
+                        }
                     });
                 }
             });
-
-            self.instance.draggable(elem, {
-                lineWidth: 3,
-                containment: "parent",
-                grid: [1, 1],
-                drag() {
-                    // let elem = document.getElementById(self.task.id);
-                    let elem = self.$refs.task;
-                    self.task.left = elem.offsetLeft;
-                    self.task.top = elem.offsetTop;
-                }
-            });
+            if (self.instance && self.instance.addEndpoint) {
+                self.instance.draggable(elem, {
+                    lineWidth: 3,
+                    containment: "parent",
+                    grid: [1, 1],
+                    drag() {
+                        // let elem = document.getElementById(self.task.id);
+                        let elem = self.$refs.task;
+                        self.task.left = elem.offsetLeft;
+                        self.task.top = elem.offsetTop;
+                    }
+                });
+            }
         },
     });
     export default TaskComponent;
@@ -754,7 +783,7 @@
                 color: #000;
                 width: 200px !important;
                 min-height: 80px;
-                
+
                 ;
                 /*
             -moz-transform: rotate(2deg);

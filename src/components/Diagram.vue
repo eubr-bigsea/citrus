@@ -62,7 +62,6 @@
                 <button class="btn btn-danger" @click="cancelExecute">Cancel</button>
             </div>
         </modal-component>
-
     </div>
 </template>
 
@@ -207,11 +206,12 @@
         components: {
             'task-component': TaskComponent,
             'flow-component': FlowComponent,
-            VuePerfectScrollbar
+            VuePerfectScrollbar,
             // 'modal-component': ModalComponent,
             // 'ctx-menu-component': CtxMenuComponent,
             // 'drop-down-component': DropDownComponent,
             // 'group-component': GroupComponent,
+            
         },
         props: {
             formContainer: null,

@@ -111,13 +111,19 @@ let newVue = new Vue({
     mounted () {
     }
 });
-
+let requestCounter = 0;
 axios.interceptors.request.use(config => {
-    newVue.$Progress.start()
+    if (requestCounter === 0){
+        newVue.$Progress.start()
+    }
+    requestCounter += 1
     return config
 })
 axios.interceptors.response.use(response => {
-    newVue.$Progress.finish()
+    requestCounter -= 1
+    if (requestCounter === 0){
+        newVue.$Progress.finish()
+    }
     return response
 }, (error) => {
     newVue.$Progress.finish()

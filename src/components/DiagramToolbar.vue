@@ -74,14 +74,30 @@
                 </b-input-group>
             </b-button-toolbar>
         </div>
+        <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
+            <table class="table table-sm table-bordered table-striped">
+                <tr v-for="h in history" :key="h.id">
+                    <td>{{h.version}}</td>
+                    <td>{{h.date}}</td>
+                    <td>{{h.user_name}}</td>
+                </tr>
+            </table>
+            <div slot="modal-footer" class="w-100">
+                <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
+            </div>
+        </b-modal>
     </div>
 </template>
 <script>
-    
+    import axios from 'axios'
+    import Notifier from '../mixins/Notifier'
+    let tahitiUrl = process.env.VUE_APP_TAHITI_URL
     export default {
+        mixins: [Notifier],
         name: 'DiagramToolbar',
         data() {
             return {
+                history: [],
                 zoomPercent: '100%',
                 zoom: 1
             }
@@ -102,7 +118,7 @@
             align(prop, fn) {
                 this.$root.$emit('onalign-tasks', prop, fn)
             },
-            saveAsImage(){
+            saveAsImage() {
                 this.$root.$emit('onsave-as-image')
             },
             saveWorkflow() {
@@ -112,6 +128,18 @@
 
             },
             showHistory() {
+                let self = this;
+                let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`
+                axios.get(url)
+                    .then((resp) => {
+                        self.history = resp.data.data
+                    })
+                    .catch(function (e) {
+                        self.error(e);
+                    }.bind(this));
+                this.$refs.historyModal.show()
+            },
+            closeHistory() {
 
             },
             execute() {

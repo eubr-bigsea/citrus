@@ -1,9 +1,7 @@
 <template>
     <div>
         <LabelComponent :field="field"></LabelComponent>
-        <select class="form-control input-sm" 
-            v-bind:data-field="field.name" 
-            v-model="selected" @change="updated">
+        <select class="form-control input-sm" v-bind:data-field="field.name" v-model="selected" @change="updated">
             <option v-if="!field.default"></option>
             <option v-for="opt in pairOptionValueList" :value="opt.key">
                 {{opt[language] || opt.value}}
@@ -23,8 +21,12 @@
             pairOptionValueList() {
                 return JSON.parse(this.field.values);
             },
-            selected() {
-                return this.value || this.field.default;
+            selected: {
+                get() {
+                    return this.value || this.field.default;
+                },
+                set(value) {
+                }
             }
         },
         methods: {
