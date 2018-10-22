@@ -119,7 +119,7 @@
         props: {
             instance: null,
             group: null,
-            operations: []
+            operations: null,
         },
         data() {
             return {
@@ -231,7 +231,8 @@
             initialZoom: {
                 default: 1.0
             },
-            workflow: { name: 'lixo' }
+            workflow: { name: '' },
+            operations: Array,
         },
         /*
         watch: {
@@ -426,7 +427,13 @@
             },
             /* Store */
             addTask(task) {
-                this.$store.dispatch('addTask', task)
+                task.forms = {};
+                task.operation.forms.forEach((f) => {
+                    f.fields.forEach((field) =>{
+                        task[field.name] = field['default'] || '';
+                    });
+                })
+                this.$root.$emit('addTask', task)
             },
 
             removeTask(task) {
@@ -577,8 +584,7 @@
                 //this.$store.dispatch('changeWorkflowId', id);
             },
             getOperationFromId(id) {
-                let operations = this.$store.getters.getOperations;
-                let result = operations.filter(v => {
+                let result = this.operations.find(v => {
                     return v.id === parseInt(id);
                 });
                 return result;
@@ -721,7 +727,9 @@
                 const self = this;
                 ev.preventDefault();
 
-                let operation = this.getOperationFromId(ev.dataTransfer.getData('id'))[0];
+                let operation = this.getOperationFromId(
+                    ev.dataTransfer.getData('id'));
+                
                 if (!operation) {
                     return;
                 }

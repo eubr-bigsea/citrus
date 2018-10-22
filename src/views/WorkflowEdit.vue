@@ -8,7 +8,7 @@
             <toolbox :operations="operations"></toolbox>
         </div>
         <div class="col-md-10 pl-0" style="position: relative">
-            <diagram :workflow="workflow" ref="diagram" id="main-diagram"></diagram>
+            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"></diagram>
             <slideout-panel :opened="showProperties">
                 <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
             </slideout-panel>
@@ -138,6 +138,11 @@
                     self.selectedTask.task.forms[field.name] = { value: value }
                 }
             });
+            /* Task related */
+            this.$root.$on('addTask', (task) => {
+                this.workflow.tasks.push(task);
+            });
+
             axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                 (resp) => {
                     let workflow = resp.data;

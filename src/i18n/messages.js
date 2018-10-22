@@ -123,6 +123,7 @@ export default {
         errors: {
             disconnected: 'You are disconnected. Please check if you have access to the Internet.',
             invalidLoginOrPassword: 'Invalid login or password',
+            invalidOperation: 'Invalid operation',
             passwordDontMatch: 'Passwords do not match',
             loginInUse: 'Login/email is in use. Try another one.',
             receivingData: 'Error receiving data from the server',

@@ -1,5 +1,5 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms.comment)? task.forms.comment.value || '': '')"
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:click="click" @contextmenu="openMenu">
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.operation.name}} {{task.name}}
@@ -235,13 +235,13 @@
                         top: task.top + 'px',
                         left: task.left + 'px',
                         background: (
-                            task.forms.color && task.forms.color.value
+                            task.forms && task.forms.color && task.forms.color.value
                                 ? task.forms.color.value.background : '#fff')
                     }
                 } else {
                     result = {
                         background: (
-                            task.forms.color && task.forms.color.value
+                            task.forms && task.forms.color && task.forms.color.value
                                 ? task.forms.color.value.background : '#fff')
                     }
                 }
@@ -254,7 +254,7 @@
             },
             getBorder() {
                 let color = '#fff'
-                if (this.task.forms.color && this.task.forms.color.value) {
+                if (this.task.forms && this.task.forms.color && this.task.forms.color.value) {
                     color = this.task.forms.color.value.background
                 }
                 return `0px solid ${color}`
