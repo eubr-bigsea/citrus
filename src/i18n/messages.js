@@ -18,6 +18,7 @@ export default {
             distributeVertically: 'Distribute vertically',
             download: 'Download',
             edit: 'Edit',
+            editValue: 'Edit value...',
             test: 'Test',
             save: 'Save',
             saveAs: 'Save as',
@@ -165,7 +166,10 @@ export default {
         },
 
         property: {
-            taskName: 'Task name (optional)'
+            taskName: 'Task name (optional)',
+            attribute: 'Attribute',
+            function: 'Function',
+            alias: 'Alias',
         },
         profile: {
             alsoChangePassword: 'Also change my password',

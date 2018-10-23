@@ -18,7 +18,7 @@ import {
     faCoffee, faCopy, faCogs, faHistory, faImage, faLayerGroup, faArrowsAltV, faArrowsAltH,
     faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
-    faDownload,
+    faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -52,7 +52,7 @@ dom.watch();
 library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, faArrowsAltH, faArrowsAltV,
     faHome, faUser, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
-    faDownload,
+    faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp
 ),
 
     Vue.use(ClientTable);
