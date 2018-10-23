@@ -31,7 +31,7 @@
                                 <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name">
                                     <div v-for="field in form.fields" class="mb-2" v-bind:key="task.id + field.name">
                                         <keep-alive>
-                                            <component v-if="['attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                            <component v-if="['expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
                                                 :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
                                                 :suggestions="suggestions"
                                                 language="language" context="context">
@@ -83,12 +83,14 @@
     //     // TextComponent,
     //     // TextAreaComponent
     // } from './Widget.vue'
+    import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
     import AttributeSelectorComponent from './widgets/AttributeSelector.vue'
     import CheckboxComponent from './widgets/Checkbox.vue'
     import CodeComponent from './widgets/Code.vue'
     import ColorComponent from './widgets/Color.vue'
     import DecimalComponent from './widgets/Decimal.vue'
     import DropDownComponent from './widgets/DropDown.vue'
+    import ExpressionComponent from './widgets/ExpressionEditor.vue'
     import IntegerComponent from './widgets/Integer.vue'
     import LookupComponent from './widgets/Lookup.vue'
     import RangeComponent from './widgets/Range.vue'
@@ -100,12 +102,14 @@
     export default {
         name: 'PropertyWindow',
         components: {
+            'attribute-function-component': AttributeFunctionComponent,
             'attribute-selector-component': AttributeSelectorComponent,
             'checkbox-component': CheckboxComponent,
             'code-component': CodeComponent,
             'color-component': ColorComponent,
             'decimal-component': DecimalComponent,
             'dropdown-component': DropDownComponent,
+            'expression-component': ExpressionComponent,
             'integer-component': IntegerComponent,
             'lookup-component': LookupComponent,
             'range-component': RangeComponent,

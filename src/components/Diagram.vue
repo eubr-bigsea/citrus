@@ -292,29 +292,28 @@
             //     this.$emit('update-form-field-value-in-diagram', field, value);
             //     this.updateAttributeSuggestion();
             // });
-            // this.$on('onstart-flow', (interfaceName) => {
-            //     this.clearSelection(null);
-            //     let sourceInterfaces = new Set(interfaceName.split(' '));
-            //     let endPoints = this.instance.selectEndpoints();
-            //     endPoints.each((endPoint) => {
-            //         if (endPoint.isTarget) {
-            //             let targetInterfaces = endPoint.scope.split(' ');
-            //             let intersection = targetInterfaces.filter(Set.prototype.has, sourceInterfaces);
 
-            //             if (intersection.length > 0) {
-            //                 endPoint.element.classList.add('selected');
-            //             }
-            //         }
-            //     });
-            // });
-            // this.$on('onstop-flow', (interfaceName) => {
-            //     let endPoints = this.instance.selectEndpoints();
-            //     endPoints.each((endPoint) => {
-            //         if (endPoint.isTarget) {
-            //             endPoint.element.classList.remove('selected');
-            //         }
-            //     });
-            // });
+            // Highlight which operations can be target for a new flow.
+            this.$root.$on('onstart-flow', (interfaceName) => {
+                this.clearSelection(null);
+                let sourceInterfaces = new Set(interfaceName.split(' '));
+                this.instance.selectEndpoints().each((endPoint) => {
+                    if (endPoint.isTarget) {
+                        let intersection = endPoint.scope.split(' ').filter(
+                            Set.prototype.has, sourceInterfaces);
+                        if (intersection.length > 0) {
+                            endPoint.element.classList.add('selected');
+                        }
+                    }
+                });
+            });
+            this.$root.$on('onstop-flow', (interfaceName) => {
+                this.instance.selectEndpoints().each((endPoint) => {
+                    if (endPoint.isTarget) {
+                        endPoint.element.classList.remove('selected');
+                    }
+                });
+            });
         },
         mounted() {
             // this.$root.$refs.toastr.defaultPosition = 'toast-bottom-full-width';

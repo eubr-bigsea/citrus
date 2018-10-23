@@ -1,19 +1,14 @@
 <template>
     <div class="mb-1">
         <LabelComponent :field="field"></LabelComponent>
-        <!--
-        {{selected}}
-        <select class="form-control input-sm" v-model.lazy="selected" @change="updated">
-            <option></option>
-            <option v-for="opt in options" :value="opt.key">{{opt.key}} - {{opt.value}}</option>
-        </select>
-    -->
-        <input disabled v-if="label != ''" :value="selected + ' - ' + label" class="form-control"/>
+        
+        <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control"/>
+
         <b-link v-b-modal="'lookupModal'" variant="sm">
              <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
              <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
         </b-link>
-        <b-modal id="lookupModal" size="lg" :title="field.label" ok-disabled :cancel-title="'Cancelar'" ref="modal">
+        <b-modal id="lookupModal" size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal">
             {{field.help}}
             <v-client-table :data="options" :columns="['key', 'value','tags']" class="lookupTable" :options="tableOptions">
                 <template slot="value" slot-scope="props">

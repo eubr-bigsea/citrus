@@ -2,7 +2,7 @@
     <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:click="click" @contextmenu="openMenu">
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
-            {{task.operation.name}} {{task.name}}
+            {{task.name}}
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="task.status? task.status.toLowerCase(): ''">
@@ -89,23 +89,30 @@
         color: #1E88E5;
         font-size: 8pt;
     }
-
+    .endpoint-label.output {
+        z-index: -2;
+        /* background: green */
+    }
     .output {
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
-            margin-top: 50px;
+            top: 20px;
+            position: relative;
+            z-index: 5
         }
     }
 
     .input {
-
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
-            margin-top: -30px;
+            top: -20px;
+            position: relative;
+            
         }
     }
+    
 </style>
 
 <script>
@@ -368,6 +375,7 @@
             let zIndex = this.task['z_index'];
             let inputs = []
             let outputs = []
+
             if (operation.ports) {
                 outputs = operation.ports.filter((p) => {
                     return p.type === 'OUTPUT';
@@ -391,43 +399,42 @@
                 this.isComment = true;
             }
             [
-                [inputs, 'input', endPointOptionsInput],
-                [outputs, 'output', endPointOptionsOutput]
+                {ports: inputs, type: 'input', options: endPointOptionsInput},
+                {ports: outputs, type: 'output', options: endPointOptionsOutput}
             ].forEach((item) => {
-                let ports = item[0];
-                let portType = item[1];
-                let portOptions = item[2];
+                let ports = item.ports;
+                let portType = item.type;
                 lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
 
                 if (ports.length > 0) {
                     anchors[portType][ports.length - 1].forEach((anchor, inx) => {
-                        let options = JSON.parse(JSON.stringify(portOptions)); // clone
-
                         lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
+                        
+                        let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
                         options['anchors'] = anchor.slice();
                         options['overlays'] = lbls.slice();
+                        options['uuid'] = `${taskId}/${ports[inx].id}`;
+                        options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
 
                         if (ports[inx].multiplicity !== 'ONE') {
                             if (portType === 'input') {
                                 options['endpoint'] = 'Dot';
                                 options['anchors'][1] = -0.15;
                             }
-                        }
-                        options['uuid'] = `${taskId}/${ports[inx].id}`;
-                        if (ports[inx].multiplicity !== 'ONE') {
                             options['maxConnections'] = 100;
                             // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
                         }
                         if (ports[inx].interfaces.length && ports[inx].interfaces[0].color) {
                             options['paintStyle']['fillStyle'] = ports[inx].interfaces[0].color;
                         }
-                        options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
                         options['dragOptions'] = {
                             start: (event, ui) => {
-                                this.$emit('onstart-flow', event.el._jsPlumb.scope);
+                                console.debug("dragEndpointStart")
+                                this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
                             },
                             stop: (event, ui) => {
-                                this.$emit('onstop-flow', event.el._jsPlumb.scope);
+                                console.debug("dragEndpointStop")
+                                this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
                             }
                         };
                         options.paintStyle.fill = options.paintStyle.fillStyle;
@@ -501,12 +508,6 @@
         display: none;
     }
 
-    /* Elements */
-
-    body {
-        padding-top: 60px;
-    }
-
     .buttons-toolbar {
         background: white;
         padding: 5px;
@@ -517,7 +518,7 @@
         }
     }
 
-    .no-padding {
+    /* .no-padding {
         [class*="col-"] {
             padding-left: 0 !important;
             padding-right: 0 !important;
@@ -529,8 +530,8 @@
             padding-left: 2px !important;
             padding-right: 2px !important;
         }
-    }
-
+    } */
+/* 
     .card-content {
         background: white;
     }
@@ -538,11 +539,11 @@
     .jsplumb-overlay.labelClass,
     .jtk-overlay.labelClass {
         cursor: pointer;
-    }
+    } */
 
-    .labelClass {
+    /* .labelClass {
         background: white;
-    }
+    } */
 
     li.dragging {
         color: $color2;
@@ -567,14 +568,13 @@
     }
 
     .lemonade-container {
-        /* background: url(grid1.png); */
         height: calc(100vh - 186px);
         overflow: hidden;
         position: relative;
         width: 100%;
     }
 
-    #lemonade-diagram {
+    /* #lemonade-diagram {
         width: 2000px;
         height: 4000px;
         .ghost-active {
@@ -594,7 +594,7 @@
             position: absolute !important;
             cursor: default !important;
         }
-    }
+    } */
 
 
     #lemonade,
@@ -888,8 +888,8 @@
         }
         z-index: 100;
     }
-
-    .xendpoint:hover {
+/* 
+    .endpoint:hover {
         opacity: 1;
         background-color: $color3;
     }
@@ -900,19 +900,11 @@
         padding: 5px 5px;
         font-weight: bold;
 
-    }
+    } */
 
     /**/
 
-    .glyphicon {
-        /* @extend .fa */
-    }
-
-    .glyphicon-remove {
-        /* @extend .fa-remove */
-    }
-
-    .icon-union:before {
+    /* .icon-union:before {
         content: "\222A";
     }
 
@@ -922,7 +914,7 @@
 
     .icon-projection:before {
         content: '\03C3';
-    }
+    } */
 
     .jsplumb-drag-selected,
     .jtk-drag-selected {

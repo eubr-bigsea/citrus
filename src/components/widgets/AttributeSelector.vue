@@ -1,10 +1,6 @@
 <template>
     <div>
-        <span>
-            {{field.label}}
-            <span class="fa fa-asterisk" v-show="field.required"></span>
-            <!-- <span class="fa fa-question-circle-o" :title="field.help"></span> -->
-        </span>
+        <LabelComponent :field="field"></LabelComponent>
         <div>
             <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
                 :taggable="true">
@@ -15,9 +11,11 @@
 </template>
 <script>
     import vSelect from "vue-select";
+    import LabelComponent from './Label.vue'
     export default {
         components: {
-            'v-select': vSelect
+            'v-select': vSelect,
+            LabelComponent
         },
         computed: {
             params() {
