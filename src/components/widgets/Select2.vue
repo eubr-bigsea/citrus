@@ -1,38 +1,36 @@
 <template>
-    <div>
-        <span>
-            {{field.label}}
-            <span class="fa fa-asterisk" v-show="field.required"></span>
-            <!-- <span class="fa fa-question-circle-o" :title="field.help"></span> -->
-        </span>
         <div>
-            <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
-                :taggable="true">
-                <slot name="no-options">Sorry, no matching options.!!!</slot>
-            </v-select>
+            <LabelComponent :field="field" <LabelComponent :field="field"></LabelComponent>
+            <div>
+                <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
+                    :taggable="true" :closeOnSelect="false">
+                    <div slot="no-options"></div>
+                </v-select>
+            </div>
         </div>
-    </div>
-</template>
-<script>
-    import vSelect from "vue-select";
-    export default {
-        components: {
-            'v-select': vSelect
-        },
-        computed: {
-            params() {
-                let result = null;
-                if (this.field.values) {
-                    result = JSON.parse(this.field.values);
+    </template>
+    <script>
+        import vSelect from "vue-select";
+        import LabelComponent from './Label.vue'
+        export default {
+            components: {
+                'v-select': vSelect,
+                LabelComponent
+            },
+            computed: {
+                params() {
+                    let result = null;
+                    if (this.field.values) {
+                        result = JSON.parse(this.field.values);
+                    }
+                    return result;
                 }
-                return result;
-            }
-        },
-        methods: {
-            updated(val) {
-                this.$root.$emit('update-form-field-value', this.field, val);
-            }
-        },
-        props: { value: "", field: null, suggestions: { required: true } },
-    }
-</script>
+            },
+            methods: {
+                updated(val) {
+                    this.$root.$emit('update-form-field-value', this.field, val);
+                }
+            },
+            props: { value: "", field: null, suggestions: { required: true } },
+        }
+    </script>

@@ -31,9 +31,10 @@
                                 <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name">
                                     <div v-for="field in form.fields" class="mb-2" v-bind:key="task.id + field.name">
                                         <keep-alive>
-                                            <component v-if="['expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                            <component v-if="['percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
                                                 :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
                                                 :suggestions="suggestions"
+                                                :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 language="language" context="context">
                                             </component>
                                             <span v-else>
@@ -93,9 +94,11 @@
     import ExpressionComponent from './widgets/ExpressionEditor.vue'
     import IntegerComponent from './widgets/Integer.vue'
     import LookupComponent from './widgets/Lookup.vue'
+    import PercentageComponent from './widgets/Range.vue'
     import RangeComponent from './widgets/Range.vue'
     import Select2Component from './widgets/Select2.vue'
     import SwitchComponent from './widgets/Switch.vue'
+    import TagComponent from './widgets/Select2.vue'
     import TextComponent from './widgets/Text.vue'
     import TextAreaComponent from './widgets/TextArea.vue'
 
@@ -112,7 +115,9 @@
             'expression-component': ExpressionComponent,
             'integer-component': IntegerComponent,
             'lookup-component': LookupComponent,
+            'percentage-component': RangeComponent,
             'range-component': RangeComponent,
+            'tag-component': TagComponent,
             'text-component': TextComponent,
             'textarea-component': TextAreaComponent,
             SwitchComponent,

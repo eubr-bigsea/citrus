@@ -3,7 +3,7 @@
         <LabelComponent :field="field" <LabelComponent :field="field"></LabelComponent>
         <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)"
             :required="field.required" />
-        <div class="float-left">{{split}}%</div>
+        <div class="float-left">{{split || 0}}%</div>
         <div class="float-right text-right">{{100-split}}%</div>
     </div>
 </template>
@@ -13,11 +13,11 @@
         components: { LabelComponent },
         data() {
             return {
-                split: ''
+                split: 50
             }
         },
         mounted() {
-            this.split = this.value;
+            this.split = this.value || 50;
         },
         methods: {
             updated:
@@ -27,7 +27,9 @@
                 }, 500)
         },
 
-        props: { value: '', field: {} },
+        props: { value: {
+            type: Number, default: 50,
+        }, field: {} },
 
     }
 </script>

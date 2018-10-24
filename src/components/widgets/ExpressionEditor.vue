@@ -58,7 +58,7 @@
                 <b-btn @click.prevent="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
                 <b-btn @click.prevent="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
             </div>
-        </b-modal>${v.f}(${v.attribute})
+        </b-modal>
     </div>
 </template>
 <script>
@@ -81,12 +81,6 @@
         },
         data() {
             return {
-                dateFunctions: [
-                    'current_date', 'current_timestamp',
-                    'date_add', 'date_format', 'date_sub',
-                    'datediff', 'dayofmonth', 'dayofyear',
-                ],
-                showModal: false,
                 expressionValue: '',
                 expressionList: this.value,
             }
