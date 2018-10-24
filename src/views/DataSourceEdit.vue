@@ -43,7 +43,7 @@
                                 <div class="col-md-3">
                                     <label>{{$tc('dataSource.treatAsNull')}}: </label>
                                     <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTreatAsMissing" :taggable="true" class="custom">
-                                        <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                        <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                     </v-select>
                                 </div>
                                 <div class="col-md-6 mt-3 mb-3 mt-3">
@@ -73,25 +73,25 @@
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.attributeDelimiter') }}: </label>
                                             <v-select style="width: 100%" v-model="dataSource.attribute_delimiter" :options="delimiters" :taggable="true">
-                                                <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                                <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.recordDelimiter') }}: </label>
                                             <v-select style="width: 100%" v-model="dataSource.record_delimiter" :options="delimiters" :taggable="true">
-                                                <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                                <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.textDelimiter') }}: </label>
                                             <v-select style="width: 100%" v-model="dataSource.text_delimiter" :options="textDelimiters" :taggable="true">
-                                                <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                                <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.encoding') }}: </label>
                                             <v-select style="width: 100%" v-model="dataSource.encoding" :options="encodings" :taggable="true">
-                                                <slot name="no-options">{{$t('messages.noMatching')}}.</slot>
+                                                <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
 
