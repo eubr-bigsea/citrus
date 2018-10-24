@@ -166,10 +166,22 @@ export default {
         },
 
         property: {
-            taskName: 'Task name (optional)',
-            attribute: 'Attribute',
-            function: 'Function',
             alias: 'Alias',
+            attribute: 'Attribute',
+            editValue: 'Edit value...',
+            function: 'Function',
+            taskName: 'Task name (optional)',
+            expression: {
+                alias: 'New attribute name (alias)',
+                explanation: 'Add one or more expresssions. New attributes will be created from the expressions informed here and you need to inform a name (alias) for them.',
+                tip: `To use an attribute, just inform its name. For string constants, delimit them with quotes (single or double). 
+                Examples: <code>substring(name, instr(name, " "))</code>.`,
+                title: 'Expression',
+                validExpressions: `Valid expressions include math expressions 
+                (e.g. <strong><code>attr * 10 - 4 </code></strong>) and function calls 
+                (e.g. <strong><code>split(attr, ' ') </code></strong>). For more informations, 
+                see Lemonade Reference Guide or Apache Spark SQL functions. `,
+            }
         },
         profile: {
             alsoChangePassword: 'Also change my password',

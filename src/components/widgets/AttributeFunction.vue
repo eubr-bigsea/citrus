@@ -51,7 +51,7 @@
             </table>
             <div class="mt-2 border-top pt-2">
                 <button class="btn btn-success btn-sm" @click.prevent="add">
-                    <span class="fa fa-plus"></span> Add</button>
+                    <span class="fa fa-plus"></span> {{$t('actions.add')}}</button>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
                 <b-btn @click="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>

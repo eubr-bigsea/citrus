@@ -1,86 +1,75 @@
 <template>
     <div>
         <LabelComponent :field="field"></LabelComponent>
-        <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
-        <b-link v-b-modal="'lookupModal'" variant="sm">
-            {{$t('actions.editValue')}}
+        <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
+        <b-link v-b-modal="'expressionModal'" variant="sm">
+            {{$t('property.editValue')}}
         </b-link>
 
-        <b-modal id="lookupModal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')" ref="modal">
-            <div slot="header">
-                <h4>Expression</h4>
-                <em>Construct an expression to transform data</em>
-            </div>
+        <b-modal id="expressionModal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')" ref="modal">
 
-            <div class="body" slot="body">
-                <div>
-                    <table class="table table-bordered" v-if="expressionList && expressionList.length">
-                        <thead>
-                            <th>Attribute</th>
-                            <th>Alias</th>
-                            <th style="width:15%"></th>
-                        </thead>
-                        <tbody>
-                            <template v-for="(row, index) in expressionList">
-                                <tr>
-                                    <td style="width: 60%">
-                                        <textarea type="text" class="form-control" @keyup="changed($event, row, 'expression')" style="height: 40px" @paste="changed($event, row, 'expression')">{{row.expression}}</textarea>
-                                        <div class="label label-danger" v-if="row.error">{{row.error}}</div>
-                                    </td>
-                                    <td>
-                                        <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
-                                    </td>
-                                    <td style="width:10%" rowspan="2">
-                                        <a href="#" @click.prevent="remove($event, index)">
-                                            <span class="fa fa-2x fa-minus-circle"></span>
-                                        </a>
-                                        <a href="#" @click.prevent="moveUp($event, index)" v-if="index !== 0">
-                                            <span class="fa fa-2x fa-chevron-circle-up"></span>
-                                        </a>
-                                        <a href="#" @click.prevent="moveDown($event, index)" v-if="index !== (expressionList.length-1)">
-                                            <span class="fa fa-2x fa-chevron-circle-down"></span>
-                                        </a>
-                                    </td>
-                                </tr>
-                                <!--
+            <p>
+                {{$t('property.expression.explanation')}}
+                <span v-html="$t('property.expression.tip')"></span>
+                <span v-html="$t('property.expression.validExpressions')"></span>
+
+            </p>
+
+            <table class="table table-bordered table-sm table-stripe" v-if="expressionList && expressionList.length">
+                <thead>
+                    <th> {{$t('property.expression.title')}}</th>
+                    <th> {{$t('property.expression.alias')}}</th>
+                    <th style="width:12%"></th>
+                </thead>
+                <tbody>
+                    <template v-for="(row, index) in expressionList">
+                        <tr>
+                            <td style="width: 60%">
+                                <textarea type="text" class="form-control" @keyup="changed($event, row, 'expression')" style="height: 40px" @paste="changed($event, row, 'expression')">{{row.expression}}</textarea>
+                                <div class="label label-danger" v-if="row.error">{{row.error}}</div>
+                            </td>
+                            <td>
+                                <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
+                            </td>
+                            <td style="width:2%" class="text-center">
+                                <a href="#" @click.prevent="remove($event, index)">
+                                    <span class="fa fa-2x fa-minus-circle"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <!--
                                     <tr>
                                         <td colspan="2">
                                             <pre style="height: 80px; overflow:auto"><code>{{ row.tree }}</code></pre>
                                         </td>
                                     </tr>
                                     -->
-                            </template>
-                        </tbody>
-                    </table>
-                    <div v-else>
-                        <div class="label label-info">Click the Add button to include a new filter.</div>
-                    </div>
-                    <div class="margin-top-10">
-                        <button class="btn btn-success btn-sm" @click="add">
-                            <span class="fa fa-plus-circle"></span> Add</button>
-                    </div>
-                </div>
-
+                    </template>
+                </tbody>
+            </table>
+            <div v-else>
+                <div class="label label-info">Click the Add button to include a new filter.</div>
+            </div>
+            <div class="margin-top-10">
+                <button class="btn btn-success btn-sm" @click.prevent="add">
+                    <span class="fa fa-plus"></span> {{$t('actions.add', {type: $t('property.expression.title').toLowerCase()})}}</button>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
-                    <b-btn @click="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
-                    <b-btn @click="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
-                </div>
-        </b-modal>
+                <b-btn @click.prevent="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
+                <b-btn @click.prevent="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
+            </div>
+        </b-modal>${v.f}(${v.attribute})
     </div>
 </template>
 <script>
-    import LabelComponent from './Label.vue'
+    import LabelComponent from './Label.vue';
+    import jsep from 'jsep';
     export default {
         computed: {
             displayValue() {
                 if (this.value) {
-                    return this.value.map((v) => {
-                        if (this.parameters.options.show_alias) {
-                            return `${v.alias} = ${v.f}(${v.attribute})`
-                        } else {
-                            return `${v.f}(${v.attribute})`
-                        }
+                    return this.value.map((v) =>{
+                        return `${v.alias} = ${v.expression}`
                     }).join('\n')
                 } else {
                     return ''
@@ -119,19 +108,16 @@
                 }
             },
             okClicked(e) {
-                $this.$root.$emit('update-expression',
+                this.$root.$emit('update-form-field-value', this.field, 
                     this.expressionList);
-                this.showModal = false;
+                this.$refs.modal.hide();
             },
             cancelClicked(e) {
-                this.showModal = false;
+                this.$refs.modal.hide();
             },
             changed: _.debounce(function (e, row, attr) {
                 this.updated(e, row, attr);
             }),
-            selectTab(tab) {
-                this.currentTab = tab;
-            },
             add(e) {
                 if (this.expressionList === null) {
                     this.expressionList = [];
@@ -145,18 +131,6 @@
                 this.expressionList.splice(index, 1);
                 e.stopPropagation();
                 e.preventDefault();
-                return false;
-            },
-            moveUp(e, index) {
-                let tmp = this.expressionList.splice(index, 1)[0];
-                this.expressionList.splice(index - 1, 0, tmp);
-                e.stopPropagation();
-                return false;
-            },
-            moveDown(e, index) {
-                let tmp = this.expressionList.splice(index, 1)[0]
-                this.expressionList.splice(index + 1, 0, tmp);
-                e.stopPropagation();
                 return false;
             },
         },
