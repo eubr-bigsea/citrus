@@ -82,7 +82,7 @@
                         }).value
                     }
                 ).catch(function (e) {
-                    this.dispatch('error', e);
+                    this.$root.$emit('on-error', e);
                 }.bind(this));
             } else {
                 JSON.parse(this.field.values).forEach((opt) => {

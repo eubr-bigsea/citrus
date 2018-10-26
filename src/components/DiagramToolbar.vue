@@ -2,26 +2,24 @@
     <div class="row pb-2">
         <div class="col-md-6 col-sm-12">
             <b-button-toolbar>
-                <b-btn size="sm" variant="outline-success mr-" @click.prevent="saveWorkflow">
+
+                <!-- b-btn size="sm" variant="outline-success mr-" @click.prevent="saveWorkflow">
                     <span class="fa fa-cogs"></span>
+                </b-btn -->
+                <b-btn class="mr-1" size="sm" variant="primary" @click.prevent="saveWorkflow" :title="$t('actions.save')">
+                    <span class="fa fa-save"></span> {{$t('actions.save')}}
                 </b-btn>
-                <b-button-group size="sm" class="mx-1">
-                    <b-btn size="sm" variant="primary mr-" @click.prevent="saveWorkflow" :title="$t('actions.save')">
-                        <span class="fa fa-save"></span>
-                    </b-btn>
-                    <b-btn size="sm" variant="secondary" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
-                        <span class="fa fa-copy"></span>
-                    </b-btn>
-                    <b-btn size="sm" @click.prevent="saveAsImage" :title="$t('actions.saveAsImage')">
-                        <span class="fa fa-image"></span>
-                    </b-btn>
-                    <b-btn size="sm" variant="secondary" @click.prevent="showHistory" :title="$t('actions.showHistory')">
-                        <span class="fa fa-history"></span>
-                    </b-btn>
-                </b-button-group>
+                <b-btn class="mr-1" size="sm" variant="secondary" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
+                    <span class="fa fa-copy"></span> {{$t('actions.saveAs')}}...
+                </b-btn>
+                <b-btn class="mr-1" size="sm" @click.prevent="saveAsImage" :title="$t('actions.saveAsImage')">
+                    <span class="fa fa-image"></span> {{$t('actions.saveAsImage')}}
+                </b-btn>
+                <b-btn class="mr-1" size="sm" variant="secondary" @click.prevent="showHistory" :title="$t('actions.showHistory')">
+                    <span class="fa fa-history"></span> {{$t('actions.showHistory')}}
+                </b-btn>
 
-
-                <b-btn size="sm" @click.prevent="execute" variant="success">
+                <b-btn class="mr-1" size="sm" @click.prevent="execute" variant="success">
                     <span class="fa fa-play"></span> Execute</b-btn>
 
                 <b-input-group size="sm" class="w-25">
@@ -75,11 +73,18 @@
             </b-button-toolbar>
         </div>
         <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
-            <table class="table table-sm table-bordered table-striped">
+            <table class="table table-sm table-striped text-center">
+                <tr>
+                    <th>{{$tc('common.version')}}</th>
+                    <th>{{$tc('common.date')}}</th>
+                    <th>{{$tc('common.author')}}</th>
+                    <th>{{$tc('common.action')}}</th>
+                </tr>
                 <tr v-for="h in history" :key="h.id">
                     <td>{{h.version}}</td>
                     <td>{{h.date}}</td>
                     <td>{{h.user_name}}</td>
+                    <td><button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button></td>
                 </tr>
             </table>
             <div slot="modal-footer" class="w-100">
@@ -106,6 +111,9 @@
             workflow: {}
         },
         methods: {
+            restore(version){
+                this.$root.$emit('onrestore-workflow', version);
+            },
             toggleTasks() {
 
             },
@@ -140,7 +148,7 @@
                 this.$refs.historyModal.show()
             },
             closeHistory() {
-
+                this.$refs.historyModal.hide()
             },
             execute() {
 

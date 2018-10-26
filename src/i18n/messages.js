@@ -19,17 +19,19 @@ export default {
             download: 'Download',
             edit: 'Edit',
             editValue: 'Edit value...',
-            test: 'Test',
+            restore: 'Restore',
             save: 'Save',
             saveAs: 'Save as',
             saveAsImage: 'Save as image',
             search: 'Search',
             showHistory: 'Show history',
             show: 'Show',
+            test: 'Test',
             toggleTasks: 'Enable/disable tasks'
         },
         common: {
             action: 'Action | Actions',
+            author: 'Author',
             attention: 'Attention',
             alreadyHaveAccount: 'Already have an account?',
             attribute: 'Attribute | Attributes',
@@ -37,6 +39,7 @@ export default {
             confirmPassword: 'Confirm password',
             created: 'Created',
             createAccount: 'Sign up',
+            date: 'Date',
             description: 'Description',
             dontHaveAccount: 'Don\'t have an account?',
             email: 'E-mail',
@@ -82,6 +85,7 @@ export default {
                 name: 'User name',
                 login: 'User login'
             },
+            version: 'Version',
             yes: 'Yes',
         },
         dataSource: {
@@ -181,7 +185,11 @@ export default {
                 (e.g. <strong><code>attr * 10 - 4 </code></strong>) and function calls 
                 (e.g. <strong><code>split(attr, ' ') </code></strong>). For more informations, 
                 see Lemonade Reference Guide or Apache Spark SQL functions. `,
-            }
+            },
+            queryBuilder: {
+                explanation: 'Write a SQL compatible Query. The supported syntax depend on the choosen platform, but in simple queries work in all cases. See documentation for more information.',
+                title: 'SQL query command',
+            },
         },
         profile: {
             alsoChangePassword: 'Also change my password',
@@ -194,6 +202,10 @@ export default {
             welcome: `Welcome to Lemonade. 
             Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) is a visual platform for distributed computing, aimed to enable implementation, experimentation, test and deploying of data processing and machine learning applications. It provides a higher level of abstractions, called operations, to users build processing workflows using a graphical web interface. By using high performance and scalable technologies, such as COMPSs, Ophidia and Spark, Lemonade can process very large amount of data, hiding all backend complexity from the users and allowing them to focus mainly in the construction of the solution.
             Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`
+        },
+        workflow: {
+            restoreHistory: 'Do you really want to restore this workflow version?',
+            versionRestored: 'Version {version} restored with success and now it is also version {version2}.',
         }
     },
     pt: {

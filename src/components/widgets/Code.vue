@@ -1,11 +1,8 @@
 <template>
     <div>
         <LabelComponent :field="field"></LabelComponent>
-        <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-control input-sm code"
-            @keyup="updated" :value="value === null ? field.default: value"></textarea>
-            {{programmingLanguage}}
         <prism-editor :code="value === null ? field.default: value" 
-            @change="updated"
+            v-model="code"
             :language="programmingLanguage" ref="prism" />
     </div>
 </template>
@@ -72,17 +69,21 @@
     };
 
     export default {
+        data(){
+            return {
+                code: ''
+            }
+        },
         components: {
             LabelComponent, PrismEditor
         },
         mounted() {
-            this.$refs.prism.updateContent()
+            this.code = this.value || this.field.default || ''
         },
-        methods: {
-            updated: _.debounce(function (e) {
+        watch: {
+            code: _.debounce(function (e) {
                 // let content = e.target.value || e.target.textContent;
-                // this.$root.$emit('update-form-field-value', this.field, content);
-                console.debug("OK")
+                this.$root.$emit('update-form-field-value', this.field, this.code);
             }, 500)
         },
         props: {

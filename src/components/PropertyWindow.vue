@@ -117,6 +117,7 @@
             'lookup-component': LookupComponent,
             'percentage-component': RangeComponent,
             'range-component': RangeComponent,
+            'select2-component': Select2Component,
             'tag-component': TagComponent,
             'text-component': TextComponent,
             'textarea-component': TextAreaComponent,

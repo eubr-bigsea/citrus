@@ -115,6 +115,10 @@
                 this.selectedTask = taskComponent;
                 this.updateAttributeSuggestion();
             });
+            this.$root.$on('on-error', (e) => {
+                this.error(e);
+            });
+            this.$root.$on('onrestore-workflow', this.restoreWorkflow)
             this.$root.$on('onsave-as-image', () => {
                 this.saveAsImage()
             });
@@ -143,6 +147,11 @@
                 this.workflow.tasks.push(task);
             });
 
+            this.$root.$on('addFlow', (flow) => {
+                flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
+                this.workflow.flows.push(flow);
+            });
+
             axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                 (resp) => {
                     let workflow = resp.data;
@@ -161,15 +170,15 @@
                         }
                     ).catch(function (e) {
                         this.dispatch('error', e);
-                    }.bind(this));
+                    }.bind(this)).finally(() => {
+                        Vue.nextTick(() => {
+                            this.$Progress.finish()
+                        })
+                    });
                 }
             ).catch(function (e) {
                 this.dispatch('error', e);
-            }.bind(this)).finally(() => {
-                Vue.nextTick(() => {
-                    this.$Progress.finish()
-                })
-            });
+            }.bind(this));
         },
         methods: {
             getSuggestions() {
@@ -297,12 +306,39 @@
                     cloned,
                     { headers }).then(
                     (resp) => {
-                        self.workflow = resp.data.data;
+                        let workflow = resp.data.data;
+                        workflow.tasks.forEach((task) => {
+                            task.operation = self.operationsLookup[task.operation.id]
+                        });
+                        self.workflow = workflow;
+                        self.success(self.$t('messages.savedWithSuccess',
+                            { what: self.$tc('titles.workflow') }));
                     }
                     ).catch(function (e) {
-                        this.dispatch('error', e);
+                        this.error(e);
                     }.bind(this));
 
+            },
+            restoreWorkflow(version){
+                let self = this;
+                this.confirm(
+                    this.$t('common.history'), 
+                    this.$t('workflow.restoreHistory'), 
+                    ()=>{
+                        let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
+
+                        axios.post(url, {version})
+                            .then((resp) => {
+                                let workflow = resp.data;
+                                workflow.tasks.forEach((task) => {
+                                    task.operation = self.operationsLookup[task.operation.id]
+                                });
+                                self.success(self.$t('workflow.versionRestored', 
+                                    {version, version2: 2343}));
+                                self.workflow = workflow;
+                                //self.closeHistory();
+                            }).catch((e) => self.error(e))
+                    });
             },
             getSuggestions(taskId) {
                 if (window.hasOwnProperty('TahitiAttributeSuggester')) {

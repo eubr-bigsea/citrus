@@ -4,11 +4,7 @@
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHanle">
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" 
-                        :task="task" 
-                        :instance="instance" 
-                        :key="task.id" 
-                        :show-decoration="showTaskDecoration || showTaskDecorationInternal"
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="task.id" :show-decoration="showTaskDecoration || showTaskDecorationInternal"
                     />
                     <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" :key="flow.id"></flow-component>
 
@@ -21,7 +17,7 @@
                     -->
 
                     <div v-for="group in groups" :key="group.id">
-                        <group-component :group="group" :instance="instance" :key="group.id"/>
+                        <group-component :group="group" :instance="instance" :key="group.id" />
                     </div>
                 </div>
             </VuePerfectScrollbar>
@@ -67,14 +63,12 @@
 
 <script>
     import Vue from 'vue';
-    // import eventHub from '../app/event-hub';
 
     import lodash from 'lodash';
 
     //import ResizerComponent from 'vue-resize-handle/bidirectional';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     //import PerfectScrollbarCss from 'perfect-scrollbar/dist/css/perfect-scrollbar.css';
-    //import ModalComponent from '../modal/modal-component.js';
     //import CtxMenuComponent from '../ctx-menu/ctx-menu.vue';
     // import DropDownComponent from '../ui/dropdown.vue';
 
@@ -84,14 +78,6 @@
     import FlowComponent from './Flow.vue';
 
     import jsplumb from 'jsplumb'
-    /*
-    import highlight from 'highlight.js';
-    import highlightCass from 'highlight.js/styles/default.css';
-    import solarizedDark from 'highlight.js/styles/solarized-dark.css';
-    */
-
-    // import { standUrl, tahitiUrl, authToken } from '../../config';
-
     const GroupComponent = Vue.extend({
 
         components: {
@@ -131,6 +117,7 @@
             }
         },
         methods: {
+
             expand() {
                 this.instance.expandGroup(this.group.id);
                 this.collapsed = false;
@@ -211,7 +198,7 @@
             // 'ctx-menu-component': CtxMenuComponent,
             // 'drop-down-component': DropDownComponent,
             // 'group-component': GroupComponent,
-            
+
         },
         props: {
             formContainer: null,
@@ -354,6 +341,13 @@
             });
         },
         methods: {
+            changeConnectorStyle(style) {
+                let self = this;
+                self.instance.selectEndpoints().each((endpoint) => {
+                    endpoint.connectorStyle = { dashstyle: '2 4' }
+                    self.instance.repaintEverything();
+                });
+            },
             scrollHanle() {
 
             },
@@ -428,10 +422,11 @@
             addTask(task) {
                 task.forms = {};
                 task.operation.forms.forEach((f) => {
-                    f.fields.forEach((field) =>{
+                    f.fields.forEach((field) => {
                         task[field.name] = field['default'] || '';
                     });
-                })
+                });
+                task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
                 this.$root.$emit('addTask', task)
             },
 
@@ -550,9 +545,9 @@
             clearTasks() {
                 this.$store.dispatch('clearTasks');
             },
-            addFlow(flow) {
-                this.$store.dispatch('addFlow', flow)
-            },
+            // addFlow(flow) {
+            //     this.$store.dispatch('addFlow', flow)
+            // },
             removeFlow(flow) {
                 this.$store.dispatch('removeFlow', flow);
             },
@@ -562,22 +557,22 @@
             changeWorkflowName(name) {
                 this.$store.dispatch('changeWorkflowName', name)
             },
-            saveWorkflow() {
-                let self = this;
-                this.$store.dispatch('saveWorkflow', { platform: self.platform }).then(() => {
-                    self.$root.$refs.toastr.s(`Workflow saved`);
-                }).catch((err) => {
-                    self.$root.$refs.toastr.e('Error saving workflow');
-                });
-            },
-            saveWorkflowAs() {
-                let self = this;
-                this.$store.dispatch('saveWorkflowAs', { platform: self.platform }).then(() => {
-                    self.$root.$refs.toastr.s(`Workflow saved`);
-                }).catch((err) => {
-                    self.$root.$refs.toastr.e('Error saving workflow');
-                });
-            },
+            // saveWorkflow() {
+            //     let self = this;
+            //     this.$store.dispatch('saveWorkflow', { platform: self.platform }).then(() => {
+            //         self.$root.$refs.toastr.s(`Workflow saved`);
+            //     }).catch((err) => {
+            //         self.$root.$refs.toastr.e('Error saving workflow');
+            //     });
+            // },
+            // saveWorkflowAs() {
+            //     let self = this;
+            //     this.$store.dispatch('saveWorkflowAs', { platform: self.platform }).then(() => {
+            //         self.$root.$refs.toastr.s(`Workflow saved`);
+            //     }).catch((err) => {
+            //         self.$root.$refs.toastr.e('Error saving workflow');
+            //     });
+            // },
             changeWorkflowId(id) {
                 //@FIXME
                 //this.$store.dispatch('changeWorkflowId', id);
@@ -728,7 +723,7 @@
 
                 let operation = this.getOperationFromId(
                     ev.dataTransfer.getData('id'));
-                
+
                 if (!operation) {
                     return;
                 }
@@ -1111,7 +1106,7 @@
 
                     let [source_id, source_port] = info.newSourceEndpoint.getUuid().split('/');
                     let [target_id, target_port] = info.newTargetEndpoint.getUuid().split('/');
-                    self.addFlow({
+                    self.$root.$emit("addFlow", {
                         source_id, source_port,
                         target_id, target_port,
                     });
@@ -1136,13 +1131,12 @@
                         let source_port_name = '';
                         let target_port_name = '';
                         // self.instance.detach(con);
-                        self.addFlow({
+                        self.$root.$emit("addFlow", {
                             source_id, source_port,
                             target_id, target_port,
                             source_port_name, target_port_name,
                             connection: con
                         });
-                        this.$emit('add-flow');
                     }
                 });
             },
