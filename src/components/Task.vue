@@ -26,98 +26,10 @@
     </div>
 </template>
 
-</template>
-<style lang="scss">
-    $color1: rgba(228, 87, 46, 1);
-    $color2: rgba(41, 51, 92, 1);
-    $color3: rgba(242, 141, 0, 1);
-    $color4: rgba(168, 198, 134, 1);
-    $color5: rgba(102, 155, 188, 1);
-    $color6: #fafafa;
-
-    $elementWidth: 120px;
-    $elementHeight: 50px;
-    .custom-context-menu {
-        background: #FAFAFA;
-        border: 1px solid #BDBDBD;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
-        display: block;
-        list-style: none;
-        margin: 10px 0 0 160px;
-        padding: 0;
-        position: absolute;
-        width: 250px;
-        z-index: 999999;
-
-        ul {
-            list-style-type: none;
-            margin: 5px 0;
-            padding: 0 0 0 5px;
-        }
-        li {
-            border-bottom: 1px solid #E0E0E0;
-            margin: 0;
-            padding: 5px 15px;
-            font-weight: bold;
-            &:last-child {
-                border-bottom: none;
-            }
-            &:hover {
-                background: #1E88E5;
-                color: #FAFAFA;
-            }
-        }
-    }
-
-    .has-2-ports {
-        text-align: center;
-        max-width: $elementWidth / 2 + 5;
-    }
-
-    .has-3-ports {
-        margin: 0px 0;
-        padding: 0px 0px;
-        text-align: center;
-        max-width: $elementWidth / 3;
-        z-index: 90;
-    }
-
-
-    .has-1-ports,
-    .has-2-ports,
-    .has-3-ports {
-        color: #1E88E5;
-        font-size: 8pt;
-    }
-    .endpoint-label.output {
-        z-index: -2;
-        /* background: green */
-    }
-    .output {
-        .has-1-ports,
-        .has-2-ports,
-        .has-3-ports {
-            top: 20px;
-            position: relative;
-            z-index: 5
-        }
-    }
-
-    .input {
-        .has-1-ports,
-        .has-2-ports,
-        .has-3-ports {
-            top: -20px;
-            position: relative;
-            
-        }
-    }
-    
-</style>
 
 <script>
     import Vue from 'vue';
-    const anchors = {
+    const anchorsOriginal = {
         input: [
             [
                 [0.5, 0, 0, -1],
@@ -147,7 +59,7 @@
             ]
         ]
     }
-    const anchors2 = {
+    const anchors = {
         input: [
             [
                 [0, 0.5, -1, 0],
@@ -463,15 +375,39 @@
     });
     export default TaskComponent;
 </script>
+<style lang="scss">
+    .has-1-ports,
+    .has-2-ports,
+    .has-3-ports {
+        color: #1E88E5;
+        font-size: .6em;
+    }
+    .endpoint-label.output {
+        z-index: -2;
+        /* background: green */
+    }
+    .output {
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports {
+            top: 20px;
+            position: relative;
+            z-index: 5
+        }
+    }
+
+    .input {
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports {
+            top: -20px;
+            position: relative;
+            
+        }
+    }
+    
+</style>
 <style scoped lang="scss">
-    /* @import "../../..//node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";
-    @import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
-    @import "../../../node_modules/font-awesome/scss/variables";
-    @import "../../../node_modules/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.scss";
-
-
-    $fa-font-path: "~font-awesome/fonts";
-    @import "~font-awesome/scss/font-awesome"; */
 
     /* Colors */
 
@@ -485,6 +421,38 @@
     $elementWidth: 120px;
     $elementHeight: 50px;
 
+
+    .custom-context-menu {
+        background: #FAFAFA;
+        border: 1px solid #BDBDBD;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
+        display: block;
+        list-style: none;
+        margin: 10px 0 0 160px;
+        padding: 0;
+        position: absolute;
+        width: 250px;
+        z-index: 999999;
+
+        ul {
+            list-style-type: none;
+            margin: 5px 0;
+            padding: 0 0 0 5px;
+        }
+        li {
+            border-bottom: 1px solid #E0E0E0;
+            margin: 0;
+            padding: 5px 15px;
+            font-weight: bold;
+            &:last-child {
+                border-bottom: none;
+            }
+            &:hover {
+                background: #1E88E5;
+                color: #FAFAFA;
+            }
+        }
+    }
     .has-1-ports,
     .has-2-ports,
     .has-3-ports {
@@ -836,6 +804,8 @@
                 &.jsplumb-drag-selected,
                 &.jtk-drag-selected {
                     box-shadow: -2px 1px 6px 0px #f28d00;
+                    font-style: italic;
+                    color: green;
                 }
                 .title {
                     align-self: center;
@@ -843,6 +813,7 @@
                     height: 100%;
                     width: 90%;
                     background: #fff;
+                    overflow: hidden;
                 }
             }
             &.operation:after {
