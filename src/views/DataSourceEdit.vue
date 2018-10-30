@@ -280,22 +280,19 @@
         mounted() {
             let self = this
             this.load().then(() => {
-                // axios.get(`${limoneroUrl}/storages`).then(
-                //     (resp) => {
-                //         self.storages = resp.data;
-                //         Vue.nextTick(() => {
-                //             self.isDirty = false
-                //         })
-                //     }
-                // ).catch(function (e) {
-                //     self.error(e);
-                // });
                 Vue.nextTick(() => {
                     self.isDirty = false
                 })
             })
         },
         watch: {
+            '$route.params.id': function (id) {
+                this.load().then(() => {
+                    Vue.nextTick(() => {
+                        this.isDirty = false
+                    })
+                })
+            },
             'dataSource': {
                 handler(newVal, oldVal) {
                     this.isDirty = true

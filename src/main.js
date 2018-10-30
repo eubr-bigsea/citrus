@@ -111,21 +111,21 @@ let newVue = new Vue({
     mounted () {
     }
 });
-let requestCounter = 0;
-axios.interceptors.request.use(config => {
-    if (requestCounter === 0){
-        newVue.$Progress.start()
-    }
-    requestCounter += 1
-    return config
-})
-axios.interceptors.response.use(response => {
-    requestCounter -= 1
-    if (requestCounter === 0){
-        newVue.$Progress.finish()
-    }
-    return response
-}, (error) => {
-    newVue.$Progress.finish()
-    throw error
-})
+// let requestCounter = 0;
+// axios.interceptors.request.use(config => {
+//     if (requestCounter === 0){
+//         newVue.$Progress.start()
+//     }
+//     requestCounter += 1
+//     return config
+// })
+// axios.interceptors.response.use(response => {
+//     requestCounter -= 1
+//     if (requestCounter === 0){
+//         newVue.$Progress.finish()
+//     }
+//     return response
+// }, (error) => {
+//     newVue.$Progress.finish()
+//     throw error
+// })
