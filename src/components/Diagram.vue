@@ -6,7 +6,8 @@
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
                     <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="task.id" :show-decoration="showTaskDecoration || showTaskDecorationInternal"
                     />
-                    <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" :key="flow.id"></flow-component>
+                    <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" 
+                        :key="`${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"></flow-component>
 
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
@@ -222,8 +223,8 @@
             operations: Array,
         },
         watch: {
-            workflow(){
-               
+            workflow() {
+
             }
         },
         data() {
@@ -537,11 +538,19 @@
                         }, 1000);
                     });
             },
-            clearWorkflow(){
-                 this.instance.deleteEveryEndpoint();
+            clearWorkflow() {
+                return new Promise((resolve, reject) =>{
+                    let oldInstance = this.instance;
+                    oldInstance.deleteEveryEndpoint();
+                    oldInstance.reset();
+
+                    this.instance = this.getJsPlumbInstance();
+                    this._bindJsPlumbEvents();
+                    resolve();
+                });
             },
             clearTasks() {
-               this.$root.$emit('clearTasks');
+                this.$root.$emit('clearTasks');
             },
             // addFlow(flow) {
             //    this.$root.$emit('addFlow', flow)
@@ -550,10 +559,10 @@
                 this.$root.$emit('removeFlow', flow);
             },
             clearFlows() {
-               this.$root.$emit('clearFlow');
+                this.$root.$emit('clearFlow');
             },
             changeWorkflowName(name) {
-               this.$root.$emit('changeWorkflowName', name)
+                this.$root.$emit('changeWorkflowName', name)
             },
             changeWorkflowId(id) {
                 //@FIXME
@@ -565,6 +574,14 @@
                 });
                 return result;
             },
+            getJsPlumbInstance() {
+                return jsPlumb.getInstance({
+                    //Anchors: anchors,
+                    Endpoints: [["Dot", { radius: 2 }], ["Dot", { radius: 1 }]],
+                    EndpointHoverStyle: { fillStyle: "orange" },
+                    HoverPaintStyle: { strokeStyle: "blue" },
+                });
+            },
             init() {
                 const self = this;
                 self.platform = self.$route.params.platform;
@@ -572,17 +589,12 @@
                 if (self.instance && self.showToolbar) {
                     this.instance.reset();
                 }
-                self.instance = jsPlumb.getInstance({
-                    //Anchors: anchors,
-                    Endpoints: [["Dot", { radius: 2 }], ["Dot", { radius: 1 }]],
-                    EndpointHoverStyle: { fillStyle: "orange" },
-                    HoverPaintStyle: { strokeStyle: "blue" },
-                });
+                self.instance = self.getJsPlumbInstance();
+                self._bindJsPlumbEvents();
                 //self.instance.setRenderMode(jsPlumb.CANVAS);
                 window.addEventListener('resize', (e) => {
                     self.instance.repaintEverything();
                 });
-                self._bindJsPlumbEvents();
 
             },
             selectElements(ev) {

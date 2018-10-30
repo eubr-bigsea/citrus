@@ -86,11 +86,14 @@
         },
         mounted() {
             let url = `${tahitiUrl}/platforms`;
+            this.$Progress.start();
             axios.get(url).then(resp => {
                 this.platforms = resp.data;
             }).catch(function (e) {
                 this.dispatch('error', e);
-            }.bind(this));
+            }.bind(this)).finally(() => {
+                this.$Progress.finish()
+            });
             this.platform = this.$refs.listTable.customQueries['platform']
         },
         /* Methods */

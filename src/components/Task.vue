@@ -331,7 +331,8 @@
                         if (ports[inx].multiplicity !== 'ONE') {
                             if (portType === 'input') {
                                 options['endpoint'] = 'Dot';
-                                options['anchors'][1] = -0.15;
+                                // options['anchors'][1] = -0.15;
+                                options['anchors'][0] = -0.05;
                             }
                             options['maxConnections'] = 100;
                             // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';

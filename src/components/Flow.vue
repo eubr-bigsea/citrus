@@ -1,5 +1,5 @@
 <template>
-    <div class="hide" :id="flow.id"></div>
+    <div class="xhide" :id="flow.id"></div>
 </template>
 <script>
 import Vue from 'vue';
@@ -12,6 +12,7 @@ export default {
     mounted() {
         this.$nextTick(() => {
             let uuids = this.flow.uuids;
+            console.debug(this.flow);
             if (! uuids) {
                 uuids = [`${this.flow['source_id']}/${this.flow['source_port']}`, 
                     `${this.flow['target_id']}/${this.flow['target_port']}`];

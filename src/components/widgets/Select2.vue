@@ -1,6 +1,6 @@
 <template>
         <div>
-            <LabelComponent :field="field" <LabelComponent :field="field"></LabelComponent>
+            <LabelComponent :field="field"></LabelComponent>
             <div>
                 <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
                     :taggable="true" :closeOnSelect="false">

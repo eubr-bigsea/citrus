@@ -42,7 +42,9 @@
                     <td>{{h.version}}</td>
                     <td>{{h.date}}</td>
                     <td>{{h.user_name}}</td>
-                    <td><button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button>
+                    </td>
                 </tr>
             </table>
             <div slot="modal-footer" class="w-100">
@@ -170,35 +172,45 @@
                 this.workflow.flows.push(flow);
             });
             this.$root.$on('onshow-history', this.showHistory);
-            axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
-                (resp) => {
-                    let workflow = resp.data;
-                    this.$Progress.start()
-                    axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
-                        (resp) => {
-                            self.operations = resp.data
-                            self.operations.forEach((op) => {
-                                self.operationsLookup[op.id] = op
-                            })
-                            workflow.tasks.forEach((task) => {
-                                task.operation = self.operationsLookup[task.operation.id]
-                            });
-                            self.workflow = workflow;
-                            //this.updateAttributeSuggestion();
-                        }
-                    ).catch(function (e) {
-                        this.dispatch('error', e);
-                    }.bind(this)).finally(() => {
-                        Vue.nextTick(() => {
-                            this.$Progress.finish()
-                        })
-                    });
-                }
-            ).catch(function (e) {
-                this.dispatch('error', e);
-            }.bind(this));
+            this.load();
+        },
+        watch: {
+            '$route.params.id': function (id) {
+                this.$refs.diagram.clearWorkflow();
+                this.load();
+            }
         },
         methods: {
+            load() {
+                let self = this;
+                axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
+                    (resp) => {
+                        let workflow = resp.data;
+                        this.$Progress.start()
+                        axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
+                            (resp) => {
+                                self.operations = resp.data
+                                self.operations.forEach((op) => {
+                                    self.operationsLookup[op.id] = op
+                                })
+                                workflow.tasks.forEach((task) => {
+                                    task.operation = self.operationsLookup[task.operation.id]
+                                });
+                                self.workflow = workflow;
+                                //this.updateAttributeSuggestion();
+                            }
+                        ).catch(function (e) {
+                            this.error(e);
+                        }.bind(this)).finally(() => {
+                            Vue.nextTick(() => {
+                                this.$Progress.finish()
+                            })
+                        });
+                    }
+                ).catch(function (e) {
+                    this.error(e);
+                }.bind(this));
+            },
             getSuggestions() {
                 if (this.attributeSuggestion && this.selectedTask) {
                     return this.attributeSuggestion[this.selectedTask.task.id]
@@ -337,24 +349,25 @@
                     }.bind(this));
 
             },
-            restore(version){
+            restore(version) {
                 let self = this;
                 this.confirm(
-                    this.$t('common.history'), 
-                    this.$t('workflow.restoreHistory'), 
-                    ()=>{
+                    this.$t('common.history'),
+                    this.$t('workflow.restoreHistory'),
+                    () => {
                         let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
 
-                        axios.post(url, {version})
+                        axios.post(url, { version })
                             .then((resp) => {
                                 let workflow = resp.data;
                                 workflow.tasks.forEach((task) => {
                                     task.operation = self.operationsLookup[task.operation.id]
                                 });
-                                self.success(self.$t('workflow.versionRestored', 
-                                    {version, version2: 2343}));
-                                self.$refs.diagram.clearWorkflow();
-                                self.workflow = workflow;
+                                self.success(self.$t('workflow.versionRestored',
+                                    { version, version2: 2343 }));
+                                self.$refs.diagram.clearWorkflow().then(() => {
+                                    self.workflow = workflow;
+                                });
                                 self.closeHistory();
                             }).catch((e) => self.error(e))
                     });
@@ -376,19 +389,23 @@
             updateAttributeSuggestion(callback) {
                 let self = this;
                 let attributeSuggestion = {};
-                TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
-                    (result) => {
-                        Object.keys(result).forEach(key => {
-                            attributeSuggestion[key] = result[key].uiPorts;
+                try {
+                    TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
+                        (result) => {
+                            Object.keys(result).forEach(key => {
+                                attributeSuggestion[key] = result[key].uiPorts;
+                            });
+                            Object.assign(self.attributeSuggestion, attributeSuggestion);
+                            TahitiAttributeSuggester.processed = true;
+                            if (callback) {
+                                callback();
+                            }
                         });
-                        Object.assign(self.attributeSuggestion, attributeSuggestion);
-                        TahitiAttributeSuggester.processed = true;
-                        if (callback) {
-                            callback();
-                        }
-                    });
+                } catch (e) {
+                    console.log(e);
+                }
             },
-            showHistory(){
+            showHistory() {
                 let self = this;
                 let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`
                 axios.get(url)
@@ -398,9 +415,11 @@
                     .catch(function (e) {
                         self.error(e);
                     }.bind(this));
-                this.$refs.historyModal.show();
+                if (this.$refs.historyModal) {
+                    this.$refs.historyModal.show();
+                }
             },
-            closeHistory(){
+            closeHistory() {
                 this.$refs.historyModal.hide();
             },
             _unique(data) {
