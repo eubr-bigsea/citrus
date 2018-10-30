@@ -1,6 +1,6 @@
 <template>
     <div class="row pb-2">
-        <div class="col-md-6 col-sm-12">
+        <div class="col-md-8 col-sm-12">
             <b-button-toolbar>
 
                 <!-- b-btn size="sm" variant="outline-success mr-" @click.prevent="saveWorkflow">
@@ -12,9 +12,11 @@
                 <b-btn class="mr-1" size="sm" variant="secondary" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
                     <span class="fa fa-copy"></span> {{$t('actions.saveAs')}}...
                 </b-btn>
+                <!--
                 <b-btn class="mr-1" size="sm" @click.prevent="saveAsImage" :title="$t('actions.saveAsImage')">
                     <span class="fa fa-image"></span> {{$t('actions.saveAsImage')}}
                 </b-btn>
+                -->
                 <b-btn class="mr-1" size="sm" variant="secondary" @click.prevent="showHistory" :title="$t('actions.showHistory')">
                     <span class="fa fa-history"></span> {{$t('actions.showHistory')}}
                 </b-btn>
@@ -27,7 +29,7 @@
                 </b-input-group>
             </b-button-toolbar>
         </div>
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-4">
             <b-button-toolbar class="float-right">
                 <b-button-group size="sm" class="mx-1">
                     <b-btn size="sm" variant="secondary" @click.prevent="align('left', 'min')" :title="$t('actions.alignLeft')">
@@ -71,26 +73,7 @@
                     {value: 1.4, text: '140%'}]"></b-form-select>
                 </b-input-group>
             </b-button-toolbar>
-        </div>
-        <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
-            <table class="table table-sm table-striped text-center">
-                <tr>
-                    <th>{{$tc('common.version')}}</th>
-                    <th>{{$tc('common.date')}}</th>
-                    <th>{{$tc('common.author')}}</th>
-                    <th>{{$tc('common.action')}}</th>
-                </tr>
-                <tr v-for="h in history" :key="h.id">
-                    <td>{{h.version}}</td>
-                    <td>{{h.date}}</td>
-                    <td>{{h.user_name}}</td>
-                    <td><button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button></td>
-                </tr>
-            </table>
-            <div slot="modal-footer" class="w-100">
-                <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
-            </div>
-        </b-modal>
+        </div>       
     </div>
 </template>
 <script>
@@ -102,7 +85,6 @@
         name: 'DiagramToolbar',
         data() {
             return {
-                history: [],
                 zoomPercent: '100%',
                 zoom: 1
             }
@@ -111,9 +93,6 @@
             workflow: {}
         },
         methods: {
-            restore(version){
-                this.$root.$emit('onrestore-workflow', version);
-            },
             toggleTasks() {
 
             },
@@ -136,19 +115,7 @@
 
             },
             showHistory() {
-                let self = this;
-                let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`
-                axios.get(url)
-                    .then((resp) => {
-                        self.history = resp.data.data
-                    })
-                    .catch(function (e) {
-                        self.error(e);
-                    }.bind(this));
-                this.$refs.historyModal.show()
-            },
-            closeHistory() {
-                this.$refs.historyModal.hide()
+                this.$root.$emit('onshow-history');
             },
             execute() {
 

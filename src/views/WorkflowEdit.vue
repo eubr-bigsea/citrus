@@ -30,7 +30,25 @@
             </slideout-panel>
         -->
         </div>
-
+        <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
+            <table class="table table-sm table-striped text-center">
+                <tr>
+                    <th>{{$tc('common.version')}}</th>
+                    <th>{{$tc('common.date')}}</th>
+                    <th>{{$tc('common.author')}}</th>
+                    <th>{{$tc('common.action')}}</th>
+                </tr>
+                <tr v-for="h in history" :key="h.id">
+                    <td>{{h.version}}</td>
+                    <td>{{h.date}}</td>
+                    <td>{{h.user_name}}</td>
+                    <td><button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button></td>
+                </tr>
+            </table>
+            <div slot="modal-footer" class="w-100">
+                <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
+            </div>
+        </b-modal>
     </div>
 </template>
 
@@ -80,6 +98,7 @@
                 attributeSuggestion: {},
                 workflow: {},
                 operations: [],
+                history: [],
                 operationsLookup: new Map(),
                 showProperties: false,
                 selectedTask: { task: { operation: {} } },
@@ -118,7 +137,6 @@
             this.$root.$on('on-error', (e) => {
                 this.error(e);
             });
-            this.$root.$on('onrestore-workflow', this.restoreWorkflow)
             this.$root.$on('onsave-as-image', () => {
                 this.saveAsImage()
             });
@@ -151,7 +169,7 @@
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
             });
-
+            this.$root.$on('onshow-history', this.showHistory);
             axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                 (resp) => {
                     let workflow = resp.data;
@@ -319,7 +337,7 @@
                     }.bind(this));
 
             },
-            restoreWorkflow(version){
+            restore(version){
                 let self = this;
                 this.confirm(
                     this.$t('common.history'), 
@@ -335,8 +353,9 @@
                                 });
                                 self.success(self.$t('workflow.versionRestored', 
                                     {version, version2: 2343}));
+                                self.$refs.diagram.clearWorkflow();
                                 self.workflow = workflow;
-                                //self.closeHistory();
+                                self.closeHistory();
                             }).catch((e) => self.error(e))
                     });
             },
@@ -368,6 +387,21 @@
                             callback();
                         }
                     });
+            },
+            showHistory(){
+                let self = this;
+                let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`
+                axios.get(url)
+                    .then((resp) => {
+                        self.history = resp.data.data
+                    })
+                    .catch(function (e) {
+                        self.error(e);
+                    }.bind(this));
+                this.$refs.historyModal.show();
+            },
+            closeHistory(){
+                this.$refs.historyModal.hide();
             },
             _unique(data) {
                 return Array.from(new Set(data))

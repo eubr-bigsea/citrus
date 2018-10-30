@@ -205,7 +205,7 @@ export default {
         },
         workflow: {
             restoreHistory: 'Do you really want to restore this workflow version?',
-            versionRestored: 'Version {version} restored with success and now it is also version {version2}.',
+            versionRestored: 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
         }
     },
     pt: {

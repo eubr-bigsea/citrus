@@ -223,7 +223,7 @@
         },
         watch: {
             workflow(){
-                this.instance.deleteEveryEndpoint();
+               
             }
         },
         data() {
@@ -537,37 +537,24 @@
                         }, 1000);
                     });
             },
+            clearWorkflow(){
+                 this.instance.deleteEveryEndpoint();
+            },
             clearTasks() {
-                this.$store.dispatch('clearTasks');
+               this.$root.$emit('clearTasks');
             },
             // addFlow(flow) {
-            //     this.$store.dispatch('addFlow', flow)
+            //    this.$root.$emit('addFlow', flow)
             // },
             removeFlow(flow) {
-                this.$store.dispatch('removeFlow', flow);
+                this.$root.$emit('removeFlow', flow);
             },
             clearFlows() {
-                this.$store.dispatch('clearFlow');
+               this.$root.$emit('clearFlow');
             },
             changeWorkflowName(name) {
-                this.$store.dispatch('changeWorkflowName', name)
+               this.$root.$emit('changeWorkflowName', name)
             },
-            // saveWorkflow() {
-            //     let self = this;
-            //     this.$store.dispatch('saveWorkflow', { platform: self.platform }).then(() => {
-            //         self.$root.$refs.toastr.s(`Workflow saved`);
-            //     }).catch((err) => {
-            //         self.$root.$refs.toastr.e('Error saving workflow');
-            //     });
-            // },
-            // saveWorkflowAs() {
-            //     let self = this;
-            //     this.$store.dispatch('saveWorkflowAs', { platform: self.platform }).then(() => {
-            //         self.$root.$refs.toastr.s(`Workflow saved`);
-            //     }).catch((err) => {
-            //         self.$root.$refs.toastr.e('Error saving workflow');
-            //     });
-            // },
             changeWorkflowId(id) {
                 //@FIXME
                 //this.$store.dispatch('changeWorkflowId', id);
@@ -1091,7 +1078,7 @@
                     let source = info.sourceEndpoint.getUuid();
                     let target = info.targetEndpoint.getUuid();
 
-                    self.removeFlow(source + '-' + target);
+                    this.removeFlow(source + '-' + target);
                 });
                 self.instance.bind('connectionMoved', (info, originalEvent) => {
                     let source = info.originalSourceEndpoint.getUuid();
