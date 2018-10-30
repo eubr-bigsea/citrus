@@ -221,16 +221,11 @@
             workflow: { name: '' },
             operations: Array,
         },
-        /*
         watch: {
-            draggableTasks() {
-                if (!this.draggableTasks) {
-                    let ids = this.workflow.tasks.map((t) => t.id);
-                    console.debug(ids);
-                    this.instance.setDraggable(ids, this.draggableTasks);
-                }
+            workflow(){
+                this.instance.deleteEveryEndpoint();
             }
-        },*/
+        },
         data() {
             return {
                 showExecutionModal: false,
