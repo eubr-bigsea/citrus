@@ -8,7 +8,7 @@
             <toolbox :operations="operations"></toolbox>
         </div>
         <div class="col-md-10 pl-0" style="position: relative">
-            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"></diagram>
+            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"></diagram>
             <slideout-panel :opened="showProperties">
                 <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
             </slideout-panel>
@@ -31,22 +31,24 @@
         -->
         </div>
         <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
-            <table class="table table-sm table-striped text-center">
-                <tr>
-                    <th>{{$tc('common.version')}}</th>
-                    <th>{{$tc('common.date')}}</th>
-                    <th>{{$tc('common.author')}}</th>
-                    <th>{{$tc('common.action')}}</th>
-                </tr>
-                <tr v-for="h in history" :key="h.id">
-                    <td>{{h.version}}</td>
-                    <td>{{h.date}}</td>
-                    <td>{{h.user_name}}</td>
-                    <td>
-                        <button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button>
-                    </td>
-                </tr>
-            </table>
+            <div class="historyArea">
+                <table class="table table-sm table-striped text-center">
+                    <tr>
+                        <th>{{$tc('common.version')}}</th>
+                        <th>{{$tc('common.date')}}</th>
+                        <th>{{$tc('common.author')}}</th>
+                        <th>{{$tc('common.action')}}</th>
+                    </tr>
+                    <tr v-for="h in history" :key="h.id">
+                        <td>{{h.version}}</td>
+                        <td>{{h.date}}</td>
+                        <td>{{h.user_name}}</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             <div slot="modal-footer" class="w-100">
                 <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
             </div>
@@ -99,6 +101,7 @@
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
                 workflow: {},
+                loaded: true,
                 operations: [],
                 history: [],
                 operationsLookup: new Map(),
@@ -197,7 +200,8 @@
                                     task.operation = self.operationsLookup[task.operation.id]
                                 });
                                 self.workflow = workflow;
-                                //this.updateAttributeSuggestion();
+                                this.updateAttributeSuggestion();
+                                self.loaded = true;
                             }
                         ).catch(function (e) {
                             this.error(e);
@@ -355,21 +359,22 @@
                     this.$t('common.history'),
                     this.$t('workflow.restoreHistory'),
                     () => {
-                        let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
+                        self.$refs.diagram.clearWorkflow().then(() => {
+                            let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
 
-                        axios.post(url, { version })
-                            .then((resp) => {
-                                let workflow = resp.data;
-                                workflow.tasks.forEach((task) => {
-                                    task.operation = self.operationsLookup[task.operation.id]
-                                });
-                                self.success(self.$t('workflow.versionRestored',
-                                    { version, version2: 2343 }));
-                                self.$refs.diagram.clearWorkflow().then(() => {
+                            axios.post(url, { version })
+                                .then((resp) => {
+                                    let workflow = resp.data;
+                                    workflow.tasks.forEach((task) => {
+                                        task.operation = self.operationsLookup[task.operation.id]
+                                    });
+                                    self.success(self.$t('workflow.versionRestored',
+                                        { version, version2: 2343 }));
+                                    
                                     self.workflow = workflow;
-                                });
-                                self.closeHistory();
-                            }).catch((e) => self.error(e))
+                                    self.closeHistory();
+                                }).catch((e) => self.error(e))
+                        });
                     });
             },
             getSuggestions(taskId) {
@@ -458,5 +463,9 @@
 <style>
     .blackout {
         background-color: rgba(0, 0, 0, 0) !important;
+    }
+    .historyArea {
+        height: 60vh;
+        overflow: auto
     }
 </style>

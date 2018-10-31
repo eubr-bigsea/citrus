@@ -300,9 +300,10 @@
                     return a.order - b.order;
                 });
             }
+            const locations = { input: [-1.2, 0], output: [3, -1.1]}
             var lbls = [
                 // note the cssClass and id parameters here
-                ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 20 }]
+                ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
             ];
 
             let elem = this.$refs.task;
@@ -323,6 +324,8 @@
                         lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
                         
                         let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
+                        lbls[0][1]['location'] = locations[item.type];
+                        console.debug(lbls[0][1])
                         options['anchors'] = anchor.slice();
                         options['overlays'] = lbls.slice();
                         options['uuid'] = `${taskId}/${ports[inx].id}`;
@@ -331,8 +334,7 @@
                         if (ports[inx].multiplicity !== 'ONE') {
                             if (portType === 'input') {
                                 options['endpoint'] = 'Dot';
-                                // options['anchors'][1] = -0.15;
-                                options['anchors'][0] = -0.05;
+                                options['anchors'][1] = -0.15;
                             }
                             options['maxConnections'] = 100;
                             // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
@@ -381,7 +383,10 @@
     .has-2-ports,
     .has-3-ports {
         color: #1E88E5;
-        font-size: .6em;
+        font-size: .5em;
+        background: #fff !important;
+        display: block;
+        z-index: 10000;
     }
     .endpoint-label.output {
         z-index: -2;
@@ -401,7 +406,8 @@
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
-            top: -20px;
+            top: -6px;
+            left: 0px;
             position: relative;
             
         }

@@ -9,10 +9,10 @@ export default {
         flow: null,
         instance: null
     },
+    
     mounted() {
         this.$nextTick(() => {
             let uuids = this.flow.uuids;
-            console.debug(this.flow);
             if (! uuids) {
                 uuids = [`${this.flow['source_id']}/${this.flow['source_port']}`, 
                     `${this.flow['target_id']}/${this.flow['target_port']}`];

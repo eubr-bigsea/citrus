@@ -4,10 +4,11 @@
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHanle">
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="task.id" :show-decoration="showTaskDecoration || showTaskDecorationInternal"
-                    />
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.workflow.version} - ${task.id}`"
+                         :show-decoration="showTaskDecoration || showTaskDecorationInternal"/>
                     <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" 
-                        :key="`${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"></flow-component>
+                        v-if="tasksRendered"
+                        :key="`${$parent.workflow.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"/>
 
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
@@ -38,7 +39,7 @@
                         <div class="col-md-6">
                             <label>Cluster:</label>
                             <select v-model="cluster" class="form-control" v-on:change="changeCluster">
-                                <option v-for="option in clusters" v-bind:value="option.id">
+                                <option v-for="option in clusters" v-bind:value="option.id" :key="option.id">
                                     {{ option.name }}
                                 </option>
                             </select>
@@ -162,7 +163,7 @@
                         return {};
                     }
                 } else {
-                    return this.$store.getters.getFlows;
+                    return this.workflow.flows;
                 }
             },
             tasks() {
@@ -173,7 +174,7 @@
                         return {};
                     }
                 } else {
-                    return this.$store.getters.getTasks;
+                    return this.workflow.tasks;
                 }
             },
             groups() {
@@ -224,8 +225,13 @@
         },
         watch: {
             workflow() {
-
+                this.tasksRendered = false;
             }
+        },
+        updated(){
+            this.$nextTick(()=> {
+                this.tasksRendered = true;
+            });
         },
         data() {
             return {
@@ -246,6 +252,7 @@
                 clusterDescription: '',
                 cluster: null,
                 name: '',
+                tasksRendered: false,
                 settings: {
                     maxScrollbarLength: 60
                 }
@@ -542,10 +549,14 @@
                 return new Promise((resolve, reject) =>{
                     let oldInstance = this.instance;
                     oldInstance.deleteEveryEndpoint();
+                    oldInstance.deleteEveryConnection();
                     oldInstance.reset();
-
+                    /*
                     this.instance = this.getJsPlumbInstance();
-                    this._bindJsPlumbEvents();
+                    //this._bindJsPlumbEvents();
+                    this.$nextTick(() => {
+                       this.instance.repaintEverything();
+                    });*/
                     resolve();
                 });
             },
