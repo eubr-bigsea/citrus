@@ -107,7 +107,7 @@
         zIndex: 99,
     }
     const overlays = [
-        ["Arrow", { location: .75, width: 8, length: 15 }],
+        ["Arrow", { location: .85, width: 10, length: 15 }],
         //["Label", { padding: 10, location: .5, label: '[ <span class="fa fa-dot-circle-o"></span> ]', cssClass: "labelClass" }]
     ];
 
@@ -124,7 +124,7 @@
     };
 
     const endPointOptionsOutput = {
-        connector: [connectorType, { gap: 0, proximityLimit: 180, curviness: 75, margin: 20, cornerRadius: 5, stub: [30, 30], midpoint: .5 },],
+        connector: [connectorType, { gap: 0, xproximityLimit: 100, curviness: 75, xmargin: 10, cornerRadius: 5, stub: [20, 20], midpoint: .5 },],
         isSource: true,
         isTarget: false,
         cssClass: 'endpoint',
