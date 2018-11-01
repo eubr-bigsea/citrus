@@ -112,7 +112,7 @@
                 this.$root.$emit('onsave-workflow')
             },
             saveWorkflowAs() {
-
+                this.$root.$emit('onsaveas-workflow')
             },
             showHistory() {
                 this.$root.$emit('onshow-history');

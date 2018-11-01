@@ -65,7 +65,7 @@
 
 <script>
     import Vue from 'vue';
-
+    
     import lodash from 'lodash';
 
     //import ResizerComponent from 'vue-resize-handle/bidirectional';
@@ -73,8 +73,6 @@
     //import PerfectScrollbarCss from 'perfect-scrollbar/dist/css/perfect-scrollbar.css';
     //import CtxMenuComponent from '../ctx-menu/ctx-menu.vue';
     // import DropDownComponent from '../ui/dropdown.vue';
-
-    // import html2canvas from 'html2canvas';
 
     import TaskComponent from './Task.vue';
     import FlowComponent from './Flow.vue';
@@ -452,98 +450,6 @@
                     self.instance.repaintEverything();
                 })
 
-            },
-            saveAsImage() {
-                let self = this;
-                html2canvas(this.$refs.diagram, {
-                    width: 3000, height: 3000, logging: false, allowTaint: false,
-                    onclone: (clone) => {
-                        let elem = clone.getElementById(this.$refs.diagram.id);
-                        elem.parentElement.style.height = '10000px';
-                        elem.style.transform = 'inherit';
-                        elem.parentElement.scrollTop = 0;
-                    }
-                }).then(
-                    (canvas) => {
-                        //inversed, to get smallest
-                        let x0 = canvas.width, y0 = canvas.height, x1 = 0, y1 = 0;
-                        self.tasks.forEach((task) => {
-                            let elem = document.getElementById(task.id);
-                            x0 = Math.min(task.left, x0);
-                            x1 = Math.max(task.left + elem.style.width, x1);
-                            y0 = Math.min(task.top, y0);
-                            y1 = Math.max(task.top + elem.style.height, y1);
-                        });
-
-                        let targetCanvas = document.createElement('canvas');
-                        let targetCtx = targetCanvas.getContext('2d');
-                        let padding = 100;
-                        targetCanvas.width = x1 + 2 * padding;
-                        targetCanvas.height = y1 + 2 * padding;
-                        targetCtx.fillStyle = "white";
-                        targetCtx.fillRect(0, 0, targetCanvas.width, canvas.height);
-
-
-                        let ctx = canvas.getContext('2d');
-                        let $flows = document.getElementsByClassName('jtk-connector'); //'jsplumb-connector'
-                        for (var flow of $flows) {
-                            let xml = flow.innerHTML.replace(new RegExp('xmlns="http://www.w3.org/1999/xhtml" ', 'g'), '');
-                            xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${xml}</svg>`;
-                            console.debug(xml)
-                            let DOMURL = window.URL || window.webkitURL || window;
-                            let img = new Image();
-                            let svg = new Blob([xml], { type: 'image/svg+xml' });
-                            let url = DOMURL.createObjectURL(svg);
-                            let left = parseInt(flow.style.left);
-                            let top = parseInt(flow.style.top);
-                            img.onload = function () {
-                                targetCtx.drawImage(img, left, top);
-                                DOMURL.revokeObjectURL(url);
-                            }
-
-                            img.src = url;
-                        }
-                        /**/
-                        let $endpoints = document.querySelectorAll('.jtk-endpoint > svg')
-                        let b64Start = 'data:image/svg+xml;base64,';
-                        for (var endpoint of $endpoints) {
-                            let xml = endpoint.innerHTML.replace(new RegExp('xmlns="http://www.w3.org/1999/xhtml" ', 'g'), '');
-                            xml = `<svg width="25" height="25" xmlns="http://www.w3.org/2000/svg">${xml}</svg>`;
-
-                            let DOMURL = window.URL || window.webkitURL || window;
-                            let img = new Image();
-                            let svg = new Blob([xml], { type: 'image/svg+xml' });
-                            let url = DOMURL.createObjectURL(svg);
-                            let left = endpoint.parentElement.offsetLeft;
-                            let top = endpoint.parentElement.offsetTop;
-                            img.onload = function () {
-                                targetCtx.drawImage(img, left, top);
-                                DOMURL.revokeObjectURL(url);
-                            }
-
-                            img.src = url;
-                        }
-                        window.setTimeout(() => {
-                            //document.body.appendChild(canvas);
-                            //targetCtx.translate(-x0 + 50, -y0 + 50);
-
-
-                            targetCtx.drawImage(canvas, 0, 0);
-
-                            targetCtx.fillStyle = "black";
-                            targetCtx.font = "12pt Verdana";
-                            targetCtx.fillText(`${self.workflow.name}. Image generated at ${new Date()}`,
-                                20, targetCanvas.height - 20);
-                            targetCtx.lineWidth = 4;
-                            targetCtx.strokeStyle = "#000000";
-                            targetCtx.strokeRect(0, 0, targetCanvas.width, targetCanvas.height);
-                            //document.body.appendChild(targetCanvas);
-                            let link = document.createElement('a');
-                            link.setAttribute('download', `workflow_${self.workflow.id}.png`);
-                            link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-                            link.click();
-                        }, 1000);
-                    });
             },
             clearWorkflow() {
                 return new Promise((resolve, reject) =>{

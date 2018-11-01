@@ -2,7 +2,7 @@
     <div class="row" style="overflow:hidden">
         <TahitiSuggester/>
         <div class="col-md-12">
-            <diagram-toolbar :workflow="workflow"></diagram-toolbar>
+            <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
         </div>
         <div class="col-md-2">
             <toolbox :operations="operations"></toolbox>
@@ -51,6 +51,35 @@
             </div>
             <div slot="modal-footer" class="w-100">
                 <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
+            </div>
+        </b-modal>
+        <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled ref="saveAsModal">
+            <b-form-radio-group v-model="saveOption">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <b-form-radio name="saveOption" v-model="saveOption" value="new">
+                            {{$t('workflow.newName')}}
+                        </b-form-radio>
+                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'" :value="$t('workflow.copyOf') + ' ' + workflow.name"
+                        />
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <b-form-radio name="saveOption" v-model="saveOption" value="image">
+                            {{$t('workflow.asImage')}}</b-form-radio>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <b-form-radio name="saveOption" v-model="saveOption" value="template">
+                            {{$t('workflow.asTemplate')}}</b-form-radio>
+                        <p>
+                            <label>Description</label>
+                            <textarea class="form-control" :disabled="saveOption != 'template'"></textarea>
+                        </p>
+                    </div>
+                </div>
+            </b-form-radio-group>
+            <div slot="modal-footer" class="w-100">
+                <b-btn @click="closeSaveAs" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
+                <b-btn @click="okClicked" variant="primary" class="float-right mr-2">{{$t('common.ok')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -104,6 +133,7 @@
                 loaded: true,
                 operations: [],
                 history: [],
+                saveOption: 'new',
                 operationsLookup: new Map(),
                 showProperties: false,
                 selectedTask: { task: { operation: {} } },
@@ -145,9 +175,9 @@
             this.$root.$on('onsave-as-image', () => {
                 this.saveAsImage()
             });
-            this.$root.$on('onsave-workflow', () => {
-                this.saveWorkflow()
-            });
+            this.$root.$on('onsave-workflow', this.saveWorkflow);
+            this.$root.$on('onsaveas-workflow', this.showSaveAs);
+
             this.$root.$on('onblur-selection', () => {
                 this.showProperties = false;
                 this.selectedTask = { task: {} };
@@ -227,12 +257,13 @@
                 let $elem = this.$refs.diagram.$el.querySelector('.lemonade')
                 html2canvas($elem, {
                     width: 3000, height: 3000, logging: false, allowTaint: false,
-                    onclone: (clone) => {
+                    logging : true,
+                    onclone(clone){
                         let elem = clone.getElementById($elem.id);
                         elem.parentElement.style.height = '10000px';
                         elem.style.transform = 'inherit';
                         elem.parentElement.scrollTop = 0;
-                    }
+                    },
                 }).then(
                     (canvas) => {
                         //inversed, to get smallest 
@@ -251,56 +282,36 @@
                         targetCanvas.width = x1 + 2 * padding;
                         targetCanvas.height = y1 + 2 * padding;
                         targetCtx.fillStyle = "white";
-                        targetCtx.fillRect(0, 0, targetCanvas.width, canvas.height);
+                        //targetCtx.fillRect(0, 0, targetCanvas.width, canvas.height);
 
+                        // targetCtx.translate(-x0 + 150, -y0 + 150);
+                        targetCtx.drawImage(canvas, 0, 0);
 
                         let ctx = canvas.getContext('2d');
                         let $flows = document.getElementsByClassName('jtk-connector'); //'jsplumb-connector'
                         for (var flow of $flows) {
-                            //let xml = flow.innerHTML.replace(new RegExp('xmlns="http://www.w3.org/\\d+/(xhtml|svg)" ', 'g'), '').replace(
-                            //    new RegExp('version="1.1"', 'g'), '');;
-                            let xml = '<path d="M 0 -0.5 L 0 30.5 L 0 41 A 1 1 0 0,0 1 42 L 1.5 42 A 0.5 0.5 0 0,1 2 42.5 L 2 54.5 L 2 84 " transform="translate(1.9999999999999991,1)" pointer-events="visibleStroke" version="1.1" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#111" style=""></path>'
+                            let xml = flow.innerHTML //.replace(new RegExp('xmlns="http://www.w3.org/1999/xhtml" ', 'g'), '');
                             xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${xml}</svg>`;
-                            console.debug(xml)
                             let DOMURL = window.URL || window.webkitURL || window;
                             let img = new Image();
                             let svg = new Blob([xml], { type: 'image/svg+xml' });
                             let url = DOMURL.createObjectURL(svg);
                             let left = parseInt(flow.style.left);
                             let top = parseInt(flow.style.top);
+
+                            //flow.removeAttribute('position');
                             img.onload = function () {
                                 targetCtx.drawImage(img, left, top);
+                                // targetCtx.drawImage(img, 10, 20);
                                 DOMURL.revokeObjectURL(url);
                             }
-
-                            img.src = 'data:image/svg+xml;base64, ' + btoa(xml) //url;
-                        }
-                        /**/
-                        let $endpoints = document.querySelectorAll('.jtk-endpoint > svg')
-                        let b64Start = 'data:image/svg+xml;base64,';
-                        for (var endpoint of $endpoints) {
-                            let xml = endpoint.innerHTML.replace(new RegExp('xmlns="http://www.w3.org/1999/xhtml" ', 'g'), '');
-                            xml = `<svg width="25" height="25" xmlns="http://www.w3.org/2000/svg">${xml}</svg>`;
-
-                            let DOMURL = window.URL || window.webkitURL || window;
-                            let img = new Image();
-                            let svg = new Blob([xml], { type: 'image/svg+xml' });
-                            let url = DOMURL.createObjectURL(svg);
-                            let left = endpoint.parentElement.offsetLeft;
-                            let top = endpoint.parentElement.offsetTop;
-                            img.onload = function () {
-                                targetCtx.drawImage(img, left, top);
-                                DOMURL.revokeObjectURL(url);
-                            }
-
                             img.src = url;
                         }
+    
                         window.setTimeout(() => {
-                            //document.body.appendChild(canvas);
-                            //targetCtx.translate(-x0 + 50, -y0 + 50);
-
-
-                            targetCtx.drawImage(canvas, 0, 0);
+                            // document.body.appendChild(canvas);
+                            //targetCtx.translate(-x0 + 150, -y0 + 150);
+                            // targetCtx.drawImage(canvas, 0, 0);
 
                             targetCtx.fillStyle = "black";
                             targetCtx.font = "12pt Verdana";
@@ -308,7 +319,7 @@
                                 20, targetCanvas.height - 20);
                             targetCtx.lineWidth = 4;
                             targetCtx.strokeStyle = "#000000";
-                            targetCtx.strokeRect(0, 0, targetCanvas.width, targetCanvas.height);
+                            //targetCtx.strokeRect(0, 0, targetCanvas.width, targetCanvas.height);
                             //document.body.appendChild(targetCanvas);
                             let link = document.createElement('a');
                             link.setAttribute('download', `workflow_${self.workflow.id}.png`);
@@ -370,7 +381,7 @@
                                     });
                                     self.success(self.$t('workflow.versionRestored',
                                         { version, version2: 2343 }));
-                                    
+
                                     self.workflow = workflow;
                                     self.closeHistory();
                                 }).catch((e) => self.error(e))
@@ -427,6 +438,23 @@
             closeHistory() {
                 this.$refs.historyModal.hide();
             },
+            showSaveAs() {
+                if (this.$refs.saveAsModal) {
+                    this.$refs.saveAsModal.show();
+                }
+            },
+            okClicked() {
+                if (this.saveOption === 'new') {
+
+                } else if (this.saveOption === 'image') {
+                    this.saveAsImage();
+                } else if (this.saveOption === 'template') {
+                }
+                this.$refs.saveAsModal.hide();
+            },
+            closeSaveAs() {
+                this.$refs.saveAsModal.hide();
+            },
             _unique(data) {
                 return Array.from(new Set(data))
             },
@@ -464,6 +492,7 @@
     .blackout {
         background-color: rgba(0, 0, 0, 0) !important;
     }
+
     .historyArea {
         height: 60vh;
         overflow: auto

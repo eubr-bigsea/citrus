@@ -325,7 +325,6 @@
                         
                         let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
                         lbls[0][1]['location'] = locations[item.type];
-                        console.debug(lbls[0][1])
                         options['anchors'] = anchor.slice();
                         options['overlays'] = lbls.slice();
                         options['uuid'] = `${taskId}/${ports[inx].id}`;
