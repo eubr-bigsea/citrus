@@ -174,6 +174,7 @@ export default {
             attribute: 'Attribute',
             editValue: 'Edit value...',
             function: 'Function',
+            help: 'Help',
             taskName: 'Task name (optional)',
             expression: {
                 alias: 'New attribute name (alias)',
@@ -207,6 +208,7 @@ export default {
             asImage: 'As a image (a download window will appear)',
             asTemplate: 'As a template workflow',
             copyOf: 'Copy of',
+            imageGeneratedAt: 'Image generated at',
             newName: 'New name (a copy of the workflow will be created, but not loaded)',
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored: 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',

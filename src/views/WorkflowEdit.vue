@@ -97,8 +97,8 @@
     import SlideOutPanel from '../components/SlideOutPanel.vue'
     import html2canvas from 'html2canvas';
     import Notifier from '../mixins/Notifier'
-    let tahitiUrl = process.env.VUE_APP_TAHITI_URL
-    let limoneroUrl = process.env.VUE_APP_LIMONERO_URL
+    const  tahitiUrl = process.env.VUE_APP_TAHITI_URL
+    const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
 
     // let TahitiAttributeSuggester = undefined;
     export default {
@@ -257,11 +257,11 @@
                 let $elem = this.$refs.diagram.$el.querySelector('.lemonade')
                 html2canvas($elem, {
                     width: 3000, height: 3000, logging: false, allowTaint: false,
-                    logging : true,
+                    logging : false,
                     onclone(clone){
                         let elem = clone.getElementById($elem.id);
                         elem.parentElement.style.height = '10000px';
-                        elem.style.transform = 'inherit';
+                        elem.style.transform = 'inherit'; // remove zoom
                         elem.parentElement.scrollTop = 0;
                     },
                 }).then(
@@ -276,52 +276,44 @@
                             y1 = Math.max(task.top + elem.style.height, y1);
                         });
 
-                        let targetCanvas = document.createElement('canvas');
-                        let targetCtx = targetCanvas.getContext('2d');
-                        let padding = 100;
+                        const targetCanvas = document.createElement('canvas');
+                        const targetCtx = targetCanvas.getContext('2d');
+                        
+                        const padding = 100;
                         targetCanvas.width = x1 + 2 * padding;
                         targetCanvas.height = y1 + 2 * padding;
                         targetCtx.fillStyle = "white";
-                        //targetCtx.fillRect(0, 0, targetCanvas.width, canvas.height);
 
                         // targetCtx.translate(-x0 + 150, -y0 + 150);
                         targetCtx.drawImage(canvas, 0, 0);
 
                         let ctx = canvas.getContext('2d');
-                        let $flows = document.getElementsByClassName('jtk-connector'); //'jsplumb-connector'
-                        for (var flow of $flows) {
-                            let xml = flow.innerHTML //.replace(new RegExp('xmlns="http://www.w3.org/1999/xhtml" ', 'g'), '');
-                            xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${xml}</svg>`;
-                            let DOMURL = window.URL || window.webkitURL || window;
-                            let img = new Image();
-                            let svg = new Blob([xml], { type: 'image/svg+xml' });
-                            let url = DOMURL.createObjectURL(svg);
-                            let left = parseInt(flow.style.left);
-                            let top = parseInt(flow.style.top);
-
-                            //flow.removeAttribute('position');
-                            img.onload = function () {
+                        for (let flow of $elem.getElementsByClassName('jtk-connector')) {
+                            const DOMURL = window.URL || window.webkitURL || window;
+                            
+                            const xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${flow.innerHTML}</svg>`;
+                            const url = DOMURL.createObjectURL(
+                                    new Blob([xml], { type: 'image/svg+xml' }));
+                            const left = parseInt(flow.style.left);
+                            const top = parseInt(flow.style.top);
+                            
+                            const img = new Image();
+                            img.onload = () => {
                                 targetCtx.drawImage(img, left, top);
-                                // targetCtx.drawImage(img, 10, 20);
                                 DOMURL.revokeObjectURL(url);
-                            }
+                            };
                             img.src = url;
                         }
     
                         window.setTimeout(() => {
-                            // document.body.appendChild(canvas);
-                            //targetCtx.translate(-x0 + 150, -y0 + 150);
-                            // targetCtx.drawImage(canvas, 0, 0);
-
                             targetCtx.fillStyle = "black";
-                            targetCtx.font = "12pt Verdana";
-                            targetCtx.fillText(`${self.workflow.name}. Image generated at ${new Date()}`,
+                            targetCtx.font = "10pt Verdana";
+
+                            targetCtx.fillText(
+                                `${self.workflow.name}. ${self.$t('workflow.imageGeneratedAt')} ${new Date()}`,
                                 20, targetCanvas.height - 20);
-                            targetCtx.lineWidth = 4;
-                            targetCtx.strokeStyle = "#000000";
-                            //targetCtx.strokeRect(0, 0, targetCanvas.width, targetCanvas.height);
-                            //document.body.appendChild(targetCanvas);
-                            let link = document.createElement('a');
+                            
+                            const link = document.createElement('a');
                             link.setAttribute('download', `workflow_${self.workflow.id}.png`);
                             link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
                             link.click();

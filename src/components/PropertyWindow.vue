@@ -6,9 +6,8 @@
                     <strong>{{task.operation.name}}</strong>
                     <br/>
                     <small>
-                        {{task.id}}
-                        <br/>
-                        <em>{{task.operation.description}}</em>
+                        <div class="property-description">{{task.operation.description}}</div>
+                        <a class="property-help" :href="docReferenceUrl"><span class="fa fa-question-circle"></span> {{$t('property.help')}}</a>
                     </small>
                 </div>
                 <div class="card-body">
@@ -29,7 +28,7 @@
                         <b-card no-body>
                             <b-tabs card v-model="tabIndex">
                                 <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name">
-                                    <div v-for="field in form.fields" class="mb-2" v-bind:key="task.id + field.name">
+                                    <div v-for="field in form.fields" class="mb-2 property" v-bind:key="task.id + field.name">
                                         <keep-alive>
                                             <component v-if="['percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
                                                 :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
@@ -65,6 +64,9 @@
                         </div>
                         -->
                     </form>
+                    <div class="card-body">
+                    {{task.id}}
+                    </div>
                 </div>
                 <div v-for="form in task.operation.forms" v-bind:key="form.id">
                     {{form.ca}}
@@ -102,8 +104,15 @@
     import TextComponent from './widgets/Text.vue'
     import TextAreaComponent from './widgets/TextArea.vue'
 
+    const referenceUrl = process.env.VUE_APP_REFERENCE_BASE_URL;
+
     export default {
         name: 'PropertyWindow',
+        computed: {
+            docReferenceUrl(){
+                return `${referenceUrl}/${this.task.operation.slug}`;
+            }
+        },
         components: {
             'attribute-function-component': AttributeFunctionComponent,
             'attribute-selector-component': AttributeSelectorComponent,
@@ -204,6 +213,19 @@
     }
 </script>
 <style scoped>
+    .property {
+        overflow: hidden;
+    }
+    .property-help {
+        font-size: 1.2em;
+    }
+    .property-description {
+        max-height: 50px;
+        overflow: auto;
+        font-style: italic;
+        font-size: 1.1em;
+        text-align: justify 
+    }
     .props {
         width: 350px;
         height: calc(79vh + 2px);
