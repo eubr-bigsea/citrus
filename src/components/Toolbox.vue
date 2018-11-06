@@ -88,11 +88,24 @@
                     let subGroups = op.categories.filter((cat) => {
                         return cat.type === 'subgroup';
                     })
-                    return (groups.length ? groups[0].name : '') + "#" + (subGroups.length ? subGroups[0].name : '');
+                    let result = {}
+                    if (groups.length){
+                        result = {order: groups[0].order, group: groups[0].name};
+                        if (subGroups.length){
+                            result['subGroup'] = subGroups[0].name;
+                        } else {
+                            result['subGroup'] = '';
+                        }
+                    }
+                    return result;
                 })];
-                g.sort((a, b) => a[0].localeCompare(b[0]));
+                g.sort((a, b) => {
+                    if (a[0].order < b[0].order) return -1;
+                    if (a[0].order > b[0].order) return 1;
+                    return a[0].group.localeCompare(b[0].group);
+                });
 
-                return [...groupBy(g, (x) => x[0].split('#')[0])];
+                return [...groupBy(g, (x) => x[0].name)];
             },
             searcheableOperations() {
                 let self = this
