@@ -10,32 +10,34 @@
                         <input @input="searchOperation" v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')" />
                     </li>
                     <div v-if="search === ''">
-                        <div v-for="(group, index) in groupedOperations" class="unstyled" v-bind:key="index">
+                        <div v-for="(group, index) in groupedOperations" :title="group.order" class="unstyled" v-bind:key="group.group" >
                             <b-link draggable="false" data-parent="submenus" v-b-toggle="'submenu' + index" class="bg-dark text-white list-group-item list-group-item-action flex-column align-items-start">
-                                <span class="fa fa-layer-group"></span> {{group[0]}}
+                                <span class="fa fa-layer-group"></span> {{group.group}}
                             </b-link>
+                            
                             <b-collapse :id="'submenu' + index" data-parent="submenus">
-                                <div v-for="(subgroup, index2) in group[1]" v-bind:key="index2">
-                                    <div v-if="subgroup[0] && subgroup[0].split('#')[1].length">
+                                 <div v-if="group.operations">
+                                    <span v-for="op in group.operations" v-bind:key="op.operation.id" :title="op.operation.name">
+                                        <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item list-group-item-action text-dark">
+                                            <span v-text="op.operation.name" :title="op.operation.name"></span>
+                                        </a>
+                                    </span>
+                                </div>
+                                <div v-else>
+                                    <div v-for="(subGroup, index2) in group.subGroups" v-bind:key="subGroup.subGroup">
                                         <b-link draggable="false" v-b-toggle="'subsubmenu' + index2" class="bg-secondary text-white list-group-item list-group-item-action flex-column align-items-start">
                                             <span class="menu-collapsed">
-                                                <span class="fa fa-layer-group"></span> {{ subgroup[0].split('#')[1] }}
+                                                <span class="fa fa-layer-group"></span> {{subGroup.subGroup }}
                                             </span>
                                         </b-link>
-                                        <b-collapse :id="'subsubmenu' + index2" v-for="op in subgroup[1]" v-bind:key="op.id" :title="op.name">
-                                            <a draggable="true" :data-id="op.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item list-group-item-action bg-white text-dark ml-30">
-                                                <span v-text="op.name"></span>
+                                        <b-collapse :id="'subsubmenu' + index2" v-for="op in subGroup.operations" v-bind:key="op.operation.id" :title="op.operation.name">
+                                            <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item list-group-item-action bg-white text-dark ml-30">
+                                                <span v-text="op.operation.name"></span>
                                             </a>
                                         </b-collapse>
                                     </div>
-                                    <div v-else>
-                                        <span v-for="op in subgroup[1]" v-bind:key="op.id" :title="op.name">
-                                            <a draggable="true" :data-id="op.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item list-group-item-action text-dark">
-                                                <span v-text="op.name" :title="op.name"></span>
-                                            </a>
-                                        </span>
-                                    </div>
                                 </div>
+                               
                             </b-collapse>
                         </div>
                     </div>
@@ -81,6 +83,7 @@
         },
         computed: {
             groupedOperations() {
+                /*
                 let g = [...groupBy(this.operations, (op) => {
                     let groups = op.categories.filter((cat) => {
                         return cat.type === 'group';
@@ -99,13 +102,53 @@
                     }
                     return result;
                 })];
+                */
+                const ops = this.operations.map((op) =>{
+                    const group = op.categories.find((cat) => {
+                        return cat.type === 'group';
+                    }) || {name: '', order: 0}
+                    const subGroup = op.categories.find((cat) => {
+                        return cat.type === 'subgroup';
+                    }) || {name: ''}
+                    return {group: group.name, operation: op, subGroup: subGroup.name, order: group.order}
+                });
+                ops.sort((a, b) => {
+                    if (a.order < b.order) return -1;
+                    if (a.order > b.order) return 1;
+                    const groupComapare = a.group.localeCompare(b.group)
+                    if (groupComapare != 0) return groupComapare;
+                    return a.subGroup.localeCompare(b.subGroup);
+                });
+                let grouped = [...groupBy(ops, (x) => x.group)].map((item) => {
+                    if (item[1][0].subGroup === ''){
+                        return {group: item[0], operations: item[1]};
+                    } else {
+                        return {group: item[0], 
+                            subGroups: [...groupBy(item[1], (x) => x.subGroup)].map((subItem) => {
+                                return {group: item[0], subGroup: subItem[0], operations: subItem[1]};
+                            })
+                        };
+                    }
+                });
+                return grouped;
+                /*
+                console.debug(grouped)
                 g.sort((a, b) => {
                     if (a[0].order < b[0].order) return -1;
                     if (a[0].order > b[0].order) return 1;
-                    return a[0].group.localeCompare(b[0].group);
+                    const groupComapare = a[0].group.localeCompare(b[0].group)
+                    if (groupComapare != 0) return groupComapare;
+                    return a[0].subGroup.localeCompare(b[0].subGroup);
                 });
-
-                return [...groupBy(g, (x) => x[0].name)];
+                const result = [...groupBy(g, (x) => x[0].group)];
+                result.forEach(group => {
+                    //group[1] = [...groupBy(group[1], (x) => x[0].subGroup)]
+                    if (group[1][0][0].subGroup !== ''){
+                        //console.debug(group[1] )
+                    }
+                });
+                //console.debug(result)
+                return result*/
             },
             searcheableOperations() {
                 let self = this
