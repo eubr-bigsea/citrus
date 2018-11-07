@@ -10,14 +10,19 @@
     export default {
         components: { LabelComponent },
         methods: {
-            updated: _.debounce(function (e) { this.$root.$emit('update-form-field-value', this.field, e.target.value); }, 500)
+            updated: _.debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
         },
         computed: {
             normalizedValue: () => {
                 return this.field.value || this.field.default;
             }
         },
-        props: { value: '', field: {} },
+        props: {
+            value: '', field: {}, message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
+        },
 
     }
 </script>

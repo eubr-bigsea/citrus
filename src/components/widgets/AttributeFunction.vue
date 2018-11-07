@@ -125,7 +125,7 @@
                 return false;
             },
             okClicked(ev) {
-                this.$root.$emit('update-form-field-value', this.field,
+                this.$root.$emit(this.message, this.field,
                     this.valueList);
                 this.$refs.modal.hide();
             },
@@ -133,6 +133,13 @@
                 this.$refs.modal.hide();
             }
         },
-        props: ['value', 'field', 'options'],
+        props: {
+            value: '', 
+            field: {}, 
+            options: {},
+            message: {
+                default: 'update-form-field-value'
+            }
+        },
     }
 </script>

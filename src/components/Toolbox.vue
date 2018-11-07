@@ -3,7 +3,7 @@
         <VuePerfectScrollbar class="scroll-area" :settings="settings">
             <div class="mr-2">
                 <ul class="list-group">
-                    <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                    <li class="bg-dark text-white list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
                         {{$tc('common.operation', 2).toUpperCase()}}
                     </li>
                     <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">

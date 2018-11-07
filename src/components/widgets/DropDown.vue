@@ -14,7 +14,7 @@
     export default {
         components: { LabelComponent },
         mounted() {
-            this.$root.$emit('update-form-field-value',
+            this.$root.$emit(this.message,
                 this.field, this.value || this.field.default);
         },
         computed: {
@@ -32,10 +32,15 @@
         methods: {
             updated(e) {
                 this.selected = e.target.value;
-                this.$root.$emit('update-form-field-value', this.field, e.target.value);
+                this.$root.$emit(this.message, this.field, e.target.value);
             }
         },
-        props: { value: 0, field: null, language: { default: 'en' }, },
+        props: {
+            value: 0, field: null, language: { default: 'en' }, message: {
+                type: String,
+                default: 'update-form-field-value'
+            }        
+        },
         ready: function () {
             //console.debug(this.field, this.field['default'], this.value)
             if (this.field['default'] && (this.value === null || this.value === '')) {

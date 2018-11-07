@@ -1,9 +1,7 @@
 <template>
     <div>
         <LabelComponent :field="field"></LabelComponent>
-        <prism-editor :code="value === null ? field.default: value" 
-            v-model="code"
-            :language="programmingLanguage" ref="prism" />
+        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="programmingLanguage" ref="prism" />
     </div>
 </template>
 <script>
@@ -69,7 +67,7 @@
     };
 
     export default {
-        data(){
+        data() {
             return {
                 code: ''
             }
@@ -83,12 +81,16 @@
         watch: {
             code: _.debounce(function (e) {
                 // let content = e.target.value || e.target.textContent;
-                this.$root.$emit('update-form-field-value', this.field, this.code);
+                this.$root.$emit(this.message, this.field, this.code);
             }, 500)
         },
         props: {
             value: 0, field: null,
             programmingLanguage: null,
+            message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
         },
 
     }

@@ -2,18 +2,27 @@
     <div class="row" style="overflow:hidden">
         <TahitiSuggester/>
         <div class="col-md-12">
-            <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
-        </div>
-        <div class="col-md-12">
-            <b-tabs>
-                <b-tab :title="$tc('titles.workflow', 1)" active>
+            <b-tabs @input="updateSelectedTab">
+                <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order">
+                    <template slot="title">
+                        <span class="fa fa-cogs"></span> {{form.name}}
+                    </template>
+                    <div class="card mt-1">
+                        <div class="card-body">
+                            <WorkflowProperty v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded"></WorkflowProperty>
+                        </div>
+                    </div>
+                </b-tab>
+                <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
                     <div class="row pt-1">
+                        <div class="col-md-12">
+                            <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
+                        </div>
                         <div class="col-md-2">
                             <toolbox :operations="operations"></toolbox>
                         </div>
                         <div class="col-md-10 pl-0" style="position: relative">
-                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"
-                                :version="workflow.version"></diagram>
+                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded" :version="workflow.version"></diagram>
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
                             </slideout-panel>
@@ -89,28 +98,7 @@
                         </b-modal>
                     </div>
                 </b-tab>
-                <b-tab>
-                    <template slot="title">
-                        <span class="fa fa-cogs"></span> {{$tc('titles.property', 2)}}  
-                    </template>
-                    <div class="card mt-1">
-                        <div class="card-body">
-                            <div v-if="loaded" v-for="(form, index) in workflow.platform.forms" :key="index">
-                                <div v-for="(field, index2) in form.fields" class="mb-2 property" v-bind:key="index2">
-                                        <component v-if="['percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
-                                            :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
-                                            language="language" context="context">
-                                        </component>
-                                        <span v-else>
-                                            {{field.name}} {{field.suggested_widget}}
-                                        </span>
-                                    </div>
-                            </div>
-                            {{workflow.platform.forms}}
-                            {{workflow.forms}}
-                        </div>
-                    </div>
-                </b-tab>
+
             </b-tabs>
         </div>
     </div>
@@ -126,9 +114,11 @@
     import DiagramToolbarComponent from '../components/DiagramToolbar.vue'
     import ToolboxComponent from '../components/Toolbox.vue'
     import SlideOutPanel from '../components/SlideOutPanel.vue'
+    import WorkflowProperty from '../components/WorkflowProperty.vue'
     import html2canvas from 'html2canvas';
     import Notifier from '../mixins/Notifier'
-    const  tahitiUrl = process.env.VUE_APP_TAHITI_URL
+
+    const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
 
     // let TahitiAttributeSuggester = undefined;
@@ -140,6 +130,7 @@
             'toolbox': ToolboxComponent,
             'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
+            WorkflowProperty,
             VuePerfectScrollbar,
             TahitiSuggester: () => {
 
@@ -160,13 +151,14 @@
             return {
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
-                workflow: {tasks: [], flows:[], platform:{}},
+                workflow: { tasks: [], flows: [], platform: {} },
                 loaded: true,
                 operations: [],
                 history: [],
                 saveOption: 'new',
                 operationsLookup: new Map(),
                 showProperties: false,
+                selectedTab: 0,
                 selectedTask: { task: { operation: {} } },
                 propertyStyles: [
                     {
@@ -226,10 +218,21 @@
                     self.selectedTask.task.forms[field.name] = { value: value }
                 }
             });
+            this.$root.$on('update-workflow-form-field-value', (field, value) => {
+                const self = this;
+                if (self.workflow)
+                    try {
+                        console.debug(field.name, value)
+                        self.workflow.forms[field.name] = { value };
+                    } catch (e) {
+                        console.debug(e)
+                    }
+            })
             /* Task related */
             this.$root.$on('addTask', (task) => {
                 this.workflow.tasks.push(task);
             });
+
 
             this.$root.$on('addFlow', (flow) => {
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
@@ -245,11 +248,9 @@
             }
         },
         methods: {
-            getValue(name) {
-                return this.workflow
-                    && this.workflow.forms
-                    && this.workflow.forms[name]
-                    ? this.workflow.forms[name].value : null;
+            updateSelectedTab(index) {
+                this.selectedTab = index;
+                this.$refs.diagram.repaint();
             },
             load() {
                 let self = this;
@@ -271,8 +272,9 @@
                                 }
                                 workflow.platform.forms.forEach((form) => {
                                     form.fields.forEach((field) => {
-                                        workflow.forms[field.name] = workflow.forms[field.name] || 
-                                            field['default'] || ''
+                                        // console.debug("Aqui", workflow.forms[field.name])
+                                        // workflow.forms[field.name] = workflow.forms[field.name].value ||
+                                        //     field['default'] || ''
                                     });
                                 });
                                 self.workflow = workflow;
@@ -303,8 +305,8 @@
                 let $elem = this.$refs.diagram.$el.querySelector('.lemonade')
                 html2canvas($elem, {
                     width: 3000, height: 3000, logging: false, allowTaint: false,
-                    logging : false,
-                    onclone(clone){
+                    logging: false,
+                    onclone(clone) {
                         let elem = clone.getElementById($elem.id);
                         elem.parentElement.style.height = '10000px';
                         elem.style.transform = 'inherit'; // remove zoom
@@ -324,7 +326,7 @@
 
                         const targetCanvas = document.createElement('canvas');
                         const targetCtx = targetCanvas.getContext('2d');
-                        
+
                         const padding = 100;
                         targetCanvas.width = x1 + 2 * padding;
                         targetCanvas.height = y1 + 2 * padding;
@@ -336,13 +338,13 @@
                         let ctx = canvas.getContext('2d');
                         for (let flow of $elem.getElementsByClassName('jtk-connector')) {
                             const DOMURL = window.URL || window.webkitURL || window;
-                            
+
                             const xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${flow.innerHTML}</svg>`;
                             const url = DOMURL.createObjectURL(
-                                    new Blob([xml], { type: 'image/svg+xml' }));
+                                new Blob([xml], { type: 'image/svg+xml' }));
                             const left = parseInt(flow.style.left);
                             const top = parseInt(flow.style.top);
-                            
+
                             const img = new Image();
                             img.onload = () => {
                                 targetCtx.drawImage(img, left, top);
@@ -350,7 +352,7 @@
                             };
                             img.src = url;
                         }
-    
+
                         window.setTimeout(() => {
                             targetCtx.fillStyle = "black";
                             targetCtx.font = "10pt Verdana";
@@ -358,7 +360,7 @@
                             targetCtx.fillText(
                                 `${self.workflow.name}. ${self.$t('workflow.imageGeneratedAt')} ${new Date()}`,
                                 20, targetCanvas.height - 20);
-                            
+
                             const link = document.createElement('a');
                             link.setAttribute('download', `workflow_${self.workflow.id}.png`);
                             link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));

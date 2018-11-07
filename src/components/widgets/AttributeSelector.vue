@@ -28,9 +28,15 @@
         },
         methods: {
             updated(val) {
-                this.$root.$emit('update-form-field-value', this.field, val);
+                this.$root.$emit(this.message, this.field, val);
             }
         },
-        props: { value: "", field: null, suggestions: { required: true } },
+        props: {
+            value: "", field: null, suggestions: { required: true },
+            message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
+        },
     }
 </script>

@@ -2,9 +2,7 @@
     <div>
         <LabelComponent :field="field"></LabelComponent>
         <div class="color-items">
-            <div v-for="(opt, index) in pairOptionValueList" @click="doUpdate(opt)" 
-                :key="index"
-                class="color-item" :class="{active: value && opt && opt.background === value.background && opt.foreground == value.foreground}"
+            <div v-for="(opt, index) in pairOptionValueList" @click="doUpdate(opt)" :key="index" class="color-item" :class="{active: value && opt && opt.background === value.background && opt.foreground == value.foreground}"
                 :style="{background: opt.background}"></div>
         </div>
     </div>
@@ -17,13 +15,19 @@
             pairOptionValueList() {
                 return JSON.parse(this.field.values);
             }
-        }, 
+        },
         methods: {
             doUpdate(value) {
-                this.$root.$emit('update-form-field-value', this.field, value)
+                this.$root.$emit(this.message, this.field, value)
             }
         },
-        props: { value: '', field: {} },
+        props: {
+            value: '', field: {},
+            message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
+        },
     }
 </script>
 <style scoped>

@@ -36,7 +36,7 @@
         },
         methods: {
             okClicked(e) {
-                this.$root.$emit('update-form-field-value', this.field,
+                this.$root.$emit(this.message, this.field,
                     this.sql);
                 this.$refs.modal.hide();
             },
@@ -46,7 +46,11 @@
         },
         props: {
             value: {},
-            field: {}
+            field: {},
+            message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
         },
     }
 </script>

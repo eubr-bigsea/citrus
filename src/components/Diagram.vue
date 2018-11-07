@@ -452,6 +452,11 @@
                 })
 
             },
+            repaint(){
+                this.$nextTick(()=>{
+                    this.instance.repaintEverything();
+                });
+            },
             clearWorkflow() {
                 return new Promise((resolve, reject) =>{
                     let oldInstance = this.instance;

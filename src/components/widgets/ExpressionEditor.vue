@@ -68,7 +68,7 @@
         computed: {
             displayValue() {
                 if (this.value) {
-                    return this.value.map((v) =>{
+                    return this.value.map((v) => {
                         return `${v.alias} = ${v.expression}`
                     }).join('\n')
                 } else {
@@ -102,7 +102,7 @@
                 }
             },
             okClicked(e) {
-                this.$root.$emit('update-form-field-value', this.field, 
+                this.$root.$emit(this.message, this.field,
                     this.expressionList);
                 this.$refs.modal.hide();
             },
@@ -132,7 +132,11 @@
             addOperators: {},
             value: {},
             removeOperators: {},
-            field: {}
+            field: {},
+            message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
         },
     }
 </script>

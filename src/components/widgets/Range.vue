@@ -1,8 +1,8 @@
 <template>
     <div class="clear mb-4">
         <LabelComponent :field="field" <LabelComponent :field="field"></LabelComponent>
-        <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)"
-            :required="field.required" />
+        <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)" :required="field.required"
+        />
         <div class="float-left">{{split || 0}}%</div>
         <div class="float-right text-right">{{100-split}}%</div>
     </div>
@@ -23,13 +23,19 @@
             updated:
                 _.debounce(function (e) {
                     this.split = parseInt(e.target.value);
-                    this.$root.$emit('update-form-field-value', this.field, e.target.value);
+                    this.$root.$emit(this.message, this.field, e.target.value);
                 }, 500)
         },
 
-        props: { value: {
-            type: Number, default: 50,
-        }, field: {} },
+        props: {
+            value: {
+                type: Number, default: 50,
+            }, field: {},
+            message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
+        },
 
     }
 </script>
