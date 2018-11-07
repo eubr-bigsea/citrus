@@ -4,84 +4,115 @@
         <div class="col-md-12">
             <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
         </div>
-        <div class="col-md-2">
-            <toolbox :operations="operations"></toolbox>
-        </div>
-        <div class="col-md-10 pl-0" style="position: relative">
-            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"></diagram>
-            <slideout-panel :opened="showProperties">
-                <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
-            </slideout-panel>
-            <!--
-            <slideout-panel :opened="showProperties" style="position: absolute; right:360px; height:100px">
-                <div class="p-3" style="font-size: .8rem; border: 1px solid; background: #fff; width: 500px; height: 400px; z-index: 0">
-                    <VuePerfectScrollbar>
-                        <div style="margin-right:20px">
-                            <h5>{{selectedTask.task.operation.name}}</h5>
-                            <div v-for="form in selectedTask.task.operation.forms">
-                                <dl v-for="field in form.fields">
-                                    <dt>{{field.label}}</dt>
-                                    <dd>{{field.help}}</dd>
-                                </dl>
-                            </div>
+        <div class="col-md-12">
+            <b-tabs>
+                <b-tab :title="$tc('titles.workflow', 1)" active>
+                    <div class="row pt-1">
+                        <div class="col-md-2">
+                            <toolbox :operations="operations"></toolbox>
                         </div>
-                    </VuePerfectScrollbar>
-                </div>
-            </slideout-panel>
-        -->
+                        <div class="col-md-10 pl-0" style="position: relative">
+                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"
+                                :version="workflow.version"></diagram>
+                            <slideout-panel :opened="showProperties">
+                                <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
+                            </slideout-panel>
+                            <!--
+                            <slideout-panel :opened="showProperties" style="position: absolute; right:360px; height:100px">
+                                <div class="p-3" style="font-size: .8rem; border: 1px solid; background: #fff; width: 500px; height: 400px; z-index: 0">
+                                    <VuePerfectScrollbar>
+                                        <div style="margin-right:20px">
+                                            <h5>{{selectedTask.task.operation.name}}</h5>
+                                            <div v-for="form in selectedTask.task.operation.forms">
+                                                <dl v-for="field in form.fields">
+                                                    <dt>{{field.label}}</dt>
+                                                    <dd>{{field.help}}</dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                    </VuePerfectScrollbar>
+                                </div>
+                            </slideout-panel>
+                        -->
+                        </div>
+                        <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
+                            <div class="historyArea">
+                                <table class="table table-sm table-striped text-center">
+                                    <tr>
+                                        <th>{{$tc('common.version')}}</th>
+                                        <th>{{$tc('common.date')}}</th>
+                                        <th>{{$tc('common.author')}}</th>
+                                        <th>{{$tc('common.action')}}</th>
+                                    </tr>
+                                    <tr v-for="h in history" :key="h.id">
+                                        <td>{{h.version}}</td>
+                                        <td>{{h.date}}</td>
+                                        <td>{{h.user_name}}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div slot="modal-footer" class="w-100">
+                                <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
+                            </div>
+                        </b-modal>
+                        <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled ref="saveAsModal">
+                            <b-form-radio-group v-model="saveOption">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <b-form-radio name="saveOption" v-model="saveOption" value="new">
+                                            {{$t('workflow.newName')}}
+                                        </b-form-radio>
+                                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'" :value="$t('workflow.copyOf') + ' ' + workflow.name"
+                                        />
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <b-form-radio name="saveOption" v-model="saveOption" value="image">
+                                            {{$t('workflow.asImage')}}</b-form-radio>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <b-form-radio name="saveOption" v-model="saveOption" value="template">
+                                            {{$t('workflow.asTemplate')}}</b-form-radio>
+                                        <p>
+                                            <label>Description</label>
+                                            <textarea class="form-control" :disabled="saveOption != 'template'"></textarea>
+                                        </p>
+                                    </div>
+                                </div>
+                            </b-form-radio-group>
+                            <div slot="modal-footer" class="w-100">
+                                <b-btn @click="closeSaveAs" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
+                                <b-btn @click="okClicked" variant="primary" class="float-right mr-2">{{$t('common.ok')}}</b-btn>
+                            </div>
+                        </b-modal>
+                    </div>
+                </b-tab>
+                <b-tab>
+                    <template slot="title">
+                        <span class="fa fa-cogs"></span> {{$tc('titles.property', 2)}}  
+                    </template>
+                    <div class="card mt-1">
+                        <div class="card-body">
+                            <div v-if="loaded" v-for="(form, index) in workflow.platform.forms" :key="index">
+                                <div v-for="(field, index2) in form.fields" class="mb-2 property" v-bind:key="index2">
+                                        <component v-if="['percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                            :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
+                                            language="language" context="context">
+                                        </component>
+                                        <span v-else>
+                                            {{field.name}} {{field.suggested_widget}}
+                                        </span>
+                                    </div>
+                            </div>
+                            {{workflow.platform.forms}}
+                            {{workflow.forms}}
+                        </div>
+                    </div>
+                </b-tab>
+            </b-tabs>
         </div>
-        <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
-            <div class="historyArea">
-                <table class="table table-sm table-striped text-center">
-                    <tr>
-                        <th>{{$tc('common.version')}}</th>
-                        <th>{{$tc('common.date')}}</th>
-                        <th>{{$tc('common.author')}}</th>
-                        <th>{{$tc('common.action')}}</th>
-                    </tr>
-                    <tr v-for="h in history" :key="h.id">
-                        <td>{{h.version}}</td>
-                        <td>{{h.date}}</td>
-                        <td>{{h.user_name}}</td>
-                        <td>
-                            <button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div slot="modal-footer" class="w-100">
-                <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
-            </div>
-        </b-modal>
-        <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled ref="saveAsModal">
-            <b-form-radio-group v-model="saveOption">
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <b-form-radio name="saveOption" v-model="saveOption" value="new">
-                            {{$t('workflow.newName')}}
-                        </b-form-radio>
-                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'" :value="$t('workflow.copyOf') + ' ' + workflow.name"
-                        />
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <b-form-radio name="saveOption" v-model="saveOption" value="image">
-                            {{$t('workflow.asImage')}}</b-form-radio>
-                    </div>
-                    <div class="col-md-12 mb-3">
-                        <b-form-radio name="saveOption" v-model="saveOption" value="template">
-                            {{$t('workflow.asTemplate')}}</b-form-radio>
-                        <p>
-                            <label>Description</label>
-                            <textarea class="form-control" :disabled="saveOption != 'template'"></textarea>
-                        </p>
-                    </div>
-                </div>
-            </b-form-radio-group>
-            <div slot="modal-footer" class="w-100">
-                <b-btn @click="closeSaveAs" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
-                <b-btn @click="okClicked" variant="primary" class="float-right mr-2">{{$t('common.ok')}}</b-btn>
-            </div>
-        </b-modal>
     </div>
 </template>
 
@@ -129,7 +160,7 @@
             return {
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
-                workflow: {},
+                workflow: {tasks: [], flows:[], platform:{}},
                 loaded: true,
                 operations: [],
                 history: [],
@@ -214,6 +245,12 @@
             }
         },
         methods: {
+            getValue(name) {
+                return this.workflow
+                    && this.workflow.forms
+                    && this.workflow.forms[name]
+                    ? this.workflow.forms[name].value : null;
+            },
             load() {
                 let self = this;
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
@@ -228,6 +265,15 @@
                                 })
                                 workflow.tasks.forEach((task) => {
                                     task.operation = self.operationsLookup[task.operation.id]
+                                });
+                                if (!workflow.forms) {
+                                    workflow.forms = {};
+                                }
+                                workflow.platform.forms.forEach((form) => {
+                                    form.fields.forEach((field) => {
+                                        workflow.forms[field.name] = workflow.forms[field.name] || 
+                                            field['default'] || ''
+                                    });
                                 });
                                 self.workflow = workflow;
                                 this.updateAttributeSuggestion();

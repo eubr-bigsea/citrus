@@ -4,11 +4,11 @@
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHanle">
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.workflow.version} - ${task.id}`"
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
                          :show-decoration="showTaskDecoration || showTaskDecorationInternal"/>
                     <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" 
                         v-if="tasksRendered"
-                        :key="`${$parent.workflow.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"/>
+                        :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"/>
 
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
@@ -106,6 +106,7 @@
             instance: null,
             group: null,
             operations: null,
+            version: 0
         },
         data() {
             return {

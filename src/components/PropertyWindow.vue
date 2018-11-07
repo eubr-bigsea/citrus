@@ -203,7 +203,7 @@
         },
         props: {
             task: { type: Object, default: {} },
-            suggestions: { type: Array, default: [] }
+            suggestions: { type: Array, default: () => [] }
         },
         watch: {
             task() {
