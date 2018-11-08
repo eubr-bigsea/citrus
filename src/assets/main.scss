@@ -170,6 +170,13 @@ ul.nav-tabs {
     li.default {
         order: -1; /* the default is 0 */
     }
+    .tab-order-0, .tab-order-1, .tab-order-2, .tab-order-3, .tab-order-5,
+    .tab-order-5, .tab-order-6, .tab-order-7, .tab-order-8, .tab-order-9 {
+        a {
+            padding: 2px 15px;
+            font-size: .9em;
+        }
+    }
     .tab-order-0 {
         order: 0   
     }
@@ -201,4 +208,7 @@ ul.nav-tabs {
         order: 9   
     }
     
+}
+.w-0 {
+    width: 0 !important;
 }
