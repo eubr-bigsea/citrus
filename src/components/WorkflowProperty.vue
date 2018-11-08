@@ -65,9 +65,6 @@
             },
         },
         mounted(){
-            this.$root.$on('update-form-field-value', (field, value) => {
-                console.debug('OK')
-            });
         }
     }
 </script>

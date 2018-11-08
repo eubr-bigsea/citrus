@@ -1,7 +1,7 @@
 <template>
     <label class="switch">
         <input :class="classes" type="checkbox" :checked="checked" :name="name" 
-            :disabled="disabled" v-model="value" >
+            :disabled="disabled" v-model="value" @change="changed">
         <span>
             <slot></slot>
         </span>
@@ -15,11 +15,19 @@
             disabled: Boolean,
             classes: String,
             checked: Boolean,
-            name: String
+            name: String,
+            onchange: null
         },
         data() {
             return {
                 value: null
+            }
+        },
+        methods: {
+            changed(){
+                if (this.onchange) {
+                    this.onchange(this.value);
+                }
             }
         },
         beforeMount() {

@@ -222,7 +222,6 @@
                 const self = this;
                 if (self.workflow)
                     try {
-                        console.debug(field.name, value)
                         self.workflow.forms[field.name] = { value };
                     } catch (e) {
                         console.debug(e)
