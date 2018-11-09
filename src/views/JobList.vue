@@ -87,11 +87,12 @@
                 data.asc = data.ascending === 1 ? 'true' : 'false'
                 data.size = data.limit
                 data.name = data.query
-
+                this.$Progress.start();
                 return axios.get(`${standUrl}/jobs`,
                     {
                         params: data
                     }).then(resp => {
+                        this.$Progress.finish();
                         return { data: resp.data.data, count: resp.data.pagination.total };
                     }).catch(function (e) {
                         this.dispatch('error', e);
@@ -99,11 +100,14 @@
             },
             remove(job) {
                 this.confirm(this.$t('actions.delete'), this.$t('messages.doYouWantToDelete'), () => {
+                    this.$Progress.start();
                     axios.delete(`${standUrl}/jobs/${job.id}`, {}).then(resp => {
                         this.success(this.$t('messages.successDeletion',
                             { what: this.$t('titles.job') }));
                         this.$refs.jobList.refresh();
+                        this.$Progress.finish();
                     }).catch(function (e) {
+                        this.$Progress.finish()
                         this.dispatch('error', e);
                     }.bind(this));
                 })

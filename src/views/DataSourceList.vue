@@ -89,13 +89,15 @@
                         data.sort = data.orderBy
                         data.asc = data.ascending === 1 ? 'true' : 'false'
                         data.size = data.limit
-
+                        this.$Progress.start();
                         return axios.get(`${limoneroUrl}/datasources?enabled=true&simple=true`,
                             {
                                 params: data
                             }).then(resp => {
+                                this.$Progress.finish();
                                 return { data: resp.data.data, count: resp.data.pagination.total };
                             }).catch(function (e) {
+                                this.$Progress.finish();
                                 this.dispatch('error', e);
                             }.bind(this));
                     }

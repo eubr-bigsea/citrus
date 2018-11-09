@@ -73,12 +73,15 @@
 
                         let url = `${tahitiUrl}/workflows`;
                         let headers = {}
+                        this.$Progress.start()
                         return axios.get(url, {
                             params: data
                         }).then(resp => {
+                            this.$Progress.finish()
                             return { data: resp.data.data, count: resp.data.pagination.total };
                         }).catch(function (e) {
-                            this.$toastr.e(this.$t('messages.errorAjax'))
+                            this.$Progress.finish()
+                            this.error(e);
                         }.bind(this));
                     }
                 }
