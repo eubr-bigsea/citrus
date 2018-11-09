@@ -8,43 +8,57 @@
             </div>
             <div class="col-md-12">
                 <b-tabs>
-                    <b-tab title="By template" active>
+                    <b-tab title="From template" active>
                         <div class="col-md-12 mt-2">
-                            <div class="d-flex flex-row justify-content-center">
-                                <div v-for="template, inx in templates" :key="inx" class="flex-grow-1 w-0">
-                                    <div class="card">
-                                        <div class="card-header text-white bg-secondary">
-                                            {{template.name}}
-                                        </div>
-                                        <div class="card-body">
-                                            <p>{{template.description}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <table class="table table-striped xtable-bordered">
+                                <tr v-for="template in templates" :key="template.id">
+                                    <td class="w-40">
+                                        <b-form-radio value="first" name="template">
+                                        {{template.name}}
+                                        </b-form-radio>
+                                    </td>
+                                    <td class="w-60">
+                                        <em>{{template.description}}.</em>
+                                    </td>
+                                </tr> 
+                            </table>
                         </div>
                     </b-tab>
-                    <b-tab title="By processing platform">
+                    <b-tab title="For processing platform">
                         <div class="col-md-12 mt-2">
-                            <div class="d-flex flex-row justify-content-center">
-                                <div v-for="platform in platforms" :key="platform.id" class="flex-grow-1 w-0">
-                                    <div class="card h-100">
-                                        <div class="card-header text-white bg-secondary">
-                                            {{platform.name}}
-                                        </div>
-                                        <div class="card-body">
-                                            <p>{{platform.description}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <table class="table table-striped xtable-bordered">
+                                <tr v-for="platform in platforms" :key="platform.id">
+                                    <td class="w-40">
+                                        <b-form-radio value="platform.id" name="platform">
+                                        {{platform.name}}
+                                        </b-form-radio>
+                                    </td>
+                                    <td class="w-60">
+                                        <em>{{platform.description}}.</em>
+                                    </td>
+                                </tr> 
+                            </table>
                         </div>
+                    </b-tab>
+                    <b-tab title="From users' templates">
+                        <table class="table table-striped xtable-bordered">
+                                <tr v-for="template in templates" :key="template.id">
+                                    <td class="w-40">
+                                        <b-form-radio value="first" name="template">
+                                        {{template.name}}
+                                        </b-form-radio>
+                                    </td>
+                                    <td class="w-60">
+                                        <em>{{template.description}}.</em>
+                                    </td>
+                                </tr> 
+                            </table>
                     </b-tab>
                 </b-tabs>
             </div>
             <div class="col-md-12 mt-3 border-top pt-1">
-                <button class="btn btn-success btn-sm" @click="choose($event, platform.id)">
-                    {{$t('actions.choose')}}
+                <button class="btn btn-primary float-right" @click="choose($event, platform.id)">
+                    {{$t('actions.create', {type: $tc('titles.workflow', 1).toLowerCase()})}}
                 </button>
             </div>
         </div>
@@ -60,6 +74,7 @@
             return {
                 platforms: [],
                 templates: [
+                    { id: 1, name: 'Empty', description: 'Empty workflow' },
                     { id: 1, name: 'Classification', description: 'Train a classification model' },
                     { id: 2, name: 'Regression', description: 'Train a regression model' },
                     { id: 3, name: 'Clustering', description: 'Train a clustering model' },

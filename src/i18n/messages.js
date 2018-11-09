@@ -13,6 +13,7 @@ export default {
             choose: 'Choose',
             chooseOption: 'Choose option...',
             clearFilters: 'Clear filters',
+            create: 'Create new {type}',
             delete: 'Delete',
             distributeHorizontally: 'Distribute horizontally',
             distributeVertically: 'Distribute vertically',
