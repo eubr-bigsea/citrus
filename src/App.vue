@@ -38,14 +38,34 @@
                         </li>
                         <li class="divider-vertical nav-item"></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">{{$tc('titles.whatIfModel', 1)}}</a>
+                            <router-link :to="{name: 'administration'}" class="nav-link">{{$tc('titles.administration', 2)}}</router-link>
                         </li>
+                        <!--
                         <li class="divider-vertical nav-item"></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">{{$tc('titles.administration', 1)}}</a>
+                            <a class="nav-link" href="#">{{$tc('titles.whatIfModel', 1)}}</a>
                         </li>
+                        -->
+                        <li class="divider-vertical nav-item"></li>
+                            <b-nav-item-dropdown class="mb-1">
+                                <!-- Using button-content slot -->
+                                <template slot="button-content">
+                                    {{$tc('titles.administration', 1)}}
+                                </template>
+                                <b-dropdown-item to="/user/profile"><span class="fa fa-user"></span> {{$tc('titles.user', 2)}}</b-dropdown-item>
+                                <b-dropdown-divider></b-dropdown-divider>
+                                <b-dropdown-item to="/user/profile"><span class="fa fa-user"></span> {{$tc('titles.cluster', 2)}}</b-dropdown-item>
+                                <b-dropdown-item to="/user/profile">{{$tc('titles.platform', 2)}}</b-dropdown-item>
+                                <b-dropdown-item to="/user/profile"><span class="fa fa-database"></span> {{$tc('titles.storage', 2)}}</b-dropdown-item>
+                                <b-dropdown-divider></b-dropdown-divider>
+                                <b-dropdown-item to="/user/profile">{{$tc('titles.template', 2)}}</b-dropdown-item>
+                                <b-dropdown-divider></b-dropdown-divider>
+                                <b-dropdown-item to="/user/profile">{{$t('titles.toolboxCategory')}}</b-dropdown-item>
+                                <b-dropdown-divider></b-dropdown-divider>
+                            </b-nav-item-dropdown>
                     </ul>
                 </div>
+                
                 <ul class="nav navbar-nav navbar-right" v-if="isLoggedIn">
                     <b-nav-item-dropdown right>
                         <!-- Using button-content slot -->
@@ -152,5 +172,7 @@
 </script>
 
 <style>
-    
+    .dropdown-divider {
+        margin: 0 !important;
+    }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-md-4 mx-auto">
+        <div class="col-md-6 mx-auto">
             <div class="card fat">
                 <div class="card-header text-center bg-secondary text-white">
                     {{$t('titles.profile')}}
