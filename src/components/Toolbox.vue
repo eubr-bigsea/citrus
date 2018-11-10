@@ -115,6 +115,8 @@
                 ops.sort((a, b) => {
                     if (a.order < b.order) return -1;
                     if (a.order > b.order) return 1;
+                    if (a.default_order < b.default_order) return -1;
+                    if (a.default_order > b.default_order) return 1;
                     const groupComapare = a.group.localeCompare(b.group)
                     if (groupComapare != 0) return groupComapare;
                     return a.subGroup.localeCompare(b.subGroup);

@@ -2,10 +2,11 @@
     <div class="row" style="overflow:hidden">
         <TahitiSuggester/>
         <div class="col-md-12">
-            <b-tabs @input="updateSelectedTab">
-                <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order">
+            <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab">
+                <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
+                    :active="form.order === minFormOrder"> 
                     <template slot="title">
-                        <span class="fa fa-cogs"></span> {{form.name}}
+                        <span class="fa fa-cogs"></span> {{form.name}} 
                     </template>
                     <div class="card mt-1">
                         <div class="card-body">
@@ -159,6 +160,7 @@
                 operationsLookup: new Map(),
                 showProperties: false,
                 selectedTab: 0,
+                minFormOrder: 5,
                 selectedTask: { task: { operation: {} } },
                 propertyStyles: [
                     {
@@ -248,7 +250,7 @@
         },
         methods: {
             updateSelectedTab(index) {
-                this.selectedTab = index;
+                //this.selectedTab = index;
                 this.$refs.diagram.repaint();
             },
             load() {
@@ -270,15 +272,20 @@
                                     workflow.forms = {};
                                 }
                                 workflow.platform.forms.forEach((form) => {
-                                    form.fields.forEach((field) => {
-                                        // console.debug("Aqui", workflow.forms[field.name])
-                                        // workflow.forms[field.name] = workflow.forms[field.name].value ||
-                                        //     field['default'] || ''
-                                    });
+                                    if (form.order < self.minFormOrder){
+                                        self.minFormOrder = form.order;
+                                    }
+                                    // form.fields.forEach((field) => {
+                                    //     // console.debug("Aqui", workflow.forms[field.name])
+                                    //     // workflow.forms[field.name] = workflow.forms[field.name].value ||
+                                    //     //     field['default'] || ''
+                                    // });
                                 });
                                 self.workflow = workflow;
                                 this.updateAttributeSuggestion();
                                 self.loaded = true;
+                                self.$nextTick(() => {
+                                });
                             }
                         ).catch(function (e) {
                             this.error(e);
