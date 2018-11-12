@@ -12,17 +12,12 @@
                 <b-btn class="mr-1" size="sm" variant="secondary" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
                     <span class="fa fa-copy"></span> {{$t('actions.saveAs')}}...
                 </b-btn>
-                <!--
-                <b-btn class="mr-1" size="sm" @click.prevent="saveAsImage" :title="$t('actions.saveAsImage')">
-                    <span class="fa fa-image"></span> {{$t('actions.saveAsImage')}}
-                </b-btn>
-                -->
                 <b-btn class="mr-1" size="sm" variant="secondary" @click.prevent="showHistory" :title="$t('actions.showHistory')">
                     <span class="fa fa-history"></span> {{$t('actions.showHistory')}}
                 </b-btn>
 
                 <b-btn class="mr-1" size="sm" @click.prevent="execute" variant="success">
-                    <span class="fa fa-play"></span> Execute</b-btn>
+                    <span class="fa fa-play"></span> {{$t('actions.execute')}}</b-btn>
 
                 <b-input-group size="sm" class="w-25">
                     <b-form-input v-model="workflow.name" xdisabled></b-form-input>
@@ -52,9 +47,11 @@
                     <b-btn size="sm" variant="secondary" @click.prevent="distribute('vertical', 'top')" :title="$t('actions.distributeVertically')">
                         <span class="fa fa-arrows-alt-v"></span>
                     </b-btn>
+                    <!--
                     <b-btn size="sm" variant="secondary" @click.prevent="addGroup" :title="$t('actions.addGroup')">
                         <span class="fa fa-object-group"></span>
                     </b-btn>
+                -->
                     <b-btn size="sm" variant="secondary" @click.prevent="toggleTasks" :title="$t('actions.toggleTasks')">
                         <span class="fa fa-toggle-on"></span>
                     </b-btn>
@@ -94,7 +91,7 @@
         },
         methods: {
             toggleTasks() {
-
+                this.$root.$emit('ontoggle-tasks')
             },
             addGroup() {
 
@@ -119,6 +116,11 @@
             },
             execute() {
 
+            },
+        },
+        watch: {
+            zoom(){
+                this.$root.$emit('onzoom', this.zoom);
             }
         }
     }
