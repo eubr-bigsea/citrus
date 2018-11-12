@@ -26,6 +26,7 @@ export default {
             saveAsImage: 'Save as image',
             search: 'Search',
             showHistory: 'Show history',
+            showResults: 'Show results',
             show: 'Show',
             test: 'Test',
             toggleTasks: 'Enable/disable tasks'

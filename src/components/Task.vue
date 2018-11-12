@@ -16,8 +16,8 @@
         </div>
         <div class="custom-context-menu" v-if="contextMenuOpened && !isComment" ref="right">
             <ul>
-                <li @click.stop="remove()">Remove</li>
-                <li @click.stop="showResults()">Results</li>
+                <li @click.stop="remove()">{{$t('actions.delete')}}</li>
+                <li @click.stop="showResults()">{{$t('actions.showResults')}}</li>
                 <li v-for="(item, index) in contextMenuActions" @click="item.action(item.name)" :key="index">
                     {{item.label}}
                 </li>
@@ -187,7 +187,7 @@
             openMenu(e) {
                 if (!this.isComment && this.enableContextMenu) {
                     this.contextMenuOpened = true;
-                    let self = this;
+                    const self = this;
                     Vue.nextTick(function () {
                         self.$refs.right.focus();
                         self.setMenu(e.y, e.x)
@@ -216,7 +216,7 @@
                 this.left = left + 'px';
             },
             click(ev) {
-                let self = this;
+                const self = this;
                 let elem = ev.target.classList.contains('task') ? ev.target : ev.target.parentElement;
 
                 Array.prototype.slice.call(document.querySelectorAll(".task.selected"), 0).forEach((e) => {
@@ -237,50 +237,37 @@
                 this.$root.$emit('onclick-task', self);
                 ev.stopPropagation();
             },
-            getForeColor(backgroundColor) {
-                if (backgroundColor) {
-                    let d = document.createElement("div");
-                    d.style.color = backgroundColor.value;
-                } else {
-                    return "#222";
-                }
-            },
             showResults() {
                 this.contextMenuOpened = false;
                 console.debug(this.task.step)
             },
             remove() {
                 this.contextMenuOpened = false;
-                this.$emit('onremove-task', this.task);
+                this.$root.$emit('onremove-task', this.task);
             },
-            sampleData(portName) {
-                console.debug(`Sampling data for ${portName}`)
-                this.contextMenuOpened = false;
-            }
         },
         props: {
-            task: {
-                'default': function () { return { name: '', icon: '' }; }
+            enableContextMenu: { default: true },
+            enablePositioning: {
+                default: true
             },
             instance: null,
             showDecoration: {
                 default: false
             },
-            enableContextMenu: {default: true},
-            enablePositioning: {
-                default: true
-            }
+            task: {
+                'default': function () { return { name: '', icon: '' }; }
+            },
         },
         data() {
             return {
                 contextMenuOpened: false,
                 isComment: false,
                 contextMenuActions: [],
-
             }
         },
         mounted() {
-            let self = this;
+            const self = this;
             let operation = this.task.operation;
             let taskId = this.task.id;
 
@@ -300,7 +287,7 @@
                     return a.order - b.order;
                 });
             }
-            const locations = { input: [-1.2, 0], output: [3, -1.1]}
+            const locations = { input: [-1.2, 0], output: [3, -1.1] }
             var lbls = [
                 // note the cssClass and id parameters here
                 ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
@@ -312,8 +299,8 @@
                 this.isComment = true;
             }
             [
-                {ports: inputs, type: 'input', options: endPointOptionsInput},
-                {ports: outputs, type: 'output', options: endPointOptionsOutput}
+                { ports: inputs, type: 'input', options: endPointOptionsInput },
+                { ports: outputs, type: 'output', options: endPointOptionsOutput }
             ].forEach((item) => {
                 let ports = item.ports;
                 let portType = item.type;
@@ -322,7 +309,7 @@
                 if (ports.length > 0) {
                     anchors[portType][ports.length - 1].forEach((anchor, inx) => {
                         lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
-                        
+
                         let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
                         lbls[0][1]['location'] = locations[item.type];
                         options['anchors'] = anchor.slice();
@@ -373,6 +360,7 @@
                     }
                 });
             }
+            this.$root.$emit("ontask-ready", self.task);
         },
     });
     export default TaskComponent;
@@ -387,10 +375,12 @@
         display: block;
         z-index: 10000;
     }
+
     .endpoint-label.output {
         z-index: -2;
         /* background: green */
     }
+
     .output {
         .has-1-ports,
         .has-2-ports,
@@ -408,13 +398,11 @@
             top: -6px;
             left: 0px;
             position: relative;
-            
+
         }
     }
-    
 </style>
 <style scoped lang="scss">
-
     /* Colors */
 
     $color1: rgba(228, 87, 46, 1);
@@ -459,6 +447,7 @@
             }
         }
     }
+
     .has-1-ports,
     .has-2-ports,
     .has-3-ports {
@@ -491,33 +480,6 @@
             margin: 1px;
         }
     }
-
-    /* .no-padding {
-        [class*="col-"] {
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-    }
-
-    .small-padding {
-        [class*="col-"] {
-            padding-left: 2px !important;
-            padding-right: 2px !important;
-        }
-    } */
-/* 
-    .card-content {
-        background: white;
-    }
-
-    .jsplumb-overlay.labelClass,
-    .jtk-overlay.labelClass {
-        cursor: pointer;
-    } */
-
-    /* .labelClass {
-        background: white;
-    } */
 
     li.dragging {
         color: $color2;
@@ -569,7 +531,6 @@
             cursor: default !important;
         }
     } */
-
 
     #lemonade,
     .lemonade {
@@ -865,7 +826,8 @@
         }
         z-index: 100;
     }
-/* 
+
+    /* 
     .endpoint:hover {
         opacity: 1;
         background-color: $color3;

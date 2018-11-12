@@ -1,14 +1,14 @@
 <template>
     <div class="border border-primary">
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}">
-            <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHanle">
+            <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
                     <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
-                         :show-decoration="showTaskDecoration || showTaskDecorationInternal"/>
-                    <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" 
-                        v-if="tasksRendered"
-                        :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"/>
+                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+
+                    <!-- flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" v-if="tasksRendered" :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"
+                    /-->
 
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
@@ -65,7 +65,7 @@
 
 <script>
     import Vue from 'vue';
-    
+
     import lodash from 'lodash';
 
     //import ResizerComponent from 'vue-resize-handle/bidirectional';
@@ -75,8 +75,6 @@
     // import DropDownComponent from '../ui/dropdown.vue';
 
     import TaskComponent from './Task.vue';
-    import FlowComponent from './Flow.vue';
-
     import jsplumb from 'jsplumb'
     const GroupComponent = Vue.extend({
 
@@ -118,7 +116,6 @@
             }
         },
         methods: {
-
             expand() {
                 this.instance.expandGroup(this.group.id);
                 this.collapsed = false;
@@ -176,85 +173,61 @@
                     return this.workflow.tasks;
                 }
             },
-            groups() {
-                return this.$store.getters.getGroups;
-            },
-            // workflow() {
-
-            //     if (this.renderFrom) {
-            //         return this.renderFrom;
-            //     } else {
-            //         return this.$store.getters.getWorkflow;
-            //     }
-            // },
+            groups() { return this.$store.getters.getGroups; },
             zoomPercent: function () {
                 return `${Math.round(100 * this.zoom, 0)}%`;
             },
         },
         components: {
             'task-component': TaskComponent,
-            'flow-component': FlowComponent,
             VuePerfectScrollbar,
-            // 'modal-component': ModalComponent,
-            // 'ctx-menu-component': CtxMenuComponent,
-            // 'drop-down-component': DropDownComponent,
-            // 'group-component': GroupComponent,
-
         },
         props: {
             formContainer: null,
-            title: {},
-            renderFrom: null,
-            showToolbar: {
-                default: true,
-            },
-            showGrid: {
-                default: true,
-            },
-            showTaskDecoration: false,
-            //draggableTasks: true,
-            multipleSelectionEnabled: {
-                default: true,
-            },
-            initialZoom: {
-                default: 1.0
-            },
-            workflow: { name: '' },
+            initialZoom: { default: 1.0 },
+            multipleSelectionEnabled: { default: true },
             operations: Array,
+            renderFrom: null,
+            showGrid: { default: true },
+            showTaskDecoration: false,
+            showToolbar: { default: true },
+            title: {},
+            workflow: { name: '' },
         },
         watch: {
             workflow() {
                 this.tasksRendered = false;
             }
         },
-        updated(){
-            this.$nextTick(()=> {
+        updated() {
+            this.$nextTick(() => {
                 this.tasksRendered = true;
             });
         },
         data() {
             return {
-                showExecutionModal: false,
-                showDeployModal: false,
+                clusters: [],
+                clusterDescription: '',
+                cluster: null,
                 deployInfo: {},
-
-                zoomInEnabled: true,
-                zoomOutEnabled: true,
-                zoom: this.initialZoom,
+                name: '',
+                readyTasks: new Set(),
 
                 selectedTask: null,
                 selectedElements: [],
 
-                showToolbarInternal: true,
-                showTaskDecorationInternal: false,
-                clusters: [],
-                clusterDescription: '',
-                cluster: null,
-                name: '',
-                tasksRendered: false,
                 settings: {
                     maxScrollbarLength: 60
-                }
+                },
+                showDeployModal: false,
+                showExecutionModal: false,
+                tasksRendered: false,
+                showToolbarInternal: true,
+                showTaskDecorationInternal: false,
+
+                zoomInEnabled: true,
+                zoomOutEnabled: true,
+                zoom: this.initialZoom,
             }
         },
         created() {
@@ -270,7 +243,7 @@
             //     this.showToolbarInternal = true;
             //     this.showTaskDecorationInternal = false;
             // });
-            this.$on('onremove-task', (task) => {
+            this.$root.$on('onremove-task', (task) => {
                 this.removeTask(task);
             });
             this.$root.$on('on-align-tasks', (pos, fn) => {
@@ -304,12 +277,17 @@
                 });
             });
         },
+        beforeDestroy() {
+            this.$root.$off('ontask-ready');
+            this.readyTasks = new Set();
+        },
         mounted() {
+            const self = this;
+            this.readyTasks = new Set();
             // this.$root.$refs.toastr.defaultPosition = 'toast-bottom-full-width';
             this.currentZIndex = 10;
 
             this.init();
-            let self = this;
             self.diagramElement = self.$refs.diagram;
             this.setZoom(self.zoom, self.instance, null, self.diagramElement);
 
@@ -341,16 +319,32 @@
                     document.addEventListener("mousemove", self.openSelector);
                 }
             });
+            self.$root.$on('ontask-ready', (task) => {
+                self.readyTasks.add(task.id);
+                //Evaluates if flow can be draw now (both endpoints were created)
+                const candidates = self.workflow.flows.filter((flow) => {
+                    return (flow['target_id'] === task.id || flow['source_id'] === task.id)
+                        && self.readyTasks.has(flow['target_id'])
+                        && self.readyTasks.has(flow['source_id']);
+                });
+
+                candidates.forEach((flow) => {
+                    let uuids = flow.uuids ||
+                        [`${flow['source_id']}/${flow['source_port']}`,
+                        `${flow['target_id']}/${flow['target_port']}`];
+
+                    const connection = self.instance.connect({ uuids });
+                    const currentStyle = connection ? connection.getPaintStyle() : null;
+                    if (currentStyle) {
+                        currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
+                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
+                        connection.setPaintStyle(currentStyle);
+                    }
+                });
+            });
         },
         methods: {
-            changeConnectorStyle(style) {
-                let self = this;
-                self.instance.selectEndpoints().each((endpoint) => {
-                    endpoint.connectorStyle = { dashstyle: '2 4' }
-                    self.instance.repaintEverything();
-                });
-            },
-            scrollHanle() {
+            scrollHandle() {
 
             },
             changeCluster() {
@@ -420,7 +414,6 @@
                 ev.preventDefault();
                 return false;
             },
-            /* Store */
             addTask(task) {
                 task.forms = {};
                 task.operation.forms.forEach((f) => {
@@ -433,8 +426,7 @@
             },
 
             removeTask(task) {
-                let self = this;
-
+                const self = this;
                 //this.instance.detachAllConnections(task.id);
                 this.instance.deleteConnectionsForElement(task.id);
                 this.instance.removeAllEndpoints(task.id);
@@ -446,19 +438,19 @@
                 this.instance.repaintEverything();
 
                 Vue.nextTick(function () {
-                    self.$store.dispatch('removeTask', task);
+                    self.$root.$emit('removeTask', task);
                     self.clearSelection();
                     self.instance.repaintEverything();
                 })
 
             },
-            repaint(){
-                this.$nextTick(()=>{
+            repaint() {
+                this.$nextTick(() => {
                     this.instance.repaintEverything();
                 });
             },
             clearWorkflow() {
-                return new Promise((resolve, reject) =>{
+                return new Promise((resolve, reject) => {
                     let oldInstance = this.instance;
                     oldInstance.deleteEveryEndpoint();
                     oldInstance.deleteEveryConnection();
@@ -544,22 +536,24 @@
 
                     self.workflow.tasks.forEach((task) => {
                         let taskElem = document.getElementById(task.id);
-                        let bounds = taskElem.getBoundingClientRect();
+                        if (taskElem) {
+                            let bounds = taskElem.getBoundingClientRect();
 
-                        // Uses task left and top because offset calculation
-                        // was already done
-                        /*console.debug(x1 <= task.left,  x2 >= task.left + bounds.width,
-                                y1 <= task.top, y2 >= task.top + bounds.height,
-                                bounds.width, bounds.height, x1, x2, y1, y2)
-                                */
-                        if (x1 <= task.left && x2 >= task.left + bounds.width
-                            && y1 <= task.top && y2 >= task.top + bounds.height) {
-                            // console.debug(`overlap with ${task.operation.name}`)
-                            self.instance.addToDragSelection(task.id);
-                            self.selectedElements.push(task.id);
+                            // Uses task left and top because offset calculation
+                            // was already done
+                            /*console.debug(x1 <= task.left,  x2 >= task.left + bounds.width,
+                                    y1 <= task.top, y2 >= task.top + bounds.height,
+                                    bounds.width, bounds.height, x1, x2, y1, y2)
+                                    */
+                            if (x1 <= task.left && x2 >= task.left + bounds.width
+                                && y1 <= task.top && y2 >= task.top + bounds.height) {
+                                // console.debug(`overlap with ${task.operation.name}`)
+                                self.instance.addToDragSelection(task.id);
+                                self.selectedElements.push(task.id);
+                            }
+                            //console.debug (bounds.left, task.left)
+                            //console.debug(task)
                         }
-                        //console.debug (bounds.left, task.left)
-                        //console.debug(task)
                     });
                 }
             },
@@ -748,14 +742,9 @@
                 el.style.height = adjust;
                 // @FIXME PerfectScrollbar.update(this.diagramElement.parentElement);
             },
-            setZoomPercent(ev, zoom) {
-                let self = this;
-                self.zoom = zoom;
-                this.setZoom(self.zoom, self.instance, null, self.diagramElement);
-                if (ev) {
-                    ev.preventDefault();
-                }
-                return false;
+            setZoomPercent(zoom) {
+                this.zoom = zoom;
+                this.setZoom(this.zoom, this.instance, null, this.diagramElement);
             },
             zoomIn(ev) {
                 let self = this;
@@ -1012,21 +1001,15 @@
                 self.instance.bind('connectionDetached', (info, originalEvent) => {
                     let source = info.sourceEndpoint.getUuid();
                     let target = info.targetEndpoint.getUuid();
-
-                    this.removeFlow(source + '-' + target);
+                    this.removeFlow(`${source}-${target}`);
+                });
+                self.instance.bind('contextmenu', (component, originalEvent) => {
+                    console.debug(component);
                 });
                 self.instance.bind('connectionMoved', (info, originalEvent) => {
                     let source = info.originalSourceEndpoint.getUuid();
                     let target = info.originalTargetEndpoint.getUuid();
-
-                    self.removeFlow(source + '-' + target);
-
-                    let [source_id, source_port] = info.newSourceEndpoint.getUuid().split('/');
-                    let [target_id, target_port] = info.newTargetEndpoint.getUuid().split('/');
-                    self.$root.$emit("addFlow", {
-                        source_id, source_port,
-                        target_id, target_port,
-                    });
+                    self.removeFlow(`${source}-${target}`);
                 });
                 /*
                 self.instance.bind('beforeDrop', (info) => {
@@ -1035,25 +1018,21 @@
                 });
                 */
                 self.instance.bind('connection', (info, originalEvent) => {
-                    let con = info.connection;
-                    var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                    if (arr.length < 0 && arr.length > 1) { // @FIXME Review
-                        // self.instance.detach(con);
-                        //} else if (con.targetId === con.sourceId) {
-                        //    self.instance.detach(con);
-                    } else if (originalEvent) {
+                    const con = info.connection;
+                    //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
+                    if (originalEvent) {
                         //self.instance.detach(con);
                         let [source_id, source_port] = info.sourceEndpoint.getUuid().split('/');
                         let [target_id, target_port] = info.targetEndpoint.getUuid().split('/');
                         let source_port_name = '';
                         let target_port_name = '';
                         // self.instance.detach(con);
-                        self.$root.$emit("addFlow", {
+                        const flow = {
                             source_id, source_port,
                             target_id, target_port,
                             source_port_name, target_port_name,
-                            connection: con
-                        });
+                        };
+                        self.$root.$emit("addFlow", flow, con);
                     }
                 });
             },

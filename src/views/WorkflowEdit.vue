@@ -210,6 +210,9 @@
             this.$root.$on('onalign-tasks', (pos, fn) => {
                 this.$refs.diagram.align(pos, fn)
             });
+            this.$root.$on('ontoggle-tasks', () =>{
+                this.$refs.diagram.toggleTasks();
+            });
             this.$root.$on('ondistribute-tasks', (how, prop) => {
                 this.$refs.diagram.distribute(how, prop)
             });
@@ -235,11 +238,24 @@
             });
 
 
-            this.$root.$on('addFlow', (flow) => {
+            this.$root.$on('addFlow', (flow, jsPlumbConn) => {
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
             });
+            this.$root.$on('removeFlow', (flowId) => {
+                const self = this;
+                const inx = this.workflow.flows.findIndex((n, inx, arr) => {
+                    const id = `${n.source_id}/${n.source_port}-${n.target_id}/${n.target_port}`;
+                    return id === flowId;
+                });
+                if (inx > -1) {
+                    this.workflow.flows.splice(inx, 1);
+                }
+            });
             this.$root.$on('onshow-history', this.showHistory);
+            this.$root.$on('onzoom', (zoom) => {
+                this.$refs.diagram.setZoomPercent(zoom);
+            });
             this.load();
         },
         watch: {
