@@ -1,6 +1,6 @@
 <template>
     <div class="row">
-        <div class="col-md-6 mx-auto overflow-hidden">
+        <div class="col-md-8 mx-auto overflow-hidden">
             <div class="card animated" v-show="step === 1">
                 <div class="card-body">
                     <h4 class="card-title">{{$t('dataSource.whatTypeOfDataSourceToAdd')}}</h4>

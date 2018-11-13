@@ -1,9 +1,9 @@
 <template>
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <div class="row border-bottom border-primary">
+            <div class="row border-bottom border-primary p-2">
                 <div class="col-md-12">
-                    <h2>{{$t('actions.add', {type: $tc('titles.workflow').toLowerCase()})}}</h2>
+                    <h2 class="title text-primary">{{$t('actions.add', {type: $tc('titles.workflow').toLowerCase()})}}</h2>
                 </div>
             </div>
             <div class="col-md-12">

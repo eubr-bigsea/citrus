@@ -1,11 +1,11 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary">
+        <div class="row border-bottom border-primary p-2">
             <div class="col-md-10">
-                <h2>{{$tc('titles.dataSource', 2)}}</h2>
+                <h2 class="title text-primary">{{$tc('titles.dataSource', 2)}}</h2>
             </div>
             <div class="col-md-2 pull-right">
-                <router-link :to="{name: 'addDataSource'}" class="btn btn-primary">
+                <router-link :to="{name: 'addDataSource'}" class="btn btn-primary btn-sm">
                     <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type: $tc('titles.dataSource').toLowerCase()})}}
                 </router-link>
             </div>

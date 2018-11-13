@@ -262,6 +262,7 @@
             task: {
                 'default': function () { return { name: '', icon: '' }; }
             },
+            draggable: {default: true},
             instance: null,
             showDecoration: {
                 default: false
@@ -360,7 +361,7 @@
                     });
                 }
             });
-            if (self.instance && self.instance.addEndpoint) {
+            if (self.draggable && self.instance && self.instance.addEndpoint) {
                 self.instance.draggable(elem, {
                     lineWidth: 3,
                     containment: "parent",

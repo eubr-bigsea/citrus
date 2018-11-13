@@ -1,14 +1,19 @@
 <template>
-    <div class="border border-primary">
+    <div class="border">
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}">
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHanle">
-                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
+                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" 
+                    :show-task-decoration="true" id="lemonade-diagram"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" 
+                         :key="`${$parent.version || 0} - ${task.id}`"
+                         :enableContextMenu="editable"
+                         :draggable="editable"
                          :show-decoration="showTaskDecoration || showTaskDecorationInternal"/>
+                    
                     <flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" 
-                        v-if="tasksRendered"
-                        :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"/>
+                        v-if="tasksRendered || hack"
+                        :key="`${$parent.version || 0}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"/>
 
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
@@ -203,6 +208,9 @@
         },
         props: {
             formContainer: null,
+            hack: {
+                default: false
+            },
             title: {},
             renderFrom: null,
             showToolbar: {
@@ -212,15 +220,20 @@
                 default: true,
             },
             showTaskDecoration: false,
-            //draggableTasks: true,
+            editable: {
+                default: true
+            },
             multipleSelectionEnabled: {
                 default: true,
             },
             initialZoom: {
                 default: 1.0
             },
-            workflow: { name: '' },
             operations: Array,
+            shink: {
+                default: false,
+            },
+            workflow: { name: '' },
         },
         watch: {
             workflow() {
@@ -341,6 +354,13 @@
                     document.addEventListener("mousemove", self.openSelector);
                 }
             });
+            if (self.shink){
+                const z = parseFloat(self.zoom);
+                const width = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.left)) + 200);
+                const height = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.top)) + 200);
+                self.$refs.diagram.style.width = width + 'px';
+                self.$refs.diagram.style.height = height + 'px';
+            }
         },
         methods: {
             changeConnectorStyle(style) {

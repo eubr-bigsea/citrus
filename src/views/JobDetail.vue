@@ -1,20 +1,44 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary">
-            <div class="col-md-12">
-                <h2>{{job.name}}</h2>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12">
                 <b-tabs>
-                    <b-tab :title="$t('job.logs')" active>
+                    <b-tab active title-item-class="smalltab">
+                         <template slot="title">
+                            {{$tc('titles.job')}}: {{job.name}}
+                        </template>
+                        <div class="row mt-1">
+                            <div class="col-md-9">
+                                <diagram :workflow="workflow" ref="diagram" id="main-diagram" 
+                                    :operations="operations" v-if="loaded" :version="job.id" zinitial-zoom=".8"
+                                    :showToolbar="false"
+                                    :hack="true"
+                                    :editable="false" shink="true"/>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <strong>Workflow: </strong> 
+                                            <br/> <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="nav-link">{{workflow.name}}</router-link>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Date:</strong> {{job.created}}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>User: </strong> {{job.user.name}}
+                                        </li>
+                                        <li class="list-group-item">
+                                            <strong>Cluster: </strong> {{job.cluster.name}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </b-tab>
-                    <b-tab :title="$t('job.results')">
+                    <b-tab :title="$tc('job.results', 2)" title-item-class="smalltab">
                         <div class="row" v-for="(step, inx) in sortedSteps" :key="inx">
                             <div class="col-md-12 lemonade">
-                                <task :task="getTask(step.task.id)" :enabledContextMenu="false" :instance="{}" :key="step.task.id" :show-decoration="false">
-                                </task>
                                 <div class="mt-5">
                                     {{step.status}}
                                     <div v-for="log in step.logs" :key="log.id" style="font-size:.9em">
@@ -48,14 +72,14 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab :title="$t('job.logs')">
+                    <b-tab :title="$tc('job.logs', 2)" title-item-class="smalltab">
                         <div class="row mt-2">
                             <div class="col-md-12" v-for="log in sortedLogs" :key="log.id">
                                 <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
                                     {{log.level}}
                                 </span> &nbsp;
                                 <span>{{log.date}}</span>&nbsp;
-                                <task-display :task="getTask(log.task.id)"></task-display>
+                                
                                 <span v-if="log.type === 'TEXT'">
                                     {{log.message}}
                                 </span>
@@ -68,59 +92,20 @@
                 </b-tabs>
             </div>
         </div>
-        <!-- <div class="row">
-            <div class="col-md-6 alternate">
-                <div class="row" v-for="(step, inx) in sortedSteps" :key="inx">
-                    <div class=" pb-5 pt-1 col-md-12 lemonade">
-                        <task :task="getTask(step.task.id)" :enabledContextMenu="false" :instance="{}" :key="step.task.id" :show-decoration="false">
-                        </task>
-                        <div class="mt-5">
-                            {{step.status}}
-                            <div v-for="log in step.logs" :key="log.id" style="font-size:.9em">
-                                <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
-                                    {{log.level}}
-                                </span> &nbsp;
-                                <span>{{log.date}}</span>
-                                <span v-if="log.type === 'TEXT'">
-                                    {{log.message}}
-                                </span>
-                                <span v-else-if="log.type === 'HTML'">
-                                    HTML content
-                                    <div class="html-div" v-html="log.message"></div>
-                                </span>
-                                <span v-else-if="log.type === 'STATUS'">
-                                    &#9733;{{log.message}}
-                                </span>
-                                <div v-else>
-                                    {{log}}
-                                </div>
-                            </div>
-                            <div v-for="(result, taskId) in getResults(step.task.id)" :key="taskId">
-                                <div v-if="result && result.type === 'VISUALIZATION'">
-                                    <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
-                                </div>
-                                <div v-else>
-                                    {{result}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
     </div>
 </template>
 
 <script>
     import Vue from 'vue'
-    import Diagram from '../components/Diagram.vue'
-    import TaskComponent from '../components/Task.vue';
+    import DiagramComponent from '../components/Diagram.vue'
     import Visualization from '../components/Visualization.vue'
     import Notifier from '../mixins/Notifier'
     import axios from 'axios'
-    let standUrl = process.env.VUE_APP_STAND_URL
-    let caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL
-    let TaskDisplay = Vue.extend({
+    const standUrl = process.env.VUE_APP_STAND_URL
+    const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL
+    const tahitiUrl = process.env.VUE_APP_TAHITI_URL
+
+    const TaskDisplay = Vue.extend({
         props: {
             task: {}
         },
@@ -151,9 +136,8 @@
     export default {
         mixins: [Notifier],
         components: {
-            Diagram,
+            'diagram': DiagramComponent,
             Visualization,
-            'task': TaskComponent,
             'task-display': TaskDisplay
         },
         computed: {
@@ -172,10 +156,14 @@
         },
         data() {
             return {
-                job: { steps: [] },
+                job: { steps: [], user:{}, cluster:{} },
                 results: new Map(),
                 sortedSteps: [],
                 tasks: new Map(),
+                loaded: false,
+                operations: [],
+                workflow: {id: 0, platform: {id: 0}, name: ''},
+                operationsLookup: new Map(),
             }
         },
         methods: {
@@ -192,9 +180,34 @@
         },
         mounted() {
             let self = this
+            this.$Progress.start();
             axios.get(`${standUrl}/jobs/${this.$route.params.id}`).then(
                 (resp) => {
                     self.job = resp.data
+                    const workflow =  self.job.workflow;
+
+                    axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
+                        (resp) => {
+                            self.operations = resp.data
+                            self.operations.forEach((op) => {
+                                self.operationsLookup[op.id] = op
+                            })
+                            workflow.tasks.forEach((task) => {
+                                task.operation = self.operationsLookup[task.operation.id]
+                            });
+                            
+                            self.$nextTick(() =>  {
+                                self.loaded = true;
+                                self.workflow = workflow;
+                            });
+                        }).catch(function (e) {
+                            this.error(e);
+                        }.bind(this)).finally(() => {
+                            Vue.nextTick(() => {
+                                this.$Progress.finish()
+                            })
+                        });
+
                     self.sortedSteps = resp.data.steps.sort((s1, s2) => {
                         let result = -1
                         if (s1.logs.length) {
@@ -206,7 +219,7 @@
                         }
                         return result
                     })
-                    resp.data.workflow.tasks.forEach(task => {
+                    workflow.tasks.forEach(task => {
                         self.tasks[task.id] = task
                     })
                     resp.data.results.forEach(result => {

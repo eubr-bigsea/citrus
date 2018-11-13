@@ -144,6 +144,10 @@ export default {
             savedWithSuccess: '{what} saved with success.',
             noMatching: 'Sorry, no matching options'
         },
+        job: {
+            logs: 'Execution log | Execution logs',
+            results: 'Result | Results',
+        },
         titles: {
             action: 'Action | Actions',
             administration: 'Administration',

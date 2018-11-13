@@ -77,7 +77,7 @@ let router = new Router({
             }
         },
         {
-            path: '/jobs/:id',
+            path: '/jobs/:platform/:id',
             name: 'jobDetail',
             component: JobDetail,
             meta: {

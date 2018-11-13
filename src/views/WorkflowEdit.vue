@@ -4,7 +4,7 @@
         <div class="col-md-12">
             <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab">
                 <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
-                    :active="form.order === minFormOrder"> 
+                    :active="form.order === minFormOrder" :key="form.id"> 
                     <template slot="title">
                         <span class="fa fa-cogs"></span> {{form.name}} 
                     </template>

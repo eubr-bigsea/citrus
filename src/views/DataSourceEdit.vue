@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary">
+        <div class="row border-bottom border-primary p-2">
             <div class="col-md-12 col-xl-12 mx-auto">
-                <h2>{{$tc('titles.dataSource', 1)}}</h2>
+                <h2 class="title text-primary">{{$tc('titles.dataSource', 1)}}</h2>
             </div>
         </div>
         <div class="row">

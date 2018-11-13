@@ -43,13 +43,16 @@ body {
         margin: 0 10px;
     }
 }
+
 pre[class*="language-"] {
     background: #fff !important;
     border: 1px solid #ccc;
 }
+
 .navbar {
     padding: 0 !important;
 }
+
 #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -60,11 +63,13 @@ pre[class*="language-"] {
     width: calc(100% - 0px);
 }
 
-.navbar-brand > span {
+.navbar-brand>span {
     margin: 3px 0 0 5px;
     display: block;
     float: right;
 }
+
+
 /* The side navigation menu */
 
 .sidenav {
@@ -89,6 +94,7 @@ pre[class*="language-"] {
     /* 0.5 second transition effect to slide in the sidenav */
 }
 
+
 /* The navigation menu links */
 
 .sidenav a svg {
@@ -107,12 +113,14 @@ pre[class*="language-"] {
     white-space: nowrap;
 }
 
+
 /* When you mouse over the navigation links, change their color */
 
 .sidenav a:hover {
     color: #f1f1f1;
     text-decoration: none;
 }
+
 
 /* Position and style the close button (top right corner) */
 
@@ -124,17 +132,18 @@ pre[class*="language-"] {
     margin-left: 50px;
 }
 
+
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 
 #main {
     transition: margin-left .5s;
     padding: 20px;
-
 }
 
 main {
     margin-top: 55px;
 }
+
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 
@@ -164,51 +173,70 @@ main {
     border: none;
     outline: none;
 }
+
 ul.nav-tabs {
     display: flex;
     background: #fafafa;
     li.default {
-        order: -1; /* the default is 0 */
+        order: -1;
+        /* the default is 0 */
     }
-    .tab-order-0, .tab-order-1, .tab-order-2, .tab-order-3, .tab-order-5,
-    .tab-order-5, .tab-order-6, .tab-order-7, .tab-order-8, .tab-order-9 {
+    .tab-order-0,
+    .tab-order-1,
+    .tab-order-2,
+    .tab-order-3,
+    .tab-order-5,
+    .tab-order-5,
+    .tab-order-6,
+    .tab-order-7,
+    .tab-order-8,
+    .tab-order-9 {
         a {
             padding: 2px 15px;
             font-size: .9em;
         }
     }
     .tab-order-0 {
-        order: 0   
+        order: 0
     }
     .tab-order-1 {
-        order: 1   
+        order: 1
     }
     .tab-order-2 {
-        order: 2   
+        order: 2
     }
     .tab-order-3 {
-        order: 3   
+        order: 3
     }
     .tab-order-4 {
-        order: 4   
+        order: 4
     }
     .tab-order-5 {
-        order: 5   
+        order: 5
     }
     .tab-order-6 {
-        order: 6   
+        order: 6
     }
     .tab-order-7 {
-        order: 7   
+        order: 7
     }
     .tab-order-8 {
-        order: 8   
+        order: 8
     }
     .tab-order-9 {
-        order: 9   
+        order: 9
     }
-    
 }
+
+.smalltab>a {
+    padding: 2px 15px;
+    font-size: .9em;
+}
+
 .w-0 {
     width: 0 !important;
+}
+
+h2.title {
+    font-size: 1.4em;
 }

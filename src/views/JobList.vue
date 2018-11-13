@@ -1,18 +1,18 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary">
+        <div class="row border-bottom border-primary p-2">
             <div class="col-md-10">
-                <h2>{{$tc('titles.jobs', 2)}}</h2>
+                <h2 class="title text-primary">{{$tc('titles.jobs', 2)}}</h2>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
                 <v-server-table :data="tableData" :columns="columns" :options="options" name="jobList" ref="jobList">
                     <template slot="id" slot-scope="props">
-                        <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+                        <router-link :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">{{props.row.id}}</router-link>
                     </template>
                     <template slot="name" slot-scope="props">
-                        <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.name}}</router-link>
+                        <router-link :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">{{props.row.name}}</router-link>
                     </template>
                     <template slot="actions" slot-scope="props">
                         <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
