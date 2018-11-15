@@ -3,10 +3,10 @@
         <TahitiSuggester/>
         <div class="col-md-12">
             <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab">
-                <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
-                    :active="form.order === minFormOrder" :key="form.id"> 
+                <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order" :active="form.order === minFormOrder"
+                    :key="form.id">
                     <template slot="title">
-                        <span class="fa fa-cogs"></span> {{form.name}} 
+                        <span class="fa fa-cogs"></span> {{form.name}}
                     </template>
                     <div class="card mt-1">
                         <div class="card-body">
@@ -27,23 +27,6 @@
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
                             </slideout-panel>
-                            <!--
-                            <slideout-panel :opened="showProperties" style="position: absolute; right:360px; height:100px">
-                                <div class="p-3" style="font-size: .8rem; border: 1px solid; background: #fff; width: 500px; height: 400px; z-index: 0">
-                                    <VuePerfectScrollbar>
-                                        <div style="margin-right:20px">
-                                            <h5>{{selectedTask.task.operation.name}}</h5>
-                                            <div v-for="form in selectedTask.task.operation.forms">
-                                                <dl v-for="field in form.fields">
-                                                    <dt>{{field.label}}</dt>
-                                                    <dd>{{field.help}}</dd>
-                                                </dl>
-                                            </div>
-                                        </div>
-                                    </VuePerfectScrollbar>
-                                </div>
-                            </slideout-panel>
-                        -->
                         </div>
                         <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
                             <div class="historyArea">
@@ -67,6 +50,36 @@
                             <div slot="modal-footer" class="w-100">
                                 <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
                             </div>
+                        </b-modal>
+                        <b-modal id="executeModal" size="lg" :title="$t('workflow.execute')" ref="executeModal">
+                            <div>
+                                {{$t('workflow.required')}}:
+                            </div>
+                            <div class="mt-3">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>{{$t('workflow.jobName')}} ({{$t('common.optional')}}):</label>
+                                            <input type="text" class="form-control" v-model="clusterInfo.jobName" maxlength="50" />
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <label>{{$tc('titles.cluster')}}:</label>
+                                            <select v-model="clusterInfo.id" class="form-control" v-on:change="changeCluster">
+                                                <option v-for="option in clusters" v-bind:value="option.id">
+                                                    {{ option.name }}
+                                                </option>
+                                            </select>
+                                            <small>{{clusterInfo.description}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div slot="modal-footer" class="w-100 text-right">
+                                <button class="btn btn-success" @click="execute">
+                                    <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
+                                <button class="ml-1 btn" @click="cancelExecute">{{$t('actions.cancel')}}</button>
+                            </div>
+                        </b-modal>
                         </b-modal>
                         <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled ref="saveAsModal">
                             <b-form-radio-group v-model="saveOption">
@@ -121,6 +134,7 @@
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
+    const standUrl = process.env.VUE_APP_STAND_URL
 
     // let TahitiAttributeSuggester = undefined;
     export default {
@@ -152,6 +166,11 @@
             return {
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
+                clusters: [],
+                clusterInfo: {
+                    name: '', description: '', workflowName: '', id: 0,
+                    jobName: '',
+                },
                 workflow: { tasks: [], flows: [], platform: {} },
                 loaded: true,
                 operations: [],
@@ -202,20 +221,16 @@
             });
             this.$root.$on('onsave-workflow', this.saveWorkflow);
             this.$root.$on('onsaveas-workflow', this.showSaveAs);
+            this.$root.$on('onalign-tasks', this.$refs.diagram.align);
+            this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks);
+            this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute);
+            this.$root.$on('onclick-execute', this.showExecuteWindow);
 
             this.$root.$on('onblur-selection', () => {
                 this.showProperties = false;
                 this.selectedTask = { task: {} };
             });
-            this.$root.$on('onalign-tasks', (pos, fn) => {
-                this.$refs.diagram.align(pos, fn)
-            });
-            this.$root.$on('ontoggle-tasks', () =>{
-                this.$refs.diagram.toggleTasks();
-            });
-            this.$root.$on('ondistribute-tasks', (how, prop) => {
-                this.$refs.diagram.distribute(how, prop)
-            });
+
             this.$root.$on('update-form-field-value', (field, value) => {
                 if (self.selectedTask.task.forms[field.name]) {
                     self.selectedTask.task.forms[field.name].value = value
@@ -236,7 +251,33 @@
             this.$root.$on('addTask', (task) => {
                 this.workflow.tasks.push(task);
             });
+            this.$root.$on('onremove-task', (task) => {
+                // const self = this;
+                // this.instance.deleteConnectionsForElement(task.id);
+                // this.instance.removeAllEndpoints(task.id);
 
+                // let elem = document.getElementById(task.id)
+                // elem.parentNode.removeChild(elem);
+
+                // //console.debug(this.instance.getConnections());
+                // this.instance.repaintEverything();
+
+                // Vue.nextTick(function () {
+                //     self.$store.dispatch('removeTask', task);
+                //     self.clearSelection();
+                //     self.instance.repaintEverything();
+                // })
+                const inx = this.workflow.tasks.findIndex((n, inx, arr) => n.id === task.id);
+                if (inx > -1) {
+                    this.workflow.tasks.splice(inx, 1);
+                    const flows = this.workflow.flows;
+                    for (let i = flows.length - 1; i > 0; i--) {
+                        if (flows[i].source_id === task.id) {
+                            state.workflow.flows.splice(i, 1);
+                        }
+                    }
+                }
+            });
 
             this.$root.$on('addFlow', (flow, jsPlumbConn) => {
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
@@ -287,8 +328,8 @@
                                 if (!workflow.forms) {
                                     workflow.forms = {};
                                 }
-                                workflow.platform.forms.forEach((form) => {
-                                    if (form.order < self.minFormOrder){
+                                (workflow.platform.forms || []).forEach((form) => {
+                                    if (form.order < self.minFormOrder) {
                                         self.minFormOrder = form.order;
                                     }
                                     // form.fields.forEach((field) => {
@@ -516,6 +557,81 @@
             },
             closeSaveAs() {
                 this.$refs.saveAsModal.hide();
+            },
+            cancelExecute() {
+                this.$refs.executeModal.hide();
+            },
+            changeCluster() {
+                const c = this.clusters.find((c) => c.id === this.clusterInfo.id)
+                if (c) {
+                    this.clusterInfo.description = c.description;
+                }
+            },
+            showExecuteWindow() {
+                const self = this;
+                const d = new Date().toLocaleString().slice(0, -5);
+                this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
+                axios.get(`${standUrl}/clusters`, {})
+                    .then((response) => {
+                        self.clusters.length = 0;
+                        Array.prototype.push.apply(self.clusters, response.data);
+                        if (self.clusters.length) {
+                            self.clusterInfo.id = self.clusters[0].id;
+                            self.clusterInfo.description = self.clusters[0].description;
+                            self.$refs.executeModal.show();
+                            if (self.name === '') {
+                                self.clusterInfo.workflowName = self.workflow.name;
+                            }
+                        } else {
+                            self.error("Unable to execute workflow: There is not cluster available.");
+                        }
+                    }).catch((ex) => {
+                        self.error(ex);
+                    });
+
+            },
+            execute() {
+                const self = this;
+                this.$refs.executeModal.hide();
+                const cloned = JSON.parse(JSON.stringify(this.workflow));
+
+                cloned.platform_id = cloned.platform.id;
+                cloned.tasks.forEach((task) => {
+                    task.operation = { id: task.operation.id };
+                    delete task.version;
+                });
+                const user = this.$store.getters.user;
+                const body = {
+                    workflow: cloned,
+                    cluster: { id: self.clusterInfo.id },
+                    name: self.clusterInfo.jobName,
+                    user: {
+                        id: user.id, 
+                        login: user.login,
+                        name: user.name
+                    }
+                }
+                const headers = {
+                    'Locale': user.locale,
+                };
+                axios.post(`${standUrl}/jobs`, body, { headers })
+                    .then(function (response) {
+                        self.$router.push({
+                            name: 'jobDetail',
+                            params: {
+                                id: response.data.data.id,
+                                platform: self.$route.params.platform
+                            }
+                        });
+                    }).catch((ex) => {
+                        if (ex.data) {
+                            self.error(ex.data.message);
+                        } else if (ex.status === 0) {
+                            self.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
+                        } else {
+                            self.error(`Unhandled error: ${JSON.stringify(ex)}`);
+                        }
+                    });
             },
             _unique(data) {
                 return Array.from(new Set(data))

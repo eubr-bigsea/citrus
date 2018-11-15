@@ -4,23 +4,21 @@
             <div class="col-md-12">
                 <b-tabs>
                     <b-tab active title-item-class="smalltab">
-                         <template slot="title">
+                        <template slot="title">
                             {{$tc('titles.job')}}: {{job.name}}
                         </template>
                         <div class="row mt-1">
-                            <div class="col-md-9">
-                                <diagram :workflow="workflow" ref="diagram" id="main-diagram" 
-                                    :operations="operations" v-if="loaded" :version="job.id" zinitial-zoom=".8"
-                                    :showToolbar="false"
-                                    :hack="true"
-                                    :editable="false" shink="true"/>
+                            <div class="col-md-9" style="position: relative">
+                                <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" :version="job.id" initial-zoom="1"
+                                    :showToolbar="false" :editable="false" shink="true" v-if="loaded" />
                             </div>
                             <div class="col-md-3">
                                 <div class="card">
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">
-                                            <strong>Workflow: </strong> 
-                                            <br/> <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="nav-link">{{workflow.name}}</router-link>
+                                            <strong>Workflow: </strong>
+                                            <br/>
+                                            <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="nav-link">{{workflow.name}}</router-link>
                                         </li>
                                         <li class="list-group-item">
                                             <strong>Date:</strong> {{job.created}}
@@ -32,6 +30,30 @@
                                             <strong>Cluster: </strong> {{job.cluster.name}}
                                         </li>
                                     </ul>
+                                </div>
+                                <div class="row" style="font-size:0.7em; max-height: 60vh; overflow-y: auto">
+                                    <div class="col-md-12  mt-2" v-for="log in sortedLogs" :key="log.id">
+                                        <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
+                                            {{log.level}}
+                                        </span> &nbsp;
+                                        <span>{{log.date}}</span>&nbsp;
+                                        <strong>
+                                            <TaskDisplay :task="getTask(log.task.id)" /> &nbsp;</strong>
+
+                                        <span v-if="log.type === 'TEXT'">
+                                            {{log.message}}
+                                        </span>
+                                        <span v-else-if="log.type === 'STATUS'">
+                                            &#9733;{{log.message}}
+                                        </span>
+                                    </div>
+                                    <div class="col-md-12  mt-2" style="font-size: 1.5em">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <code><pre>{{job.status_text}}</pre></code>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -72,7 +94,7 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab :title="$tc('job.logs', 2)" title-item-class="smalltab">
+                    <!-- <b-tab :title="$tc('job.logs', 2)" title-item-class="smalltab">
                         <div class="row mt-2">
                             <div class="col-md-12" v-for="log in sortedLogs" :key="log.id">
                                 <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
@@ -86,9 +108,10 @@
                                 <span v-else-if="log.type === 'STATUS'">
                                     &#9733;{{log.message}}
                                 </span>
+                                <TaskDisplay :task="getTask(log.task.id)"/>
                             </div>
                         </div>
-                    </b-tab>
+                    </b-tab> -->
                 </b-tabs>
             </div>
         </div>
@@ -112,23 +135,23 @@
         render(createElement) {
             let color = this.task.forms.color
                 && this.task.forms.color.value
-                ? this.task.forms.color.value.background : '#fff'
+                ? this.task.forms.color.value.background : '#222'
             return createElement('span',
                 {
                     domProps: {
                         innerHTML: this.task.name
                     },
-                    style: {
-                        'font-size': '.6em',
-                        'padding': '2px',
-                        'width': '180px',
-                        'display': 'inline-block',
-                        'text-align': 'center',
-                        'border': '1px solid',
-                        'border-left': '8px solid',
-                        'border-right': '8px solid',
-                        'border-color': color,
-                    },
+                    // style: {
+                    //     'font-size': '.9em',
+                    //     'padding': '2px',
+                    //     'width': '180px',
+                    //     'display': 'inline-block',
+                    //     'text-align': 'center',
+                    //     'border': '1px solid',
+                    //     'border-left': '8px solid',
+                    //     'border-right': '8px solid',
+                    //     'border-color': color,
+                    // },
                     text: 'this.task.name'
                 })
         }
@@ -138,7 +161,7 @@
         components: {
             'diagram': DiagramComponent,
             Visualization,
-            'task-display': TaskDisplay
+            TaskDisplay
         },
         computed: {
             sortedLogs() {
@@ -156,13 +179,13 @@
         },
         data() {
             return {
-                job: { steps: [], user:{}, cluster:{} },
+                job: { steps: [], user: {}, cluster: {} },
                 results: new Map(),
                 sortedSteps: [],
                 tasks: new Map(),
                 loaded: false,
                 operations: [],
-                workflow: {id: 0, platform: {id: 0}, name: ''},
+                workflow: { id: 0, platform: { id: 0 }, name: '' },
                 operationsLookup: new Map(),
             }
         },
@@ -184,7 +207,7 @@
             axios.get(`${standUrl}/jobs/${this.$route.params.id}`).then(
                 (resp) => {
                     self.job = resp.data
-                    const workflow =  self.job.workflow;
+                    const workflow = self.job.workflow;
 
                     axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
                         (resp) => {
@@ -195,8 +218,8 @@
                             workflow.tasks.forEach((task) => {
                                 task.operation = self.operationsLookup[task.operation.id]
                             });
-                            
-                            self.$nextTick(() =>  {
+
+                            self.$nextTick(() => {
                                 self.loaded = true;
                                 self.workflow = workflow;
                             });
