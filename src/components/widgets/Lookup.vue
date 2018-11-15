@@ -77,9 +77,10 @@
                                 "tags": (v.tags || '').split(',')
                             };
                         });
-                        this.label = this.options.find((item) => {
-                            return Number(item.key) === Number(self.value)
-                        }).value
+                        this.label = (self.value) 
+                            ? this.options.find((item) => {
+                                return Number(item.key) === Number(self.value)}).value
+                            : '';
                     }
                 ).catch(function (e) {
                     this.$root.$emit('on-error', e);

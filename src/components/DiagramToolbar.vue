@@ -115,7 +115,7 @@
                 this.$root.$emit('onshow-history');
             },
             execute() {
-
+                this.$root.$emit('onclick-execute');
             },
         },
         watch: {

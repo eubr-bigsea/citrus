@@ -4,7 +4,10 @@
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" 
+                        :key="`${$parent.version} - ${task.id}`"
+                        :enableContextMenu="editable"
+                        :draggable="editable"
                         :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
 
                     <!-- flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" v-if="tasksRendered" :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"
@@ -246,6 +249,7 @@
             }
         },
         created() {
+            const self = this;
             if (this.$route.params.id) {
                 this.changeWorkflowId(this.$route.params.id);
                 this.init();
@@ -291,6 +295,29 @@
                     }
                 });
             });
+            self.$root.$on('ontask-ready', (task) => {
+                self.readyTasks.add(task.id);
+                //Evaluates if flow can be draw now (both endpoints were created)
+                const candidates = self.workflow.flows.filter((flow) => {
+                    return (flow['target_id'] === task.id || flow['source_id'] === task.id)
+                        && self.readyTasks.has(flow['target_id'])
+                        && self.readyTasks.has(flow['source_id']);
+                });
+
+                candidates.forEach((flow) => {
+                    let uuids = flow.uuids ||
+                        [`${flow['source_id']}/${flow['source_port']}`,
+                        `${flow['target_id']}/${flow['target_port']}`];
+
+                    const connection = self.instance.connect({ uuids });
+                    const currentStyle = connection ? connection.getPaintStyle() : null;
+                    if (currentStyle) {
+                        currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
+                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
+                        connection.setPaintStyle(currentStyle);
+                    }
+                });
+            });
         },
         beforeDestroy() {
             this.$root.$off('ontask-ready');
@@ -302,9 +329,9 @@
             // this.$root.$refs.toastr.defaultPosition = 'toast-bottom-full-width';
             this.currentZIndex = 10;
 
-            this.init();
+            //this.init();
             self.diagramElement = self.$refs.diagram;
-            this.setZoom(self.zoom, self.instance, null, self.diagramElement);
+            this.setZoom(parseFloat(self.zoom), self.instance, null, self.diagramElement);
 
             /* scroll bars */
             // @FIXME PerfectScrollbar.initialize(self.diagramElement.parentElement);
@@ -341,29 +368,7 @@
                 self.$refs.diagram.style.width = width + 'px';
                 self.$refs.diagram.style.height = height + 'px';
             }
-            self.$root.$on('ontask-ready', (task) => {
-                self.readyTasks.add(task.id);
-                //Evaluates if flow can be draw now (both endpoints were created)
-                const candidates = self.workflow.flows.filter((flow) => {
-                    return (flow['target_id'] === task.id || flow['source_id'] === task.id)
-                        && self.readyTasks.has(flow['target_id'])
-                        && self.readyTasks.has(flow['source_id']);
-                });
-
-                candidates.forEach((flow) => {
-                    let uuids = flow.uuids ||
-                        [`${flow['source_id']}/${flow['source_port']}`,
-                        `${flow['target_id']}/${flow['target_port']}`];
-
-                    const connection = self.instance.connect({ uuids });
-                    const currentStyle = connection ? connection.getPaintStyle() : null;
-                    if (currentStyle) {
-                        currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
-                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
-                        connection.setPaintStyle(currentStyle);
-                    }
-                });
-            });
+            
         },
         methods: {
             scrollHandle() {
@@ -744,21 +749,23 @@
             },
 
             setZoom(zoom, instance, transformOrigin, el) {
-                transformOrigin = transformOrigin || [0.5, 0.5];
-                instance = instance || jsPlumb;
-                el = el || instance.getContainer();
-                var p = ["webkit", "moz", "ms", "o"],
-                    s = "scale(" + zoom + ")",
-                    oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+                if (parseInt(zoom) !== instance.getZoom()) {
+                    transformOrigin = transformOrigin || [0.5, 0.5];
+                    //instance = instance || jsPlumb;
+                    el = el || instance.getContainer();
+                    var p = ["webkit", "moz", "ms", "o"],
+                        s = "scale(" + zoom + ")",
+                        oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
 
-                for (var i = 0; i < p.length; i++) {
-                    el.style[p[i] + "Transform"] = s;
-                    el.style[p[i] + "TransformOrigin"] = oString;
+                    for (var i = 0; i < p.length; i++) {
+                        el.style[p[i] + "Transform"] = s;
+                        el.style[p[i] + "TransformOrigin"] = oString;
+                    }
+
+                    el.style["transform"] = s;
+                    el.style["transformOrigin"] = '0% 0% 0px'; //oString;
+                    instance.setZoom(zoom);
                 }
-
-                el.style["transform"] = s;
-                el.style["transformOrigin"] = '0% 0% 0px'; //oString;
-                instance.setZoom(zoom);
                 let adjust = ((1.0 / zoom) * 5000) + 'px'
                 el.style.width = adjust;
                 el.style.height = adjust;

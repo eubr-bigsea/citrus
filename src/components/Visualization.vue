@@ -6,6 +6,9 @@
       </h3>
       <font-awesome-icon icon="spinner" pulse class="icon" size="3x" v-if="loading"/> 
       {{content}}
+      <div v-if="errorState">
+            {{errorMessage}}
+      </div>
     </div>
   </div>
 </template>
@@ -18,21 +21,24 @@ export default {
     data(){
         return {
             content: '',
-            loading: false
+            loading: false,
+            errorState: false,
+            errorMessage: ''
         }
     },
     props: {
         url: '',
     },
     mounted(){
-        let self = this
+        const self = this
         self.loading = true
         axios.get(this.url).then(
           (resp) => {
               this.content = resp.data
           }
       ).catch(function (e) {
-          self.error(e);
+          self.errorState = true;
+          self.errorMessage = e.response.data
       }).finally(()=>{
         self.loading = false
       });
