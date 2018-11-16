@@ -152,6 +152,7 @@ export default {
             error: 'Error running job. See more details in the log window above.',
             logs: 'Execution log | Execution logs',
             results: 'Result | Results',
+            sourceCode: 'Source code',
             visualizations: 'Visualization | Visualizations',
         },
         titles: {

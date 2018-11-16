@@ -79,7 +79,7 @@
             }
         },
         props: {
-            operations: { type: Array, default() { return [] } }
+            operations: { type: Array, default: []}
         },
         computed: {
             groupedOperations() {
@@ -103,6 +103,7 @@
                     return result;
                 })];
                 */
+                
                 const ops = this.operations.map((op) =>{
                     const group = op.categories.find((cat) => {
                         return cat.type === 'group';

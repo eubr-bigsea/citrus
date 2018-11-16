@@ -1074,10 +1074,6 @@
 
 </script>
 <style scoped lang="scss">
-    .with-grid {
-        background-image: url(grid1.png);
-    }
-
     .scroll-area {
         width: 100%;
         height: 82vh;

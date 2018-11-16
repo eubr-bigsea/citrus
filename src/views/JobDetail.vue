@@ -107,12 +107,15 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length">
+                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length" @click="loadVisualizations">
                         <div class="row" v-for="(result, inx) in job.results" :key="result.id">
                             <div class="col-md-8 lemonade offset-2">
                                 {{result}}
                             </div>
                         </div>
+                    </b-tab>
+                    <b-tab :title="$tc('job.sourceCode')" title-item-class="smalltab" @click="showSourceCode = 1">
+                        <SourceCode v-if="showSourceCode" :job="job.id"/>
                     </b-tab>
                     <!-- <b-tab :title="$tc('job.logs', 2)" title-item-class="smalltab">
                         <div class="row mt-2">
@@ -141,6 +144,7 @@
 <script>
     import Vue from 'vue'
     import DiagramComponent from '../components/Diagram.vue'
+    import SourceCode from '../components/SourceCode.vue'
     import Visualization from '../components/Visualization.vue'
     import Notifier from '../mixins/Notifier'
     import axios from 'axios'
@@ -193,6 +197,7 @@
         mixins: [Notifier],
         components: {
             'diagram': DiagramComponent,
+            SourceCode,
             Visualization,
             TaskDisplay
         },
@@ -212,6 +217,7 @@
         },
         data() {
             return {
+                sourceCode: '',
                 details: false,
                 jobStatus: '',
                 job: { steps: [], user: {}, cluster: {} },
@@ -223,9 +229,13 @@
                 workflow: { id: 0, platform: { id: 0 }, name: '' },
                 operationsLookup: new Map(),
                 selectedTask: {},
+                showSourceCode: false,
             }
         },
         methods: {
+            loadVisualizations(){
+
+            },
             getTask(taskId) {
                 return this.tasks[taskId]
             },
