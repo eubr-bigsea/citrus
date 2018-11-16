@@ -22,8 +22,8 @@
                         <div class="col-md-2">
                             <toolbox :operations="operations"></toolbox>
                         </div>
-                        <div class="col-md-10 pl-0" style="position: relative">
-                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded" :version="workflow.version"></diagram>
+                        <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
+                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded" :loaded="loaded" :version="workflow.version"></diagram>
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
                             </slideout-panel>
@@ -172,7 +172,7 @@
                     jobName: '',
                 },
                 workflow: { tasks: [], flows: [], platform: {} },
-                loaded: true,
+                loaded: false,
                 operations: [],
                 history: [],
                 saveOption: 'new',
@@ -221,9 +221,9 @@
             });
             this.$root.$on('onsave-workflow', this.saveWorkflow);
             this.$root.$on('onsaveas-workflow', this.showSaveAs);
-            this.$root.$on('onalign-tasks', this.$refs.diagram.align);
-            this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks);
-            this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute);
+            this.$root.$on('onalign-tasks', this.align);
+            this.$root.$on('ontoggle-tasks', this.toggleTasks);
+            this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-execute', this.showExecuteWindow);
 
             this.$root.$on('onblur-selection', () => {
@@ -299,6 +299,26 @@
             });
             this.load();
         },
+        beforeDestroy(){
+            this.$root.$off('onclick-task');
+            this.$root.$off('on-error');
+            this.$root.$off('onsave-as-image');
+            this.$root.$off('onsave-workflow');
+            this.$root.$off('onsaveas-workflow');
+            this.$root.$off('onalign-tasks');
+            this.$root.$off('ontoggle-tasks');
+            this.$root.$off('ondistribute-tasks');
+            this.$root.$off('onclick-execute');
+            this.$root.$off('onblur-selection');
+            this.$root.$off('update-form-field-value');
+            this.$root.$off('update-workflow-form-field-value');
+            this.$root.$off('addTask');
+            this.$root.$off('onremove-task');
+            this.$root.$off('addFlow');
+            this.$root.$off('removeFlow');
+            this.$root.$off('onshow-history');
+            this.$root.$off('onzoom');
+        },
         watch: {
             '$route.params.id': function (id) {
                 this.$refs.diagram.clearWorkflow();
@@ -306,6 +326,9 @@
             }
         },
         methods: {
+            align(){this.$root.$on('onalign-tasks', this.$refs.diagram.align);},
+            toggleTasks(){this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks);},
+            distribute(){this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute);},
             updateSelectedTab(index) {
                 //this.selectedTab = index;
                 this.$refs.diagram.repaint();

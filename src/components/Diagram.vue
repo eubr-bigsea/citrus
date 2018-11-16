@@ -1,9 +1,10 @@
 <template>
     <div class="border">
-        <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}">
+        <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}" v-on:click="diagramClick" >
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
-                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" v-on:click="diagramClick" :show-task-decoration="true" id="lemonade-diagram"
-                    ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
+                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true" id="lemonade-diagram"
+                    v-if="loaded"
+                    ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}"> 
                     <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" 
                         :key="`${$parent.version} - ${task.id}`"
                         :enableContextMenu="editable"
@@ -191,6 +192,7 @@
             },
             title: {},
             initialZoom: { default: 1.0 },
+            loaded: false,
             multipleSelectionEnabled: { default: true },
             operations: Array,
             renderFrom: null,
@@ -365,8 +367,8 @@
                 const z = parseFloat(self.zoom);
                 const width = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.left)) + 200);
                 const height = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.top)) + 200);
-                self.$refs.diagram.style.width = width + 'px';
-                self.$refs.diagram.style.height = height + 'px';
+                self.$refs.diagram.style.width = '100%'; //width + 'px';
+                self.$refs.diagram.style.height = '100%';
             }
             
         },
@@ -459,7 +461,7 @@
                 this.instance.removeAllEndpoints(task.id);
                 //this.instance.detach(task.id);
                 let elem = document.getElementById(task.id)
-                elem.parentNode.removeChild(elem);
+                //elem.parentNode.removeChild(elem);
 
                 //console.debug(this.instance.getConnections());
                 this.instance.repaintEverything();

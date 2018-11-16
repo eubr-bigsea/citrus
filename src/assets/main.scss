@@ -240,3 +240,47 @@ ul.nav-tabs {
 h2.title {
     font-size: 1.4em;
 }
+.modal-backdrop {
+    z-index: 100000 !important;
+  }
+
+  .modal {
+    z-index: 100001 !important;
+  }
+.lemonade-job {
+    &.completed,
+    &.running,
+    &.canceled,
+    &.interrupted,
+    &.waiting,
+    &.error {
+        color: white;
+        font-size: .7em;
+        padding: 4px;
+    }
+
+    &.completed {
+        background-color: #2ECC40;
+    }
+
+    &.running {
+        background-color: #0074D9;
+    }
+
+    &.interrupted {
+        background-color: #111;
+    }
+
+    &.canceled {
+        background-color: #aaa;
+    }
+
+    &.waiting {
+        background-color: #FFDC00;
+        color: black;
+    }
+
+    &.error {
+        background-color: #FF4136;
+    }
+}

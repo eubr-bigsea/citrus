@@ -20,7 +20,7 @@
                         </button>
                     </template>
                     <template slot="status" slot-scope="props">
-                        <div :class="props.row.status.toLowerCase()">
+                        <div class="lemonade-job" :class="props.row.status.toLowerCase()">
                             {{props.row.status}}
                         </div>
                     </template>
@@ -95,7 +95,7 @@
                         this.$Progress.finish();
                         return { data: resp.data.data, count: resp.data.pagination.total };
                     }).catch(function (e) {
-                        this.dispatch('error', e);
+                        this.error(e);
                     }.bind(this));
             },
             remove(job) {
@@ -116,42 +116,6 @@
     }
 </script>
 <style scoped>
-    .completed,
-    .running,
-    .canceled,
-    .interrupted,
-    .waiting,
-    .error {
-        color: white;
-        font-size: .7em;
-        padding: 4px;
-    }
-
-    .completed {
-        background-color: #2ECC40;
-    }
-
-    .running {
-        background-color: #0074D9;
-    }
-
-    .interrupted {
-        background-color: #111;
-    }
-
-    .canceled {
-        background-color: #aaa;
-    }
-
-    .waiting {
-        background-color: #FFDC00;
-        color: black;
-    }
-
-    .error {
-        background-color: #FF4136;
-    }
-
     .slide-leave-active,
     .slide-enter-active {
         transition: .5s;

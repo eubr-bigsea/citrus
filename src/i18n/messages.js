@@ -2,6 +2,7 @@ export default {
     en: {
         actions: {
             add: 'Add new {type}',
+            addItem: 'Add',
             addGroup: 'Add a new group',
             alignLeft: 'Align left',
             alignRight: 'Align right',
@@ -148,8 +149,10 @@ export default {
             noMatching: 'Sorry, no matching options'
         },
         job: {
+            error: 'Error running job. See more details in the log window above.',
             logs: 'Execution log | Execution logs',
             results: 'Result | Results',
+            visualizations: 'Visualization | Visualizations',
         },
         titles: {
             action: 'Action | Actions',
@@ -158,6 +161,7 @@ export default {
             dataSource: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
             error: 'Error',
+            errorDetail: 'Error detail (advanced)',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
             job: 'Job | Jobs',
             jobs: 'Jobs',
@@ -173,6 +177,7 @@ export default {
             template: 'Template | Templates',
             toolboxCategory: 'Toolbox disposition',
             user: 'User | Users',
+            warning: 'Warning',
             whatIfModel: 'What if model?',
             workflow: 'Workflow | Workflows',
         },

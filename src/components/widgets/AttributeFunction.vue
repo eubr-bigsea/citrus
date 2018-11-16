@@ -7,7 +7,7 @@
             {{$t('actions.chooseOption')}}
         </b-link>
 
-        <b-modal id="lookupModal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')" ref="modal">
+        <b-modal id="lookupModal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')" no-fade centered ref="modal">
             <p>
                 <em>{{parameters.options.description}}</em>
             </p>
@@ -51,7 +51,7 @@
             </table>
             <div class="mt-2 border-top pt-2">
                 <button class="btn btn-success btn-sm" @click.prevent="add">
-                    <span class="fa fa-plus"></span> {{$t('actions.add')}}</button>
+                    <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
                 <b-btn @click="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
@@ -68,19 +68,6 @@
             parameters() {
                 return JSON.parse(this.field.values);
             },
-            displayValue(){
-                if (this.value) {
-                    return this.value.map((v) =>{
-                        if (this.parameters.options.show_alias){
-                            return `${v.alias} = ${v.f}(${v.attribute})`
-                        } else {
-                            return `${v.f}(${v.attribute})`
-                        }
-                    }).join('\n')
-                } else {
-                    return ''
-                }
-            }
         },
         components: {
             LabelComponent,
@@ -88,13 +75,30 @@
         data() {
             return {
                 currentTab: 'editor',
+                displayValue: '',
                 showModal: false,
                 valueList: JSON.parse(JSON.stringify(this.value || [])),
                 ok: this.okClicked,
                 cancel: this.cancelClicked
             }
         },
+        mounted(){
+            this.updateDisplayValue(this.value);
+        },
         methods: {
+            updateDisplayValue(v){
+                if (v) {
+                    this.displayValue = v.map((v) =>{
+                        if (this.parameters.options.show_alias){
+                            return `${v.alias} = ${v.f}(${v.attribute})`
+                        } else {
+                            return `${v.f}(${v.attribute})`
+                        }
+                    }).join('\n')
+                } else {
+                    this.displayValue = '';
+                }
+            },
             updated(e, row, attr) {
                 row[attr] = e.target.value;
                 /*eventHub.$emit('update-form-field-value', this.field, 
@@ -128,6 +132,7 @@
                 this.$root.$emit(this.message, this.field,
                     this.valueList);
                 this.$refs.modal.hide();
+                this.updateDisplayValue(this.valueList);
             },
             cancelClicked(ev) {
                 this.$refs.modal.hide();

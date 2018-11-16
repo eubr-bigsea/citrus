@@ -5,8 +5,7 @@
             {{task.name}}
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
-        <div v-if="!isComment && showDecoration" class="right-decor" :class="task.status? task.status.toLowerCase(): ''">
-            <span class="fa fa-check-circle fa-2x"></span>
+        <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
         </div>
         <div v-if="!isComment && task.step && task.step.status" class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
             <span class="fa fa-check-circle fa-2x"></span>
@@ -171,6 +170,29 @@
                     (this.isComment ? ' comment ' : '') + 'test';
 
             },
+            getDecorationClass() {
+                let result = [];
+                switch (this.task.name && this.task.status) {
+                    case 'ERROR':
+                        result.push("fa fa-times-circle fa-2x");
+                        break;
+                    case 'PENDING':
+                        result.push("fa fa-pause-circle fa-2x");
+                        break;
+                    case 'CANCELED':
+                        result.push("fa fa-stop-circle fa-2x");
+                        break;
+                    case 'RUNNING':
+                        result.push("fa fa-sync fa-spin fa-2x");
+                        break;
+                    case 'COMPLETED':
+                        result.push("fa fa-check-circle fa-2x");
+                        break;
+                    default:
+                }
+                result.push(this.task.status.toLowerCase());
+                return result.join(' ');
+            },
             getBorder() {
                 let color = '#fff'
                 if (this.task.forms && this.task.forms.color && this.task.forms.color.value) {
@@ -251,13 +273,13 @@
             enablePositioning: {
                 default: true
             },
-            draggable: {default: true},
+            draggable: { default: true },
             instance: null,
             showDecoration: {
                 default: false
             },
             task: {
-                'default': function () { return { name: '', icon: '' }; }
+                'default': function () { return { name: '', icon: '', status: '' }; }
             },
         },
         data() {
@@ -267,10 +289,22 @@
                 contextMenuActions: [],
             }
         },
+        watch: { 
+            enableContextMenu: function(newVal, oldVal) { 
+                console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+            },
+            task: function(n, o){
+                console.debug('Aqui')
+            },
+            'task.status': function(n, o) {
+                console.debug('va')
+            }
+        },
         mounted() {
             const self = this;
             let operation = this.task.operation;
             let taskId = this.task.id;
+            this.task.name = this.task.name || this.task.operation.name
 
             let zIndex = this.task['z_index'];
             let inputs = []
@@ -342,7 +376,7 @@
                         options.paintStyle.fill = options.paintStyle.fillStyle;
                         if (self.instance && self.instance.addEndpoint) {
                             let endpoint = self.instance.addEndpoint(elem, options);
-                            endpoint.canvas.style.zIndex = zIndex - 1;
+                            endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1; 
                             endpoint._portId = ports[inx].id;
                         }
                     });
@@ -627,7 +661,7 @@
             .left-decor,
             .bottom-right-decor {
                 color: #aaa;
-                border: 1px solid #ccc;
+                /* border: 1px solid #ccc; */
                 background-color: #fff;
                 border-radius: 20px;
                 font-size: 7pt !important;
