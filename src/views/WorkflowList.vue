@@ -38,8 +38,10 @@
 <script>
     import axios from 'axios'
     import { Event } from 'vue-tables-2'
+    import Notifier from '../mixins/Notifier'
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL
     export default {
+        mixins: [Notifier],
         data() {
             return {
                 platform: '',
@@ -71,6 +73,8 @@
                         data.size = data.limit
                         data.name = data.query
 
+                        data.fields = 'id,name,platform,created,updated,user,version';
+
                         let url = `${tahitiUrl}/workflows`;
                         let headers = {}
                         this.$Progress.start()
@@ -91,9 +95,9 @@
             let url = `${tahitiUrl}/platforms`;
             this.$Progress.start();
             axios.get(url).then(resp => {
-                this.platforms = resp.data;
+                this.platforms = resp.data.sort((a, b) => a.name.localeCompare(b.name));
             }).catch(function (e) {
-                this.dispatch('error', e);
+                this.error(e);
             }.bind(this)).finally(() => {
                 this.$Progress.finish()
             });
