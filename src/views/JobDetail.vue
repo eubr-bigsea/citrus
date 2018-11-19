@@ -23,7 +23,7 @@
                                         <li class="list-group-item">
                                             <strong>{{$tc('titles.workflow')}}: </strong>
                                             <br/>
-                                            <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="nav-link">{{workflow.name}}</router-link>
+                                            <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="nav-link">{{workflow.id}} - {{workflow.name}}</router-link>
                                         </li>
                                         <li class="list-group-item">
                                             <strong>{{$t('common.date')}}:</strong> {{job.created}}
@@ -95,6 +95,7 @@
                                             {{log}}
                                         </div> -->
                                     </div>
+                                    <!--
                                     <div v-for="(result, taskId) in getResults(step.task.id)" :key="taskId">
                                         <div v-if="result && result.type === 'VISUALIZATION'">
                                             <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
@@ -103,6 +104,7 @@
                                             {{result}}
                                         </div>
                                     </div>
+                                -->
                                 </div>
                             </div>
                         </div>
@@ -110,7 +112,7 @@
                     <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length" @click="loadVisualizations">
                         <div class="row" v-for="(result, inx) in job.results" :key="result.id">
                             <div class="col-md-8 lemonade offset-2">
-                                {{result}}
+                                    <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
                             </div>
                         </div>
                     </b-tab>
@@ -149,6 +151,7 @@
     import Notifier from '../mixins/Notifier'
     import axios from 'axios'
     import io from 'socket.io-client';
+
     const standUrl = process.env.VUE_APP_STAND_URL
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL

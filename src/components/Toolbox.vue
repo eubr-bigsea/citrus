@@ -124,11 +124,13 @@
                 });
                 let grouped = [...groupBy(ops, (x) => x.group)].map((item) => {
                     if (item[1][0].subGroup === ''){
-                        return {group: item[0], operations: item[1]};
+                        return {group: item[0], operations: item[1].sort(
+                                    (a, b) => a.operation.name.localeCompare(b.operation.name))};
                     } else {
                         return {group: item[0], 
                             subGroups: [...groupBy(item[1], (x) => x.subGroup)].map((subItem) => {
-                                return {group: item[0], subGroup: subItem[0], operations: subItem[1]};
+                                return {group: item[0], subGroup: subItem[0], operations: subItem[1].sort(
+                                    (a, b) => a.operation.name.localeCompare(b.operation.name))};
                             })
                         };
                     }
