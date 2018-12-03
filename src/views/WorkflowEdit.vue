@@ -342,7 +342,11 @@
                     (resp) => {
                         let workflow = resp.data;
                         this.$Progress.start()
-                        axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
+                        const params = {
+                            platform: this.$route.params.platform,
+                            lang: this.$root.$i18n.locale
+                        }
+                        axios.get(`${tahitiUrl}/operations`, {params}).then(
                             (resp) => {
                                 self.operations = resp.data
                                 self.operations.forEach((op) => {

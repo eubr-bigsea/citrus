@@ -9,7 +9,7 @@
             <div class="col-md-12 col-xg-12 mx-auto" v-if="dataSource.id">
                 <b-card no-body>
                     <b-tabs card>
-                        <b-tab title="Basic information" active>
+                        <b-tab :title="$t('dataSource.basicInformation')" active>
                             <div class="row">
                                 <div class="col-md-6">
                                     <label class="font-weight-bold">{{$tc('common.name')}}: </label>
@@ -99,7 +99,7 @@
                                 </div>
                             </div>
                         </b-tab>
-                        <b-tab title="Attributes">
+                        <b-tab :title="$tc('dataSource.attribute', 2)">
                             <h5 class="card-title">
                                 {{$tc('common.attribute', 2)}}
                             </h5>
@@ -165,10 +165,7 @@
                                 <div class="alert alert-info">{{ $t("dataSource.noAttributes") }}</div>
                             </div>
                         </b-tab>
-                        <b-tab title="Permissions">
-                            <div class="card-title">
-                                {{ $tc("common.permission", 2) }}
-                            </div>
+                        <b-tab :title="$tc('dataSource.permission', 2)">
                             <table class="table table-bordered table-stripped" v-if="dataSource.permissions && dataSource.permissions.length > 0">
                                 <thead>
                                     <tr>
