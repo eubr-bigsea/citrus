@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-4 offset-md-4">
             <div v-for="(field, index2) in form.fields" class="mb-2 property" v-bind:key="index2">
-                <component v-if="['percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                <component v-if="['select2', 'percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
                     :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)" language="language"
                     context="context" message="update-workflow-form-field-value">
                 </component>

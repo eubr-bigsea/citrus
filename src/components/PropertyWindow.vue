@@ -28,17 +28,18 @@
                         <b-card no-body>
                             <b-tabs card v-model="tabIndex">
                                 <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name">
-                                    <div v-for="field in form.fields" class="mb-2 property" v-bind:key="task.id + field.name">
+                                    <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
-                                            <component v-if="['percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                                            <component 
                                                 :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
                                                 :suggestions="suggestions"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
-                                                language="language" context="context">
+                                                language="language" context="context"
+                                                >
                                             </component>
-                                            <span v-else>
+                                            <!-- <span v-else>
                                                 {{field.name}} {{field.suggested_widget}}
-                                            </span>
+                                            </span> -->
                                         </keep-alive>
                                     </div>
                                 </b-tab>
@@ -79,6 +80,7 @@
     </div>
 </template>
 <script>
+    import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     // import {
     //     // CodeComponent,
@@ -138,7 +140,9 @@
             return {
                 forms: [],
                 filledForm: [],
-                tabIndex: 0
+                tabIndex: 0,
+                allFields: new Map(),
+                conditionalFields: new Map()
             }
         },
         methods: {
@@ -148,6 +152,10 @@
                     && this.task.forms[name]
                     ? this.task.forms[name].value : null;
             },
+            evalInContext(js, context) {
+                //# Return the results of the in-line anonymous function we .call with the passed context
+                return function() { return eval(js); }.call(context);
+            },
             update() {
                 let self = this;
                 let callback = () => {
@@ -156,9 +164,22 @@
                         return a.order - b.order;
                     });
                     // Reverse association between field and form. Used to retrieve category
+                    const conditional = /\bthis\..+?\b/g;
                     self.forms.forEach((f, i) => {
                         f.fields.forEach((field, j) => {
                             field.category = f.category;
+                            Vue.set(field, "enabled", true);
+                            self.allFields[field.name] = field;
+                            if (field.enable_conditions){
+                                field.enable_conditions.match(conditional).forEach(v => {
+                                    const key = v.replace('this.', '');
+                                    if (!self.conditionalFields.has(key)){
+                                        self.conditionalFields.set(key, []);
+                                    }
+                                    self.conditionalFields.get(key).push(field);
+                                });
+                            }
+                            Vue.set(field, "internalValue", null);
                         });
                     });
                 };
@@ -173,10 +194,23 @@
                 } else {
                     callback();
                 }
-            }
+            },
         },
         mounted() {
-            this.update()
+            const self = this;
+            this.update();
+            self.$root.$on('update-form-field-value', (field, value) => {
+                field.internalValue = value;
+                if (self.conditionalFields.has(field.name)){
+                    self.conditionalFields.get(field.name).forEach(fieldToCheck =>{
+                        try{
+                            fieldToCheck.enabled = self.evalInContext(fieldToCheck.enable_conditions, self.allFields);
+                        }catch(e){
+                            // Ignore
+                        }
+                    });
+                }
+            });
         },
         props: {
             task: { type: Object, default: {} },
@@ -191,7 +225,7 @@
 </script>
 <style scoped>
     .property {
-        overflow: hidden;
+        padding: 3px 0;
     }
     .property-help {
         font-size: 1.2em;

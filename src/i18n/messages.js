@@ -8,7 +8,7 @@ export default {
             alignRight: 'Alinhar à direira',
             alignTop: 'Alinhar com o topo',
             alignBottom: 'Alinhar com parte inferior',
-            back: 'Volbar',
+            back: 'Voltar',
             cancel: 'Cancelar',
             changeOption: 'Alterar opção...',
             choose: 'Escolha',
@@ -222,12 +222,18 @@ export default {
         },
         
         home: {
-            aPlatformForDataScience: 'A platform for data science',
-            learnMore: 'Learn more',
-            recentlyUpdated: 'Recently updated {what}',
-            welcome: `Welcome to Lemonade. 
-            Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) is a visual platform for distributed computing, aimed to enable implementation, experimentation, test and deploying of data processing and machine learning applications. It provides a higher level of abstractions, called operations, to users build processing workflows using a graphical web interface. By using high performance and scalable technologies, such as COMPSs, Ophidia and Spark, Lemonade can process very large amount of data, hiding all backend complexity from the users and allowing them to focus mainly in the construction of the solution.
-            Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`
+            aPlatformForDataScience: 'Uma plataforma para ciência dos dados',
+            learnMore: 'Aprenda mais',
+            recentlyUpdated: '{what} recentemente atualizados(as)',
+            welcome: `Bem-vindo ao Lemonade. 
+            Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) é uma platforma visual para computação distribuída 
+            que permite a implementação, experimentação, teste and implantação de aplicações de processamento de dados aprendizado de máquina. 
+            Ele provê um nível mais alto de abstração (fluxo de trabalho e operations) para que os usuários construam aplicações em uma interface gráfica web. 
+            Por usar tecnologias escaláveis e de alto desempenho, tais como COMPSs, Keras+Tensorflow e Spark, 
+            Lemonade pode processar grandes volumes de dados, ocultado toda a complexidade de infraestrutura dos usuários, permitindo-os focar
+            principalmente na construção da solução.
+            Lemonade é implementado como uma ferramenta de código aberto e está em desenvolvimento 
+            como produto dos projetos EUBra-BIGSEA e Atmosphere.`
         },
         workflow: {
             asImage: 'Como uma imagem (uma janela para baixar a imagem aparecerá)',
