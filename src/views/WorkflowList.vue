@@ -75,7 +75,7 @@
 
                         data.fields = 'id,name,platform,created,updated,user,version';
 
-                        let url = `${tahitiUrl}/workflows`;
+                        let url = `${tahitiUrl}/workflows?enabled=1`;
                         let headers = {}
                         this.$Progress.start()
                         return axios.get(url, {
