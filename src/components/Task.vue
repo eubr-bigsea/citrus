@@ -314,12 +314,18 @@
                 outputs = operation.ports.filter((p) => {
                     return p.type === 'OUTPUT';
                 }).sort((a, b) => {
-                    return a.order - b.order;
+                    /* For horizontal ports*/
+                    return b.order - a.order;
+                    /* For veritical ports */
+                    // return a.order - b.order;
                 });
                 inputs = operation.ports.filter((p) => {
                     return p.type === 'INPUT';
                 }).sort((a, b) => {
-                    return a.order - b.order;
+                    /* For horizontal ports*/
+                    return b.order - a.order;
+                    /* For veritical ports */
+                    // return a.order - b.order;
                 });
             }
             const locations = { input: [-1.2, 0], output: [3, -1.1] }
@@ -406,13 +412,16 @@
     .has-3-ports {
         color: #1E88E5;
         font-size: .5em;
-        background: #fff !important;
+        /* background: #fff !important; */
         display: block;
+        line-height: 6px;
         z-index: 10000;
+        text-align: center;
+        width: 50px;
     }
 
     .endpoint-label.output {
-        z-index: -2;
+        z-index: 1;
         /* background: green */
     }
 
@@ -420,9 +429,13 @@
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
-            top: 20px;
+            top: 10px;
             position: relative;
             z-index: 5
+        }
+        .has-3-ports {
+            margin-top: 20px !important;
+            
         }
     }
 

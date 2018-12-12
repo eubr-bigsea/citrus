@@ -36,10 +36,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#">{{$tc('titles.dashboard', 2)}}</a>
                         </li>
-                        <li class="divider-vertical nav-item"></li>
+                        <!-- <li class="divider-vertical nav-item"></li>
                         <li class="nav-item">
                             <router-link :to="{name: 'administration'}" class="nav-link">{{$tc('titles.administration', 2)}}</router-link>
-                        </li>
+                        </li> -->
                         <!--
                         <li class="divider-vertical nav-item"></li>
                         <li class="nav-item">

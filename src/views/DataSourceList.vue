@@ -67,13 +67,14 @@
                         limit: this.$t('common.limit'),
                     },
                     headings: {
+                        actions: this.$tc('common.action', 2),
                         id: 'ID',
                         name: this.$tc('common.name', 1),
                         description: this.$tc('common.description', 1),
                         format: this.$tc('dataSource.format', 1),
                         created: this.$t('common.created'),
                         tags: this.$t('common.tags'),
-                        user: this.$t('common.user'),
+                        user_name: this.$t('common.user.name'),
                     },
                     sortable: ['name', 'id', 'created'],
                     sortIcon: {

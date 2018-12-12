@@ -2,19 +2,19 @@
     <div class="row" style="overflow:hidden">
         <TahitiSuggester/>
         <div class="col-md-12">
-            <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab">
+            <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="justify-content-center">
                 <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order" :active="form.order === minFormOrder"
                     :key="form.id">
                     <template slot="title">
                         <span class="fa fa-cogs"></span> {{form.name}}
                     </template>
-                    <div class="card mt-1">
+                    <div class="card mt-1" style="min-height: 90vh">
                         <div class="card-body">
                             <WorkflowProperty v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded"></WorkflowProperty>
                         </div>
                     </div>
                 </b-tab>
-                <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
+                <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5" >
                     <div class="row pt-1">
                         <div class="col-md-12">
                             <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
@@ -241,6 +241,9 @@
             this.$root.$on('update-workflow-form-field-value', (field, value) => {
                 const self = this;
                 if (self.workflow)
+                    if (!self.workflow.forms || ! (self.workflow.forms instanceof Object)){
+                        self.workflow.forms = {}
+                    }
                     try {
                         self.workflow.forms[field.name] = { value };
                     } catch (e) {
@@ -339,7 +342,11 @@
                     (resp) => {
                         let workflow = resp.data;
                         this.$Progress.start()
-                        axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
+                        const params = {
+                            platform: this.$route.params.platform,
+                            lang: this.$root.$i18n.locale
+                        }
+                        axios.get(`${tahitiUrl}/operations`, {params}).then(
                             (resp) => {
                                 self.operations = resp.data
                                 self.operations.forEach((op) => {
@@ -388,7 +395,7 @@
             },
             saveAsImage() {
                 let self = this
-                let $elem = this.$refs.diagram.$el.querySelector('.lemonade')
+                let $elem = this.$refs.diagram.$el.querySelector('#lemonade-container')
                 html2canvas($elem, {
                     width: 3000, height: 3000, logging: false, allowTaint: false,
                     logging: false,

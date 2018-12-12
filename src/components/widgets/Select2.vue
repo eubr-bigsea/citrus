@@ -2,8 +2,10 @@
     <div>
         <LabelComponent :field="field"></LabelComponent>
         <div>
-            <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
-                :taggable="true" :closeOnSelect="false">
+            <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" 
+               :value.sync="values" :on-change="updated"
+               label="value"
+                :taggable="false" :closeOnSelect="false">
                 <div slot="no-options"></div>
             </v-select>
         </div>
@@ -18,12 +20,9 @@
             LabelComponent
         },
         computed: {
-            params() {
-                let result = null;
-                if (this.field.values) {
-                    result = JSON.parse(this.field.values);
-                }
-                return result;
+            suggestions() {
+                let obj = JSON.parse(this.field.values);
+                return obj;
             }
         },
         methods: {
@@ -31,11 +30,17 @@
                 this.$root.$emit(this.message, this.field, val);
             }
         },
+        data(){
+            return {
+                values: []
+            }
+        },
         props: {
-            value: "", field: null, suggestions: { required: true }, message: {
+            value: "", field: null, 
+            message: {
                 type: String,
                 default: 'update-form-field-value'
-            }
+            }      
         },
     }
 </script>

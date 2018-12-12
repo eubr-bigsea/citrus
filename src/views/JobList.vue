@@ -76,7 +76,15 @@
                     preserveState: true,
                     saveState: true,
                     filterable: ['name', 'album'],
-                    requestFunction: this.load
+                    requestFunction: this.load,
+                    texts:{
+                        filter: this.$tc('common.filter'),
+                        count: this.$t('common.pagerShowing'),
+                        limit: this.$t('common.limit'),
+                        noResults: this.$t('common.noData'),
+                        loading: this.$t('common.loading'),
+                        filterPlaceholder: this.$t('common.filterPlaceholder')
+                    }
                 }
             }
         },

@@ -3,7 +3,7 @@
         <LabelComponent :field="field"></LabelComponent>
         <div>
             <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
-                :taggable="true">
+                :taggable="true" :closeOnSelect="false">
                 <slot name="no-options">Sorry, no matching options.!!!</slot>
             </v-select>
         </div>

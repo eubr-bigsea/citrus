@@ -1,7 +1,7 @@
 <template>
     <div class="row lemonade">
-        <div class="col-md-3 col-sm-12">
-            <div class="jumbotron ">
+        <div class="col-md-12 col-sm-12">
+            <div class="jumbotron pt-2 pb-2">
                 <h1 class="display-4">{{$t('titles.lemonadePlatform')}}</h1>
                 <p class="lead text-justify">{{$t('home.aPlatformForDataScience')}}</p>
                 <hr class="my-4">
@@ -11,10 +11,10 @@
                 </p>
             </div>
         </div>
-        <div class="col-sm-12 col-md-3 border">
+        <div class="col-sm-12 col-md-4 border">
             <div class="card mb-3">
                 <div class="text-white card-header bg-secondary ">
-                    <h5 class="card-title">{{$t('home.recentlyUpdated', {what: $tc('titles.workflow', 2).toLowerCase() })}}</h5>
+                    <h5 class="card-title updated">{{$t('home.recentlyUpdated', {what: $tc('titles.workflow', 2).toLowerCase() })}}</h5>
                 </div>
                 <div class="card-body">
                     <div v-if="loading.workflows">
@@ -40,10 +40,10 @@
             </div>
 
         </div>
-        <div class="col-sm-12 col-md-3 border">
+        <div class="col-sm-12 col-md-4 border">
             <div class="card mb-3">
                 <div class="text-white card-header bg-secondary ">
-                    <h5 class="card-title">{{$t('home.recentlyUpdated', {what: $tc('titles.dataSource', 2).toLowerCase() })}}</h5>
+                    <h5 class="card-title updated">{{$t('home.recentlyUpdated', {what: $tc('titles.dataSource', 2).toLowerCase() })}}</h5>
                 </div>
                 <div class="card-body">
                     <div v-if="loading.dataSources">
@@ -68,10 +68,10 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-3 border">
+        <div class="col-sm-12 col-md-4 border">
             <div class="card mb-3" id="latest-jobs">
                 <div class="text-white card-header bg-secondary ">
-                    <h5 class="card-title">{{$t('home.recentlyUpdated', {what: $tc('titles.job', 2).toLowerCase() })}}</h5>
+                    <h5 class="card-title updated">{{$t('home.recentlyUpdated', {what: $tc('titles.job', 2).toLowerCase() })}}</h5>
                 </div>
                 <div class="card-body">
                     <div v-if="loading.jobs">
@@ -167,5 +167,8 @@
 
     .card {
         height: 98%;
+    }
+    .updated::first-letter {
+        text-transform: uppercase;
     }
 </style>

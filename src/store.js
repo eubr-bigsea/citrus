@@ -42,8 +42,9 @@ export default new Vuex.Store({
     actions: {
         changeProfile({ commit }, params) {
             return new Promise((resolve, reject) => {
-                let url = `${params.thornUrl}/api/users/${params.user.attributes.id}`
-                let headers = { 'Accept': 'application/json; charset=utf-8' }
+                const self = this;
+                const url = `${params.thornUrl}/api/users/${params.user.attributes.id}`
+                const headers = { 'Accept': 'application/json; charset=utf-8' }
                 axios({ url, data: { data: params.user }, method: 'PATCH', headers })
                     .then(resp => {
                         commit('change_profile_success', { user: resp.data.data })

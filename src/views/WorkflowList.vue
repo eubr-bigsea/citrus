@@ -4,7 +4,7 @@
             <div class="col-md-10">
                 <h2 class="title text-primary">{{$tc('titles.workflow', 2)}}</h2>
             </div>
-            <div class="col-md-2 pull-right">
+            <div class="col-md-2 pull-right text-right">
                 <a href="#/workflows/add" class="btn btn-primary btn-sm" role="button">
                     <font-awesome-icon icon="plus" size="1x"></font-awesome-icon>  {{$t('actions.add', {type: $tc('titles.workflow').toLowerCase()})}}</a>
             </div>
@@ -17,9 +17,6 @@
                     </template>
                     <template slot="platform" slot-scope="props">
                         {{props.row.platform.name}}
-                    </template>
-                    <template slot="h__name">
-                        {{$tc('common.name')}}
                     </template>
                     <div slot="afterFilter">
                         <label>{{$tc('common.platform')}}:</label>
@@ -53,7 +50,12 @@
                     dateColumns: ['created', 'updated'],
                     headings: {
                         id: 'ID',
-                        name: 'Name',
+                        name: this.$tc('common.name'),
+                        created: this.$tc('common.created'),
+                        updated: this.$tc('common.updated'),
+                        platform: this.$tc('common.platform'),
+                        user_name: this.$tc('common.user.name'),
+                        version: this.$tc('common.version'),
                     },
                     sortable: ['name', 'id', 'created', 'updated'],
                     filterable: ['name', 'id'],
@@ -87,6 +89,14 @@
                             this.$Progress.finish()
                             this.error(e);
                         }.bind(this));
+                    },
+                    texts:{
+                        filter: this.$tc('common.filter'),
+                        count: this.$t('common.pagerShowing'),
+                        limit: this.$t('common.limit'),
+                        noResults: this.$t('common.noData'),
+                        loading: this.$t('common.loading'),
+                        filterPlaceholder: this.$t('common.filterPlaceholder')
                     }
                 }
             }

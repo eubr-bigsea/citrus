@@ -99,10 +99,20 @@ if (token) {
 
 // i18n
 const i18n = new VueI18n({
-    locale: 'en', // set locale
+    locale: 'pt', // set locale
     fallbackLocale: 'en',
     messages
 })
+
+Object.defineProperty(Vue.prototype, '$locale', {
+    get: function () {
+      return i18n.locale
+    },
+    set: function (locale) {
+        i18n.locale = locale
+    }
+  })
+
 
 let newVue = new Vue({
     el: '#app',

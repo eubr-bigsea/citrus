@@ -88,6 +88,9 @@
                                         <span v-if="log.type === 'HTML'">
                                             <div class="html-div" v-html="log.message"></div>
                                         </span>
+                                        <span v-else-if="log.type === 'IMAGE'">
+                                            <img :src="'data:image/png;base64,' + log.message"/>
+                                        </span>
                                         <!-- <span v-else-if="log.type === 'STATUS'">
                                             &#9733;{{log.message}}
                                         </span> -->
@@ -253,6 +256,8 @@
                 const self = this;
                 const standNamespace = "/stand";
                 const standSocketIOdPath = "";
+                // const standNamespace = "";
+                // const standSocketIOdPath = "/stand/";
                 const socket = io(`${standUrl}${standNamespace}`,
                     { upgrade: true, path: `${standSocketIOdPath}/socket.io`, });
 

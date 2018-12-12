@@ -95,7 +95,7 @@
         },
         methods: {
             save() {
-                let self = this
+                const self = this
                 let thornUrl = process.env.VUE_APP_THORN_URL
                 this.$store.dispatch('changeProfile', { thornUrl, user: this.user })
                     .then(() => {
@@ -103,7 +103,8 @@
                             self.$t('profile.updated'),
                             self.$t('titles.success'),
                         );
-                        this.$router.push('/')
+                        self.$root.$i18n.locale = self.user.attributes.locale;
+                        this.$router.push('/');
                     })
                     .catch(err => {
                         let msg = err.message.startsWith('errors.')
