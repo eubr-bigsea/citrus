@@ -19,7 +19,7 @@ import {
     faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
     faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp, faCheckCircle, faTimesCircle, faHandPaper, faStopCircle, faPauseCircle,
-    faSync,
+    faSync, faCheckSquare, faSquare
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -54,7 +54,7 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
     faHome, faUser, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
     faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp, faTimesCircle, faHandPaper, faStopCircle,
-    faCheckCircle, faPauseCircle,faSync,
+    faCheckCircle, faPauseCircle, faSync, faCheckSquare, faSquare,
 ),
 
     Vue.use(ClientTable);
@@ -106,12 +106,12 @@ const i18n = new VueI18n({
 
 Object.defineProperty(Vue.prototype, '$locale', {
     get: function () {
-      return i18n.locale
+        return i18n.locale
     },
     set: function (locale) {
         i18n.locale = locale
     }
-  })
+})
 
 
 let newVue = new Vue({

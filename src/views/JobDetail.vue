@@ -254,10 +254,10 @@
             },
             connectWebSocket() {
                 const self = this;
-                const standNamespace = "/stand";
-                const standSocketIOdPath = "";
-                // const standNamespace = "";
-                // const standSocketIOdPath = "/stand/";
+                //const standNamespace = "/stand";
+                //const standSocketIOdPath = "";
+                const standNamespace = "";
+                const standSocketIOdPath = "/stand/";
                 const socket = io(`${standUrl}${standNamespace}`,
                     { upgrade: true, path: `${standSocketIOdPath}/socket.io`, });
 
