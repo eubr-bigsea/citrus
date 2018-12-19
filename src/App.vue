@@ -34,7 +34,7 @@
                         </li>
                         <li class="divider-vertical nav-item"></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">{{$tc('titles.dashboard', 2)}}</a>
+                            <router-link :to="{name: 'dashboards'}" class="nav-link">{{$tc('titles.dashboard', 2)}}</router-link>
                         </li>
                         <li class="divider-vertical nav-item"></li>
                         <li class="nav-item">
