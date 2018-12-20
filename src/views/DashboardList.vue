@@ -61,7 +61,7 @@
                         data.sort = data.orderBy
                         data.asc = data.ascending === 1 ? 'true' : 'false'
                         data.size = data.limit
-                        data.name = data.query
+                        data.q = data.query
 
                         data.fields = 'id,title,updated,user';
 
