@@ -39,6 +39,7 @@
     "vue-slideout-panel": "^3.0.0",
     "vue-snotify": "^3.2.1",
     "vue-tables-2": "^1.4.70",
+    "vue2-leaflet": "^1.2.3",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

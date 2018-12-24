@@ -21,7 +21,7 @@
     import axios from 'axios'
     import io from 'socket.io-client'
 
-    import CapirinhaVisualization from '../components/CaipirinhaVisualization.vue'
+    import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue'
 
 
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
