@@ -254,10 +254,10 @@
             },
             connectWebSocket() {
                 const self = this;
-                //const standNamespace = "/stand";
-                //const standSocketIOdPath = "";
-                const standNamespace = "";
-                const standSocketIOdPath = "/stand/";
+                const standNamespace = "/stand";
+                const standSocketIOdPath = "";
+                // const standNamespace = "";
+                // const standSocketIOdPath = "/stand/";
                 const socket = io(`${standUrl}${standNamespace}`,
                     { upgrade: true, path: `${standSocketIOdPath}/socket.io`, });
 
@@ -306,6 +306,7 @@
                         self.job.status = msg.status;
                         self.jobStatus = msg.status.toLowerCase();
                         self.job.finished = msg.finished;
+                        
                         if (msg.message) {
                             // let finalMsg = msg.message.replace(/&/g, '&amp;')
                             //     .replace(/"/g, '&quot;')
@@ -316,6 +317,7 @@
                             if (msg.status === 'COMPLETED') {
                                 self.success(finalMsg);
                             } else if (msg.status === 'ERROR') {
+                                self.job.exception_stack =  msg.exception_stack.replace(/(^[ \t]*\n)/gm, "");
                                 self.error(null, self.$t('job.error'));
                                 // } else {
                                 //     self.error(finalMsg)

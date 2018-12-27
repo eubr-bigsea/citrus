@@ -135,6 +135,9 @@ export default {
             youCanUploadYourFiles: 'Você pdoe carregar seus próprios arquivos para o servidor',
             youCanUseSQL: 'Você pode usar comandos SELECT SQL para recuperar os dados',
         },
+        diagram: {
+            showProperties: 'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
+        },
         errors: {
             disconnected: 'You are disconnected. Please check if you have access to the Internet.',
             invalidLoginOrPassword: 'Invalid login or password',

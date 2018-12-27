@@ -27,7 +27,7 @@
                     <form>
                         <b-card no-body>
                             <b-tabs card v-model="tabIndex">
-                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name">
+                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name" :title-link-class="'small-nav-link'">
                                     <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
                                             <component 
@@ -249,12 +249,16 @@
         zoom: 100%;
         font-size: .75rem
     }
+
 </style>
 <style>
     .props .card-body {
         flex: inherit
     }
-
+    .small-nav-link {
+        padding: 5px 10px !important;
+        margin: 0;
+    }
     .props .form-control {
         font-size: .7rem !important;
     }

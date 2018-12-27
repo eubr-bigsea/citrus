@@ -34,13 +34,13 @@
                         </router-link>
                     </template>
                     -->
-                    <template slot="platforms" slot-scope="props">
+                    <template slot="platforms.name" slot-scope="props">
                         {{props.row.platforms.map(plat => plat.name).join(", ")}}
                     </template>
                     <template slot="enabled" slot-scope="props">
                         <div class="xtext-center">
-                        <span v-if="props.row.enabled" class="fa fa-check-square"></span>
-                        <span v-if="!props.row.enabled" class="fa fa-square"></span>
+                            <span v-if="props.row.enabled" class="fa fa-check-square"></span>
+                            <span v-if="!props.row.enabled" class="fa fa-square"></span>
                         </div>
                     </template>
                 </v-server-table>
@@ -53,9 +53,7 @@
     import axios from 'axios'
     import Notifier from '../mixins/Notifier'
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL
-    const FIELDS = ['id', 'slug', 'name', 'platforms',
-                    'enabled'
-                ]
+    const FIELDS = ['id', 'slug', 'name', 'platforms.name', 'enabled']
     export default {
         mixins: [Notifier],
         data() {
@@ -72,10 +70,10 @@
                     },
                     headings: {
                         id: 'ID',
-                        created: this.$t('common.created'),
                         actions: this.$tc('common.action', 2),
                         name: this.$tc('common.name'),
                         'user.name': this.$t('common.user.name'),
+                        'platforms.name': this.$tc('titles.platform', 2),
                     },
                     sortable: ['name', 'id', 'created'],
                     sortIcon: {
@@ -88,7 +86,7 @@
                     saveState: true,
                     filterable: ['name', 'album'],
                     requestFunction: this.load,
-                    texts:{
+                    texts: {
                         filter: this.$tc('common.filter'),
                         count: this.$t('common.pagerShowing'),
                         limit: this.$t('common.limit'),
@@ -114,7 +112,7 @@
                         params: data
                     }).then(resp => {
                         this.$Progress.finish();
-                        return { data: resp.data, count: resp.data.length };
+                        return { data: resp.data.data, count: resp.data.pagination.total };
                     }).catch(function (e) {
                         this.error(e);
                     }.bind(this));

@@ -1,6 +1,8 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
-        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:click="click" @contextmenu="openMenu">
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" 
+        class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
+        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" 
+        v-on:dblclick.stop="dblClick" v-on:click.stop="click" @contextmenu="openMenu">
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
         </div>
@@ -8,7 +10,7 @@
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
         </div>
         <div v-if="!isComment && task.step && task.step.status" class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
-            <span class="fa fa-check-circle fa-2x"></span>
+            <span class="fa fa-2x" :class="getDecorationClass"></span>
         </div>
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
@@ -16,7 +18,8 @@
         <div class="custom-context-menu" v-if="contextMenuOpened && !isComment" ref="right">
             <ul>
                 <li @click.stop="remove()">{{$t('actions.delete')}}</li>
-                <li @click.stop="showResults()">{{$t('actions.showResults')}}</li>
+                <li @click.stop="showResults()" v-if="task.step">{{$t('actions.showResults')}}</li>
+                <li @click.stop="dblClick">{{$tc('titles.property', 2)}}</li>
                 <li v-for="(item, index) in contextMenuActions" @click="item.action(item.name)" :key="index">
                     {{item.label}}
                 </li>
@@ -171,8 +174,49 @@
 
             },
             getDecorationClass() {
+                if (this.task.step && this.task.step.status){
+                    return this.getClassesForDecor(this.task.step.status);
+                } else {
+                    return this.getClassesForDecor(this.task.status || '')
+                }
+                // let result = [];
+                // switch (this.task.name && this.task.status) {
+                //     case 'ERROR':
+                //         result.push("fa fa-times-circle fa-2x");
+                //         break;
+                //     case 'PENDING':
+                //         result.push("fa fa-pause-circle fa-2x");
+                //         break;
+                //     case 'CANCELED':
+                //         result.push("fa fa-stop-circle fa-2x");
+                //         break;
+                //     case 'RUNNING':
+                //         result.push("fa fa-sync fa-spin fa-2x");
+                //         break;
+                //     case 'COMPLETED':
+                //         result.push("fa fa-check-circle fa-2x");
+                //         break;
+                //     default:
+                // }
+                // result.push(this.task.status.toLowerCase());
+                // return result.join(' ');
+            },
+            getBorder() {
+                let color = '#fff'
+                if (this.task.forms && this.task.forms.color && this.task.forms.color.value) {
+                    color = this.task.forms.color.value.background
+                }
+                return `0px solid ${color}`
+            },
+            inGroup: function () {
+                let elem = this.$refs.task;
+                return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
+            }
+        },
+        methods: {
+            getClassesForDecor(value){
                 let result = [];
-                switch (this.task.name && this.task.status) {
+                switch (value) {
                     case 'ERROR':
                         result.push("fa fa-times-circle fa-2x");
                         break;
@@ -190,22 +234,9 @@
                         break;
                     default:
                 }
-                result.push(this.task.status.toLowerCase());
+                result.push(value.toLowerCase());
                 return result.join(' ');
             },
-            getBorder() {
-                let color = '#fff'
-                if (this.task.forms && this.task.forms.color && this.task.forms.color.value) {
-                    color = this.task.forms.color.value.background
-                }
-                return `0px solid ${color}`
-            },
-            inGroup: function () {
-                let elem = this.$refs.task;
-                return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
-            }
-        },
-        methods: {
             openMenu(e) {
                 if (!this.isComment && this.enableContextMenu) {
                     this.contextMenuOpened = true;
@@ -237,7 +268,7 @@
                 this.top = top + 'px';
                 this.left = left + 'px';
             },
-            click(ev) {
+            _click(ev, showProperties){
                 const self = this;
                 let elem = ev.target.classList.contains('task') ? ev.target : ev.target.parentElement;
 
@@ -256,12 +287,18 @@
                 self.instance.repaintEverything()
 
                 // Raise the click event to upper components
-                this.$root.$emit('onclick-task', self);
-                ev.stopPropagation();
+                this.$root.$emit('onclick-task', self, showProperties);
+                this.hideMenu();
+            },
+            dblClick(ev){
+                this._click(ev, true);
+            },
+            click(ev) {
+                this._click(ev, false);
             },
             showResults() {
                 this.contextMenuOpened = false;
-                console.debug(this.task.step)
+                this.$root.$emit('onshow-result', this.task);
             },
             remove() {
                 this.contextMenuOpened = false;
@@ -665,7 +702,7 @@
             }
             ;
             .right-decor {
-                right: -10px;
+                left: 50px;
             }
             .left-decor {
                 left: -10px;
@@ -681,7 +718,7 @@
                 padding: 0px;
                 position: absolute;
                 display: block;
-                top: -10px;
+                bottom: -9px;
                 height: 20px;
                 width: 20px;
                 text-align: center;

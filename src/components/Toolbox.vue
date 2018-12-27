@@ -3,20 +3,20 @@
         <VuePerfectScrollbar class="scroll-area" :settings="settings">
             <div class="mr-2">
                 <ul class="list-group">
-                    <li class="bg-dark text-white list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed">
+                    <li class="list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed bg-dark text-white">
                         {{$tc('common.operation', 2).toUpperCase()}}
                     </li>
                     <li class="list-group-item sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
                         <input @input="searchOperation" v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')" />
                     </li>
                     <div v-if="search === ''">
-                        <div v-for="(group, index) in groupedOperations" :title="group.order" class="unstyled" v-bind:key="group.group" >
-                            <b-link draggable="false" data-parent="submenus" v-b-toggle="'submenu' + index" class="bg-dark text-white list-group-item list-group-item-action flex-column align-items-start">
-                                <span class="fa fa-layer-group"></span> {{group.group}}
+                        <div v-for="(group, index) in groupedOperations" :title="group.order" class="unstyled" v-bind:key="group.group">
+                            <b-link draggable="false" data-parent="submenus" v-b-toggle="'submenu' + index" class="list-group-item list-group-item-action flex-column align-items-start">
+                                <strong><span class="fa fa-layer-group"></span> {{group.group}}</strong>
                             </b-link>
-                            
+
                             <b-collapse :id="'submenu' + index" data-parent="submenus">
-                                 <div v-if="group.operations">
+                                <div v-if="group.operations">
                                     <span v-for="op in group.operations" v-bind:key="op.operation.id" :title="op.operation.name">
                                         <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item list-group-item-action text-dark">
                                             <span v-text="op.operation.name" :title="op.operation.name"></span>
@@ -25,19 +25,20 @@
                                 </div>
                                 <div v-else>
                                     <div v-for="(subGroup, index2) in group.subGroups" v-bind:key="subGroup.subGroup">
-                                        <b-link draggable="false" v-b-toggle="'subsubmenu' + index2" class="bg-secondary text-white list-group-item list-group-item-action flex-column align-items-start">
-                                            <span class="menu-collapsed">
-                                                <span class="fa fa-layer-group"></span> {{subGroup.subGroup }}
+                                        <b-link draggable="false" v-b-toggle="'subsubmenu' + index2" class="list-group-item list-group-item-action flex-column align-items-start">
+                                            <span class="menu-collapsed pl-2">
+                                                <span class="fa fa-layer-group"></span>
+                                                <strong> {{subGroup.subGroup }}</strong>
                                             </span>
                                         </b-link>
                                         <b-collapse :id="'subsubmenu' + index2" v-for="op in subGroup.operations" v-bind:key="op.operation.id" :title="op.operation.name">
-                                            <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item list-group-item-action bg-white text-dark ml-30">
-                                                <span v-text="op.operation.name"></span>
-                                            </a>
+                                                <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item list-group-item-action bg-white text-dark">
+                                                    <span class="ml-3" v-text="op.operation.name"></span>
+                                                </a>
                                         </b-collapse>
                                     </div>
                                 </div>
-                               
+
                             </b-collapse>
                         </div>
                     </div>
@@ -79,7 +80,7 @@
             }
         },
         props: {
-            operations: { type: Array, default: []}
+            operations: { type: Array, default: [] }
         },
         computed: {
             groupedOperations() {
@@ -103,35 +104,53 @@
                     return result;
                 })];
                 */
-                
-                const ops = this.operations.map((op) =>{
+
+                const ops = this.operations.map((op) => {
                     const group = op.categories.find((cat) => {
                         return cat.type === 'group';
-                    }) || {name: '', order: 0}
+                    }) || { name: '', order: 0, default_order: 0 }
                     const subGroup = op.categories.find((cat) => {
                         return cat.type === 'subgroup';
-                    }) || {name: ''}
-                    return {group: group.name, operation: op, subGroup: subGroup.name, order: group.order}
+                    }) || { name: '', order: 0, default_order: 0 }
+                    return { group: group.name, operation: op, subGroup: subGroup.name, order: group.order, 
+                        default_order: group.default_order, subGroupOrder: subGroup.order, 
+                        subGroupDefaultOrder: subGroup.default_order }
                 });
                 ops.sort((a, b) => {
                     if (a.order < b.order) return -1;
                     if (a.order > b.order) return 1;
                     if (a.default_order < b.default_order) return -1;
                     if (a.default_order > b.default_order) return 1;
-                    const groupComapare = a.group.localeCompare(b.group)
-                    if (groupComapare != 0) return groupComapare;
+                    const groupCompare = a.group.localeCompare(b.group)
+                    if (groupCompare != 0) return groupCompare;
                     return a.subGroup.localeCompare(b.subGroup);
                 });
                 let grouped = [...groupBy(ops, (x) => x.group)].map((item) => {
-                    if (item[1][0].subGroup === ''){
-                        return {group: item[0], operations: item[1].sort(
-                                    (a, b) => a.operation.name.localeCompare(b.operation.name))};
+                    if (item[1][0].subGroup === '') {
+                        return {                            
+                            group: item[0], operations: item[1].sort(
+                                (a, b) => a.operation.name.localeCompare(b.operation.name))
+                        };
                     } else {
-                        return {group: item[0], 
-                            subGroups: [...groupBy(item[1], (x) => x.subGroup)].map((subItem) => {
-                                return {group: item[0], subGroup: subItem[0], operations: subItem[1].sort(
-                                    (a, b) => a.operation.name.localeCompare(b.operation.name))};
-                            })
+                        return {
+                            group: item[0],
+                            subGroups: [...groupBy(item[1], (x) => x.subGroup)]
+                                .map((subItem) => {
+                                    return {
+                                        group: item[0], subGroup: subItem[0], 
+                                        subGroupOrder: item[1][0].subGroupOrder,
+                                        subGroupDefaultOrder: item[1][0].subGroupDefaultOrder,
+                                        operations: subItem[1].sort(
+                                            (a, b) => a.operation.name.localeCompare(b.operation.name))                                
+                                    };
+                                })
+                                .sort((a, b) => {
+                                    if (a.subGroupOrder < b.subGroupOrder) return -1;
+                                    if (a.subGroupOrder > b.subGroupOrder) return 1;
+                                    if (a.subGroupDefaultOrder < b.subGroupDefaultOrder) return -1;
+                                    if (a.subGroupDefaultOrder > b.subGroupDefaultOrder) return 1;
+                                    return a.subGroup.localeCompare(b.subGroup)
+                                })
                         };
                     }
                 });

@@ -14,7 +14,7 @@
                         </div>
                     </div>
                 </b-tab>
-                <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5" >
+                <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
                     <div class="row pt-1">
                         <div class="col-md-12">
                             <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
@@ -112,8 +112,20 @@
                         </b-modal>
                     </div>
                 </b-tab>
+                <b-tab :title="$tc('titles.job', 2)" title-item-class="tab-order-6" @click="showJobs">
+                    <WorkflowExecution :workflow-id="workflow.id" v-if="showPreviousJobs" />
+                </b-tab>
 
             </b-tabs>
+            <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
+                <p>{{resultTask.step.status}}</p>
+                <div v-for="log in resultTask.step.logs" :key="log.id">
+                    {{log}}
+                </div>
+                <div>
+                    {{resultTask.result}}
+                </div>
+            </b-modal>
         </div>
     </div>
 </template>
@@ -129,6 +141,7 @@
     import ToolboxComponent from '../components/Toolbox.vue'
     import SlideOutPanel from '../components/SlideOutPanel.vue'
     import WorkflowProperty from '../components/WorkflowProperty.vue'
+    import WorkflowExecution from '../components/WorkflowExecution.vue'
     import html2canvas from 'html2canvas';
     import Notifier from '../mixins/Notifier'
 
@@ -146,6 +159,7 @@
             'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
             WorkflowProperty,
+            WorkflowExecution,
             VuePerfectScrollbar,
             TahitiSuggester: () => {
 
@@ -171,45 +185,48 @@
                     name: '', description: '', workflowName: '', id: 0,
                     jobName: '',
                 },
-                workflow: { tasks: [], flows: [], platform: {} },
-                loaded: false,
-                operations: [],
                 history: [],
-                saveOption: 'new',
-                operationsLookup: new Map(),
-                showProperties: false,
-                selectedTab: 0,
+                isDirty: false,
+                loaded: false,
                 minFormOrder: 5,
+                operations: [],
+                operationsLookup: new Map(),
+                resultTask: { step: {} },
+                saveOption: 'new',
+                selectedTab: 0,
                 selectedTask: { task: { operation: {} } },
-                propertyStyles: [
-                    {
-                        top: '112px',
-                        height: 'calc(92vh - 112px)'
-                    },
-                    {
-
-                        backgroundColor: '#fff',
-                        paddingTop: '2rem',
-                        paddingBottom: '1rem',
-                        overflow: 'hidden'
-                    },
-                    {
-                        overflow: 'hidden'
-                    },
-                    {
-
-                        color: '#555',
-                        textDecoration: 'none',
-                        top: '8px',
-                        right: '1rem'
-                    }
-                ]
+                showPreviousJobs: false,
+                showProperties: false,
+                workflow: { tasks: [], flows: [], platform: {} },
+                // propertyStyles: [
+                    //     {
+                        //         top: '112px',
+                        //         height: 'calc(92vh - 112px)'
+                        //     },
+                        //     {
+                            
+                            //         backgroundColor: '#fff',
+                            //         paddingTop: '2rem',
+                            //         paddingBottom: '1rem',
+                            //         overflow: 'hidden'
+                            //     },
+                            //     {
+                                //         overflow: 'hidden'
+                                //     },
+                                //     {
+                                    
+                                    //         color: '#555',
+                                    //         textDecoration: 'none',
+                                    //         top: '8px',
+                                    //         right: '1rem'
+                                    //     }
+                // ],
             }
         },
         mounted() {
             let self = this
-            this.$root.$on('onclick-task', (taskComponent) => {
-                this.showProperties = true;
+            this.$root.$on('onclick-task', (taskComponent, showProperties) => {
+                this.showProperties = showProperties;
                 this.selectedTask = taskComponent;
                 this.updateAttributeSuggestion();
             });
@@ -237,22 +254,26 @@
                 } else {
                     self.selectedTask.task.forms[field.name] = { value: value }
                 }
+                this.isDirty = true;
             });
             this.$root.$on('update-workflow-form-field-value', (field, value) => {
                 const self = this;
                 if (self.workflow)
-                    if (!self.workflow.forms || ! (self.workflow.forms instanceof Object)){
+                    if (!self.workflow.forms || !(self.workflow.forms instanceof Object)) {
                         self.workflow.forms = {}
                     }
-                    try {
-                        self.workflow.forms[field.name] = { value };
-                    } catch (e) {
-                        console.debug(e)
-                    }
+                try {
+                    self.workflow.forms[field.name] = { value };
+                } catch (e) {
+                    console.debug(e)
+                }
+                this.isDirty = true;
             })
             /* Task related */
             this.$root.$on('addTask', (task) => {
+                task.step = null;
                 this.workflow.tasks.push(task);
+                this.isDirty = true;
             });
             this.$root.$on('onremove-task', (task) => {
                 // const self = this;
@@ -280,11 +301,13 @@
                         }
                     }
                 }
+                this.isDirty = true;
             });
 
             this.$root.$on('addFlow', (flow, jsPlumbConn) => {
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
+                this.isDirty = true;
             });
             this.$root.$on('removeFlow', (flowId) => {
                 const self = this;
@@ -295,14 +318,16 @@
                 if (inx > -1) {
                     this.workflow.flows.splice(inx, 1);
                 }
+                this.isDirty = true;
             });
             this.$root.$on('onshow-history', this.showHistory);
             this.$root.$on('onzoom', (zoom) => {
                 this.$refs.diagram.setZoomPercent(zoom);
             });
+            this.$root.$on('onshow-result', this.showTaskResult);
             this.load();
         },
-        beforeDestroy(){
+        beforeDestroy() {
             this.$root.$off('onclick-task');
             this.$root.$off('on-error');
             this.$root.$off('onsave-as-image');
@@ -321,6 +346,7 @@
             this.$root.$off('removeFlow');
             this.$root.$off('onshow-history');
             this.$root.$off('onzoom');
+            this.$root.$off('onshow-result');
         },
         watch: {
             '$route.params.id': function (id) {
@@ -329,11 +355,19 @@
             }
         },
         methods: {
-            align(){this.$root.$on('onalign-tasks', this.$refs.diagram.align);},
-            toggleTasks(){this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks);},
-            distribute(){this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute);},
+            showTaskResult(task) {
+                this.resultTask = task;
+                this.$refs.taskResultModal.show();
+            },
+            showJobs() {
+                this.showPreviousJobs = true
+            },
+            align() { this.$root.$on('onalign-tasks', this.$refs.diagram.align); },
+            toggleTasks() { this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks); },
+            distribute() { this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute); },
             updateSelectedTab(index) {
                 //this.selectedTab = index;
+                console.debug(index)
                 this.$refs.diagram.repaint();
             },
             load() {
@@ -346,7 +380,7 @@
                             platform: this.$route.params.platform,
                             lang: this.$root.$i18n.locale
                         }
-                        axios.get(`${tahitiUrl}/operations`, {params}).then(
+                        axios.get(`${tahitiUrl}/operations`, { params }).then(
                             (resp) => {
                                 self.operations = resp.data
                                 self.operations.forEach((op) => {
@@ -354,6 +388,7 @@
                                 })
                                 workflow.tasks.forEach((task) => {
                                     task.operation = self.operationsLookup[task.operation.id]
+                                    task.step = null;
                                 });
                                 if (!workflow.forms) {
                                     workflow.forms = {};
@@ -373,6 +408,28 @@
                                 self.loaded = true;
                                 self.$nextTick(() => {
                                 });
+                                const params = { workflow_id: this.$route.params.id }
+                                axios.get(`${standUrl}/jobs/latest`, { params })
+                                    .then((resp2 => {
+                                        const job = resp2.data;
+                                        const tasks = self.workflow.tasks;
+                                        job.steps.forEach((step, i) => {
+                                            const foundTask = tasks.find((t) => {
+                                                return t.id === step.task.id;
+                                            });
+                                            if (foundTask) {
+                                                foundTask.step = step;
+                                            }
+                                        });
+                                        job.results.forEach((result, i) => {
+                                            const foundTask = tasks.find((t) => {
+                                                return t.id === result.task.id;
+                                            });
+                                            if (foundTask) {
+                                                foundTask.result = result;
+                                            }
+                                        });
+                                    })).catch((e) => { });
                             }
                         ).catch(function (e) {
                             this.error(e);
@@ -477,6 +534,8 @@
                 cloned.tasks.forEach((task) => {
                     task.operation = { id: task.operation.id };
                     delete task.version; //
+                    delete task.step;
+                    delete task.status;
                 });
 
                 axios[method](
@@ -491,6 +550,7 @@
                         self.workflow = workflow;
                         self.success(self.$t('messages.savedWithSuccess',
                             { what: self.$tc('titles.workflow') }));
+                        self.isDirty = false;
                     }
                     ).catch(function (e) {
                         this.error(e);
@@ -511,12 +571,14 @@
                                     let workflow = resp.data;
                                     workflow.tasks.forEach((task) => {
                                         task.operation = self.operationsLookup[task.operation.id]
+                                        task.step = null
                                     });
                                     self.success(self.$t('workflow.versionRestored',
                                         { version, version2: 2343 }));
 
                                     self.workflow = workflow;
                                     self.closeHistory();
+                                    self.isDirty = false;
                                 }).catch((e) => self.error(e))
                         });
                     });
@@ -620,9 +682,25 @@
                     });
 
             },
-            execute() {
+            execute(){
                 const self = this;
-                this.$refs.executeModal.hide();
+                this.saveWorkflow();
+                this._execute();
+                // this.$refs.executeModal.hide();
+                // if (self.isDirty) {
+                //     this.confirm(
+                //     this.$t('common.history'),
+                //     this.$t('workflow.restoreHistory'),
+                //     () => {
+                //         //self.execute();
+                //         alert('Executando')
+                //     })
+                // } else {
+                //     alert('Executando 2')
+                // }
+            },
+            _execute() {
+                const self = this;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
 
                 cloned.platform_id = cloned.platform.id;
@@ -636,7 +714,7 @@
                     cluster: { id: self.clusterInfo.id },
                     name: self.clusterInfo.jobName,
                     user: {
-                        id: user.id, 
+                        id: user.id,
                         login: user.login,
                         name: user.name
                     }
