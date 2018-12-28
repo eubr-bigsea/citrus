@@ -46,13 +46,14 @@
         mixins: [Notifier],
         data() {
             return {
-                columns: ['actions', 'status',
+                columns: ['status',
                     'id', 'name', 'workflow',
-                    'created', 'user.name'
+                    'created', 'user.name', 'actions', 
                 ],
                 tableData: [],
                 showSideBar: false,
                 options: {
+                    skin: 'table-sm table table-striped',
                     columnsClasses: {
                         name: 'th-20',
                         description: 'th-20',

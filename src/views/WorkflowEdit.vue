@@ -2,6 +2,7 @@
     <div class="row" style="overflow:hidden">
         <TahitiSuggester/>
         <div class="col-md-12">
+            <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
             <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="justify-content-center">
                 <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order" :active="form.order === minFormOrder"
                     :key="form.id">
@@ -16,9 +17,6 @@
                 </b-tab>
                 <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
                     <div class="row pt-1">
-                        <div class="col-md-12">
-                            <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
-                        </div>
                         <div class="col-md-2">
                             <toolbox :operations="operations"></toolbox>
                         </div>
@@ -199,27 +197,27 @@
                 showProperties: false,
                 workflow: { tasks: [], flows: [], platform: {} },
                 // propertyStyles: [
-                    //     {
-                        //         top: '112px',
-                        //         height: 'calc(92vh - 112px)'
-                        //     },
-                        //     {
-                            
-                            //         backgroundColor: '#fff',
-                            //         paddingTop: '2rem',
-                            //         paddingBottom: '1rem',
-                            //         overflow: 'hidden'
-                            //     },
-                            //     {
-                                //         overflow: 'hidden'
-                                //     },
-                                //     {
-                                    
-                                    //         color: '#555',
-                                    //         textDecoration: 'none',
-                                    //         top: '8px',
-                                    //         right: '1rem'
-                                    //     }
+                //     {
+                //         top: '112px',
+                //         height: 'calc(92vh - 112px)'
+                //     },
+                //     {
+
+                //         backgroundColor: '#fff',
+                //         paddingTop: '2rem',
+                //         paddingBottom: '1rem',
+                //         overflow: 'hidden'
+                //     },
+                //     {
+                //         overflow: 'hidden'
+                //     },
+                //     {
+
+                //         color: '#555',
+                //         textDecoration: 'none',
+                //         top: '8px',
+                //         right: '1rem'
+                //     }
                 // ],
             }
         },
@@ -682,7 +680,7 @@
                     });
 
             },
-            execute(){
+            execute() {
                 const self = this;
                 this.saveWorkflow();
                 this._execute();

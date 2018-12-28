@@ -702,7 +702,7 @@
             }
             ;
             .right-decor {
-                left: 50px;
+                left: 48px;
             }
             .left-decor {
                 left: -10px;
@@ -714,12 +714,12 @@
                 /* border: 1px solid #ccc; */
                 background-color: #fff;
                 border-radius: 20px;
-                font-size: 7pt !important;
+                font-size: 6pt !important;
                 padding: 0px;
                 position: absolute;
                 display: block;
-                bottom: -9px;
-                height: 20px;
+                bottom: 1px;
+                height: 16px;
                 width: 20px;
                 text-align: center;
                 &.completed {

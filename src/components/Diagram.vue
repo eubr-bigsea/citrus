@@ -2,7 +2,6 @@
     <div class="border">
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}" v-on:click="diagramClick" >
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
-                <span class="news"><span class="fa fa-lightbulb text-warning"></span> {{$t('diagram.showProperties')}}</span>
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true" id="lemonade-diagram"
                     v-if="loaded"
                     ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}"> 

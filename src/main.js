@@ -84,7 +84,7 @@ Vue.use(VueProgressBar, options)
 
 // Date-fns
 import { format, parse } from 'date-fns'
-Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MMM/YYYY HH:MM') } })
+Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MM/YYYY HH:MM') } })
 
 
 // Auth

@@ -74,10 +74,12 @@ export default {
             permission: 'Permissão | Permissões',
             platform: 'Platforma',
             precision: 'Precisão',
-            preview: 'Previsão',
+            preview: 'Pré-visualização',
             rememberMe: 'Lembrar minha senha',
             saveBeforeToEnableThis: 'Salve os dados para habilitar a ação {what}',
+            sharing: 'Sharing',
             scale: 'Escala',
+            sharing: 'Compartilhamento',
             show: 'Exibir',
             size: 'Tamanho',
             tag: 'Tag | Tags',
@@ -113,7 +115,7 @@ export default {
             inferSuccess: 'Atributos inferidos com sucesso.',
             inferSupported: 'Lemonade suporta inferir atributos para o formato {what}.',
             isFirstLineHeader: 'Usar a primeira linha como cabeçalho',
-            isMultiline: 'Multilinas (atributo com quebra de linha)',
+            isMultiline: 'Multilinhas (atributo com quebra de linha)',
             missingRepresentation: 'Representação para dados ausentes',
             noPermissions: 'Nenhuma permissão definida',
             noAttributes: 'Nenhum atributo definido.',
@@ -139,13 +141,13 @@ export default {
             showProperties: 'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
         },
         errors: {
-            disconnected: 'You are disconnected. Please check if you have access to the Internet.',
-            invalidLoginOrPassword: 'Invalid login or password',
-            invalidOperation: 'Invalid operation',
-            passwordDontMatch: 'Passwords do not match',
-            loginInUse: 'Login/email is in use. Try another one.',
-            receivingData: 'Error receiving data from the server',
-            sendingData: 'Error sending data to the server.'
+            disconnected: 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
+            invalidLoginOrPassword: 'Senha ou usuário inválidos',
+            invalidOperation: 'Operação inválida',
+            passwordDontMatch: 'Senhas são diferentes',
+            loginInUse: 'Login/email estão em uso por outro usuário. Tente outro.',
+            receivingData: 'Erro recebendo dados do servidor.',
+            sendingData: 'Erro enviando dados do servidor.'
         },
         job: {
             error: 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
@@ -155,23 +157,23 @@ export default {
             visualizations: 'Visualização | Visualizações',
         },
         messages: {
-            acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
-            doYouWantToDelete: 'Do you want to delete this record?',
-            confirmRemove: 'Are you sure you want to remove this record?',
-            successDeletion: '{what} was successfuly removed',
-            registeredWithSuccess: 'You were registered with success. Please, sign in again.',
-            savedWithSuccess: '{what} saved with success.',
-            noMatching: 'Sorry, no matching options'
+            acceptTerms: 'Concordo com os termos de uso <a href="{link}">Policy</a>',
+            doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
+            confirmRemove: 'Tem certeza que você quer excluir esse registro?',
+            successDeletion: '{what} foi removido com sucesso',
+            registeredWithSuccess: 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
+            savedWithSuccess: '{what} foi salvo com sucesso!',
+            noMatching: 'Lamentamos, nenhuma opção encontrada'
         },
         privacy: {
-            anonymizationTechnique: 'Anonymization technique',
-            privacyType: 'Privacy type',
-            hierarchy: 'Hierarchy',
-            attributePrivacyGroup: 'Attribute privacy group',
+            anonymizationTechnique: 'Técnica de anonimização',
+            privacyType: 'Tipo de privacidade',
+            hierarchy: 'Hierarquia',
+            attributePrivacyGroup: 'Grupo de atributos para privacidade',
         },
         profile: {
-            alsoChangePassword: 'Also change my password',
-            updated: 'Profile updated'
+            alsoChangePassword: 'Também altere minha senha',
+            updated: 'Perfil atualizado'
         },
         property: {
             alias: 'Nome novo',
@@ -210,6 +212,7 @@ export default {
             lemonade: 'Lemonade',
             lemonadePlatform: 'Plataforma Lemonade',
             login: 'Entrar',
+            news: 'Novidades e Dicas',
             platform: 'Platforma | Platformas',
             profile: 'Perfil',
             property: 'Propriedade | Propriedades',
@@ -227,7 +230,7 @@ export default {
         home: {
             aPlatformForDataScience: 'Uma plataforma para ciência dos dados',
             learnMore: 'Aprenda mais',
-            recentlyUpdated: '{what} recentemente atualizados(as)',
+            recentlyUpdated: 'Atualizados recentemente',
             welcome: `Bem-vindo ao Lemonade. 
             Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) é uma platforma visual para computação distribuída 
             que permite a implementação, experimentação, teste and implantação de aplicações de processamento de dados aprendizado de máquina. 
@@ -425,6 +428,7 @@ export default {
             jobs: 'Jobs',
             lemonade: 'Lemonade',
             lemonadePlatform: 'Lemonade Platform',
+            news: 'News & Tips',
             login: 'Login',
             platform: 'Platform | Platforms',
             profile: 'Profile',
