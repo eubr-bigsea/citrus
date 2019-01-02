@@ -5,14 +5,43 @@
                 <h2 class="title text-primary">Dashboards</h2>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <h2>{{title}}</h2>
-                <caipirinha-visualization v-for="url in urls" :url="url" :key="url"></caipirinha-visualization>
-            </div>
+        <div >
+            <h2>{{title}}</h2>
+            <input v-model="title">
+            <button v-on:click='salvar'>Salvar</button>
+            <grid-layout
+                :layout.sync="layout"
+                :col-num="12"
+                :row-height="30"
+                :is-draggable="true"
+                :is-resizable="true"
+                :is-mirrored="false"
+                :is-responsive="true"
+                :vertical-compact="false"
+                :margin="[10, 10]"
+                :use-css-transforms="true"
+                @layout-updated="layoutUpdatedEvent"
+            >
+
+                <grid-item v-for="item in layout"
+                    :x="item.x"
+                    :y="item.y"
+                    :w="item.w"
+                    :h="item.h"
+                    :i="item.i"
+                >
+                    <caipirinha-visualization :url="item.url"></caipirinha-visualization>
+                </grid-item>
+            </grid-layout>
         </div>
     </div>
 </template>
+
+<style>
+    .vue-grid-item.vue-grid-placeholder {
+        background-color: rgb(255,127,42);
+    }
+</style>
 
 <script>
     import Vue from 'vue'
@@ -22,7 +51,7 @@
     import io from 'socket.io-client'
 
     import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue'
-
+    import VueGridLayout from 'vue-grid-layout';
 
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
@@ -33,25 +62,80 @@
         },
         data(){
             return {
-                urls: [],
-                title: ''
+                title: '',
+                configuration: {},
+                layout: []
+            }
+        },
+        methods: {
+            layoutUpdatedEvent: function(newLayout){
+                newLayout.forEach(item => {
+                    this.configuration[item.i] = {
+                        ...this.configuration[item.i],
+                        x: item.x,
+                        y: item.y,
+                        width: item.w,
+                        height: item.h
+                    }
+                });
+
+                this.layout = this.getLayout();
+                window.dispatchEvent(new Event('resize'));
+            },
+            salvar: function(event){
+                axios
+                .patch(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`, {
+                    title: this.title,
+                    configuration: this.configuration
+                })
+                .then(response => {
+                    console.log(response)
+                })
+                .catch((e) => {
+                    this.error(e);
+                })
+            },
+            getLayout: function() {
+                return Object.keys(this.configuration).map(key => {
+                    const {x, y, width, height, vizId, jobId, taskId} = this.configuration[key];
+
+                    return {
+                        x: x,
+                        y: y,
+                        w: width,
+                        h: height,
+                        i: vizId,
+                        url: `${caipirinhaUrl}/visualizations/${jobId}/${taskId}`
+                    }
+                })
             }
         },
         mounted(){
-            const dashboardId = this.$route.params.id;
-            const url = `${caipirinhaUrl}/dashboards/${dashboardId}`
-
             axios
-                .get(url)
+                .get(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`)
                 .then(response => {
                     this.title = response.data.title;
-                    this.urls = response.data.visualizations.map(visualization => {
-                        return `${caipirinhaUrl}/visualizations/${visualization.job_id}/${visualization.task_id}`
-                    })})
-                .catch( () => {
+                    this.configuration = response.data.configuration;
+                    
+                    if (this.configuration == null) {
+                        this.configuration = response.data.visualizations.map((viz, i) => {
+                            return {
+                                vizId: viz.task_id + "",
+                                jobId: viz.job_id,
+                                taskId: viz.task_id,
+                                x: 0,
+                                y: 4 * i,
+                                width: 4,
+                                height: 4
+                            }
+                        })
+                    }
+
+                    this.layout = this.getLayout()
+                })
+                .catch((e) => {
                     this.error(e);
                 })
-
         }
     }
 </script>

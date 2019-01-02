@@ -1,12 +1,18 @@
 <template>
-  <div>
+  <div class="myview">
     <p v-if="loading">Loading</p>
 
     <div v-if="error" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
 
-    <component v-bind:is="visualizationComponent" :visualizationData="visualizationData"></component>
+    <component class="myview" v-bind:is="visualizationComponent" :visualizationData="visualizationData"></component>
   </div>
 </template>
+
+<style>
+  .myview {
+    height: 100%;
+  }
+</style>
 
 <script>
 import axios from "axios"
