@@ -5,10 +5,15 @@
                 <h2 class="title text-primary">Dashboards</h2>
             </div>
         </div>
-        <div >
-            <h2>{{title}}</h2>
-            <input v-model="title">
-            <button v-on:click='salvar'>Salvar</button>
+        <div>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" v-model="title">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" @click.stop="save">
+                            <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
+                </div>
+            </div>
+            
             <grid-layout
                 :layout.sync="layout"
                 :col-num="12"
@@ -82,7 +87,7 @@
                 this.layout = this.getLayout();
                 window.dispatchEvent(new Event('resize'));
             },
-            salvar: function(event){
+            save: function(event){
                 axios
                 .patch(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`, {
                     title: this.title,
