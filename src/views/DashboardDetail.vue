@@ -94,7 +94,7 @@
                     configuration: this.configuration
                 })
                 .then(response => {
-                    console.log(response)
+                    this.success(this.$t('messages.savedWithSuccess',{what: this.$tc('titles.dashboard') }));
                 })
                 .catch((e) => {
                     this.error(e);
