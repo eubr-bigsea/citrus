@@ -84,7 +84,7 @@
                     }
                 });
 
-                this.layout = this.getLayout();
+                //this.layout = this.getLayout();
                 window.dispatchEvent(new Event('resize'));
             },
             save: function(event){
@@ -125,7 +125,7 @@
                     if (this.configuration == null) {
                         this.configuration = response.data.visualizations.map((viz, i) => {
                             return {
-                                vizId: viz.task_id + "",
+                                vizId: viz.id + "",
                                 jobId: viz.job_id,
                                 taskId: viz.task_id,
                                 x: 0,

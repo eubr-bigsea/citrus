@@ -100,6 +100,7 @@ Vue.use(HighchartsVue)
 // Leaflet
 import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.heat'
 
 Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);
