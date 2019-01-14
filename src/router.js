@@ -21,6 +21,8 @@ import WorkflowAdd from './views/WorkflowAdd.vue'
 import DashboardList from './views/DashboardList.vue'
 import DashboardDetail from './views/DashboardDetail.vue'
 
+import OperationList from './views/OperationList.vue'
+
 import Profile from './views/Profile.vue'
 
 import store from './store.js'
@@ -159,7 +161,14 @@ let router = new Router({
             // which is lazy-loaded when the route is visited.
             component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
         },
-
+        {
+            path: '/admin/operations',
+            name: 'operations',
+            component: OperationList,
+            meta: {
+                requiresAuth: true
+            }
+        },
     ]
 })
 router.beforeEach((to, from, next) => {

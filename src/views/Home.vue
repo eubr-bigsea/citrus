@@ -1,98 +1,89 @@
 <template>
     <div class="row lemonade">
-        <div class="col-md-3 col-sm-12">
-            <div class="jumbotron ">
-                <h1 class="display-4">{{$t('titles.lemonadePlatform')}}</h1>
-                <p class="lead text-justify">{{$t('home.aPlatformForDataScience')}}</p>
-                <hr class="my-4">
-                <p class="text-justify">{{$t('home.welcome')}}</p>
-                <p class="lead">
-                    <a class="btn btn-primary btn-lg" href="http://www.lemonade.org.br" role="button">{{$t('home.learnMore')}}</a>
-                </p>
+        <div class="col-md-4 col-sm-12">
+            <div class="card pt-0 pb-1 mb-0">
+                <div class="card-body">
+                    <h3 class="display-5">{{$t('titles.lemonadePlatform')}}</h3>
+                    <p class="lead text-justify">{{$t('home.aPlatformForDataScience')}}</p>
+                    <p class="text-justify">{{$t('home.welcome')}}</p>
+                    <p class="lead">
+                        <a class="btn btn-primary btn" href="http://www.lemonade.org.br" role="button">{{$t('home.learnMore')}}</a>
+                    </p>
+                </div>
             </div>
         </div>
-        <div class="col-sm-12 col-md-3 border">
-            <div class="card mb-3">
-                <div class="text-white card-header bg-secondary ">
-                    <h5 class="card-title">{{$t('home.recentlyUpdated', {what: $tc('titles.workflow', 2).toLowerCase() })}}</h5>
+        <div class="col-md-8 col-sm-12">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="card-title updated">{{$t('home.recentlyUpdated')}}</h5>
                 </div>
                 <div class="card-body">
-                    <div v-if="loading.workflows">
-                        <font-awesome-icon icon="spinner" pulse class="fa-3x" />
-                    </div>
-                    <div class="table-responsive" v-else>
-                        <table class="table table-sm">
-                            <tr v-for="w in workflows" :key="w.id">
-                                <td>
-                                    <router-link :to="{name: 'editWorkflow', params: {id: w.id, platform: w.platform.id}}">
-                                        {{w.id}} - {{w.name}}
-                                    </router-link>
-                                    <br/>
-                                    <small>{{w.updated}}</small>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <span v-if="workflows.length === 0 && !loading.workflows">
-                        {{$t('common.noData')}}
-                    </span>
-                </div>
-            </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div v-if="loading.workflows">
+                                <font-awesome-icon icon="spinner" pulse class="fa-3x" />
+                            </div>
+                            <div v-else>
+                                <strong>{{$tc('titles.workflow', 2)}}</strong>
+                                <table class="table">
+                                    <tr v-for="w in workflows" :key="w.id">
+                                        <td class="text-right">{{w.id}}</td>
+                                        <td>
+                                        <router-link :to="{name: 'editWorkflow', params: {id: w.id, platform: w.platform.id}}">
+                                            {{w.name}}
+                                        </router-link>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <span v-if="workflows.length === 0 && !loading.workflows">
+                                {{$t('common.noData')}}
+                            </span>
+                        </div>
+                        <div class="col-md-4">
+                            <div v-if="loading.dataSources">
+                                <font-awesome-icon icon="spinner" pulse class="fa-3x" />
+                            </div>
+                            <div v-else>
+                                <strong>{{$tc('titles.dataSource', 2)}}</strong>
+                                <table class="table">
+                                    <tr v-for="d in dataSources" :key="d.id">
+                                        <td class="text-right">{{d.id}}</td>
+                                        <td>
+                                        <router-link :to="{name: 'editDataSource', params: {id: d.id}}">
+                                            {{d.name}}
+                                        </router-link>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <span v-if="dataSources.length === 0 && !loading.dataSources">
+                                {{$t('common.noData')}}
+                            </span>
+                        </div>
+                        <div class="col-md-4">
+                            <div v-if="loading.jobs">
+                                <font-awesome-icon icon="spinner" pulse class="fa-3x" />
+                            </div>
+                            <div class="table-responsive" v-else>
+                                <strong>{{$tc('titles.job', 2)}}</strong>
+                                <table class="table">
+                                    <tr v-for="j in jobs" :key="j.id">
+                                        <td class="text-right">{{j.id}}</td>
+                                        <td>
+                                        <router-link :to="{name: 'editJob', params: {id: j.id}}">
+                                            {{j.name}}
+                                        </router-link>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <span v-if="jobs.length === 0 && !loading.jobs">
+                                {{$t('common.noData')}}
+                            </span>
 
-        </div>
-        <div class="col-sm-12 col-md-3 border">
-            <div class="card mb-3">
-                <div class="text-white card-header bg-secondary ">
-                    <h5 class="card-title">{{$t('home.recentlyUpdated', {what: $tc('titles.dataSource', 2).toLowerCase() })}}</h5>
-                </div>
-                <div class="card-body">
-                    <div v-if="loading.dataSources">
-                        <font-awesome-icon icon="spinner" pulse class="fa-3x" />
+                        </div>
                     </div>
-                    <div class="table-responsive" v-else>
-                        <table class="table table-sm">
-                            <tr v-for="d in dataSources" :key="d.id">
-                                <td>
-                                    <router-link :to="{name: 'editDataSource', params: {id: d.id}}">
-                                        {{d.id}} - {{d.name}}
-                                    </router-link>
-                                    <br/>
-                                    <small>{{d.updated}}</small>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <span v-if="dataSources.length === 0 && !loading.dataSources">
-                        {{$t('common.noData')}}
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-3 border">
-            <div class="card mb-3" id="latest-jobs">
-                <div class="text-white card-header bg-secondary ">
-                    <h5 class="card-title">{{$t('home.recentlyUpdated', {what: $tc('titles.job', 2).toLowerCase() })}}</h5>
-                </div>
-                <div class="card-body">
-                    <div v-if="loading.jobs">
-                        <font-awesome-icon icon="spinner" pulse class="fa-3x" />
-                    </div>
-                    <div class="table-responsive" v-else>
-                        <table class="table table-sm">
-                            <tr v-for="j in jobs" :key="j.id">
-                                <td>
-                                    <router-link :to="{name: 'editJob', params: {id: j.id}}">
-                                        {{j.id}} - {{j.name}}
-                                    </router-link>
-                                    <br/>
-                                    <small>{{j.created}}</small>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <span v-if="jobs.length === 0 && !loading.jobs">
-                        {{$t('common.noData')}}
-                    </span>
                 </div>
             </div>
         </div>
@@ -160,12 +151,18 @@
         height: 85vh;
         overflow: hidden;
     }
+
     .lemonade>div {
         max-height: 95vh;
         overflow: auto;
     }
 
-    .card {
-        height: 98%;
+    .card,
+    .jumbotron {
+        height: 85vh;
+    }
+
+    .updated::first-letter {
+        text-transform: uppercase;
     }
 </style>

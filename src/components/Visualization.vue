@@ -42,7 +42,7 @@
                 }
             ).catch(function (e) {
                 self.errorState = true;
-                self.errorMessage = e.response.data
+                self.errorMessage = e.response ? e.response.data : ''
             }).finally(() => {
                 self.loading = false
             });

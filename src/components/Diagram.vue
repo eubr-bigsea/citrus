@@ -1102,4 +1102,8 @@
     .not-selectable {
         user-select: none;
     }
+    .news {
+        margin-left: 5px;
+        color: #888;
+    }
 </style>

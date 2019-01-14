@@ -8,6 +8,7 @@
         <div class="row">
             <div class="col-md-12">
                 <v-server-table :data="tableData" :columns="columns" :options="options" name="jobList" ref="jobList">
+                    <!--
                     <template slot="id" slot-scope="props">
                         <router-link :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">{{props.row.id}}</router-link>
                     </template>
@@ -32,6 +33,16 @@
                             {{props.row.workflow.id}} - {{props.row.workflow.name}}
                         </router-link>
                     </template>
+                    -->
+                    <template slot="platforms.name" slot-scope="props">
+                        {{props.row.platforms.map(plat => plat.name).join(", ")}}
+                    </template>
+                    <template slot="enabled" slot-scope="props">
+                        <div class="xtext-center">
+                            <span v-if="props.row.enabled" class="fa fa-check-square"></span>
+                            <span v-if="!props.row.enabled" class="fa fa-square"></span>
+                        </div>
+                    </template>
                 </v-server-table>
             </div>
         </div>
@@ -41,19 +52,16 @@
 <script>
     import axios from 'axios'
     import Notifier from '../mixins/Notifier'
-    let standUrl = process.env.VUE_APP_STAND_URL
+    let tahitiUrl = process.env.VUE_APP_TAHITI_URL
+    const FIELDS = ['id', 'slug', 'name', 'platforms.name', 'enabled']
     export default {
         mixins: [Notifier],
         data() {
             return {
-                columns: ['status',
-                    'id', 'name', 'workflow',
-                    'created', 'user.name', 'actions', 
-                ],
+                columns: FIELDS,
                 tableData: [],
                 showSideBar: false,
                 options: {
-                    skin: 'table-sm table table-striped',
                     columnsClasses: {
                         name: 'th-20',
                         description: 'th-20',
@@ -62,10 +70,10 @@
                     },
                     headings: {
                         id: 'ID',
-                        created: this.$t('common.created'),
                         actions: this.$tc('common.action', 2),
                         name: this.$tc('common.name'),
                         'user.name': this.$t('common.user.name'),
+                        'platforms.name': this.$tc('titles.platform', 2),
                     },
                     sortable: ['name', 'id', 'created'],
                     sortIcon: {
@@ -78,7 +86,7 @@
                     saveState: true,
                     filterable: ['name', 'album'],
                     requestFunction: this.load,
-                    texts:{
+                    texts: {
                         filter: this.$tc('common.filter'),
                         count: this.$t('common.pagerShowing'),
                         limit: this.$t('common.limit'),
@@ -94,10 +102,12 @@
             load(data) {
                 data.sort = data.orderBy
                 data.asc = data.ascending === 1 ? 'true' : 'false'
-                data.size = data.limit
-                data.name = data.query
+                data.size = data.limit;
+                data.name = data.query;
+                data.fields = FIELDS.join(",");
+                data.disabled = 1
                 this.$Progress.start();
-                return axios.get(`${standUrl}/jobs`,
+                return axios.get(`${tahitiUrl}/operations`,
                     {
                         params: data
                     }).then(resp => {
@@ -110,7 +120,7 @@
             remove(job) {
                 this.confirm(this.$t('actions.delete'), this.$t('messages.doYouWantToDelete'), () => {
                     this.$Progress.start();
-                    axios.delete(`${standUrl}/jobs/${job.id}`, {}).then(resp => {
+                    axios.delete(`${tahitiUrl}/jobs/${job.id}`, {}).then(resp => {
                         this.success(this.$t('messages.successDeletion',
                             { what: this.$t('titles.job') }));
                         this.$refs.jobList.refresh();

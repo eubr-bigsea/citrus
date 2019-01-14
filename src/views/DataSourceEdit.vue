@@ -46,6 +46,7 @@
                                         <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                     </v-select>
                                 </div>
+                                <!--
                                 <div class="col-md-6 mt-3 mb-3 mt-3">
                                     <b-form-checkbox v-model="dataSource.enabled">
                                         {{ $t('common.enabled') }}
@@ -55,6 +56,7 @@
                                         {{ $t('dataSource.privacyAware') }}
                                     </b-form-checkbox>
                                 </div>
+                            -->
                                 <div class="col-md-6 mt-3 mb-3 mt-3" v-if="dataSource.format === 'CSV'">
                                     <b-form-checkbox v-model="dataSource.is_first_line_header">
                                         {{ $t('dataSource.isFirstLineHeader') }}
@@ -118,16 +120,18 @@
                                     <font-awesome-icon icon="spinner" pulse class="icon" /> {{$tc('dataSource.inferSchema')}}
                                 </button>
                             </div>
-                            <table class="table table-bordered table-sm table-stripped" v-if="dataSource.attributes && dataSource.attributes.length > 0">
+                            <table class="table table-sm table-stripped" v-if="dataSource.attributes && dataSource.attributes.length > 0">
                                 <thead>
                                     <tr>
                                         <th class="primary text-center" style="width:3%">#</th>
                                         <th class="primary text-center" style="width:30%">{{$tc('common.name')}}</th>
                                         <th class="primary text-center" style="width:12%">{{$tc('common.type')}}</th>
+                                        <!--
                                         <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
                                         <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
                                         <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
                                         <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
+                                        -->
                                         <th class="primary text-center" style="width:25%">{{$tc('dataSource.missingRepresentation')}}</th>
                                     </tr>
                                 </thead>
@@ -135,27 +139,29 @@
                                     <tr v-for="(attr, index) in dataSource.attributes" :key="attr.id">
                                         <td class="text-center">{{index + 1}}</td>
                                         <td>
-                                            <input v-model="attr.name" class="form-control" />
+                                            <input v-model="attr.name" class="form-control-sm form-control" />
                                         </td>
                                         <td>
-                                            <select class="form-control" v-model="attr.type">
+                                            <select class="form-control-sm form-control" v-model="attr.type">
                                                 <option v-for="dt in dataTypes" v-bind:value="dt" :key="dt">{{dt}}</option>
                                             </select>
                                         </td>
+                                        <!--
                                         <td class="text-center">
                                             <SwitchComponent v-model="attr.nullable" :checked="attr.nullable"></SwitchComponent>
                                         </td>
                                         <td class="col-xs-1">
-                                            <input type="number" class="form-control" maxlenght="2" v-model="attr.size" min="0" />
+                                            <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.size" min="0" />
                                         </td>
                                         <td class="col-xs-1">
-                                            <input type="number" class="form-control" maxlenght="2" v-model="attr.precision" min="0" />
+                                            <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.precision" min="0" />
                                         </td>
                                         <td class="col-xs-1">
-                                            <input type="number" class="form-control" maxlenght="2" v-model="attr.scale" min="0" />
+                                            <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.scale" min="0" />
                                         </td>
+                                    -->
                                         <td>
-                                            <input class="form-control" v-model="attr.missing_representation" maxlength="200" />
+                                            <input class="form-control-sm form-control" v-model="attr.missing_representation" maxlength="200" />
                                         </td>
 
                                     </tr>
@@ -165,7 +171,7 @@
                                 <div class="alert alert-info">{{ $t("dataSource.noAttributes") }}</div>
                             </div>
                         </b-tab>
-                        <b-tab :title="$tc('dataSource.permission', 2)">
+                        <b-tab :title="$tc('common.sharing', 2)">
                             <table class="table table-bordered table-stripped" v-if="dataSource.permissions && dataSource.permissions.length > 0">
                                 <thead>
                                     <tr>

@@ -287,3 +287,12 @@ h2.title {
 .with-grid {
     background-image: url(grid1.png);
 }
+.VueTables__table, .small-table {
+    td, th {
+        padding: 8px 5px;
+        font-size: .9em;
+    }
+}
+.VuePagination__count {
+    font-size: .8em;
+}

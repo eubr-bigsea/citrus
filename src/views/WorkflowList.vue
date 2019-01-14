@@ -6,7 +6,7 @@
             </div>
             <div class="col-md-2 pull-right text-right">
                 <a href="#/workflows/add" class="btn btn-primary btn-sm" role="button">
-                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon>  {{$t('actions.add', {type: $tc('titles.workflow').toLowerCase()})}}</a>
+                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type: $tc('titles.workflow').toLowerCase()})}}</a>
             </div>
         </div>
         <div class="row">
@@ -15,8 +15,21 @@
                     <template slot="id" slot-scope="props">
                         <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.id}}</router-link>
                     </template>
+                    <template slot="name" slot-scope="props">
+                        <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.name}}</router-link>
+                    </template>
+
                     <template slot="platform" slot-scope="props">
                         {{props.row.platform.name}}
+                    </template>
+                    <template slot="user_name" slot-scope="props">
+                        {{props.row.user.name}}
+                    </template>
+                    <template slot="created" slot-scope="props">
+                        {{props.row.created | formatJsonDate}}
+                    </template>
+                    <template slot="updated" slot-scope="props">
+                        {{props.row.updated | formatJsonDate}}
                     </template>
                     <div slot="afterFilter">
                         <label>{{$tc('common.platform')}}:</label>
@@ -44,9 +57,9 @@
                 platform: '',
                 platforms: [],
                 columns: ['id', 'name', 'created', 'updated', 'platform', 'user_name', 'version'],
-
                 showSideBar: false,
                 options: {
+                    skin: 'table-sm table table-striped',
                     dateColumns: ['created', 'updated'],
                     headings: {
                         id: 'ID',
@@ -77,7 +90,7 @@
 
                         data.fields = 'id,name,platform,created,updated,user,version';
 
-                        let url = `${tahitiUrl}/workflows`;
+                        let url = `${tahitiUrl}/workflows?enabled=1`;
                         let headers = {}
                         this.$Progress.start()
                         return axios.get(url, {
@@ -90,7 +103,7 @@
                             this.error(e);
                         }.bind(this));
                     },
-                    texts:{
+                    texts: {
                         filter: this.$tc('common.filter'),
                         count: this.$t('common.pagerShowing'),
                         limit: this.$t('common.limit'),
@@ -133,6 +146,7 @@
         margin-bottom: 10px;
         padding: 15px 0;
     }
+
     .form-inline {
         width: 650px;
         float: left;
@@ -147,6 +161,7 @@
         display: block !important;
         font-weight: bold;
     }
+
     .VueTables__sort-icon {
         display: block;
         float: left;

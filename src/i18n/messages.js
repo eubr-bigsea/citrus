@@ -8,7 +8,7 @@ export default {
             alignRight: 'Alinhar à direira',
             alignTop: 'Alinhar com o topo',
             alignBottom: 'Alinhar com parte inferior',
-            back: 'Volbar',
+            back: 'Voltar',
             cancel: 'Cancelar',
             changeOption: 'Alterar opção...',
             choose: 'Escolha',
@@ -74,10 +74,12 @@ export default {
             permission: 'Permissão | Permissões',
             platform: 'Platforma',
             precision: 'Precisão',
-            preview: 'Previsão',
+            preview: 'Pré-visualização',
             rememberMe: 'Lembrar minha senha',
             saveBeforeToEnableThis: 'Salve os dados para habilitar a ação {what}',
+            sharing: 'Sharing',
             scale: 'Escala',
+            sharing: 'Compartilhamento',
             show: 'Exibir',
             size: 'Tamanho',
             tag: 'Tag | Tags',
@@ -113,7 +115,7 @@ export default {
             inferSuccess: 'Atributos inferidos com sucesso.',
             inferSupported: 'Lemonade suporta inferir atributos para o formato {what}.',
             isFirstLineHeader: 'Usar a primeira linha como cabeçalho',
-            isMultiline: 'Multilinas (atributo com quebra de linha)',
+            isMultiline: 'Multilinhas (atributo com quebra de linha)',
             missingRepresentation: 'Representação para dados ausentes',
             noPermissions: 'Nenhuma permissão definida',
             noAttributes: 'Nenhum atributo definido.',
@@ -135,14 +137,17 @@ export default {
             youCanUploadYourFiles: 'Você pdoe carregar seus próprios arquivos para o servidor',
             youCanUseSQL: 'Você pode usar comandos SELECT SQL para recuperar os dados',
         },
+        diagram: {
+            showProperties: 'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
+        },
         errors: {
-            disconnected: 'You are disconnected. Please check if you have access to the Internet.',
-            invalidLoginOrPassword: 'Invalid login or password',
-            invalidOperation: 'Invalid operation',
-            passwordDontMatch: 'Passwords do not match',
-            loginInUse: 'Login/email is in use. Try another one.',
-            receivingData: 'Error receiving data from the server',
-            sendingData: 'Error sending data to the server.'
+            disconnected: 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
+            invalidLoginOrPassword: 'Senha ou usuário inválidos',
+            invalidOperation: 'Operação inválida',
+            passwordDontMatch: 'Senhas são diferentes',
+            loginInUse: 'Login/email estão em uso por outro usuário. Tente outro.',
+            receivingData: 'Erro recebendo dados do servidor.',
+            sendingData: 'Erro enviando dados do servidor.'
         },
         job: {
             error: 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
@@ -152,23 +157,23 @@ export default {
             visualizations: 'Visualização | Visualizações',
         },
         messages: {
-            acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
-            doYouWantToDelete: 'Do you want to delete this record?',
-            confirmRemove: 'Are you sure you want to remove this record?',
-            successDeletion: '{what} was successfuly removed',
-            registeredWithSuccess: 'You were registered with success. Please, sign in again.',
-            savedWithSuccess: '{what} saved with success.',
-            noMatching: 'Sorry, no matching options'
+            acceptTerms: 'Concordo com os termos de uso <a href="{link}">Policy</a>',
+            doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
+            confirmRemove: 'Tem certeza que você quer excluir esse registro?',
+            successDeletion: '{what} foi removido com sucesso',
+            registeredWithSuccess: 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
+            savedWithSuccess: '{what} foi salvo com sucesso!',
+            noMatching: 'Lamentamos, nenhuma opção encontrada'
         },
         privacy: {
-            anonymizationTechnique: 'Anonymization technique',
-            privacyType: 'Privacy type',
-            hierarchy: 'Hierarchy',
-            attributePrivacyGroup: 'Attribute privacy group',
+            anonymizationTechnique: 'Técnica de anonimização',
+            privacyType: 'Tipo de privacidade',
+            hierarchy: 'Hierarquia',
+            attributePrivacyGroup: 'Grupo de atributos para privacidade',
         },
         profile: {
-            alsoChangePassword: 'Also change my password',
-            updated: 'Profile updated'
+            alsoChangePassword: 'Também altere minha senha',
+            updated: 'Perfil atualizado'
         },
         property: {
             alias: 'Nome novo',
@@ -207,6 +212,7 @@ export default {
             lemonade: 'Lemonade',
             lemonadePlatform: 'Plataforma Lemonade',
             login: 'Entrar',
+            news: 'Novidades e Dicas',
             platform: 'Platforma | Platformas',
             profile: 'Perfil',
             property: 'Propriedade | Propriedades',
@@ -222,12 +228,18 @@ export default {
         },
         
         home: {
-            aPlatformForDataScience: 'A platform for data science',
-            learnMore: 'Learn more',
-            recentlyUpdated: 'Recently updated {what}',
-            welcome: `Welcome to Lemonade. 
-            Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) is a visual platform for distributed computing, aimed to enable implementation, experimentation, test and deploying of data processing and machine learning applications. It provides a higher level of abstractions, called operations, to users build processing workflows using a graphical web interface. By using high performance and scalable technologies, such as COMPSs, Ophidia and Spark, Lemonade can process very large amount of data, hiding all backend complexity from the users and allowing them to focus mainly in the construction of the solution.
-            Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`
+            aPlatformForDataScience: 'Uma plataforma para ciência dos dados',
+            learnMore: 'Aprenda mais',
+            recentlyUpdated: 'Atualizados recentemente',
+            welcome: `Bem-vindo ao Lemonade. 
+            Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) é uma platforma visual para computação distribuída 
+            que permite a implementação, experimentação, teste and implantação de aplicações de processamento de dados aprendizado de máquina. 
+            Ele provê um nível mais alto de abstração (fluxo de trabalho e operations) para que os usuários construam aplicações em uma interface gráfica web. 
+            Por usar tecnologias escaláveis e de alto desempenho, tais como COMPSs, Keras+Tensorflow e Spark, 
+            Lemonade pode processar grandes volumes de dados, ocultado toda a complexidade de infraestrutura dos usuários, permitindo-os focar
+            principalmente na construção da solução.
+            Lemonade é implementado como uma ferramenta de código aberto e está em desenvolvimento 
+            como produto dos projetos EUBra-BIGSEA e Atmosphere.`
         },
         workflow: {
             asImage: 'Como uma imagem (uma janela para baixar a imagem aparecerá)',
@@ -416,6 +428,7 @@ export default {
             jobs: 'Jobs',
             lemonade: 'Lemonade',
             lemonadePlatform: 'Lemonade Platform',
+            news: 'News & Tips',
             login: 'Login',
             platform: 'Platform | Platforms',
             profile: 'Profile',

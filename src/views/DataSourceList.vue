@@ -18,8 +18,6 @@
                     </template>
                     <template slot="name" slot-scope="props">
                         <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.name}}</router-link>
-                        <br/>
-                        <em>{{props.row.description}}</em>
                     </template>
                     <template slot="actions" slot-scope="props">
                         <button class="btn btn-sm danger mr-2">
@@ -51,7 +49,7 @@
     export default {
         data() {
             return {
-                columns: ['actions', 'id', 'name', 'format', 'created', 'user_name', 'tags'],
+                columns: ['id', 'name', 'description', 'format', 'created', 'user_name', 'tags', 'actions', ],
                 tableData: [],
                 showSideBar: false,
                 options: {
@@ -62,9 +60,12 @@
                         actions: 'th-10'
                     },
                     texts: {
+                        filter: this.$tc('common.filter'),
                         count: this.$t('common.pagerShowing'),
-                        filter: this.$t('common.filter'),
                         limit: this.$t('common.limit'),
+                        noResults: this.$t('common.noData'),
+                        loading: this.$t('common.loading'),
+                        filterPlaceholder: this.$t('common.filterPlaceholder')
                     },
                     headings: {
                         actions: this.$tc('common.action', 2),

@@ -19,7 +19,7 @@ import {
     faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
     faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp, faCheckCircle, faTimesCircle, faHandPaper, faStopCircle, faPauseCircle,
-    faSync,
+    faSync, faCheckSquare, faSquare, faLightbulb
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -54,7 +54,7 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
     faHome, faUser, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
     faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp, faTimesCircle, faHandPaper, faStopCircle,
-    faCheckCircle, faPauseCircle,faSync,
+    faCheckCircle, faPauseCircle, faSync, faCheckSquare, faSquare, faLightbulb
 ),
 
     Vue.use(ClientTable);
@@ -84,7 +84,7 @@ Vue.use(VueProgressBar, options)
 
 // Date-fns
 import { format, parse } from 'date-fns'
-Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MMM/YYYY HH:MM') } })
+Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MM/YYYY HH:MM') } })
 
 // Highcharts
 import Highcharts from 'highcharts'
@@ -133,12 +133,12 @@ const i18n = new VueI18n({
 
 Object.defineProperty(Vue.prototype, '$locale', {
     get: function () {
-      return i18n.locale
+        return i18n.locale
     },
     set: function (locale) {
         i18n.locale = locale
     }
-  })
+})
 
 
 let newVue = new Vue({

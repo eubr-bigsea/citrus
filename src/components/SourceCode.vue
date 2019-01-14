@@ -1,10 +1,11 @@
 <template>
     <div class="row">
-        <div class="col-md-8 border">
-            <VuePerfectScrollbar class="scroll-area">
+        <div class="col-md-8">
+            <!-- <VuePerfectScrollbar class="scroll-area"> -->
                 <PrismEditor :code="sourceCode.source" 
-                    :settings="{maxScrollbarLength: 80}" :language="sourceCode.lang" ref="prism" style="height:90vh;" />
-            </VuePerfectScrollbar>
+                    :settings="{maxScrollbarLength: 80}" :language="sourceCode.lang" ref="prism" 
+                        style="height:90vh;font-size:.9em" />
+            <!-- </VuePerfectScrollbar> -->
         </div>
     </div>
 </template>
