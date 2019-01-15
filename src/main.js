@@ -122,6 +122,9 @@ if (token) {
     axios.defaults.headers.common['X-Authentication'] = token
     axios.defaults.headers.common['X-User-Id'] = user['id']
     axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8'
+    axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
+    axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
+    axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
 }
 
 // i18n
