@@ -18,6 +18,9 @@ import WorkflowList from './views/WorkflowList.vue'
 import WorkflowEdit from './views/WorkflowEdit.vue'
 import WorkflowAdd from './views/WorkflowAdd.vue'
 
+import DashboardList from './views/DashboardList.vue'
+import DashboardDetail from './views/DashboardDetail.vue'
+
 import OperationList from './views/OperationList.vue'
 
 import Profile from './views/Profile.vue'
@@ -106,6 +109,23 @@ let router = new Router({
             path: '/workflows/add',
             name: 'addWorkflow',
             component: WorkflowAdd,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        // start dashboards
+        {
+            path: '/dashboards',
+            name: 'dashboards',
+            component: DashboardList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/dashboards/:id',
+            name: 'dashboardDetail',
+            component: DashboardDetail,
             meta: {
                 requiresAuth: true
             }
