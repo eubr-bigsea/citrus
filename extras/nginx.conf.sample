@@ -4,36 +4,36 @@ server {
     client_max_body_size 250M;
     client_body_buffer_size    100M;
     client_body_in_single_buffer on;
-#     location /caipirinha/ {
-#         proxy_set_header Host $host;
-#         proxy_set_header X-Real-IP $remote_addr;
-#         proxy_pass http://caipirinha:23401/;
-#         proxy_buffering on;
-#     }
-#     location /limonero/ {
-#         proxy_set_header Host $host;
-#         proxy_set_header X-Real-IP $remote_addr;
-#         proxy_pass http://limonero:23402/;
-#     }
-#     location /tahiti/ {
-#         proxy_set_header Host $host;
-#         proxy_set_header X-Real-IP $remote_addr;
-#         proxy_pass http://tahiti:23403/;
-#     }
-#     location /thorn/ {
-#         proxy_set_header Host $host;
-#         proxy_set_header X-Real-IP $remote_addr;
-#         proxy_pass http://thorn:3000/;
-#     }
-#     location /stand/ {
-#         proxy_pass http://stand:23404/;
-# 
-#         proxy_http_version 1.1; 
-#         proxy_set_header Upgrade $http_upgrade;
-#         proxy_set_header X-Real-IP $remote_addr;
-#         proxy_set_header Connection "upgrade";
-#         proxy_set_header Host $host;
-#     }
+    location /caipirinha/ {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://caipirinha:23401/;
+        proxy_buffering on;
+    }
+    location /limonero/ {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://limonero:23402/;
+    }
+    location /tahiti/ {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://tahiti:23403/;
+    }
+    location /thorn/ {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://thorn:3000/;
+    }
+    location /stand/ {
+        proxy_pass http://stand:23404/;
+
+        proxy_http_version 1.1; 
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+    }
    location / {
         root   /usr/local/citrus/dist;
         index  index.html index.htm;
