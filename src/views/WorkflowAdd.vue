@@ -10,7 +10,7 @@
                 <label>{{$tc('common.name')}}:</label>
                 <input class="form-control mb-1" v-model="name" placeholder="Inform a name"/>
                 <b-tabs @input="changeTab">
-                    <b-tab title="From template" active>
+                    <b-tab :title="$t('workflow.fromTemplate')">
                         <div class="col-md-12 mt-2">
                             <table class="table table-striped xtable-bordered">
                                 <tr v-for="template in templates" :key="template.id">
@@ -26,9 +26,8 @@
                             </table>
                         </div>
                     </b-tab>
-                    <b-tab title="For processing platform">
+                    <b-tab :title="$t('workflow.forPlatform')" active>
                         <div class="col-md-12 mt-2">
-                            {{selectedPlatform}}
                             <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform">
                                 <table class="table table-striped xtable-bordered">
                                     <tr v-for="platform in platforms" :key="platform.id">
@@ -45,7 +44,7 @@
                             </b-form-radio-group>
                         </div>
                     </b-tab>
-                    <b-tab title="From users' templates">
+                    <b-tab :title="$t('workflow.fromUserTemplate')">
                         <table class="table table-striped xtable-bordered">
                             <tr v-for="template in templates" :key="template.id">
                                 <td class="w-40">
@@ -124,7 +123,8 @@
                     };
                     let url = `${tahitiUrl}/workflows`;
                     axios.post(url, data).then(resp => {
-                        this.platforms = resp.data;
+                        this.$router.push({name: 'editWorkflow', 
+                            params: {platform: resp.data.platform.id, id: resp.data.id}})
                     }).catch(function (e) {
                         this.error(e);
                     }.bind(this));
