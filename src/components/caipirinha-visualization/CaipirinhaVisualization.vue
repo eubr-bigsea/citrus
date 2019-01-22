@@ -16,7 +16,8 @@
 
 <script>
 import axios from "axios"
-
+import Highcharts from 'highcharts'
+ 
 import CaipirinhaVisualizationHtml from "./CaipirinhaVisualizationHtml"
 import CaipirinhaVisualizationTable from "./CaipirinhaVisualizationTable"
 import CaipirinhaVisualizationLine from "./CaipirinhaVisualizationLine"
@@ -26,6 +27,30 @@ import CaipirinhaVisualizationArea from "./CaipirinhaVisualizationArea"
 import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
 import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap"
 import CaipirinhaVisualizationDonut from "./CaipirinhaVisualizationDonut"
+
+let highchartsDefaultLang = undefined;
+
+const highchartsPtLang = {
+  months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+  shortMonths: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+  weekdays: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
+  contextButtonTitle: 'Opções Avançadas',
+  decimalPoint: ',',
+  thousandsSep: '.',
+  downloadJPEG: 'Salvar como JPEG',
+  downloadPDF: 'Salvar como PDF',
+  downloadPNG: 'Salvar como PNG',
+  downloadSVG: 'Salvar como SVG',
+  downloadCSV: 'Salvar como CSV',
+  downloadXLS: 'Salvar como XLS',
+  loading: 'Aguarde...',
+  noData: 'Sem dados para exibir',
+  viewData: 'Visualizar em tabela',
+  printChart: 'Imprimir',
+  resetZoom: 'Desfazer zoom',
+  resetZoomTitle: 'Voltar zoom 1:1',
+  openInCloud: "Abrir no Highcharts Cloud"
+};
 
 const getVisualizationComponent = function(typeId) {
   switch (typeId) {
@@ -76,9 +101,29 @@ export default {
       visualizationComponent: null
     };
   },
+  methods: {
+    setLang() {
+      if (highchartsDefaultLang === undefined)
+        highchartsDefaultLang = {
+          ...Highcharts.getOptions().lang
+        };
+
+      if (this.$locale == 'pt')
+        Highcharts.setOptions({
+          lang: highchartsPtLang
+        });
+
+      else
+        Highcharts.setOptions({
+          lang: highchartsDefaultLang
+        });
+    }
+  },
   created() {
     this.loading = true;
     this.error = false;
+
+    this.setLang();
 
     axios
       .get(this.url)
