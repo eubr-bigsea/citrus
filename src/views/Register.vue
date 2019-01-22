@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="footer text-center">
-                    Copyright © 2018 — Lemonade Project
+                    Copyright © 2019 — Lemonade Project
                 </div>
             </div>
         </div>
@@ -80,11 +80,11 @@
     export default {
         data() {
             return {
-                firstName: "Walter",
-                lastName: "dos Santos Filho",
-                email: "waltersf@gmail.com",
-                password: "zooropa",
-                confirmPassword: "zooropa",
+                firstName: "",
+                lastName: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
                 accepted: false
             }
         },

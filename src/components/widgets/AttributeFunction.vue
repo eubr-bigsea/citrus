@@ -7,43 +7,51 @@
             {{$t('actions.chooseOption')}}
         </b-link>
 
-        <b-modal id="lookupModal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')" no-fade centered ref="modal">
+        <b-modal id="lookupModal" size="lg" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
+            no-fade ref="modal">
             <p>
                 <em>{{parameters.options.description}}</em>
             </p>
-            <table class="table table-bordered table-sm table-striped" v-if="valueList && valueList.length">
+            <table class="table table-bordered table-sm" v-if="valueList && valueList.length">
                 <thead>
                     <th class="text-center">{{$t('property.attribute')}}</th>
                     <th class="text-center">{{$t('property.function')}}</th>
                     <th class="text-center" v-if="parameters.options.show_alias">{{$t('property.alias')}}</th>
-                    <th class="text-center" v-if="parameters.options.show_value">Value name of attribute without quotation</th>
+                    <th class="text-center" v-if="parameters.options.show_value">Value name of attribute without
+                        quotation</th>
                     <th class="text-center" style="width:15%"></th>
                 </thead>
                 <tbody>
                     <tr v-for="(row, index) in valueList">
-                        <td>
+                        <td style="width:50%">
+                            <v-select :options="suggestions" :multiple="false" :value="row.attribute" :on-change="attrUpdated.bind(this, row, 'attribute')"
+                                :taggable="true" :closeOnSelect="true">
+                                <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
+                            </v-select>
+                            <!--
                             <input class="form-control" :value="row.attribute" @change="updated($event, row, 'attribute')">
+                            -->
                         </td>
-                        <td>
+                        <td style="width:20%">
                             <select class="form-control" :value="row.f" @change="updated($event, row, 'f')">
                                 <option v-for="opt in parameters.functions" :value="opt.key">{{opt.value}}</option>
                             </select>
                         </td>
-                        <td v-if="parameters.options.show_alias">
+                        <td v-if="parameters.options.show_alias"  style="width:20%">
                             <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
                         </td>
-                        <td v-if="parameters.options.show_value">
+                        <td v-if="parameters.options.show_value"  style="width:20%">
                             <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
                         </td>
-                        <td style="width:15%" class="text-center">
-                            <a href="#" @click="remove($event, index)">
-                                <span class="fa fa-2x fa-minus-circle"></span>
+                        <td style="width:10%" class="text-center">
+                            <a href="#" @click="remove($event, index)" :title="$t('actions.delete')">
+                                <span class="fa fa-minus-circle"></span>
                             </a>
-                            <a href="#" @click="moveUp($event, index)" v-if="index !== 0">
-                                <span class="fa fa-2x fa-chevron-circle-up"></span>
+                            <a href="#" @click="moveUp($event, index)" v-if="index !== 0"  :title="$t('actions.moveUp')">
+                                <span class="fa fa-chevron-circle-up"></span>
                             </a>
-                            <a href="#" @click="moveDown($event, index)" v-if="index !== (valueList.length-1)">
-                                <span class="fa fa-2x fa-chevron-circle-down"></span>
+                            <a href="#" @click="moveDown($event, index)" v-if="index !== (valueList.length-1)"  :title="$t('actions.moveDown')">
+                                <span class="fa fa-chevron-circle-down"></span>
                             </a>
                         </td>
                     </tr>
@@ -70,7 +78,7 @@
             },
         },
         components: {
-            LabelComponent,
+            LabelComponent, 'v-select': vSelect
         },
         data() {
             return {
@@ -82,14 +90,14 @@
                 cancel: this.cancelClicked
             }
         },
-        mounted(){
+        mounted() {
             this.updateDisplayValue(this.value);
         },
         methods: {
-            updateDisplayValue(v){
+            updateDisplayValue(v) {
                 if (v) {
-                    this.displayValue = v.map((v) =>{
-                        if (this.parameters.options.show_alias){
+                    this.displayValue = v.map((v) => {
+                        if (this.parameters.options.show_alias) {
                             return `${v.alias} = ${v.f}(${v.attribute})`
                         } else {
                             return `${v.f}(${v.attribute})`
@@ -101,6 +109,9 @@
             },
             updated(e, row, attr) {
                 row[attr] = e.target.value;
+            },
+            attrUpdated(row, attr, val) {
+                row[attr] = val;
                 /*eventHub.$emit('update-form-field-value', this.field, 
                     this.valueValue);*/
             },
@@ -139,8 +150,12 @@
             }
         },
         props: {
-            value: '', 
-            field: {}, 
+            suggestions: {
+                type: Array,
+                default: []
+            },
+            value: '',
+            field: {},
             options: {},
             message: {
                 default: 'update-form-field-value'

@@ -22,6 +22,8 @@ export default {
             edit: 'Editar',
             editValue: 'Editar valor...',
             execute: 'Executar ...',
+            moveDown: 'Mover para baixo',
+            moveUp: 'Mover para cima',
             restore: 'Restaurar',
             save: 'Salvar',
             saveAs: 'Salvar como',
@@ -30,6 +32,7 @@ export default {
             showHistory: 'Exibir histórico',
             showResults: 'Exibir resultados',
             show: 'Exibir',
+            simpleAdd: 'Adicionar',
             test: 'Testar',
             toggleTasks: 'Habilitar/desabilitar tarefas'
         },
@@ -179,24 +182,27 @@ export default {
         property: {
             alias: 'Nome novo',
             attribute: 'Atributo',
+            copyAttributeName: 'Duplo clique para copiar e colar na caixa de edição',
             editValue: 'Editar valor ...',
             function: 'Função',
             help: 'Ajuda',
+            noExpressions: 'Nenhuma expressão',
             taskName: 'Nome da tarefa (opcional)',
             expression: {
-                alias: 'New attribute name (alias)',
-                explanation: 'Add one or more expresssions. New attributes will be created from the expressions informed here and you need to inform a name (alias) for them.',
-                tip: `To use an attribute, just inform its name. For string constants, delimit them with quotes (single or double). 
-                Examples: <code>substring(name, instr(name, " "))</code>.`,
-                title: 'Expression',
-                validExpressions: `Valid expressions include math expressions 
-                (e.g. <strong><code>attr * 10 - 4 </code></strong>) and function calls 
-                (e.g. <strong><code>split(attr, ' ') </code></strong>). For more informations, 
-                see Lemonade Reference Guide or Apache Spark SQL functions. `,
+                availableAttribute: 'Atributo disponível | Atributos disponíveis',
+                alias: 'Nome do novo atributo (alias)',
+                explanation: 'Adicione uma ou mais expressões. Novos atributos serão criados para as expressões informadas aqui, portanto, é necessário informar um nome (alias) para eles.',
+                tip: `Para usar um atributo existente, basta informar seu nome. Para constantes do tipo texto (string), delimite-as com aspas ou apóstrofos (' ou "). 
+                Examplos: <strong><code>substring(atributo, instr(atributo, " "))</code><strong>.`,
+                title: 'Expressão',
+                validExpressions: `Expressões válidas incluem expressões matemáticas 
+                (ex. <strong><code>atributo * 10 - 4 </code></strong>) e chamadas a funções 
+                (ex. <strong><code>split(atributo, ' ')</code></strong>). Para mais informações, 
+                consulte o Guia de referência do Lemonade ou as funções existentes na plataforma Apache Spark. `,
             },
             queryBuilder: {
-                explanation: 'Write a SQL compatible Query. The supported syntax depend on the choosen platform, but in simple queries work in all cases. See documentation for more information.',
-                title: 'SQL query command',
+                explanation: 'Escreva uma consulta SQL válida. A sintaxe suportada depende da plataforma escolhida. Geralmente, consultas simpels funcionam na maioria dos casos. Veja a documentação do Lemonade para mais exemplos.',
+                title: 'Consulta SQL',
             },
         },
         titles: {
@@ -282,6 +288,8 @@ export default {
             edit: 'Edit',
             editValue: 'Edit value...',
             execute: 'Execute...',
+            moveDown: 'Move down',
+            moveUp: 'Move up',
             restore: 'Restore',
             save: 'Save',
             saveAs: 'Save as',
@@ -289,6 +297,7 @@ export default {
             search: 'Search',
             showHistory: 'Show history',
             showResults: 'Show results',
+            simpleAdd: 'Add',
             show: 'Show',
             test: 'Test',
             toggleTasks: 'Enable/disable tasks'
@@ -458,11 +467,14 @@ export default {
         property: {
             alias: 'Alias',
             attribute: 'Attribute',
+            copyAttributeName: 'Double click to copy and paste attribute name to edit box',
             editValue: 'Edit value...',
             function: 'Function',
             help: 'Help',
+            noExpressions: '0 Expression defined',
             taskName: 'Task name (optional)',
             expression: {
+                availableAttribute: 'Available attribute | Available attributes',
                 alias: 'New attribute name (alias)',
                 explanation: 'Add one or more expresssions. New attributes will be created from the expressions informed here and you need to inform a name (alias) for them.',
                 tip: `To use an attribute, just inform its name. For string constants, delimit them with quotes (single or double). 

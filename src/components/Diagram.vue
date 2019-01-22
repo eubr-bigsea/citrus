@@ -1,15 +1,12 @@
 <template>
     <div class="border">
-        <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}" v-on:click="diagramClick" >
+        <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
+            v-on:click="diagramClick">
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true" id="lemonade-diagram"
-                    v-if="loaded"
-                    ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}"> 
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" 
-                        :key="`${$parent.version} - ${task.id}`"
-                        :enableContextMenu="editable"
-                        :draggable="editable"
-                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+                    v-if="loaded" ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
+                        :enableContextMenu="editable" :draggable="editable" :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
 
                     <!-- flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" v-if="tasksRendered" :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"
                     /-->
@@ -312,6 +309,19 @@
                         `${flow['target_id']}/${flow['target_port']}`];
 
                     const connection = self.instance.connect({ uuids });
+                    connection.bind('mouseover', (info, originalEvent) => {
+                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
+                        debugger
+                        if (originalEvent) {
+                            //self.instance.detach(con);
+                            let [source_id, source_port] = info.endpoints[0].getUuid().split('/');
+                            let [target_id, target_port] = info.endpoints[1].getUuid().split('/');
+                            let source_port_name = '';
+                            let target_port_name = '';
+                            // self.instance.detach(con);
+                            
+                        }
+                    });
                     const currentStyle = connection ? connection.getPaintStyle() : null;
                     if (currentStyle) {
                         currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
@@ -363,14 +373,14 @@
                     document.addEventListener("mousemove", self.openSelector);
                 }
             });
-            if (self.shink){
+            if (self.shink) {
                 const z = parseFloat(self.zoom);
                 const width = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.left)) + 200);
                 const height = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.top)) + 200);
                 self.$refs.diagram.style.width = '100%'; //width + 'px';
                 self.$refs.diagram.style.height = '100%';
             }
-            
+
         },
         methods: {
             scrollHandle() {
@@ -959,7 +969,7 @@
                     members.forEach((member) => {
                         let connections = self.instance.getConnections(
                             { scope: '*', target: member.id }).concat(
-                            self.instance.getConnections({ scope: '*', source: member.id }));
+                                self.instance.getConnections({ scope: '*', source: member.id }));
                         connections.forEach((conn) => {
                             if (conn.target === member) {
                                 if (members.indexOf(conn.source) > -1) {
@@ -1048,23 +1058,9 @@
                   return info.sourceId !== info.targetId;
                 });
                 */
-                self.instance.bind('connection', (info, originalEvent) => {
+
+                self.instance.bind('connection', (info) => {
                     const con = info.connection;
-                    //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                    if (originalEvent) {
-                        //self.instance.detach(con);
-                        let [source_id, source_port] = info.sourceEndpoint.getUuid().split('/');
-                        let [target_id, target_port] = info.targetEndpoint.getUuid().split('/');
-                        let source_port_name = '';
-                        let target_port_name = '';
-                        // self.instance.detach(con);
-                        const flow = {
-                            source_id, source_port,
-                            target_id, target_port,
-                            source_port_name, target_port_name,
-                        };
-                        self.$root.$emit("addFlow", flow, con);
-                    }
                 });
             },
         },
@@ -1102,6 +1098,7 @@
     .not-selectable {
         user-select: none;
     }
+
     .news {
         margin-left: 5px;
         color: #888;

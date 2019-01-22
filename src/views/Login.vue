@@ -81,8 +81,8 @@
         name: 'Login',
         data() {
             return {
-                email: "waltersf@gmail.com",
-                password: "zooropa",
+                email: "",
+                password: "",
                 rememberPassword: false,
                 showingPassword: false
             }
