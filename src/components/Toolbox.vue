@@ -10,30 +10,39 @@
                         <input @input="searchOperation" v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')" />
                     </li>
                     <div v-if="search === ''">
-                        <div v-for="(group, index) in groupedOperations" :title="group.order" class="unstyled" v-bind:key="group.group">
-                            <b-link draggable="false" data-parent="submenus" v-b-toggle="'submenu' + index" class="list-group-item truncate list-group-item-action flex-column align-items-start">
+                        <div v-for="(group, index) in groupedOperations" :title="group.order" class="unstyled"
+                            v-bind:key="group.group">
+                            <b-link draggable="false" data-parent="submenus" v-b-toggle="'submenu' + index"
+                                class="list-group-item truncate list-group-item-action flex-column align-items-start">
+                                <span class="when-closed"><span class="fa fa-angle-right"></span></span>
+                                <span class="when-opened"><span class="fa fa-angle-down"></span></span>
                                 <strong>
-                                    <span class="fa fa-layer-group"></span> {{group.group}}</strong>
+                                    {{group.group}}
+                                </strong>
                             </b-link>
 
                             <b-collapse :id="'submenu' + index" data-parent="submenus">
                                 <div v-if="group.operations">
                                     <span v-for="op in group.operations" v-bind:key="op.operation.id" :title="op.operation.name">
-                                        <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item truncate list-group-item-action text-dark">
+                                        <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag"
+                                            href="#" class="list-group-item truncate list-group-item-action text-dark">
                                             <span v-text="op.operation.name" :title="op.operation.name"></span>
                                         </a>
                                     </span>
                                 </div>
                                 <div v-else>
                                     <div v-for="(subGroup, index2) in group.subGroups" v-bind:key="subGroup.subGroup">
-                                        <b-link draggable="false" v-b-toggle="'subsubmenu' + index2" class="list-group-item truncate list-group-item-action flex-column align-items-start">
+                                        <b-link draggable="false" v-b-toggle="`subsubmenu_${index}+${index2}`" class="list-group-item truncate list-group-item-action flex-column align-items-start">
+                                            <span class="when-closed fa fa-angle-right"></span>
+                                            <span class="when-opened fa fa-angle-down"></span>
                                             <span class="menu-collapsed pl-2">
-                                                <span class="fa fa-layer-group"></span>
                                                 <strong> {{subGroup.subGroup }}</strong>
                                             </span>
                                         </b-link>
-                                        <b-collapse :id="'subsubmenu' + index2" v-for="op in subGroup.operations" v-bind:key="op.operation.id" :title="op.operation.name">
-                                            <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag" @dragend="stopDrag" href="#" class="list-group-item truncate list-group-item-action bg-white text-dark">
+                                        <b-collapse :id="`subsubmenu_${index}+${index2}`" v-for="op in subGroup.operations"
+                                            v-bind:key="op.operation.id" :title="op.operation.name">
+                                            <a draggable="true" :data-id="op.operation.id" @dragstart="startDrag"
+                                                @dragend="stopDrag" href="#" class="list-group-item truncate list-group-item-action bg-white text-dark">
                                                 <span class="ml-3" v-text="op.operation.name"></span>
                                             </a>
                                         </b-collapse>
@@ -58,8 +67,8 @@
                         {{$t('titles.news')}}
                     </li>
                     <li class="list-group-item">
-                            <span class="news">
-                                    <span class="fa fa-lightbulb text-warning"></span> {{$t('diagram.showProperties')}}</span>
+                        <span class="news">
+                            <span class="fa fa-lightbulb text-warning"></span> {{$t('diagram.showProperties')}}</span>
                     </li>
                 </ul>
             </div>
@@ -96,27 +105,6 @@
         },
         computed: {
             groupedOperations() {
-                /*
-                let g = [...groupBy(this.operations, (op) => {
-                    let groups = op.categories.filter((cat) => {
-                        return cat.type === 'group';
-                    })
-                    let subGroups = op.categories.filter((cat) => {
-                        return cat.type === 'subgroup';
-                    })
-                    let result = {}
-                    if (groups.length){
-                        result = {order: groups[0].order, group: groups[0].name};
-                        if (subGroups.length){
-                            result['subGroup'] = subGroups[0].name;
-                        } else {
-                            result['subGroup'] = '';
-                        }
-                    }
-                    return result;
-                })];
-                */
-
                 const ops = this.operations.map((op) => {
                     const group = op.categories.find((cat) => {
                         return cat.type === 'group';
@@ -169,24 +157,6 @@
                     }
                 });
                 return grouped;
-                /*
-                console.debug(grouped)
-                g.sort((a, b) => {
-                    if (a[0].order < b[0].order) return -1;
-                    if (a[0].order > b[0].order) return 1;
-                    const groupComapare = a[0].group.localeCompare(b[0].group)
-                    if (groupComapare != 0) return groupComapare;
-                    return a[0].subGroup.localeCompare(b[0].subGroup);
-                });
-                const result = [...groupBy(g, (x) => x[0].group)];
-                result.forEach(group => {
-                    //group[1] = [...groupBy(group[1], (x) => x[0].subGroup)]
-                    if (group[1][0][0].subGroup !== ''){
-                        //console.debug(group[1] )
-                    }
-                });
-                //console.debug(result)
-                return result*/
             },
             searcheableOperations() {
                 let self = this
@@ -201,18 +171,14 @@
         },
         methods: {
             startDrag(event) {
-                ///event.target.classList.add('draggable');
-                //var crt = ev.target.cloneNode(true);
                 const target = event.target;
                 let crt = this.$refs.opDrag;
                 crt.innerHTML = target.innerHTML;
-                //document.body.appendChild(crt);
 
                 crt.classList.add('dragging');
                 crt.classList.add('operation');
                 crt.style.position = 'absolute';
                 crt.style.left = '-1000px';
-                //event.dataTransfer.setData("text", target.innerHTML);
                 event.dataTransfer.setData("id", target.dataset.id);
 
                 event.dataTransfer.setDragImage(crt, 0, 0);
@@ -221,7 +187,6 @@
                 event.target.classList.remove('draggable');
             },
             toggle(e) {
-                e.target.nextSibling.removeClass('collapse')
             },
             searchOperation: _.debounce(function () {
                 let search = this.search.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase()
@@ -268,5 +233,10 @@
         font-family: Verdana, Tahoma, Geneva, sans-serif;
         text-align: center;
         transform: rotate(90deg);
+    }
+
+    .collapsed>.when-opened,
+    :not(.collapsed)>.when-closed {
+        display: none;
     }
 </style>
