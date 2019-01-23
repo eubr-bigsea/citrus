@@ -46,9 +46,9 @@
                             <a class="nav-link" href="#">{{$tc('titles.whatIfModel', 1)}}</a>
                         </li>
                         -->
+                        <!--
                         <li class="divider-vertical nav-item"></li>
                             <b-nav-item-dropdown class="mb-1">
-                                <!-- Using button-content slot -->
                                 <template slot="button-content">
                                     {{$tc('titles.administration', 1)}}
                                 </template>
@@ -63,6 +63,7 @@
                                 <b-dropdown-item to="/user/profile">{{$t('titles.toolboxCategory')}}</b-dropdown-item>
                                 <b-dropdown-divider></b-dropdown-divider>
                             </b-nav-item-dropdown>
+                        -->
                     </ul>
                 </div>
                 

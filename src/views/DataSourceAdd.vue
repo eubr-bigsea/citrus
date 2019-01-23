@@ -6,8 +6,8 @@
                     <h4 class="card-title">{{$t('dataSource.whatTypeOfDataSourceToAdd')}}</h4>
                     <div class="row">
                         <div class="col-md-6">
-                            <b-card bg-variant="light" :title="$t('dataSource.distributedFileSystem')" class="card-option">
-                                {{$t('dataSource.features')}}:
+                            <b-card bg-variant="" :title="$t('dataSource.distributedFileSystem')" class="card-option">
+                                {{$t('dataSource.characteristics')}}:
                                 <ul>
                                     <li>{{$t('dataSource.scalability')}};</li>
                                     <li>{{$t('dataSource.youCanUploadYourFiles')}};</li>
@@ -29,7 +29,7 @@
                         </div>
                         <div class="col-md-6">
                             <b-card :title="$t('dataSource.databaseStorage')" class="card-option">
-                                {{$t('dataSource.features')}}:
+                                {{$t('dataSource.characteristics')}}:
                                 <ul>
                                     <li>{{$t('dataSource.youCanUseSQL')}};</li>
                                     <li>{{$t('dataSource.databaseConnectionPreviouslyConfigured')}};</li>
