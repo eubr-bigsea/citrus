@@ -4,7 +4,7 @@
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" 
         v-on:dblclick.stop="dblClick" v-on:click.stop="click" @contextmenu="openMenu">
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
-            {{task.name}}
+            {{task.name}} <span class="text-danger fa fa-2x fa-exclamation-triangle" v-if="task.warning" :title="$t('workflow.usingDisabledOperation')"></span>
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">

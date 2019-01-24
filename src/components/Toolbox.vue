@@ -105,7 +105,7 @@
         },
         computed: {
             groupedOperations() {
-                const ops = this.operations.map((op) => {
+                const ops = this.operations.filter(op => op.enabled).map((op) => {
                     const group = op.categories.find((cat) => {
                         return cat.type === 'group';
                     }) || { name: '', order: 0, default_order: 0 }
@@ -159,7 +159,6 @@
                 return grouped;
             },
             searcheableOperations() {
-                let self = this
                 let result = new Map()
                 if (this.search) {
                     this.operations.forEach(op => {
@@ -193,9 +192,9 @@
                 let searcheable = this.searcheableOperations
 
                 this.filteredOperations = this.operations.filter((op) => {
-                    return searcheable[op.id].indexOf(search) > -1
+                    return searcheable[op.id] && searcheable[op.id].indexOf(search) > -1
                 });
-            }, 500)
+            }, 5000)
         }
     }
 </script>

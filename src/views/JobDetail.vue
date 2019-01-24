@@ -9,9 +9,9 @@
                         </template>
                         <div class="row mt-1">
                             <div class="col-md-9" style="position: relative">
-                                <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" :version="job.id" initial-zoom="1"
-                                    :showToolbar="false" :editable="false" shink="true" v-if="loaded" :loaded="loaded" :showTaskDecoration="true"
-                                />
+                                <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
+                                    :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false" shink="true"
+                                    v-if="loaded" :loaded="loaded" :showTaskDecoration="true" />
                             </div>
                             <div class="col-md-3">
                                 <div class="card">
@@ -22,14 +22,16 @@
                                         </li>
                                         <li class="list-group-item">
                                             <strong>{{$tc('titles.workflow')}}: </strong>
-                                            <br/>
-                                            <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="nav-link">{{workflow.id}} - {{workflow.name}}</router-link>
+                                            <br />
+                                            <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
+                                                class="nav-link">{{workflow.id}} - {{workflow.name}}</router-link>
                                         </li>
                                         <li class="list-group-item">
                                             <strong>{{$t('common.date')}}:</strong> {{job.created}}
                                         </li>
                                         <li class="list-group-item">
-                                            <strong>{{$t('common.user.name')}}: </strong> {{job.user.name}} ({{job.user.login}})
+                                            <strong>{{$t('common.user.name')}}: </strong> {{job.user.name}}
+                                            ({{job.user.login}})
                                         </li>
                                         <li class="list-group-item">
                                             <strong>{{$tc('titles.cluster')}}: </strong> {{job.cluster.name}}
@@ -89,7 +91,7 @@
                                             <div class="html-div" v-html="log.message"></div>
                                         </span>
                                         <span v-else-if="log.type === 'IMAGE'">
-                                            <img :src="'data:image/png;base64,' + log.message"/>
+                                            <img :src="'data:image/png;base64,' + log.message" />
                                         </span>
                                         <!-- <span v-else-if="log.type === 'STATUS'">
                                             &#9733;{{log.message}}
@@ -112,15 +114,16 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length" @click="loadVisualizations">
+                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length"
+                        @click="loadVisualizations">
                         <div class="row" v-for="(result, inx) in job.results" :key="result.id">
                             <div class="col-md-8 lemonade offset-2">
-                                    <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
+                                <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
                             </div>
                         </div>
                     </b-tab>
                     <b-tab :title="$tc('job.sourceCode')" title-item-class="smalltab" @click="showSourceCode = 1">
-                        <SourceCode v-if="showSourceCode" :job="job.id"/>
+                        <SourceCode v-if="showSourceCode" :job="job.id" />
                     </b-tab>
                     <!-- <b-tab :title="$tc('job.logs', 2)" title-item-class="smalltab">
                         <div class="row mt-2">
@@ -143,6 +146,37 @@
                 </b-tabs>
             </div>
         </div>
+        <div class="fixed-bottom m-2 border" style="height: 200px; background: white">
+            <div class="row">
+                <div class="col-md-12">
+                    <b-tabs>
+                        <b-tab active title-item-class="smalltab">
+                            <template slot="title">
+                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status"></div>
+                                    {{$tc('job.logs', 2)}}
+                            </template>
+                            <div v-for="log in sortedLogs" :key="log.id" class="job-log p-2" :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
+                                <small>
+                                    <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
+                                        {{log.level}}
+                                    </span> &nbsp;
+                                    <span>{{log.date}}</span>&nbsp;
+                                    <TaskDisplay :task="getTask(log.task.id)" :simple="true" /> &nbsp;</strong>
+
+                                    <span v-if="log.type === 'TEXT'">
+                                        {{log.message}}
+                                    </span>
+                                    <span v-else-if="log.type === 'STATUS'">
+                                        &#9733;{{log.message}}
+                                    </span>
+                                </small>
+                            </div>
+                        </b-tab>
+                    </b-tabs>
+
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -156,6 +190,8 @@
     import io from 'socket.io-client';
 
     const standUrl = process.env.VUE_APP_STAND_URL
+    const standNamespace = process.env.VUE_APP_STAND_NAMESPACE
+    const standSocketIOPath = process.env.VUE_APP_STAND_SOCKET_IO_PATH
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
 
@@ -239,7 +275,7 @@
             }
         },
         methods: {
-            loadVisualizations(){
+            loadVisualizations() {
 
             },
             getTask(taskId) {
@@ -254,12 +290,8 @@
             },
             connectWebSocket() {
                 const self = this;
-                const standNamespace = "/stand";
-                const standSocketIOdPath = "";
-                // const standNamespace = "";
-                // const standSocketIOdPath = "/stand/";
                 const socket = io(`${standUrl}${standNamespace}`,
-                    { upgrade: true, path: `${standSocketIOdPath}/socket.io`, });
+                    { upgrade: true, path: `${standSocketIOPath}/socket.io`, });
 
                 self.socket = socket
 
@@ -306,7 +338,7 @@
                         self.job.status = msg.status;
                         self.jobStatus = msg.status.toLowerCase();
                         self.job.finished = msg.finished;
-                        
+
                         if (msg.message) {
                             // let finalMsg = msg.message.replace(/&/g, '&amp;')
                             //     .replace(/"/g, '&quot;')
@@ -317,7 +349,9 @@
                             if (msg.status === 'COMPLETED') {
                                 self.success(finalMsg);
                             } else if (msg.status === 'ERROR') {
-                                self.job.exception_stack =  msg.exception_stack.replace(/(^[ \t]*\n)/gm, "");
+                                if (msg.exception_stack) {
+                                    self.job.exception_stack = msg.exception_stack.replace(/(^[ \t]*\n)/gm, "");
+                                }
                                 self.error(null, self.$t('job.error'));
                                 // } else {
                                 //     self.error(finalMsg)
@@ -353,8 +387,12 @@
                     self.job = resp.data
                     const workflow = self.job.workflow;
                     self.jobStatus = self.job.status.toLowerCase();
-
-                    axios.get(`${tahitiUrl}/operations?platform=${this.$route.params.platform}`).then(
+                    const params = {
+                        platform: this.$route.params.platform,
+                        lang: this.$root.$i18n.locale,
+                        disabled: true // even disabled operations must be returned to keep compatibility
+                    }
+                    axios.get(`${tahitiUrl}/operations`, { params }).then(
                         (resp) => {
                             self.operations = resp.data
                             self.operations.forEach((op) => {

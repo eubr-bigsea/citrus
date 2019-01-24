@@ -376,7 +376,8 @@
                         this.$Progress.start()
                         const params = {
                             platform: this.$route.params.platform,
-                            lang: this.$root.$i18n.locale
+                            lang: this.$root.$i18n.locale,
+                            disabled: true // even disabled operations must be returned to keep compatibility
                         }
                         axios.get(`${tahitiUrl}/operations`, { params }).then(
                             (resp) => {
@@ -384,10 +385,18 @@
                                 self.operations.forEach((op) => {
                                     self.operationsLookup[op.id] = op
                                 })
+                                let usingDisabledOp = false;
                                 workflow.tasks.forEach((task) => {
-                                    task.operation = self.operationsLookup[task.operation.id]
+                                    let op = self.operationsLookup[task.operation.id];
+                                    task.operation = op
                                     task.step = null;
+                                    usingDisabledOp |= op.enabled === false; 
+                                    task.warning = op.enabled === false
                                 });
+                                if (usingDisabledOp){
+                                    self.warning(self.$t('messages.usingDisabledOperation',
+                                        { what: self.$tc('titles.workflow') }), 60000, 300);
+                                }
                                 if (!workflow.forms) {
                                     workflow.forms = {};
                                 }

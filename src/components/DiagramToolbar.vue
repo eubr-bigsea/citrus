@@ -100,6 +100,7 @@
                 this.$root.$emit('ondistribute-tasks', mode, prop)
             },
             align(prop, fn) {
+                console.debug('align')
                 this.$root.$emit('onalign-tasks', prop, fn)
             },
             saveAsImage() {

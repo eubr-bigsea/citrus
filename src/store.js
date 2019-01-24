@@ -27,10 +27,10 @@ export default new Vuex.Store({
             state.token = ''
         },
         register_error(err) {
-
+            console.error(err);
         },
         register_request(user) {
-
+            console.info("User", user)
         },
         change_profile_success(state, { user }) {
             user.email = user.attributes.email
@@ -42,7 +42,6 @@ export default new Vuex.Store({
     actions: {
         changeProfile({ commit }, params) {
             return new Promise((resolve, reject) => {
-                const self = this;
                 const url = `${params.thornUrl}/api/users/${params.user.attributes.id}`
                 const headers = { 'Accept': 'application/json; charset=utf-8' }
                 axios({ url, data: { data: params.user }, method: 'PATCH', headers })
@@ -81,6 +80,7 @@ export default new Vuex.Store({
 
                             resolve(resp)
                         }).catch(function (e) {
+                            reject(e)
                         });
                     })
                     .catch(err => {

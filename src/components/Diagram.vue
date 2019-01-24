@@ -309,17 +309,14 @@
                         `${flow['target_id']}/${flow['target_port']}`];
 
                     const connection = self.instance.connect({ uuids });
-                    connection.bind('mouseover', (info, originalEvent) => {
+                    connection.bind('mouseover', (c, originalEvent) => {
                         //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        debugger
                         if (originalEvent) {
-                            //self.instance.detach(con);
-                            let [source_id, source_port] = info.endpoints[0].getUuid().split('/');
-                            let [target_id, target_port] = info.endpoints[1].getUuid().split('/');
-                            let source_port_name = '';
-                            let target_port_name = '';
-                            // self.instance.detach(con);
-                            
+                            const currentStyle = c ? c.getPaintStyle() : null; 
+                            currentStyle.lineWidth = 20;
+                            currentStyle.outlineColor = "#ed8";
+                            c.setPaintStyle(currentStyle);
+                            self.instance.repaintEverything();
                         }
                     });
                     const currentStyle = connection ? connection.getPaintStyle() : null;

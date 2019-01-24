@@ -81,7 +81,6 @@ export default {
             preview: 'Pré-visualização',
             rememberMe: 'Lembrar minha senha',
             saveBeforeToEnableThis: 'Salve os dados para habilitar a ação {what}',
-            sharing: 'Sharing',
             scale: 'Escala',
             sharing: 'Compartilhamento',
             show: 'Exibir',
@@ -168,7 +167,8 @@ export default {
             successDeletion: '{what} foi removido com sucesso',
             registeredWithSuccess: 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
             savedWithSuccess: '{what} foi salvo com sucesso!',
-            noMatching: 'Lamentamos, nenhuma opção encontrada'
+            noMatching: 'Lamentamos, nenhuma opção encontrada',
+            usingDisabledOperation: 'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.'
         },
         privacy: {
             anonymizationTechnique: 'Técnica de anonimização',
@@ -263,6 +263,7 @@ export default {
             required: 'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
             restoreHistory: 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored: 'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
+            usingDisabledOperation: 'Tarefa usa operação desabilitada no Lemonade',
         }
     },
 
@@ -422,7 +423,8 @@ export default {
             successDeletion: '{what} was successfuly removed',
             registeredWithSuccess: 'You were registered with success. Please, sign in again.',
             savedWithSuccess: '{what} saved with success.',
-            noMatching: 'Sorry, no matching options'
+            noMatching: 'Sorry, no matching options',
+            usingDisabledOperation: 'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.'
         },
         job: {
             error: 'Error running job. See more details in the log window above.',
@@ -518,6 +520,7 @@ export default {
             required: 'Please, complete the required information for the execution of the workflow',
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored: 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
+            usingDisabledOperation: 'Task is using a disabled operation in Lemonade',
         }
     }
     
