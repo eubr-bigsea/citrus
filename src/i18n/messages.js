@@ -148,6 +148,8 @@ export default {
             disconnected: 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
             invalidLoginOrPassword: 'Senha ou usuário inválidos',
             invalidOperation: 'Operação inválida',
+            missingRequiredValue: 'Valor obrigatório ausente',
+            notFound: 'Registro não encontrado',
             passwordDontMatch: 'Senhas são diferentes',
             loginInUse: 'Login/email estão em uso por outro usuário. Tente outro.',
             receivingData: 'Erro recebendo dados do servidor.',
@@ -227,9 +229,12 @@ export default {
             register: 'Registrar',
             storage: 'Armazenamento | Armazenamentos',
             success: 'Successo',
+            tasks: 'Tarefa | Tarefas',
             template: 'Modelo | Modelos',
             toolboxCategory: 'Organização das operações',
             user: 'Usuário | Usuários',
+            validationErrors: 'Erro de validação | Erros de validação',
+            value: 'Valor',
             warning: 'Aviso',
             whatIfModel: 'What if model?',
             workflow: 'Fluxo de trabalho | Fluxos de trabalho',
@@ -264,7 +269,8 @@ export default {
             restoreHistory: 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored: 'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
             usingDisabledOperation: 'Tarefa usa operação desabilitada no Lemonade',
-        }
+            validationExplanation: 'Há um erro no fluxo de trabalho. Por favor, corrija-o antes de executar o fluxo. | Existem erros no fluxo de trabalho. Por favor, corrija-os antes de executar o fluxo.'
+        },
     },
 
     en: {
@@ -411,6 +417,8 @@ export default {
             disconnected: 'You are disconnected. Please check if you have access to the Internet.',
             invalidLoginOrPassword: 'Invalid login or password',
             invalidOperation: 'Invalid operation',
+            missingRequiredValue: 'Missing required value',
+            notFound: 'Record not found',
             passwordDontMatch: 'Passwords do not match',
             loginInUse: 'Login/email is in use. Try another one.',
             receivingData: 'Error receiving data from the server',
@@ -454,9 +462,12 @@ export default {
             register: 'Sign up',
             storage: 'Storage | Storages',
             success: 'Success',
+            tasks: 'Task | Tasks',
             template: 'Template | Templates',
             toolboxCategory: 'Toolbox disposition',
             user: 'User | Users',
+            validationErrors: 'Validation error | Validation errors',
+            value: 'Value',
             warning: 'Warning',
             whatIfModel: 'What if model?',
             workflow: 'Workflow | Workflows',
@@ -521,6 +532,7 @@ export default {
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored: 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
             usingDisabledOperation: 'Task is using a disabled operation in Lemonade',
+            validationExplanation: 'There is an error in the workflow. Please, fix it before running the workflow. | There are errors in the workflow. Please, fix them before running the workflow.'
         }
     }
     

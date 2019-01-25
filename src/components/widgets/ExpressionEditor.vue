@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
         <b-link v-b-modal="'expressionModal'" variant="sm">
             {{$t('property.editValue')}}

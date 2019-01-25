@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <prism-editor :code="value === null ? field.default: value" v-model="code" :language="programmingLanguage" ref="prism" />
     </div>
 </template>

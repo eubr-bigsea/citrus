@@ -31,10 +31,12 @@
                                     <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
                                             <component 
-                                                :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
+                                                :is="field.suggested_widget + '-component'" 
+                                                :field="field" :value="getValue(field.name)"
                                                 :suggestions="suggestions"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
-                                                language="language" context="context"
+                                                :language="$root.$i18n.locale" 
+                                                context="context"
                                                 >
                                             </component>
                                             <!-- <span v-else>

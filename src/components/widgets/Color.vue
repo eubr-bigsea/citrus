@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <div class="color-items">
             <div v-for="(opt, index) in pairOptionValueList" @click="doUpdate(opt)" :key="index" class="color-item" :class="{active: value && opt && opt.background === value.background && opt.foreground == value.foreground}"
                 :style="{background: opt.background}"></div>

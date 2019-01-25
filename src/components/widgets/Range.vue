@@ -1,6 +1,6 @@
 <template>
     <div class="clear mb-4">
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)" :required="field.required"
         />
         <div class="float-left">{{split || 0}}%</div>
@@ -29,7 +29,7 @@
 
         props: {
             value: {
-                type: Number, default: 50,
+                type: String, default: 50,
             }, field: {},
             message: {
                 type: String,

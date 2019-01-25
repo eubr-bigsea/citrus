@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <div>
             <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" 
                :value.sync="values" :on-change="updated"
@@ -22,7 +22,7 @@
         computed: {
             suggestions() {
                 let obj = JSON.parse(this.field.values);
-                return obj;
+                return obj || [];
             }
         },
         methods: {

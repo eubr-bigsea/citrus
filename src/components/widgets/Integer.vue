@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field" <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" <LabelComponent :field="field" :value="value"></LabelComponent>
         <input type="number" maxlenght="10" class="form-control input-sm" :value="value === null ? field['default']: value" pattern="\\d*"
             @input="updated" :required="field.required" />
     </div>

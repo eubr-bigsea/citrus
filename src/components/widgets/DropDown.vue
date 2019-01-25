@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <select class="form-control input-sm" v-bind:data-field="field.name" v-model="selected" @change="updated">
             <option v-if="!field.default"></option>
             <option v-for="opt in pairOptionValueList" :value="opt.key">

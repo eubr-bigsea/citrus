@@ -1,6 +1,6 @@
 <template>
     <div class="row" style="overflow:hidden">
-        <TahitiSuggester/>
+        <TahitiSuggester />
         <div class="col-md-12">
             <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
             <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="justify-content-center">
@@ -21,7 +21,8 @@
                             <toolbox :operations="operations"></toolbox>
                         </div>
                         <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
-                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded" :loaded="loaded" :version="workflow.version"></diagram>
+                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"
+                                :loaded="loaded" :version="workflow.version"></diagram>
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
                             </slideout-panel>
@@ -58,7 +59,8 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <label>{{$t('workflow.jobName')}} ({{$t('common.optional')}}):</label>
-                                            <input type="text" class="form-control" v-model="clusterInfo.jobName" maxlength="50" />
+                                            <input type="text" class="form-control" v-model="clusterInfo.jobName"
+                                                maxlength="50" />
                                         </div>
                                         <div class="col-md-6 mt-3">
                                             <label>{{$tc('titles.cluster')}}:</label>
@@ -86,8 +88,8 @@
                                         <b-form-radio name="saveOption" v-model="saveOption" value="new">
                                             {{$t('workflow.newName')}}
                                         </b-form-radio>
-                                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'" :value="$t('workflow.copyOf') + ' ' + workflow.name"
-                                        />
+                                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'"
+                                            :value="$t('workflow.copyOf') + ' ' + workflow.name" />
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <b-form-radio name="saveOption" v-model="saveOption" value="image">
@@ -123,6 +125,21 @@
                 <div>
                     {{resultTask.result}}
                 </div>
+            </b-modal>
+            <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true" :title="$tc('titles.validationErrors', 1)">
+                <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
+                <table class="table table-sm">
+                    <tr>
+                        <th>{{$tc('titles.tasks')}}</th>
+                        <th>{{$tc('titles.value')}}</th>
+                        <th>{{$tc('titles.error')}}</th>
+                    </tr>
+                    <tr v-for="err in validationErrors" :key="err.sequential">
+                        <td>{{err.task.name}}</td>
+                        <td>{{err.field}}</td>
+                        <td>{{err.message}}</td>
+                    </tr>
+                </table>
             </b-modal>
         </div>
     </div>
@@ -195,6 +212,7 @@
                 selectedTask: { task: { operation: {} } },
                 showPreviousJobs: false,
                 showProperties: false,
+                validationErrors: [],
                 workflow: { tasks: [], flows: [], platform: {} },
                 // propertyStyles: [
                 //     {
@@ -252,6 +270,7 @@
                 } else {
                     self.selectedTask.task.forms[field.name] = { value: value }
                 }
+                self._validateTasks([self.selectedTask.task]);
                 this.isDirty = true;
             });
             this.$root.$on('update-workflow-form-field-value', (field, value) => {
@@ -390,10 +409,14 @@
                                     let op = self.operationsLookup[task.operation.id];
                                     task.operation = op
                                     task.step = null;
-                                    usingDisabledOp |= op.enabled === false; 
-                                    task.warning = op.enabled === false
+                                    usingDisabledOp |= op.enabled === false;
+                                    if (!op.enabled){
+                                        task.warning = $t('workflow.usingDisabledOperation');
+                                    } else {
+                                        task.warning = null;
+                                    }
                                 });
-                                if (usingDisabledOp){
+                                if (usingDisabledOp) {
                                     self.warning(self.$t('messages.usingDisabledOperation',
                                         { what: self.$tc('titles.workflow') }), 60000, 300);
                                 }
@@ -411,6 +434,8 @@
                                     // });
                                 });
                                 self.workflow = workflow;
+                                self._validateTasks(self.workflow.tasks);
+
                                 this.updateAttributeSuggestion();
                                 self.loaded = true;
                                 self.$nextTick(() => {
@@ -549,16 +574,17 @@
                     `${tahitiUrl}/workflows/${this.$route.params.id}`,
                     cloned,
                     { headers }).then(
-                    (resp) => {
-                        let workflow = resp.data.data;
-                        workflow.tasks.forEach((task) => {
-                            task.operation = self.operationsLookup[task.operation.id]
-                        });
-                        self.workflow = workflow;
-                        self.success(self.$t('messages.savedWithSuccess',
-                            { what: self.$tc('titles.workflow') }));
-                        self.isDirty = false;
-                    }
+                        (resp) => {
+                            let workflow = resp.data.data;
+                            workflow.tasks.forEach((task) => {
+                                task.operation = self.operationsLookup[task.operation.id]
+                            });
+                            self.workflow = workflow;
+                            self.success(self.$t('messages.savedWithSuccess',
+                                { what: self.$tc('titles.workflow') }));
+                            self.isDirty = false;
+                            self._validateTasks(self.workflow.tasks);
+                        }
                     ).catch(function (e) {
                         this.error(e);
                     }.bind(this));
@@ -668,31 +694,33 @@
             },
             showExecuteWindow() {
                 const self = this;
-                const d = new Date().toLocaleString().slice(0, -5);
-                this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
-                axios.get(`${standUrl}/clusters`, {})
-                    .then((response) => {
-                        self.clusters.length = 0;
-                        Array.prototype.push.apply(self.clusters, response.data);
-                        if (self.clusters.length) {
-                            self.clusterInfo.id = self.clusters[0].id;
-                            self.clusterInfo.description = self.clusters[0].description;
-                            self.$refs.executeModal.show();
-                            if (self.name === '') {
-                                self.clusterInfo.workflowName = self.workflow.name;
+                if (self._validateTasks(self.workflow.tasks)) {
+                    const d = new Date().toLocaleString().slice(0, -5);
+                    this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
+                    axios.get(`${standUrl}/clusters`, {})
+                        .then((response) => {
+                            self.clusters.length = 0;
+                            Array.prototype.push.apply(self.clusters, response.data);
+                            if (self.clusters.length) {
+                                self.clusterInfo.id = self.clusters[0].id;
+                                self.clusterInfo.description = self.clusters[0].description;
+                                self.$refs.executeModal.show();
+                                if (self.name === '') {
+                                    self.clusterInfo.workflowName = self.workflow.name;
+                                }
+                            } else {
+                                self.error("Unable to execute workflow: There is not cluster available.");
                             }
-                        } else {
-                            self.error("Unable to execute workflow: There is not cluster available.");
-                        }
-                    }).catch((ex) => {
-                        self.error(ex);
-                    });
-
+                        }).catch((ex) => {
+                            self.error(ex);
+                        });
+                } else {
+                    self.$refs.validationErrorsModal.show();
+                }
             },
             execute() {
                 const self = this;
                 this.saveWorkflow();
-                this._execute();
                 // this.$refs.executeModal.hide();
                 // if (self.isDirty) {
                 //     this.confirm(
@@ -705,6 +733,31 @@
                 // } else {
                 //     alert('Executando 2')
                 // }
+            },
+            _validateTasks(tasks) {
+                const self = this;
+                self.validationErrors = [];
+                let counter = 1;
+                tasks.forEach(t => {
+                    let warning = null;
+                    t.operation.forms.forEach(form => {
+                        if (form.category === 'execution'){
+                            form.fields.forEach(field => {
+                                if (field.required){
+                                    const value = t.forms[field.name] ? t.forms[field.name].value : null;
+                                    if (value === null || value === '' || value === {}){
+                                        warning = this.$tc("errors.missingRequiredValue");
+                                        self.validationErrors.push({ id: counter++, task: {id: t.id, name: t.name},
+                                            field: field.label,
+                                            message: self.$tc("errors.missingRequiredValue")})
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    t.warning = warning;
+                });
+                return false;
             },
             _execute() {
                 const self = this;

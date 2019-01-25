@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <textarea disabled :value="field.value" class="form-control code" rows="8"></textarea>
         <b-link v-b-modal="'queryBuilderModal'" variant="sm">
             {{$t('property.editValue')}}
