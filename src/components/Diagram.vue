@@ -1055,9 +1055,22 @@
                   return info.sourceId !== info.targetId;
                 });
                 */
-
-                self.instance.bind('connection', (info) => {
+                self.instance.bind('connection', (info, originalEvent) => {
                     const con = info.connection;
+                    if (originalEvent) {
+                            //self.instance.detach(con);
+                            let [source_id, source_port] = info.sourceEndpoint.getUuid().split('/');
+                            let [target_id, target_port] = info.targetEndpoint.getUuid().split('/');
+                            let source_port_name = '';
+                            let target_port_name = '';
+                            // self.instance.detach(con);
+                            const flow = {
+                                    source_id, source_port,
+                                    target_id, target_port,
+                                    source_port_name, target_port_name,
+                                };
+                                self.$root.$emit("addFlow", flow, con);
+                            }
                 });
             },
         },

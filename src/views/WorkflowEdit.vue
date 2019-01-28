@@ -744,10 +744,10 @@
                         id: user.id,
                         login: user.login,
                         name: user.name
-                    }
+                    },
                 }
                 const headers = {
-                    'Locale': user.locale,
+                    'Locale': self.$root.$i18n.locale,
                 };
                 axios.post(`${standUrl}/jobs`, body, { headers })
                     .then(function (response) {
