@@ -570,7 +570,7 @@
                     delete task.status;
                 });
 
-                axios[method](
+                return axios[method](
                     `${tahitiUrl}/workflows/${this.$route.params.id}`,
                     cloned,
                     { headers }).then(
@@ -720,47 +720,12 @@
             },
             execute() {
                 const self = this;
-                this.saveWorkflow();
-                // this.$refs.executeModal.hide();
-                // if (self.isDirty) {
-                //     this.confirm(
-                //     this.$t('common.history'),
-                //     this.$t('workflow.restoreHistory'),
-                //     () => {
-                //         //self.execute();
-                //         alert('Executando')
-                //     })
-                // } else {
-                //     alert('Executando 2')
-                // }
-            },
-            _validateTasks(tasks) {
-                const self = this;
-                self.validationErrors = [];
-                let counter = 1;
-                let result = true;
-                tasks.forEach(t => {
-                    let warning = null;
-                    t.operation.forms.forEach(form => {
-                        if (form.category === 'execution'){
-                            form.fields.forEach(field => {
-                                if (field.required){
-                                    const value = t.forms[field.name] ? t.forms[field.name].value : null;
-                                    if (value === null || value === '' || value === {}){
-                                        warning = this.$tc("errors.missingRequiredValue");
-                                        self.validationErrors.push({ id: counter++, task: {id: t.id, name: t.name},
-                                            field: field.label,
-                                            message: self.$tc("errors.missingRequiredValue")})
-                                        result = false;
-                                    }
-                                }
-                            });
-                        }
-                    });
-                    t.warning = warning;
+                this.saveWorkflow().then(() => {
+                    self.$refs.executeModal.hide();
+                    self._execute();
                 });
-                return result;
             },
+            
             _execute() {
                 const self = this;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
@@ -802,6 +767,33 @@
                             self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                         }
                     });
+            },
+            _validateTasks(tasks) {
+                const self = this;
+                self.validationErrors = [];
+                let counter = 1;
+                let result = true;
+                tasks.forEach(t => {
+                    let warning = null;
+                    t.operation.forms.forEach(form => {
+                        if (form.category === 'execution'){
+                            form.fields.forEach(field => {
+                                if (field.required){
+                                    const value = t.forms[field.name] ? t.forms[field.name].value : null;
+                                    if (value === null || value === '' || value === {}){
+                                        warning = this.$tc("errors.missingRequiredValue");
+                                        self.validationErrors.push({ id: counter++, task: {id: t.id, name: t.name},
+                                            field: field.label,
+                                            message: self.$tc("errors.missingRequiredValue")})
+                                        result = false;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    t.warning = warning;
+                });
+                return result;
             },
             _unique(data) {
                 return Array.from(new Set(data))

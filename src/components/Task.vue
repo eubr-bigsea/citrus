@@ -334,7 +334,7 @@
                 console.log('Prop changed: ', newVal, ' | was: ', oldVal)
             },
             task: function (n, o) {
-                console.debug('Aqui')
+                
             },
             'task.status': function (n, o) {
                 console.debug('va')
