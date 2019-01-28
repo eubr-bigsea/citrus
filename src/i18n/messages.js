@@ -156,6 +156,7 @@ export default {
             sendingData: 'Erro enviando dados do servidor.'
         },
         job: {
+            details: 'Detalhe | Detalhes',
             error: 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
             logs: 'Log de execução | Logs de execução',
             results: 'Resultado | Resultados',
@@ -435,6 +436,7 @@ export default {
             usingDisabledOperation: 'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.'
         },
         job: {
+            details: 'Detail | Details',
             error: 'Error running job. See more details in the log window above.',
             logs: 'Execution log | Execution logs',
             results: 'Result | Results',

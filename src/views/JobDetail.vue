@@ -2,18 +2,23 @@
     <div>
         <div class="row">
             <div class="col-md-12">
+                <div class="border p-2 mb-1">
+                    <strong>{{$tc('titles.workflow')}}: </strong>
+                    <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
+                        v-if="workflow.id">{{workflow.id}} - {{workflow.name}} ({{$t('actions.back').toLowerCase()}})</router-link>
+                </div>
                 <b-tabs>
                     <b-tab active title-item-class="smalltab">
                         <template slot="title">
                             {{$tc('titles.job')}}: {{job.name}}
                         </template>
                         <div class="row mt-1">
-                            <div class="col-md-9" style="position: relative">
+                            <div class="col-md-12" style="position: relative">
                                 <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
                                     :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false" shink="true"
                                     v-if="loaded" :loaded="loaded" :showTaskDecoration="true" />
                             </div>
-                            <div class="col-md-3">
+                            <!-- <div class="col-md-3">
                                 <div class="card">
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">
@@ -26,16 +31,7 @@
                                             <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
                                                 class="nav-link">{{workflow.id}} - {{workflow.name}}</router-link>
                                         </li>
-                                        <li class="list-group-item">
-                                            <strong>{{$t('common.date')}}:</strong> {{job.created}}
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>{{$t('common.user.name')}}: </strong> {{job.user.name}}
-                                            ({{job.user.login}})
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>{{$tc('titles.cluster')}}: </strong> {{job.cluster.name}}
-                                        </li>
+
                                     </ul>
                                 </div>
                                 <div class="row" style="font-size:0.7em; max-height: 60vh; overflow-y: auto">
@@ -69,7 +65,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </b-tab>
                     <b-tab :title="$tc('job.results', 2)" title-item-class="smalltab">
@@ -122,6 +118,20 @@
                             </div>
                         </div>
                     </b-tab>
+                    <b-tab :title="$tc('job.details', 2) + ' (' + $tc('titles.job').toLowerCase() + ')' " title-item-class="smalltab">
+                        <ul class="mt-2">
+                            <li class="list-group-item">
+                                <strong>{{$t('common.date')}}:</strong> {{job.created}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>{{$t('common.user.name')}}: </strong> {{job.user.name}}
+                                ({{job.user.login}})
+                            </li>
+                            <li class="list-group-item">
+                                <strong>{{$tc('titles.cluster')}}: </strong> {{job.cluster.name}}
+                            </li>
+                        </ul>
+                    </b-tab>
                     <b-tab :title="$tc('job.sourceCode')" title-item-class="smalltab" @click="showSourceCode = 1">
                         <SourceCode v-if="showSourceCode" :job="job.id" />
                     </b-tab>
@@ -146,16 +156,25 @@
                 </b-tabs>
             </div>
         </div>
-        <div class="fixed-bottom m-2 border" style="height: 200px; background: white">
+        <div class="fixed-bottom m-2 border" style="height: 200px; background: white; overflow: auto">
             <div class="row">
                 <div class="col-md-12">
                     <b-tabs>
                         <b-tab active title-item-class="smalltab">
                             <template slot="title">
-                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status"></div>
-                                    {{$tc('job.logs', 2)}}
+                                <div class="circle lemonade-job" :class="jobStatus" :title="job.status"></div>
+                                {{$tc('job.logs', 2)}}
                             </template>
-                            <div v-for="log in sortedLogs" :key="log.id" class="job-log p-2" :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
+                            <div class="pl-4 mr-3 mt-1">
+                                <div class="alert alert-secondary">{{job.status_text}}</div>
+                                <div style="font-size:.8em" class="mt-2" v-if="job.exception_stack">
+                                    <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
+                                    <div v-if="details">
+                                        <code><pre>{{job.exception_stack}}</pre></code>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-for="log in sortedLogs" :key="log.id" class="job-log pl-4" :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
                                 <small>
                                     <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
                                         {{log.level}}
@@ -172,8 +191,18 @@
                                 </small>
                             </div>
                         </b-tab>
+                        <b-tab :title="$t('titles.errorDetail')" title-item-class="smalltab">
+                            <div style="font-size:.8em" class="mt-2 p-2" v-if="job.exception_stack">
+                                <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
+                                <div v-if="details">
+                                    <code><pre>{{job.exception_stack}}</pre></code>
+                                </div>
+                            </div>
+                            <div v-else class="p-2">
+                                {{$t('common.noData')}}
+                            </div>
+                        </b-tab>
                     </b-tabs>
-
                 </div>
             </div>
         </div>
