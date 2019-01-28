@@ -738,6 +738,7 @@
                 const self = this;
                 self.validationErrors = [];
                 let counter = 1;
+                let result = true;
                 tasks.forEach(t => {
                     let warning = null;
                     t.operation.forms.forEach(form => {
@@ -750,6 +751,7 @@
                                         self.validationErrors.push({ id: counter++, task: {id: t.id, name: t.name},
                                             field: field.label,
                                             message: self.$tc("errors.missingRequiredValue")})
+                                        result = false;
                                     }
                                 }
                             });
@@ -757,7 +759,7 @@
                     });
                     t.warning = warning;
                 });
-                return false;
+                return result;
             },
             _execute() {
                 const self = this;

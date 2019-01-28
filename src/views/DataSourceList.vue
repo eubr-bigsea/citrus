@@ -6,13 +6,14 @@
             </div>
             <div class="col-md-2 pull-right">
                 <router-link :to="{name: 'addDataSource'}" class="btn btn-primary btn-sm">
-                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type: $tc('titles.dataSource').toLowerCase()})}}
+                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type:
+                    $tc('titles.dataSource').toLowerCase()})}}
                 </router-link>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <v-server-table :data="tableData" :columns="columns" :options="options" name="dataSourceList">
+                <v-server-table :data="tableData" :columns="columns" :options="options" name="dataSourceList" ref="dataSourceList">
                     <template slot="id" slot-scope="props">
                         <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.id}}</router-link>
                     </template>
@@ -21,7 +22,7 @@
                     </template>
                     <template slot="actions" slot-scope="props">
                         <button class="btn btn-sm danger mr-2">
-                            <font-awesome-icon icon="trash"></font-awesome-icon>
+                            <font-awesome-icon icon="trash" @click="remove(props.row.id)"></font-awesome-icon>
                         </button>
                         <button class="btn btn-sm ml-1" @click="download(props.row)" :title="$t('actions.download')">
                             <span class="fa fa-download"></span>
@@ -45,11 +46,13 @@
 
 <script>
     import axios from 'axios'
+    import Notifier from '../mixins/Notifier'
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     export default {
+        mixins: [Notifier],
         data() {
             return {
-                columns: ['id', 'name', 'description', 'format', 'created', 'user_name', 'tags', 'actions', ],
+                columns: ['id', 'name', 'description', 'format', 'created', 'user_name', 'tags', 'actions',],
                 tableData: [],
                 showSideBar: false,
                 options: {
@@ -130,7 +133,7 @@
                 let self = this;
                 let headers = {};
                 let params = {}
-                let url = `${limoneroUrl}/datasources/infer-schema/${id}`
+                const url = `${limoneroUrl}/datasources/infer-schema/${id}`
                 Vue.http.post(url, params, { headers }).then(
                     (response) => {
                         self.$root.$refs.toastr.s('Success');
@@ -153,7 +156,19 @@
                     link.click();
                 });
             },
-
+            remove(dataSourceId) {
+                const self = this;
+                this.confirm(
+                    this.$t('actions.delete'),
+                    this.$t('messages.doYouWantToDelete'),
+                    () => {
+                        const url = `${limoneroUrl}/datasources/${dataSourceId}`
+                        axios.delete(url, { })
+                            .then((resp) => {
+                                self.$refs.dataSourceList.refresh();
+                            }).catch((e) => self.error(e))
+                    });
+            }
         },
     }
 </script>

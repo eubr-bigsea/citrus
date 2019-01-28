@@ -168,7 +168,7 @@ export default {
             confirmRemove: 'Tem certeza que você quer excluir esse registro?',
             successDeletion: '{what} foi removido com sucesso',
             registeredWithSuccess: 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
-            savedWithSuccess: '{what} foi salvo com sucesso!',
+            savedWithSuccess: '{what} foi salvo(a) com sucesso!',
             noMatching: 'Lamentamos, nenhuma opção encontrada',
             usingDisabledOperation: 'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.'
         },
