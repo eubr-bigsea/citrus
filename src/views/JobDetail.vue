@@ -136,8 +136,8 @@
                     <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length"
                         @click="loadVisualizations">
                         <div class="row" v-for="(result, inx) in job.results" :key="result.id">
-                            <div class="col-md-8 lemonade offset-2">
-                                <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
+                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px">
+                                <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)"></caipirinha-visualization>
                             </div>
                         </div>
                     </b-tab>
@@ -193,6 +193,7 @@
     import axios from 'axios'
     import io from 'socket.io-client';
     import SlideOut from '../components/SlideOutPanel.vue'
+    import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue'
 
     const standUrl = process.env.VUE_APP_STAND_URL
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE
@@ -245,6 +246,7 @@
         components: {
             'diagram': DiagramComponent,
             'slideout-panel': SlideOut,
+            'caipirinha-visualization': CapirinhaVisualization,
             SourceCode,
             Visualization,
             TaskDisplay
