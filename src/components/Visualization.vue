@@ -4,14 +4,15 @@
             <font-awesome-icon icon="spinner" pulse class="icon" size="3x" v-if="loading" />
             <div v-if="content.type.name === 'html'">
                 <p v-html="content.html"></p>
-                
             </div>
             <div v-else>
                 {{content}}
             </div>
         </div>
-        <div v-if="errorState">
-            {{errorMessage}}
+        <div v-if="errorState" class="col-md-12 mt-2">
+            <div class="alert alert-warning">
+                {{errorMessage.message}}
+            </div>
         </div>
     </div>
 </template>

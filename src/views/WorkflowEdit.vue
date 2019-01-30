@@ -148,7 +148,6 @@
 <script>
     import Vue from 'vue'
     import axios from 'axios'
-    import SlideOut from 'vue-slideout-panel'
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import DiagramComponent from '../components/Diagram.vue'
     import PropertyWindow from '../components/PropertyWindow.vue'
