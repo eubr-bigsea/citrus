@@ -42,8 +42,8 @@
                         <button type="button" class="ml-1 btn btn-sm btn-success" @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
                     </div>
                     <template slot="actions" slot-scope="props">
-                        <button class="btn btn-sm danger mr-2">
-                            <font-awesome-icon icon="trash" @click="remove(props.row.id)"></font-awesome-icon>
+                        <button class="btn btn-sm danger mr-2"  @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash"></font-awesome-icon>
                         </button>
                     </template>
                 </v-server-table>

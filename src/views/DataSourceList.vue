@@ -21,8 +21,8 @@
                         <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.name}}</router-link>
                     </template>
                     <template slot="actions" slot-scope="props">
-                        <button class="btn btn-sm danger mr-2">
-                            <font-awesome-icon icon="trash" @click="remove(props.row.id)"></font-awesome-icon>
+                        <button class="btn btn-sm danger mr-2" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash"></font-awesome-icon>
                         </button>
                         <button class="btn btn-sm ml-1" @click="download(props.row)" :title="$t('actions.download')">
                             <span class="fa fa-download"></span>
