@@ -214,6 +214,10 @@
             <b-modal size="lg" ref="preview" :title="$t('common.preview')">
                 {{$t('dataSource.previewExplanation', {amount: 40})}}
                 <v-client-table :columns="getPreviewColumns()" :data="samples" :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}"></v-client-table>
+                <div v-if="previewWarnings.length">
+                    <strong>{{$tc('dataSource.someAttributesMayHaveProblem', previewWarnings.length)}}:</strong>
+                    {{previewWarnings.join(", ")}}
+                </div>
             </b-modal>
         </div>
     </div>
@@ -271,6 +275,7 @@
                     ',', ';', '.', '{tab}', '{new_line}',
                 ],
                 textDelimiters: ['"', "'"],
+                previewWarnings: [],
                 encodings: ['ISO-8859-1', 'UTF-8', 'UTF-16'],
             }
         },
@@ -377,6 +382,7 @@
                 axios.get(url, {})
                     .then((resp) => {
                         self.samples = resp.data.data
+                        self.previewWarnings = resp.data.warnings
                         self.$refs.preview.show()
                     }
                     ).catch((e) => {
