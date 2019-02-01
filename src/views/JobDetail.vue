@@ -104,7 +104,7 @@
                                             {{log.message}}
                                         </span> -->
                                         <span v-if="log.type === 'HTML'">
-                                            <span class="html-div" v-html="log.message"></span>
+                                            <div class="html-div" v-html="log.message"></div>
                                         </span>
                                         <span v-else-if="log.type === 'IMAGE'">
                                             <img :src="'data:image/png;base64,' + log.message" />
@@ -370,9 +370,6 @@
                     }
                 });
                 socket.on('task result', (msg) => {
-                    console.debug(msg)
-                    return
-
                     self.job.results.push(msg);
                 });
             },
