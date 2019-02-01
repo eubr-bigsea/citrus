@@ -272,7 +272,8 @@
                 formats: ['XML_FILE', 'NETCDF4', 'HDF5', 'SHAPEFILE', 'TEXT',
                     'UNKNOWN', 'CUSTOM', 'GEO_JSON', 'JSON', 'CSV', 'PARQUET', 'PICKLE', 'JDBC'].sort(),
                 delimiters: [
-                    ',', ';', '.', '{tab}', '{new_line}',
+                    ',', ';', '.', '{tab}', '{new_line \\n}', 
+                    '{new_line \\r\\n}',
                 ],
                 textDelimiters: ['"', "'"],
                 previewWarnings: [],
