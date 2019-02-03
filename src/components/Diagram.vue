@@ -458,6 +458,7 @@
                     });
                 });
                 task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
+                task.enabled = true;
                 this.$root.$emit('addTask', task)
             },
 
