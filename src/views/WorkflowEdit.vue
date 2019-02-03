@@ -95,6 +95,7 @@
                                         <b-form-radio name="saveOption" v-model="saveOption" value="image">
                                             {{$t('workflow.asImage')}}</b-form-radio>
                                     </div>
+                                    <!--
                                     <div class="col-md-12 mb-3">
                                         <b-form-radio name="saveOption" v-model="saveOption" value="template">
                                             {{$t('workflow.asTemplate')}}</b-form-radio>
@@ -103,6 +104,7 @@
                                             <textarea class="form-control" :disabled="saveOption != 'template'"></textarea>
                                         </p>
                                     </div>
+                                    -->
                                 </div>
                             </b-form-radio-group>
                             <div slot="modal-footer" class="w-100">
@@ -546,7 +548,10 @@
                             const link = document.createElement('a');
                             link.setAttribute('download', `workflow_${self.workflow.id}.png`);
                             link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+                            document.getElementsByTagName("body")[0].appendChild(link)
                             link.click();
+                            link.remove();
+                            //link.text = "Click"
                         }, 1000);
                     });
 
