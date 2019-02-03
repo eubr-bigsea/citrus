@@ -4,9 +4,9 @@
         <div class="container-fluid">
             <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
                 <router-link :to="{name: 'home'}" class="navbar-brand">
-                    <div class="navbar-brand logo">
+                    <span class="navbar-brand logo">
                         <img/>
-                    </div>
+                    </span>
                     <span>Lemonade Citrus</span>
                 </router-link>
                 <!--
