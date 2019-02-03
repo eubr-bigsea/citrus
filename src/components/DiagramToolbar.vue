@@ -103,9 +103,6 @@
                 console.debug('align')
                 this.$root.$emit('onalign-tasks', prop, fn)
             },
-            saveAsImage() {
-                this.$root.$emit('onsave-as-image')
-            },
             saveWorkflow() {
                 this.$root.$emit('onsave-workflow')
             },
