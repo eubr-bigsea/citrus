@@ -17,10 +17,10 @@
                 </b-tab>
                 <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
                     <div class="row pt-1">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <toolbox :operations="operations"></toolbox>
                         </div>
-                        <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
+                        <div class="col-md-9 pl-0 lemonade with-grid" style="position: relative">
                             <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"
                                 :loaded="loaded" :version="workflow.version"></diagram>
                             <slideout-panel :opened="showProperties">
