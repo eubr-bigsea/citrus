@@ -57,7 +57,7 @@
                     </b-btn>
                 </b-button-group>
 
-                <!-- <b-input-group size="sm" class="mx-1" prepend="Zoom">
+                 <b-input-group size="sm" class="mx-1" prepend="Zoom">
                     <b-form-select v-model="zoom" :options="[
                     {value: .6, text: '60%'},
                     {value: .7, text: '70%'},
@@ -68,7 +68,7 @@
                     {value: 1.2, text: '120%'},
                     {value: 1.3, text: '130%'},
                     {value: 1.4, text: '140%'}]"></b-form-select>
-                </b-input-group> -->
+                </b-input-group> 
             </b-button-toolbar>
         </div>       
     </div>
@@ -102,9 +102,6 @@
             align(prop, fn) {
                 console.debug('align')
                 this.$root.$emit('onalign-tasks', prop, fn)
-            },
-            saveAsImage() {
-                this.$root.$emit('onsave-as-image')
             },
             saveWorkflow() {
                 this.$root.$emit('onsave-workflow')
