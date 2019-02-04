@@ -381,7 +381,9 @@
             showJobs() {
                 this.showPreviousJobs = true
             },
-            align() { this.$root.$on('onalign-tasks', this.$refs.diagram.align); },
+            align(prop, fn) { 
+                this.$refs.diagram.align(prop, fn);
+            },
             toggleTasks() { this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks); },
             distribute() { this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute); },
             updateSelectedTab(index) {

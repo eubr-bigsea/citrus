@@ -83,7 +83,6 @@
 
         },
         mounted() {
-
             let self = this;
             let el = self.$refs.container;
             if (el) {
@@ -265,7 +264,6 @@
                 this.removeTask(task);
             });
             this.$root.$on('on-align-tasks', (pos, fn) => {
-                console.debug('Diagram')
                 this.align(pos, fn)
             });
             // this.$on('xupdate-form-field-value', (field, value) => {
@@ -334,6 +332,12 @@
         },
         mounted() {
             const self = this;
+            
+            // Required, otherwise zoom will not work.
+            // It seems that jsplumb is loosing this setting between
+            // calls to init() and mounted()
+            this.instance.setContainer("lemonade-diagram");
+
             this.readyTasks = new Set();
             // this.$root.$refs.toastr.defaultPosition = 'toast-bottom-full-width';
             this.currentZIndex = 10;
@@ -764,7 +768,7 @@
             setZoom(zoom, instance, transformOrigin, el) {
                 transformOrigin = transformOrigin || [0.5, 0.5];
                 //instance = instance || jsPlumb;
-                el = instance.getContainer();
+                el = el || instance.getContainer();
                 var p = ["webkit", "moz", "ms", "o"],
                     s = "scale(" + zoom + ")",
                     oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
@@ -1023,7 +1027,6 @@
             },
             _bindJsPlumbEvents() {
                 let self = this;
-                self.instance.setContainer("lemonade-diagram");
                 self.instance.getGroupManager().updateConnectionsForGroup = self._fixGroupConnections(self);
                 // self.instance.getContainer().addEventListener('click', function (ev) {
                 //     //self.clearSelection(ev);
@@ -1075,6 +1078,7 @@
                         self.$root.$emit("addFlow", flow, con);
                     }
                 });
+                self.instance.setContainer("lemonade-diagram");
             },
         },
     });
