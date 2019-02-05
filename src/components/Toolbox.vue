@@ -9,7 +9,7 @@
                     <li class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
                         <input @input="searchOperation" v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')" />
                     </li>
-                    <div v-if="search === ''">
+                    <div v-if="search === ''" class="menu">
                         <div v-for="(group, index) in groupedOperations" :title="group.order" class="unstyled"
                             v-bind:key="group.group">
                             <b-link draggable="false" data-parent="submenus" v-b-toggle="'submenu' + index"
@@ -237,5 +237,55 @@
     .collapsed>.when-opened,
     :not(.collapsed)>.when-closed {
         display: none;
+    }
+
+    // -- MENU BORDERS
+    .menu > div .list-group-item {
+        border-radius: 0 !important;
+    }
+
+    .menu > div:last-child span:last-child .list-group-item {
+        border-bottom-left-radius: .25rem !important;
+        border-bottom-right-radius: .25rem !important;
+    }
+
+    // -- MENU COLORS & ALIGNMENT
+    // group
+    .menu a[data-parent="submenus"]{
+        padding-left: 14px;
+    }
+
+    // group > subgroup
+    .menu a[data-parent="submenus"] > strong{
+        padding-left: 8px!important;
+    }
+
+    // group > subgroup
+    .menu div[data-parent="submenus"] > div > div > a {
+        padding-left: 32px;
+        background-color: #f5f6f8;
+    }
+
+    // group > subgroup > operation
+    .menu div[data-parent="submenus"] > div > div > div > a {
+        padding-left: 34px;
+        background-color: #f5f6f8!important;
+        border-bottom: 0;
+    }
+
+    // group > operation
+    .menu div[data-parent="submenus"] > div > span > a {
+        padding-left: 32px;
+        background-color: #f5f6f8;
+        border-bottom: 0;
+    }
+
+    // -- MENU LAST ITEMS
+    .menu > div:last-child > div[data-parent="submenus"] > div > span:last-child > a {
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+
+    .menu > div:last-child > div[data-parent="submenus"] > div > div:last-child > div:last-child > a {
+        border-bottom: 1px solid rgba(0,0,0,.125);
     }
 </style>
