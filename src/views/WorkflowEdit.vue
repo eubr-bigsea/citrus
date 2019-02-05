@@ -17,10 +17,10 @@
                 </b-tab>
                 <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
                     <div class="row pt-1">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <toolbox :operations="operations"></toolbox>
                         </div>
-                        <div class="col-md-9 pl-0 lemonade with-grid" style="position: relative">
+                        <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
                             <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"
                                 :loaded="loaded" :version="workflow.version"></diagram>
                             <slideout-panel :opened="showProperties">
@@ -89,7 +89,7 @@
                                             {{$t('workflow.newName')}}
                                         </b-form-radio>
                                         <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'"
-                                            v-model="newName"/>
+                                            v-model="newName" />
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <b-form-radio name="saveOption" v-model="saveOption" value="image">
@@ -381,7 +381,7 @@
             showJobs() {
                 this.showPreviousJobs = true
             },
-            align(prop, fn) { 
+            align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
             },
             toggleTasks() { this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks); },
@@ -702,7 +702,7 @@
             },
             showSaveAs() {
                 if (this.$refs.saveAsModal) {
-                    this.newName = `${this.$t('workflow.copyOf')} ${this.workflow.name}`; 
+                    this.newName = `${this.$t('workflow.copyOf')} ${this.workflow.name}`;
                     this.$refs.saveAsModal.show();
                 }
             },
@@ -809,26 +809,30 @@
                 let counter = 1;
                 let result = true;
                 tasks.forEach(t => {
-                    let warning = null;
-                    t.operation.forms.forEach(form => {
-                        if (form.category === 'execution') {
-                            form.fields.forEach(field => {
-                                if (field.required) {
-                                    const value = t.forms[field.name] ? t.forms[field.name].value : null;
-                                    if (value === null || value === '' || value === {}) {
-                                        warning = this.$tc("errors.missingRequiredValue");
-                                        self.validationErrors.push({
-                                            id: counter++, task: { id: t.id, name: t.name },
-                                            field: field.label,
-                                            message: self.$tc("errors.missingRequiredValue")
-                                        })
-                                        result = false;
+                    if (t.enabled) {
+                        let warning = null;
+                        t.operation.forms.forEach(form => {
+                            if (form.category === 'execution') {
+                                form.fields.forEach(field => {
+                                    if (field.enabled) {
+                                        if (field.required) {
+                                            const value = t.forms[field.name] ? t.forms[field.name].value : null;
+                                            if (value === null || value === '' || value === {}) {
+                                                warning = this.$tc("errors.missingRequiredValue");
+                                                self.validationErrors.push({
+                                                    id: counter++, task: { id: t.id, name: t.name },
+                                                    field: field.label,
+                                                    message: self.$tc("errors.missingRequiredValue")
+                                                })
+                                                result = false;
+                                            }
+                                        }
                                     }
-                                }
-                            });
-                        }
-                    });
-                    t.warning = warning;
+                                });
+                            }
+                        });
+                        t.warning = warning;
+                    }
                 });
                 return result;
             },
@@ -873,5 +877,18 @@
     .historyArea {
         height: 60vh;
         overflow: auto
+    }
+
+    .edit-area {
+        -ms-flex: 0 0 230px;
+        flex: 0 0 230px;
+        background-color: greenyellow;
+    }
+
+    .sidebar {
+        -ms-flex: 0 0 230px;
+        flex: 0 0 230px;
+        background-color: greenyellow;
+        max-width: 250px;
     }
 </style>
