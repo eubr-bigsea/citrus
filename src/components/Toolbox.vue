@@ -192,7 +192,7 @@
                 let searcheable = this.searcheableOperations
 
                 this.filteredOperations = this.operations.filter((op) => {
-                    return searcheable[op.id] && searcheable[op.id].indexOf(search) > -1
+                    return op.enabled && searcheable[op.id] && searcheable[op.id].indexOf(search) > -1
                 });
             }, 500)
         }

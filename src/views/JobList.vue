@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row border-bottom border-primary p-2">
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <h2 class="title text-primary">{{$tc('titles.jobs', 2)}}</h2>
             </div>
         </div>

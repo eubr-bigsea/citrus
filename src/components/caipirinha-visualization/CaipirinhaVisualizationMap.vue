@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; padding: 0 5px 5px 0">
+  <div style="height: 500px; padding: 0 5px 5px 0">
     <l-map ref="mapRef">
       <l-tile-layer :url="url"></l-tile-layer>
     </l-map>
@@ -59,8 +59,9 @@ export default {
           this.points.map(point => [point.lat, point.lon, 1])
         ).addTo(this.$refs.mapRef.mapObject);
       }
-
       this.$refs.mapRef.mapObject.fitBounds(this.getBounds(this.points))
+      this.$refs.mapRef.mapObject.setView([-15, -50], 3)
+      
     })
   }
 };

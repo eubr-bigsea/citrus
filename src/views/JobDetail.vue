@@ -16,7 +16,7 @@
                             <div class="col-md-12" style="position: relative; overflow: hidden; height: 65vh;">
                                 <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
                                     :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false" shink="true"
-                                    v-if="loaded" :loaded="loaded" :showTaskDecoration="true" />
+                                    v-if="loaded" :loaded="loaded" :showTaskDecoration="true" :initialZoom=".7"/>
                                 <slideout-panel :opened="showProperties" v-if="selectedTask && selectedTask.operation">
                                     <div style="background: red; height: 60vh; width: 300px" class="p-2">
                                         <h6>{{$tc('titles.property', 2)}}</h6>

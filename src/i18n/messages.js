@@ -257,10 +257,14 @@ export default {
             Lemonade é implementado como uma ferramenta de código aberto e está em desenvolvimento 
             como produto dos projetos EUBra-BIGSEA e Atmosphere.`
         },
+        visualization: {
+            tryRefresh: 'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada'
+        },
         workflow: {
             asImage: 'Como uma imagem (uma janela para baixar a imagem aparecerá)',
             asTemplate: 'Como um modelo de fluxo de trabalho (poderá ser reusado posteriormente)',
             copyOf: 'Cópia de',
+            copySavedWithSuccess: 'Cópia salva com sucesso!',
             execute: 'Executar fluxo de trabalho',
             forPlatform: 'Para uma plataforma de processamento',
             fromTemplate: 'A partir de um modelo',
@@ -523,10 +527,14 @@ export default {
             Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) is a visual platform for distributed computing, aimed to enable implementation, experimentation, test and deploying of data processing and machine learning applications. It provides a higher level of abstractions, called operations, to users build processing workflows using a graphical web interface. By using high performance and scalable technologies, such as COMPSs, Ophidia and Spark, Lemonade can process very large amount of data, hiding all backend complexity from the users and allowing them to focus mainly in the construction of the solution.
             Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`
         },
+        visualization: {
+            tryRefresh: 'Try refresh the page, visualization may still be generating.'
+        },
         workflow: {
             asImage: 'As a image (a download window will appear)',
             asTemplate: 'As a template workflow',
             copyOf: 'Copy of',
+            copySavedWithSuccess: 'Copy saved with success!',
             execute: 'Execute workflow',
             forPlatform: 'For processing platform',
             fromTemplate: 'From template',

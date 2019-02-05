@@ -1,10 +1,10 @@
 <template>
     <div>
         <div class="row border-bottom border-primary p-2">
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <h2 class="title text-primary">{{$tc('titles.workflow', 2)}}</h2>
             </div>
-            <div class="col-md-2 pull-right text-right">
+            <div class="col-md-4 pull-right text-right">
                 <a href="#/workflows/add" class="btn btn-primary btn-sm" role="button">
                     <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type:
                     $tc('titles.workflow').toLowerCase()})}}

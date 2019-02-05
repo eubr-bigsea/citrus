@@ -83,7 +83,6 @@
 
         },
         mounted() {
-
             let self = this;
             let el = self.$refs.container;
             if (el) {
@@ -265,7 +264,6 @@
                 this.removeTask(task);
             });
             this.$root.$on('on-align-tasks', (pos, fn) => {
-                console.debug('Diagram')
                 this.align(pos, fn)
             });
             // this.$on('xupdate-form-field-value', (field, value) => {
@@ -312,7 +310,7 @@
                     connection.bind('mouseover', (c, originalEvent) => {
                         //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
                         if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null; 
+                            const currentStyle = c ? c.getPaintStyle() : null;
                             currentStyle.lineWidth = 20;
                             currentStyle.outlineColor = "#ed8";
                             c.setPaintStyle(currentStyle);
@@ -334,6 +332,12 @@
         },
         mounted() {
             const self = this;
+            
+            // Required, otherwise zoom will not work.
+            // It seems that jsplumb is loosing this setting between
+            // calls to init() and mounted()
+            this.instance.setContainer("lemonade-diagram");
+
             this.readyTasks = new Set();
             // this.$root.$refs.toastr.defaultPosition = 'toast-bottom-full-width';
             this.currentZIndex = 10;
@@ -458,6 +462,7 @@
                     });
                 });
                 task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
+                task.enabled = true;
                 this.$root.$emit('addTask', task)
             },
 
@@ -526,12 +531,15 @@
                 return result;
             },
             getJsPlumbInstance() {
-                return jsPlumb.getInstance({
+                const instance = jsPlumb.getInstance({
                     //Anchors: anchors,
                     Endpoints: [["Dot", { radius: 2 }], ["Dot", { radius: 1 }]],
                     EndpointHoverStyle: { fillStyle: "orange" },
                     HoverPaintStyle: { strokeStyle: "blue" },
                 });
+                if (this.initialZoom)
+                    instance.setZoom(this.initialZoom)
+                return instance;
             },
             init() {
                 const self = this;
@@ -758,23 +766,22 @@
             },
 
             setZoom(zoom, instance, transformOrigin, el) {
-                if (parseInt(zoom) !== instance.getZoom()) {
-                    transformOrigin = transformOrigin || [0.5, 0.5];
-                    //instance = instance || jsPlumb;
-                    el = el || instance.getContainer();
-                    var p = ["webkit", "moz", "ms", "o"],
-                        s = "scale(" + zoom + ")",
-                        oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+                transformOrigin = transformOrigin || [0.5, 0.5];
+                //instance = instance || jsPlumb;
+                el = el || instance.getContainer();
+                var p = ["webkit", "moz", "ms", "o"],
+                    s = "scale(" + zoom + ")",
+                    oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
 
-                    for (var i = 0; i < p.length; i++) {
-                        el.style[p[i] + "Transform"] = s;
-                        el.style[p[i] + "TransformOrigin"] = oString;
-                    }
-
-                    el.style["transform"] = s;
-                    el.style["transformOrigin"] = '0% 0% 0px'; //oString;
-                    instance.setZoom(zoom);
+                for (var i = 0; i < p.length; i++) {
+                    el.style[p[i] + "Transform"] = s;
+                    el.style[p[i] + "TransformOrigin"] = oString;
                 }
+                //instance.setZoom(zoom);
+
+                el.style["transform"] = s;
+                el.style["transformOrigin"] = '0% 0% 0px'; //oString;
+
                 let adjust = ((1.0 / zoom) * 5000) + 'px'
                 el.style.width = adjust;
                 el.style.height = adjust;
@@ -1020,7 +1027,6 @@
             },
             _bindJsPlumbEvents() {
                 let self = this;
-                self.instance.setContainer("lemonade-diagram");
                 self.instance.getGroupManager().updateConnectionsForGroup = self._fixGroupConnections(self);
                 // self.instance.getContainer().addEventListener('click', function (ev) {
                 //     //self.clearSelection(ev);
@@ -1058,20 +1064,21 @@
                 self.instance.bind('connection', (info, originalEvent) => {
                     const con = info.connection;
                     if (originalEvent) {
-                            //self.instance.detach(con);
-                            let [source_id, source_port] = info.sourceEndpoint.getUuid().split('/');
-                            let [target_id, target_port] = info.targetEndpoint.getUuid().split('/');
-                            let source_port_name = '';
-                            let target_port_name = '';
-                            // self.instance.detach(con);
-                            const flow = {
-                                    source_id, source_port,
-                                    target_id, target_port,
-                                    source_port_name, target_port_name,
-                                };
-                                self.$root.$emit("addFlow", flow, con);
-                            }
+                        //self.instance.detach(con);
+                        let [source_id, source_port] = info.sourceEndpoint.getUuid().split('/');
+                        let [target_id, target_port] = info.targetEndpoint.getUuid().split('/');
+                        let source_port_name = '';
+                        let target_port_name = '';
+                        // self.instance.detach(con);
+                        const flow = {
+                            source_id, source_port,
+                            target_id, target_port,
+                            source_port_name, target_port_name,
+                        };
+                        self.$root.$emit("addFlow", flow, con);
+                    }
                 });
+                self.instance.setContainer("lemonade-diagram");
             },
         },
     });
