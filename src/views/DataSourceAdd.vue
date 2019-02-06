@@ -149,6 +149,8 @@
                             self.sqlStorages.push(storage);
                         }
                     });
+                    this.fsStorage = this.fsStorages.length ? this.fsStorages[0].id : ''
+                    this.sqlStorage = this.sqlStorages.length ? this.sqlStorages[0].id : ''
                 }
             ).catch(function (e) {
                 self.error(e);
@@ -220,10 +222,9 @@
             },
             setupResumable() {
                 let self = this
-                let authToken = this.$store.authToken
-
+                
                 let resumable = new Resumable({
-                    target: `${limoneroUrl}/datasources/upload?token=${authToken}`,
+                    target: `${limoneroUrl}/datasources/upload`,
                     chunkSize: 10 * 1024 * 1024,
                     simultaneousUploads: 1,
                     testChunks: true,

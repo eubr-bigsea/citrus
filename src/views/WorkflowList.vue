@@ -1,17 +1,19 @@
 <template>
     <div>
         <div class="row border-bottom border-primary p-2">
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <h2 class="title text-primary">{{$tc('titles.workflow', 2)}}</h2>
             </div>
-            <div class="col-md-2 pull-right text-right">
+            <div class="col-md-4 pull-right text-right">
                 <a href="#/workflows/add" class="btn btn-primary btn-sm" role="button">
-                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type: $tc('titles.workflow').toLowerCase()})}}</a>
+                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type:
+                    $tc('titles.workflow').toLowerCase()})}}
+                </a>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <v-server-table :columns="columns" :options="options" ref="listTable" name="workflowList">
+                <v-server-table :columns="columns" :options="options" ref="workflowList" name="workflowList">
                     <template slot="id" slot-scope="props">
                         <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.id}}</router-link>
                     </template>
@@ -39,6 +41,11 @@
                         </select>
                         <button type="button" class="ml-1 btn btn-sm btn-success" @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
                     </div>
+                    <template slot="actions" slot-scope="props">
+                        <button class="btn btn-sm danger mr-2"  @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash"></font-awesome-icon>
+                        </button>
+                    </template>
                 </v-server-table>
             </div>
         </div>
@@ -56,11 +63,12 @@
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'name', 'created', 'updated', 'platform', 'user_name', 'version'],
+                columns: ['id', 'name', 'created', 'updated', 'platform', 'user_name', 'version', 'actions'],
                 showSideBar: false,
                 options: {
                     skin: 'table-sm table table-striped',
                     dateColumns: ['created', 'updated'],
+                    columnClasses: {actions: 'th-10'},
                     headings: {
                         id: 'ID',
                         name: this.$tc('common.name'),
@@ -69,6 +77,7 @@
                         platform: this.$tc('common.platform'),
                         user_name: this.$tc('common.user.name'),
                         version: this.$tc('common.version'),
+                        actions: this.$tc('common.action', 2),
                     },
                     sortable: ['name', 'id', 'created', 'updated'],
                     filterable: ['name', 'id'],
@@ -124,14 +133,27 @@
             }.bind(this)).finally(() => {
                 this.$Progress.finish()
             });
-            this.platform = this.$refs.listTable.customQueries['platform']
+            this.platform = this.$refs.workflowList.customQueries['platform']
         },
         /* Methods */
         methods: {
             clearFilters() {
-                this.$refs.listTable.setFilter('')
-                this.$refs.listTable.customQueries = {}
+                this.$refs.workflowList.setFilter('')
+                this.$refs.workflowList.customQueries = {}
                 this.platform = ''
+            },
+            remove(workflowId) {
+                const self = this;
+                this.confirm(
+                    this.$t('actions.delete'),
+                    this.$t('messages.doYouWantToDelete'),
+                    () => {
+                        const url = `${tahitiUrl}/workflows/${workflowId}`
+                        axios.delete(url, { })
+                            .then((resp) => {
+                                self.$refs.workflowList.refresh();
+                            }).catch((e) => self.error(e))
+                    });
             }
         },
         watch: {

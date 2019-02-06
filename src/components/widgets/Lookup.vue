@@ -1,6 +1,6 @@
 <template>
     <div class="mb-1">
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
 
         <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
 
@@ -8,7 +8,7 @@
             <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
             <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
         </b-link>
-        <b-modal id="lookupModal" size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade centered>
+        <b-modal id="lookupModal" size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             {{field.help}}
             <v-client-table :data="options" :columns="['key', 'value','tags']" class="lookupTable" :options="tableOptions">
                 <template slot="value" slot-scope="props">

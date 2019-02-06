@@ -1,6 +1,6 @@
 <template>
     <div class="function-editor">
-        <LabelComponent :field="field"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>
         <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
 
         <b-link v-b-modal="'lookupModal'" variant="sm">

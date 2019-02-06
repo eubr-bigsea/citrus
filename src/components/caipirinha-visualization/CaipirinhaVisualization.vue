@@ -2,7 +2,10 @@
   <div class="myview">
     <p v-if="loading">Loading</p>
 
-    <div v-if="error" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    <div v-if="error">
+        <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+        {{$t('visualization.tryRefresh')}}
+    </div> 
 
     <component class="myview" v-bind:is="visualizationComponent" :visualizationData="visualizationData"></component>
   </div>

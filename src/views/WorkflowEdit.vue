@@ -1,6 +1,6 @@
 <template>
     <div class="row" style="overflow:hidden">
-        <TahitiSuggester/>
+        <TahitiSuggester />
         <div class="col-md-12">
             <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
             <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="justify-content-center">
@@ -21,7 +21,8 @@
                             <toolbox :operations="operations"></toolbox>
                         </div>
                         <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
-                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded" :loaded="loaded" :version="workflow.version"></diagram>
+                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"
+                                :loaded="loaded" :version="workflow.version"></diagram>
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
                             </slideout-panel>
@@ -58,7 +59,8 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <label>{{$t('workflow.jobName')}} ({{$t('common.optional')}}):</label>
-                                            <input type="text" class="form-control" v-model="clusterInfo.jobName" maxlength="50" />
+                                            <input type="text" class="form-control" v-model="clusterInfo.jobName"
+                                                maxlength="50" />
                                         </div>
                                         <div class="col-md-6 mt-3">
                                             <label>{{$tc('titles.cluster')}}:</label>
@@ -86,13 +88,14 @@
                                         <b-form-radio name="saveOption" v-model="saveOption" value="new">
                                             {{$t('workflow.newName')}}
                                         </b-form-radio>
-                                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'" :value="$t('workflow.copyOf') + ' ' + workflow.name"
-                                        />
+                                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'"
+                                            v-model="newName" />
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <b-form-radio name="saveOption" v-model="saveOption" value="image">
                                             {{$t('workflow.asImage')}}</b-form-radio>
                                     </div>
+                                    <!--
                                     <div class="col-md-12 mb-3">
                                         <b-form-radio name="saveOption" v-model="saveOption" value="template">
                                             {{$t('workflow.asTemplate')}}</b-form-radio>
@@ -101,6 +104,7 @@
                                             <textarea class="form-control" :disabled="saveOption != 'template'"></textarea>
                                         </p>
                                     </div>
+                                    -->
                                 </div>
                             </b-form-radio-group>
                             <div slot="modal-footer" class="w-100">
@@ -124,6 +128,21 @@
                     {{resultTask.result}}
                 </div>
             </b-modal>
+            <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true" :title="$tc('titles.validationErrors', 1)">
+                <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
+                <table class="table table-sm">
+                    <tr>
+                        <th>{{$tc('titles.tasks')}}</th>
+                        <th>{{$tc('titles.value')}}</th>
+                        <th>{{$tc('titles.error')}}</th>
+                    </tr>
+                    <tr v-for="err in validationErrors" :key="err.sequential">
+                        <td>{{err.task.name}}</td>
+                        <td>{{err.field}}</td>
+                        <td>{{err.message}}</td>
+                    </tr>
+                </table>
+            </b-modal>
         </div>
     </div>
 </template>
@@ -131,7 +150,6 @@
 <script>
     import Vue from 'vue'
     import axios from 'axios'
-    import SlideOut from 'vue-slideout-panel'
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import DiagramComponent from '../components/Diagram.vue'
     import PropertyWindow from '../components/PropertyWindow.vue'
@@ -187,6 +205,7 @@
                 isDirty: false,
                 loaded: false,
                 minFormOrder: 5,
+                newName: '',
                 operations: [],
                 operationsLookup: new Map(),
                 resultTask: { step: {} },
@@ -195,6 +214,7 @@
                 selectedTask: { task: { operation: {} } },
                 showPreviousJobs: false,
                 showProperties: false,
+                validationErrors: [],
                 workflow: { tasks: [], flows: [], platform: {} },
                 // propertyStyles: [
                 //     {
@@ -234,7 +254,7 @@
             this.$root.$on('onsave-as-image', () => {
                 this.saveAsImage()
             });
-            this.$root.$on('onsave-workflow', this.saveWorkflow);
+            this.$root.$on('onsave-workflow', () => this.saveWorkflow(false));
             this.$root.$on('onsaveas-workflow', this.showSaveAs);
             this.$root.$on('onalign-tasks', this.align);
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
@@ -252,6 +272,7 @@
                 } else {
                     self.selectedTask.task.forms[field.name] = { value: value }
                 }
+                self._validateTasks([self.selectedTask.task]);
                 this.isDirty = true;
             });
             this.$root.$on('update-workflow-form-field-value', (field, value) => {
@@ -360,7 +381,9 @@
             showJobs() {
                 this.showPreviousJobs = true
             },
-            align() { this.$root.$on('onalign-tasks', this.$refs.diagram.align); },
+            align(prop, fn) {
+                this.$refs.diagram.align(prop, fn);
+            },
             toggleTasks() { this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks); },
             distribute() { this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute); },
             updateSelectedTab(index) {
@@ -390,10 +413,14 @@
                                     let op = self.operationsLookup[task.operation.id];
                                     task.operation = op
                                     task.step = null;
-                                    usingDisabledOp |= op.enabled === false; 
-                                    task.warning = op.enabled === false
+                                    usingDisabledOp |= op.enabled === false;
+                                    if (!op.enabled) {
+                                        task.warning = $t('workflow.usingDisabledOperation');
+                                    } else {
+                                        task.warning = null;
+                                    }
                                 });
-                                if (usingDisabledOp){
+                                if (usingDisabledOp) {
                                     self.warning(self.$t('messages.usingDisabledOperation',
                                         { what: self.$tc('titles.workflow') }), 60000, 300);
                                 }
@@ -411,6 +438,8 @@
                                     // });
                                 });
                                 self.workflow = workflow;
+                                self._validateTasks(self.workflow.tasks);
+
                                 this.updateAttributeSuggestion();
                                 self.loaded = true;
                                 self.$nextTick(() => {
@@ -521,47 +550,78 @@
                             const link = document.createElement('a');
                             link.setAttribute('download', `workflow_${self.workflow.id}.png`);
                             link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+                            document.getElementsByTagName("body")[0].appendChild(link)
                             link.click();
+                            link.remove();
+                            //link.text = "Click"
                         }, 1000);
                     });
 
             },
-            saveWorkflow() {
+            _generateId() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            },
+
+            saveWorkflow(savingCopy, newName) {
                 let self = this
                 let cloned = JSON.parse(JSON.stringify(self.workflow));
                 let url = `${tahitiUrl}/workflows`;
                 let headers = { 'Content-Type': 'application/json' }
 
                 let method = 'post'
-                if (cloned.id !== 0) {
+                if (cloned.id !== 0 && !savingCopy) {
                     url = `${url}/${cloned.id}`;
                     method = 'patch'
                 }
                 cloned.platform_id = this.$route.params.platform;
+
+                const oldId2NewId = new Map();
                 cloned.tasks.forEach((task) => {
                     task.operation = { id: task.operation.id };
                     delete task.version; //
                     delete task.step;
                     delete task.status;
-                });
-
-                axios[method](
-                    `${tahitiUrl}/workflows/${this.$route.params.id}`,
-                    cloned,
-                    { headers }).then(
-                    (resp) => {
-                        let workflow = resp.data.data;
-                        workflow.tasks.forEach((task) => {
-                            task.operation = self.operationsLookup[task.operation.id]
-                        });
-                        self.workflow = workflow;
-                        self.success(self.$t('messages.savedWithSuccess',
-                            { what: self.$tc('titles.workflow') }));
-                        self.isDirty = false;
+                    if (savingCopy) {
+                        const newId = self._generateId();
+                        oldId2NewId[task.id] = newId;
+                        task.id = newId;
                     }
-                    ).catch(function (e) {
-                        this.error(e);
-                    }.bind(this));
+                });
+                if (savingCopy) {
+                    cloned.id = null;
+                    cloned.name = newName;
+                    cloned.flows.forEach((flow) => {
+                        let newSource = oldId2NewId[flow.source_id];
+                        flow.source_id = newSource;
+                        let newTarget = oldId2NewId[flow.target_id];
+                        flow.target_id = newTarget;
+                        flow.id = `${newSource}/${flow.source_port}-${newTarget}/${flow.target_port}`;
+                    });
+                }
+
+                return axios[method](url, cloned, { headers }).then(
+                    (resp) => {
+                        if (!savingCopy) {
+                            let workflow = resp.data.data;
+                            workflow.tasks.forEach((task) => {
+                                task.operation = self.operationsLookup[task.operation.id]
+                            });
+                            self.workflow = workflow;
+                            self.success(self.$t('messages.savedWithSuccess',
+                                { what: self.$tc('titles.workflow') }));
+                            self.isDirty = false;
+                            self._validateTasks(self.workflow.tasks);
+                        } else {
+                            self.success(self.$t('workflow.copySavedWithSuccess',
+                                { what: self.$tc('titles.workflow') }));
+                        }
+                    }
+                ).catch(function (e) {
+                    this.error(e);
+                }.bind(this));
 
             },
             restore(version) {
@@ -642,12 +702,13 @@
             },
             showSaveAs() {
                 if (this.$refs.saveAsModal) {
+                    this.newName = `${this.$t('workflow.copyOf')} ${this.workflow.name}`;
                     this.$refs.saveAsModal.show();
                 }
             },
             okClicked() {
                 if (this.saveOption === 'new') {
-
+                    this.saveWorkflow(true, this.newName);
                 } else if (this.saveOption === 'image') {
                     this.saveAsImage();
                 } else if (this.saveOption === 'template') {
@@ -668,44 +729,38 @@
             },
             showExecuteWindow() {
                 const self = this;
-                const d = new Date().toLocaleString().slice(0, -5);
-                this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
-                axios.get(`${standUrl}/clusters`, {})
-                    .then((response) => {
-                        self.clusters.length = 0;
-                        Array.prototype.push.apply(self.clusters, response.data);
-                        if (self.clusters.length) {
-                            self.clusterInfo.id = self.clusters[0].id;
-                            self.clusterInfo.description = self.clusters[0].description;
-                            self.$refs.executeModal.show();
-                            if (self.name === '') {
-                                self.clusterInfo.workflowName = self.workflow.name;
+                if (self._validateTasks(self.workflow.tasks)) {
+                    const d = new Date().toLocaleString().slice(0, -5);
+                    this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
+                    axios.get(`${standUrl}/clusters`, {})
+                        .then((response) => {
+                            self.clusters.length = 0;
+                            Array.prototype.push.apply(self.clusters, response.data);
+                            if (self.clusters.length) {
+                                self.clusterInfo.id = self.clusters[0].id;
+                                self.clusterInfo.description = self.clusters[0].description;
+                                self.$refs.executeModal.show();
+                                if (self.name === '') {
+                                    self.clusterInfo.workflowName = self.workflow.name;
+                                }
+                            } else {
+                                self.error("Unable to execute workflow: There is not cluster available.");
                             }
-                        } else {
-                            self.error("Unable to execute workflow: There is not cluster available.");
-                        }
-                    }).catch((ex) => {
-                        self.error(ex);
-                    });
-
+                        }).catch((ex) => {
+                            self.error(ex);
+                        });
+                } else {
+                    self.$refs.validationErrorsModal.show();
+                }
             },
             execute() {
                 const self = this;
-                this.saveWorkflow();
-                this._execute();
-                // this.$refs.executeModal.hide();
-                // if (self.isDirty) {
-                //     this.confirm(
-                //     this.$t('common.history'),
-                //     this.$t('workflow.restoreHistory'),
-                //     () => {
-                //         //self.execute();
-                //         alert('Executando')
-                //     })
-                // } else {
-                //     alert('Executando 2')
-                // }
+                this.saveWorkflow(false).then(() => {
+                    self.$refs.executeModal.hide();
+                    self._execute();
+                });
             },
+
             _execute() {
                 const self = this;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
@@ -724,10 +779,10 @@
                         id: user.id,
                         login: user.login,
                         name: user.name
-                    }
+                    },
                 }
                 const headers = {
-                    'Locale': user.locale,
+                    'Locale': self.$root.$i18n.locale,
                 };
                 axios.post(`${standUrl}/jobs`, body, { headers })
                     .then(function (response) {
@@ -747,6 +802,39 @@
                             self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                         }
                     });
+            },
+            _validateTasks(tasks) {
+                const self = this;
+                self.validationErrors = [];
+                let counter = 1;
+                let result = true;
+                tasks.forEach(t => {
+                    if (t.enabled) {
+                        let warning = null;
+                        t.operation.forms.forEach(form => {
+                            if (form.category === 'execution') {
+                                form.fields.forEach(field => {
+                                    if (field.enabled) {
+                                        if (field.required) {
+                                            const value = t.forms[field.name] ? t.forms[field.name].value : null;
+                                            if (value === null || value === '' || value === {}) {
+                                                warning = this.$tc("errors.missingRequiredValue");
+                                                self.validationErrors.push({
+                                                    id: counter++, task: { id: t.id, name: t.name },
+                                                    field: field.label,
+                                                    message: self.$tc("errors.missingRequiredValue")
+                                                })
+                                                result = false;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        t.warning = warning;
+                    }
+                });
+                return result;
             },
             _unique(data) {
                 return Array.from(new Set(data))
@@ -789,5 +877,18 @@
     .historyArea {
         height: 60vh;
         overflow: auto
+    }
+
+    .edit-area {
+        -ms-flex: 0 0 230px;
+        flex: 0 0 230px;
+        background-color: greenyellow;
+    }
+
+    .sidebar {
+        -ms-flex: 0 0 230px;
+        flex: 0 0 230px;
+        background-color: greenyellow;
+        max-width: 250px;
     }
 </style>

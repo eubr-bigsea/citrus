@@ -1,16 +1,19 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" 
-        class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
-        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" 
-        v-on:dblclick.stop="dblClick" v-on:click.stop="click" @contextmenu="openMenu">
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
+        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
+        v-on:click.stop="click" @contextmenu="openMenu">
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
-            {{task.name}} <span class="text-danger fa fa-2x fa-exclamation-triangle" v-if="task.warning" :title="$t('workflow.usingDisabledOperation')"></span>
+            {{task.name}}
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
         </div>
-        <div v-if="!isComment && task.step && task.step.status" class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
+        <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
             <span class="fa fa-2x" :class="getDecorationClass"></span>
+        </div>
+        <div v-if="!isComment && task.warning " class="right-decor">
+            <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" 
+                :title="task.warning"></span>
         </div>
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
@@ -174,7 +177,7 @@
 
             },
             getDecorationClass() {
-                if (this.task.step && this.task.step.status){
+                if (this.task.step && this.task.step.status) {
                     return this.getClassesForDecor(this.task.step.status);
                 } else {
                     return this.getClassesForDecor(this.task.status || '')
@@ -214,7 +217,7 @@
             }
         },
         methods: {
-            getClassesForDecor(value){
+            getClassesForDecor(value) {
                 let result = [];
                 switch (value) {
                     case 'ERROR':
@@ -268,7 +271,7 @@
                 this.top = top + 'px';
                 this.left = left + 'px';
             },
-            _click(ev, showProperties){
+            _click(ev, showProperties) {
                 const self = this;
                 let elem = ev.target.classList.contains('task') ? ev.target : ev.target.parentElement;
 
@@ -290,7 +293,7 @@
                 this.$root.$emit('onclick-task', self, showProperties);
                 this.hideMenu();
             },
-            dblClick(ev){
+            dblClick(ev) {
                 this._click(ev, true);
             },
             click(ev) {
@@ -326,14 +329,14 @@
                 contextMenuActions: [],
             }
         },
-        watch: { 
-            enableContextMenu: function(newVal, oldVal) { 
+        watch: {
+            enableContextMenu: function (newVal, oldVal) {
                 console.log('Prop changed: ', newVal, ' | was: ', oldVal)
             },
-            task: function(n, o){
-                console.debug('Aqui')
+            task: function (n, o) {
+                
             },
-            'task.status': function(n, o) {
+            'task.status': function (n, o) {
                 console.debug('va')
             }
         },
@@ -419,7 +422,7 @@
                         options.paintStyle.fill = options.paintStyle.fillStyle;
                         if (self.instance && self.instance.addEndpoint) {
                             let endpoint = self.instance.addEndpoint(elem, options);
-                            endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1; 
+                            endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
                             endpoint._portId = ports[inx].id;
                         }
                     });
@@ -463,6 +466,7 @@
     }
 
     .output {
+
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
@@ -470,13 +474,15 @@
             position: relative;
             z-index: 5
         }
+
         .has-3-ports {
             margin-top: 20px !important;
-            
+
         }
     }
 
     .input {
+
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
@@ -518,14 +524,17 @@
             margin: 5px 0;
             padding: 0 0 0 5px;
         }
+
         li {
             border-bottom: 1px solid #E0E0E0;
             margin: 0;
             padding: 5px 15px;
             font-weight: bold;
+
             &:last-child {
                 border-bottom: none;
             }
+
             &:hover {
                 background: #1E88E5;
                 color: #FAFAFA;
@@ -561,6 +570,7 @@
         padding: 5px;
         width: 100%;
         z-index: 100;
+
         p {
             margin: 1px;
         }
@@ -577,6 +587,7 @@
         font-size: 8pt;
         text-align: center;
         font-weight: bold;
+
         .fa-grip {
             display: none;
         }
@@ -635,6 +646,7 @@
         -ms-user-select: none;
         /* Internet Explorer/Edge */
         user-select: none;
+
         /* Non-prefixed version, currently
                                                                 not supported by any browser */
         .jtk-group-expanded,
@@ -645,18 +657,22 @@
             padding: 4px;
             position: absolute;
             width: 400px;
+
             .command {
                 text-align: right;
             }
+
             .header {
                 padding: 5px;
                 background: #ed8;
                 overflow: auto;
+
                 >div {
                     float: left;
                     width: 50%;
                 }
             }
+
             .resizer {
                 position: absolute;
                 background: red;
@@ -666,14 +682,17 @@
                 right: 0;
             }
         }
+
         .jtk-group-collapsed {
             height: 80px !important;
             width: 120px !important;
             overflow: hidden;
+
             .task {
                 display: none;
             }
         }
+
         .task {
             border-width: 1px;
             font-family: Verdana, Tahoma, Geneva, sans-serif;
@@ -683,15 +702,19 @@
 
             &.disabled {
                 background: #fff;
+
                 .title {
                     color: #ccc;
                     text-decoration: line-through;
                 }
             }
+
             &.completed {
                 border: none;
             }
+
             ;
+
             /*&.interrupted, &.canceled, &.error, &.canceled,*/
             &.running,
             &.highlight {
@@ -700,13 +723,17 @@
                 -moz-box-sha: 0px 0px 50px #a93;
                 -webkit-box-: 0px 0px 50px #a93;
             }
+
             ;
+
             .right-decor {
                 left: 48px;
             }
+
             .left-decor {
                 left: -10px;
             }
+
             .right-decor,
             .left-decor,
             .bottom-right-decor {
@@ -722,14 +749,18 @@
                 height: 16px;
                 width: 20px;
                 text-align: center;
+
                 &.completed {
                     color: seagreen;
+
                     span {
                         /* @extend .fa-check; */
                     }
                 }
+
                 &.running {
                     color: dodgerblue;
+
                     span {
                         /* @extend .fa-spin;
                         @extend .fa-refresh; */
@@ -740,46 +771,60 @@
                         text-align: center;
                     }
                 }
+
                 &.interrupted {
                     color: black;
+
                     span {
                         /* @extend .fa-hand-stop-o; */
                     }
                 }
+
                 &.canceled {
                     color: darkgray;
+
                     span {
                         /* @extend .fa-close; */
                     }
                 }
+
                 &.waiting {
                     color: #aaa;
+
                     span {
                         /* @extend .fa-clock-o; */
                     }
                 }
+
                 &.error {
                     color: red;
+
                     span {
                         /* @extend .fa-warning; */
                     }
                 }
             }
+
             .bottom-right-decor {
                 right: 10px;
                 bottom: 0;
             }
+
             &.service {
                 background-color: lighten($color5, 30%) !important;
             }
+
             &.comment {
                 z-index: 1;
+
                 .decor {
                     display: none;
                 }
+
                 strong {
                     display: none;
                 }
+
                 em {
                     font-family: Verdana, Tahoma, Geneva, sans-serif;
                     vertical-align: top !important;
@@ -789,9 +834,11 @@
                     top: 5%;
                     min-height: 200px;
                 }
+
                 div.title {
                     background: transparent !important;
                 }
+
                 background:#ffffa5;
                 overflow-y: auto;
                 border: none !important;
@@ -816,18 +863,23 @@
                 -moz-box-shadow: 0px 4px 6px #333;
                 -webkit-box-shadow: 0px 4px 6px #333;
             }
+
             &.data-source {
                 background-color: lighten($color1, 30%);
             }
+
             &.algorithm {
                 background-color: lighten($color4, 30%);
             }
+
             &.model {
                 background-color: lighten($color3, 30%);
             }
+
             &.selected {
                 box-shadow: -2px 1px 6px 0px $color3;
             }
+
             em {
                 top: 48%;
                 padding: 0 5px;
@@ -836,6 +888,7 @@
                 font-family: Verdana, Tahoma, Geneva, sans-serif;
                 font-size: 6pt !important;
             }
+
             &.operation {
                 border: $color2 1px solid;
                 border-radius: 2px;
@@ -853,12 +906,14 @@
                 z-index: 2;
                 display: flex;
                 justify-content: center;
+
                 &.jsplumb-drag-selected,
                 &.jtk-drag-selected {
                     box-shadow: -2px 1px 6px 0px #f28d00;
                     font-style: italic;
                     color: green;
                 }
+
                 .title {
                     align-self: center;
                     text-align: center;
@@ -868,9 +923,11 @@
                     overflow: hidden;
                 }
             }
+
             &.operation:after {
                 mix-blend-mode: difference;
             }
+
             /*
         strong {
             position: absolute;
@@ -884,6 +941,7 @@
             span {
                 xfont-size: 12pt;
             }
+
             p {
                 border-top: 1px solid $color2;
             }
@@ -893,6 +951,7 @@
     .endpoint {
         opacity: 1;
         background: white;
+
         &.many-endpoint {
             background-color: red;
         }
@@ -900,15 +959,19 @@
 
     .endpoint-label {
         color: $color5;
-        background: /*$color6*/
-        transparent;
+        background:
+            /*$color6*/
+            transparent;
         font-size: 8pt;
+
         &.input {
             margin-top: -20px;
         }
+
         &.output {
             margin-top: 30px;
         }
+
         z-index: 100;
     }
 
@@ -987,6 +1050,7 @@
     .drop-menu-item-2,
     .drop-menu-item-3 {
         border-bottom: 1px solid #aaa;
+
         li {
             padding-left: 20px;
         }

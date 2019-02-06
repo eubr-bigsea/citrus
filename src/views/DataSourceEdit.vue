@@ -23,7 +23,8 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label class="font-weight-bold">{{$t('dataSource.storage')}}:</label>
-                                    <input disabled v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'" class="form-control" />
+                                    <input disabled v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
+                                        class="form-control" />
                                     <!-- <select v-model="dataSource.storage.id" class="form-control" disabled>
                                     <option v-for="storage in storages" :key="storage.id" :value="storage.id">
                                         {{storage.name}} ({{storage.type}})
@@ -36,13 +37,15 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label>{{$t('common.tags')}}:</label>
-                                    <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTags" :taggable="true" class="custom">
+                                    <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTags"
+                                        :taggable="true" class="custom">
                                         <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                     </v-select>
                                 </div>
                                 <div class="col-md-3">
                                     <label>{{$tc('dataSource.treatAsNull')}}: </label>
-                                    <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTreatAsMissing" :taggable="true" class="custom">
+                                    <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTreatAsMissing"
+                                        :taggable="true" class="custom">
                                         <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                     </v-select>
                                 </div>
@@ -74,25 +77,29 @@
                                     <div class="row">
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.attributeDelimiter') }}: </label>
-                                            <v-select style="width: 100%" v-model="dataSource.attribute_delimiter" :options="delimiters" :taggable="true">
+                                            <v-select style="width: 100%" v-model="dataSource.attribute_delimiter"
+                                                :options="delimiters" :taggable="true">
                                                 <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.recordDelimiter') }}: </label>
-                                            <v-select style="width: 100%" v-model="dataSource.record_delimiter" :options="delimiters" :taggable="true">
+                                            <v-select style="width: 100%" v-model="dataSource.record_delimiter"
+                                                :options="delimiters" :taggable="true">
                                                 <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.textDelimiter') }}: </label>
-                                            <v-select style="width: 100%" v-model="dataSource.text_delimiter" :options="textDelimiters" :taggable="true">
+                                            <v-select style="width: 100%" v-model="dataSource.text_delimiter" :options="textDelimiters"
+                                                :taggable="true">
                                                 <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.encoding') }}: </label>
-                                            <v-select style="width: 100%" v-model="dataSource.encoding" :options="encodings" :taggable="true">
+                                            <v-select style="width: 100%" v-model="dataSource.encoding" :options="encodings"
+                                                :taggable="true">
                                                 <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
@@ -105,21 +112,7 @@
                             <h5 class="card-title">
                                 {{$tc('common.attribute', 2)}}
                             </h5>
-                            <div v-if="inferableDataSource" class="border-bottom pb-3">
-                                {{$t('dataSource.inferSupported', {what: dataSource.format})}}
-                                <div v-if="!canInfer">
-                                    But, in basic information tab, you:
-                                    <ul>
-                                        <li>Need to define the attribute separator;</li>
-                                        <li>Mark "Use first line as header" if it is the case for your data source;</li>
-                                        <li>Review the other delimiters, encoding and if rows are multiline.</li>
-                                    </ul>
-                                    Without this configuration, Lemonade may not work appropriately.
-                                </div>
-                                <button class="float-right btn-sm btn btn-success mb-2 btn-spinner" @click.stop="infer" v-if="canInfer">
-                                    <font-awesome-icon icon="spinner" pulse class="icon" /> {{$tc('dataSource.inferSchema')}}
-                                </button>
-                            </div>
+
                             <table class="table table-sm table-stripped" v-if="dataSource.attributes && dataSource.attributes.length > 0">
                                 <thead>
                                     <tr>
@@ -161,7 +154,8 @@
                                         </td>
                                     -->
                                         <td>
-                                            <input class="form-control-sm form-control" v-model="attr.missing_representation" maxlength="200" />
+                                            <input class="form-control-sm form-control" v-model="attr.missing_representation"
+                                                maxlength="200" />
                                         </td>
 
                                     </tr>
@@ -201,14 +195,14 @@
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                             <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
                         <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">{{$tc('actions.cancel')}}</router-link>
+                        <button class="btn btn-success ml-1  btn-spinner" @click.stop="infer" v-if="canInfer">
+                            <font-awesome-icon icon="spinner" pulse class="icon" /> {{$tc('dataSource.inferSchema')}}
+                        </button>
                         <button class="btn btn-spinner" @click.stop="preview" :disabled="isDirty">
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                             <span class="fa fa-eye"></span>
                             &nbsp;
                             <span v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')"></span>
-                        </button>
-                        <button class="btn btn-success ml-1  btn-spinner" @click.stop="infer" v-if="canInfer" :disabled="isDirty">
-                            <font-awesome-icon icon="spinner" pulse class="icon" /> {{$tc('dataSource.inferSchema')}}
                         </button>
                     </div>
                 </b-card>
@@ -220,6 +214,10 @@
             <b-modal size="lg" ref="preview" :title="$t('common.preview')">
                 {{$t('dataSource.previewExplanation', {amount: 40})}}
                 <v-client-table :columns="getPreviewColumns()" :data="samples" :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}"></v-client-table>
+                <div v-if="previewWarnings.length">
+                    <strong>{{$tc('dataSource.someAttributesMayHaveProblem', previewWarnings.length)}}:</strong>
+                    {{previewWarnings.join(", ")}}
+                </div>
             </b-modal>
         </div>
     </div>
@@ -274,9 +272,11 @@
                 formats: ['XML_FILE', 'NETCDF4', 'HDF5', 'SHAPEFILE', 'TEXT',
                     'UNKNOWN', 'CUSTOM', 'GEO_JSON', 'JSON', 'CSV', 'PARQUET', 'PICKLE', 'JDBC'].sort(),
                 delimiters: [
-                    ',', ';', '.', '{tab}', '{new_line}',
+                    ',', ';', '.', '{tab}', '{new_line \\n}', 
+                    '{new_line \\r\\n}',
                 ],
                 textDelimiters: ['"', "'"],
+                previewWarnings: [],
                 encodings: ['ISO-8859-1', 'UTF-8', 'UTF-16'],
             }
         },
@@ -362,7 +362,7 @@
                 let url = `${limoneroUrl}/datasources/${this.dataSource.id}`
                 event.target.setAttribute('disabled', 'disabled')
                 event.target.classList.remove('btn-spinner')
-                axios.patch(url, this.dataSource)
+                return axios.patch(url, this.dataSource)
                     .then((resp) => {
                         event.target.removeAttribute('disabled')
                         event.target.classList.add('btn-spinner')
@@ -383,6 +383,7 @@
                 axios.get(url, {})
                     .then((resp) => {
                         self.samples = resp.data.data
+                        self.previewWarnings = resp.data.warnings
                         self.$refs.preview.show()
                     }
                     ).catch((e) => {
@@ -393,12 +394,9 @@
                         event.target.classList.add('btn-spinner')
                     })
             },
-
-            infer(event) {
-                let url = `${limoneroUrl}/datasources/infer-schema/${this.dataSource.id}`
-                let self = this
-                event.target.setAttribute('disabled', 'disabled')
-                event.target.classList.remove('btn-spinner')
+            _doInfer(event){
+                const self = this
+                const url = `${limoneroUrl}/datasources/infer-schema/${self.dataSource.id}`
                 axios.post(url, {})
                     .then((resp) => {
                         self.success(
@@ -411,8 +409,17 @@
                     ).finally(() => {
                         event.target.removeAttribute('disabled')
                         event.target.classList.add('btn-spinner')
-                    })
-
+                })
+            },
+            infer(event) {
+                const self = this
+                event.target.setAttribute('disabled', 'disabled')
+                event.target.classList.remove('btn-spinner')
+                if (self.isDirty) {
+                    self.save(event).then(() => self._doInfer(event));
+                } else {
+                    self._doInfer(event);
+                }
             },
 
         },

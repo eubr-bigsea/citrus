@@ -116,14 +116,17 @@
         mounted() {
             let self = this;
             let workflowFilters = {
+                enabled: 1,
                 page: 1, sort: 'updated', asc: false, size: 5,
                 fields: 'id,name,platform.id,updated'
             }
             let dataSourceFilters = {
+                enabled: 1,
                 page: 1, sort: 'updated', asc: false, size: 5,
                 fields: 'id,name,updated'
             }
             let jobFilters = {
+                enabled: 1,
                 page: 1, sort: 'created', asc: false, size: 5,
                 fields: 'id,name,created,workflow.name'
             }

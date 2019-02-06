@@ -33,7 +33,7 @@
                             {{props.row.workflow.id}} - {{props.row.workflow.name}}
                         </router-link>
                     </template>
-                    -->
+            -->
                     <template slot="platforms.name" slot-scope="props">
                         {{props.row.platforms.map(plat => plat.name).join(", ")}}
                     </template>

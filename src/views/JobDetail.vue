@@ -2,71 +2,87 @@
     <div>
         <div class="row">
             <div class="col-md-12">
+                <div class="border p-2 mb-1">
+                    <strong>{{$tc('titles.workflow')}}: </strong>
+                    <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
+                        v-if="workflow.id">{{workflow.id}} - {{workflow.name}} ({{$t('actions.back').toLowerCase()}})</router-link>
+                </div>
                 <b-tabs>
                     <b-tab active title-item-class="smalltab">
                         <template slot="title">
                             {{$tc('titles.job')}}: {{job.name}}
                         </template>
                         <div class="row mt-1">
-                            <div class="col-md-9" style="position: relative">
+                            <div class="col-md-12" style="position: relative; overflow: hidden; height: 65vh;">
                                 <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
                                     :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false" shink="true"
-                                    v-if="loaded" :loaded="loaded" :showTaskDecoration="true" />
+                                    v-if="loaded" :loaded="loaded" :showTaskDecoration="true" :initialZoom=".7"/>
+                                <slideout-panel :opened="showProperties" v-if="selectedTask && selectedTask.operation">
+                                    <div style="background: red; height: 60vh; width: 300px" class="p-2">
+                                        <h6>{{$tc('titles.property', 2)}}</h6>
+                                        <dl>
+                                            <template v-for="form in operationsLookup[selectedTask.operation.id].forms">
+                                                {{form.scope}}
+                                                <template v-for="field in form" v-if="form.scope !== 'EXECUTION' ">
+                                                    <dt>{{field}}</dt>
+                                                    <dd></dd>
+                                                </template>
+                                            </template>
+                                        </dl>
+                                    </div>
+                                </slideout-panel>
                             </div>
-                            <div class="col-md-3">
-                                <div class="card">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">
-                                            <div class="circle lemonade-job" :class="jobStatus" :title="job.status"></div>
-                                            {{job.status}}
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>{{$tc('titles.workflow')}}: </strong>
-                                            <br />
-                                            <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                                                class="nav-link">{{workflow.id}} - {{workflow.name}}</router-link>
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>{{$t('common.date')}}:</strong> {{job.created}}
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>{{$t('common.user.name')}}: </strong> {{job.user.name}}
-                                            ({{job.user.login}})
-                                        </li>
-                                        <li class="list-group-item">
-                                            <strong>{{$tc('titles.cluster')}}: </strong> {{job.cluster.name}}
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="row" style="font-size:0.7em; max-height: 60vh; overflow-y: auto">
-                                    <div class="col-md-12  mt-2" style="font-size: 1.5em">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <small>{{job.status_text}}</small>
-                                                <div style="font-size:.8em" class="mt-2" v-if="job.exception_stack">
+                            <div class="fixed-bottom m-2 border" style="height: 200px; background: white; overflow: auto">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <b-tabs>
+                                            <b-tab active title-item-class="smalltab">
+                                                <template slot="title">
+                                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status"></div>
+                                                    {{$tc('job.logs', 2)}}
+                                                </template>
+                                                <div class="pl-4 mr-3 mt-1">
+                                                    <div class="alert alert-secondary">{{job.status_text}}</div>
+                                                    <div style="font-size:.8em" class="mt-2" v-if="job.exception_stack">
+                                                        <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
+                                                        <div v-if="details">
+                                                            <code><pre>{{job.exception_stack}}</pre></code>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="job-log-list">
+                                                    <div v-for="log in sortedLogs" :key="log.id" class="job-log pl-4"
+                                                        :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
+                                                        <small>
+                                                            <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
+                                                                {{log.level}}
+                                                            </span> &nbsp;
+                                                            <span>{{log.date}}</span>&nbsp;
+                                                            <TaskDisplay :task="getTask(log.task.id)" :simple="true" />
+                                                            &nbsp;</strong>
+
+                                                            <span v-if="log.type === 'TEXT'">
+                                                                {{log.message}}
+                                                            </span>
+                                                            <span v-else-if="log.type === 'STATUS'">
+                                                                &#9733;{{log.message}}
+                                                            </span>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </b-tab>
+                                            <b-tab :title="$t('titles.errorDetail')" title-item-class="smalltab">
+                                                <div style="font-size:.8em" class="mt-2 p-2" v-if="job.exception_stack">
                                                     <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
                                                     <div v-if="details">
                                                         <code><pre>{{job.exception_stack}}</pre></code>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12 mt-2 flex">
-                                        <div v-for="log in sortedLogs" :key="log.id" class="job-log" :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
-                                            <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
-                                                {{log.level}}
-                                            </span> &nbsp;
-                                            <span>{{log.date}}</span>&nbsp;
-                                            <TaskDisplay :task="getTask(log.task.id)" :simple="true" /> &nbsp;</strong>
-
-                                            <span v-if="log.type === 'TEXT'">
-                                                {{log.message}}
-                                            </span>
-                                            <span v-else-if="log.type === 'STATUS'">
-                                                &#9733;{{log.message}}
-                                            </span>
-                                        </div>
+                                                <div v-else class="p-2">
+                                                    {{$t('common.noData')}}
+                                                </div>
+                                            </b-tab>
+                                        </b-tabs>
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +91,7 @@
                     <b-tab :title="$tc('job.results', 2)" title-item-class="smalltab">
                         <div class="row" v-for="(step, inx) in job.steps" :key="inx">
                             <div class="col-md-12 lemonade">
-                                <div class="mt-2 border-bottom pb-2" v-if="step.logs.find(s => s.type === 'HTML')">
+                                <div class="mt-2 border-bottom pb-2" v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
                                     <TaskDisplay :task="getTask(step.task.id)" /> &nbsp;</strong>
                                     {{step.status}}
                                     <div v-for="log in step.logs" :key="log.id" style="font-size:.9em">
@@ -111,16 +127,34 @@
                                     </div>
                                 -->
                                 </div>
+                                <!-- <div v-else class="mt-1">
+                                    <div class="alert alert-info">{{$t('common.noResults')}}</div>
+                                </div> -->
                             </div>
                         </div>
                     </b-tab>
                     <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length"
                         @click="loadVisualizations">
                         <div class="row" v-for="(result, inx) in job.results" :key="result.id">
-                            <div class="col-md-8 lemonade offset-2">
-                                <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
+                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px">
+                                <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)"></caipirinha-visualization>
                             </div>
                         </div>
+                    </b-tab>
+                    <b-tab :title="$tc('job.details', 2) + ' (' + $tc('titles.job').toLowerCase() + ')' "
+                        title-item-class="smalltab">
+                        <ul class="mt-2">
+                            <li class="list-group-item">
+                                <strong>{{$t('common.date')}}:</strong> {{job.created}}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>{{$t('common.user.name')}}: </strong> {{job.user.name}}
+                                ({{job.user.login}})
+                            </li>
+                            <li class="list-group-item">
+                                <strong>{{$tc('titles.cluster')}}: </strong> {{job.cluster.name}}
+                            </li>
+                        </ul>
                     </b-tab>
                     <b-tab :title="$tc('job.sourceCode')" title-item-class="smalltab" @click="showSourceCode = 1">
                         <SourceCode v-if="showSourceCode" :job="job.id" />
@@ -146,37 +180,7 @@
                 </b-tabs>
             </div>
         </div>
-        <div class="fixed-bottom m-2 border" style="height: 200px; background: white">
-            <div class="row">
-                <div class="col-md-12">
-                    <b-tabs>
-                        <b-tab active title-item-class="smalltab">
-                            <template slot="title">
-                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status"></div>
-                                    {{$tc('job.logs', 2)}}
-                            </template>
-                            <div v-for="log in sortedLogs" :key="log.id" class="job-log p-2" :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
-                                <small>
-                                    <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
-                                        {{log.level}}
-                                    </span> &nbsp;
-                                    <span>{{log.date}}</span>&nbsp;
-                                    <TaskDisplay :task="getTask(log.task.id)" :simple="true" /> &nbsp;</strong>
 
-                                    <span v-if="log.type === 'TEXT'">
-                                        {{log.message}}
-                                    </span>
-                                    <span v-else-if="log.type === 'STATUS'">
-                                        &#9733;{{log.message}}
-                                    </span>
-                                </small>
-                            </div>
-                        </b-tab>
-                    </b-tabs>
-
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -188,6 +192,8 @@
     import Notifier from '../mixins/Notifier'
     import axios from 'axios'
     import io from 'socket.io-client';
+    import SlideOut from '../components/SlideOutPanel.vue'
+    import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue'
 
     const standUrl = process.env.VUE_APP_STAND_URL
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE
@@ -239,6 +245,8 @@
         mixins: [Notifier],
         components: {
             'diagram': DiagramComponent,
+            'slideout-panel': SlideOut,
+            'caipirinha-visualization': CapirinhaVisualization,
             SourceCode,
             Visualization,
             TaskDisplay
@@ -272,6 +280,7 @@
                 operationsLookup: new Map(),
                 selectedTask: {},
                 showSourceCode: false,
+                showProperties: false
             }
         },
         methods: {
@@ -314,6 +323,7 @@
                     const task = self.job.workflow.tasks.find((t) => {
                         return msg.task && t.id === msg.task.id;
                     })
+                    console.debug('task', task)
                     // const task = self.tasks[msg.task.id];
                     if (task) {
                         task.status = msg.status;
@@ -324,7 +334,7 @@
                             if (found.length === 0) {
                                 step.logs.push({
                                     id: msg.step_id,
-                                    level: 'INFO',
+                                    level: msg.level,
                                     date: msg.date,
                                     type: msg.type,
                                     message: msg.message
@@ -360,9 +370,6 @@
                     }
                 });
                 socket.on('task result', (msg) => {
-                    console.debug(msg)
-                    return
-
                     self.job.results.push(msg);
                 });
             },
@@ -444,9 +451,11 @@
             });
             this.$root.$on('onclick-task', (taskComponent) => {
                 this.selectedTask = taskComponent.task;
+                this.showProperties = true;
             });
             this.$root.$on('onblur-selection', () => {
                 this.selectedTask = {};
+                this.showProperties = false;
             });
 
         }
@@ -495,6 +504,11 @@
 
     .badge-warn {
         background-color: #FFDC00;
+    }
+
+    .job-log-list {
+        flex-direction: column;
+        display: flex
     }
 
     .job-log {
