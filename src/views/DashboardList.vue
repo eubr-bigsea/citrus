@@ -1,14 +1,10 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary p-2">
-            <div class="col-md-10">
-                <h2 class="title text-primary">{{$tc('titles.dashboard', 2)}}</h2>
-            </div>
-            <div class="col-md-2 pull-right text-right">
-                <a href="#/dashboards/add" class="btn btn-primary btn-sm" role="button">
-                    <font-awesome-icon icon="plus" size="1x"></font-awesome-icon>  {{$t('actions.add', {type: $tc('titles.dashboard').toLowerCase()})}}
-                </a>
-            </div>
+        <div class="row border-bottom border-primary p-3 d-flex justify-content-between">
+            <h2 class="title text-primary">{{$tc('titles.dashboard', 2)}}</h2>
+            <a href="#/dashboards/add" class="btn btn-primary btn-sm" role="button">
+                <font-awesome-icon icon="plus" size="1x"></font-awesome-icon>  {{$t('actions.add', {type: $tc('titles.dashboard').toLowerCase()})}}
+            </a>
         </div>
         <div class="row">
             <div class="col-md-12">
