@@ -35,7 +35,8 @@
                                                 :field="field" :value="getValue(field.name)"
                                                 :suggestions="suggestions"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
-                                                :language="$root.$i18n.locale" 
+                                                :language="$root.$i18n.locale"
+                                                :type="field.suggested_widget" 
                                                 context="context"
                                                 >
                                             </component>
