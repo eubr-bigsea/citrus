@@ -4,10 +4,11 @@
             <div class="props card text-dark bg-light p0 mb-1">
                 <div class="border-bottom card-header special">
                     <strong>{{task.operation.name}}</strong>
-                    <br/>
+                    <br />
                     <small>
                         <div class="property-description">{{task.operation.description}}</div>
-                        <a class="property-help" :href="docReferenceUrl"><span class="fa fa-question-circle"></span> {{$t('property.help')}}</a>
+                        <a class="property-help" :href="docReferenceUrl"><span class="fa fa-question-circle"></span>
+                            {{$t('property.help')}}</a>
                     </small>
                 </div>
                 <div class="card-body">
@@ -27,18 +28,15 @@
                     <form>
                         <b-card no-body>
                             <b-tabs card v-model="tabIndex">
-                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name" :title-link-class="'small-nav-link'">
-                                    <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
+                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name"
+                                    :title-link-class="'small-nav-link'">
+                                    <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="task.id + field.name"
+                                        v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
-                                            <component 
-                                                :is="field.suggested_widget + '-component'" 
-                                                :field="field" :value="getValue(field.name)"
-                                                :suggestions="suggestions"
+                                            <component :is="field.suggested_widget + '-component'" :field="field"
+                                                :value="getValue(field.name)" :suggestions="suggestions"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
-                                                :language="$root.$i18n.locale"
-                                                :type="field.suggested_widget" 
-                                                context="context"
-                                                >
+                                                :language="$root.$i18n.locale" :type="field.suggested_widget" context="context">
                                             </component>
                                             <!-- <span v-else>
                                                 {{field.name}} {{field.suggested_widget}}
@@ -69,7 +67,7 @@
                         -->
                     </form>
                     <div class="card-body">
-                    {{task.id}}
+                        {{task.id}}
                     </div>
                 </div>
                 <div v-for="form in task.operation.forms" v-bind:key="form.id">
@@ -114,7 +112,7 @@
     export default {
         name: 'PropertyWindow',
         computed: {
-            docReferenceUrl(){
+            docReferenceUrl() {
                 return `${referenceUrl}/${this.task.operation.slug}`;
             }
         },
@@ -137,7 +135,7 @@
             'textarea-component': TextAreaComponent,
             SwitchComponent,
             VuePerfectScrollbar,
-            
+
         },
         data() {
             return {
@@ -157,7 +155,7 @@
             },
             evalInContext(js, context) {
                 //# Return the results of the in-line anonymous function we .call with the passed context
-                return function() { return eval(js); }.call(context);
+                return function () { return eval(js); }.call(context);
             },
             update() {
                 let self = this;
@@ -173,14 +171,18 @@
                             field.category = f.category;
                             Vue.set(field, "enabled", true);
                             self.allFields[field.name] = field;
-                            if (field.enable_conditions){
-                                field.enable_conditions.match(conditional).forEach(v => {
-                                    const key = v.replace('this.', '');
-                                    if (!self.conditionalFields.has(key)){
-                                        self.conditionalFields.set(key, []);
-                                    }
-                                    self.conditionalFields.get(key).push(field);
-                                });
+                            if (field.enable_conditions) {
+                                if (field.enable_conditions === 'false') {
+                                    field.enabled = false;
+                                } else {
+                                    field.enable_conditions.match(conditional).forEach(v => {
+                                        const key = v.replace('this.', '');
+                                        if (!self.conditionalFields.has(key)) {
+                                            self.conditionalFields.set(key, []);
+                                        }
+                                        self.conditionalFields.get(key).push(field);
+                                    });
+                                }
                             }
                             Vue.set(field, "internalValue", null);
                         });
@@ -204,11 +206,11 @@
             this.update();
             self.$root.$on('update-form-field-value', (field, value) => {
                 field.internalValue = value;
-                if (self.conditionalFields.has(field.name)){
-                    self.conditionalFields.get(field.name).forEach(fieldToCheck =>{
-                        try{
+                if (self.conditionalFields.has(field.name)) {
+                    self.conditionalFields.get(field.name).forEach(fieldToCheck => {
+                        try {
                             fieldToCheck.enabled = self.evalInContext(fieldToCheck.enable_conditions, self.allFields);
-                        }catch(e){
+                        } catch (e) {
                             // Ignore
                         }
                     });
@@ -230,16 +232,19 @@
     .property {
         padding: 3px 0;
     }
+
     .property-help {
         font-size: 1.2em;
     }
+
     .property-description {
         max-height: 50px;
         overflow: auto;
         font-style: italic;
         font-size: 1.1em;
-        text-align: justify 
+        text-align: justify
     }
+
     .props {
         width: 350px;
         height: calc(79vh + 2px);
@@ -252,16 +257,17 @@
         zoom: 100%;
         font-size: .75rem
     }
-
 </style>
 <style>
     .props .card-body {
         flex: inherit
     }
+
     .small-nav-link {
         padding: 5px 10px !important;
         margin: 0;
     }
+
     .props .form-control {
         font-size: .7rem !important;
     }
