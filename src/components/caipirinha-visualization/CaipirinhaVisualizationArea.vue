@@ -3,18 +3,23 @@
 </template>
 
 <script>
+import { setDatetimeOptions }  from './CaipirinhaVisualizationUtils.js';
+
+
 export default {
   name: "caipirinha-visualization-area",
   props: ["visualizationData"],
   data: function() {
-    const options = {
+    let options = {
         chart: {
           type: "area"
         },
         plotOptions: {
           area: {
             stacking: "normal",
-            marker: false
+            marker: {
+              enabled: false
+            }
           }
         },
         title: {
@@ -37,6 +42,9 @@ export default {
             .sort((a, b) => a[0] - b[0])
         }))
       };
+
+   if (this.visualizationData.x.type == 'time')
+     options = setDatetimeOptions(options);
 
     return { options };
   }

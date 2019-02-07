@@ -81,6 +81,20 @@ const getVisualizationComponent = function(typeId) {
   }
 };
 
+const getVisualizationData = function(responseData) {
+  if (responseData.x.type == "time") {
+    responseData.data = responseData.data.map(serie => ({
+      ...serie,
+      values: serie.values.map(value => ({
+          ...value,
+          x: Date.parse(value.x)
+        }))
+    }))
+  }
+
+  return responseData;
+}
+
 export default {
   name: "caipirinha-visualization",
   props: ["url"],
@@ -134,7 +148,7 @@ export default {
         this.visualizationComponent = getVisualizationComponent(
           response.data.type.id
         );
-        this.visualizationData = response.data;
+        this.visualizationData = getVisualizationData(response.data);
         this.loading = false;
       })
       .catch(response => {
