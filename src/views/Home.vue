@@ -151,7 +151,7 @@
 </script>
 <style scoped>
     .lemonade {
-        height: 85vh;
+        height: 80vh;
         overflow: hidden;
     }
 
@@ -162,7 +162,7 @@
 
     .card,
     .jumbotron {
-        height: 85vh;
+        height: 80vh;
     }
 
     .updated::first-letter {

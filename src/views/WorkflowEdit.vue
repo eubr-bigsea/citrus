@@ -384,8 +384,8 @@
             align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
             },
-            toggleTasks() { this.$root.$on('ontoggle-tasks', this.$refs.diagram.toggleTasks); },
-            distribute() { this.$root.$on('ondistribute-tasks', this.$refs.diagram.distribute); },
+            toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
+            distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
             updateSelectedTab(index) {
                 //this.selectedTab = index;
                 console.debug(index)
