@@ -145,11 +145,20 @@
                 return false;
             },
             copyAttributeName(v) {
-                if (this.lastEdited){
-                    if (this.lastEdited.row && 
-                        this.expressionList.includes(this.lastEdited.row)){
-                        this.lastEdited.row.expression += ' ' + v.target.value;
-                    }
+                if (this.lastEdited && this.lastEdited.el){
+                    // console.debug(this.lastEdited.row)
+                    // if (this.lastEdited.row && 
+                    //     this.expressionList.includes(this.lastEdited.row)){
+                    //     this.lastEdited.row.expression += ' ' + v.target.value;
+                    // }
+                    const el = this.lastEdited.el;
+                    const startPos = el.selectionStart;
+                    const endPos = el.selectionEnd;
+                    const value = el.value.substring(0, startPos) +
+                         v.target.value + el.value.substring(endPos, el.value.length);
+                         el.value = value;
+                         // this.lastEdited.row.expression = value;
+                    this.updated({target: el}, this.lastEdited.row, 'expression')
                     this.lastEdited.el.focus();
                 }
             }
