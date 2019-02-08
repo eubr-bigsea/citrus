@@ -1,13 +1,9 @@
 <template>
-    <div class="row">
-        <div class="col-md-8">
-            <!-- <VuePerfectScrollbar class="scroll-area"> -->
-                <PrismEditor :code="sourceCode.source" 
-                    :settings="{maxScrollbarLength: 80}" :language="sourceCode.lang" ref="prism" 
-                        style="height:90vh;font-size:.9em" />
-            <!-- </VuePerfectScrollbar> -->
-        </div>
-    </div>
+
+    <PrismEditor :code="sourceCode.source" :settings="{maxScrollbarLength: 30}" :language="sourceCode.lang" ref="prism"
+        :autoStyleLineNumbers="true" :lineNumbers="true" 
+        style="height:80vh;font-size:.9em; width: 60vw; overflow-x:hidden" />
+
 </template>
 <script>
     import axios from 'axios';
@@ -15,6 +11,7 @@
     import prismjs from "prismjs";
     import "prismjs/themes/prism.css";
     import PrismEditor from 'vue-prism-editor'
+    import "vue-prism-editor/dist/VuePrismEditor.css";
 
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     const standUrl = process.env.VUE_APP_STAND_URL;

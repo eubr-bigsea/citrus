@@ -157,7 +157,7 @@
                         </ul>
                     </b-tab>
                     <b-tab :title="$tc('job.sourceCode')" title-item-class="smalltab" @click="showSourceCode = 1">
-                        <SourceCode v-if="showSourceCode" :job="job.id" />
+                        <SourceCode v-if="showSourceCode" :job="job.id"/>
                     </b-tab>
                     <!-- <b-tab :title="$tc('job.logs', 2)" title-item-class="smalltab">
                         <div class="row mt-2">
