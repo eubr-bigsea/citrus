@@ -19,7 +19,8 @@ import {
     faHome, faUser, faPlay, faPlus, faSortAmountUp, faSort, faSortAmountDown, faSave, faEdit, faTrash,
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
     faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp, faCheckCircle, faTimesCircle, faHandPaper, faStopCircle, faPauseCircle,
-    faSync, faCheckSquare, faSquare, faLightbulb, faAngleDown, faAngleRight, faExclamationTriangle, faExclamationCircle, faChevronLeft
+    faSync, faCheckSquare, faSquare, faLightbulb, faAngleDown, faAngleRight, faExclamationTriangle, faExclamationCircle, faChevronLeft,
+    faSyncAlt, faStop
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -55,7 +56,7 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
     faToggleOn, faObjectGroup, faQuestionCircle, faAsterisk, faSpinner, faDatabase, faSearch, faEye,
     faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp, faTimesCircle, faHandPaper, faStopCircle,
     faCheckCircle, faPauseCircle, faSync, faCheckSquare, faSquare, faLightbulb, faAngleDown, faAngleRight,
-    faExclamationTriangle, faExclamationCircle, faChevronLeft
+    faExclamationTriangle, faExclamationCircle, faChevronLeft, faSyncAlt, faStop
 )
 
 import { faSave as farSave, faCopy as farCopy } from '@fortawesome/free-regular-svg-icons'

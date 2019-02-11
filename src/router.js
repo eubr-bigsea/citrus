@@ -26,6 +26,8 @@ import DashboardDetail from './views/DashboardDetail.vue';
 import OperationList from './views/OperationList.vue';
 
 import Profile from './views/Profile.vue';
+import DeploymentList from './views/DeploymentList.vue';
+import DeploymentAdd from './views/DeploymentAdd.vue';
 
 import store from './store.js';
 
@@ -74,6 +76,22 @@ let router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+        path: '/deployments',
+        name: 'deployments',
+        component: DeploymentList,
+        meta: {
+            requiresAuth: true
+        }
+    },
+    {
+        path: '/deployments/add',
+        name: 'addDeployment',
+        component: DeploymentAdd,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
       path: '/jobs',

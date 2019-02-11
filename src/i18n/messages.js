@@ -156,6 +156,12 @@ export default {
       youCanUploadYourFiles: 'Você pdoe carregar seus próprios arquivos para o servidor',
       youCanUseSQL: 'Você pode usar comandos SELECT SQL para recuperar os dados'
     },
+    deployment: {
+        savedModel: 'Modelo salvo',
+        target: 'Alvo | Alvos',
+        whatToDeploy: 'O que você quer implantar?',
+        workflow: 'Fluxo de trabalho'
+    },
     diagram: {
       showProperties: 'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
     },
@@ -484,6 +490,15 @@ export default {
       youCanUploadYourFiles: 'You can upload your own files',
       youCanUseSQL: 'You can use SQL to query data'
     },
+    deployment: {
+        savedModel: 'Saved model',
+        target: 'Target | Targets',
+        whatToDeploy: 'What do you want to deploy?',
+        workflow: 'Workflow'
+    },
+    diagram: {
+        showProperties: 'To display task\'s properties, double click it.'
+      },
     errors: {
       disconnected: 'You are disconnected. Please check if you have access to the Internet.',
       emailNotFound: 'Email not found.',

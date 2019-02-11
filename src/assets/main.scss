@@ -340,3 +340,49 @@ h1 {
 .vue-grid-item {
     border: 1px solid #ccc;
 }
+.platform-icon {
+    &.bg-compss {
+        width: 61px; height: 60px;
+        background: url('platforms.png') -0 -94px;
+    }
+    &.bg-scikit_learn {
+        width: 112px; height: 60px;
+        background: url('platforms.png') -113px -0;
+    }
+    &.bg-spark {
+        width: 113px; height: 60px;
+        background: url('platforms.png') -0 -0;
+    }
+    &.bg-keras {
+        width: 112px; height: 34px;
+        background: url('platforms.png') -0 -60px;
+    }
+}
+.platform-icon-small {
+    zoom: .4;
+    
+    &.bg-compss {
+        width: 61px; height: 60px;
+        background: url('platforms.png') -0 -94px;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+    &.bg-scikit_learn {
+        width: 112px; height: 60px;
+        background: url('platforms.png') -113px -0;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+    &.bg-spark {
+        width: 113px; height: 60px;
+        background: url('platforms.png') -0 -0;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+    &.bg-keras {
+        background: url('platforms.png') -0 -60px;
+        width: 112px; height: 34px;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+}
