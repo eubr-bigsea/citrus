@@ -11,7 +11,7 @@
             <div class="col-md-12">
                 <v-server-table :data="tableData" :columns="columns" :options="options" name="deploymentList" ref="deploymentList">
                     <template slot="id" slot-scope="props">
-                        <router-link :to="{name: 'editdeployment', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+                        <router-link :to="{name: 'editDeployment', params: {id: props.row.id}}">{{props.row.id}}</router-link>
                     </template>
                     <template slot="workflow" slot-scope="props">
                         {{props.row.workflow.id}} - {{props.row.workflow.name}}

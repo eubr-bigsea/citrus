@@ -12,7 +12,8 @@
         <b-nav-item :to="{name: 'workflows'}">{{$tc('titles.workflow', 2)}}</b-nav-item>
         <b-nav-item :to="{name: 'jobs'}">{{$tc('titles.jobs', 2)}}</b-nav-item>
         <b-nav-item :to="{name: 'dashboards'}">{{$tc('titles.dashboard', 2)}}</b-nav-item>
-
+        <b-nav-item :to="{name: 'deployments'}">{{$tc('titles.deployment', 2)}}</b-nav-item>
+        <!--
         <b-nav-item-dropdown v-bind:text="$tc('titles.administration', 2)" right>
           <b-dropdown-item href="#">{{$tc('titles.user', 2)}}</b-dropdown-item>
           <b-dropdown-item href="#">{{$tc('titles.cluster', 2)}}</b-dropdown-item>
@@ -22,6 +23,7 @@
           <b-dropdown-item href="#">{{$tc('titles.template', 2)}}</b-dropdown-item>
           <b-dropdown-item href="#">{{$t('titles.toolboxCategory')}}</b-dropdown-item>
         </b-nav-item-dropdown>
+        -->
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">

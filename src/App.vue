@@ -38,22 +38,6 @@ export default {
   },
   data() {
     return {
-      columns: ['code', 'symbol', 'rate'],
-      tableData: [],
-      options: {
-        xtemplates: {
-          symbol: function (row) {
-            return row.symbol
-          }
-        },
-        headings: {
-          code: 'ID',
-          symbol: 'Symbol',
-          rate: 'Rate'
-        },
-        sortable: ['name', 'album'],
-        filterable: ['name', 'album']
-      }
     }
   }
 }

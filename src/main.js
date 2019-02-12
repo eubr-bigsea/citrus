@@ -131,7 +131,7 @@ L.Icon.Default.mergeOptions({
 
 // Auth
 const token = localStorage.getItem("token")
-const user = JSON.parse(localStorage.getItem('user'), '{}')
+const user = JSON.parse(localStorage.getItem('user'), '{}') || {}
 if (token) {
     axios.defaults.headers.common['Authorization'] = token
     axios.defaults.headers.common['X-Authentication'] = token

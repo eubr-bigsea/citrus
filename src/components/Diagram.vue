@@ -4,10 +4,12 @@
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
             v-on:click="diagramClick">
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
-                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true" id="lemonade-diagram"
-                    v-if="loaded" ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
-                        :enableContextMenu="editable" :draggable="editable" :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true"
+                    id="lemonade-diagram" v-if="loaded" ref="diagram"
+                    :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance"
+                        :key="`${$parent.version} - ${task.id}`" :enableContextMenu="editable" :draggable="editable"
+                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
 
                     <!-- flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" v-if="tasksRendered" :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"
                     /-->
@@ -310,21 +312,23 @@
                         `${flow['target_id']}/${flow['target_port']}`];
 
                     const connection = self.instance.connect({ uuids });
-                    connection.bind('mouseover', (c, originalEvent) => {
-                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null;
-                            currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = "#ed8";
-                            c.setPaintStyle(currentStyle);
-                            self.instance.repaintEverything();
+                    if (connection) {
+                        connection.bind('mouseover', (c, originalEvent) => {
+                            //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
+                            if (originalEvent) {
+                                const currentStyle = c ? c.getPaintStyle() : null;
+                                currentStyle.lineWidth = 20;
+                                currentStyle.outlineColor = "#ed8";
+                                c.setPaintStyle(currentStyle);
+                                self.instance.repaintEverything();
+                            }
+                        });
+                        const currentStyle = connection ? connection.getPaintStyle() : null;
+                        if (currentStyle) {
+                            currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
+                            currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
+                            connection.setPaintStyle(currentStyle);
                         }
-                    });
-                    const currentStyle = connection ? connection.getPaintStyle() : null;
-                    if (currentStyle) {
-                        currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
-                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
-                        connection.setPaintStyle(currentStyle);
                     }
                 });
             });
@@ -335,7 +339,7 @@
         },
         mounted() {
             const self = this;
-            
+
             // Required, otherwise zoom will not work.
             // It seems that jsplumb is loosing this setting between
             // calls to init() and mounted()

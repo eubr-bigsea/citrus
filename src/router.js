@@ -28,6 +28,7 @@ import OperationList from './views/OperationList.vue';
 import Profile from './views/Profile.vue';
 import DeploymentList from './views/DeploymentList.vue';
 import DeploymentAdd from './views/DeploymentAdd.vue';
+import DeploymentList from './views/DeploymentList.vue';
 
 import store from './store.js';
 

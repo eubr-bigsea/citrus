@@ -10,7 +10,8 @@
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">{{$t('common.firstName')}}</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" required autofocus v-model="user.attributes['first-name']">
+                                <input type="text" class="form-control" required autofocus
+                                    v-model="user.attributes['first-name']">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -37,12 +38,14 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-12">
-                                <b-link v-b-toggle.changePassword class="float-right">{{$t('profile.alsoChangePassword')}}</b-link>
+                                <b-link v-b-toggle.changePassword class="float-right">
+                                    {{$t('profile.alsoChangePassword')}}</b-link>
                             </div>
                             <div class="col-md-12">
                                 <b-collapse id="changePassword">
                                     <div class="form-group row">
-                                        <label for="inputPassword3" class="col-sm-3 col-form-label">{{$t('common.password')}}</label>
+                                        <label for="inputPassword3"
+                                            class="col-sm-3 col-form-label">{{$t('common.password')}}</label>
                                         <div class="col-sm-9">
                                             <input type="password" class="form-control" id="inputPassword3">
                                         </div>
@@ -52,8 +55,10 @@
                         </div>
                         <div class="form-group row border-top clearfix pt-3">
                             <div class="col-sm-12 text-center">
-                                <button type="submit" class="btn btn-primary mr-2 pr-5 pl-5">{{$t('common.ok')}}</button>
-                                <router-link class="btn btn-secondary text-white" :to="{name: 'home'}">{{$t('actions.cancel')}}</router-link>
+                                <button type="submit"
+                                    class="btn btn-primary mr-2 pr-5 pl-5">{{$t('common.ok')}}</button>
+                                <router-link class="btn btn-secondary text-white" :to="{name: 'home'}">
+                                    {{$t('actions.cancel')}}</router-link>
                             </div>
                         </div>
                     </form>
@@ -105,6 +110,14 @@
                         );
                         self.$root.$i18n.locale = self.user.attributes.locale;
                         this.$router.push('/');
+                        let user = {
+                            id: this.$store.getters.user.id,
+                            email: self.user.attributes.email,
+                            locale: self.user.attributes.locale,
+                            login: self.user.attributes.email,
+                            name: `${self.user.attributes['first-name']} ${self.user.attributes['last-name']}`
+                        }
+                        localStorage.setItem('user', JSON.stringify(user))
                     })
                     .catch(err => {
                         let msg = err.message.startsWith('errors.')

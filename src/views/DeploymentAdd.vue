@@ -5,30 +5,51 @@
                 <div class="row">
                     <div class="col-md-12">
                         <b-card bg-variant="" :title="$t('deployment.whatToDeploy')" class="card-option">
-                            <b-form-group>
-                                <b-form-radio-group v-model="selectedDeployableType" :options="deployableTypes" stacked
-                                    name="radiosStacked">
-                                </b-form-radio-group>
-                            </b-form-group>
-                            <v-select label="name" :filterable="false" :options="selectableDeployables"
-                                @search="onSearch" ref="deployables">
-                                <template slot="no-options">
-                                    {{$t('actions.chooseOption')}}
-                                </template>
-                                <template slot="option" slot-scope="option">
-                                    <div class="d-center">
-                                        {{ option.name }} (#{{option.id }})
-                                        <div class="platform-icon-small float-right" :class="'bg-' + option.platform.slug"></div>
-                                        {{ option.full_name }}
+                            <div class="border-bottom mb-2 pb-4">
+                                <label>1 - {{$tc('titles.workflow')}}</label>
+                                <v-select label="name" :filterable="false" :options="workflows" @search="onSearch"
+                                    ref="deployables" @input="selectWorkflow">
+                                    <template slot="no-options">
+                                        {{$t('actions.typeAndchooseOption')}}
+                                    </template>
+                                    <template slot="option" slot-scope="option">
+                                        <div class="d-center">
+                                            {{ option.name }} (#{{option.id }})
+                                            <div class="platform-icon-small float-right"
+                                                :class="'bg-' + option.platform.slug"></div>
+                                        </div>
+                                    </template>
+                                    <template slot="selected-option" scope="option">
+                                        <div class="selected d-center">
+                                            {{ option.name }} (#{{option.id }})
+                                        </div>
+                                    </template>
+                                </v-select>
+                            </div>
+                            <div v-if="step >= 2">
+                                <label>2 - {{$tc('titles.job')}}</label>
+                                <div class="p-2">
+                                    {{$t('deployment.requireExecution')}}
+                                </div>
+
+                                <b-form-group v-if="jobs && jobs.length">
+                                    <b-form-radio-group v-model="job" :options="jobs" stacked name="jobs"
+                                        @input="jobSelected">
+                                    </b-form-radio-group>
+                                </b-form-group>
+                                <div v-else>
+                                    <div class="alert alert-warning">
+                                        Nenhum job executado com sucesso para o fluxo escolhido
+                                        {{jobs}}
                                     </div>
-                                </template>
-                                <template slot="selected-option" scope="option">
-                                    <div class="selected d-center">
-                                        {{ option.full_name }}
-                                    </div>
-                                </template>
-                            </v-select>
+                                </div>
+                            </div>
                         </b-card>
+                        <router-link :to="{name: 'deployments'}">
+                            <button class="btn mt-2 float-right" @click="save">{{$t('actions.cancel')}}</button>
+                        </router-link>
+                        <button class="btn btn-primary mt-2 float-right" v-if="step===3"
+                            @click="save">{{$t('actions.saveAndContinue')}}...</button>
                     </div>
                 </div>
             </div>
@@ -55,19 +76,65 @@
         },
         data() {
             return {
-                deployableTypes: [
-                    { text: this.$t('deployment.savedModel'), value: 'model' },
-                    { text: this.$t('deployment.workflow'), value: 'workflow' }
-                ],
-                selectedDeployableType: "model",
-                selectableDeployables: [],
-                selectedDeployable: null
+                workflows: [],
+                workflow: null,
+                step: 1,
+                jobs: [],
+                job: null,
+                deployment: null,
             }
         },
         methods: {
+            onChange(val) {
+                alert(val)
+            },
             onSearch(search, loading) {
                 loading(true);
                 this._search(loading, search, this);
+            },
+            selectWorkflow(val) {
+                this.workflow = val;
+                this.step = (val !== '' && val !== null) ? 2 : 1;
+                if (this.step >= 2) {
+                    this.displayJobs(val.id);
+                }
+            },
+            save() {
+                const self = this;
+                const data = {
+                    job_id: this.job,
+                    workflow_id: this.workflow.id,
+                    workflow_name: this.workflow.name,
+                }
+                axios.post(`${seedUrl}/deployments`, data).then(resp => {
+                    self.deployment = resp.data;
+                    self.success(self.$t('messages.savedWithSuccess',
+                        { what: self.$tc('titles.deployment') }));
+                }).catch(function (e) {
+                    self.error(e)
+                })
+            },
+            jobSelected(checked) {
+                if (checked)
+                    this.step = 3;
+            },
+            displayJobs(workflowId) {
+                const self = this;
+                const data = {
+                    page: 1,
+                    size: 10,
+                    sort: 'id',
+                    asc: false,
+                    fields: 'id,name,created,status',
+                    workflow_id: workflowId
+                }
+                axios.get(`${standUrl}/jobs`, { params: data }).then(resp => {
+                    self.jobs = resp.data.data
+                        .filter(j => j.status === 'COMPLETED')
+                        .map((j) => { return { text: `${j.name} (${j.created})`, value: j.id } });
+                }).catch(function (e) {
+                    self.error(e)
+                })
             },
             _search: _.debounce((loading, search, vm) => {
                 const data = {
@@ -78,9 +145,8 @@
                     loading(false);
                 }).catch(function (e) {
                     loading(false);
-                    this.dispatch('error', e);
-                }
-                )
+                    vm.error(e)
+                })
             }, 350)
         }
     }
