@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 500px; padding: 0 5px 5px 0">
+  <div style="height: 100%; padding: 0 5px 5px 0">
     <l-map ref="mapRef">
       <l-tile-layer :url="url"></l-tile-layer>
     </l-map>
@@ -45,22 +45,20 @@ export default {
     this.mode = this.visualizationData.mode;
 
     this.$nextTick(() => {
-      if (this.mode.points) {
-        this.points.slice(0, 100).forEach(point => {      // TODO: Find a way to show larger datasets
+      if (this.mode.points || this.mode == 'points') {
+        this.points.forEach(point => {      // TODO: Find a way to show larger datasets
           L.marker([point.lat, point.lon])
           .addTo(this.$refs.mapRef.mapObject);
         });
-
-        console.log("Attention: The number of markers shown in the map are being limited.")
       }
 
-      if (this.mode.heatmap) {
+      if (this.mode.heat || this.mode.heatmap || this.mode == 'heatmap') {
         L.heatLayer(
-          this.points.map(point => [point.lat, point.lon, 1])
+          this.points.map(point => [point.lat, point.lon, point.value | 1])
         ).addTo(this.$refs.mapRef.mapObject);
       }
       this.$refs.mapRef.mapObject.fitBounds(this.getBounds(this.points))
-      this.$refs.mapRef.mapObject.setView([-15, -50], 3)
+      //this.$refs.mapRef.mapObject.setView([-15, -50], 3)
       
     })
   }

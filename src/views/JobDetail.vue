@@ -134,9 +134,9 @@
                         </div>
                     </b-tab>
                     <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length"
-                        @click="loadVisualizations">
-                        <div class="row" v-for="(result, inx) in job.results" :key="result.id">
-                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px">
+                        @click="showVisualizations = true">
+                        <div class="row" v-for="result in job.results" :key="result.id">
+                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px" v-if="showVisualizations">
                                 <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)"></caipirinha-visualization>
                             </div>
                         </div>
@@ -280,13 +280,11 @@
                 operationsLookup: new Map(),
                 selectedTask: {},
                 showSourceCode: false,
-                showProperties: false
+                showProperties: false,
+                showVisualizations: false,
             }
         },
         methods: {
-            loadVisualizations() {
-
-            },
             getTask(taskId) {
                 return this.tasks[taskId]
             },
