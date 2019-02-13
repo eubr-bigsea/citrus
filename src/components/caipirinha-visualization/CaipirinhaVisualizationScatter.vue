@@ -3,6 +3,9 @@
 </template>
 
 <script>
+import { setDatetimeOptions } from './CaipirinhaVisualizationUtils.js';
+
+
 export default {
   name: "caipirinha-visualization-scatter",
   props: ["visualizationData"],
@@ -26,7 +29,7 @@ export default {
     }
   },
   data: function() {
-    const options = {
+    let options = {
       chart: {
         type: "scatter"
       },
@@ -51,6 +54,9 @@ export default {
           .sort((a, b) => a[0] - b[0])
       }))
     };
+
+    if (this.visualizationData.x.type == 'time')
+      options = setDatetimeOptions(options);
 
     return { options };
   }
