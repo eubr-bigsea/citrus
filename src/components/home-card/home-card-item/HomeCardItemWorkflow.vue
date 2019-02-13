@@ -9,7 +9,7 @@
             <img :src="getUserAvatar()"/> {{item.user.name}}
         </template>
         <template slot="footer">
-            <small class="text-muted">{{getStatus()}} · {{item.updated | moment("from", "now")}}</small>
+            <small class="text-muted">{{getStatus()}} · {{item.updated | timeFromNow(this.$locale)}}</small>
             <span :class="['badge', getPlatformBadgeColor()]">{{this.item.platform.slug}}</span>
         </template>
     </home-card-item-base>

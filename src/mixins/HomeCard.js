@@ -27,9 +27,9 @@ export default {
         },
         getStatus() {
             if (this.item.created == this.item.updated)
-                return 'created';
+                return this.$t('common.created');
             else
-                return 'updated';
+                return this.$t('common.updated');
         },
     }
 }

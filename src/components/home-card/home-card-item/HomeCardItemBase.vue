@@ -49,6 +49,9 @@
 .home-card-item .badge {
     text-transform: uppercase;
 }
+.home-card-item .text-muted::first-letter {
+    text-transform: uppercase;
+}
 </style>
 
 <script>

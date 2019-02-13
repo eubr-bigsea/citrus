@@ -9,7 +9,7 @@
             {{item.description}}
         </template>
         <template slot="footer">
-            <small class="text-muted">{{getStatus()}} · {{item.updated | moment("from", "now")}}</small>
+            <small class="text-muted">{{getStatus()}} · {{item.updated | timeFromNow(this.$locale)}}</small>
             <span :class="['badge', getFormatBadgeColor()]">{{this.item.format}}</span>
         </template>
     </home-card-item-base>

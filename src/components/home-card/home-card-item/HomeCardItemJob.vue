@@ -9,7 +9,7 @@
             <img :src="getUserAvatar()"/> {{item.user.name}}
         </template>
         <template slot="footer">
-            <small class="text-muted">{{(item.finished || item.created) | moment("from", "now")}}</small>
+            <small class="text-muted">{{(item.finished || item.created) | timeFromNow(this.$locale)}}</small>
             <span :class="['badge', getStatusBadgeColor()]">{{this.item.status}}</span>
         </template>
     </home-card-item-base>

@@ -84,8 +84,15 @@ Vue.use(VueI18n)
 Vue.use(VueProgressBar, options)
 
 // Date-fns
-import { format, parse } from 'date-fns'
+import { distanceInWordsStrict, format, parse } from 'date-fns'
+
+const locales = {
+    en: require('date-fns/locale/en'),
+    pt: require('date-fns/locale/pt'),
+}
+
 Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MM/YYYY HH:MM') } })
+Vue.filter('timeFromNow', (v, l) => distanceInWordsStrict(new Date(), v, {addSuffix: true, locale: locales[l]}))
 
 // Highcharts
 import Highcharts from 'highcharts'
@@ -127,9 +134,6 @@ if (token) {
     axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
     axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
 }
-
-// Moment
-Vue.use(require('vue-moment'));
 
 // i18n
 const i18n = new VueI18n({
