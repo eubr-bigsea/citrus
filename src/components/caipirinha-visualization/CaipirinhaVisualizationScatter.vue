@@ -3,11 +3,33 @@
 </template>
 
 <script>
+import { setDatetimeOptions } from './CaipirinhaVisualizationUtils.js';
+
+
 export default {
   name: "caipirinha-visualization-scatter",
   props: ["visualizationData"],
+  methods: {
+    getType() {
+      let sample;
+      
+      try {
+        sample = this.visualizationData.data[0].values[0].x;
+      } catch(e) {
+        return 'linear';
+      }  
+      
+      if (isNaN(sample) && !isNaN(Date.parse(sample)))
+        return 'datetime';
+      
+      if (typeof sample == 'string')
+        return 'category';
+
+      return 'linear';
+    }
+  },
   data: function() {
-    const options = {
+    let options = {
       chart: {
         type: "scatter"
       },
@@ -17,7 +39,8 @@ export default {
       xAxis: {
         title: {
           text: this.visualizationData.x.title
-        }
+        },
+        type: this.getType()
       },
       yAxis: {
         title: {
@@ -31,6 +54,9 @@ export default {
           .sort((a, b) => a[0] - b[0])
       }))
     };
+
+    if (this.visualizationData.x.type == 'time')
+      options = setDatetimeOptions(options);
 
     return { options };
   }

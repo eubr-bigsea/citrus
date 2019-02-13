@@ -1,40 +1,44 @@
 <template>
-    <div>
-        <div class="row border-bottom border-primary p-3 d-flex justify-content-between">
-            <h2 class="title text-primary">{{$tc('titles.dataSource', 2)}}</h2>
-            <router-link :to="{name: 'addDataSource'}" class="btn btn-primary btn-sm">
-                <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type:
-                $tc('titles.dataSource').toLowerCase()})}}
+    <div class="">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>{{$tc('titles.dataSource', 2)}}</h1>
+            <router-link :to="{name: 'addDataSource'}" class="btn btn-sm btn-outline-primary">
+                {{$t('actions.addItem')}}
             </router-link>
         </div>
+        <hr>
         <div class="row">
             <div class="col-md-12">
-                <v-server-table :data="tableData" :columns="columns" :options="options" name="dataSourceList" ref="dataSourceList">
-                    <template slot="id" slot-scope="props">
-                        <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.id}}</router-link>
-                    </template>
-                    <template slot="name" slot-scope="props">
-                        <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.name}}</router-link>
-                    </template>
-                    <template slot="actions" slot-scope="props">
-                        <button class="btn btn-sm danger mr-2" @click="remove(props.row.id)">
-                            <font-awesome-icon icon="trash"></font-awesome-icon>
-                        </button>
-                        <button class="btn btn-sm ml-1" @click="download(props.row)" :title="$t('actions.download')">
-                            <span class="fa fa-download"></span>
-                        </button>
-                    </template>
-                    <template slot="created" slot-scope="props">
-                        {{props.row.created | formatJsonDate}}
-                    </template>
-                    <template slot="tags" slot-scope="props">
-                        <div v-if="props.row.tags">
-                            <div v-for="tag in (props.row.tags || '').split(',')" class="badge badge-info mr-1" :key="tag">
-                                {{tag}}
-                            </div>
-                        </div>
-                    </template>
-                </v-server-table>
+                <div class="card">
+                    <div class="card-body">
+                        <v-server-table :data="tableData" :columns="columns" :options="options" name="dataSourceList" ref="dataSourceList">
+                            <template slot="id" slot-scope="props">
+                                <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+                            </template>
+                            <template slot="name" slot-scope="props">
+                                <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">{{props.row.name}}</router-link>
+                            </template>
+                            <template slot="actions" slot-scope="props">
+                                <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                                    <font-awesome-icon icon="trash"></font-awesome-icon>
+                                </button>
+                                <button class="btn btn-sm btn-light" @click="download(props.row)" :title="$t('actions.download')">
+                                    <span class="fa fa-download"></span>
+                                </button>
+                            </template>
+                            <template slot="created" slot-scope="props">
+                                {{props.row.created | formatJsonDate}}
+                            </template>
+                            <template slot="tags" slot-scope="props">
+                                <div v-if="props.row.tags">
+                                    <div v-for="tag in (props.row.tags || '').split(',')" class="badge badge-info mr-1" :key="tag">
+                                        {{tag}}
+                                    </div>
+                                </div>
+                            </template>
+                        </v-server-table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -52,7 +56,7 @@
                 tableData: [],
                 showSideBar: false,
                 options: {
-                    skin: 'table-sm table table-striped',
+                    skin: 'table-sm table table-hover',
                     columnsClasses: {
                         name: 'th-20',
                         description: 'th-20',
@@ -168,36 +172,20 @@
         },
     }
 </script>
-<style scoped>
-    em {
-        font-size: .8em;
-    }
-
-    .th-5 {
-        width: 5%;
-    }
-
-    .th-10 {
-        width: 10%;
-    }
-
-    .th-20 {
-        width: 20%;
-    }
-
-    .form-inline {
-        width: 450px;
-        float: left;
-        display: block;
-    }
-
-    .form-inline label {
-        display: block !important;
-        font-weight: bold;
-    }
-
-    .VueTables__sort-icon {
-        display: block;
-        float: left;
-    }
+<style>
+.VueTables .form-inline label {
+    display: block !important;
+    font-weight: bold;
+}
+/* issue: Search and Limit Fields not inline when using latest Bootstrap4
+    https://github.com/matfish2/vue-tables-2/issues/486
+    The code below solve the problem.
+    TODO: Remove the code When the problem is resolved.
+*/
+.VueTables__search {
+    width: auto!important;
+}
+.VueTables__limit {
+    width: auto!important;
+}
 </style>
