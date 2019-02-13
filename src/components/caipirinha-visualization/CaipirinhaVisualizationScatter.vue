@@ -6,6 +6,25 @@
 export default {
   name: "caipirinha-visualization-scatter",
   props: ["visualizationData"],
+  methods: {
+    getType() {
+      let sample;
+      
+      try {
+        sample = this.visualizationData.data[0].values[0].x;
+      } catch(e) {
+        return 'linear';
+      }  
+      
+      if (isNaN(sample) && !isNaN(Date.parse(sample)))
+        return 'datetime';
+      
+      if (typeof sample == 'string')
+        return 'category';
+
+      return 'linear';
+    }
+  },
   data: function() {
     const options = {
       chart: {
@@ -17,7 +36,8 @@ export default {
       xAxis: {
         title: {
           text: this.visualizationData.x.title
-        }
+        },
+        type: this.getType()
       },
       yAxis: {
         title: {
