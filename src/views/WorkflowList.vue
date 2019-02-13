@@ -1,48 +1,51 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary p-3 d-flex justify-content-between">
-            <h2 class="title text-primary">{{$tc('titles.workflow', 2)}}</h2>
-            <a href="#/workflows/add" class="btn btn-primary btn-sm" role="button">
-                <font-awesome-icon icon="plus" size="1x"></font-awesome-icon> {{$t('actions.add', {type:
-                $tc('titles.workflow').toLowerCase()})}}
-            </a>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>{{$tc('titles.workflow', 2)}}</h1>
+            <router-link :to="{name: 'addWorkflow'}" class="btn btn-sm btn-outline-primary">
+                {{$t('actions.addItem')}}
+            </router-link>
         </div>
+        <hr>
         <div class="row">
             <div class="col-md-12">
-                <v-server-table :columns="columns" :options="options" ref="workflowList" name="workflowList">
-                    <template slot="id" slot-scope="props">
-                        <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.id}}</router-link>
-                    </template>
-                    <template slot="name" slot-scope="props">
-                        <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.name}}</router-link>
-                    </template>
-
-                    <template slot="platform" slot-scope="props">
-                        {{props.row.platform.name}}
-                    </template>
-                    <template slot="user_name" slot-scope="props">
-                        {{props.row.user.name}}
-                    </template>
-                    <template slot="created" slot-scope="props">
-                        {{props.row.created | formatJsonDate}}
-                    </template>
-                    <template slot="updated" slot-scope="props">
-                        {{props.row.updated | formatJsonDate}}
-                    </template>
-                    <div slot="afterFilter">
-                        <label>{{$tc('common.platform')}}:</label>
-                        <select class="form-control" v-model="platform">
-                            <option></option>
-                            <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">{{p.name}}</option>
-                        </select>
-                        <button type="button" class="ml-1 btn btn-sm btn-success" @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
+                <div class="card">
+                    <div class="card-body">
+                        <v-server-table :columns="columns" :options="options" ref="workflowList" name="workflowList">
+                            <template slot="id" slot-scope="props">
+                                <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.id}}</router-link>
+                            </template>
+                            <template slot="name" slot-scope="props">
+                                <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.name}}</router-link>
+                            </template>
+                            <template slot="platform" slot-scope="props">
+                                {{props.row.platform.name}}
+                            </template>
+                            <template slot="user_name" slot-scope="props">
+                                {{props.row.user.name}}
+                            </template>
+                            <template slot="created" slot-scope="props">
+                                {{props.row.created | formatJsonDate}}
+                            </template>
+                            <template slot="updated" slot-scope="props">
+                                {{props.row.updated | formatJsonDate}}
+                            </template>
+                            <div slot="afterFilter" class="ml-2">
+                                <label>{{$tc('common.platform')}}</label>
+                                <select class="form-control" v-model="platform">
+                                    <option></option>
+                                    <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">{{p.name}}</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-light ml-2" @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
+                            </div>
+                            <template slot="actions" slot-scope="props">
+                                <button class="btn btn-sm btn-light"  @click="remove(props.row.id)">
+                                    <font-awesome-icon icon="trash"></font-awesome-icon>
+                                </button>
+                            </template>
+                        </v-server-table>
                     </div>
-                    <template slot="actions" slot-scope="props">
-                        <button class="btn btn-sm danger mr-2"  @click="remove(props.row.id)">
-                            <font-awesome-icon icon="trash"></font-awesome-icon>
-                        </button>
-                    </template>
-                </v-server-table>
+                </div>
             </div>
         </div>
     </div>
@@ -62,7 +65,7 @@
                 columns: ['id', 'name', 'created', 'updated', 'platform', 'user_name', 'version', 'actions'],
                 showSideBar: false,
                 options: {
-                    skin: 'table-sm table table-striped',
+                    skin: 'table-sm table table-hover',
                     dateColumns: ['created', 'updated'],
                     columnClasses: {actions: 'th-10'},
                     headings: {
@@ -159,30 +162,3 @@
         }
     }
 </script>
-<style>
-    .row.border-primary {
-        margin-bottom: 10px;
-        padding: 15px 0;
-    }
-
-    .form-inline {
-        width: 650px;
-        float: left;
-        display: block;
-    }
-
-    .form-inline>div {
-        margin-right: 5px;
-    }
-
-    .form-inline label {
-        display: block !important;
-        font-weight: bold;
-    }
-
-    .VueTables__sort-icon {
-        display: block;
-        float: left;
-        margin-right: 5px
-    }
-</style>

@@ -58,8 +58,8 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
     faExclamationTriangle, faExclamationCircle
 ),
 
-    Vue.use(ClientTable);
-Vue.use(ServerTable, { useVuex: true, theme: 'bootstrap4' });
+Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
+Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 
 Vue.use(VueAxios, axios)
 Vue.use(BootstrapVue)
@@ -84,8 +84,15 @@ Vue.use(VueI18n)
 Vue.use(VueProgressBar, options)
 
 // Date-fns
-import { format, parse } from 'date-fns'
+import { distanceInWordsStrict, format, parse } from 'date-fns'
+
+const locales = {
+    en: require('date-fns/locale/en'),
+    pt: require('date-fns/locale/pt'),
+}
+
 Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MM/YYYY HH:MM') } })
+Vue.filter('timeFromNow', (v, l) => distanceInWordsStrict(new Date(), v, {addSuffix: true, locale: locales[l]}))
 
 // Highcharts
 import Highcharts from 'highcharts'
