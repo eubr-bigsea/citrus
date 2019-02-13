@@ -1,10 +1,9 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary p-2">
-            <div class="col-md-12 col-xl-12 mx-auto">
-                <h2 class="title text-primary">{{$tc('titles.dataSource', 1)}}</h2>
-            </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>{{$tc('titles.dataSource', 1)}}</h1>
         </div>
+        <hr>
         <div class="row">
             <div class="col-md-12 col-xg-12 mx-auto" v-if="dataSource.id">
                 <b-card no-body>

@@ -1,21 +1,26 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary p-3 d-flex justify-content-between">
-            <h2 class="title text-primary">{{$tc('titles.dashboard', 2)}}</h2>
-            <a href="#/dashboards/add" class="btn btn-primary btn-sm" role="button">
-                <font-awesome-icon icon="plus" size="1x"></font-awesome-icon>  {{$t('actions.add', {type: $tc('titles.dashboard').toLowerCase()})}}
-            </a>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>{{$tc('titles.dashboard', 2)}}</h1>
         </div>
+        <hr>
         <div class="row">
             <div class="col-md-12">
-                <v-server-table :columns="columns" :options="options" ref="listTable" name="dashboardList">
-                    <template slot="id" slot-scope="props">
-                        <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
-                    </template>
-                    <template slot="updated" slot-scope="props">
-                        {{props.row.updated | formatJsonDate}}
-                    </template>
-                </v-server-table>
+                <div class="card">
+                    <div class="card-body">
+                        <v-server-table :columns="columns" :options="options" ref="listTable" name="dashboardList">
+                            <template slot="id" slot-scope="props">
+                                <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+                            </template>
+                            <template slot="title" slot-scope="props">
+                                <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">{{props.row.title}}</router-link>
+                            </template>
+                            <template slot="updated" slot-scope="props">
+                                {{props.row.updated | formatJsonDate}}
+                            </template>
+                        </v-server-table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -35,6 +40,7 @@
                 
                 showSideBar: false,
                 options: {
+                    skin: 'table-sm table table-hover',
                     dateColumns: ['updated'],
                     headings: {
                         id: 'ID',
@@ -94,28 +100,3 @@
         }
     }
 </script>
-<style>
-    .row.border-primary {
-        margin-bottom: 10px;
-        padding: 15px 0;
-    }
-    .form-inline {
-        width: 650px;
-        float: left;
-        display: block;
-    }
-
-    .form-inline>div {
-        margin-right: 5px;
-    }
-
-    .form-inline label {
-        display: block !important;
-        font-weight: bold;
-    }
-    .VueTables__sort-icon {
-        display: block;
-        float: left;
-        margin-right: 5px
-    }
-</style>

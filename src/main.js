@@ -58,8 +58,8 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
     faExclamationTriangle, faExclamationCircle
 ),
 
-    Vue.use(ClientTable);
-Vue.use(ServerTable, { useVuex: true, theme: 'bootstrap4' });
+Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
+Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 
 Vue.use(VueAxios, axios)
 Vue.use(BootstrapVue)
@@ -127,6 +127,9 @@ if (token) {
     axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
     axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
 }
+
+// Moment
+Vue.use(require('vue-moment'));
 
 // i18n
 const i18n = new VueI18n({

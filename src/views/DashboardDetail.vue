@@ -1,43 +1,49 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary p-2">
-            <div class="col-md-10">
-                <h2 class="title text-primary">Dashboards</h2>
-            </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>{{$tc('titles.dashboard', 2)}}</h1>
         </div>
-        <div>
-            <div class="input-group mb-3">
-                <input type="text" class="form-control" v-model="title">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" @click.stop="save">
-                            <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
+        <hr>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" v-model="title">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" @click.stop="save">
+                                    <span class="fa fa-save"></span> {{$tc('actions.save')}}
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <grid-layout
+                            :layout.sync="layout"
+                            :col-num="12"
+                            :row-height="30"
+                            :is-draggable="true"
+                            :is-resizable="true"
+                            :is-mirrored="false"
+                            :is-responsive="true"
+                            :vertical-compact="false"
+                            :margin="[10, 10]"
+                            :use-css-transforms="true"
+                            @layout-updated="layoutUpdatedEvent"
+                        >
+
+                            <grid-item v-for="item in layout"
+                                :x="item.x"
+                                :y="item.y"
+                                :w="item.w"
+                                :h="item.h"
+                                :i="item.i"
+                            >
+                                <caipirinha-visualization :url="item.url"></caipirinha-visualization>
+                            </grid-item>
+                        </grid-layout>
+                    </div>
                 </div>
             </div>
-            
-            <grid-layout
-                :layout.sync="layout"
-                :col-num="12"
-                :row-height="30"
-                :is-draggable="true"
-                :is-resizable="true"
-                :is-mirrored="false"
-                :is-responsive="true"
-                :vertical-compact="false"
-                :margin="[10, 10]"
-                :use-css-transforms="true"
-                @layout-updated="layoutUpdatedEvent"
-            >
-
-                <grid-item v-for="item in layout"
-                    :x="item.x"
-                    :y="item.y"
-                    :w="item.w"
-                    :h="item.h"
-                    :i="item.i"
-                >
-                    <caipirinha-visualization :url="item.url"></caipirinha-visualization>
-                </grid-item>
-            </grid-layout>
         </div>
     </div>
 </template>
