@@ -46,7 +46,8 @@
             return {
                 deployment: null,
                 loaded: false,
-                operations: null
+                operations: null,
+                operationsLookup: new Map(),
             }
         },
         mounted() {
@@ -57,10 +58,17 @@
             self.$Progress.start();
             self.load().then(() => {
                 axios.get(`${tahitiUrl}/operations`).then(resp => {
-                    self.operations = resp.data.data;
+                    self.operations = resp.data;
+                    self.operations.forEach((op) => {
+                        self.operationsLookup[op.id] = op
+                    })
                     axios.get(`${standUrl}/jobs/${this.deployment.job_id}`, data).then(
                         (resp) => {
                             self.job = resp.data;
+                            self.job.workflow.tasks.forEach((task) => {
+                                task.operation = self.operationsLookup[task.operation.id];
+                                task.status = task.status || "";
+                            });
                             self.loaded = true;
                             self.$Progress.finish();
                         }

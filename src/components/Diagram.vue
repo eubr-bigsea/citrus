@@ -7,7 +7,7 @@
                 <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true"
                     id="lemonade-diagram" v-if="loaded" ref="diagram"
                     :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance"
+                    <task-component v-for="task of tasks" :task="task" :instance="instance"
                         :key="`${$parent.version} - ${task.id}`" :enableContextMenu="editable" :draggable="editable"
                         :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
 
@@ -107,7 +107,10 @@
             instance: null,
             group: null,
             operations: null,
-            version: 0
+            version: 0,
+            environment: {
+                default: 'DESIGN'
+            }
         },
         data() {
             return {
@@ -173,7 +176,8 @@
                         return {};
                     }
                 } else {
-                    return this.workflow.tasks;
+                    return this.workflow.tasks.filter(
+                        t => t.environment === undefined || t.environment === this.environment);
                 }
             },
             groups() { return this.$store.getters.getGroups; },
@@ -214,6 +218,9 @@
             showToolbar: { default: true },
             title: {},
             workflow: { name: '' },
+            environment: {
+                default: 'DESIGN'
+            }
         },
         watch: {
             workflow() {
@@ -343,7 +350,8 @@
             // Required, otherwise zoom will not work.
             // It seems that jsplumb is loosing this setting between
             // calls to init() and mounted()
-            this.instance.setContainer("lemonade-diagram");
+            // this.instance.setContainer("lemonade-diagram");
+            this.instance.setContainer(this.$refs.diagram);
 
             this.readyTasks = new Set();
             // this.$root.$refs.toastr.defaultPosition = 'toast-bottom-full-width';
@@ -470,6 +478,7 @@
                 });
                 task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
                 task.enabled = true;
+                task.environment = this.environment;
                 this.$root.$emit('addTask', task)
             },
 
@@ -515,9 +524,6 @@
             clearTasks() {
                 this.$root.$emit('clearTasks');
             },
-            // addFlow(flow) {
-            //    this.$root.$emit('addFlow', flow)
-            // },
             removeFlow(flow) {
                 this.$root.$emit('removeFlow', flow);
             },
@@ -586,24 +592,18 @@
                     this.$emit('onclear-selection');
 
                     self.workflow.tasks.forEach((task) => {
-                        let taskElem = document.getElementById(task.id);
-                        if (taskElem) {
-                            let bounds = taskElem.getBoundingClientRect();
-
-                            // Uses task left and top because offset calculation
-                            // was already done
-                            /*console.debug(x1 <= task.left,  x2 >= task.left + bounds.width,
-                                    y1 <= task.top, y2 >= task.top + bounds.height,
-                                    bounds.width, bounds.height, x1, x2, y1, y2)
-                                    */
-                            if (x1 <= task.left && x2 >= task.left + bounds.width
-                                && y1 <= task.top && y2 >= task.top + bounds.height) {
-                                // console.debug(`overlap with ${task.operation.name}`)
-                                self.instance.addToDragSelection(task.id);
-                                self.selectedElements.push(task.id);
+                        if (task.environment === this.environment) {
+                            let taskElem = document.getElementById(task.id);
+                            if (taskElem) {
+                                let bounds = taskElem.getBoundingClientRect();
+                                // Uses task left and top because offset calculation
+                                // was already done
+                                if (x1 <= task.left && x2 >= task.left + bounds.width
+                                    && y1 <= task.top && y2 >= task.top + bounds.height) {
+                                    self.instance.addToDragSelection(task.id);
+                                    self.selectedElements.push(task.id);
+                                }
                             }
-                            //console.debug (bounds.left, task.left)
-                            //console.debug(task)
                         }
                     });
                 }
@@ -1081,11 +1081,13 @@
                             source_id, source_port,
                             target_id, target_port,
                             source_port_name, target_port_name,
+                            environment: self.environment
                         };
                         self.$root.$emit("addFlow", flow, con);
                     }
                 });
-                self.instance.setContainer("lemonade-diagram");
+                // self.instance.setContainer("lemonade-diagram");
+                self.instance.setContainer(this.$refs.diagram);
             },
         },
     });

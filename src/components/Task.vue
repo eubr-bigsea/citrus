@@ -1,5 +1,5 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
+    <div :class="getClasses" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
         v-on:click.stop="click" @contextmenu="openMenu">
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
@@ -207,9 +207,20 @@
             inGroup: function () {
                 let elem = this.$refs.task;
                 return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
+            },
+            getClasses(){
+                const allClasses = [this.classes];
+                if (!this.task.enabled) {
+                    allClasses.push('disabled');
+                }
+                if (this.task.environment === 'DEPLOYMENT'){
+                    allClasses.push('deployment')
+                }
+                return allClasses.join(' ');
             }
         },
         methods: {
+            
             getClassesForDecor(value) {
                 let result = [];
                 switch (value) {
@@ -1069,5 +1080,8 @@
 
     .margin-top-10 {
         margin-top: 10px;
+    }
+    .deployment {
+        border: 1px dashed !important;
     }
 </style>

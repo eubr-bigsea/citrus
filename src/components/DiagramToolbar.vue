@@ -83,7 +83,8 @@
             }
         },
         props: {
-            workflow: {}
+            workflow: {},
+            showExecute: {default: true}
         },
         methods: {
             toggleTasks() {

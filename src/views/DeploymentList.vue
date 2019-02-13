@@ -89,6 +89,7 @@
                     saveState: true,
                     filterable: ['name', 'album'],
                     requestFunction: function (data) {
+                        const self = this;
                         data.sort = data.orderBy
                         data.asc = data.ascending === 1 ? 'true' : 'false'
                         data.size = data.limit
@@ -101,7 +102,7 @@
                                 return { data: resp.data.data, count: resp.data.pagination.total };
                             }).catch(function (e) {
                                 this.$Progress.finish();
-                                this.dispatch('error', e);
+                                self.$parent.error(e);
                             }.bind(this));
                     }
                 }

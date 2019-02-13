@@ -33,7 +33,8 @@
                         </div>
                         <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
                             <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                v-if="loaded" :loaded="loaded" :version="workflow.version"></diagram>
+                                v-if="loaded" :loaded="loaded" :version="workflow.version"
+                                environment="DESIGN"></diagram>
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task"
                                     :suggestions="getSuggestions(selectedTask.task.id)" />
@@ -168,7 +169,24 @@
                     </div>
                 </b-card>
             </b-tab>
+            <b-tab :title="$tc('titles.deployment', 1)" title-item-class="tab-order-6" purpose="deployment">
+                    <div class="row pt-1">
+                        <div class="col-md-2">
+                            <toolbox :operations="operations"></toolbox>
+                        </div>
+                        <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
+                            <diagram :workflow="workflow" ref="deployDiagram" id="deploy-diagram"
+                                :operations="operations" v-if="showDeployment" :loaded="loaded" :version="workflow.version"
+                                environment="DEPLOYMENT">
+                            </diagram>
+                            <slideout-panel :opened="showProperties">
+                                <property-window :task="selectedTask.task"
+                                    :suggestions="getSuggestions(selectedTask.task.id)" />
+                            </slideout-panel>
+                        </div>
 
+                    </div>
+                </b-tab>
         </b-tabs>
 
         <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
@@ -287,6 +305,8 @@
                 selectedTask: { task: { operation: {} } },
                 showPreviousJobs: false,
                 showProperties: false,
+                showDeployment: false,
+                showExecute: true,
                 validationErrors: [],
                 workflow: { tasks: [], flows: [], platform: {} },
                 // propertyStyles: [
@@ -485,9 +505,15 @@
             toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
             updateSelectedTab(index) {
-                //this.selectedTab = index;
-                console.debug(index)
-                this.$refs.diagram.repaint();
+                if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'workflow'){
+                    this.$refs.diagram.repaint();
+                    this.showExecute = true;
+                    this.showDeployment = false;
+                } else if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'deployment'){
+                    this.showExecute = false;
+                    this.showDeployment = true;
+                    //this.$refs.deployDiagram.repaint();
+                }
             },
             load() {
                 let self = this;
