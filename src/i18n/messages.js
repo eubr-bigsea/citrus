@@ -29,9 +29,10 @@ export default {
             saveAs: 'Salvar como',
             saveAsImage: 'Salvar como imagem',
             search: 'Pesquisar',
-            showHistory: 'Exibir histórico',
-            showResults: 'Exibir resultados',
             show: 'Exibir',
+            showHistory: 'Exibir histórico',
+            showProperties: 'Exibir propriedades',
+            showResults: 'Exibir resultados',
             simpleAdd: 'Adicionar',
             test: 'Testar',
             toggleTasks: 'Habilitar/desabilitar tarefas'
@@ -276,6 +277,7 @@ export default {
             required: 'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
             restoreHistory: 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored: 'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
+            useAsTemplate: 'Usar este fluxo de trabalho como modelo',
             usingDisabledOperation: 'Tarefa usa operação desabilitada no Lemonade',
             validationExplanation: 'Há um erro no fluxo de trabalho. Por favor, corrija-o antes de executar o fluxo. | Existem erros no fluxo de trabalho. Por favor, corrija-os antes de executar o fluxo.'
         },
@@ -311,10 +313,11 @@ export default {
             saveAs: 'Save as',
             saveAsImage: 'Save as image',
             search: 'Search',
+            show: 'Show',
             showHistory: 'Show history',
+            showProperties: 'Show properties',
             showResults: 'Show results',
             simpleAdd: 'Add',
-            show: 'Show',
             test: 'Test',
             toggleTasks: 'Enable/disable tasks'
         },
@@ -548,6 +551,7 @@ export default {
             required: 'Please, complete the required information for the execution of the workflow',
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored: 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
+            useAsTemplate: 'Use this workflow as a template',
             usingDisabledOperation: 'Task is using a disabled operation in Lemonade',
             validationExplanation: 'There is an error in the workflow. Please, fix it before running the workflow. | There are errors in the workflow. Please, fix them before running the workflow.'
         }
