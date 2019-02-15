@@ -15,10 +15,12 @@
             </b-btn>
         </b-button-group>
         <b-button-group size="sm" class="mx-1">
-            <b-btn variant="secondary" @click.prevent="distribute('horizontal', 'left')" :title="$t('actions.distributeHorizontally')">
+            <b-btn variant="secondary" @click.prevent="distribute('horizontal', 'left')"
+                :title="$t('actions.distributeHorizontally')">
                 <span class="fa fa-arrows-alt-h"></span>
             </b-btn>
-            <b-btn variant="secondary" @click.prevent="distribute('vertical', 'top')" :title="$t('actions.distributeVertically')">
+            <b-btn variant="secondary" @click.prevent="distribute('vertical', 'top')"
+                :title="$t('actions.distributeVertically')">
                 <span class="fa fa-arrows-alt-v"></span>
             </b-btn>
             <!--
@@ -29,11 +31,16 @@
             <b-btn variant="secondary" @click.prevent="toggleTasks" :title="$t('actions.toggleTasks')">
                 <span class="fa fa-toggle-on"></span>
             </b-btn>
+
+        </b-button-group>
+        <b-button-group>
+            <b-btn size="sm" variant="secondary" @click.prevent="showProperties" :title="$t('actions.showProperties')">
+                <span class="fa fa-cogs"></span>
+            </b-btn>
         </b-button-group>
 
         <b-input-group size="sm" class="mx-1 zoom">
-            <b-form-select v-model="zoom"
-                :options="[
+            <b-form-select v-model="zoom" :options="[
                     {value: .6, text: '60%'},
                     {value: .7, text: '70%'},
                     {value: .8, text: '80%'},
@@ -45,20 +52,21 @@
                     {value: 1.4, text: '140%'}
                 ]">
             </b-form-select>
-        </b-input-group> 
+        </b-input-group>
     </b-button-toolbar>
 </template>
 
 <style scoped>
-.toolbar {
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    z-index: 1;
-}
-.zoom {
-    width: 70px!important;
-}
+    .toolbar {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        z-index: 1;
+    }
+
+    .zoom {
+        width: 75px !important;
+    }
 </style>
 
 <script>
@@ -102,9 +110,12 @@
             execute() {
                 this.$root.$emit('onclick-execute');
             },
+            showProperties() {
+                this.$root.$emit('onshow-properties')
+            }
         },
         watch: {
-            zoom(){
+            zoom() {
                 this.$root.$emit('onzoom', this.zoom);
             }
         }

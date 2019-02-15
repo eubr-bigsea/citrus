@@ -21,11 +21,11 @@
                             <template slot="platform" slot-scope="props">
                                 {{props.row.platform.name}}
                             </template>
+                            <template slot="is_template" slot-scope="props">
+                                {{$tc(props.row.is_template ? 'common.yes': 'common.no')}}
+                            </template>
                             <template slot="user_name" slot-scope="props">
                                 {{props.row.user.name}}
-                            </template>
-                            <template slot="created" slot-scope="props">
-                                {{props.row.created | formatJsonDate}}
                             </template>
                             <template slot="updated" slot-scope="props">
                                 {{props.row.updated | formatJsonDate}}
@@ -62,23 +62,22 @@
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'name', 'created', 'updated', 'platform', 'user_name', 'version', 'actions'],
-                showSideBar: false,
+                columns: ['id', 'name', 'updated', 'platform', 'user_name', 'version', 'is_template', 'actions'],
                 options: {
                     skin: 'table-sm table table-hover',
-                    dateColumns: ['created', 'updated'],
-                    columnClasses: {actions: 'th-10'},
+                    dateColumns: ['updated'],
+                    columnClasses: { actions: 'th-10' },
                     headings: {
                         id: 'ID',
                         name: this.$tc('common.name'),
-                        created: this.$tc('common.created'),
                         updated: this.$tc('common.updated'),
                         platform: this.$tc('common.platform'),
                         user_name: this.$tc('common.user.name'),
                         version: this.$tc('common.version'),
+                        is_template: this.$tc('titles.template'),
                         actions: this.$tc('common.action', 2),
                     },
-                    sortable: ['name', 'id', 'created', 'updated'],
+                    sortable: ['name', 'id', 'updated'],
                     filterable: ['name', 'id'],
                     sortIcon: {
                         base: 'fa fas',
@@ -96,7 +95,7 @@
                         data.size = data.limit
                         data.name = data.query
 
-                        data.fields = 'id,name,platform,created,updated,user,version';
+                        data.fields = 'id,name,platform,updated,user,version,is_template';
 
                         let url = `${tahitiUrl}/workflows?enabled=1`;
                         let headers = {}
