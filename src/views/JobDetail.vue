@@ -38,11 +38,11 @@
                                         <b-tabs>
                                             <b-tab active title-item-class="smalltab">
                                                 <template slot="title">
-                                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status"></div>
+                                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status" id="dtl-job-status"></div>
                                                     {{$tc('job.logs', 2)}}
                                                 </template>
                                                 <div class="pl-4 mr-3 mt-1">
-                                                    <div class="alert alert-secondary">{{job.status_text}}</div>
+                                                    <div class="alert alert-secondary" id="dtl-job-status-text">{{job.status_text}}</div>
                                                     <div style="font-size:.8em" class="mt-2" v-if="job.exception_stack">
                                                         <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
                                                         <div v-if="details">

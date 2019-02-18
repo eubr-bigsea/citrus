@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                             <div slot="modal-footer" class="w-100 text-right">
-                                <button class="btn btn-success" @click="execute">
+                                <button class="btn btn-success" @click="execute" id="mdl-execute-wf">
                                     <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
                                 <button class="ml-1 btn" @click="cancelExecute">{{$t('actions.cancel')}}</button>
                             </div>
