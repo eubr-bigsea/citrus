@@ -336,9 +336,6 @@
             task: function (n, o) {
                 
             },
-            'task.status': function (n, o) {
-                console.debug('va')
-            }
         },
         mounted() {
             const self = this;
