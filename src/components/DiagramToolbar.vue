@@ -16,7 +16,7 @@
                     <span class="fa fa-history"></span> {{$t('actions.showHistory')}}
                 </b-btn>
 
-                <b-btn class="mr-1" size="sm" @click.prevent="execute" variant="success">
+                <b-btn class="mr-1" size="sm" @click.prevent="execute" variant="success" id="tlb-execute-wf">
                     <span class="fa fa-play"></span> {{$t('actions.execute')}}</b-btn>
 
                 <b-input-group size="sm" class="w-25">
