@@ -5,8 +5,7 @@
                 <div class="border p-2 mb-1">
                     <strong>{{$tc('titles.workflow')}}: </strong>
                     <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                        v-if="workflow.id">{{workflow.id}} - {{workflow.name}} ({{$t('actions.back').toLowerCase()}})
-                    </router-link>
+                        v-if="workflow.id">{{workflow.id}} - {{workflow.name}} ({{$t('actions.back').toLowerCase()}})</router-link>
                 </div>
                 <b-tabs>
                     <b-tab active title-item-class="smalltab">
@@ -16,9 +15,8 @@
                         <div class="row mt-1">
                             <div class="col-md-12" style="position: relative; overflow: hidden; height: 65vh;">
                                 <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                    :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false"
-                                    shink="true" v-if="loaded" :loaded="loaded" :showTaskDecoration="true"
-                                    :initialZoom=".7" />
+                                    :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false" shink="true"
+                                    v-if="loaded" :loaded="loaded" :showTaskDecoration="true" :initialZoom=".7"/>
                                 <slideout-panel :opened="showProperties" v-if="selectedTask && selectedTask.operation">
                                     <div style="background: red; height: 60vh; width: 300px" class="p-2">
                                         <h6>{{$tc('titles.property', 2)}}</h6>
@@ -34,23 +32,19 @@
                                     </div>
                                 </slideout-panel>
                             </div>
-                            <div class="fixed-bottom m-2 border"
-                                style="height: 200px; background: white; overflow: auto">
+                            <div class="fixed-bottom m-2 border" style="height: 200px; background: white; overflow: auto">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <b-tabs>
                                             <b-tab active title-item-class="smalltab">
                                                 <template slot="title">
-                                                    <div class="circle lemonade-job" :class="jobStatus"
-                                                        :title="job.status" id="dtl-job-status"></div>
+                                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status" id="dtl-job-status"></div>
                                                     {{$tc('job.logs', 2)}}
                                                 </template>
                                                 <div class="pl-4 mr-3 mt-1">
-                                                    <div class="alert alert-secondary" id="dtl-job-status-text">
-                                                        {{job.status_text}}</div>
+                                                    <div class="alert alert-secondary" id="dtl-job-status-text">{{job.status_text}}</div>
                                                     <div style="font-size:.8em" class="mt-2" v-if="job.exception_stack">
-                                                        <a href="#"
-                                                            @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
+                                                        <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
                                                         <div v-if="details">
                                                             <code><pre>{{job.exception_stack}}</pre></code>
                                                         </div>
@@ -60,8 +54,7 @@
                                                     <div v-for="log in sortedLogs" :key="log.id" class="job-log pl-4"
                                                         :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
                                                         <small>
-                                                            <span class="badge-custom"
-                                                                :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
+                                                            <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
                                                                 {{log.level}}
                                                             </span> &nbsp;
                                                             <span>{{log.date}}</span>&nbsp;
@@ -80,8 +73,7 @@
                                             </b-tab>
                                             <b-tab :title="$t('titles.errorDetail')" title-item-class="smalltab">
                                                 <div style="font-size:.8em" class="mt-2 p-2" v-if="job.exception_stack">
-                                                    <a href="#"
-                                                        @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
+                                                    <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
                                                     <div v-if="details">
                                                         <code><pre>{{job.exception_stack}}</pre></code>
                                                     </div>
@@ -99,8 +91,7 @@
                     <b-tab :title="$tc('job.results', 2)" title-item-class="smalltab">
                         <div class="row" v-for="(step, inx) in job.steps" :key="inx">
                             <div class="col-md-12 lemonade">
-                                <div class="mt-2 border-bottom pb-2"
-                                    v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
+                                <div class="mt-2 border-bottom pb-2" v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
                                     <TaskDisplay :task="getTask(step.task.id)" /> &nbsp;</strong>
                                     {{step.status}}
                                     <div v-for="log in step.logs" :key="log.id" style="font-size:.9em">
@@ -142,13 +133,11 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab"
-                        v-if="job.results && job.results.length" @click="showVisualizations = true">
+                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length"
+                        @click="showVisualizations = true">
                         <div class="row" v-for="result in job.results" :key="result.id">
-                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px"
-                                v-if="showVisualizations">
-                                <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)">
-                                </caipirinha-visualization>
+                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px" v-if="showVisualizations">
+                                <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)"></caipirinha-visualization>
                             </div>
                         </div>
                     </b-tab>
@@ -352,14 +341,21 @@
                     }
                 });
                 socket.on('update job', (msg) => {
+                    self.jobStatus = msg.status.toLowerCase();
                     if (msg.id === self.job.id && self.job.status !== 'COMPLETED') {
-                        self.jobStatus = msg.status.toLowerCase();
+                        self.job.status = msg.status;
                         self.job.finished = msg.finished;
 
                         if (msg.message) {
+                            // let finalMsg = msg.message.replace(/&/g, '&amp;')
+                            //     .replace(/"/g, '&quot;')
+                            //     .replace(/</g, '&lt;')
+                            //     .replace(/>/g, '&gt;');;
                             const finalMsg = msg.message;
                             self.job.status_text = finalMsg;
                             if (msg.status === 'COMPLETED') {
+                                // hack
+                                window.setTimeout(() => self.jobStatus = 'COMPLETED', 10)
                                 self.success(finalMsg);
                             } else if (msg.status === 'ERROR') {
                                 if (msg.exception_stack) {
@@ -369,9 +365,6 @@
                             }
                         }
                     }
-                    self.$nextTick(() => {
-                        self.job.status = msg.status;
-                    });
                 });
                 socket.on('task result', (msg) => {
                     self.job.results.push(msg);
