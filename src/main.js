@@ -59,7 +59,7 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
 ),
 
 Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
-Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
+Vue.use(ServerTable, {}, false, 'bootstrap4', 'default');
 
 Vue.use(VueAxios, axios)
 Vue.use(BootstrapVue)
