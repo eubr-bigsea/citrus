@@ -56,7 +56,11 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
     faDownload, faMinusCircle, faChevronCircleDown, faChevronCircleUp, faTimesCircle, faHandPaper, faStopCircle,
     faCheckCircle, faPauseCircle, faSync, faCheckSquare, faSquare, faLightbulb, faAngleDown, faAngleRight,
     faExclamationTriangle, faExclamationCircle
-),
+)
+
+import {faSave as farSave, faCopy as farCopy} from '@fortawesome/free-regular-svg-icons'
+
+library.add(farSave, farCopy)
 
 Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
