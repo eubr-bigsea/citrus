@@ -1,27 +1,37 @@
 <template>
-    <div class="row" style="overflow:hidden">
+    <div>
         <TahitiSuggester />
-        <div class="col-md-12">
-            <diagram-toolbar :workflow="workflow" :disabled="!loaded"></diagram-toolbar>
-            <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="justify-content-center">
-                <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
-                    :active="form.order === minFormOrder" :key="form.id">
-                    <template slot="title">
-                        <span class="fa fa-cogs"></span> {{form.name}}
-                    </template>
-                    <div class="card mt-1" style="min-height: 90vh">
-                        <div class="card-body">
-                            <WorkflowProperty v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded">
-                            </WorkflowProperty>
-                        </div>
+        
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="header-pretitle" >{{$tc('titles.workflow', 1)}}</h6>
+                <input-header v-model="workflow.name" ></input-header>
+            </div>
+            <div>
+                <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
+            </div>
+        </div>
+
+        <b-tabs  @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="custom-tab">
+            <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
+                :active="form.order === minFormOrder" :key="form.id">
+                <template slot="title">
+                    <span class="fa fa-cogs"></span> {{form.name}}
+                </template>
+                <div class="card mt-1" style="min-height: 90vh">
+                    <div class="card-body">
+                        <WorkflowProperty v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded">
+                        </WorkflowProperty>
                     </div>
-                </b-tab>
-                <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
-                    <div class="row pt-1">
-                        <div class="col-md-2">
+                </div>
+            </b-tab>
+            <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
+                <b-card>
+                    <div class="row">
+                        <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
                             <toolbox :operations="operations"></toolbox>
                         </div>
-                        <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
+                        <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
                             <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
                                 v-if="loaded" :loaded="loaded" :version="workflow.version"></diagram>
                             <slideout-panel :opened="showProperties">
@@ -120,38 +130,49 @@
                             </div>
                         </b-modal>
                     </div>
-                </b-tab>
-                <b-tab :title="$tc('titles.job', 2)" title-item-class="tab-order-6" @click="showJobs">
-                    <WorkflowExecution :workflow-id="workflow.id" v-if="showPreviousJobs" />
-                </b-tab>
+                </b-card>
+            </b-tab>
+            <b-tab :title="$tc('titles.job', 2)" title-item-class="tab-order-6" @click="showJobs">
+                <b-card>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col justify-content-center">
+                                <WorkflowExecution :workflow-id="workflow.id" v-if="showPreviousJobs" />
+                            </div>
+                        </div>
+                    </div>
+                </b-card>
+            </b-tab>
 
-            </b-tabs>
-            <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
-                <p>{{resultTask.step.status}}</p>
-                <div v-for="log in resultTask.step.logs" :key="log.id">
-                    {{log}}
-                </div>
-                <div>
-                    {{resultTask.result}}
-                </div>
-            </b-modal>
-            <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true"
-                :title="$tc('titles.validationErrors', 1)">
-                <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
-                <table class="table table-sm">
-                    <tr>
-                        <th>{{$tc('titles.tasks')}}</th>
-                        <th>{{$tc('titles.value')}}</th>
-                        <th>{{$tc('titles.error')}}</th>
-                    </tr>
-                    <tr v-for="err in validationErrors" :key="err.sequential">
-                        <td>{{err.task.name}}</td>
-                        <td>{{err.field}}</td>
-                        <td>{{err.message}}</td>
-                    </tr>
-                </table>
-            </b-modal>
-        </div>
+        </b-tabs>
+
+        <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
+            <p>{{resultTask.step.status}}</p>
+            <div v-for="log in resultTask.step.logs" :key="log.id">
+                {{log}}
+            </div>
+            <div>
+                {{resultTask.result}}
+            </div>
+        </b-modal>
+        
+        <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true"
+            :title="$tc('titles.validationErrors', 1)">
+            <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
+            <table class="table table-sm">
+                <tr>
+                    <th>{{$tc('titles.tasks')}}</th>
+                    <th>{{$tc('titles.value')}}</th>
+                    <th>{{$tc('titles.error')}}</th>
+                </tr>
+                <tr v-for="err in validationErrors" :key="err.sequential">
+                    <td>{{err.task.name}}</td>
+                    <td>{{err.field}}</td>
+                    <td>{{err.message}}</td>
+                </tr>
+            </table>
+        </b-modal>
+
     </div>
 </template>
 
@@ -161,11 +182,12 @@
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import DiagramComponent from '../components/Diagram.vue'
     import PropertyWindow from '../components/PropertyWindow.vue'
-    import DiagramToolbarComponent from '../components/DiagramToolbar.vue'
+    import WorkflowToolbar from '../components/WorkflowToolbar.vue'
     import ToolboxComponent from '../components/Toolbox.vue'
     import SlideOutPanel from '../components/SlideOutPanel.vue'
     import WorkflowProperty from '../components/WorkflowProperty.vue'
     import WorkflowExecution from '../components/WorkflowExecution.vue'
+    import InputHeader from '../components/InputHeader.vue'
     import html2canvas from 'html2canvas';
     import Notifier from '../mixins/Notifier'
 
@@ -178,13 +200,14 @@
         mixins: [Notifier],
         components: {
             'diagram': DiagramComponent,
-            'diagram-toolbar': DiagramToolbarComponent,
             'toolbox': ToolboxComponent,
+            'workflow-toolbar': WorkflowToolbar,
             'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
             WorkflowProperty,
             WorkflowExecution,
             VuePerfectScrollbar,
+            InputHeader,
             TahitiSuggester: () => {
 
                 let tahitiUrl = process.env.VUE_APP_TAHITI_URL

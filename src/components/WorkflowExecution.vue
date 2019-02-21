@@ -1,6 +1,4 @@
 <template>
-    <div class="row">
-        <div class="col-md-3">
             <v-server-table :data="jobs" :columns="columns" :options="options" name="jobList" ref="jobList">
                 <template slot="id" slot-scope="props">
                     <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
@@ -19,8 +17,6 @@
                     {{props.row.created | formatJsonDate}}
                 </template>
             </v-server-table>
-        </div>
-    </div>
 </template>
 <script>
     import Vue from 'vue'

@@ -1,5 +1,6 @@
 <template>
     <div class="border">
+        <diagram-toolbar :workflow="workflow"></diagram-toolbar>
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
             v-on:click="diagramClick">
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
@@ -75,6 +76,7 @@
     // import DropDownComponent from '../ui/dropdown.vue';
 
     import TaskComponent from './Task.vue';
+    import DiagramToolbar from './DiagramToolbar.vue'
     import jsplumb from 'jsplumb'
     const GroupComponent = Vue.extend({
 
@@ -179,6 +181,7 @@
         },
         components: {
             'task-component': TaskComponent,
+            'diagram-toolbar': DiagramToolbar,
             VuePerfectScrollbar,
         },
         props: {
