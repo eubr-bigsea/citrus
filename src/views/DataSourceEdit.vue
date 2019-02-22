@@ -22,7 +22,8 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label class="font-weight-bold">{{$t('dataSource.storage')}}:</label>
-                                    <input disabled v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
+                                    <input disabled
+                                        v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
                                         class="form-control" />
                                     <!-- <select v-model="dataSource.storage.id" class="form-control" disabled>
                                     <option v-for="storage in storages" :key="storage.id" :value="storage.id">
@@ -43,8 +44,8 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label>{{$tc('dataSource.treatAsNull')}}: </label>
-                                    <v-select multiple :close-on-select="false" style="width: 100%" v-model="customTreatAsMissing"
-                                        :taggable="true" class="custom">
+                                    <v-select multiple :close-on-select="false" style="width: 100%"
+                                        v-model="customTreatAsMissing" :taggable="true" class="custom">
                                         <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                     </v-select>
                                 </div>
@@ -90,15 +91,15 @@
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.textDelimiter') }}: </label>
-                                            <v-select style="width: 100%" v-model="dataSource.text_delimiter" :options="textDelimiters"
-                                                :taggable="true">
+                                            <v-select style="width: 100%" v-model="dataSource.text_delimiter"
+                                                :options="textDelimiters" :taggable="true">
                                                 <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
                                         <div class="col-md-3">
                                             <label>{{ $t('dataSource.encoding') }}: </label>
-                                            <v-select style="width: 100%" v-model="dataSource.encoding" :options="encodings"
-                                                :taggable="true">
+                                            <v-select style="width: 100%" v-model="dataSource.encoding"
+                                                :options="encodings" :taggable="true">
                                                 <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                             </v-select>
                                         </div>
@@ -112,19 +113,22 @@
                                 {{$tc('common.attribute', 2)}}
                             </h5>
 
-                            <table class="table table-sm table-stripped" v-if="dataSource.attributes && dataSource.attributes.length > 0">
+                            <table class="table table-sm table-stripped"
+                                v-if="dataSource.attributes && dataSource.attributes.length > 0">
                                 <thead>
                                     <tr>
                                         <th class="primary text-center" style="width:3%">#</th>
                                         <th class="primary text-center" style="width:30%">{{$tc('common.name')}}</th>
                                         <th class="primary text-center" style="width:12%">{{$tc('common.type')}}</th>
+                                        <th class="primary text-center" style="width:12%">{{$tc('common.format')}}</th>
                                         <!--
                                         <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
                                         <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
                                         <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
                                         <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
                                         -->
-                                        <th class="primary text-center" style="width:25%">{{$tc('dataSource.missingRepresentation')}}</th>
+                                        <th class="primary text-center" style="width:25%">
+                                            {{$tc('dataSource.missingRepresentation')}}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -135,8 +139,13 @@
                                         </td>
                                         <td>
                                             <select class="form-control-sm form-control" v-model="attr.type">
-                                                <option v-for="dt in dataTypes" v-bind:value="dt" :key="dt">{{dt}}</option>
+                                                <option v-for="dt in dataTypes" v-bind:value="dt" :key="dt">{{dt}}
+                                                </option>
                                             </select>
+                                        </td>
+                                        <td class="text-center">
+                                            <input type="text" class="form-control-sm form-control" maxlenght="50"
+                                                v-model="attr.format"/>
                                         </td>
                                         <!--
                                         <td class="text-center">
@@ -153,8 +162,8 @@
                                         </td>
                                     -->
                                         <td>
-                                            <input class="form-control-sm form-control" v-model="attr.missing_representation"
-                                                maxlength="200" />
+                                            <input class="form-control-sm form-control"
+                                                v-model="attr.missing_representation" maxlength="200" />
                                         </td>
 
                                     </tr>
@@ -165,7 +174,8 @@
                             </div>
                         </b-tab>
                         <b-tab :title="$tc('common.sharing', 2)">
-                            <table class="table table-bordered table-stripped" v-if="dataSource.permissions && dataSource.permissions.length > 0">
+                            <table class="table table-bordered table-stripped"
+                                v-if="dataSource.permissions && dataSource.permissions.length > 0">
                                 <thead>
                                     <tr>
                                         <th class="primary col-md-1 text-center">{{ $t("common.userId") }}</th>
@@ -193,7 +203,8 @@
                         <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                             <span class="fa fa-save"></span> {{$tc('actions.save')}}</button>
-                        <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">{{$tc('actions.cancel')}}</router-link>
+                        <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">
+                            {{$tc('actions.cancel')}}</router-link>
                         <button class="btn btn-success ml-1  btn-spinner" @click.stop="infer" v-if="canInfer">
                             <font-awesome-icon icon="spinner" pulse class="icon" /> {{$tc('dataSource.inferSchema')}}
                         </button>
@@ -201,7 +212,8 @@
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                             <span class="fa fa-eye"></span>
                             &nbsp;
-                            <span v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')"></span>
+                            <span
+                                v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')"></span>
                         </button>
                     </div>
                 </b-card>
@@ -212,7 +224,9 @@
             </div>
             <b-modal size="lg" ref="preview" :title="$t('common.preview')">
                 {{$t('dataSource.previewExplanation', {amount: 40})}}
-                <v-client-table :columns="getPreviewColumns()" :data="samples" :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}"></v-client-table>
+                <v-client-table :columns="getPreviewColumns()" :data="samples"
+                    :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}">
+                </v-client-table>
                 <div v-if="previewWarnings.length">
                     <strong>{{$tc('dataSource.someAttributesMayHaveProblem', previewWarnings.length)}}:</strong>
                     {{previewWarnings.join(", ")}}
@@ -271,7 +285,7 @@
                 formats: ['XML_FILE', 'NETCDF4', 'HDF5', 'SHAPEFILE', 'TEXT',
                     'UNKNOWN', 'CUSTOM', 'GEO_JSON', 'JSON', 'CSV', 'PARQUET', 'PICKLE', 'JDBC'].sort(),
                 delimiters: [
-                    ',', ';', '.', '{tab}', '{new_line \\n}', 
+                    ',', ';', '.', '{tab}', '{new_line \\n}',
                     '{new_line \\r\\n}',
                 ],
                 textDelimiters: ['"', "'"],
@@ -393,7 +407,7 @@
                         event.target.classList.add('btn-spinner')
                     })
             },
-            _doInfer(event){
+            _doInfer(event) {
                 const self = this
                 const url = `${limoneroUrl}/datasources/infer-schema/${self.dataSource.id}`
                 axios.post(url, {})
@@ -408,7 +422,7 @@
                     ).finally(() => {
                         event.target.removeAttribute('disabled')
                         event.target.classList.add('btn-spinner')
-                })
+                    })
             },
             infer(event) {
                 const self = this

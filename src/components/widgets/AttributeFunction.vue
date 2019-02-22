@@ -112,8 +112,6 @@
             },
             attrUpdated(row, attr, val) {
                 row[attr] = val;
-                /*eventHub.$emit('update-form-field-value', this.field, 
-                    this.valueValue);*/
             },
             add(e) {
                 if (this.valueList === null) {
