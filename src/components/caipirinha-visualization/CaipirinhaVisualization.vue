@@ -82,7 +82,7 @@ const getVisualizationComponent = function(typeId) {
 };
 
 const getVisualizationData = function(responseData) {
-  if (responseData.x.type == "time") {
+  if (responseData.x && responseData.x.type == "time") {
     responseData.data = responseData.data.map(serie => ({
       ...serie,
       values: serie.values.map(value => ({

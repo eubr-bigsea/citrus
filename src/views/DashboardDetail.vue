@@ -1,21 +1,21 @@
 <template>
     <div>
         <div class="d-flex justify-content-between align-items-center">
-            <h1>{{$tc('titles.dashboard', 2)}}</h1>
+            <div>
+                <h6 class="header-pretitle" >{{$tc('titles.dashboard', 1)}}</h6>
+                <input-header v-model="title" ></input-header>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-dark" @click.stop="save">
+                    <span class="far fa-save"></span>
+                </button>
+            </div>
         </div>
         <hr>
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" v-model="title">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" @click.stop="save">
-                                    <span class="fa fa-save"></span> {{$tc('actions.save')}}
-                                </button>
-                            </div>
-                        </div>
                         
                         <grid-layout
                             :layout.sync="layout"
@@ -52,6 +52,9 @@
     .vue-grid-item.vue-grid-placeholder {
         background-color: rgb(255,127,42);
     }
+    .vue-grid-item > div{
+        overflow: auto;
+    }
 </style>
 
 <script>
@@ -62,6 +65,7 @@
     import io from 'socket.io-client'
 
     import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue'
+    import InputHeader from '../components/InputHeader.vue'
     import VueGridLayout from 'vue-grid-layout';
 
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
@@ -69,7 +73,8 @@
     export default {
         mixins: [Notifier],
         components: {
-            'caipirinha-visualization': CapirinhaVisualization
+            'caipirinha-visualization': CapirinhaVisualization,
+            InputHeader,
         },
         data(){
             return {
@@ -119,6 +124,33 @@
                         url: `${caipirinhaUrl}/visualizations/${jobId}/${taskId}`
                     }
                 })
+            },
+            configurationIsInvalid(configuration) {
+                if (configuration == null || configuration.constructor === Array)
+                    return true;
+                return false;
+            },
+            createInitialConfiguration(response) {
+                return response.data.visualizations.reduce((configuration, viz, i) => {
+                    return {
+                        ...configuration,
+                        [viz.id]: {
+                            vizId: viz.id + "",
+                            jobId: viz.job_id,
+                            taskId: viz.task_id,
+                            x: 3,
+                            y: 10 * i,
+                            width: 6,
+                            height: 10
+                        }
+                    }
+                }, {})
+            },
+            getConfiguration(response) {
+                if (this.configurationIsInvalid(response.data.configuration))
+                    return this.createInitialConfiguration(response)
+                else
+                    return response.data.configuration;
             }
         },
         mounted(){
@@ -126,22 +158,7 @@
                 .get(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`)
                 .then(response => {
                     this.title = response.data.title;
-                    this.configuration = response.data.configuration;
-                    
-                    if (this.configuration == null) {
-                        this.configuration = response.data.visualizations.map((viz, i) => {
-                            return {
-                                vizId: viz.id + "",
-                                jobId: viz.job_id,
-                                taskId: viz.task_id,
-                                x: 0,
-                                y: 4 * i,
-                                width: 4,
-                                height: 4
-                            }
-                        })
-                    }
-
+                    this.configuration = this.getConfiguration(response);
                     this.layout = this.getLayout()
                 })
                 .catch((e) => {
