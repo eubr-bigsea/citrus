@@ -446,7 +446,7 @@
                                     task.step = null;
                                     usingDisabledOp |= op.enabled === false;
                                     if (!op.enabled) {
-                                        task.warning = $t('workflow.usingDisabledOperation');
+                                        task.warning = self.$t('workflow.usingDisabledOperation');
                                     } else {
                                         task.warning = null;
                                     }

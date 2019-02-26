@@ -9,10 +9,10 @@
             ref="modal">
             <div class="row">
                 <div class="col-md-9">
-                    <table class="table table-bordered table-sm table-stripe" v-if="expressionList && expressionList.length">
+                    <table class="table table-sm" v-if="expressionList && expressionList.length">
                         <thead>
                             <th> {{$t('property.expression.title')}}</th>
-                            <th> {{$t('property.expression.alias')}}</th>
+                            <th v-if="values.alias !== false"> {{$t('property.expression.alias')}}</th>
                             <th style="width:12%"></th>
                         </thead>
                         <tbody>
@@ -23,7 +23,7 @@
                                             @blur="elementBlur(row, $event)" style="height: 40px" @paste="changed($event, row, 'expression')">{{row.expression}}</textarea>
                                         <div class="label label-danger" v-if="row.error">{{row.error}}</div>
                                     </td>
-                                    <td style="width: 35%">
+                                    <td v-if="values.alias !== false" style="width: 35%">
                                         <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
                                     </td>
                                     <td style="width:2%" class="text-center">
@@ -32,17 +32,11 @@
                                         </a>
                                     </td>
                                 </tr>
-                                <!--
-                                            <tr>
-                                                <td colspan="2">
-                                                    <pre style="height: 80px; overflow:auto"><code>{{ row.tree }}</code></pre>
-                                                </td>
-                                            </tr>
-                                        -->
+
                             </template>
                         </tbody>
                     </table>
-                    <div v-else>
+                    <div v-else class="border pt-5 pb-5 pl-3">
                         <div class="label label-info">{{$t('property.noExpressions')}}</div>
                     </div>
                 </div>
@@ -63,7 +57,7 @@
             </div>
             <p class="mt-2">
                 {{$t('property.expression.explanation')}}
-                <span v-html="$t('property.expression.tip')"></span>
+                <span v-html="$t('property.expression.tip')"></span> &nbsp;
                 <span v-html="$t('property.expression.validExpressions')"></span>
 
             </p>
@@ -82,12 +76,19 @@
             displayValue() {
                 if (this.value) {
                     return this.value.map((v) => {
-                        return `${v.alias} = ${v.expression}`
+                        if (this.values.alias !== false){
+                            return `${v.alias} = ${v.expression}`
+                        } else {
+                            return v.expression;
+                        }
                     }).join('\n')
                 } else {
                     return ''
                 }
-            }
+            },
+            values(){
+                return this.field.values ? JSON.parse(this.field.values): {}
+            },
         },
         components: {
             LabelComponent

@@ -79,7 +79,7 @@ export default {
             pagerShowing: 'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
             password: 'Senha',
             permission: 'Permissão | Permissões',
-            platform: 'Platforma',
+            platform: 'Plataforma',
             precision: 'Precisão',
             preview: 'Pré-visualização',
             rememberMe: 'Lembrar minha senha',

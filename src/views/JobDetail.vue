@@ -5,7 +5,8 @@
                 <div class="border p-2 mb-1">
                     <strong>{{$tc('titles.workflow')}}: </strong>
                     <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                        v-if="workflow.id">{{workflow.id}} - {{workflow.name}} ({{$t('actions.back').toLowerCase()}})</router-link>
+                        v-if="workflow.id">{{workflow.id}} - {{workflow.name}} ({{$t('actions.back').toLowerCase()}})
+                    </router-link>
                 </div>
                 <b-tabs>
                     <b-tab active title-item-class="smalltab">
@@ -13,53 +14,38 @@
                             {{$tc('titles.job')}}: {{job.name}}
                         </template>
                         <div class="row mt-1">
-                            <div class="col-md-12" style="position: relative; overflow: hidden; height: 65vh;">
-                                <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                    :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false" shink="true"
-                                    v-if="loaded" :loaded="loaded" :showTaskDecoration="true" :initialZoom=".7"/>
-                                <slideout-panel :opened="showProperties" v-if="selectedTask && selectedTask.operation">
-                                    <div style="background: red; height: 60vh; width: 300px" class="p-2">
-                                        <h6>{{$tc('titles.property', 2)}}</h6>
-                                        <dl>
-                                            <template v-for="form in operationsLookup[selectedTask.operation.id].forms">
-                                                {{form.scope}}
-                                                <template v-for="field in form" v-if="form.scope !== 'EXECUTION' ">
-                                                    <dt>{{field}}</dt>
-                                                    <dd></dd>
-                                                </template>
-                                            </template>
-                                        </dl>
-                                    </div>
-                                </slideout-panel>
+                            <div class="col-md-8">
+                                <div style="position: relative; overflow: hidden; height: 75vh;">
+                                    <diagram :workflow="workflow" ref="diagram" id="main-diagram"
+                                        :operations="operations" :version="job.id" initial-zoom="1" :showToolbar="false"
+                                        :editable="false" shink="true" v-if="loaded" :loaded="loaded"
+                                        :showTaskDecoration="true" :initialZoom=".7" />
+                                </div>
                             </div>
-                            <div class="fixed-bottom m-2 border" style="height: 200px; background: white; overflow: auto">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <b-tabs>
-                                            <b-tab active title-item-class="smalltab">
-                                                <template slot="title">
-                                                    <div class="circle lemonade-job" :class="jobStatus" :title="job.status" id="dtl-job-status"></div>
-                                                    {{$tc('job.logs', 2)}}
-                                                </template>
-                                                <div class="pl-4 mr-3 mt-1">
-                                                    <div class="alert alert-secondary" id="dtl-job-status-text">{{job.status_text}}</div>
-                                                    <div style="font-size:.8em" class="mt-2" v-if="job.exception_stack">
-                                                        <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
-                                                        <div v-if="details">
-                                                            <code><pre>{{job.exception_stack}}</pre></code>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                            <div class="col-md-4">
+                                <b-tabs>
+                                    <b-tab active title-item-class="smalltab">
+                                        <template slot="title">
+                                            <div class="circle lemonade-job" :class="jobStatus" :title="job.status"
+                                                id="dtl-job-status"></div>
+                                            {{$tc('job.logs', 2)}}
+                                        </template>
+                                        <div class="pl-4 mr-3 mt-1">
+                                        </div>
+                                        <div class="job-log-list">
+                                            <b-card style="overflow:auto; height: 70vh">
+                                                <div class="alert alert-secondary" id="dtl-job-status-text">
+                                                    {{job.status_text}}</div>
                                                 <div class="job-log-list">
                                                     <div v-for="log in sortedLogs" :key="log.id" class="job-log pl-4"
                                                         :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
                                                         <small>
-                                                            <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
+                                                            <span class="badge-custom"
+                                                                :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
                                                                 {{log.level}}
                                                             </span> &nbsp;
-                                                            <span>{{log.date}}</span>&nbsp;
+                                                            <span>{{log.date | formatJsonDate}}</span>&nbsp;
                                                             <TaskDisplay :task="getTask(log.task.id)" :simple="true" />
-                                                            &nbsp;</strong>
 
                                                             <span v-if="log.type === 'TEXT'">
                                                                 {{log.message}}
@@ -70,28 +56,32 @@
                                                         </small>
                                                     </div>
                                                 </div>
-                                            </b-tab>
-                                            <b-tab :title="$t('titles.errorDetail')" title-item-class="smalltab">
-                                                <div style="font-size:.8em" class="mt-2 p-2" v-if="job.exception_stack">
-                                                    <a href="#" @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
-                                                    <div v-if="details">
-                                                        <code><pre>{{job.exception_stack}}</pre></code>
-                                                    </div>
+                                            </b-card>
+                                        </div>
+                                    </b-tab>
+                                    <b-tab :title="$t('titles.errorDetail')" title-item-class="smalltab">
+                                        <b-card>
+                                            <div style="font-size:.8em" class="mt-2 p-2" v-if="job.exception_stack">
+                                                <a href="#"
+                                                    @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
+                                                <div v-if="details">
+                                                    <code><pre>{{job.exception_stack}}</pre></code>
                                                 </div>
-                                                <div v-else class="p-2">
-                                                    {{$t('common.noData')}}
-                                                </div>
-                                            </b-tab>
-                                        </b-tabs>
-                                    </div>
-                                </div>
+                                            </div>
+                                            <div v-else class="p-2">
+                                                {{$t('common.noData')}}
+                                            </div>
+                                        </b-card>
+                                    </b-tab>
+                                </b-tabs>
                             </div>
                         </div>
                     </b-tab>
                     <b-tab :title="$tc('job.results', 2)" title-item-class="smalltab">
                         <div class="row" v-for="(step, inx) in job.steps" :key="inx">
                             <div class="col-md-12 lemonade">
-                                <div class="mt-2 border-bottom pb-2" v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
+                                <div class="mt-2 border-bottom pb-2"
+                                    v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
                                     <TaskDisplay :task="getTask(step.task.id)" /> &nbsp;</strong>
                                     {{step.status}}
                                     <div v-for="log in step.logs" :key="log.id" style="font-size:.9em">
@@ -133,11 +123,13 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab" v-if="job.results && job.results.length"
-                        @click="showVisualizations = true">
+                    <b-tab :title="$tc('job.visualizations', 2)" title-item-class="smalltab"
+                        v-if="job.results && job.results.length" @click="showVisualizations = true">
                         <div class="row" v-for="result in job.results" :key="result.id">
-                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px" v-if="showVisualizations">
-                                <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)"></caipirinha-visualization>
+                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px"
+                                v-if="showVisualizations">
+                                <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)">
+                                </caipirinha-visualization>
                             </div>
                         </div>
                     </b-tab>
@@ -180,7 +172,6 @@
                 </b-tabs>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -460,7 +451,7 @@
 </script>
 <style>
     .badge-custom {
-        min-width: 80px
+        width: 60px
     }
 
     .html-div {

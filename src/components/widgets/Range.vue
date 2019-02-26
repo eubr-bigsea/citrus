@@ -1,10 +1,16 @@
 <template>
     <div class="clear mb-4">
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)" :required="field.required"
-        />
-        <div class="float-left">{{split || 0}}%</div>
-        <div class="float-right text-right">{{100-split}}%</div>
+        <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)"
+            @mousedown="mouseDown" @mouseup="mouseUp" :required="field.required" ref="slider" />
+        <div class="float-left">
+            {{values[language][0]}}:
+            {{split || 0}}%
+        </div>
+        <div class="float-right text-right">
+                {{values[language][1]}}:
+            {{100-split}}%
+        </div>
     </div>
 </template>
 <script>
@@ -13,21 +19,38 @@
         components: { LabelComponent },
         data() {
             return {
-                split: 50
+                split: 50,
+                isDragging: false,
+                values: {}
             }
         },
         mounted() {
             this.split = this.value || 50;
+            this.values = this.field.values ? JSON.parse(this.field.values) : {}
         },
         methods: {
             updated:
                 _.debounce(function (e) {
                     this.split = parseInt(e.target.value);
                     this.$root.$emit(this.message, this.field, e.target.value);
-                }, 500)
+                }, 500),
+            mouseDown() {
+                this.isDragging = true;
+                this.$refs.slider.addEventListener('mousemove', this.moveSlider, false);
+            },
+            mouseUp() {
+                this.isDragging = false;
+                this.$refs.slider.removeEventListener('mousemove', this.moveSlider);
+            },
+            moveSlider(e) {
+                if (this.isDragging) {
+                    this.split = this.$refs.slider.value;
+                }
+            }
         },
 
         props: {
+            language: { default: 'en' },
             value: {
                 type: String, default: 50,
             }, field: {},
@@ -69,4 +92,5 @@
         background: #4CAF50;
         cursor: pointer;
     }
+
 </style>
