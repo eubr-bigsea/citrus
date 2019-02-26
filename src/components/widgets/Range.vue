@@ -4,11 +4,11 @@
         <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)"
             @mousedown="mouseDown" @mouseup="mouseUp" :required="field.required" ref="slider" />
         <div class="float-left">
-            {{values[language][0]}}:
+            {{values[language] ? values[language][0] : ''}}:
             {{split || 0}}%
         </div>
         <div class="float-right text-right">
-                {{values[language][1]}}:
+                {{values[language] ? values[language][1] : ''}}:
             {{100-split}}%
         </div>
     </div>

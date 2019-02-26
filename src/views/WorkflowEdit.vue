@@ -1,18 +1,18 @@
 <template>
     <div>
         <TahitiSuggester />
-        
+
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h6 class="header-pretitle" >{{$tc('titles.workflow', 1)}}</h6>
-                <input-header v-model="workflow.name" ></input-header>
+                <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}}</h6>
+                <input-header v-model="workflow.name"></input-header>
             </div>
             <div>
                 <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
             </div>
         </div>
 
-        <b-tabs  @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="custom-tab">
+        <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="custom-tab">
             <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
                 :active="form.order === minFormOrder" :key="form.id">
                 <template slot="title">
@@ -68,31 +68,57 @@
                             <div>
                                 {{$t('workflow.required')}}:
                             </div>
-                            <div class="mt-3">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <label>{{$t('workflow.jobName')}} ({{$t('common.optional')}}):</label>
-                                            <input type="text" class="form-control" v-model="clusterInfo.jobName"
-                                                maxlength="50" />
+                            <div v-if="validationErrors.length > 0">
+                                <b-card>
+                                    <b-card-body>
+                                        <p class="text-danger">
+                                            {{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
+                                        <table class="table table-sm">
+                                            <tr>
+                                                <th>{{$tc('titles.tasks')}}</th>
+                                                <th>{{$tc('titles.value')}}</th>
+                                                <th>{{$tc('titles.error')}}</th>
+                                            </tr>
+                                            <tr v-for="err in validationErrors" :key="err.sequential">
+                                                <td>{{err.task.name}}</td>
+                                                <td>{{err.field}}</td>
+                                                <td>{{err.message}}</td>
+                                            </tr>
+                                        </table>
+                                    </b-card-body>
+                                </b-card>
+                            </div>
+                            <div class="mt-1">
+                                <b-card>
+                                    <b-card-body>
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label>{{$t('workflow.jobName')}}
+                                                        ({{$t('common.optional')}}):</label>
+                                                    <input type="text" class="form-control"
+                                                        v-model="clusterInfo.jobName" maxlength="50" />
+                                                </div>
+                                                <div class="col-md-6 mt-3">
+                                                    <label>{{$tc('titles.cluster')}}:</label>
+                                                    <select v-model="clusterInfo.id" class="form-control"
+                                                        v-on:change="changeCluster">
+                                                        <option v-for="option in clusters" v-bind:value="option.id">
+                                                            {{ option.name }}
+                                                        </option>
+                                                    </select>
+                                                    <small>{{clusterInfo.description}}</small>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6 mt-3">
-                                            <label>{{$tc('titles.cluster')}}:</label>
-                                            <select v-model="clusterInfo.id" class="form-control"
-                                                v-on:change="changeCluster">
-                                                <option v-for="option in clusters" v-bind:value="option.id">
-                                                    {{ option.name }}
-                                                </option>
-                                            </select>
-                                            <small>{{clusterInfo.description}}</small>
-                                        </div>
-                                    </div>
-                                </div>
+                                    </b-card-body>
+                                </b-card>
                             </div>
                             <div slot="modal-footer" class="w-100 text-right">
-                                <button class="btn btn-success" @click="execute" id="mdl-execute-wf">
+                                <button class="btn btn-sm btn-outline-success" @click="execute" id="mdl-execute-wf">
                                     <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
-                                <button class="ml-1 btn" @click="cancelExecute">{{$t('actions.cancel')}}</button>
+                                <button class="ml-1 btn btn-sm btn-outline-dark"
+                                    @click="cancelExecute">{{$t('actions.cancel')}}</button>
                             </div>
                         </b-modal>
                         </b-modal>
@@ -155,7 +181,7 @@
                 {{resultTask.result}}
             </div>
         </b-modal>
-        
+
         <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true"
             :title="$tc('titles.validationErrors', 1)">
             <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
@@ -760,29 +786,31 @@
             },
             showExecuteWindow() {
                 const self = this;
-                if (self._validateTasks(self.workflow.tasks)) {
-                    const d = new Date().toLocaleString().slice(0, -5);
-                    this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
-                    axios.get(`${standUrl}/clusters`, {})
-                        .then((response) => {
-                            self.clusters.length = 0;
-                            Array.prototype.push.apply(self.clusters, response.data);
-                            if (self.clusters.length) {
-                                self.clusterInfo.id = self.clusters[0].id;
-                                self.clusterInfo.description = self.clusters[0].description;
-                                self.$refs.executeModal.show();
-                                if (self.name === '') {
-                                    self.clusterInfo.workflowName = self.workflow.name;
-                                }
-                            } else {
-                                self.error("Unable to execute workflow: There is not cluster available.");
+                const valid = self._validateTasks(self.workflow.tasks);
+                //if (valid) {
+                const options = { year: 'numeric', month: 'long', day: 'long' }
+                const d = new Date().toISOString().slice(0, -5);
+                this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
+                axios.get(`${standUrl}/clusters`, {})
+                    .then((response) => {
+                        self.clusters.length = 0;
+                        Array.prototype.push.apply(self.clusters, response.data);
+                        if (self.clusters.length) {
+                            self.clusterInfo.id = self.clusters[0].id;
+                            self.clusterInfo.description = self.clusters[0].description;
+                            self.$refs.executeModal.show();
+                            if (self.name === '') {
+                                self.clusterInfo.workflowName = self.workflow.name;
                             }
-                        }).catch((ex) => {
-                            self.error(ex);
-                        });
-                } else {
-                    self.$refs.validationErrorsModal.show();
-                }
+                        } else {
+                            self.error("Unable to execute workflow: There is not cluster available.");
+                        }
+                    }).catch((ex) => {
+                        self.error(ex);
+                    });
+                //} else {
+                //    self.$refs.validationErrorsModal.show();
+                //}
             },
             execute() {
                 const self = this;
@@ -845,10 +873,11 @@
                         t.operation.forms.forEach(form => {
                             if (form.category === 'execution') {
                                 form.fields.forEach(field => {
-                                    if (field.enabled) {
+                                    if (field.enabled || field.enabled === undefined) {
                                         if (field.required) {
                                             const value = t.forms[field.name] ? t.forms[field.name].value : null;
-                                            if (value === null || value === '' || value === {}) {
+                                            console.debug(field.name, t.forms[field.name], value === [] , value)
+                                            if (value === null || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
                                                 warning = this.$tc("errors.missingRequiredValue");
                                                 self.validationErrors.push({
                                                     id: counter++, task: { id: t.id, name: t.name },
