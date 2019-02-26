@@ -1,6 +1,6 @@
 <template>
     <div class="border">
-        <diagram-toolbar :workflow="workflow"></diagram-toolbar>
+        <diagram-toolbar :workflow="workflow" v-if="showToolbar"></diagram-toolbar>
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
             v-on:click="diagramClick">
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
