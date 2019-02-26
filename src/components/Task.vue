@@ -463,19 +463,24 @@
     }
 
     .output {
-
+        
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
-            top: 10px;
             position: relative;
-            z-index: 5
+            z-index: 5;
+            left: -10px;
         }
-
+        .has-1-ports {
+            top: 10px;
+        }
+        .has-2-ports {
+            top: 20px;
+        }
         .has-3-ports {
             margin-top: 20px !important;
-
         }
+
     }
 
     .input {
