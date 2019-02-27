@@ -454,7 +454,7 @@
         line-height: 6px;
         z-index: 10000;
         text-align: center;
-        width: 50px;
+        width: 55px;
     }
 
     .endpoint-label.output {
@@ -469,13 +469,13 @@
         .has-3-ports {
             position: relative;
             z-index: 5;
-            left: -10px;
+            left: -2px;
         }
         .has-1-ports {
             top: 10px;
         }
         .has-2-ports {
-            top: 20px;
+            top: 15px;
         }
         .has-3-ports {
             margin-top: 20px !important;
