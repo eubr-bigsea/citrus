@@ -42,7 +42,7 @@
                                                         <small>
                                                             <span class="badge-custom"
                                                                 :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
-                                                                {{log.level}}
+                                                                {{$t(`juicer.log.${log.level.toLowerCase()}`)}}
                                                             </span> &nbsp;
                                                             <span>{{log.date | formatJsonDate}}</span>&nbsp;
                                                             <TaskDisplay :task="getTask(log.task.id)" :simple="true" />
@@ -62,11 +62,7 @@
                                     <b-tab :title="$t('titles.errorDetail')" title-item-class="smalltab">
                                         <b-card>
                                             <div style="font-size:.8em" class="mt-2 p-2" v-if="job.exception_stack">
-                                                <a href="#"
-                                                    @click.prevent="details=!details">{{$t('titles.errorDetail')}}</a>
-                                                <div v-if="details">
-                                                    <code><pre>{{job.exception_stack}}</pre></code>
-                                                </div>
+                                                <code><pre>{{job.exception_stack}}</pre></code>
                                             </div>
                                             <div v-else class="p-2">
                                                 {{$t('common.noData')}}
