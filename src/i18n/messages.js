@@ -162,7 +162,7 @@ export default {
         job: {
             details: 'Detalhe | Detalhes',
             error: 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
-            logs: 'Log de execução | Logs de execução',
+            logs: 'Log | Logs',
             results: 'Resultado | Resultados',
             sourceCode: 'Código-fonte',
             visualizations: 'Visualização | Visualizações',
@@ -451,7 +451,7 @@ export default {
         job: {
             details: 'Detail | Details',
             error: 'Error running job. See more details in the log window above.',
-            logs: 'Execution log | Execution logs',
+            logs: 'Log | Logs',
             results: 'Result | Results',
             sourceCode: 'Source code',
             visualizations: 'Visualization | Visualizations',
