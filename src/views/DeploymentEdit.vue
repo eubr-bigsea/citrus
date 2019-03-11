@@ -1,10 +1,9 @@
 <template>
     <div>
-        <div class="row border-bottom border-primary p-2">
-            <div class="col-md-12 col-xl-12 mx-auto">
-                <h2 class="title text-primary">{{$tc('titles.deployment', 1)}}</h2>
-            </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>{{$tc('titles.deployment', 1)}}</h1>
         </div>
+        <hr/>
         <div class="row" v-if="loaded">
             <div class="col-md-4 col-xg-12 mx-auto">
                 <p>
@@ -15,9 +14,9 @@
             </div>
             <div class="col-md-8 col-xg-12 mx-auto">
                 <div style="position: relative; overflow: hidden; height: 65vh;">
-                    <diagram :workflow="job.workflow" ref="diagram" id="main-diagram" :operations="operations"
-                        :version="job.id" initial-zoom="1" :showToolbar="false" :editable="false" shink="true"
-                        v-if="loaded" :loaded="loaded" :showTaskDecoration="true" :initialZoom=".7" />
+                    <diagram :workflow="job.workflow" ref="diagram" id="main-diagram" :operations="operations" :version="job.id"
+                        initial-zoom="1" :showToolbar="false" :editable="false" shink="true" v-if="loaded" :loaded="loaded"
+                        :showTaskDecoration="true" :initialZoom=".7" />
                 </div>
             </div>
         </div>
