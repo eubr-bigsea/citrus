@@ -57,6 +57,30 @@
                     </v-select>
                 </p>
                 <p>
+                    Metrics:
+                </p>
+                <p>
+                    <v-select label="name" :filterable="false" :options="metrics" multiple>
+                        <template slot="no-options">
+                            {{$t('actions.typeAndchooseOption')}}
+                        </template>
+                        <template slot="option" slot-scope="option">
+                            <div class="d-center">
+                                {{ option.name }} (#{{option.id }})
+                                <br />
+                                <em><small>{{option.description}}</small></em>
+                            </div>
+                        </template>
+                        <template slot="selected-option" scope="option">
+                            <div class="selected d-center">
+                                {{ option.name }} (#{{option.id }})
+                                <br />
+                                <em><small>{{option.description}}</small></em>
+                            </div>
+                        </template>
+                    </v-select>
+                </p>
+                <p>
                     Authentication token:
                 </p>
                 <p>
@@ -109,6 +133,15 @@
                     { id: 1, name: 'Small', description: '1 Gb RAM, 1 VCPU' },
                     { id: 2, name: 'Medium', description: '4 Gb RAM, 2 VCPU' },
                     { id: 3, name: 'Large', description: '8 Gb RAM, 4 VCPU' },
+                ],
+                metrics: [
+                    { id: 1, name: 'High QoS F1 Score', description: 'F1 Score >= .8' },
+                    { id: 2, name: 'False positive rate (FPR) for women', description: '0.8 <= FPR <= 0.9' },
+                    { id: 3, name: 'Classifiers stability (aggrement)', description: 'Aggrement > 70% in last 100 executions' },
+                    { id: 4, name: 'Classifiers stability (cross-validation)', 
+                        description: 'Aggrement > 70%' },
+                    { id: 5, name: 'Reidentification risk (time window)', 
+                        description: 'Average risk in last week > 15%' },
                 ],
             }
         },
