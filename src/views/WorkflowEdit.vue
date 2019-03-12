@@ -317,6 +317,7 @@
                 showExecute: true,
                 validationErrors: [],
                 workflow: { tasks: [], flows: [], platform: {} },
+                selectedDiagram: 'diagram',
                 // propertyStyles: [
                 //     {
                 //         top: '112px',
@@ -470,6 +471,7 @@
             });
             this.$root.$on('onshow-result', this.showTaskResult);
             this.load();
+            
         },
         beforeDestroy() {
             this.$root.$off('onclick-task');
@@ -510,16 +512,18 @@
             align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
             },
-            toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
+            toggleTasks(mode, prop) { this.$refs[this.selectedDiagram].toggleTasks(mode, prop); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
             updateSelectedTab(index) {
                 if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'workflow') {
                     this.$refs.diagram.repaint();
                     this.showExecute = true;
                     this.showDeployment = false;
+                    this.selectedDiagram = 'diagram';
                 } else if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'deployment') {
                     this.showExecute = false;
                     this.showDeployment = true;
+                    this.selectedDiagram = 'deployDiagram';
                     //this.$refs.deployDiagram.repaint();
                 }
             },

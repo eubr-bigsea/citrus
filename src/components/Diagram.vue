@@ -410,11 +410,8 @@
                 }
             },
             toggleTasks() {
-                this.workflow.tasks.forEach((task) => {
-                    if (lodash.includes(this.selectedElements, task.id)) {
-                        task.enabled = !task.enabled;
-                    }
-                });
+                this.workflow.tasks.filter((t) => this.selectedElements.indexOf(t.id) > -1)
+                    .forEach((task) => {task.enabled = !task.enabled;});
             },
             addGroup() {
                 let self = this;

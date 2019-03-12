@@ -1,22 +1,22 @@
 <template>
-            <v-server-table :data="jobs" :columns="columns" :options="options" name="jobList" ref="jobList">
-                <template slot="id" slot-scope="props">
-                    <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
-                </template>
-                <template slot="actions" slot-scope="props">
-                    <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
-                        <font-awesome-icon icon="trash"></font-awesome-icon>
-                    </button>
-                </template>
-                <template slot="status" slot-scope="props">
-                    <div class="lemonade-job" :class="props.row.status.toLowerCase()">
-                        {{props.row.status}}
-                    </div>
-                </template>
-                <template slot="created" slot-scope="props">
-                    {{props.row.created | formatJsonDate}}
-                </template>
-            </v-server-table>
+    <v-server-table :data="jobs" :columns="columns" :options="options" name="jobList" ref="jobList">
+        <template slot="id" slot-scope="props">
+            <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+        </template>
+        <template slot="actions" slot-scope="props">
+            <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
+                <font-awesome-icon icon="trash"></font-awesome-icon>
+            </button>
+        </template>
+        <template slot="status" slot-scope="props">
+            <div class="lemonade-job" :class="props.row.status.toLowerCase()">
+                {{props.row.status}}
+            </div>
+        </template>
+        <template slot="created" slot-scope="props">
+            {{props.row.created | formatJsonDate}}
+        </template>
+    </v-server-table>
 </template>
 <script>
     import Vue from 'vue'
@@ -36,6 +36,10 @@
                 jobsTotal: 0,
                 columns: ['status', 'id', 'name', 'created'],
                 options: {
+                    orderBy: {
+                        column: 'id',
+                    },
+                    descOrderColumns: ['id'],
                     columnsClasses: {
                         name: 'th-20',
                         description: 'th-20',
@@ -79,8 +83,8 @@
         methods: {
             load(params) {
                 this.$Progress.start();
-                params.sort = params.orderBy
-                params.asc = params.ascending === 1 ? 'true' : 'false'
+                params.sort = params.orderBy || 'id'
+                params.asc = (params.ascending === undefined) ? false : (params.ascending === 1 ? 'true' : 'false')
                 params.size = params.limit
                 params.name = params.query
                 params.workflow_id = this.workflowId
@@ -93,17 +97,6 @@
                     }).catch(function (e) {
                         this.error(e);
                     }.bind(this));
-
-                // axios.get(`${standUrl}/jobs`, { params }).then((resp) => {
-                //     this.jobs = resp.data.data;
-                //     this.jobsTotal = resp.data.pagination.total;
-                // }).catch(function (e) {
-                //     this.error(e);
-                // }.bind(this)).finally(() => {
-                //     Vue.nextTick(() => {
-                //         this.$Progress.finish()
-                //     })
-                // });;
             },
         }
 
