@@ -86,30 +86,6 @@
                             </div>
                             <div class="mt-1">
                                 <b-card>
-<<<<<<< HEAD
-                                    <b-card-body>
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <label>{{$t('workflow.jobName')}}
-                                                        ({{$t('common.optional')}}):</label>
-                                                    <input type="text" class="form-control"
-                                                        v-model="clusterInfo.jobName" maxlength="50" />
-                                                </div>
-                                                <div class="col-md-6 mt-3">
-                                                    <label>{{$tc('titles.cluster')}}:</label>
-                                                    <select v-model="clusterInfo.id" class="form-control"
-                                                        v-on:change="changeCluster">
-                                                        <option v-for="option in clusters" v-bind:value="option.id" v-bind:key="option.id">
-                                                            {{ option.name }}
-                                                        </option>
-                                                    </select>
-                                                    <small>{{clusterInfo.description}}</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </b-card-body>
-=======
                                     <div>
                                         <label>{{$t('workflow.jobName')}}
                                             ({{$t('common.optional')}}):</label>
@@ -124,7 +100,6 @@
                                         </select>
                                         <small>{{clusterInfo.description}}</small>
                                     </div>
->>>>>>> 1571654... Minor fixes
                                 </b-card>
                             </div>
                             <div slot="modal-footer" class="w-100 text-right">

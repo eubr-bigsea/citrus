@@ -1,16 +1,15 @@
 <template>
     <div class="row">
         <div class="col-md-8 mx-auto">
-            <div class="card-body" >
+            <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
                         <b-card bg-variant="" :title="$t('deployment.whatToDeploy')" class="card-option">
                             <div class="border-bottom mb-2 pb-4">
                                 <label>1 - {{$tc('titles.workflow')}}</label>
-                                
-                                <v-select label="name" :filterable="false" 
-                                    :options="selectableDeployables" @search="onSearch" ref="deployables"
-                                    @input="selectWorkflow">
+
+                                <v-select label="name" :filterable="false" :options="selectableDeployables" @search="onSearch"
+                                    ref="deployables" @input="selectWorkflow">
                                     <template slot="no-options">
                                         {{$t('actions.typeAndchooseOption')}}
                                     </template>
@@ -45,7 +44,8 @@
                         <router-link :to="{name: 'deployments'}">
                             <button class="btn mt-2 float-right btn btn-sm btn-outline-secondary" @click="save">{{$t('actions.cancel')}}</button>
                         </router-link>
-                        <button class="btn btn-sm btn-outline-primary btn-sm mt-2 float-right mr-1" v-if="step===3" @click="save">{{$t('actions.saveAndContinue')}}...</button>
+                        <button class="btn btn-sm btn-outline-primary btn-sm mt-2 float-right mr-1" v-if="step===3"
+                            @click="save">{{$t('actions.saveAndContinue')}}...</button>
                     </div>
                 </div>
             </div>
@@ -114,6 +114,10 @@
                     self.deployment = resp.data;
                     self.success(self.$t('messages.savedWithSuccess',
                         { what: self.$tc('titles.deployment') }));
+                    self.$router.push({
+                        name: 'editDeployment',
+                        params: { id: resp.data.id }
+                    })
                 }).catch(function (e) {
                     self.error(e)
                 })

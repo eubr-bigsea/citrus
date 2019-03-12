@@ -20,13 +20,12 @@
                     <div class="row">
                         <div class="col-md-8">
                             <b-card>
-                                <div style="position: relative;  height: 75vh;">
-                                    <div>
-                                        <diagram :workflow="workflow" ref="diagram" id="main-diagram"
-                                            :operations="operations" :version="job.id" initial-zoom="1"
-                                            :showToolbar="false" :editable="false" shink="true" v-if="loaded"
-                                            :loaded="loaded" :showTaskDecoration="true" :initialZoom=".7" />
-                                    </div>
+                                <div style="position: relative; overflow: hidden; height: 75vh;">
+                                    <diagram :workflow="workflow" ref="diagram" id="main-diagram"
+                                        :operations="operations" :version="job.id" initial-zoom="1" :showToolbar="false"
+                                        :editable="false" shink="true" v-if="loaded" :loaded="loaded"
+                                        :showTaskDecoration="true" :initialZoom=".7"
+                                        environment="DESIGN" />
                                 </div>
                             </b-card>
                         </div>
