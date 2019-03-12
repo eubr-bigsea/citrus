@@ -1,22 +1,23 @@
 <template>
     <div class="row">
-        <div class="col-md-8 mx-auto overflow-hidden">
-            <div class="card-body">
+        <div class="col-md-8 mx-auto">
+            <div class="card-body" >
                 <div class="row">
                     <div class="col-md-12">
                         <b-card bg-variant="" :title="$t('deployment.whatToDeploy')" class="card-option">
                             <div class="border-bottom mb-2 pb-4">
                                 <label>1 - {{$tc('titles.workflow')}}</label>
-                                <v-select label="name" :filterable="false" :options="workflows" @search="onSearch"
-                                    ref="deployables" @input="selectWorkflow">
+                                
+                                <v-select label="name" :filterable="false" 
+                                    :options="selectableDeployables" @search="onSearch" ref="deployables"
+                                    @input="selectWorkflow">
                                     <template slot="no-options">
                                         {{$t('actions.typeAndchooseOption')}}
                                     </template>
                                     <template slot="option" slot-scope="option">
                                         <div class="d-center">
                                             {{ option.name }} (#{{option.id }})
-                                            <div class="platform-icon-small float-right"
-                                                :class="'bg-' + option.platform.slug"></div>
+                                            <div class="platform-icon-small float-right" :class="'bg-' + option.platform.slug"></div>
                                         </div>
                                     </template>
                                     <template slot="selected-option" scope="option">
@@ -28,28 +29,23 @@
                             </div>
                             <div v-if="step >= 2">
                                 <label>2 - {{$tc('titles.job')}}</label>
-                                <div class="p-2">
-                                    {{$t('deployment.requireExecution')}}
-                                </div>
+                                <div class="p-2" v-html="$t('deployment.requireExecution')"></div>
 
                                 <b-form-group v-if="jobs && jobs.length">
-                                    <b-form-radio-group v-model="job" :options="jobs" stacked name="jobs"
-                                        @input="jobSelected">
+                                    <b-form-radio-group v-model="job" :options="jobs" stacked name="jobs" @input="jobSelected">
                                     </b-form-radio-group>
                                 </b-form-group>
                                 <div v-else>
                                     <div class="alert alert-warning">
-                                        Nenhum job executado com sucesso para o fluxo escolhido
-                                        {{jobs}}
+                                        {{$t('common.noData')}}
                                     </div>
                                 </div>
                             </div>
                         </b-card>
                         <router-link :to="{name: 'deployments'}">
-                            <button class="btn mt-2 float-right" @click="save">{{$t('actions.cancel')}}</button>
+                            <button class="btn mt-2 float-right btn btn-sm btn-outline-secondary" @click="save">{{$t('actions.cancel')}}</button>
                         </router-link>
-                        <button class="btn btn-primary mt-2 float-right" v-if="step===3"
-                            @click="save">{{$t('actions.saveAndContinue')}}...</button>
+                        <button class="btn btn-sm btn-outline-primary btn-sm mt-2 float-right mr-1" v-if="step===3" @click="save">{{$t('actions.saveAndContinue')}}...</button>
                     </div>
                 </div>
             </div>
@@ -76,6 +72,14 @@
         },
         data() {
             return {
+                deployableTypes: [
+                    { text: this.$t('deployment.savedModel'), value: 'model' },
+                    { text: this.$t('deployment.workflow'), value: 'workflow' }
+                ],
+                selectedDeployableType: "model",
+                selectableDeployables: [],
+                selectedDeployable: null,
+
                 workflows: [],
                 workflow: null,
                 step: 1,
@@ -138,10 +142,11 @@
             },
             _search: _.debounce((loading, search, vm) => {
                 const data = {
-                    simple: true
+                    name: search,
+                    fields: "id,name,platform.id,platform.name"
                 }
                 axios.get(`${tahitiUrl}/workflows`, { params: data }).then(resp => {
-                    vm.selectableDeployables = resp.data
+                    vm.selectableDeployables = resp.data.data
                     loading(false);
                 }).catch(function (e) {
                     loading(false);

@@ -2,7 +2,7 @@
     <div>
         <div class="d-flex justify-content-between align-items-center">
             <h1>{{$tc('titles.deployment', 2)}}</h1>
-            <router-link :to="{name: 'addWorkflow'}" class="btn btn-sm btn-outline-primary">
+            <router-link :to="{name: 'addDeployment'}" class="btn btn-sm btn-outline-primary">
                 {{$t('actions.addItem')}}
             </router-link>
         </div>
