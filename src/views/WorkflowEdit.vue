@@ -13,8 +13,8 @@
         </div>
 
         <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="custom-tab">
-            <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
-                :active="form.order === minFormOrder" :key="form.id">
+            <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order" :active="form.order === minFormOrder"
+                :key="form.id">
                 <template slot="title">
                     <span class="fa fa-cogs"></span> {{form.name}}
                 </template>
@@ -32,12 +32,10 @@
                             <toolbox :operations="operations"></toolbox>
                         </div>
                         <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
-                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                v-if="loaded" :loaded="loaded" :version="workflow.version"
-                                environment="DESIGN"></diagram>
+                            <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations" v-if="loaded"
+                                :loaded="loaded" :version="workflow.version" environment="DESIGN"></diagram>
                             <slideout-panel :opened="showProperties">
-                                <property-window :task="selectedTask.task"
-                                    :suggestions="getSuggestions(selectedTask.task.id)" />
+                                <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
                             </slideout-panel>
                         </div>
                         <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
@@ -54,8 +52,7 @@
                                         <td>{{h.date}}</td>
                                         <td>{{h.user_name}}</td>
                                         <td>
-                                            <button class="btn btn-sm btn-danger"
-                                                @click="restore(h.version)">{{$t('actions.restore')}}</button>
+                                            <button class="btn btn-sm btn-danger" @click="restore(h.version)">{{$t('actions.restore')}}</button>
                                         </td>
                                     </tr>
                                 </table>
@@ -71,26 +68,25 @@
                             </div>
                             <div v-if="validationErrors.length > 0">
                                 <b-card>
-                                    <b-card-body>
-                                        <p class="text-danger">
-                                            {{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
-                                        <table class="table table-sm">
-                                            <tr>
-                                                <th>{{$tc('titles.tasks')}}</th>
-                                                <th>{{$tc('titles.value')}}</th>
-                                                <th>{{$tc('titles.error')}}</th>
-                                            </tr>
-                                            <tr v-for="err in validationErrors" :key="err.sequential">
-                                                <td>{{err.task.name}}</td>
-                                                <td>{{err.field}}</td>
-                                                <td>{{err.message}}</td>
-                                            </tr>
-                                        </table>
-                                    </b-card-body>
+                                    <p class="text-danger">
+                                        {{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <th>{{$tc('titles.tasks')}}</th>
+                                            <th>{{$tc('titles.value')}}</th>
+                                            <th>{{$tc('titles.error')}}</th>
+                                        </tr>
+                                        <tr v-for="err in validationErrors" :key="err.sequential">
+                                            <td>{{err.task.name}}</td>
+                                            <td>{{err.field}}</td>
+                                            <td>{{err.message}}</td>
+                                        </tr>
+                                    </table>
                                 </b-card>
                             </div>
                             <div class="mt-1">
                                 <b-card>
+<<<<<<< HEAD
                                     <b-card-body>
                                         <div class="container-fluid">
                                             <div class="row">
@@ -113,13 +109,28 @@
                                             </div>
                                         </div>
                                     </b-card-body>
+=======
+                                    <div>
+                                        <label>{{$t('workflow.jobName')}}
+                                            ({{$t('common.optional')}}):</label>
+                                        <input type="text" class="form-control" v-model="clusterInfo.jobName" maxlength="50" />
+                                    </div>
+                                    <div>
+                                        <label>{{$tc('titles.cluster')}}:</label>
+                                        <select v-model="clusterInfo.id" class="form-control" v-on:change="changeCluster">
+                                            <option v-for="option in clusters" v-bind:value="option.id">
+                                                {{ option.name }}
+                                            </option>
+                                        </select>
+                                        <small>{{clusterInfo.description}}</small>
+                                    </div>
+>>>>>>> 1571654... Minor fixes
                                 </b-card>
                             </div>
                             <div slot="modal-footer" class="w-100 text-right">
                                 <button class="btn btn-sm btn-outline-success" @click="execute" id="mdl-execute-wf">
                                     <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
-                                <button class="ml-1 btn btn-sm btn-outline-dark"
-                                    @click="cancelExecute">{{$t('actions.cancel')}}</button>
+                                <button class="ml-1 btn btn-sm btn-outline-dark" @click="cancelExecute">{{$t('actions.cancel')}}</button>
                             </div>
                         </b-modal>
                         <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled ref="saveAsModal">
@@ -129,8 +140,8 @@
                                         <b-form-radio name="saveOption" v-model="saveOption" value="new">
                                             {{$t('workflow.newName')}}
                                         </b-form-radio>
-                                        <input type="text" maxlength="40" class="form-control"
-                                            :disabled="saveOption != 'new'" v-model="newName" />
+                                        <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'"
+                                            v-model="newName" />
                                     </div>
                                     <div class="col-md-12 mb-3">
                                         <b-form-radio name="saveOption" v-model="saveOption" value="image">
@@ -170,23 +181,21 @@
                 </b-card>
             </b-tab>
             <b-tab :title="$tc('titles.deployment', 1)" title-item-class="tab-order-6" purpose="deployment">
-                    <div class="row pt-1">
-                        <div class="col-md-2">
-                            <toolbox :operations="operations"></toolbox>
-                        </div>
-                        <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
-                            <diagram :workflow="workflow" ref="deployDiagram" id="deploy-diagram"
-                                :operations="operations" v-if="showDeployment" :loaded="loaded" :version="workflow.version"
-                                environment="DEPLOYMENT">
-                            </diagram>
-                            <slideout-panel :opened="showProperties">
-                                <property-window :task="selectedTask.task"
-                                    :suggestions="getSuggestions(selectedTask.task.id)" />
-                            </slideout-panel>
-                        </div>
-
+                <div class="row pt-1">
+                    <div class="col-md-2">
+                        <toolbox :operations="operations"></toolbox>
                     </div>
-                </b-tab>
+                    <div class="col-md-10 pl-0 lemonade with-grid" style="position: relative">
+                        <diagram :workflow="workflow" ref="deployDiagram" id="deploy-diagram" :operations="operations"
+                            v-if="showDeployment" :loaded="loaded" :version="workflow.version" environment="DEPLOYMENT">
+                        </diagram>
+                        <slideout-panel :opened="showProperties">
+                            <property-window :task="selectedTask.task" :suggestions="getSuggestions(selectedTask.task.id)" />
+                        </slideout-panel>
+                    </div>
+
+                </div>
+            </b-tab>
         </b-tabs>
 
         <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
@@ -199,8 +208,7 @@
             </div>
         </b-modal>
 
-        <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true"
-            :title="$tc('titles.validationErrors', 1)">
+        <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true" :title="$tc('titles.validationErrors', 1)">
             <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
             <table class="table table-sm">
                 <tr>
@@ -505,11 +513,11 @@
             toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
             updateSelectedTab(index) {
-                if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'workflow'){
+                if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'workflow') {
                     this.$refs.diagram.repaint();
                     this.showExecute = true;
                     this.showDeployment = false;
-                } else if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'deployment'){
+                } else if (this.$refs.formTabs.tabs[index].$attrs.purpose === 'deployment') {
                     this.showExecute = false;
                     this.showDeployment = true;
                     //this.$refs.deployDiagram.repaint();
@@ -940,7 +948,7 @@
                 let counter = 1;
                 let result = true;
                 tasks.forEach(t => {
-                    if (t.enabled) {
+                    if (t.enabled && t.environment === 'DESIGN') {
                         let warning = null;
                         t.operation.forms.forEach(form => {
                             if (form.category === 'execution') {
