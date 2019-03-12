@@ -39,7 +39,7 @@
                     orderBy: {
                         column: 'id',
                     },
-                    descOrderColumns: ['id'],
+                    descOrderColumns: ['id', 'created'],
                     columnsClasses: {
                         name: 'th-20',
                         description: 'th-20',
@@ -57,8 +57,8 @@
                     sortIcon: {
                         base: 'fa fas',
                         is: 'fa-sort ml-10',
-                        up: 'fa-sort-amount-up',
-                        down: 'fa-sort-amount-down'
+                        up: 'fa-sort-up',
+                        down: 'fa-sort-down'
                     },
                     requestFunction: this.load,
                     filterable: [],

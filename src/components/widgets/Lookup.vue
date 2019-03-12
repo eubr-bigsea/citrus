@@ -38,8 +38,8 @@
                     sortIcon: {
                         base: 'fa fas',
                         is: 'fa-sort ml-10',
-                        up: 'fa-sort-amount-up',
-                        down: 'fa-sort-amount-down'
+                        up: 'fa-sort-up',
+                        down: 'fa-sort-down'
                     },
                     columnsClasses: {
                         key: 'text-center',
