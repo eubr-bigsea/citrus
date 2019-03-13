@@ -45,7 +45,7 @@
                                                     <small>
                                                         <span class="badge-custom"
                                                             :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
-                                                            {{log.level}}
+                                                            {{$t(`juicer.log.${log.level.toLowerCase()}`)}}
                                                         </span> &nbsp;
                                                         <span>{{log.date | formatJsonDate}}</span>&nbsp;
                                                         <TaskDisplay :task="getTask(log.task.id)" :simple="true" />
@@ -62,9 +62,9 @@
                                         </div>
                                     </b-tab>
                                     <b-tab :title="$t('titles.errorDetail')" v-if="job.exception_stack">
-                                            <div style="font-size:.8em">
-                                                <code><pre>{{job.exception_stack}}</pre></code>
-                                            </div>
+                                        <div style="font-size:.8em">
+                                            <code><pre>{{job.exception_stack}}</pre></code>
+                                        </div>
                                     </b-tab>
                                     <b-tab :title="$tc('job.details', 2)">
                                         <dl>

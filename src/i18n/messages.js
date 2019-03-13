@@ -167,6 +167,14 @@ export default {
             sourceCode: 'Código-fonte',
             visualizations: 'Visualização | Visualizações',
         },
+        juicer: {
+            log: {
+                error: 'ERRO',
+                info: 'INFORMAÇÂO',
+                warn: 'AVISO',
+                warning: 'AVISO',
+            }
+        },
         messages: {
             acceptTerms: 'Concordo com os termos de uso <a href="{link}">Policy</a>',
             doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
@@ -455,6 +463,15 @@ export default {
             results: 'Result | Results',
             sourceCode: 'Source code',
             visualizations: 'Visualization | Visualizations',
+        },
+        juicer: {
+            log: {
+                info: 'INFO',
+                warning: 'WARN',
+                error: 'ERROR',
+                warn: 'WARN'
+
+            }
         },
         titles: {
             action: 'Action | Actions',
