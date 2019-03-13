@@ -2,11 +2,13 @@
     <div>
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h6 class="header-pretitle"><span class="text-muted">{{$tc('titles.workflow', 1)}} &nbsp; &#8226; &nbsp; </span> {{$tc('titles.job', 1)}}</h6>
-                <h1 class="header-title" v-if="loaded">
-                    {{workflow.id}} - <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" v-if="workflow.id">
-                        {{workflow.name}}
+                <h6 class="header-pretitle">
+                    <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" v-if="workflow.id">
+                        <i class="fa fa-chevron-left"></i> &nbsp; {{$t('actions.back')}}
                     </router-link>
+                </h6>
+                <h1 class="header-title" v-if="loaded">
+                    <span v-bind:title="$tc('titles.job', 1)"> {{job.id}} </span> {{workflow.name}}
                 </h1>
             </div>
         </div>
@@ -512,11 +514,11 @@
         margin-bottom: 12px!important;
     }
 
-    .header-title > a {
-        color: initial;
+    .header-title > span {
+        font-weight: 200;
     }
 
-    .header-title:hover > a {
+    .header-pretitle:hover > a {
         text-decoration: none;
     }
 </style>
