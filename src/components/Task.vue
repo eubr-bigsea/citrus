@@ -5,7 +5,7 @@
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
         </div>
-        <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
+        <em v-if="isComment"><Markdown :text="task.forms.comment ? task.forms.comment.value: ''"></Markdown></em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
         </div>
         <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
@@ -18,7 +18,7 @@
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
         </div>
-        <div class="custom-context-menu" v-if="contextMenuOpened && !isComment" ref="right">
+        <div class="custom-context-menu" v-if="contextMenuOpened" ref="right">
             <ul>
                 <li @click.stop="remove()">{{$t('actions.delete')}}</li>
                 <li @click.stop="showResults()" v-if="task.step">{{$t('actions.showResults')}}</li>
@@ -34,6 +34,7 @@
 
 <script>
     import Vue from 'vue';
+    import Markdown from './widgets/Markdown';
     const anchorsOriginal = {
         input: [
             [
@@ -307,6 +308,9 @@
                 this.contextMenuOpened = false;
                 this.$root.$emit('onremove-task', this.task);
             },
+        },
+        components: {
+            Markdown
         },
         props: {
             enableContextMenu: { default: true },
