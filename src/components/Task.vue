@@ -612,28 +612,6 @@
         width: 100%;
     }
 
-    /* #lemonade-diagram {
-        width: 2000px;
-        height: 4000px;
-        .ghost-active {
-            display: block !important;
-        }
-        .ghost-select>span {
-            border: 1px dashed #000;
-            width: 100%;
-            height: 100%;
-            float: left;
-        }
-        .ghost-select {
-            display: none;
-            width: 100px;
-            height: 100px;
-            z-index: 100000;
-            position: absolute !important;
-            cursor: default !important;
-        }
-    } */
-
     #lemonade,
     .lemonade {
         position: relative;
@@ -653,8 +631,7 @@
         /* Internet Explorer/Edge */
         user-select: none;
 
-        /* Non-prefixed version, currently
-                                                                not supported by any browser */
+        /* Non-prefixed version, currently not supported by any browser */
         .jtk-group-expanded,
         .jtk-group-collapsed {
             background: transparent;
@@ -934,16 +911,6 @@
                 mix-blend-mode: difference;
             }
 
-            /*
-        strong {
-            position: absolute;
-            text-align: center;
-            top: 10%; 
-            width: 100%;
-            /*border-bottom: 1px solid $color2;
-            font-size: 1.1em;
-            font-family: Arial, Helvetica, sans-serif;
-        }*/
             span {
                 xfont-size: 12pt;
             }
@@ -981,34 +948,6 @@
         z-index: 100;
     }
 
-    /* 
-    .endpoint:hover {
-        opacity: 1;
-        background-color: $color3;
-    }
-
-    li .list-group-item {
-        list-style-type: none;
-        font-size: 9pt;
-        padding: 5px 5px;
-        font-weight: bold;
-
-    } */
-
-    /**/
-
-    /* .icon-union:before {
-        content: "\222A";
-    }
-
-    .icon-intersection:before {
-        content: "\2229";
-    }
-
-    .icon-projection:before {
-        content: '\03C3';
-    } */
-
     .jsplumb-drag-selected,
     .jtk-drag-selected {
         border-width: 2px !important;
@@ -1037,17 +976,10 @@
 
     .log-enter,
     .log-leave-to
-    /* .list-leave-active for <2.1.8 */
-
         {
         opacity: 0;
         color: red;
-        /*transform: translateY(5px);*/
     }
-
-    /* \f142 is ellipsis-v */
-
-    /* \202F is thin unbreakable space */
 
     .fa.fa-grip:before {
         content: "\f142\202F\f142\202F\f142";
