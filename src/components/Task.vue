@@ -5,15 +5,16 @@
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
         </div>
-        <em v-if="isComment"><Markdown :text="task.forms.comment ? task.forms.comment.value: ''"></Markdown></em>
+        <em v-if="isComment">
+            <Markdown :text="task.forms.comment ? task.forms.comment.value: ''"></Markdown>
+        </em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
         </div>
         <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
             <span class="fa fa-2x" :class="getDecorationClass"></span>
         </div>
         <div v-if="!isComment && task.warning " class="right-decor">
-            <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" 
-                :title="task.warning"></span>
+            <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" :title="task.warning"></span>
         </div>
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
@@ -331,6 +332,7 @@
                 contextMenuOpened: false,
                 isComment: false,
                 contextMenuActions: [],
+                dragEnabledForComment: false
             }
         },
         watch: {
@@ -338,7 +340,7 @@
                 console.log('Prop changed: ', newVal, ' | was: ', oldVal)
             },
             task: function (n, o) {
-                
+
             },
         },
         mounted() {
@@ -429,18 +431,38 @@
                     });
                 }
             });
-            if (self.draggable && self.instance && self.instance.addEndpoint) {
-                self.instance.draggable(elem, {
-                    lineWidth: 3,
-                    containment: "parent",
-                    grid: [1, 1],
-                    drag() {
-                        // let elem = document.getElementById(self.task.id);
-                        let elem = self.$refs.task;
-                        self.task.left = elem.offsetLeft;
-                        self.task.top = elem.offsetTop;
+            const dragOptions = {
+                lineWidth: 3,
+                containment: "parent",
+                grid: [1, 1],
+                drag() {
+                    const elem = self.$refs.task;
+                    self.task.left = elem.offsetLeft;
+                    self.task.top = elem.offsetTop;
+                }
+            };
+            if (self.isComment) {
+                self.$el.addEventListener("mouseover", (ev) => {
+                    const dragHandlerPos = (self.$el.clientHeight - ev.offsetY > 30)
+                        && (self.$el.clientWidth - ev.offsetX > 30)
+                    if (dragHandlerPos && ! self.dragEnabledForComment) {
+                        self.instance.setDraggable(self.$el, true);
+                        self.instance.draggable(self.$el, dragOptions);
+                        self.dragEnabledForComment = false;
+                    } else {
+                        self.instance.setDraggable(self.$el, false);
+                        self.dragEnabledForComment = false;
                     }
                 });
+                self.$el.addEventListener("mouseleave", (ev) => {
+                    self.instance.setDraggable(self.$el, false);
+                    self.dragEnabledForComment = false;
+                    self.task.width = self.$el.clientWidth;
+                    self.task.height = self.$el.clientHeight;
+                })
+            }
+            if (self.draggable && !self.isComment && self.instance && self.instance.addEndpoint) {
+                self.instance.draggable(elem, dragOptions);
             }
             this.$root.$emit("ontask-ready", self.task);
         },
@@ -467,7 +489,7 @@
     }
 
     .output {
-        
+
         .has-1-ports,
         .has-2-ports,
         .has-3-ports {
@@ -475,12 +497,15 @@
             z-index: 5;
             left: -2px;
         }
+
         .has-1-ports {
             top: 10px;
         }
+
         .has-2-ports {
             top: 15px;
         }
+
         .has-3-ports {
             margin-top: 20px !important;
         }
@@ -821,7 +846,11 @@
             }
 
             &.comment {
-                z-index: 1;
+                z-index: 1 !important;
+                resize: both;
+                min-height: 300px;
+                justify-content: inherit !important;
+                width: 100px;
 
                 .decor {
                     display: none;
@@ -854,7 +883,7 @@
                 cursive;
                 font-size: 1.2em;
                 color: #000;
-                width: 200px !important;
+                width: 200px;
                 min-height: 80px;
 
                 ;
