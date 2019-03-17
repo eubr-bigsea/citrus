@@ -162,7 +162,9 @@ main {
     border: none;	
     outline: none;	
 }
-
+div:focus, ul:focus {
+    outline:none !important
+}
 ul.nav-tabs {
     display: flex;
     background: #fafafa;

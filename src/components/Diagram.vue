@@ -1,5 +1,5 @@
 <template>
-    <div class="border">
+    <div class="border" tabindex="0">
         <diagram-toolbar :workflow="workflow" v-if="showToolbar"></diagram-toolbar>
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
             v-on:click="diagramClick">
@@ -14,11 +14,6 @@
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
                     </div>
-                    <!--
-                        ctx-menu-component>
-                        /ctx-menu-component>
-                    -->
-
                     <div v-for="group in groups" :key="group.id">
                         <group-component :group="group" :instance="instance" :key="group.id" />
                     </div>
@@ -69,20 +64,12 @@
 
     import lodash from 'lodash';
 
-    //import ResizerComponent from 'vue-resize-handle/bidirectional';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-    //import PerfectScrollbarCss from 'perfect-scrollbar/dist/css/perfect-scrollbar.css';
-    //import CtxMenuComponent from '../ctx-menu/ctx-menu.vue';
-    // import DropDownComponent from '../ui/dropdown.vue';
-
     import TaskComponent from './Task.vue';
     import DiagramToolbar from './DiagramToolbar.vue'
     import jsplumb from 'jsplumb'
     const GroupComponent = Vue.extend({
-
         components: {
-            // "resizer": ResizerComponent,
-
         },
         mounted() {
             let self = this;
@@ -236,7 +223,7 @@
                 selectedElements: [],
 
                 settings: {
-                    maxScrollbarLength: 60
+                    maxScrollbarLength: 60,
                 },
                 showDeployModal: false,
                 showExecutionModal: false,
@@ -257,6 +244,7 @@
             }
             this.$root.$on('onclick-task', (taskComponent) => {
                 this.selectedTask = taskComponent.task;
+                this.$el.focus({preventScroll: true});
             });
             // this.$on('oncancel-deploy', () => {
             //     this.setZoomPercent(null, this.oldZoom);
@@ -352,7 +340,7 @@
             /* scroll bars */
             // @FIXME PerfectScrollbar.initialize(self.diagramElement.parentElement);
 
-            this.$el.addEventListener('keyup', this.keyboardAction, true);
+            self.$el.addEventListener('keyup', this.keyboardAction, true);
             /* selection by dragging */
             self.diagramElement.addEventListener("mousedown", (ev) => {
                 if (self.$refs.diagram === ev.target) {
@@ -476,7 +464,7 @@
                 this.instance.removeAllEndpoints(task.id);
                 //this.instance.detach(task.id);
                 let elem = document.getElementById(task.id)
-                //elem.parentNode.removeChild(elem);
+                elem.parentNode.removeChild(elem);
 
                 //console.debug(this.instance.getConnections());
                 this.instance.repaintEverything();
@@ -606,12 +594,12 @@
             },
             openSelector(ev) {
                 if (ev.which === 1 && this.multipleSelectionEnabled) { //left mouse
-                    let self = this;
-                    let rect = this.diagramElement.getBoundingClientRect();
-                    let x = ev.pageX - rect.left;
-                    let y = ev.pageY - rect.top;
-                    let w = Math.abs(self.initialW - x);
-                    let h = Math.abs(self.initialH - y);
+                    const self = this;
+                    const rect = this.diagramElement.getBoundingClientRect();
+                    const x = ev.pageX - rect.left;
+                    const y = ev.pageY - rect.top;
+                    const w = Math.abs(self.initialW - x);
+                    const h = Math.abs(self.initialH - y);
 
                     let ghostSelect = self.$refs.ghostSelect;
                     ghostSelect.style.display = ''
@@ -621,16 +609,6 @@
 
                     ghostSelect.style.left = Math.min(x, self.initialW) + 'px';
                     ghostSelect.style.top = Math.min(y, self.initialH) + 'px';
-                    /*
-                    if (ev.offsetX <= self.initialW && ev.offsetY >= self.initialH) {
-                    elem.style.left = ev.offsetX + 'px';
-                    } else if (ev.offsetY <= self.initialH && ev.offsetX >= self.initialW) {
-                        elem.style.top = ev.offsetY + 'px';
-                    } else if (ev.offsetY < self.initialH && ev.offsetX < self.initialW) {
-                        elem.style.left = ev.offsetX + 'px';
-                        elem.style.top = ev.offsetY + 'px';
-                        //console.debug('3bopenselector (x, y)', ev.offsetX, ev.offsetY, elem.style.left, elem.style.top)
-                    }*/
 
                 }
             },
@@ -705,14 +683,17 @@
                 self.clearTasks();
             },
             keyboardAction(ev) {
-                let self = this;
+                const self = this;
                 if (self.selectedTask) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+
                     let elem = document.getElementById(self.selectedTask.id);
                     let inc = ev.ctrlKey ? 10 : 1;
                     let v = 0;
                     switch (ev.code) {
                         case 'Delete':
-                            this.deleteSelected();
+                            this.removeTask(self.selectedTask);
                             break;
                         case 'ArrowRight':
                             v = parseInt(elem.style.left, 10) + inc;
@@ -739,21 +720,22 @@
                             self.instance.repaintEverything();
                             break
                     }
-                    ev.stopPropagation();
+                    
                 }
             },
+            /*
             deleteSelected(ev) {
                 let self = this;
                 if (self.selectedTask) {
-                    /*self.instance.remove(self.selectedTask);
-                    self.removeTask({ id: self.selectedTask.id });*/
+                    //self.instance.remove(self.selectedTask);
+                    //self.removeTask({ id: self.selectedTask.id });
                     self.removeTask(self.selectedTask);
                     self.selectedTask = null;
                 } else if (self.selectedFlow) {
                     self.instance.detach(self.selectedFlow);
                     self.selectedFlow = null;
                 }
-            },
+            },*/
             diagramClick(ev) {
                 if (ev.target.classList.contains("diagram")) {
                     ev.preventDefault();
@@ -881,12 +863,13 @@
                     })
                 }
             },
+            /*
             scrollToTask(taskId) {
                 let elemTask = document.getElementById(taskId);
                 let container = self.diagramElement.parentElement;
                 container.scrollTop = parseInt(elemTask.style.top);
                 container.scrollLeft = parseInt(elemTask.style.left);
-            },
+            },*/
             cancelExecute() {
                 this.showExecutionModal = false;
             },

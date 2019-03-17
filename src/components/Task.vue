@@ -1,21 +1,31 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="(!isComment) ? (task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')): ''"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
         v-on:click.stop="click" @contextmenu="openMenu">
-        <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
+        <div v-if="!isComment && !isMeta" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
+        </div>
+        <div v-if="isMeta">
+            {{task.name}}
+            <div style="position: absolute; bottom: 0;" class="text-center">
+                <a href="#" class="link">edit 
+                <span class="fa fa-cogs"></span>
+                </a>
+            </div>
         </div>
         <em v-if="isComment">
             <Markdown :text="task.forms.comment ? task.forms.comment.value: ''"></Markdown>
         </em>
-        <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
-        </div>
-        <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
-            <span class="fa fa-2x" :class="getDecorationClass"></span>
-        </div>
-        <div v-if="!isComment && task.warning " class="right-decor">
-            <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" :title="task.warning"></span>
-        </div>
+        <template v-else>
+            <div v-if="showDecoration" class="right-decor" :class="getDecorationClass">
+            </div>
+            <div v-if="task.step && task.step.status && !task.warning " class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
+                <span class="fa fa-2x" :class="getDecorationClass"></span>
+            </div>
+            <div v-if="task.warning " class="right-decor">
+                <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" :title="task.warning"></span>
+            </div>
+        </template>
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
         </div>
@@ -23,6 +33,7 @@
             <ul>
                 <li @click.stop="remove()">{{$t('actions.delete')}}</li>
                 <li @click.stop="showResults()" v-if="task.step">{{$t('actions.showResults')}}</li>
+                <li @click.stop="showResults()" v-if="isComment">{{$t('task.editMetaTask')}}</li>
                 <li @click.stop="dblClick">{{$tc('titles.property', 2)}}</li>
                 <li v-for="(item, index) in contextMenuActions" @click="item.action(item.name)" :key="index">
                     {{item.label}}
@@ -93,9 +104,58 @@
                 [1, 0.1, 1, 0],
                 [1, 0.5, 1, 0],
                 [1, 0.9, 1, 0]
+            ],
+            [
+                [1, 0.16, 1, 0],
+                [1, 0.38, 1, 0],
+                [1, 0.60, 1, 0],
+                [1, 0.82, 1, 0]
+            ],
+            [
+                [1, 0.1, 1, 0],
+                [1, 0.3, 1, 0],
+                [1, 0.5, 1, 0],
+                [1, .7, 1, 0],
+                [1, .9, 1, 0],
+            ],
+            [
+                [1, 0, 1, 0],
+                [1, 0.20, 1, 0],
+                [1, 0.40, 1, 0],
+                [1, 0.60, 1, 0],
+                [1, .80, 1, 0],
+                [1, 1, 1, 0],
+            ],
+            [
+                [1, 0 + .07, 1, 0],
+                [1, 0.14 + .07, 1, 0],
+                [1, 0.28 + .07, 1, 0],
+                [1, 0.42 + .07, 1, 0],
+                [1, 0.56 + .07, 1, 0],
+                [1, 0.70 + .07, 1, 0],
+                [1, 0.84 + .07, 1, 0],
+            ],
+            [
+                [1, .0 + 0.06, 1, 0],
+                [1, .125 + 0.06, 1, 0],
+                [1, .25 + 0.06, 1, 0],
+                [1, .375 + 0.06, 1, 0],
+                [1, .5 + 0.06, 1, 0],
+                [1, .625 + 0.06, 1, 0],
+                [1, .75 + 0.06, 1, 0],
+                [1, .875 + 0.06, 1, 0],
             ]
         ]
     }
+    const incr = [0, 0, 0, 0, 0, 0, 0, 0.125, 0.125];
+    /*anchors['output'] = Array(8).fill(1).map(
+        (x, y) => {
+            let counter = 0;
+            return Array(x + y).fill(1).map(
+                (a, b) => [1, incr[x +y], 1, 0]
+        )
+    }
+    );*/
     const connectorType = ['Flowchart', 'Bezier', 'StateMachine'][0];
     const connectorPaintStyle = {
         lineWidth: 1,
@@ -152,6 +212,9 @@
 
     const TaskComponent = Vue.extend({
         computed: {
+            isMeta() {
+                return this.task !== null && this.task.operation.slug === 'within'
+            },
             getStyle() {
                 let result = {}
                 let task = this.task
@@ -174,8 +237,11 @@
                 return result
             },
             'classes': function () {
-                return (this.task.status ? this.task.status.toLowerCase() : '') +
-                    (this.isComment ? ' comment ' : '') + 'test';
+                return [
+                    this.task.status ? this.task.status.toLowerCase() : '',
+                    this.isComment ? ' comment ' : '',
+                    this.isMeta ? ' meta-task ' : '']
+                    .filter(v => v !== '').join(" ");
 
             },
             getDecorationClass() {
@@ -243,7 +309,7 @@
                 return result.join(' ');
             },
             openMenu(e) {
-                if (!this.isComment && this.enableContextMenu) {
+                if (this.enableContextMenu) {
                     this.contextMenuOpened = true;
                     const self = this;
                     Vue.nextTick(function () {
@@ -309,6 +375,9 @@
                 this.contextMenuOpened = false;
                 this.$root.$emit('onremove-task', this.task);
             },
+            _generatePorts(x, y, multiplicity) {
+                return { name: `p${x + y}`, id: x + y, multiplicity, interfaces: [] }
+            }
         },
         components: {
             Markdown
@@ -335,14 +404,7 @@
                 dragEnabledForComment: false
             }
         },
-        watch: {
-            enableContextMenu: function (newVal, oldVal) {
-                console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-            },
-            task: function (n, o) {
 
-            },
-        },
         mounted() {
             const self = this;
             let operation = this.task.operation;
@@ -372,34 +434,56 @@
                 });
             }
             const locations = { input: [-1.2, 0], output: [3, -1.1] }
-            var lbls = [
+            const lbls = [
                 // note the cssClass and id parameters here
                 ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
             ];
 
-            let elem = this.$refs.task;
+            const elem = this.$refs.task;
+            let setUp = [];
             if (this.task.operation.slug === 'comment') {
                 elem.classList.add('comment');
                 this.isComment = true;
+            } else if (this.isMeta) {
+                const nIn = 3;
+                const nOut = 4;
+                setUp = [
+                    {
+                        ports: Array(nIn).fill(1).map((x, y) => this._generatePorts(x, y, 'ONE')), type:
+                            'input', options: endPointOptionsInput
+                    },
+                    {
+                        ports: Array(nOut).fill(1).map((x, y) => this._generatePorts(x + 1000, y, 'MANY')), type:
+                            'output', options: endPointOptionsOutput
+                    }
+                ]
+            } else {
+                setUp = [
+                    { ports: inputs, type: 'input', options: endPointOptionsInput },
+                    { ports: outputs, type: 'output', options: endPointOptionsOutput }
+                ]
             }
-            [
-                { ports: inputs, type: 'input', options: endPointOptionsInput },
-                { ports: outputs, type: 'output', options: endPointOptionsOutput }
-            ].forEach((item) => {
-                let ports = item.ports;
-                let portType = item.type;
+
+            setUp.forEach((item) => {
+                const ports = item.ports;
+                const portType = item.type;
                 lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
 
                 if (ports.length > 0) {
                     anchors[portType][ports.length - 1].forEach((anchor, inx) => {
-                        lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
+                        lbls[0][1]['label'] = `<div class="${portType} has-${ports.length}-ports">${ports[inx].name}</div>`;
 
                         let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
                         lbls[0][1]['location'] = locations[item.type];
                         options['anchors'] = anchor.slice();
                         options['overlays'] = lbls.slice();
                         options['uuid'] = `${taskId}/${ports[inx].id}`;
-                        options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
+
+                        if (ports[inx].interfaces.length) {
+                            options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
+                        } else {
+                            options['scope'] = `undefined-${portType}-scope`;
+                        }
 
                         if (ports[inx].multiplicity !== 'ONE') {
                             if (portType === 'input') {
@@ -414,11 +498,9 @@
                         }
                         options['dragOptions'] = {
                             start: (event, ui) => {
-                                console.debug("dragEndpointStart")
                                 this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
                             },
                             stop: (event, ui) => {
-                                console.debug("dragEndpointStop")
                                 this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
                             }
                         };
@@ -431,6 +513,7 @@
                     });
                 }
             });
+
             const dragOptions = {
                 lineWidth: 3,
                 containment: "parent",
@@ -445,7 +528,7 @@
                 self.$el.addEventListener("mouseover", (ev) => {
                     const dragHandlerPos = (self.$el.clientHeight - ev.offsetY > 30)
                         && (self.$el.clientWidth - ev.offsetX > 30)
-                    if (dragHandlerPos && ! self.dragEnabledForComment) {
+                    if (dragHandlerPos && !self.dragEnabledForComment) {
                         self.instance.setDraggable(self.$el, true);
                         self.instance.draggable(self.$el, dragOptions);
                         self.dragEnabledForComment = false;
@@ -470,25 +553,43 @@
     export default TaskComponent;
 </script>
 <style lang="scss">
-    .has-1-ports,
-    .has-2-ports,
-    .has-3-ports {
+    $maxPorts: 8;
+
+    %ports-styles {
         color: #1E88E5;
         font-size: .5em;
-        /* background: #fff !important; */
+        /* background: #fff !important;
         display: block;
         line-height: 6px;
         z-index: 10000;
-        text-align: center;
+        text-align: center; */
         width: 55px;
+        line-height: .8;
+        &.output {
+            margin-top: 36px;
+            text-align: left;
+        }
+        &.input {
+            margin-right: 4px;
+            text-align: right;
+        }
     }
+    @mixin has-x-ports {
+        @for $i from 1 through $maxPorts {
+            .has-#{$i}-ports {
+                @extend %ports-styles;
+            }
+        }
+    }
+
+    @include has-x-ports;
 
     .endpoint-label.output {
         z-index: 1;
         /* background: green */
     }
 
-    .output {
+    .xoutput {
 
         .has-1-ports,
         .has-2-ports,
@@ -539,36 +640,40 @@
 
 
     .custom-context-menu {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 8pt;
         background: #FAFAFA;
         border: 1px solid #BDBDBD;
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
         display: block;
         list-style: none;
-        margin: 10px 0 0 160px;
+        left: 100px;
+        top: 20px;
         padding: 0;
         position: absolute;
-        width: 250px;
+        width: 150px;
         z-index: 999999;
 
         ul {
             list-style-type: none;
-            margin: 5px 0;
-            padding: 0 0 0 5px;
+            margin: 0px 0;
+            padding: 0;
         }
 
         li {
             border-bottom: 1px solid #E0E0E0;
             margin: 0;
-            padding: 5px 15px;
-            font-weight: bold;
+            padding: 5px 10px;
+            font-weight: normal;
 
             &:last-child {
                 border-bottom: none;
             }
 
             &:hover {
-                background: #1E88E5;
+                background: #343a40;
                 color: #FAFAFA;
+                font-weight: bold;
             }
         }
     }
@@ -596,6 +701,7 @@
         display: none;
     }
 
+    /* FIXME: remove
     .buttons-toolbar {
         background: white;
         padding: 5px;
@@ -622,8 +728,8 @@
         .fa-grip {
             display: none;
         }
-    }
-
+    }*/
+    /*
     .diagram-toolbar {
         .add-margin {
             margin-right: 5px !important;
@@ -636,29 +742,7 @@
         position: relative;
         width: 100%;
     }
-
-    /* #lemonade-diagram {
-        width: 2000px;
-        height: 4000px;
-        .ghost-active {
-            display: block !important;
-        }
-        .ghost-select>span {
-            border: 1px dashed #000;
-            width: 100%;
-            height: 100%;
-            float: left;
-        }
-        .ghost-select {
-            display: none;
-            width: 100px;
-            height: 100px;
-            z-index: 100000;
-            position: absolute !important;
-            cursor: default !important;
-        }
-    } */
-
+    */
     #lemonade,
     .lemonade {
         position: relative;
@@ -678,8 +762,7 @@
         /* Internet Explorer/Edge */
         user-select: none;
 
-        /* Non-prefixed version, currently
-                                                                not supported by any browser */
+        /* Non-prefixed version, currently not supported by any browser */
         .jtk-group-expanded,
         .jtk-group-collapsed {
             background: transparent;
@@ -688,7 +771,7 @@
             padding: 4px;
             position: absolute;
             width: 400px;
-
+            /*
             .command {
                 text-align: right;
             }
@@ -712,6 +795,7 @@
                 bottom: 0;
                 right: 0;
             }
+            */
         }
 
         .jtk-group-collapsed {
@@ -744,8 +828,6 @@
                 border: none;
             }
 
-            ;
-
             /*&.interrupted, &.canceled, &.error, &.canceled,*/
             &.running,
             &.highlight {
@@ -754,8 +836,6 @@
                 -moz-box-sha: 0px 0px 50px #a93;
                 -webkit-box-: 0px 0px 50px #a93;
             }
-
-            ;
 
             .right-decor {
                 left: 48px;
@@ -845,23 +925,40 @@
                 background-color: lighten($color5, 30%) !important;
             }
 
+            &.meta-task {
+                min-height: 150px;
+                width: 80px !important;
+                border: double !important;
+
+                div {
+                    margin: 5px;
+                }
+
+                .decor {
+                    border: 1px solid #222;
+                    border-radius: 20px;
+                    height: 20px;
+                    width: 20px;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                }
+            }
+
             &.comment {
                 z-index: 1 !important;
                 resize: both;
                 min-height: 300px;
                 justify-content: inherit !important;
                 width: 100px;
+                font-family: Verdana, Tahoma, Geneva, sans-serif;
 
-                .decor {
-                    display: none;
-                }
-
+                .decor,
                 strong {
                     display: none;
                 }
 
                 em {
-                    font-family: Verdana, Tahoma, Geneva, sans-serif;
                     vertical-align: top !important;
                     bottom: inherit;
                     margin-top: 3px;
@@ -870,30 +967,16 @@
                     min-height: 200px;
                 }
 
-                div.title {
-                    background: transparent !important;
-                }
 
                 background:#ffffa5;
                 overflow-y: auto;
                 border: none !important;
                 border-radius: 0 !important;
                 padding:10px !important;
-                font-family: 'Gloria Hallelujah',
-                cursive;
                 font-size: 1.2em;
                 color: #000;
                 width: 200px;
                 min-height: 80px;
-
-                ;
-                /*
-            -moz-transform: rotate(2deg);
-            -webkit-transform: rotate(2deg);
-            -o-transform: rotate(2deg);
-            -ms-transform: rotate(2deg);
-            transform: rotate(2deg);
-            */
                 box-shadow: 0px 4px 6px #333;
                 -moz-box-shadow: 0px 4px 6px #333;
                 -webkit-box-shadow: 0px 4px 6px #333;
@@ -962,24 +1045,6 @@
             &.operation:after {
                 mix-blend-mode: difference;
             }
-
-            /*
-        strong {
-            position: absolute;
-            text-align: center;
-            top: 10%; 
-            width: 100%;
-            /*border-bottom: 1px solid $color2;
-            font-size: 1.1em;
-            font-family: Arial, Helvetica, sans-serif;
-        }*/
-            span {
-                xfont-size: 12pt;
-            }
-
-            p {
-                border-top: 1px solid $color2;
-            }
         }
     }
 
@@ -1009,34 +1074,6 @@
 
         z-index: 100;
     }
-
-    /* 
-    .endpoint:hover {
-        opacity: 1;
-        background-color: $color3;
-    }
-
-    li .list-group-item {
-        list-style-type: none;
-        font-size: 9pt;
-        padding: 5px 5px;
-        font-weight: bold;
-
-    } */
-
-    /**/
-
-    /* .icon-union:before {
-        content: "\222A";
-    }
-
-    .icon-intersection:before {
-        content: "\2229";
-    }
-
-    .icon-projection:before {
-        content: '\03C3';
-    } */
 
     .jsplumb-drag-selected,
     .jtk-drag-selected {
@@ -1105,9 +1142,5 @@
         pointer-events: none;
         cursor: default;
         opacity: 0.6;
-    }
-
-    .margin-top-10 {
-        margin-top: 10px;
     }
 </style>
