@@ -6,10 +6,10 @@
             {{task.name}}
         </div>
         <div v-if="isMeta">
-            {{task.name}}
-            <div style="position: absolute; bottom: 0;" class="text-center">
-                <a href="#" class="link">edit 
-                <span class="fa fa-cogs"></span>
+            <div style="top: 25%; position: relative"> {{task.name}}</div>
+            <div style="position: absolute; top: -3px; right: -3px;" class="text-center">
+                <a href="#" class="link">
+                <span class="fa fa-external-link-alt fa-2x"></span>
                 </a>
             </div>
         </div>
@@ -446,7 +446,7 @@
                 this.isComment = true;
             } else if (this.isMeta) {
                 const nIn = 3;
-                const nOut = 4;
+                const nOut = 1;
                 setUp = [
                     {
                         ports: Array(nIn).fill(1).map((x, y) => this._generatePorts(x, y, 'ONE')), type:
