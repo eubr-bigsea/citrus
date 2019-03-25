@@ -445,7 +445,7 @@
 </script>
 <style>
     .badge-custom {
-        width: 60px
+        width: 70px
     }
 
     .html-div {
