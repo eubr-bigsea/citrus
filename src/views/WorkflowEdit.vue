@@ -341,23 +341,35 @@
                 this.selectedTask = { task: {} };
             });
 
-            this.$root.$on('update-form-field-value', (field, value) => {
-                if (self.selectedTask.task.forms[field.name]) {
-                    self.selectedTask.task.forms[field.name].value = value
+            this.$root.$on('update-form-field-value', (field, value, labelValue) => {
+                const fieldInSelectedTask = self.selectedTask.task.forms[field.name];
+                if (fieldInSelectedTask) {
+                    fieldInSelectedTask.value = value
                 } else {
-                    self.selectedTask.task.forms[field.name] = { value: value }
+                    fieldInSelectedTask = { value: value }
+                }
+                fieldInSelectedTask.label = field.label;
+                if (labelValue) {
+                    fieldInSelectedTask.labelValue = labelValue
+                } else {
+                    delete fieldInSelectedTask.labelValue
                 }
                 self._validateTasks([self.selectedTask.task]);
                 this.isDirty = true;
             });
-            this.$root.$on('update-workflow-form-field-value', (field, value) => {
+            this.$root.$on('update-workflow-form-field-value', (field, value, labelValue) => {
                 const self = this;
                 if (self.workflow)
                     if (!self.workflow.forms || !(self.workflow.forms instanceof Object)) {
                         self.workflow.forms = {}
                     }
                 try {
-                    self.workflow.forms[field.name] = { value };
+                    if (labelValue){
+                        self.workflow.forms[field.name] = { value, labelValue};
+                    } else {
+                        self.workflow.forms[field.name] = { value};
+                    }
+                    self.workflow.forms[field.name].label = field.label;
                 } catch (e) {
                     console.debug(e)
                 }

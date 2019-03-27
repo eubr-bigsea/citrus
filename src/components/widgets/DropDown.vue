@@ -32,7 +32,8 @@
         methods: {
             updated(e) {
                 this.selected = e.target.value;
-                this.$root.$emit(this.message, this.field, e.target.value);
+                this.$root.$emit(this.message, this.field, e.target.value, 
+                    e.target.options[e.target.selectedIndex].text);
             }
         },
         props: {

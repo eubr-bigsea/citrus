@@ -119,14 +119,15 @@
                 }
                 return tpl;
             },
-            updated(e) {
-                this.selected = e.target.value;
-                this.$root.$emit(this.message, this.field, e.target.value);
-            },
+            // updated(e) {
+            //     this.selected = e.target.value;
+            //     this.$root.$emit(this.message, this.field, e.target.value);
+            // },
             select(evt, newValue) {
                 this.selected = newValue.key;
                 this.label = newValue.value;
-                this.$root.$emit(this.message, this.field, this.selected);
+                this.$root.$emit(this.message, this.field, this.selected, 
+                    this.label);
                 this.closeModal()
             }
         },
