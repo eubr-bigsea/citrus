@@ -77,7 +77,7 @@
                                             <dd>{{job.cluster.name}}</dd>
                                         </dl>
                                     </b-tab>
-                                    <b-tab :title="$tc('job.parameters', 2)">
+                                    <b-tab :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto">
                                         <div class="card" v-for="task in job.workflow.tasks">
                                             <div class="card-body" style="overflow: auto">
                                                 {{task.name}} ({{task.operation.name}})
@@ -92,7 +92,7 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="(v, k, i) in task.forms">
-                                                            <td>{{v.label ? v.label : v.value}}</td>
+                                                            <td>{{v.label ? v.label : k}}</td>
                                                             <td>{{v.labelValue ? v.labelValue: v.value}}</td>
                                                         </tr>
                                                     </tbody>
