@@ -17,7 +17,8 @@
         methods: {
             changed(newValue){
                 this.checked = newValue ? '1' : '0';
-                this.$root.$emit(this.message, this.field, this.checked);
+                this.$root.$emit(this.message, this.field, this.checked, 
+                    this.checked? this.$t('common.yes'): this.$t('common.no'));
             }
         },
         data() {

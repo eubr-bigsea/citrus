@@ -164,8 +164,10 @@ export default {
             details: 'Detalhe | Detalhes',
             error: 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
             logs: 'Log | Logs',
+            parameters: 'Parâmetro | Parâmetros',
             results: 'Resultado | Resultados',
             sourceCode: 'Código-fonte',
+            values: 'Valor | Valores',
             visualizations: 'Visualização | Visualizações',
         },
         juicer: {
@@ -464,8 +466,10 @@ export default {
             details: 'Detail | Details',
             error: 'Error running job. See more details in the log window above.',
             logs: 'Log | Logs',
+            parameters: 'Parameter | Parameters',
             results: 'Result | Results',
             sourceCode: 'Source code',
+            values: 'Value | Values',
             visualizations: 'Visualization | Visualizations',
         },
         juicer: {
