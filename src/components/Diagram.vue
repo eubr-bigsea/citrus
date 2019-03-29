@@ -92,7 +92,8 @@
             instance: null,
             group: null,
             operations: null,
-            version: 0
+            version: 0,
+            group: null,
         },
         data() {
             return {

@@ -33,7 +33,7 @@
                         </div>
                         <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
                             <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                v-if="loaded" :loaded="loaded" :version="workflow.version"></diagram>
+                                v-if="loaded" :loaded="loaded" :version="workflow.version" :group="null"></diagram>
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task"
                                     :suggestions="getSuggestions(selectedTask.task.id)" />
