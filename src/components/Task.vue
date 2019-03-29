@@ -1,7 +1,8 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="(!isComment) ? (task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')): ''"
-        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
-        v-on:click.stop="click" @contextmenu="openMenu">
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task"
+        :title="(!isComment) ? (task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')): ''"
+        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle"
+        v-on:dblclick.stop="dblClick" v-on:click.stop="click" @contextmenu="openMenu">
         <div v-if="!isComment && !isMeta" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
         </div>
@@ -9,7 +10,7 @@
             <div style="top: 25%; position: relative"> {{task.name}}</div>
             <div style="position: absolute; top: -3px; right: -3px;" class="text-center">
                 <a href="#" class="link">
-                <span class="fa fa-external-link-alt fa-2x"></span>
+                    <span class="fa fa-external-link-alt fa-2x"></span>
                 </a>
             </div>
         </div>
@@ -19,17 +20,19 @@
         <template v-else>
             <div v-if="showDecoration" class="right-decor" :class="getDecorationClass">
             </div>
-            <div v-if="task.step && task.step.status && !task.warning " class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
+            <div v-if="task.step && task.step.status && !task.warning " class="right-decor"
+                :class="task.step? task.step.status.toLowerCase(): ''">
                 <span class="fa fa-2x" :class="getDecorationClass"></span>
             </div>
             <div v-if="task.warning " class="right-decor">
-                <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" :title="task.warning"></span>
+                <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning"
+                    :title="task.warning"></span>
             </div>
         </template>
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
         </div>
-        <div class="custom-context-menu" v-if="contextMenuOpened" ref="right">
+        <div class="custom-context-menu" v-if="contextMenuOpened && !isComment" ref="right">
             <ul>
                 <li @click.stop="remove()">{{$t('actions.delete')}}</li>
                 <li @click.stop="showResults()" v-if="task.step">{{$t('actions.showResults')}}</li>
@@ -213,11 +216,11 @@
     const TaskComponent = Vue.extend({
         computed: {
             isMeta() {
-                return this.task !== null && this.task.operation.slug === 'within'
+                return this.task !== null && this.task.operation.slug === 'meta-operation'
             },
             getStyle() {
                 let result = {}
-                let task = this.task
+                const task = this.task
                 if (this.enablePositioning) {
                     result = {
                         zIndex: task.z_index < 99 ? 100 : task.z_index,
@@ -225,14 +228,26 @@
                         left: task.left + 'px',
                         background: (
                             task.forms && task.forms.color && task.forms.color.value
-                                ? task.forms.color.value.background : '#fff')
+                                ? task.forms.color.value.background : '#fff'),
+                        
                     }
                 } else {
                     result = {
                         background: (
                             task.forms && task.forms.color && task.forms.color.value
-                                ? task.forms.color.value.background : '#fff')
+                                ? task.forms.color.value.background : '#fff'),
+                       
                     }
+                }
+                if (this.task.height > 0){
+                    result['height'] = `${this.task.height}px`;
+                }
+                if (this.task.width > 0){
+                    result['width'] = `${this.task.width}px`;
+                }
+                if (this.isMeta || this.isComment) {
+                    result['color'] = task.forms && task.forms.color && task.forms.color.value
+                                ? task.forms.color.value.foreground : '#222';
                 }
                 return result
             },
@@ -565,15 +580,18 @@
         text-align: center; */
         width: 55px;
         line-height: .8;
+
         &.output {
             margin-top: 36px;
             text-align: left;
         }
+
         &.input {
             margin-right: 4px;
             text-align: right;
         }
     }
+
     @mixin has-x-ports {
         @for $i from 1 through $maxPorts {
             .has-#{$i}-ports {
@@ -970,7 +988,7 @@
 
                 background:#ffffa5;
                 overflow-y: auto;
-                border: none !important;
+                border: 1px #888 solid !important;
                 border-radius: 0 !important;
                 padding:10px !important;
                 font-size: 1.2em;
