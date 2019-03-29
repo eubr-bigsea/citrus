@@ -157,7 +157,15 @@
         },
         watch: {
             platform(v) {
-                Event.$emit('vue-tables.workflowList.filter::platform', v);
+                // This is not working
+                // Event.$emit('vue-tables.workflowList.filter::platform', v);
+                // Event.$emit('vue-tables.filter::platform', v);
+                
+                // This works, but use internal details of component
+                const table = this.$refs.workflowList;
+                table.customQueries['platform'] = v; 
+                table.updateState('customQueries', table.customQueries);
+                table.getData();
             }
         }
     }
