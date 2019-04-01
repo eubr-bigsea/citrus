@@ -2,14 +2,15 @@
   <span></span>
 </template>
 <script>
+
 export default {
-  data() {
-    return {};
+  data () {
+    return {}
   },
-  created: function() {
+  created: function () {
     this.$store.dispatch('logout').then(() => {
-      this.$router.push('/login');
-    });
+      this.$router.push('/')
+    })
   }
-};
+}
 </script>

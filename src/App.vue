@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div v-if="showLandingPage">
+    <router-view></router-view>
+  </div>
+  <div v-else>
     <vue-snotify></vue-snotify>
     <l-navbar v-if="isLoggedIn"></l-navbar>
     <div class="container-fluid main-container">
@@ -22,20 +25,23 @@ export default {
     'l-footer': Footer
   },
   computed: {
-    isLoggedIn() {
+    isLoggedIn () {
       return this.$store.getters.isLoggedIn;
     },
-    user() {
+    user () {
       return this.$store.getters.user;
+    },
+    showLandingPage () {
+      return this.$route.name === 'landing-page';
     }
   },
-  data() {
+  data () {
     return {
       columns: ['code', 'symbol', 'rate'],
       tableData: [],
       options: {
         xtemplates: {
-          symbol: function(row) {
+          symbol: function (row) {
             return row.symbol;
           }
         },
@@ -57,6 +63,6 @@ body {
   background-color: #f8f9fa !important;
 }
 .main-container {
-    padding-top: 15px;
-  }
+  padding-top: 15px;
+}
 </style>
