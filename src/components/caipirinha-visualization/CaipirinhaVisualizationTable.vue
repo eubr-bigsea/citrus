@@ -1,14 +1,5 @@
 <template>
-  <table class="table">
-    <thead>
-      <th v-for="attribute in attributes" v-bind:key="attribute">{{attribute}}</th>
-    </thead>
-    <tbody>
-      <tr v-for="row in rows" v-bind:key="row">
-        <td v-for="column in row" v-bind:key="column">{{column}}</td>
-      </tr>
-    </tbody>
-  </table>
+  <v-client-table :data="data" :columns="columns" :options="options"></v-client-table>
 </template>
 
 <script>
@@ -17,8 +8,23 @@ export default {
   props: ["visualizationData"],
   data: function() {
     return {
-      attributes: this.visualizationData.data.attributes,
-      rows: this.visualizationData.data.rows
+      options: {
+        filterable: false,
+        perPage: 10,
+        perPageValues: [],
+        skin:'table-smallest table-bordered table-sm table table-striped',
+      },
+      columns: this.visualizationData.data.attributes,
+      data: this.visualizationData.data.rows.map(row => {
+        const columns = this.visualizationData.data.attributes;
+
+        return row.reduce((data, column, i) => {
+          return {
+            ...data,
+            [columns[i]]: column,
+          }
+        }, {})
+      })
     };
   }
 };
