@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div v-if="showLandingPage">
+    <router-view></router-view>
+  </div>
+  <div v-else>
     <vue-snotify></vue-snotify>
     <l-navbar v-if="isLoggedIn"></l-navbar>
     <div class="container-fluid">
@@ -35,6 +38,9 @@ export default {
     user() {
       return this.$store.getters.user
     },
+    showLandingPage() {
+      return this.$route.name === 'landing-page';
+    }
   },
   data() {
     return {

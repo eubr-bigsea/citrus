@@ -23,6 +23,8 @@ import DashboardDetail from './views/DashboardDetail.vue'
 
 import OperationList from './views/OperationList.vue'
 
+import LandingPage from './views/LandingPage.vue'
+
 import Profile from './views/Profile.vue'
 
 import store from './store.js'
@@ -39,6 +41,11 @@ let router = new Router({
             meta: {
                 requiresAuth: true
             }
+        },
+        {
+            path: '/',
+            name: 'landing-page',
+            component: LandingPage
         },
         {
             path: '/administration',
@@ -177,7 +184,11 @@ router.beforeEach((to, from, next) => {
             next()
             return
         }
-        next('/login')
+
+        if (to.path == '/')
+            next({ name: 'landing-page' });
+        else
+            next('/login');
     } else {
         next()
     }
