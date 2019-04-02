@@ -1,10 +1,16 @@
 <template>
     <div>
         <TahitiSuggester />
-
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}}</h6>
+                <h6 class="header-pretitle">
+                    <template v-if="metaTaskId !== null">
+                        <a href="#" @click.prevent="backToMainWorkflow">{{$t('diagram.goBackMainWorkflow')}}</a> &nbsp;&nbsp;
+                        <span class="fa fa-chevron-right"></span> &nbsp;&nbsp;
+                        {{metaTaskName}}
+                    </template>
+                    <template v-else>{{$tc('titles.workflow', 1)}}</template>
+                </h6>
                 <input-header v-model="workflow.name"></input-header>
             </div>
             <div>
@@ -33,7 +39,7 @@
                         </div>
                         <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
                             <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                v-if="loaded" :loaded="loaded" :version="workflow.version" :group="null"></diagram>
+                                v-if="loaded" :loaded="loaded" :version="workflow.version" :metaTaskId="metaTaskId"></diagram>
                             <slideout-panel :opened="showProperties">
                                 <property-window :task="selectedTask.task"
                                     :suggestions="getSuggestions(selectedTask.task.id)" />
@@ -258,6 +264,8 @@
                     name: '', description: '', workflowName: '', id: 0,
                     jobName: '',
                 },
+                metaTaskId: null,
+                metaTaskName: null,
                 history: [],
                 isDirty: false,
                 loaded: false,
@@ -317,6 +325,13 @@
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-execute', this.showExecuteWindow);
+
+            this.$root.$on('switchToMetaTask', (metaTaskId, name) => {
+                //self.instance.deleteEveryConnection();
+                //self.instance.deleteEveryEndpoint();
+                self.metaTaskId = metaTaskId;
+                self.metaTaskName = name;
+            });
 
             this.$root.$on('onblur-selection', () => {
                 this.showProperties = false;
@@ -431,6 +446,9 @@
             }
         },
         methods: {
+            backToMainWorkflow(){
+                this.metaTaskId = null;
+            },
             showTaskResult(task) {
                 this.resultTask = task;
                 this.$refs.taskResultModal.show();

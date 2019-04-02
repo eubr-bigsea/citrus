@@ -146,6 +146,7 @@ export default {
             youCanUseSQL: 'Você pode usar comandos SELECT SQL para recuperar os dados',
         },
         diagram: {
+            goBackMainWorkflow: 'Voltar ao fluxo principal',
             showProperties: 'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
         },
         errors: {
@@ -434,6 +435,10 @@ export default {
             whatTypeOfDataSourceToAdd: 'What type of data source do you want to add?',
             youCanUploadYourFiles: 'You can upload your own files',
             youCanUseSQL: 'You can use SQL to query data',
+        },
+        diagram: {
+            goBackMainWorkflow: 'Back to main workflow',
+            showProperties: 'Double click a task to show its properties.'
         },
         errors: {
             disconnected: 'You are disconnected. Please check if you have access to the Internet.',

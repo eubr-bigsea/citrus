@@ -4,18 +4,16 @@
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
             v-on:click="diagramClick">
             <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
-                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true" id="lemonade-diagram"
-                    v-if="loaded" ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
-                        :enableContextMenu="editable" :draggable="editable" :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true"
+                    id="lemonade-diagram" v-if="loaded" ref="diagram"
+                    :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
+                    <task-component v-for="task of tasks" :task="task" :instance="instance"
+                        :key="`${$parent.version} - ${task.id}`" :enableContextMenu="editable" :draggable="editable"
+                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" :metaTaskId="metaTaskId" 
+                        :environment="environment"/>
 
-                    <!-- flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" v-if="tasksRendered" :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"
-                    /-->
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
-                    </div>
-                    <div v-for="group in groups" :key="group.id">
-                        <group-component :group="group" :instance="instance" :key="group.id" />
                     </div>
                 </div>
             </VuePerfectScrollbar>
@@ -68,76 +66,7 @@
     import TaskComponent from './Task.vue';
     import DiagramToolbar from './DiagramToolbar.vue'
     import jsplumb from 'jsplumb'
-    const GroupComponent = Vue.extend({
-        components: {
-        },
-        mounted() {
-            let self = this;
-            let el = self.$refs.container;
-            if (el) {
-                self.instance.addGroup({
-                    anchor: "Continuous",
-                    constrain: false,
-                    el: el,
-                    endpoint: ["Rectangle", { width: 10, height: 10 }],
-                    ghost: true,
-                    id: this.group.id,
-                    orphan: true,
-                    proxied: true,
-                    revert: false,
-                });
-            }
-        },
-        props: {
-            instance: null,
-            group: null,
-            operations: null,
-            version: 0,
-            group: null,
-        },
-        data() {
-            return {
-                collapsed: false,
-                style: {
-                    height: 400,
-                    width: 400,
-                },
-            }
-        },
-        methods: {
-            expand() {
-                this.instance.expandGroup(this.group.id);
-                this.collapsed = false;
-            },
-            collapse() {
-                this.instance.collapseGroup(this.group.id);
-                this.collapsed = true;
-            },
-            resizeEnd(size, component) {
-                let self = this;
-                self.$refs.container._katavorioDrag.setEnabled(true);
-            },
-            resizeStart(size, component) {
-                let self = this;
-                self.$refs.container._katavorioDrag.setEnabled(false);
-                console.info('Started')
-            }
-        },
-        template: `
-        <div v:id="'lem-group-' + group.id" ref="container" :style="{width:style.width+'px', height: style.height + 'px'}">
-                <resizer :size.sync="style" v-on:resize-start="resizeStart" v-on:resize-end="resizeEnd"></resizer>
-            <div class="header">
-                <div>
-                    <b>Group {{group.id}}</b>
-                </div>
-                <div class="command">
-                    <button class="btn btn-sm" v-on:click="collapse()" v-show="!collapsed"><span class="fa fa-sort-down"></span></button>
-                    <button class="btn btn-sm" v-on:click="expand()" v-show="collapsed"><span class="fa fa-sort-up"></span></button>
-                </div>
-            </div>
-        </div>
-        `
-    });
+
     const DiagramComponent = Vue.extend({
         computed: {
             flows() {
@@ -152,6 +81,8 @@
                 }
             },
             tasks() {
+                return this.workflow.tasks;
+                const self = this;
                 if (this.renderFrom) {
                     if (this.renderFrom && this.renderFrom.tasks) {
                         return this.renderFrom.tasks;
@@ -159,10 +90,36 @@
                         return {};
                     }
                 } else {
-                    return this.workflow.tasks;
+                    const displayInEnvironment = [];
+                    const hide = [];
+                    this.workflow.tasks.forEach((t) => {
+                        if (this.environment === undefined
+                            || t.environment === undefined
+                            || t.environment === this.environment) {
+                            if (this.metaTaskId !== t.group_id) {
+                                hide.push(t);
+                            } else {
+                                self.instance.hide(t.id, false);
+                                displayInEnvironment.push(t);
+                            }
+                        } else {
+                            hide.push(t);
+                        }
+                    });
+                    // hide tasks according to meta task operation
+                    // null means main workflow, otherwise, it is a child of 
+                    // meta task
+                    // if (self.instance) {
+                    //     hide.forEach(t => {
+                    //         self.instance.hide(t.id, true);
+                    //         // const d = document.getElementById(t.id);
+                    //         // if (d)
+                    //         //     d.style.display = "none";
+                    //     });
+                    // }
+                    return displayInEnvironment;
                 }
             },
-            groups() { return this.$store.getters.getGroups; },
             zoomPercent: function () {
                 return `${Math.round(100 * this.zoom, 0)}%`;
             },
@@ -173,6 +130,8 @@
             VuePerfectScrollbar,
         },
         props: {
+            metaTaskId: null,
+            environment: null,
             formContainer: null,
             hack: {
                 default: false
@@ -243,9 +202,10 @@
                 this.changeWorkflowId(this.$route.params.id);
                 this.init();
             }
+
             this.$root.$on('onclick-task', (taskComponent) => {
                 this.selectedTask = taskComponent.task;
-                this.$el.focus({preventScroll: true});
+                this.$el.focus({ preventScroll: true });
             });
             // this.$on('oncancel-deploy', () => {
             //     this.setZoomPercent(null, this.oldZoom);
@@ -298,22 +258,24 @@
                         [`${flow['source_id']}/${flow['source_port']}`,
                         `${flow['target_id']}/${flow['target_port']}`];
 
-                    const connection = self.instance.connect({ uuids });
-                    connection.bind('mouseover', (c, originalEvent) => {
-                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null;
-                            currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = "#ed8";
-                            c.setPaintStyle(currentStyle);
-                            self.instance.repaintEverything();
+                    const connection = self.instance.connect({ uuids, cssClass: this.metaTaskId });
+                    if (connection) {
+                        connection.bind('mouseover', (c, originalEvent) => {
+                            //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
+                            if (originalEvent) {
+                                const currentStyle = c ? c.getPaintStyle() : null;
+                                currentStyle.lineWidth = 20;
+                                currentStyle.outlineColor = "#ed8";
+                                c.setPaintStyle(currentStyle);
+                                self.instance.repaintEverything();
+                            }
+                        });
+                        const currentStyle = connection ? connection.getPaintStyle() : null;
+                        if (currentStyle) {
+                            currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
+                            currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
+                            connection.setPaintStyle(currentStyle);
                         }
-                    });
-                    const currentStyle = connection ? connection.getPaintStyle() : null;
-                    if (currentStyle) {
-                        currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
-                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
-                        connection.setPaintStyle(currentStyle);
                     }
                 });
             });
@@ -324,7 +286,7 @@
         },
         mounted() {
             const self = this;
-            
+
             // Required, otherwise zoom will not work.
             // It seems that jsplumb is loosing this setting between
             // calls to init() and mounted()
@@ -392,30 +354,6 @@
                         task.enabled = !task.enabled;
                     }
                 });
-            },
-            addGroup() {
-                let self = this;
-                let group = {}
-                self.$store.dispatch('addGroup', group)
-                /*
-                if (self.instance.getGroups().length === 0){
-                    let el = document.createElement('div');
-                    el.setAttribute('id', 'lemon-group-1');
-                    el.style.cssText = "width: 200px; height: 400px; border: 2px solid #222; position:absolute";
-                    self.instance.getContainer().appendChild(el);
-    
-                    self.instance.addGroup({
-                        el: el,
-                        constrain: false,
-                        revert: false,
-                        orphan: true
-                        //id: el.getAttribute('id'),
-                    });
-                }
-                */
-
-                return false;
-
             },
             deploy(ev) {
                 this.$emit('onshow-deploy');
@@ -721,7 +659,7 @@
                             self.instance.repaintEverything();
                             break
                     }
-                    
+
                 }
             },
             /*
@@ -950,85 +888,8 @@
                     });
 
             },
-            _fixGroupConnections(self) {
-                return function (group) {
-                    let members = group.getMembers();
-                    let groupConnections = group.connections;
-                    ['internal', 'source', 'target'].forEach((m) => {
-                        groupConnections[m].length = 0;
-                    });
-                    members.forEach((member) => {
-                        let connections = self.instance.getConnections(
-                            { scope: '*', target: member.id }).concat(
-                                self.instance.getConnections({ scope: '*', source: member.id }));
-                        connections.forEach((conn) => {
-                            if (conn.target === member) {
-                                if (members.indexOf(conn.source) > -1) {
-                                    if (groupConnections.internal.indexOf(conn) === -1) {
-                                        groupConnections.internal.push(conn);
-                                    }
-                                } else if (groupConnections.target.indexOf(conn) === -1) {
-                                    groupConnections.target.push(conn);
-                                }
-                            } else if (conn.source === member) {
-                                if (members.indexOf(conn.target) > -1) {
-                                    if (groupConnections.internal.indexOf(conn) === -1) {
-                                        groupConnections.internal.push(conn);
-                                    }
-                                } else if (groupConnections.source.indexOf(conn) === -1) {
-                                    groupConnections.source.push(conn);
-                                }
-                            }
-                        });
-                    });
-                }
-            },
-            _customUpdateConnectionsForGroup(_jsPlumb) {
-                // return function (group) {
-                //     var members = group.getMembers();
-                //     var c1 = _jsPlumb.getConnections({ source: members, scope: '*' }, true);
-                //     var c2 = _jsPlumb.getConnections({ target: members, scope: '*' }, true);
-                //     var processed = {};
-                //     group.connections.source.length = 0;
-                //     group.connections.target.length = 0;
-                //     var oneSet = function (c) {
-                //         for (var i = 0; i < c.length; i++) {
-                //             if (processed[c[i].id]) {
-                //                 continue;
-                //             }
-                //             processed[c[i].id] = true;
-                //             if (c[i].source._jsPlumbGroup === group) {
-                //                 if (c[i].target._jsPlumbGroup !== group) {
-                //                     group.connections.source.push(c[i]);
-                //                 }
-                //                 _connectionSourceMap[c[i].id] = group;
-                //             }
-                //             else if (c[i].target._jsPlumbGroup === group) {
-                //                 group.connections.target.push(c[i]);
-                //                 _connectionTargetMap[c[i].id] = group;
-                //             }
-                //         }
-                //     };
-                //     oneSet(c1); oneSet(c2);
-                // }
-            },
             _bindJsPlumbEvents() {
                 let self = this;
-                self.instance.getGroupManager().updateConnectionsForGroup = self._fixGroupConnections(self);
-                // self.instance.getContainer().addEventListener('click', function (ev) {
-                //     //self.clearSelection(ev);
-                // });
-                // self.instance.bind("click", self.flowClick);
-
-                self.instance.bind('group:removeMember', (p) => {
-                    console.log("Group", p.group.id, "removed", p.el.id);
-                    self._fixGroupConnections(self, p);
-                });
-                self.instance.bind('group:addMember', (p) => {
-                    p.el._katavorioDrag.setConstrain(false);
-                    console.log("Group", p.group.id, "added", p.el.id);
-                    self._fixGroupConnections(self, p);
-                });
                 self.instance.bind('connectionDetached', (info, originalEvent) => {
                     let source = info.sourceEndpoint.getUuid();
                     let target = info.targetEndpoint.getUuid();

@@ -7,10 +7,10 @@
             {{task.name}}
         </div>
         <div v-if="isMeta">
-            <div style="top: 25%; position: relative"> {{task.name}}</div>
+            <div style="top: 25%; position: relative" class="text-center"> {{task.name}}</div>
             <div style="position: absolute; top: -3px; right: -3px;" class="text-center">
-                <a href="#" class="link">
-                    <span class="fa fa-external-link-alt fa-2x"></span>
+                <a href="#" class="link" @click.prevent="switchToMetaTask($event, task.id, task.name)">
+                    {{$t('actions.edit')}} <span class="fa fa-external-link-alt fa"></span>
                 </a>
             </div>
         </div>
@@ -214,6 +214,22 @@
     }
 
     const TaskComponent = Vue.extend({
+        watch: {
+            metaTaskId(v) {
+                const show = this.task.group_id === v;
+                this.$refs.task.style.zIndex = show ? '0' : this.task.zIndex;
+                this.$nextTick(() => {
+                    if (!show) {
+                        this.instance.hide(this.task.id, true);
+                    } else {
+                        this.instance.show(this.task.id, true);
+                    }
+                });
+            },
+            environment(v) {
+                console.debug(v)
+            }
+        },
         computed: {
             isMeta() {
                 return this.task !== null && this.task.operation.slug === 'meta-operation'
@@ -229,25 +245,25 @@
                         background: (
                             task.forms && task.forms.color && task.forms.color.value
                                 ? task.forms.color.value.background : '#fff'),
-                        
+
                     }
                 } else {
                     result = {
                         background: (
                             task.forms && task.forms.color && task.forms.color.value
                                 ? task.forms.color.value.background : '#fff'),
-                       
+
                     }
                 }
-                if (this.task.height > 0){
+                if (this.task.height > 0) {
                     result['height'] = `${this.task.height}px`;
                 }
-                if (this.task.width > 0){
+                if (this.task.width > 0) {
                     result['width'] = `${this.task.width}px`;
                 }
                 if (this.isMeta || this.isComment) {
                     result['color'] = task.forms && task.forms.color && task.forms.color.value
-                                ? task.forms.color.value.foreground : '#222';
+                        ? task.forms.color.value.foreground : '#222';
                 }
                 return result
             },
@@ -265,27 +281,6 @@
                 } else {
                     return this.getClassesForDecor(this.task.status || '')
                 }
-                // let result = [];
-                // switch (this.task.name && this.task.status) {
-                //     case 'ERROR':
-                //         result.push("fa fa-times-circle fa-2x");
-                //         break;
-                //     case 'PENDING':
-                //         result.push("fa fa-pause-circle fa-2x");
-                //         break;
-                //     case 'CANCELED':
-                //         result.push("fa fa-stop-circle fa-2x");
-                //         break;
-                //     case 'RUNNING':
-                //         result.push("fa fa-sync fa-spin fa-2x");
-                //         break;
-                //     case 'COMPLETED':
-                //         result.push("fa fa-check-circle fa-2x");
-                //         break;
-                //     default:
-                // }
-                // result.push(this.task.status.toLowerCase());
-                // return result.join(' ');
             },
             getBorder() {
                 let color = '#fff'
@@ -300,6 +295,9 @@
             }
         },
         methods: {
+            switchToMetaTask(ev, metaTaskId, name) {
+                this.$root.$emit('switchToMetaTask', metaTaskId, name);
+            },
             getClassesForDecor(value) {
                 let result = [];
                 switch (value) {
@@ -403,7 +401,9 @@
                 default: true
             },
             draggable: { default: true },
+            environment: null,
             instance: null,
+            metaTaskId: null,
             showDecoration: {
                 default: false
             },
