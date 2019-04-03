@@ -134,7 +134,7 @@
                         template_id: this.selectedTemplate
                     };
                     let url = `${tahitiUrl}/workflows`;
-                    if (this.selectedTab === 0) {
+                    if (this.selectedTab === 1) {
                         url = `${tahitiUrl}/workflows/from-template`;
                     }
                     axios.post(url, data).then(resp => {
