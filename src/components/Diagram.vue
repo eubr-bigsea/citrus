@@ -202,6 +202,14 @@
                 this.changeWorkflowId(this.$route.params.id);
                 this.init();
             }
+            this.$root.$on('switchToMetaTask', (metaTaskId, name) => {
+                Array.from(this.$el.querySelectorAll('.group')).forEach(el => el.classList.add('hide'));
+                if (metaTaskId) {
+                    Array.from(this.$el.querySelectorAll('.g-' + metaTaskId)).forEach(el => el.classList.remove('hide'));
+                } else {
+                    Array.from(this.$el.querySelectorAll('.main-flow')).forEach(el => el.classList.remove('hide'));
+                } 
+            }); 
 
             this.$root.$on('onclick-task', (taskComponent) => {
                 this.selectedTask = taskComponent.task;
@@ -257,8 +265,7 @@
                     let uuids = flow.uuids ||
                         [`${flow['source_id']}/${flow['source_port']}`,
                         `${flow['target_id']}/${flow['target_port']}`];
-
-                    const connection = self.instance.connect({ uuids, cssClass: this.metaTaskId });
+                    const connection = self.instance.connect({ uuids, cssClass: 'hide group ' + (task.group_id ? 'g-' + task.group_id : 'main-flow') });
                     if (connection) {
                         connection.bind('mouseover', (c, originalEvent) => {
                             //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });

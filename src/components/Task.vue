@@ -216,6 +216,7 @@
     const TaskComponent = Vue.extend({
         watch: {
             metaTaskId(v) {
+                return false;
                 const show = this.task.group_id === v;
                 this.$refs.task.style.zIndex = show ? '0' : this.task.zIndex;
                 this.$nextTick(() => {

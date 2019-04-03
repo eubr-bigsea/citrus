@@ -3,7 +3,9 @@ $snotify-width: 600px !default;
 body {
     overflow-y: scroll;
 }
-
+.hide {
+   display: none
+}
 .snotify {
     .snotifyToast__title {
         font-size: 1.2rem;

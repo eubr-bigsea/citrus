@@ -222,6 +222,9 @@ export default {
                 title: 'Consulta SQL',
             },
         },
+        task: {
+            editMetaTask: 'Editar meta tarefa...'
+        },
         titles: {
             action: 'Ação | Ações',
             administration: 'Administração',
@@ -477,6 +480,9 @@ export default {
                 warn: 'WARN'
 
             }
+        },
+        task: {
+            editMetaTask: 'Edit meta task...'
         },
         titles: {
             action: 'Action | Actions',
