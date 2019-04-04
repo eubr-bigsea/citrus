@@ -9,8 +9,8 @@
                     :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
                     <task-component v-for="task of tasks" :task="task" :instance="instance"
                         :key="`${$parent.version} - ${task.id}`" :enableContextMenu="editable" :draggable="editable"
-                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" :metaTaskId="metaTaskId" 
-                        :environment="environment"/>
+                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" :metaTaskId="metaTaskId"
+                        :environment="environment" />
 
                     <div class="ghost-select" ref="ghostSelect">
                         <span></span>
@@ -90,6 +90,7 @@
                         return {};
                     }
                 } else {
+
                     const displayInEnvironment = [];
                     const hide = [];
                     this.workflow.tasks.forEach((t) => {
@@ -99,7 +100,7 @@
                             if (this.metaTaskId !== t.group_id) {
                                 hide.push(t);
                             } else {
-                                self.instance.hide(t.id, false);
+                                //self.instance.hide(t.id, false);
                                 displayInEnvironment.push(t);
                             }
                         } else {
@@ -112,12 +113,20 @@
                     // if (self.instance) {
                     //     hide.forEach(t => {
                     //         self.instance.hide(t.id, true);
-                    //         // const d = document.getElementById(t.id);
+                    //         const d = document.getElementById(t.id);
                     //         // if (d)
                     //         //     d.style.display = "none";
                     //     });
+                    //     displayInEnvironment.forEach(t => {
+                    //         const d = document.getElementById(t.id);
+                    //         if (d)
+                    //             d.style.display = "";
+                    //         self.instance.show(t.id, true);
+                    //     });
                     // }
+                    // self.instance.repaintEverything();
                     return displayInEnvironment;
+                    // return this.workflow.tasks();
                 }
             },
             zoomPercent: function () {
@@ -202,14 +211,7 @@
                 this.changeWorkflowId(this.$route.params.id);
                 this.init();
             }
-            this.$root.$on('switchToMetaTask', (metaTaskId, name) => {
-                Array.from(this.$el.querySelectorAll('.group')).forEach(el => el.classList.add('hide'));
-                if (metaTaskId) {
-                    Array.from(this.$el.querySelectorAll('.g-' + metaTaskId)).forEach(el => el.classList.remove('hide'));
-                } else {
-                    Array.from(this.$el.querySelectorAll('.main-flow')).forEach(el => el.classList.remove('hide'));
-                } 
-            }); 
+            this.$root.$on('switchToMetaTask', this.switchView);
 
             this.$root.$on('onclick-task', (taskComponent) => {
                 this.selectedTask = taskComponent.task;
@@ -265,7 +267,7 @@
                     let uuids = flow.uuids ||
                         [`${flow['source_id']}/${flow['source_port']}`,
                         `${flow['target_id']}/${flow['target_port']}`];
-                    const connection = self.instance.connect({ uuids, cssClass: 'hide group ' + (task.group_id ? 'g-' + task.group_id : 'main-flow') });
+                    const connection = self.instance.connect({ uuids, cssClass: 'group ' + (task.group_id ? 'g-' + task.group_id : 'main-flow') });
                     if (connection) {
                         connection.bind('mouseover', (c, originalEvent) => {
                             //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
@@ -342,9 +344,33 @@
                 self.$refs.diagram.style.width = '100%'; //width + 'px';
                 self.$refs.diagram.style.height = '100%';
             }
-
+            this.switchView(null, null);
         },
         methods: {
+            switchView(metaTaskId, name) {
+                const self = this;
+                const tasksIn = this.workflow.tasks.filter((t) => t.group_id === metaTaskId);
+                const tasksOut = this.workflow.tasks.filter((t) => t.group_id !== metaTaskId);
+
+                Array.from(this.$el.querySelectorAll('.group')).forEach(el => el.classList.add('hide'));
+                if (metaTaskId) {
+                    Array.from(this.$el.querySelectorAll('.g-' + metaTaskId)).forEach(el => el.classList.remove('hide'));
+                } else {
+                    Array.from(this.$el.querySelectorAll('.main-flow')).forEach(el => el.classList.remove('hide'));
+                }
+                tasksIn.forEach(t => {
+                    document.getElementById(t.id).style.display = '';
+                    self.instance.show(t.id, true);
+                });
+                tasksOut.forEach(t => {
+                    document.getElementById(t.id).style.display = 'none';
+                    self.instance.hide(t.id, true);
+                });
+                self.instance.repaintEverything();
+                if (metaTaskId){
+                    // Add inputs and outputs
+                }
+            },
             scrollHandle() {
 
             },
@@ -610,13 +636,13 @@
                     return;
                 }
 
-                let classes = operation.categories.map((c) => {
+                const classes = operation.categories.map((c) => {
                     return c.type.replace(' ', '-');
                 }).join(' ');
                 self.addTask({
                     id: self.generateId(), operation, operation_id: operation.id,
                     left: ev.offsetX, top: ev.offsetY, z_index: ++self.currentZIndex, classes,
-                    status: 'WAITING'
+                    status: 'WAITING', group_id: self.metaTaskId,
                 });
             },
             allowDrop(ev) {

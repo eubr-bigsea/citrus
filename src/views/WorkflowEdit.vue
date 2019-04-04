@@ -448,6 +448,7 @@
         methods: {
             backToMainWorkflow(){
                 this.metaTaskId = null;
+                this.$refs.diagram.switchView(null, null);
             },
             showTaskResult(task) {
                 this.resultTask = task;
