@@ -342,6 +342,15 @@
             });
 
             this.$root.$on('update-form-field-value', (field, value, labelValue) => {
+                if (self.selectedTask.task.forms[field.name]) {
+                    self.selectedTask.task.forms[field.name].value = value
+                } else {
+                    self.selectedTask.task.forms[field.name] = { value: value }
+                }
+                self._validateTasks([self.selectedTask.task]);
+                this.isDirty = true;
+                return;
+
                 if (! self.selectedTask.task.forms){
                     self.selectedTask.task.forms = {};
                 }
