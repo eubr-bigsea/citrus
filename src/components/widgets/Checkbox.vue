@@ -31,8 +31,11 @@
             this.$on('input', () => {alert('fff')})
             let input = this.$refs.fieldElement //this.$el.querySelector('input[type="checkbox"]');
             input.id = `checkboxComponentInput-${this.field.name}`;
-           
             this.checked = this.value === 1 || this.value === '1';
+            if (this.value === null && this.field.default === '1') {
+                this.checked = true;
+                this.changed(this.field.default);
+            }
             this.id = `check_${this._uid}`;
         },
         props: {

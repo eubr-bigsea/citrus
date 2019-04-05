@@ -158,17 +158,10 @@
                         zIndex: task.z_index < 99 ? 100 : task.z_index,
                         top: task.top + 'px',
                         left: task.left + 'px',
-                        background: (
-                            task.forms && task.forms.color && task.forms.color.value
-                                ? task.forms.color.value.background : '#fff')
-                    }
-                } else {
-                    result = {
-                        background: (
-                            task.forms && task.forms.color && task.forms.color.value
-                                ? task.forms.color.value.background : '#fff')
                     }
                 }
+                result['background'] = task.forms && task.forms.color && task.forms.color.value
+                                ? task.forms.color.value.background : '#fff';
                 return result
             },
             'classes': function () {
