@@ -342,7 +342,7 @@
             });
 
             this.$root.$on('update-form-field-value', (field, value, labelValue) => {
-                const fieldInSelectedTask = self.selectedTask.task.forms[field.name];
+                let fieldInSelectedTask = self.selectedTask.task.forms[field.name];
                 if (fieldInSelectedTask) {
                     fieldInSelectedTask.value = value
                 } else {
