@@ -342,6 +342,9 @@
             });
 
             this.$root.$on('update-form-field-value', (field, value, labelValue) => {
+                if (! self.selectedTask.task.forms){
+                    self.selectedTask.task.forms = {};
+                }
                 let fieldInSelectedTask = self.selectedTask.task.forms[field.name];
                 if (fieldInSelectedTask) {
                     fieldInSelectedTask.value = value
@@ -351,7 +354,7 @@
                 fieldInSelectedTask.label = field.label;
                 if (labelValue) {
                     fieldInSelectedTask.labelValue = labelValue
-                } else {
+                } else if (fieldInSelectedTask.labelValue){
                     delete fieldInSelectedTask.labelValue
                 }
                 self._validateTasks([self.selectedTask.task]);
@@ -914,7 +917,7 @@
                                     if (field.enabled || field.enabled === undefined) {
                                         if (field.required) {
                                             const value = t.forms[field.name] ? t.forms[field.name].value : null;
-                                            console.debug(field.name, t.forms[field.name], value === [], value)
+                                            //console.debug(field.name, t.forms[field.name], value === [], value)
                                             if (value === null || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
                                                 warning = this.$tc("errors.missingRequiredValue");
                                                 self.validationErrors.push({
