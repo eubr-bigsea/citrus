@@ -12,7 +12,7 @@
             <a href="#team">TEAM</a>
             <a href="#supporters">SUPPORTERS</a>
         </div>
-        <router-link :to="{name: 'login'}" class="enter">
+        <router-link :to="{name: 'workflows'}" class="enter">
           SIGN IN
         </router-link>
     </div>
