@@ -3,6 +3,7 @@ import Router from 'vue-router';
 
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
+import Login from './views/Login.vue';
 import Logout from './views/Logout.vue';
 import Register from './views/Register.vue';
 
@@ -42,7 +43,20 @@ let router = new Router({
       }
     },
     {
+      path: '/home',
+      name: 'home',
+      component: Home,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/',
+      name: 'landing-page',
+      component: LandingPage
+    },
+    {
+      path: '/landing-page',
       name: 'landing-page',
       component: LandingPage
     },
@@ -144,7 +158,11 @@ let router = new Router({
         requiresAuth: true
       }
     },
-
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
     {
       path: '/logout',
       name: 'logout',
@@ -174,8 +192,6 @@ let router = new Router({
   ]
 });
 router.beforeEach((to, from, next) => {
-      console.log('TOOOO', to)
-
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
       next();
@@ -184,9 +200,10 @@ router.beforeEach((to, from, next) => {
 
     if (to.path == '/') next({ name: 'landing-page' });
     else {
-      store.dispatch('login', next);
+      next('/login');
     }
   } else {
+    //no auth required
     next();
   }
 });

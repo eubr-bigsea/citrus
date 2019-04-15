@@ -30,7 +30,7 @@
             <img :src="getUserAvatar()" class="avatar">
             {{getUserFirstName()}}
           </template>
-          <b-dropdown-item to="/user/profile">{{$t('titles.profile')}}</b-dropdown-item>
+          <b-dropdown-item v-on:click="profile">{{$t('titles.profile')}}</b-dropdown-item>
           <b-dropdown-item v-on:click="logout">{{$t('common.logout')}}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
@@ -43,10 +43,12 @@ export default {
   name: "l-navbar",
   components: {},
   methods: {
+    profile() {
+      this.$store.getters.keycloak.init()
+      this.$store.getters.keycloak.accountManagement()
+    },
     logout() {
-      this.$store.dispatch("logout").then(() => {
-        this.$router.push("/");
-      });
+      this.$store.dispatch("logout");
     },
     getUserFirstName() {
       return (

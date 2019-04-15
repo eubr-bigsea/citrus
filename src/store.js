@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import Keycloak from 'keycloak-js';
+import router from './router'
 
 const keycloak = new Keycloak({
   realm: 'thorn',
@@ -68,12 +69,11 @@ export default new Vuex.Store({
           });
       });
     },
-    login({ commit }, next) {
+    login({ commit }) {
       commit('auth_request');
       this.getters.keycloak
         .init({ onLoad: 'login-required', responseMode: 'query' })
         .success(() => {
-          console.log('logou');
           keycloak.loadUserProfile().success(profile => {
             const token = 'Bearer ' + keycloak.token;
             const user = {
@@ -92,7 +92,7 @@ export default new Vuex.Store({
             localStorage.setItem('user', JSON.stringify(user));
 
             commit('auth_success', { token, user, keycloak });
-            next();
+            router.push('/home')
           });
         })
         .error(function() {
@@ -119,11 +119,14 @@ export default new Vuex.Store({
       });
     },
     logout({ commit }) {
+      this.getters.keycloak.init()
       delete axios.defaults.headers.common['Authorization'];
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       this.getters.keycloak.logout();
       commit('logout');
+      router.push('/landing-page')
+
     }
   },
   getters: {

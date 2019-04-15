@@ -7,7 +7,11 @@ export default {
     return {};
   },
   created: function() {
-    this.$store.dispatch("logout");
+    if (this.$store.getters.isLoggedIn) {
+      this.$router.push("/");
+    } else {
+      this.$store.dispatch("login");
+    }
   }
 };
 </script>
