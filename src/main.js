@@ -103,9 +103,11 @@ import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
 import exporting from 'highcharts/modules/exporting'
 import exportdata from 'highcharts/modules/export-data'
+import highchartsMore from 'highcharts/highcharts-more'
 
 exporting(Highcharts)
 exportdata(Highcharts)
+highchartsMore(Highcharts)
 
 Vue.use(HighchartsVue)
 
