@@ -271,7 +271,13 @@ export default {
             como produto dos projetos EUBra-BIGSEA e Atmosphere.`
         },
         visualization: {
-            tryRefresh: 'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada'
+            tryRefresh: 'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada',
+            lowerQuartile: 'Quartil inferior (1o)',
+            maximum: 'Máximo',
+            median: 'Mediana',
+            minimum: 'Mínimo',
+            outlier: 'Discrepante | Discrepantes',
+            upperQuartile: 'Quartil superior (3o)',
         },
         workflow: {
             asImage: 'Como uma imagem (uma janela para baixar a imagem aparecerá)',
@@ -558,7 +564,13 @@ export default {
             Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`
         },
         visualization: {
-            tryRefresh: 'Try refresh the page, visualization may still be generating.'
+            lowerQuartile: 'Lower quartile',
+            maximum: 'Maximum',
+            median: 'Median',
+            minimum: 'Minimum',
+            outlier: 'Outlier | Outliers',
+            tryRefresh: 'Try refresh the page, visualization may still be generating.',
+            upperQuartile: 'Upper quartile',
         },
         workflow: {
             asImage: 'As a image (a download window will appear)',

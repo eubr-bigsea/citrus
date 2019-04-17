@@ -77,7 +77,7 @@
                                             <dd>{{job.cluster.name}}</dd>
                                         </dl>
                                     </b-tab>
-                                    <b-tab :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto">
+                                    <b-tab :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto" v-if="job.workflow" >
                                         <div class="card" v-for="task in job.workflow.tasks">
                                             <div class="card-body" style="overflow: auto">
                                                 {{task.name}} ({{task.operation.name}})
@@ -158,7 +158,7 @@
                     @click="showVisualizations = true">
                     <b-card>
                         <div class="row" v-for="result in job.results" :key="result.id">
-                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px"
+                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px; display:table"
                                 v-if="showVisualizations">
                                 <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)">
                                 </caipirinha-visualization>
