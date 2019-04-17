@@ -25,6 +25,7 @@ import CaipirinhaVisualizationHtml from "./CaipirinhaVisualizationHtml"
 import CaipirinhaVisualizationTable from "./CaipirinhaVisualizationTable"
 import CaipirinhaVisualizationLine from "./CaipirinhaVisualizationLine"
 import CaipirinhaVisualizationBar from "./CaipirinhaVisualizationBar"
+import CaipirinhaVisualizationBoxPlot from "./CaipirinhaVisualizationBoxPlot"
 import CaipirinhaVisualizationPie from "./CaipirinhaVisualizationPie"
 import CaipirinhaVisualizationArea from "./CaipirinhaVisualizationArea"
 import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
@@ -75,7 +76,8 @@ const getVisualizationComponent = function(typeId) {
       return "caipirinha-visualization-map";
     case 89:
       return "caipirinha-visualization-donut";
-
+    case 123:
+      return "caipirinha-visualization-boxplot";
     default:
       throw new TypeError("Invalid visualization ID");
   }
@@ -103,6 +105,7 @@ export default {
     CaipirinhaVisualizationTable,
     CaipirinhaVisualizationLine,
     CaipirinhaVisualizationBar,
+    "caipirinha-visualization-boxplot": CaipirinhaVisualizationBoxPlot,
     CaipirinhaVisualizationPie,
     CaipirinhaVisualizationArea,
     CaipirinhaVisualizationScatter,
