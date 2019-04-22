@@ -19,11 +19,13 @@
                     <div class="row">
                         <div class="col-md-8">
                             <b-card>
-                                <div style="position: relative; overflow: hidden; height: 75vh;">
-                                    <diagram :workflow="workflow" ref="diagram" id="main-diagram"
-                                        :operations="operations" :version="job.id" initial-zoom="1" :showToolbar="false"
-                                        :editable="false" shink="true" v-if="loaded" :loaded="loaded"
-                                        :showTaskDecoration="true" :initialZoom=".7" />
+                                <div style="position: relative;  height: 75vh;">
+                                    <div>
+                                        <diagram :workflow="workflow" ref="diagram" id="main-diagram"
+                                            :operations="operations" :version="job.id" initial-zoom="1"
+                                            :showToolbar="false" :editable="false" shink="true" v-if="loaded"
+                                            :loaded="loaded" :showTaskDecoration="true" :initialZoom=".7" />
+                                    </div>
                                 </div>
                             </b-card>
                         </div>
@@ -77,7 +79,8 @@
                                             <dd>{{job.cluster.name}}</dd>
                                         </dl>
                                     </b-tab>
-                                    <b-tab :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto" v-if="job.workflow" >
+                                    <b-tab :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto"
+                                        v-if="job.workflow">
                                         <div class="card" v-for="task in job.workflow.tasks">
                                             <div class="card-body" style="overflow: auto">
                                                 {{task.name}} ({{task.operation.name}})
@@ -158,8 +161,8 @@
                     @click="showVisualizations = true">
                     <b-card>
                         <div class="row" v-for="result in job.results" :key="result.id">
-                            <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; height: 500px; display:table"
-                                v-if="showVisualizations">
+                            <div class="col-md-8 lemonade offset-2"
+                                style="margin-top: 14px; display:table" v-if="showVisualizations">
                                 <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)">
                                 </caipirinha-visualization>
                             </div>
@@ -546,7 +549,9 @@
     .header-pretitle:hover>a {
         text-decoration: none;
     }
-    .table-parameters td, .table-parameters th{
+
+    .table-parameters td,
+    .table-parameters th {
         padding: 1px !important;
         font-size: .75em;
     }

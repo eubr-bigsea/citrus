@@ -131,7 +131,7 @@
                 this.updated(e, row, attr);
             }),
             add(e) {
-                if (this.expressionList === null) {
+                if (this.expressionList === null || this.expressionList === '') {
                     this.expressionList = [];
                 }
                 this.expressionList.push({

@@ -34,7 +34,7 @@
             return {
                 jobs: [],
                 jobsTotal: 0,
-                columns: ['status', 'id', 'created'],
+                columns: ['status', 'id', 'name', 'created'],
                 options: {
                     columnsClasses: {
                         name: 'th-20',
@@ -84,7 +84,7 @@
                 params.size = params.limit
                 params.name = params.query
                 params.workflow_id = this.workflowId
-                params.fields = "id,created,status"
+                params.fields = "id,name,created,status"
 
                 return axios.get(`${standUrl}/jobs`, { params })
                     .then(resp => {
