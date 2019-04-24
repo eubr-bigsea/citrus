@@ -86,13 +86,13 @@
                         </table>
                     </div>
                     <div v-if="resumableList.length">
-                        <h3>Uploading log</h3>
+                        <h3>{{$t('dataSource.uploadingLog')}}</h3>
                         <table class="table table-bordered table-stripped" v-if="resumableList.length > 0">
                             <thead>
                                 <tr>
-                                    <th>File</th>
-                                    <th>Message</th>
-                                    <th>Progress</th>
+                                    <th>{{$t('dataSource.file')}}</th>
+                                    <th>{{$t('dataSource.message')}}</th>
+                                    <th>{{$t('dataSource.progress')}}</th>
                                 </tr>
                             </thead>
                             <tbody>

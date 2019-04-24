@@ -396,7 +396,7 @@
                 axios.get(url, {})
                     .then((resp) => {
                         self.samples = resp.data.data
-                        self.previewWarnings = resp.data.warnings
+                        self.previewWarnings = resp.data.warnings || []
                         self.$refs.preview.show()
                     }
                     ).catch((e) => {
