@@ -5,7 +5,8 @@
                 <h6 class="header-pretitle">
                     <router-link :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
                         v-if="workflow.id">
-                        <i class="fa fa-chevron-left"></i> &nbsp; {{$t('actions.back')}}
+                        <i class="fa fa-chevron-left"></i> &nbsp; {{$t('actions.back')}} - 
+                        {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
                     </router-link>
                 </h6>
                 <h1 class="header-title" v-if="loaded">
@@ -473,7 +474,7 @@
 </script>
 <style>
     .badge-custom {
-        width: 60px
+        width: 80px
     }
 
     .html-div {
