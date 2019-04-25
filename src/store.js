@@ -47,6 +47,11 @@ export default new Vuex.Store({
                 axios({ url, data: { data: params.user }, method: 'PATCH', headers })
                     .then(resp => {
                         commit('change_profile_success', { user: resp.data.data })
+                        const data = resp.data.data;
+                        const user = { id: data.id, email: data.email, locale: data.locale, 
+                            login: data.email,
+                            name:  `${data.attributes['first-name']} ${data.attributes['last-name']}` }
+                        localStorage.setItem('user', JSON.stringify(user))
                         resolve(resp)
                     }).catch((err) => {
                         reject(err)

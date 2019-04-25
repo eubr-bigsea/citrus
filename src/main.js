@@ -143,7 +143,7 @@ if (token) {
 
 // i18n
 const i18n = new VueI18n({
-    locale: 'pt', // set locale
+    locale: user.locale,
     fallbackLocale: 'en',
     messages
 })
