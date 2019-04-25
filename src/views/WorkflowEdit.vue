@@ -923,10 +923,9 @@
                         t.operation.forms.forEach(form => {
                             if (form.category === 'execution') {
                                 form.fields.forEach(field => {
-                                    if (field.enabled || field.enabled === undefined) {
-                                        if (field.required) {
+                                    if (field.enabled || field.enabled === undefined){
+                                        if (field.required && field.enable_conditions !== 'false') {
                                             const value = t.forms[field.name] ? t.forms[field.name].value : null;
-                                            //console.debug(field.name, t.forms[field.name], value === [], value)
                                             if (value === null || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
                                                 warning = this.$tc("errors.missingRequiredValue");
                                                 self.validationErrors.push({
