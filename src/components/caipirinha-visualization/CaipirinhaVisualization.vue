@@ -26,6 +26,7 @@
     import CaipirinhaVisualizationLine from "./CaipirinhaVisualizationLine"
     import CaipirinhaVisualizationBar from "./CaipirinhaVisualizationBar"
     import CaipirinhaVisualizationBoxPlot from "./CaipirinhaVisualizationBoxPlot"
+    import CaipirinhaVisualizationHistogram from "./CaipirinhaVisualizationHistogram"
     import CaipirinhaVisualizationPie from "./CaipirinhaVisualizationPie"
     import CaipirinhaVisualizationArea from "./CaipirinhaVisualizationArea"
     import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
@@ -56,32 +57,7 @@
         openInCloud: "Abrir no Highcharts Cloud"
     };
 
-    const getVisualizationComponent = function (typeId) {
-        switch (typeId) {
-            case 1:
-                return "caipirinha-visualization-html";
-            case 35:
-                return "caipirinha-visualization-table";
-            case 68:
-                return "caipirinha-visualization-line";
-            case 69:
-                return "caipirinha-visualization-bar";
-            case 70:
-                return "caipirinha-visualization-pie";
-            case 71:
-                return "caipirinha-visualization-area";
-            case 87:
-                return "caipirinha-visualization-scatter";
-            case 88:
-                return "caipirinha-visualization-map";
-            case 89:
-                return "caipirinha-visualization-donut";
-            case 123:
-                return "caipirinha-visualization-boxplot";
-            default:
-                throw new TypeError("Invalid visualization ID");
-        }
-    };
+
 
     const getVisualizationData = function (responseData) {
         if (responseData.x && responseData.x.type == "time") {
@@ -106,6 +82,7 @@
             CaipirinhaVisualizationLine,
             CaipirinhaVisualizationBar,
             "caipirinha-visualization-boxplot": CaipirinhaVisualizationBoxPlot,
+            "caipirinha-visualization-histogram": CaipirinhaVisualizationHistogram,
             CaipirinhaVisualizationPie,
             CaipirinhaVisualizationArea,
             CaipirinhaVisualizationScatter,
@@ -122,6 +99,34 @@
             };
         },
         methods: {
+            getVisualizationComponent(typeId) {
+                switch (typeId) {
+                    case 1:
+                        return "caipirinha-visualization-html";
+                    case 35:
+                        return "caipirinha-visualization-table";
+                    case 68:
+                        return "caipirinha-visualization-line";
+                    case 69:
+                        return "caipirinha-visualization-bar";
+                    case 70:
+                        return "caipirinha-visualization-pie";
+                    case 71:
+                        return "caipirinha-visualization-area";
+                    case 87:
+                        return "caipirinha-visualization-scatter";
+                    case 88:
+                        return "caipirinha-visualization-map";
+                    case 89:
+                        return "caipirinha-visualization-donut";
+                    case 123:
+                        return "caipirinha-visualization-boxplot";
+                    case 124:
+                        return "caipirinha-visualization-histogram";
+                    default:
+                        throw new TypeError(this.$t("errors.invalidVisualizationId"));
+                }
+            },
             setLang() {
                 if (highchartsDefaultLang === undefined)
                     highchartsDefaultLang = {
@@ -148,7 +153,7 @@
             axios
                 .get(this.url)
                 .then(response => {
-                    this.visualizationComponent = getVisualizationComponent(
+                    this.visualizationComponent = this.getVisualizationComponent(
                         response.data.type.id
                     );
                     this.visualizationData = getVisualizationData(response.data);

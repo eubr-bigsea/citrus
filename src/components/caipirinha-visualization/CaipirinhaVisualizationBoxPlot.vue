@@ -10,7 +10,6 @@
         props: ["visualizationData"],
         computed: {
             options() {
-                console.debug(this.$t('actions.save'))
                 const result = this.visualizationData.data[0];
                 result['chart']['height'] = 600;
                 result['chart']['zoomType'] = 'Xy';
