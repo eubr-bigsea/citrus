@@ -58,7 +58,7 @@ library.add(faCoffee, faCopy, faCogs, faHistory, faPlay, faImage, faLayerGroup, 
     faExclamationTriangle, faExclamationCircle, faChevronLeft
 )
 
-import {faSave as farSave, faCopy as farCopy} from '@fortawesome/free-regular-svg-icons'
+import { faSave as farSave, faCopy as farCopy } from '@fortawesome/free-regular-svg-icons'
 
 library.add(farSave, farCopy)
 
@@ -96,7 +96,7 @@ const locales = {
 }
 
 Vue.filter('formatJsonDate', (v) => { if (v) { return format(parse(v), 'DD/MM/YYYY HH:MM') } })
-Vue.filter('timeFromNow', (v, l) => distanceInWordsStrict(new Date(), v, {addSuffix: true, locale: locales[l]}))
+Vue.filter('timeFromNow', (v, l) => distanceInWordsStrict(new Date(), v, { addSuffix: true, locale: locales[l] }))
 
 // Highcharts
 import Highcharts from 'highcharts'
@@ -123,9 +123,9 @@ Vue.component('l-marker', LMarker);
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
 // Auth
@@ -143,7 +143,7 @@ if (token) {
 
 // i18n
 const i18n = new VueI18n({
-    locale: user.locale,
+    locale: user ? user.locale : 'pt',
     fallbackLocale: 'en',
     messages
 })
@@ -164,7 +164,7 @@ new Vue({
     router,
     store,
     render: h => h(App),
-    mounted () {
+    mounted() {
     }
 });
 // let requestCounter = 0;
