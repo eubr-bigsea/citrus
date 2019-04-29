@@ -15,7 +15,7 @@
     "animated-number-vue": "^0.1.4",
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
-    "bootstrap-vue": "^2.0.0-rc.11",
+    "bootstrap-vue": "^2.0.0-rc.19",
     "date-fns": "^1.29.0",
     "highcharts": "^6.2.0",
     "highcharts-export-data": "^0.1.7",
@@ -28,7 +28,7 @@
     "leaflet": "^1.4.0",
     "leaflet.heat": "github:Leaflet/Leaflet.heat",
     "loadash": "^1.0.0",
-    "node-sass": "^4.9.3",
+    "node-sass": "^4.12.0",
     "perfect-scrollbar": "^1.4.0",
     "prismjs": "^1.15.0",
     "resumablejs": "^1.1.0",
@@ -51,9 +51,9 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.4",
+    "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-plugin-eslint": "^3.0.4",
-    "@vue/cli-service": "^3.0.4",
+    "@vue/cli-service": "^3.7.0",
     "vue-cli-plugin-bootstrap": "^1.0.0-alpha.1",
     "vue-template-compiler": "^2.5.17"
   },
