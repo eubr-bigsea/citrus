@@ -752,7 +752,7 @@
             },
             getSuggestions(taskId) {
                 if (window.hasOwnProperty('TahitiAttributeSuggester')) {
-                    if (TahitiAttributeSuggester.processed === undefined) {
+                    if (window.TahitiAttributeSuggester.processed === undefined) {
                         this.updateAttributeSuggestion();
                     }
                     if (this.attributeSuggestion[taskId]) {
@@ -768,13 +768,13 @@
                 let self = this;
                 let attributeSuggestion = {};
                 try {
-                    TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
+                    window.TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
                         (result) => {
                             Object.keys(result).forEach(key => {
                                 attributeSuggestion[key] = result[key].uiPorts;
                             });
                             Object.assign(self.attributeSuggestion, attributeSuggestion);
-                            TahitiAttributeSuggester.processed = true;
+                            window.TahitiAttributeSuggester.processed = true;
                             if (callback) {
                                 callback();
                             }
@@ -953,11 +953,11 @@
                 let self = this;
 
                 id = parseInt(id);
-                if (TahitiAttributeSuggester.cached === undefined) {
-                    TahitiAttributeSuggester.cached = {};
+                if (window.TahitiAttributeSuggester.cached === undefined) {
+                    window.TahitiAttributeSuggester.cached = {};
                 }
-                if (TahitiAttributeSuggester.cached[id]) {
-                    attributes = TahitiAttributeSuggester.cached[id];
+                if (window.TahitiAttributeSuggester.cached[id]) {
+                    attributes = window.TahitiAttributeSuggester.cached[id];
                     callback(attributes);
                 } else {
                     let url = `${limoneroUrl}/datasources/${id}`;
@@ -965,7 +965,7 @@
                         (response) => {
                             let ds = response.data;
                             attributes = ds.attributes.map(function (attr) { return attr.name });
-                            TahitiAttributeSuggester.cached[id] = attributes;
+                            window.TahitiAttributeSuggester.cached[id] = attributes;
                             callback(attributes);
                         },
                         (error) => {

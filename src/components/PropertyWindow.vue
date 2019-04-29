@@ -19,7 +19,8 @@
                         </div>
                         <div class="col-md-3">
                             <label type="checkbox">
-                                <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}</SwitchComponent>
+                                <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}
+                                </SwitchComponent>
                             </label>
                         </div>
                     </div>
@@ -28,43 +29,24 @@
                     <form>
                         <b-card no-body>
                             <b-tabs card v-model="tabIndex">
-                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0" :title="form.name"
-                                    :title-link-class="'small-nav-link'">
-                                    <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="task.id + field.name"
-                                        v-if="field.enabled" :data-name="field.name">
+                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0"
+                                    :title="form.name" :title-link-class="'small-nav-link'">
+                                    <div v-for="field in form.fields" class="mb-2 property clearfix"
+                                        v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
                                             <component :is="field.suggested_widget + '-component'" :field="field"
                                                 :value="getValue(field.name)" :suggestions="suggestions"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
-                                                :language="$root.$i18n.locale" :type="field.suggested_widget" context="context">
+                                                :language="$root.$i18n.locale" :type="field.suggested_widget"
+                                                context="context">
                                             </component>
-                                            <!-- <span v-else>
-                                                {{field.name}} {{field.suggested_widget}}
-                                            </span> -->
+
                                         </keep-alive>
                                     </div>
                                 </b-tab>
                             </b-tabs>
                         </b-card>
-                        <!--
-                        <div class="card text-dark bg-light p0 mb-1" v-for="form in forms" v-bind:key="form.id">
-                            <div class="card-header">{{form.name}}</div>
-                            <div v-if="!form.fields.length">
-                                No parameters to configure.
-                            </div>
-                            <div class="card-body">
-                                <div v-for="field in form.fields" class="mb-2" v-bind:key="field.name">
-                                    <component v-if="['checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
-                                        :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
-                                        language="language" context="context"></component>
-                                    <span v-else>{{field.name}} {{field.suggested_widget}} {{['checkbox', 'color', 'textarea', 'code'].includes(field.suggested_widget)}}
-                                    </span>
-                                    <keep-alive>
-                                    </keep-alive>
-                                </div>
-                            </div>
-                        </div>
-                        -->
+
                     </form>
                     <div class="card-body">
                         {{task.id}}
@@ -83,12 +65,6 @@
 <script>
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-    // import {
-    //     // CodeComponent,
-    //     CheckboxComponent,
-    //     // TextComponent,
-    //     // TextAreaComponent
-    // } from './Widget.vue'
     import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
     import AttributeSelectorComponent from './widgets/AttributeSelector.vue'
     import CheckboxComponent from './widgets/Checkbox.vue'
@@ -167,6 +143,11 @@
                     // Reverse association between field and form. Used to retrieve category
                     const conditional = /\bthis\..+?\b/g;
                     self.forms.forEach((f, i) => {
+                        f.fields.forEach((field) => {
+                            Vue.set(field, "internalValue", self.task.forms[field.name].value);
+                        });
+                    });
+                    self.forms.forEach((f, i) => {
                         f.fields.forEach((field, j) => {
                             field.category = f.category;
                             Vue.set(field, "enabled", true);
@@ -182,10 +163,11 @@
                                             self.conditionalFields.set(key, []);
                                         }
                                         self.conditionalFields.get(key).push(field);
+                                        field.enabled = self.evalInContext(field.enable_conditions, self.allFields);
                                     });
                                 }
                             }
-                            Vue.set(field, "internalValue", null);
+
                         });
                     });
                 };
@@ -194,7 +176,6 @@
                     container.scrollTop = 0;
                 }
                 this.tabIndex = 0;
-                //if (!TahitiAttributeSuggester.processed) {
                 if (false) {
                     self.updateAttributeSuggestion(callback);
                 } else {

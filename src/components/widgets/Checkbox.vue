@@ -1,6 +1,6 @@
 <template>
     <div ref="fieldElement">
-        <div class="float-left">
+        <div class="float-left" :data-name="field.name">
             <SwitchComponent class="float-left" :onchange="changed" :checked="checked">{{field.label}}</SwitchComponent>
         </div>
         <div class="float-right">
