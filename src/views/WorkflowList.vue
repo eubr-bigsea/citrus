@@ -13,10 +13,14 @@
                     <div class="card-body">
                         <v-server-table :columns="columns" :options="options" ref="workflowList" name="workflowList">
                             <template slot="id" slot-scope="props">
-                                <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.id}}</router-link>
+                                <router-link
+                                    :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                    {{props.row.id}}</router-link>
                             </template>
                             <template slot="name" slot-scope="props">
-                                <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">{{props.row.name}}</router-link>
+                                <router-link
+                                    :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                    {{props.row.name}}</router-link>
                             </template>
                             <template slot="platform" slot-scope="props">
                                 {{props.row.platform.name}}
@@ -34,12 +38,14 @@
                                 <label>{{$tc('common.platform')}}</label>
                                 <select class="form-control" v-model="platform">
                                     <option></option>
-                                    <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">{{p.name}}</option>
+                                    <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">{{p.name}}
+                                    </option>
                                 </select>
-                                <button type="button" class="btn btn-sm btn-light ml-2" @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
+                                <button type="button" class="btn btn-sm btn-light ml-2"
+                                    @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
                             </div>
                             <template slot="actions" slot-scope="props">
-                                <button class="btn btn-sm btn-light"  @click="remove(props.row.id)">
+                                <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
                                     <font-awesome-icon icon="trash"></font-awesome-icon>
                                 </button>
                             </template>
@@ -64,6 +70,7 @@
                 platforms: [],
                 columns: ['id', 'name', 'updated', 'platform', 'user_name', 'version', 'is_template', 'actions'],
                 options: {
+                    debounce: 800,
                     skin: 'table-sm table table-hover',
                     dateColumns: ['updated'],
                     columnClasses: { actions: 'th-10' },
@@ -147,7 +154,7 @@
                     this.$t('messages.doYouWantToDelete'),
                     () => {
                         const url = `${tahitiUrl}/workflows/${workflowId}`
-                        axios.delete(url, { })
+                        axios.delete(url, {})
                             .then((resp) => {
                                 self.$refs.workflowList.refresh();
                             }).catch((e) => self.error(e))
@@ -156,7 +163,15 @@
         },
         watch: {
             platform(v) {
-                Event.$emit('vue-tables.workflowList.filter::platform', v);
+                // This is not working
+                // Event.$emit('vue-tables.workflowList.filter::platform', v);
+                // Event.$emit('vue-tables.filter::platform', v);
+
+                // This works, but use internal details of component
+                const table = this.$refs.workflowList;
+                table.customQueries['platform'] = v;
+                table.updateState('customQueries', table.customQueries);
+                table.getData();
             }
         }
     }
