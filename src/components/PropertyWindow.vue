@@ -144,7 +144,8 @@
                     const conditional = /\bthis\..+?\b/g;
                     self.forms.forEach((f, i) => {
                         f.fields.forEach((field) => {
-                            Vue.set(field, "internalValue", self.task.forms[field.name].value);
+                            if (self.task && self.task.forms[field.name])
+                                Vue.set(field, "internalValue", self.task.forms[field.name].value);
                         });
                     });
                     self.forms.forEach((f, i) => {

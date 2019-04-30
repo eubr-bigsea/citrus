@@ -1,6 +1,6 @@
 <template>
     <span class="label">
-        <span :data-name="field.name" :class="{'font-weight-bold': field.required, 'text-danger': error}" :title="error">{{field.label}}</span>
+        <span :data-order="field.order" :data-name="field.name" :class="{'font-weight-bold': field.required, 'text-danger': error}" :title="error">{{field.label}}</span>
         <span v-show="field.required">*</span>
         <span class="fa fa-question-circle float-right" :title="field.help"></span>
     </span>
