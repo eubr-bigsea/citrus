@@ -103,7 +103,7 @@
                                                     <label>{{$tc('titles.cluster')}}:</label>
                                                     <select v-model="clusterInfo.id" class="form-control"
                                                         v-on:change="changeCluster">
-                                                        <option v-for="option in clusters" v-bind:value="option.id">
+                                                        <option v-for="option in clusters" v-bind:value="option.id" v-bind:key="option.id">
                                                             {{ option.name }}
                                                         </option>
                                                     </select>
@@ -120,7 +120,6 @@
                                 <button class="ml-1 btn btn-sm btn-outline-dark"
                                     @click="cancelExecute">{{$t('actions.cancel')}}</button>
                             </div>
-                        </b-modal>
                         </b-modal>
                         <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled ref="saveAsModal">
                             <b-form-radio-group v-model="saveOption">
@@ -350,24 +349,24 @@
                 self._validateTasks([self.selectedTask.task]);
                 this.isDirty = true;
                 return;
-
-                if (! self.selectedTask.task.forms){
-                    self.selectedTask.task.forms = {};
-                }
-                let fieldInSelectedTask = self.selectedTask.task.forms[field.name];
-                if (fieldInSelectedTask) {
-                    fieldInSelectedTask.value = value
-                } else {
-                    fieldInSelectedTask = { value: value }
-                }
-                fieldInSelectedTask.label = field.label;
-                if (labelValue) {
-                    fieldInSelectedTask.labelValue = labelValue
-                } else if (fieldInSelectedTask.labelValue){
-                    delete fieldInSelectedTask.labelValue
-                }
-                self._validateTasks([self.selectedTask.task]);
-                this.isDirty = true;
+                // FIXME: Review this code. It is used to save the label
+                // if (! self.selectedTask.task.forms){
+                //     self.selectedTask.task.forms = {};
+                // }
+                // let fieldInSelectedTask = self.selectedTask.task.forms[field.name];
+                // if (fieldInSelectedTask) {
+                //     fieldInSelectedTask.value = value
+                // } else {
+                //     fieldInSelectedTask = { value: value }
+                // }
+                // fieldInSelectedTask.label = field.label;
+                // if (labelValue) {
+                //     fieldInSelectedTask.labelValue = labelValue
+                // } else if (fieldInSelectedTask.labelValue){
+                //     delete fieldInSelectedTask.labelValue
+                // }
+                // self._validateTasks([self.selectedTask.task]);
+                // this.isDirty = true;
             });
             this.$root.$on('update-workflow-form-field-value', (field, value, labelValue) => {
                 const self = this;
@@ -409,15 +408,15 @@
                 //     self.clearSelection();
                 //     self.instance.repaintEverything();
                 // })
-                const inx = this.workflow.tasks.findIndex((n, inx, arr) => n.id === task.id);
+                const inx = this.workflow.tasks.findIndex((n) => n.id === task.id);
                 if (inx > -1) {
                     this.workflow.tasks.splice(inx, 1);
-                    const flows = this.workflow.flows;
-                    for (let i = flows.length - 1; i > 0; i--) {
-                        if (flows[i].source_id === task.id) {
-                            state.workflow.flows.splice(i, 1);
-                        }
-                    }
+                    // const flows = this.workflow.flows;
+                    // for (let i = flows.length - 1; i > 0; i--) {
+                    //     if (flows[i].source_id === task.id) {
+                    //         state.workflow.flows.splice(i, 1);
+                    //     }
+                    // }
                 }
                 this.isDirty = true;
             });
@@ -428,8 +427,7 @@
                 this.isDirty = true;
             });
             this.$root.$on('removeFlow', (flowId) => {
-                const self = this;
-                const inx = this.workflow.flows.findIndex((n, inx, arr) => {
+                const inx = this.workflow.flows.findIndex((n) => {
                     const id = `${n.source_id}/${n.source_port}-${n.target_id}/${n.target_port}`;
                     return id === flowId;
                 });
@@ -469,7 +467,7 @@
         watch: {
             '$route.params.id': function (id) {
                 this.$refs.diagram.clearWorkflow();
-                this.load();
+                this.load(id);
             }
         },
         methods: {
@@ -549,7 +547,7 @@
                                     .then((resp2 => {
                                         const job = resp2.data;
                                         const tasks = self.workflow.tasks;
-                                        job.steps.forEach((step, i) => {
+                                        job.steps.forEach((step) => {
                                             const foundTask = tasks.find((t) => {
                                                 return t.id === step.task.id;
                                             });
@@ -557,7 +555,7 @@
                                                 foundTask.step = step;
                                             }
                                         });
-                                        job.results.forEach((result, i) => {
+                                        job.results.forEach((result) => {
                                             const foundTask = tasks.find((t) => {
                                                 return t.id === result.task.id;
                                             });
@@ -565,7 +563,7 @@
                                                 foundTask.result = result;
                                             }
                                         });
-                                    })).catch((e) => { });
+                                    })).catch(() => { });
                             }
                         ).catch(function (e) {
                             this.error(e);
@@ -579,19 +577,18 @@
                     this.error(e);
                 }.bind(this));
             },
-            getSuggestions() {
-                if (this.attributeSuggestion && this.selectedTask) {
-                    return this.attributeSuggestion[this.selectedTask.task.id]
-                } else {
-                    return []
-                }
-            },
+            // getSuggestions() {
+            //     if (this.attributeSuggestion && this.selectedTask) {
+            //         return this.attributeSuggestion[this.selectedTask.task.id]
+            //     } else {
+            //         return []
+            //     }
+            // },
             saveAsImage() {
                 let self = this
                 let $elem = this.$refs.diagram.$el.querySelector('#lemonade-container')
                 html2canvas($elem, {
                     width: 3000, height: 3000, logging: false, allowTaint: false,
-                    logging: false,
                     onclone(clone) {
                         let elem = clone.getElementById($elem.id);
                         elem.parentElement.style.height = '10000px';
@@ -621,7 +618,7 @@
                         // targetCtx.translate(-x0 + 150, -y0 + 150);
                         targetCtx.drawImage(canvas, 0, 0);
 
-                        let ctx = canvas.getContext('2d');
+                        // let ctx = canvas.getContext('2d');
                         for (let flow of $elem.getElementsByClassName('jtk-connector')) {
                             const DOMURL = window.URL || window.webkitURL || window;
 
@@ -818,7 +815,6 @@
                     this.saveWorkflow(true, this.newName);
                 } else if (this.saveOption === 'image') {
                     this.saveAsImage();
-                } else if (this.saveOption === 'template') {
                 }
                 this.$refs.saveAsModal.hide();
             },
@@ -836,9 +832,9 @@
             },
             showExecuteWindow() {
                 const self = this;
-                const valid = self._validateTasks(self.workflow.tasks);
-                //if (valid) {
-                const options = { year: 'numeric', month: 'long', day: 'long' }
+                // const valid = self._validateTasks(self.workflow.tasks);
+                // if (valid) {
+                // const options = { year: 'numeric', month: 'long', day: 'long' }
                 const d = new Date().toISOString().slice(0, -5);
                 this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
                 axios.get(`${standUrl}/clusters`, {})
@@ -968,8 +964,8 @@
                             window.TahitiAttributeSuggester.cached[id] = attributes;
                             callback(attributes);
                         },
-                        (error) => {
-                            self.warning('At least one data source is invalid in workflow');
+                        () => {
+                            self.warning(self.$t('errors.invalidDataSource'));
                             callback([]);
                         }
                     );

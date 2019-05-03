@@ -75,7 +75,6 @@
     import ExpressionComponent from './widgets/ExpressionEditor.vue'
     import IntegerComponent from './widgets/Integer.vue'
     import LookupComponent from './widgets/Lookup.vue'
-    import PercentageComponent from './widgets/Range.vue'
     import RangeComponent from './widgets/Range.vue'
     import Select2Component from './widgets/Select2.vue'
     import SwitchComponent from './widgets/Switch.vue'

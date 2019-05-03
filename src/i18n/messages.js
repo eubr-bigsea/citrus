@@ -155,6 +155,7 @@ export default {
         },
         errors: {
             disconnected: 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
+            invalidDataSource: 'Pelo menos uma fonte de dados de entrada usada no fluxo de trabalho é inválida, revise a configuração e se você está conectado à internet.',
             invalidLoginOrPassword: 'Senha ou usuário inválidos',
             invalidOperation: 'Operação inválida',
             invalidVisualizationId: 'Visualização não registrada. Contacte o suporte.',
@@ -458,6 +459,7 @@ export default {
         },
         errors: {
             disconnected: 'You are disconnected. Please check if you have access to the Internet.',
+            invalidDataSource: 'At least one data source is invalid in workflow',
             invalidLoginOrPassword: 'Invalid login or password',
             invalidOperation: 'Invalid operation',
             invalidVisualizationId: 'Invalid visualization. Please, contact the support.',

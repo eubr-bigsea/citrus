@@ -46,7 +46,7 @@
             }
         },
         watch: {
-            value: function(val) {
+            value: function() {
                 this.checked = this.value === 1 || this.value === '1';
             }
         }
