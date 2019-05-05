@@ -8,15 +8,16 @@
                             <div class="border-bottom mb-2 pb-4">
                                 <label>1 - {{$tc('titles.workflow')}}</label>
 
-                                <v-select label="name" :filterable="false" :options="selectableDeployables" @search="onSearch"
-                                    ref="deployables" @input="selectWorkflow">
+                                <v-select label="name" :filterable="false" :options="selectableDeployables"
+                                    @search="onSearchWorkflow" ref="deployables" @input="selectWorkflow">
                                     <template slot="no-options">
                                         {{$t('actions.typeAndchooseOption')}}
                                     </template>
                                     <template slot="option" slot-scope="option">
                                         <div class="d-center">
                                             {{ option.name }} (#{{option.id }})
-                                            <div class="platform-icon-small float-right" :class="'bg-' + option.platform.slug"></div>
+                                            <div class="platform-icon-small float-right"
+                                                :class="'bg-' + option.platform.slug"></div>
                                         </div>
                                     </template>
                                     <template slot="selected-option" scope="option">
@@ -26,12 +27,13 @@
                                     </template>
                                 </v-select>
                             </div>
-                            <div v-if="step >= 2">
+                            <div v-if="step >= 2 || true">
                                 <label>2 - {{$tc('titles.job')}}</label>
                                 <div class="p-2" v-html="$t('deployment.requireExecution')"></div>
 
                                 <b-form-group v-if="jobs && jobs.length">
-                                    <b-form-radio-group v-model="job" :options="jobs" stacked name="jobs" @input="jobSelected">
+                                    <b-form-radio-group v-model="job" :options="jobs" stacked name="jobs"
+                                        @input="jobSelected">
                                     </b-form-radio-group>
                                 </b-form-group>
                                 <div v-else>
@@ -39,10 +41,27 @@
                                         {{$t('common.noData')}}
                                     </div>
                                 </div>
+                                <div class="row border-bottom mb-2 pb-4">
+                                    <div class="col-md-6">
+                                        <label>3 - {{$tc('titles.target', 1)}}</label>
+                                        <select v-model="selectedTarget" class="form-control">
+                                            <option v-for="t in selectableTargets" :key="t.id" :value="t.id">
+                                                {{t.name}} ({{t.description}})</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>4 - {{$tc('titles.image', 1)}}</label>
+                                        <select v-model="selectedImage" class="form-control">
+                                            <option v-for="s in selectableImages" :key="s.id" :value="s.id">
+                                                {{s.name}} ({{s.name}}:{{s.tag}})</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </b-card>
                         <router-link :to="{name: 'deployments'}">
-                            <button class="btn mt-2 float-right btn btn-sm btn-outline-secondary" @click="save">{{$t('actions.cancel')}}</button>
+                            <button class="btn mt-2 float-right btn btn-sm btn-outline-secondary"
+                                @click="save">{{$t('actions.cancel')}}</button>
                         </router-link>
                         <button class="btn btn-sm btn-outline-primary btn-sm mt-2 float-right mr-1" v-if="step===3"
                             @click="save">{{$t('actions.saveAndContinue')}}...</button>
@@ -67,8 +86,17 @@
             'v-select': vSelect,
         },
         mounted() {
-            let self = this;
-
+            const data = { sort: 'name' };
+            axios.get(`${seedUrl}/images`, { params: data }).then(resp => {
+                this.selectableImages = resp.data.data
+            }).catch(function (e) {
+                this.error(e)
+            });
+            axios.get(`${seedUrl}/targets`, { params: data }).then(resp => {
+                this.selectableTargets = resp.data.data
+            }).catch(function (e) {
+                this.error(e)
+            })
         },
         data() {
             return {
@@ -79,6 +107,12 @@
                 selectedDeployableType: "model",
                 selectableDeployables: [],
                 selectedDeployable: null,
+
+                selectableImages: [],
+                selectedImage: null,
+
+                selectableTargets: [],
+                selectedTarget: null,
 
                 workflows: [],
                 workflow: null,
@@ -92,9 +126,9 @@
             onChange(val) {
                 alert(val)
             },
-            onSearch(search, loading) {
+            onSearchWorkflow(search, loading) {
                 loading(true);
-                this._search(loading, search, this);
+                this._searchWorkflow(loading, search, this);
             },
             selectWorkflow(val) {
                 this.workflow = val;
@@ -109,6 +143,9 @@
                     job_id: this.job,
                     workflow_id: this.workflow.id,
                     workflow_name: this.workflow.name,
+                    image_id: this.selectedImage,
+                    target_id: this.selectedTarget,
+                    
                 }
                 axios.post(`${seedUrl}/deployments`, data).then(resp => {
                     self.deployment = resp.data;
@@ -144,13 +181,26 @@
                     self.error(e)
                 })
             },
-            _search: _.debounce((loading, search, vm) => {
+            _searchWorkflow: _.debounce((loading, search, vm) => {
                 const data = {
                     name: search,
                     fields: "id,name,platform.id,platform.name"
                 }
                 axios.get(`${tahitiUrl}/workflows`, { params: data }).then(resp => {
                     vm.selectableDeployables = resp.data.data
+                    loading(false);
+                }).catch(function (e) {
+                    loading(false);
+                    vm.error(e)
+                })
+            }, 350),
+            _searchImage: _.debounce((loading, search, vm) => {
+                const data = {
+                    name: search,
+                    fields: "id,name,tag"
+                }
+                axios.get(`${seedUrl}/images`, { params: data }).then(resp => {
+                    vm.selectableImages = resp.data.data
                     loading(false);
                 }).catch(function (e) {
                     loading(false);
