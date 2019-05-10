@@ -55,12 +55,13 @@
 
                     <div class="col-md-12">
                         <div ref="drop" class="jumbotron">
-                            <div class="resumable-drop" :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
+                            <div class="resumable-drop"
+                                :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
                                 {{$t('dataSource.dropFilesHere')}}
                                 <a class="resumable-browse" ref="browse">
                                     <u>{{$t('dataSource.selectFromComputer')}}</u>
                                 </a>.
-                                <br/>
+                                <br />
                                 <small>{{$t('dataSource.uploadExplanation')}}</small>
                             </div>
                         </div>
@@ -102,7 +103,8 @@
                                         {{fileInfo.message.message}}
                                     </td>
                                     <td>
-                                        <span class="resumable-file-progress">{{Math.floor(100*fileInfo.file.progress()) }}%</span>
+                                        <span
+                                            class="resumable-file-progress">{{Math.floor(100*fileInfo.file.progress()) }}%</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -222,7 +224,7 @@
             },
             setupResumable() {
                 let self = this
-                
+
                 let resumable = new Resumable({
                     target: `${limoneroUrl}/datasources/upload`,
                     chunkSize: 10 * 1024 * 1024,
@@ -230,7 +232,7 @@
                     testChunks: true,
                     throttleProgressCallbacks: 1,
                     method: "octet",
-                    query: {storage_id: self.fsStorage},
+                    query: { storage_id: self.fsStorage },
                     permanentErrors: [400, 401, 404, 415, 500, 501],
                     chunkRetryInterval: 5000,
                     headers: axios.defaults.headers.common // < same auth headers
@@ -276,11 +278,20 @@
                     let fileRef = getFileRef(file);
                     const link = self.$router.resolve({
                         name: "editDataSource",
-                        params: {id: m.data.id},
+                        params: { id: m.data.id },
                     });
-                    self.$refs[fileRef.file.uniqueIdentifier][0].innerHTML = 
+                    self.$refs[fileRef.file.uniqueIdentifier][0].innerHTML =
                         `<a href="${link.href}">${self.$t("actions.edit")} ${fileRef.file.fileName}`
                     fileRef.done = true;
+
+                    this.success(
+                        this.$t('messages.savedWithSuccess',
+                            { what: this.$tc('titles.dataSource', 1) }));
+                    setTimeout( () => this.$router.push({
+                        name: 'editDataSource',
+                        params: { 'id': m.data.id }
+                    }, 1000));
+
                 });
                 resumable.on('error', (message, file) => {
                     let fileRef = getFileRef(file);
@@ -305,6 +316,7 @@
                     }
                 });
             },
+            /*
             save(event) {
                 let self = this;
                 let url = `${limoneroUrl}/datasources`
@@ -325,7 +337,7 @@
                         })
                     }
                     ).catch((e) => { self.error(e) })
-            }
+            }*/
         }
     }
 </script>

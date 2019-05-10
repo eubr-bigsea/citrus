@@ -471,7 +471,7 @@
             top: 15px;
         }
         .has-3-ports {
-            margin-top: 20px !important;
+            margin-top: 40px !important;
         }
 
     }

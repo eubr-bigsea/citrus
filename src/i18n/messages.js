@@ -394,6 +394,7 @@ export default {
             rememberMe: 'Remember me',
             saveBeforeToEnableThis: 'Save data to enabled the {what} action',
             scale: 'Scale',
+            sharing: 'Sharing',
             show: 'Show',
             size: 'Size',
             tag: 'Tag | Tags',
