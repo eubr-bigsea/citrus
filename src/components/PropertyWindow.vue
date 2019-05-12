@@ -66,7 +66,7 @@
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
-    import AttributeSelectorComponent from './widgets/AttributeSelector.vue'
+    import AttributeSelectorComponent from './widgets/AttributeSelector2.vue'
     import CheckboxComponent from './widgets/Checkbox.vue'
     import CodeComponent from './widgets/Code.vue'
     import ColorComponent from './widgets/Color.vue'
