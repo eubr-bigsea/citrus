@@ -66,7 +66,8 @@
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
-    import AttributeSelectorComponent from './widgets/AttributeSelector.vue'
+    // import AttributeSelectorComponent from './widgets/AttributeSelector2.vue'
+    import AttributeSelector2Component from './widgets/AttributeSelector2.vue'
     import CheckboxComponent from './widgets/Checkbox.vue'
     import CodeComponent from './widgets/Code.vue'
     import ColorComponent from './widgets/Color.vue'
@@ -93,7 +94,8 @@
         },
         components: {
             'attribute-function-component': AttributeFunctionComponent,
-            'attribute-selector-component': AttributeSelectorComponent,
+            // 'attribute-selector-component': AttributeSelectorComponent,
+            'attribute-selector-component': AttributeSelector2Component,
             'checkbox-component': CheckboxComponent,
             'code-component': CodeComponent,
             'color-component': ColorComponent,

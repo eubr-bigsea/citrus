@@ -207,12 +207,10 @@ export default {
         property: {
             alias: 'Nome novo',
             attribute: 'Atributo',
+            availableAttribute: 'Atributo disponível | Atributos disponíveis',
+            clickToMove: 'Clique um item para movê-lo entre as listas',
             copyAttributeName: 'Duplo clique para copiar e colar na caixa de edição',
             editValue: 'Editar valor ...',
-            function: 'Função',
-            help: 'Ajuda',
-            noExpressions: 'Nenhuma expressão',
-            taskName: 'Nome da tarefa (opcional)',
             expression: {
                 availableAttribute: 'Atributo disponível | Atributos disponíveis',
                 alias: 'Nome do novo atributo (alias)',
@@ -225,10 +223,16 @@ export default {
                 (ex. <strong><code>split(atributo, ' ')</code></strong>). Para mais informações, 
                 consulte o Guia de referência do Lemonade ou as funções existentes na plataforma Apache Spark. `,
             },
+            function: 'Função',
+            help: 'Ajuda',
+            informAttributeName: 'Não está na lista? Informe um nome',
+            noExpressions: 'Nenhuma expressão',
             queryBuilder: {
                 explanation: 'Escreva uma consulta SQL válida. A sintaxe suportada depende da plataforma escolhida. Geralmente, consultas simpels funcionam na maioria dos casos. Veja a documentação do Lemonade para mais exemplos.',
                 title: 'Consulta SQL',
             },
+            selectedAttribute: 'Atributo selecionado | Atributos selecionados',
+            taskName: 'Nome da tarefa (opcional)',
         },
         titles: {
             action: 'Ação | Ações',
@@ -541,10 +545,13 @@ export default {
         property: {
             alias: 'Alias',
             attribute: 'Attribute',
+            availableAttribute: 'Available attribute | Available attributes',
+            clickToMove: 'Click an item to move it between lists',
             copyAttributeName: 'Double click to copy and paste attribute name to edit box',
             editValue: 'Edit value...',
             function: 'Function',
             help: 'Help',
+            informAttributeName: 'Not in the list? Inform a name',
             noExpressions: '0 Expression defined',
             taskName: 'Task name (optional)',
             expression: {
@@ -563,6 +570,7 @@ export default {
                 explanation: 'Write a SQL compatible Query. The supported syntax depend on the choosen platform, but in simple queries work in all cases. See documentation for more information.',
                 title: 'SQL query command',
             },
+            selectedAttribute: 'Selected attribute | Selected attributes'
         },
         profile: {
             alsoChangePassword: 'Also change my password',

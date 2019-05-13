@@ -8,8 +8,9 @@
 
 <script>
     export default {
+        name: "property-label",
         props: {
-            field: {},
+            field: {required: true, type: Object},
             value: {}
         },
         computed: {
