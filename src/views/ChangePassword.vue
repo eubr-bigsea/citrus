@@ -5,29 +5,11 @@
         <div class="brand"></div>
         <div class="card fat">
           <div class="card-body">
-            <h4 class="card-title float-left">{{$t('titles.login')}}</h4>
+            <h4 class="card-title float-left">{{$t('titles.changePassword')}}</h4>
             <div class="float-right navbar-brand logo"></div>
-            <form @submit.prevent="login">
+            <form @submit.prevent="changePassword">
               <div class="form-group">
-                <label for="email">{{$t('common.email')}}</label>
-                <input
-                  required
-                  v-model="email"
-                  type="email"
-                  class="form-control"
-                  placeholder="Name"
-                  autofocus
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="password">
-                  {{$t('common.password')}}
-                  <router-link
-                    class="float-right"
-                    to="/reset_password"
-                  >{{$t('common.forgotPassword')}}</router-link>
-                </label>
+                <label for="password">{{$t('common.password')}}</label>
                 <div style="position:relative">
                   <input
                     :type="showingPassword ? 'text' : 'password'"
@@ -47,14 +29,29 @@
               </div>
 
               <div class="form-group">
-                <label>
-                  <input type="checkbox" v-model="rememberPassword">
-                  {{$t('common.rememberMe')}}
-                </label>
+                <label for="password-confirmation">{{$t('common.confirmPassword')}}</label>
+                <div style="position:relative">
+                  <input
+                    :type="showingPassword ? 'text' : 'password'"
+                    class="form-control"
+                    v-model="passwordConfirmation"
+                    required
+                    style="padding-right: 60px;"
+                    placeholder="Password"
+                  >
+                </div>
               </div>
 
               <div class="form-group no-margin text-center">
-                <button type="submit" class="btn btn-primary col-md-4">{{$t('common.login')}}</button>
+                <button
+                  type="submit"
+                  class="btn btn-primary col-md-4"
+                >{{$t('common.changePassword')}}</button>
+              </div>
+              <div class="margin-top20 border-top text-center">
+                {{$t('common.alreadyHaveAccount')}}
+                <br>
+                <router-link to="/login">{{$t('common.login')}}</router-link>
               </div>
               <div class="margin-top20 text-center">
                 {{$t('common.dontHaveAccount')}}
@@ -89,12 +86,11 @@ label {
 </style>
 <script>
 export default {
-  name: "Login",
+  name: "ChangePassword",
   data() {
     return {
-      email: "",
       password: "",
-      rememberPassword: false,
+      passwordConfirmation: "",
       showingPassword: false
     };
   },
@@ -104,20 +100,37 @@ export default {
     }
   },
   methods: {
-    login: function() {
+    changePassword: function() {
       let self = this;
       let thornUrl = process.env.VUE_APP_THORN_URL;
-      let email = this.email;
       let password = this.password;
-      this.$store
-        .dispatch("login", { thornUrl, user: { email, password } })
-        .then(() => this.$router.push("/"))
-        .catch(err => {
-          let msg = err.message.startsWith("errors.")
-            ? self.$t(err.message)
-            : err.message;
-          self.$snotify.error(msg, self.$t("titles.error"));
-        });
+      let password_confirmation = this.passwordConfirmation;
+      let reset_password_token = this.$route.query.reset_password_token;
+
+      if (password.length < 6) {
+        let msg = self.$t("errors.passwordTooShort");
+        self.$snotify.error(msg, self.$t("titles.error"));
+      } else if (password !== password_confirmation) {
+        let msg = self.$t("errors.passwordDontMatch");
+        self.$snotify.error(msg, self.$t("titles.error"));
+      } else {
+        this.$store
+          .dispatch("changePassword", {
+            thornUrl,
+            user: {
+              password,
+              password_confirmation,
+              reset_password_token
+            }
+          })
+          .then(() => this.$router.push("/"))
+          .catch(err => {
+            let msg = err.message.startsWith("errors.")
+              ? self.$t(err.message)
+              : err.message;
+            self.$snotify.error(msg, self.$t("titles.error"));
+          });
+      }
     }
   }
 };
