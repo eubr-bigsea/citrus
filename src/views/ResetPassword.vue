@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-sm-3 col-md-3 col-lg-3 mx-auto">
+    <div class="col-12 col-sm-6 col-md-6 col-lg-4 mx-auto">
       <div class="card-wrapper">
         <div class="brand"></div>
         <div class="card fat">
