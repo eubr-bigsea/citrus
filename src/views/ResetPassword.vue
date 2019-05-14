@@ -26,6 +26,11 @@
                   class="btn btn-primary col-md-4"
                 >{{$t('common.resetPassword')}}</button>
               </div>
+              <div class="margin-top20 border-top text-center">
+                {{$t('common.alreadyHaveAccount')}}
+                <br>
+                <router-link to="/login">{{$t('common.login')}}</router-link>
+              </div>
               <div class="margin-top20 text-center">
                 {{$t('common.dontHaveAccount')}}
                 <br>

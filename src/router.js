@@ -3,10 +3,11 @@ import Router from 'vue-router';
 
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
+import ChangePassword from './views/ChangePassword.vue';
 import Login from './views/Login.vue';
-import ResetPassword from './views/ResetPassword.vue';
 import Logout from './views/Logout.vue';
 import Register from './views/Register.vue';
+import ResetPassword from './views/ResetPassword.vue';
 
 import DataSourceList from './views/DataSourceList.vue';
 import DataSourceEdit from './views/DataSourceEdit.vue';
@@ -140,14 +141,14 @@ let router = new Router({
       }
     },
     {
+      path: '/change_password',
+      name: 'change_password',
+      component: ChangePassword
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login
-    },
-    {
-      path: '/reset_password',
-      name: 'reset_password',
-      component: ResetPassword
     },
     {
       path: '/logout',
@@ -158,6 +159,11 @@ let router = new Router({
       path: '/register',
       name: 'register',
       component: Register
+    },
+    {
+      path: '/reset_password',
+      name: 'reset_password',
+      component: ResetPassword
     },
     {
       path: '/about',

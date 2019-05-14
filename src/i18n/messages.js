@@ -44,6 +44,7 @@ export default {
       attention: 'Atenção',
       alreadyHaveAccount: 'Já possui uma conta?',
       attribute: 'Atributo | Atributos',
+      changePassword: 'Criar nova Senha',
       command: 'Comando SQL',
       confirmPassword: 'Confirmar senha',
       created: 'Criado',
@@ -169,8 +170,10 @@ export default {
       missingRequiredValue: 'Valor obrigatório ausente',
       notFound: 'Registro não encontrado',
       passwordDontMatch: 'Senhas são diferentes',
+      passwordTooShort: 'Senha deve ter mais que 5 caracteres',
       loginInUse: 'Login/email estão em uso por outro usuário. Tente outro.',
       receivingData: 'Erro recebendo dados do servidor.',
+      resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest: 'Este link expirou, por favor redefina sua senha novamente.',
       sendingData: 'Erro enviando dados do servidor.'
     },
     job: {
@@ -224,12 +227,12 @@ export default {
         alias: 'Nome do novo atributo (alias)',
         explanation:
           'Adicione uma ou mais expressões. Novos atributos serão criados para as expressões informadas aqui, portanto, é necessário informar um nome (alias) para eles.',
-        tip: `Para usar um atributo existente, basta informar seu nome. Para constantes do tipo texto (string), delimite-as com aspas ou apóstrofos (' ou "). 
+        tip: `Para usar um atributo existente, basta informar seu nome. Para constantes do tipo texto (string), delimite-as com aspas ou apóstrofos (' ou ").
                 Examplos: <strong><code>substring(atributo, instr(atributo, " "))</code><strong>.`,
         title: 'Expressão',
-        validExpressions: `Expressões válidas incluem expressões matemáticas 
-                (ex. <strong><code>atributo * 10 - 4 </code></strong>) e chamadas a funções 
-                (ex. <strong><code>split(atributo, ' ')</code></strong>). Para mais informações, 
+        validExpressions: `Expressões válidas incluem expressões matemáticas
+                (ex. <strong><code>atributo * 10 - 4 </code></strong>) e chamadas a funções
+                (ex. <strong><code>split(atributo, ' ')</code></strong>). Para mais informações,
                 consulte o Guia de referência do Lemonade ou as funções existentes na plataforma Apache Spark. `
       },
       function: 'Função',
@@ -247,6 +250,7 @@ export default {
     titles: {
       action: 'Ação | Ações',
       administration: 'Administração',
+      changePassword: 'Nova senha',
       cluster: 'Cluster | Clusters',
       dataSource: 'Base de dados | Bases de dados',
       dashboard: 'Dashboard | Dashboards',
@@ -281,14 +285,14 @@ export default {
       aPlatformForDataScience: 'Uma plataforma para ciência dos dados',
       learnMore: 'Aprenda mais',
       recentlyUpdated: 'Atualizados recentemente',
-      welcome: `Bem-vindo ao Lemonade. 
-            Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) é uma platforma visual para computação distribuída 
-            que permite a implementação, experimentação, teste and implantação de aplicações de processamento de dados aprendizado de máquina. 
-            Ele provê um nível mais alto de abstração (fluxo de trabalho e operations) para que os usuários construam aplicações em uma interface gráfica web. 
-            Por usar tecnologias escaláveis e de alto desempenho, tais como COMPSs, Keras+Tensorflow e Spark, 
+      welcome: `Bem-vindo ao Lemonade.
+            Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) é uma platforma visual para computação distribuída
+            que permite a implementação, experimentação, teste and implantação de aplicações de processamento de dados aprendizado de máquina.
+            Ele provê um nível mais alto de abstração (fluxo de trabalho e operations) para que os usuários construam aplicações em uma interface gráfica web.
+            Por usar tecnologias escaláveis e de alto desempenho, tais como COMPSs, Keras+Tensorflow e Spark,
             Lemonade pode processar grandes volumes de dados, ocultado toda a complexidade de infraestrutura dos usuários, permitindo-os focar
             principalmente na construção da solução.
-            Lemonade é implementado como uma ferramenta de código aberto e está em desenvolvimento 
+            Lemonade é implementado como uma ferramenta de código aberto e está em desenvolvimento
             como produto dos projetos EUBra-BIGSEA e Atmosphere.`
     },
     visualization: {
@@ -370,6 +374,7 @@ export default {
       attention: 'Attention',
       alreadyHaveAccount: 'Already have an account?',
       attribute: 'Attribute | Attributes',
+      changePassword: 'Create new password',
       command: 'SQL Command',
       confirmPassword: 'Confirm password',
       created: 'Created',
@@ -489,8 +494,10 @@ export default {
       missingRequiredValue: 'Missing required value',
       notFound: 'Record not found',
       passwordDontMatch: 'Passwords do not match',
+      passwordTooShort: 'Passwords must have more than que 5 characters',
       loginInUse: 'Login/email is in use. Try another one.',
       receivingData: 'Error receiving data from the server',
+      resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest: 'This requet has expired. Please make another request.',
       sendingData: 'Error sending data to the server.'
     },
     messages: {
@@ -525,6 +532,7 @@ export default {
     titles: {
       action: 'Action | Actions',
       administration: 'Administration',
+      changePassword: 'New password',
       cluster: 'Cluster | Clusters',
       dataSource: 'Data source | Data sources',
       dashboard: 'Dashboard | Dashboards',
@@ -578,12 +586,12 @@ export default {
         alias: 'New attribute name (alias)',
         explanation:
           'Add one or more expresssions. New attributes will be created from the expressions informed here and you need to inform a name (alias) for them.',
-        tip: `To use an attribute, just inform its name. For string constants, delimit them with quotes (single or double). 
+        tip: `To use an attribute, just inform its name. For string constants, delimit them with quotes (single or double).
                 Examples: <code>substring(name, instr(name, " "))</code>.`,
         title: 'Expression',
-        validExpressions: `Valid expressions include math expressions 
-                (e.g. <strong><code>attr * 10 - 4 </code></strong>) and function calls 
-                (e.g. <strong><code>split(attr, ' ') </code></strong>). For more informations, 
+        validExpressions: `Valid expressions include math expressions
+                (e.g. <strong><code>attr * 10 - 4 </code></strong>) and function calls
+                (e.g. <strong><code>split(attr, ' ') </code></strong>). For more informations,
                 see Lemonade Reference Guide or Apache Spark SQL functions. `
       },
       queryBuilder: {
@@ -601,7 +609,7 @@ export default {
       aPlatformForDataScience: 'A platform for data science',
       learnMore: 'Learn more',
       recentlyUpdated: 'Recently updated',
-      welcome: `Welcome to Lemonade. 
+      welcome: `Welcome to Lemonade.
             Lemonade (Live Exploration and Mining Of Non-trivial Amount of Data from Everywhere) is a visual platform for distributed computing, aimed to enable implementation, experimentation, test and deploying of data processing and machine learning applications. It provides a higher level of abstractions, called operations, to users build processing workflows using a graphical web interface. By using high performance and scalable technologies, such as COMPSs, Ophidia and Spark, Lemonade can process very large amount of data, hiding all backend complexity from the users and allowing them to focus mainly in the construction of the solution.
             Lemonade is implemented as an open-source tool and is under development as a product of EUBra-BIGSEA project.`
     },
