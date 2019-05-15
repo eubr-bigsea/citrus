@@ -86,11 +86,14 @@
         },
         computed: {
             multiple(){
+                return true;
+                /*
                 if (this.field && this.field.values){
                     return JSON.parse(this.field.values).multiple !== false;
                 } else {
                     return {};
                 }
+                */
             },
             params() {
                 let result = null;
