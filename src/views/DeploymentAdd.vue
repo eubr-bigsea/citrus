@@ -145,7 +145,7 @@
                     workflow_name: this.workflow.name,
                     image_id: this.selectedImage,
                     target_id: this.selectedTarget,
-                    
+
                 }
                 axios.post(`${seedUrl}/deployments`, data).then(resp => {
                     self.deployment = resp.data;
