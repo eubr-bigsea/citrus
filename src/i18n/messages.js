@@ -176,6 +176,9 @@ export default {
       resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest: 'Este link expirou, por favor redefina sua senha novamente.',
       sendingData: 'Erro enviando dados do servidor.'
     },
+    warnings: {
+      dirtyCheck: 'Existem alterações que ainda não foram salvas. Deseja sair assim mesmo?'
+    },
     job: {
       details: 'Detalhe | Detalhes',
       error: 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
@@ -499,6 +502,9 @@ export default {
       receivingData: 'Error receiving data from the server',
       resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest: 'This requet has expired. Please make another request.',
       sendingData: 'Error sending data to the server.'
+    },
+    warnings: {
+      dirtyCheck: 'This workflow has modifications that has not been saved. Do you want to leave anyway?'
     },
     messages: {
       acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',

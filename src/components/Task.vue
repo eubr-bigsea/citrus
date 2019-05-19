@@ -428,6 +428,9 @@
                         let elem = self.$refs.task;
                         self.task.left = elem.offsetLeft;
                         self.task.top = elem.offsetTop;
+                    },
+                    stop() {
+                        self.$root.$emit('onset-isDirty', true);
                     }
                 });
             }
