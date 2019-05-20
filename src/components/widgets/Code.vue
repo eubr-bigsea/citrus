@@ -1,7 +1,29 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="programmingLanguage" ref="prism" />
+        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage"
+            ref="prism" disabled class="code2"/>
+
+        <b-link v-b-modal="'lookupModal' + field.order" variant="sm">
+            <span>{{$t('actions.edit')}}...</span>
+        </b-link>
+        <b-modal :id="'lookupModal' + field.order" size="lg" :title="field.label" ok-disabled
+            :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+            <div slot="default">
+                <div class="row" >
+					<div class="col-md-12">
+                        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="programmingLanguage"
+                            ref="prism" disabled class="code"/>
+					</div>
+                </div>
+            </div>
+            <div slot="modal-footer">
+                <b-btn @click="cancelModal" variant="" size="sm" class="float-right">{{$t('actions.cancel')}}
+                </b-btn>
+                <b-btn @click="okModal" variant="success mr-1" size="sm" class="float-right">{{$t('common.ok')}}
+                </b-btn>
+            </div>
+        </b-modal>
     </div>
 </template>
 <script>
@@ -67,16 +89,27 @@
     };
 
     export default {
+        computed: {
+            computedProgrammingLanguage(){
+                if (this.field && this.field.values){
+                    return JSON.parse(this.field.values).language !== false;
+                } else {
+                    return this.programmingLanguage;
+                }
+            }
+        },
         data() {
             return {
-                code: ''
+                code: '',
+                originalCode: ''
             }
         },
         components: {
             LabelComponent, PrismEditor
         },
         mounted() {
-            this.code = this.value || this.field.default || ''
+            this.code = this.value || this.field.default || '';
+            this.originalCode = this.code;
         },
         watch: {
             code: _.debounce(function (e) {
@@ -92,12 +125,27 @@
                 default: 'update-form-field-value'
             }
         },
+        methods: {
+            okModal(){
+                this.$refs.modal.hide();
+            },
+            cancelModal(){
+                this.code = this.originalCode;
+                this.$root.$emit(this.message, this.field, this.code);
+                this.$refs.modal.hide();
+            }
+        }
 
     }
 </script>
 <style scoped>
+    .code2 {
+        height: 100px;
+        border: 1px solid #ccc;
+    }
     .code {
-        height: 200px;
+        height: 60vh;
+        border: 1px solid #ccc;
         font-family: Courier New, Courier, monospace;
         font-size: .8em
     }

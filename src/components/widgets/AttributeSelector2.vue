@@ -86,11 +86,14 @@
         },
         computed: {
             multiple(){
+                return true;
+                /*
                 if (this.field && this.field.values){
                     return JSON.parse(this.field.values).multiple !== false;
                 } else {
                     return {};
                 }
+                */
             },
             params() {
                 let result = null;
@@ -140,13 +143,21 @@
                 } else if (direction === 'all-left') {
                     this.updated([]);
                 } else if (direction === 'right') {
-                    this.value.push(this.available[index]);
+                    if (!this.value){
+                        this.updated([this.available[index]]);
+                    } else {
+                        this.value.push(this.available[index]);
+                    }
                 } else if (direction == 'left') {
                     this.updated(this.value.filter((a, i) => i !== index));
                 }
             },
             updated(val) {
-                this.$root.$emit(this.message, this.field, val);
+                if (Array.isArray(val)){
+                    this.$root.$emit(this.message, this.field, val);
+                } else {
+                    this.$root.$emit(this.message, this.field, [val]);
+                }
             },
             okModal() {
                 this.$refs.modal.hide();

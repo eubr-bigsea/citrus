@@ -2,20 +2,17 @@
     <div class="row">
         <div class="col-md-4 offset-md-4">
             <div v-for="(field, index2) in form.fields" class="mb-2 property" v-bind:key="index2">
-                <component v-if="['select2', 'percentage', 'tag', 'expression', 'attribute-function', 'attribute-selector', 'select2', 'checkbox', 'decimal', 'range', 'integer', 'lookup', 'dropdown', 'text' , 'color', 'textarea', 'code'].includes(field.suggested_widget)"
+                <component
                     :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)" language="language"
                     context="context" message="update-workflow-form-field-value">
                 </component>
-                <span v-else>
-                    {{field.name}} {{field.suggested_widget}}
-                </span>
             </div>
         </div>
     </div>
 </template>
 <script>
     import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
-    import AttributeSelectorComponent from './widgets/AttributeSelector.vue'
+    import AttributeSelectorComponent from './widgets/AttributeSelector2.vue'
     import CheckboxComponent from './widgets/Checkbox.vue'
     import CodeComponent from './widgets/Code.vue'
     import ColorComponent from './widgets/Color.vue'
@@ -70,6 +67,7 @@
 </script>
 <style>
     .property {
-        /* overflow: auto; */
+        display: block;
+        clear: both;
     }
 </style>

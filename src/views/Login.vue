@@ -17,6 +17,7 @@
                   class="form-control"
                   placeholder="Name"
                   autofocus
+                  autocomplete="username"
                 >
               </div>
 
@@ -36,6 +37,7 @@
                     required
                     style="padding-right: 60px;"
                     placeholder="Password"
+                    autocomplete="current-password"
                   >
                   <input type="hidden" id="passeye-0">
                   <div
