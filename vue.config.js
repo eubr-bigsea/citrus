@@ -1,8 +1,12 @@
 module.exports = {
-    baseUrl: './',
-    pluginOptions: {
-        webpackBundleAnalyzer: {
-            openAnalyzer: false
-        }
-    }
+  configureWebpack: {
+    devtool: 'source-map'
+  }
+  baseUrl: './',
+  pluginOptions: {
+      webpackBundleAnalyzer: {
+          openAnalyzer: false
+      }
+  }
 }
+

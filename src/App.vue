@@ -3,14 +3,8 @@
     <vue-snotify></vue-snotify>
     <l-navbar v-if="isLoggedIn"></l-navbar>
     <div class="container-fluid">
-      <main role="main">
-          <div class="row">
-            <div class="col">
-                <router-view></router-view>
-            </div>
-        </div>
-      </main>
-        
+      <router-view></router-view>
+
       <vue-progress-bar></vue-progress-bar>
       <l-footer v-if="isLoggedIn"></l-footer>
     </div>
@@ -21,7 +15,6 @@
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 
-
 export default {
   name: 'app',
   components: {
@@ -30,11 +23,11 @@ export default {
   },
   computed: {
     isLoggedIn() {
-      return this.$store.getters.isLoggedIn
+      return this.$store.getters.isLoggedIn;
     },
     user() {
-      return this.$store.getters.user
-    },
+      return this.$store.getters.user;
+    }
   },
   data() {
     return {
@@ -42,8 +35,8 @@ export default {
       tableData: [],
       options: {
         xtemplates: {
-          symbol: function (row) {
-            return row.symbol
+          symbol: function(row) {
+            return row.symbol;
           }
         },
         headings: {
@@ -54,13 +47,13 @@ export default {
         sortable: ['name', 'album'],
         filterable: ['name', 'album']
       }
-    }
+    };
   }
-}
+};
 </script>
 
 <style>
-  body {
-    background-color: #f8f9fa !important;
-  }
+body {
+  background-color: #f8f9fa !important;
+}
 </style>

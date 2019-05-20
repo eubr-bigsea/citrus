@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-sm-3 col-md-3 col-lg-3 mx-auto">
+    <div class="col-12 col-sm-6 col-md-6 col-lg-4 mx-auto">
       <div class="card-wrapper">
         <div class="brand"></div>
         <div class="card fat">
@@ -91,18 +91,18 @@ label {
 </style>
 <script>
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
     return {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       rememberPassword: false,
       showingPassword: false
     };
   },
   computed: {
     passwordShowText() {
-      return this.$t(this.showingPassword ? "common.hide" : "common.show");
+      return this.$t(this.showingPassword ? 'common.hide' : 'common.show');
     }
   },
   methods: {
@@ -112,13 +112,13 @@ export default {
       let email = this.email;
       let password = this.password;
       this.$store
-        .dispatch("login", { thornUrl, user: { email, password } })
-        .then(() => this.$router.push("/"))
+        .dispatch('login', { thornUrl, user: { email, password } })
+        .then(() => this.$router.push('/'))
         .catch(err => {
-          let msg = err.message.startsWith("errors.")
+          let msg = err.message.startsWith('errors.')
             ? self.$t(err.message)
             : err.message;
-          self.$snotify.error(msg, self.$t("titles.error"));
+          self.$snotify.error(msg, self.$t('titles.error'));
         });
     }
   }
