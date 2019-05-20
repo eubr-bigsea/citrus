@@ -12,9 +12,9 @@
     // From https://github.com/rafaelpimpa/vue-checkbox-switch
     export default {
         props: {
-            disabled: Boolean,
+            disabled: null,
             classes: String,
-            checked: Boolean,
+            checked: null,
             name: String,
             onchange: null
         },

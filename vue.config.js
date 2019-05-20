@@ -1,3 +1,8 @@
 module.exports = {
-    baseUrl: './'
+    baseUrl: './',
+    pluginOptions: {
+        webpackBundleAnalyzer: {
+            openAnalyzer: false
+        }
+    }
 }
