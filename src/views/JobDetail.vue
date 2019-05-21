@@ -4,22 +4,19 @@
       <div class="col">
         <div>
           <div class="d-flex justify-content-between align-items-center">
-            <div>
-              <h6 class="header-pretitle">
-                <router-link
-                  :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                  v-if="workflow.id"
-                >
-                  <i class="fa fa-chevron-left"></i>
-                  &nbsp; {{$t('actions.back')}} -
-                  {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
-                </router-link>
-              </h6>
-              <h1 class="header-title" v-if="loaded">
-                <span v-bind:title="$tc('titles.job', 1)">{{job.id}}</span>
-                {{workflow.name}}
-              </h1>
-            </div>
+            <h1 class="header-title" v-if="loaded">
+              <span v-bind:title="$tc('titles.job', 1)">{{job.id}}</span>
+              {{workflow.name}}
+            </h1>
+            <router-link
+              :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
+              v-if="workflow.id"
+              class="btn btn-sm btn-outline-primary"
+            >
+              <i class="fa fa-chevron-left"></i>
+              &nbsp; {{$t('actions.back')}} -
+              {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
+            </router-link>
           </div>
           <div>
             <b-tabs nav-class="custom-tab">
