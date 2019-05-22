@@ -196,6 +196,8 @@ export default {
           axios
             .delete(url, {})
             .then(resp => {
+              self.success(self.$t('messages.successDeletion', 
+                {what: this.$tc('titles.workflow', 1)}));
               self.$refs.workflowList.refresh();
             })
             .catch(e => self.error(e));

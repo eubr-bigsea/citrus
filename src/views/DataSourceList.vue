@@ -214,6 +214,8 @@ export default {
           axios
             .delete(url, {})
             .then(resp => {
+              self.success(self.$t('messages.successDeletion', 
+                {what: this.$tc('titles.dataSource', 1)}));
               self.$refs.dataSourceList.refresh();
             })
             .catch(e => self.error(e));
