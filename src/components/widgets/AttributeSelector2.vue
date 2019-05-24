@@ -146,7 +146,7 @@
                     if (!this.value){
                         this.updated([this.available[index]]);
                     } else {
-                        this.value.push(this.available[index]);
+                        this.updated([... this.value.concat(this.available[index])]);
                     }
                 } else if (direction == 'left') {
                     this.updated(this.value.filter((a, i) => i !== index));
@@ -158,8 +158,10 @@
                 } else {
                     this.$root.$emit(this.message, this.field, [val]);
                 }
+                this.$forceUpdate();
             },
             okModal() {
+                this.originalValue = [... this.value]
                 this.$refs.modal.hide();
             },
             cancelModal() {
