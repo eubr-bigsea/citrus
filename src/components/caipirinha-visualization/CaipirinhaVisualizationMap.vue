@@ -12,8 +12,9 @@ export default {
   name: "caipirinha-visualization-map",
   props: ["visualizationData"],
   data: function() {
+      const protocol = location.protocol;
       return {
-          url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+          url: `${protocol}://{s}.tile.osm.org/{z}/{x}/{y}.png`,
           points: [],
           mode: null,
       }
