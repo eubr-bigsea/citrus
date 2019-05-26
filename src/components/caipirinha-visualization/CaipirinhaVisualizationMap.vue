@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; padding: 0 5px 5px 0">
+  <div style="height: 800px; padding: 0 5px 5px 0">
     <l-map ref="mapRef">
       <l-tile-layer :url="url"></l-tile-layer>
     </l-map>
