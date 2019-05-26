@@ -49,11 +49,11 @@ export default {
       if (this.mode.points || this.mode == 'points') {
         this.points.forEach(point => {      // TODO: Find a way to show larger datasets
           L.marker([point.lat, point.lon])
-          .addTo(this.$refs.mapRef.mapObject);
-        }).bindTooltip(point.name, 
+          .addTo(this.$refs.mapRef.mapObject).bindTooltip(point.name, 
           {
             permanent: true 
           });
+        });
       }
 
       if (this.mode.heat || this.mode.heatmap || this.mode == 'heatmap') {
