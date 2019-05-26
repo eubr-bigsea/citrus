@@ -14,7 +14,7 @@ export default {
   data: function() {
       const protocol = location.protocol;
       return {
-          url: `${protocol}://{s}.tile.osm.org/{z}/{x}/{y}.png`,
+          url: `${protocol}//{s}.tile.osm.org/{z}/{x}/{y}.png`,
           points: [],
           mode: null,
       }
