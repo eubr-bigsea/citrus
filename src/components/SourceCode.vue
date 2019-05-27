@@ -2,7 +2,7 @@
 
     <PrismEditor :code="sourceCode.source" :settings="{maxScrollbarLength: 30}" :language="sourceCode.lang" ref="prism"
         :autoStyleLineNumbers="true" :lineNumbers="true" 
-        style="height:80vh;font-size:.9em; width: 60vw; overflow-x:hidden" />
+        style="height:80vh;font-size:.9em; overflow-x:hidden" />
 
 </template>
 <script>
@@ -38,8 +38,12 @@
         },
     }
 </script>
-<style scoped>
-    pre[class*="language-"] {
-        border: none !important
+<style>
+    .prism-editor__code {
+        background: #fff !important;
+        border: none;
+    }
+    .prism-editor__line-numbers {
+        background: #fff !important;
     }
 </style>

@@ -198,7 +198,24 @@
                 </tr>
             </table>
         </b-modal>
-
+        <b-modal id="workflowProperties" size="lg" ref="workflowProperties" :title="$tc('titles.property', 2)"
+            :okOnly="true">
+            <b-form @submit="saveWorkflowProperties" v-if="loaded">
+                <b-form-group :label="$tc('common.name', 1) + ':'">
+                    <b-form-input id="exampleInput1" type="text" v-model="workflow.name" required>
+                    </b-form-input>
+                </b-form-group>
+                <b-form-group id="exampleInputGroup1" :label="$tc('common.description', 1) + ':'">
+                    <b-form-textarea id="textarea1" v-model="workflow.description" :rows="3" :max-rows="6">
+                    </b-form-textarea>
+                </b-form-group>
+                <b-form-checkbox v-model="workflow.is_template">
+                    {{$t('workflow.useAsTemplate')}}
+                    <br/>
+                    <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
+                </b-form-checkbox>
+            </b-form>
+        </b-modal>
     </div>
 </template>
 
@@ -317,29 +334,42 @@
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-execute', this.showExecuteWindow);
+            this.$root.$on('onshow-properties', this.showPropertiesWindow);
 
             this.$root.$on('onblur-selection', () => {
                 this.showProperties = false;
                 this.selectedTask = { task: {} };
             });
 
-            this.$root.$on('update-form-field-value', (field, value) => {
-                if (self.selectedTask.task.forms[field.name]) {
-                    self.selectedTask.task.forms[field.name].value = value
+            this.$root.$on('update-form-field-value', (field, value, labelValue) => {
+                const fieldInSelectedTask = self.selectedTask.task.forms[field.name];
+                if (fieldInSelectedTask) {
+                    fieldInSelectedTask.value = value
                 } else {
-                    self.selectedTask.task.forms[field.name] = { value: value }
+                    fieldInSelectedTask = { value: value }
+                }
+                fieldInSelectedTask.label = field.label;
+                if (labelValue) {
+                    fieldInSelectedTask.labelValue = labelValue
+                } else {
+                    delete fieldInSelectedTask.labelValue
                 }
                 self._validateTasks([self.selectedTask.task]);
                 this.isDirty = true;
             });
-            this.$root.$on('update-workflow-form-field-value', (field, value) => {
+            this.$root.$on('update-workflow-form-field-value', (field, value, labelValue) => {
                 const self = this;
                 if (self.workflow)
                     if (!self.workflow.forms || !(self.workflow.forms instanceof Object)) {
                         self.workflow.forms = {}
                     }
                 try {
-                    self.workflow.forms[field.name] = { value };
+                    if (labelValue){
+                        self.workflow.forms[field.name] = { value, labelValue};
+                    } else {
+                        self.workflow.forms[field.name] = { value};
+                    }
+                    self.workflow.forms[field.name].label = field.label;
                 } catch (e) {
                     console.debug(e)
                 }
@@ -431,6 +461,7 @@
             }
         },
         methods: {
+
             showTaskResult(task) {
                 this.resultTask = task;
                 this.$refs.taskResultModal.show();
@@ -757,6 +788,13 @@
             closeHistory() {
                 this.$refs.historyModal.hide();
             },
+            saveWorkflowProperties() {
+
+            },
+            showPropertiesWindow() {
+                if (this.$refs.workflowProperties)
+                    this.$refs.workflowProperties.show();
+            },
             showSaveAs() {
                 if (this.$refs.saveAsModal) {
                     this.newName = `${this.$t('workflow.copyOf')} ${this.workflow.name}`;
@@ -876,7 +914,7 @@
                                     if (field.enabled || field.enabled === undefined) {
                                         if (field.required) {
                                             const value = t.forms[field.name] ? t.forms[field.name].value : null;
-                                            console.debug(field.name, t.forms[field.name], value === [] , value)
+                                            console.debug(field.name, t.forms[field.name], value === [], value)
                                             if (value === null || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
                                                 warning = this.$tc("errors.missingRequiredValue");
                                                 self.validationErrors.push({
