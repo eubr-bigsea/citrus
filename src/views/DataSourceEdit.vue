@@ -255,7 +255,7 @@
                     <font-awesome-icon icon="spinner" pulse class="icon"/>
                     {{$tc('dataSource.inferSchema')}}
                   </button>
-                  <button class="btn btn-spinner" @click.stop="preview" :disabled="isDirty">
+                  <button class="btn btn-spinner ml-1 btn-outline-info" @click.stop="preview" :disabled="isDirty">
                     <font-awesome-icon icon="spinner" pulse class="icon"/>
                     <span class="fa fa-eye"></span>
                     &nbsp;
