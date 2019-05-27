@@ -23,13 +23,12 @@ import DashboardDetail from './views/DashboardDetail.vue'
 
 import OperationList from './views/OperationList.vue'
 
-import LandingPage from './views/LandingPage.vue'
-
 import Profile from './views/Profile.vue'
 
 import store from './store.js'
 
 Vue.use(Router)
+
 
 let router = new Router({
     mode: 'hash',
@@ -45,7 +44,7 @@ let router = new Router({
         {
             path: '/',
             name: 'landing-page',
-            component: LandingPage
+            component: () => import('./views/LandingPage.vue')
         },
         {
             path: '/administration',
