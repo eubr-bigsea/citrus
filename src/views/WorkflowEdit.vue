@@ -35,7 +35,7 @@
                                 </div>
                                 <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
                                     <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                        v-if="loaded" :loaded="loaded" :version="workflow.version"></diagram>
+                                        v-if="loaded" :loaded="loaded" :version="workflow.version" tabindex="0"></diagram>
                                     <slideout-panel :opened="showProperties">
                                         <property-window :task="selectedTask.task"
                                             :suggestions="getSuggestions(selectedTask.task.id)" />
@@ -223,19 +223,19 @@
 </template>
 
 <script>
-    import Vue from 'vue'
-    import axios from 'axios'
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-    import DiagramComponent from '../components/Diagram.vue'
-    import PropertyWindow from '../components/PropertyWindow.vue'
-    import WorkflowToolbar from '../components/WorkflowToolbar.vue'
-    import ToolboxComponent from '../components/Toolbox.vue'
-    import SlideOutPanel from '../components/SlideOutPanel.vue'
-    import WorkflowProperty from '../components/WorkflowProperty.vue'
-    import WorkflowExecution from '../components/WorkflowExecution.vue'
-    import InputHeader from '../components/InputHeader.vue'
+    import Vue from 'vue';
+    import axios from 'axios';
+    import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+    import DiagramComponent from '../components/Diagram.vue';
+    import PropertyWindow from '../components/PropertyWindow.vue';
+    import WorkflowToolbar from '../components/WorkflowToolbar.vue';
+    import ToolboxComponent from '../components/Toolbox.vue';
+    import SlideOutPanel from '../components/SlideOutPanel.vue';
+    import WorkflowProperty from '../components/WorkflowProperty.vue';
+    import WorkflowExecution from '../components/WorkflowExecution.vue';
+    import InputHeader from '../components/InputHeader.vue';
     import html2canvas from 'html2canvas';
-    import Notifier from '../mixins/Notifier'
+    import Notifier from '../mixins/Notifier';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
@@ -255,7 +255,6 @@
             VuePerfectScrollbar,
             InputHeader,
             TahitiSuggester: () => {
-
                 let tahitiUrl = process.env.VUE_APP_TAHITI_URL
                 return new Promise((resolve, reject) => {
                     let script = document.createElement('script')
@@ -267,7 +266,6 @@
                     document.head.appendChild(script)
                 })
             }
-
         },
         data() {
             return {
@@ -299,7 +297,6 @@
                 //         height: 'calc(92vh - 112px)'
                 //     },
                 //     {
-
                 //         backgroundColor: '#fff',
                 //         paddingTop: '2rem',
                 //         paddingBottom: '1rem',
@@ -309,7 +306,6 @@
                 //         overflow: 'hidden'
                 //     },
                 //     {
-
                 //         color: '#555',
                 //         textDecoration: 'none',
                 //         top: '8px',
@@ -323,6 +319,8 @@
             window.addEventListener('beforeunload', self.leaving)
         },
         mounted() {
+                 
+         
             let self = this
             this.$root.$on('onclick-task', (taskComponent, showProperties) => {
                 this.showProperties = showProperties;
@@ -343,12 +341,10 @@
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showPropertiesWindow);
             this.$root.$on('onset-isDirty',this.setIsDirty);
-
             this.$root.$on('onblur-selection', () => {
                 this.showProperties = false;
                 this.selectedTask = { task: {} };
             });
-
             this.$root.$on('update-form-field-value', (field, value, labelValue) => {
                 if (self.selectedTask.task.forms[field.name]) {
                     if(self.selectedTask.task.forms[field.name].value !== value) {
@@ -417,13 +413,10 @@
                 // const self = this;
                 // this.instance.deleteConnectionsForElement(task.id);
                 // this.instance.removeAllEndpoints(task.id);
-
                 // let elem = document.getElementById(task.id)
                 // elem.parentNode.removeChild(elem);
-
                 // //console.debug(this.instance.getConnections());
                 // this.instance.repaintEverything();
-
                 // Vue.nextTick(function () {
                 //     self.$store.dispatch('removeTask', task);
                 //     self.clearSelection();
@@ -441,7 +434,6 @@
                 }
                 this.isDirty = true;
             });
-
             this.$root.$on('addFlow', (flow, jsPlumbConn) => {
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
@@ -576,7 +568,6 @@
                                 });
                                 self.workflow = workflow;
                                 self._validateTasks(self.workflow.tasks);
-
                                 this.updateAttributeSuggestion();
                                 self.loaded = true;
                                 self.$nextTick(() => {
@@ -645,28 +636,22 @@
                             y0 = Math.min(task.top, y0);
                             y1 = Math.max(task.top + elem.style.height, y1);
                         });
-
                         const targetCanvas = document.createElement('canvas');
                         const targetCtx = targetCanvas.getContext('2d');
-
                         const padding = 100;
                         targetCanvas.width = x1 + 2 * padding;
                         targetCanvas.height = y1 + 2 * padding;
                         targetCtx.fillStyle = "white";
-
                         // targetCtx.translate(-x0 + 150, -y0 + 150);
                         targetCtx.drawImage(canvas, 0, 0);
-
                         // let ctx = canvas.getContext('2d');
                         for (let flow of $elem.getElementsByClassName('jtk-connector')) {
                             const DOMURL = window.URL || window.webkitURL || window;
-
                             const xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${flow.innerHTML}</svg>`;
                             const url = DOMURL.createObjectURL(
                                 new Blob([xml], { type: 'image/svg+xml' }));
                             const left = parseInt(flow.style.left);
                             const top = parseInt(flow.style.top);
-
                             const img = new Image();
                             img.onload = () => {
                                 targetCtx.drawImage(img, left, top);
@@ -674,15 +659,12 @@
                             };
                             img.src = url;
                         }
-
                         window.setTimeout(() => {
                             targetCtx.fillStyle = "black";
                             targetCtx.font = "10pt Verdana";
-
                             targetCtx.fillText(
                                 `${self.workflow.name}. ${self.$t('workflow.imageGeneratedAt')} ${new Date()}`,
                                 20, targetCanvas.height - 20);
-
                             const link = document.createElement('a');
                             link.setAttribute('download', `workflow_${self.workflow.id}.png`);
                             link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
@@ -692,7 +674,6 @@
                             //link.text = "Click"
                         }, 1000);
                     });
-
             },
             _generateId() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -700,20 +681,17 @@
                     return v.toString(16);
                 });
             },
-
             saveWorkflow(savingCopy, newName) {
                 let self = this
                 let cloned = JSON.parse(JSON.stringify(self.workflow));
                 let url = `${tahitiUrl}/workflows`;
                 let headers = { 'Content-Type': 'application/json' }
-
                 let method = 'post'
                 if (cloned.id !== 0 && !savingCopy) {
                     url = `${url}/${cloned.id}`;
                     method = 'patch'
                 }
                 cloned.platform_id = this.$route.params.platform;
-
                 const oldId2NewId = new Map();
                 cloned.tasks.forEach((task) => {
                     task.operation = { id: task.operation.id };
@@ -737,7 +715,6 @@
                         flow.id = `${newSource}/${flow.source_port}-${newTarget}/${flow.target_port}`;
                     });
                 }
-
                 return axios[method](url, cloned, { headers }).then(
                     (resp) => {
                         self.isDirty = false;
@@ -758,7 +735,6 @@
                 ).catch(function (e) {
                     this.error(e);
                 }.bind(this));
-
             },
             restore(version) {
                 let self = this;
@@ -768,7 +744,6 @@
                     () => {
                         self.$refs.diagram.clearWorkflow().then(() => {
                             let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
-
                             axios.post(url, { version })
                                 .then((resp) => {
                                     let workflow = resp.data;
@@ -778,7 +753,6 @@
                                     });
                                     self.success(self.$t('workflow.versionRestored',
                                         { version, version2: 2343 }));
-
                                     self.workflow = workflow;
                                     self.closeHistory();
                                     self.isDirty = false;
@@ -837,7 +811,6 @@
                 this.$refs.historyModal.hide();
             },
             saveWorkflowProperties() {
-
             },
             showPropertiesWindow() {
                 if (this.$refs.workflowProperties)
@@ -907,11 +880,9 @@
                     self._execute();
                 });
             },
-
             _execute() {
                 const self = this;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
-
                 cloned.platform_id = cloned.platform.id;
                 cloned.tasks.forEach((task) => {
                     task.operation = { id: task.operation.id };
@@ -989,7 +960,6 @@
             _queryDataSource(id, callback) {
                 let attributes = null;
                 let self = this;
-
                 id = parseInt(id);
                 if (window.TahitiAttributeSuggester.cached === undefined) {
                     window.TahitiAttributeSuggester.cached = {};
@@ -1020,18 +990,15 @@
     .blackout {
         background-color: rgba(0, 0, 0, 0) !important;
     }
-
     .historyArea {
         height: 60vh;
         overflow: auto
     }
-
     .edit-area {
         -ms-flex: 0 0 230px;
         flex: 0 0 230px;
         background-color: greenyellow;
     }
-
     .sidebar {
         -ms-flex: 0 0 230px;
         flex: 0 0 230px;

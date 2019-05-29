@@ -266,6 +266,9 @@
             this.$root.$on('onremove-task', (task) => {
                 this.removeTask(task);
             });
+            this.$root.$on('onkeyboard-keyup', ev => {
+                this.keyboardKeyUpHandler(ev);
+            });
             this.$root.$on('on-align-tasks', (pos, fn) => {
                 this.align(pos, fn)
             });
@@ -335,7 +338,6 @@
         },
         mounted() {
             const self = this;
-            
             // Required, otherwise zoom will not work.
             // It seems that jsplumb is loosing this setting between
             // calls to init() and mounted()
@@ -352,7 +354,7 @@
             /* scroll bars */
             // @FIXME PerfectScrollbar.initialize(self.diagramElement.parentElement);
 
-            this.$el.addEventListener('keyup', this.keyboardAction, true);
+            this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
             /* selection by dragging */
             self.diagramElement.addEventListener("mousedown", (ev) => {
                 if (self.$refs.diagram === ev.target) {
@@ -385,6 +387,9 @@
                 self.$refs.diagram.style.height = '100%';
             }
 
+        },
+        beforeDestroy() {
+            this.$root.$off('onkeyboard-keyup');
         },
         methods: {
             scrollHandle() {
@@ -482,7 +487,6 @@
                 this.instance.repaintEverything();
 
                 Vue.nextTick(function () {
-                    self.$root.$emit('removeTask', task);
                     self.clearSelection();
                     self.instance.repaintEverything();
                 })
@@ -704,7 +708,10 @@
                 self.clearFlows();
                 self.clearTasks();
             },
-            keyboardAction(ev) {
+            keyboardKeyUpTrigger(ev) {
+                this.$root.$emit('onkeyboard-keyup', ev);
+            },
+            keyboardKeyUpHandler(ev) {
                 let self = this;
                 if (self.selectedTask) {
                     let elem = document.getElementById(self.selectedTask.id);
@@ -747,7 +754,7 @@
                 if (self.selectedTask) {
                     /*self.instance.remove(self.selectedTask);
                     self.removeTask({ id: self.selectedTask.id });*/
-                    self.removeTask(self.selectedTask);
+                    self.$root.$emit('onremove-task', self.selectedTask);
                     self.selectedTask = null;
                 } else if (self.selectedFlow) {
                     self.instance.detach(self.selectedFlow);
