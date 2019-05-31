@@ -1,7 +1,7 @@
 <template>
     <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
-        v-on:click.stop="click" @contextmenu="openMenu">
+        v-on:click.stop="click" @contextmenu="openMenu" tabindex="0">
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
         </div>
@@ -210,6 +210,9 @@
             }
         },
         methods: {
+            keyboardKeyUpTrigger(ev) {
+                this.$root.$emit('onkeyboard-keyup', ev);
+            },
             getClassesForDecor(value) {
                 let result = [];
                 switch (value) {
@@ -290,6 +293,7 @@
                 this._click(ev, true);
             },
             click(ev) {
+                this.$el.focus()
                 this._click(ev, false);
             },
             showResults() {
@@ -327,10 +331,12 @@
                 console.log('Prop changed: ', newVal, ' | was: ', oldVal)
             },
             task: function (n, o) {
-                
+
             },
         },
         mounted() {
+            this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
+
             const self = this;
             let operation = this.task.operation;
             let taskId = this.task.id;
@@ -876,6 +882,10 @@
 
             &.selected {
                 box-shadow: -2px 1px 6px 0px $color3;
+            }
+
+            &:focus{
+                outline: none;
             }
 
             em {
