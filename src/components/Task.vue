@@ -394,16 +394,18 @@
                         options['uuid'] = `${taskId}/${ports[inx].id}`;
                         options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
 
+                        if (ports[inx].interfaces.length && ports[inx].interfaces[0].color) {
+                            options['paintStyle']['fillStyle'] = ports[inx].interfaces[0].color;
+                        }
                         if (ports[inx].multiplicity !== 'ONE') {
                             if (portType === 'input') {
                                 options['endpoint'] = 'Dot';
-                                options['anchors'][1] = -0.15;
+                                options['cssClass'] = 'multiple';
+                                options['anchors'][0] = -0.07;
+                                //options['paintStyle']['fillStyle'] = 'transparent';
                             }
                             options['maxConnections'] = 100;
                             // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
-                        }
-                        if (ports[inx].interfaces.length && ports[inx].interfaces[0].color) {
-                            options['paintStyle']['fillStyle'] = ports[inx].interfaces[0].color;
                         }
                         options['dragOptions'] = {
                             start: (event, ui) => {
@@ -448,7 +450,8 @@
 <style lang="scss">
     .has-1-ports,
     .has-2-ports,
-    .has-3-ports {
+    .has-3-ports,
+    .has-4-ports {
         color: #1E88E5;
         font-size: .5em;
         /* background: #fff !important; */
@@ -468,7 +471,8 @@
         
         .has-1-ports,
         .has-2-ports,
-        .has-3-ports {
+        .has-3-ports,
+        .has-4-ports {
             position: relative;
             z-index: 5;
             left: -2px;

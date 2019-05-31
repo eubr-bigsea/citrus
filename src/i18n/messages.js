@@ -489,6 +489,9 @@ export default {
       youCanUploadYourFiles: 'You can upload your own files',
       youCanUseSQL: 'You can use SQL to query data'
     },
+    diagram: {
+        showProperties: 'Tip: Double click a task to show its properties'
+    },
     errors: {
       disconnected: 'You are disconnected. Please check if you have access to the Internet.',
       emailNotFound: 'Email not found.',

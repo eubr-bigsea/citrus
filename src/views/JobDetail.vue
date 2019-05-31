@@ -77,8 +77,8 @@
                                   >{{$t(`juicer.log.${log.level.toLowerCase()}`)}}</span> &nbsp;
                                   <span>{{log.date | formatJsonDate}}</span>&nbsp;
                                   <TaskDisplay :task="getTask(log.task.id)" :simple="true"/>
-
-                                  <span v-if="log.type === 'TEXT'">{{log.message}}</span>
+                                
+                                  <span v-if="log.type === 'TEXT'">&nbsp;{{log.message}}</span>
                                   <span v-else-if="log.type === 'STATUS'">&#9733;{{log.message}}</span>
                                 </small>
                               </div>
