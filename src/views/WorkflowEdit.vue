@@ -337,6 +337,7 @@
             this.$root.$on('onsaveas-workflow', this.showSaveAs);
             this.$root.$on('onalign-tasks', this.align);
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
+            this.$root.$on('onremove-tasks', this.removeTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showPropertiesWindow);
@@ -520,6 +521,7 @@
                 this.$refs.diagram.align(prop, fn);
             },
             toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
+            removeTasks() { this.$refs.diagram.removeSelectedTasks(); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
             updateSelectedTab(index) {
                 //this.selectedTab = index;

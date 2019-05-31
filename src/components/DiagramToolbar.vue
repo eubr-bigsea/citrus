@@ -1,6 +1,11 @@
 <template>
     <b-button-toolbar class="toolbar">
         <b-button-group size="sm" class="mx-1">
+            <b-btn variant="secondary" @click.prevent="removeSelected" :title="$t('actions.removeSelected')">
+                <span class="fa fa-trash"></span>
+            </b-btn>
+        </b-button-group>
+        <b-button-group size="sm" class="mx-1">
             <b-btn variant="secondary" @click.prevent="align('left', 'min')" :title="$t('actions.alignLeft')">
                 <span class="object-align-left"></span>
             </b-btn>
@@ -86,6 +91,9 @@
             workflow: {}
         },
         methods: {
+            removeSelected(){
+                this.$root.$emit('onremove-tasks');
+            },
             toggleTasks() {
                 this.$root.$emit('ontoggle-tasks')
             },

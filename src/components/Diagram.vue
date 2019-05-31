@@ -257,6 +257,7 @@
             }
             this.$root.$on('onclick-task', (taskComponent) => {
                 this.selectedTask = taskComponent.task;
+                this.selectedElements = [taskComponent.task.id]
             });
             // this.$on('oncancel-deploy', () => {
             //     this.setZoomPercent(null, this.oldZoom);
@@ -397,6 +398,13 @@
                     this.clusterDescription = c[0].description;
                 }
             },
+            removeSelectedTasks(){
+                this.workflow.tasks.forEach((task) => {
+                    if (lodash.includes(this.selectedElements, task.id)) {
+                        this.removeTask(task);
+                    }
+                });
+            },
             toggleTasks() {
                 this.workflow.tasks.forEach((task) => {
                     if (lodash.includes(this.selectedElements, task.id)) {
@@ -476,7 +484,9 @@
                 this.instance.removeAllEndpoints(task.id);
                 //this.instance.detach(task.id);
                 let elem = document.getElementById(task.id)
-                //elem.parentNode.removeChild(elem);
+                if (elem){
+                    elem.parentNode.removeChild(elem);
+                }
 
                 //console.debug(this.instance.getConnections());
                 this.instance.repaintEverything();
