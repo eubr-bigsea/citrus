@@ -1,22 +1,22 @@
 <template>
-            <v-server-table :data="jobs" :columns="columns" :options="options" name="jobList" ref="jobList">
-                <template slot="id" slot-scope="props">
-                    <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
-                </template>
-                <template slot="actions" slot-scope="props">
-                    <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
-                        <font-awesome-icon icon="trash"></font-awesome-icon>
-                    </button>
-                </template>
-                <template slot="status" slot-scope="props">
-                    <div class="lemonade-job" :class="props.row.status.toLowerCase()">
-                        {{props.row.status}}
-                    </div>
-                </template>
-                <template slot="created" slot-scope="props">
-                    {{props.row.created | formatJsonDate}}
-                </template>
-            </v-server-table>
+    <v-server-table :data="jobs" :columns="columns" :options="options" name="jobListWf" ref="jobList">
+        <template slot="id" slot-scope="props">
+            <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
+        </template>
+        <template slot="actions" slot-scope="props">
+            <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
+                <font-awesome-icon icon="trash"></font-awesome-icon>
+            </button>
+        </template>
+        <template slot="status" slot-scope="props">
+            <div class="lemonade-job" :class="props.row.status.toLowerCase()">
+                {{props.row.status}}
+            </div>
+        </template>
+        <template slot="created" slot-scope="props">
+            {{props.row.created | formatJsonDate}}
+        </template>
+    </v-server-table>
 </template>
 <script>
     import Vue from 'vue'
