@@ -1,5 +1,5 @@
 <template>
-    <div class="border">
+    <div class="border" :class="'platform-' + platform">
         <diagram-toolbar :workflow="workflow" v-if="showToolbar"></diagram-toolbar>
         <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
             v-on:click="diagramClick">
