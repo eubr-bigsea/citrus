@@ -2,6 +2,9 @@
     <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
         v-on:click.stop="click" @contextmenu="openMenu" tabindex="0">
+
+        <!-- <div style="margin: 0 auto; border: 1px solid black; border-radius: 60px; height: 60px; width: 60px; background:green">
+            </div> -->
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
         </div>
@@ -78,6 +81,13 @@
                 [0, 0.5, -1, 0],
                 [0, 0.9, -1, 0]
             ]
+            ,
+            [
+                [0, .1, -1, 0],
+                [0, 0.39, -1, 0],
+                [0, 0.65, -1, 0],
+                [0, .9, -1, 0]
+            ],
         ],
         output: [
             [
@@ -91,7 +101,13 @@
                 [1, 0.1, 1, 0],
                 [1, 0.5, 1, 0],
                 [1, 0.9, 1, 0]
-            ]
+            ],
+            [
+                [1, .1, 1, 0],
+                [1, 0.39, 1, 0],
+                [1, 0.65, 1, 0],
+                [1, .9, 1, 0]
+            ],
         ]
     }
     const connectorType = ['Flowchart', 'Bezier', 'StateMachine'][0];
@@ -165,8 +181,10 @@
                 return result
             },
             'classes': function () {
-                return (this.task.status ? this.task.status.toLowerCase() : '') +
-                    (this.isComment ? ' comment ' : '') + 'test';
+                return [
+                    (this.task.operation.cssClass ? this.task.operation.cssClass : ''),
+                    (this.task.status ? this.task.status.toLowerCase() : ''),
+                    (this.isComment ? ' comment ' : '') + 'test'].join(' ');
 
             },
             getDecorationClass() {
@@ -401,7 +419,7 @@
                             if (portType === 'input') {
                                 options['endpoint'] = 'Dot';
                                 options['cssClass'] = 'multiple';
-                                options['anchors'][0] = -0.07;
+                                options['anchors'][0] = -0.06;
                                 //options['paintStyle']['fillStyle'] = 'transparent';
                             }
                             options['maxConnections'] = 100;
@@ -486,6 +504,9 @@
         .has-3-ports {
             margin-top: 40px !important;
         }
+        .has-4-ports {
+            margin-top: 40px !important;
+        }
 
     }
 
@@ -521,10 +542,10 @@
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
         display: block;
         list-style: none;
-        margin: 10px 0 0 160px;
+        margin: 3px 0 0 20px;
         padding: 0;
         position: absolute;
-        width: 250px;
+        width: 150px;
         z-index: 999999;
 
         ul {
@@ -916,7 +937,7 @@
                 position: absolute;
                 width: $elementWidth;
                 z-index: 2;
-                display: flex;
+                xdisplay: flex;
                 justify-content: center;
 
                 &.jsplumb-drag-selected,
@@ -931,6 +952,7 @@
                     text-align: center;
                     height: 100%;
                     width: 90%;
+                    margin: 0 5%;
                     background: #fff;
                     overflow: hidden;
                 }
@@ -939,17 +961,6 @@
             &.operation:after {
                 mix-blend-mode: difference;
             }
-
-            /*
-        strong {
-            position: absolute;
-            text-align: center;
-            top: 10%; 
-            width: 100%;
-            /*border-bottom: 1px solid $color2;
-            font-size: 1.1em;
-            font-family: Arial, Helvetica, sans-serif;
-        }*/
             span {
                 xfont-size: 12pt;
             }
@@ -1086,5 +1097,10 @@
 
     .margin-top-10 {
         margin-top: 10px;
+    }
+</style>
+<style lang="scss">
+    div.size-2 {
+        height: 65px !important
     }
 </style>
