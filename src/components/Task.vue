@@ -1099,7 +1099,7 @@
         margin-top: 10px;
     }
 </style>
-<style lang="scss">
+<style lang="scss" scoped>
     .multiple-input {
        border: 1px solid white;
         border-radius: 0 8px 8px 0;
