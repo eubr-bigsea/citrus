@@ -404,11 +404,11 @@
                 }
             },
             removeSelectedTasks(){
-                this.workflow.tasks.forEach((task) => {
-                    if (lodash.includes(this.selectedElements, task.id)) {
-                        this.removeTask(task);
-                    }
+                // Two steps, because this.removeTask changes the array used in the loop
+                const tasksToRemove = this.workflow.tasks.filter((task) => {
+                    return lodash.includes(this.selectedElements, task.id);
                 });
+                tasksToRemove.forEach(this.removeTask);
             },
             toggleTasks() {
                 this.workflow.tasks.forEach((task) => {
@@ -488,13 +488,19 @@
                 this.instance.deleteConnectionsForElement(task.id);
                 this.instance.removeAllEndpoints(task.id);
                 //this.instance.detach(task.id);
-                let elem = document.getElementById(task.id)
+                /*let elem = document.getElementById(task.id)
                 if (elem){
                     elem.parentNode.removeChild(elem);
-                }
+                }*/
 
                 //console.debug(this.instance.getConnections());
                 this.instance.repaintEverything();
+                const inx = this.workflow.tasks.indexOf(task);
+                if (inx >= 0){
+                    this.workflow.tasks.splice(inx, 1);
+                } else {
+                    console.debug('Not found')
+                }
 
                 Vue.nextTick(function () {
                     self.clearSelection();
@@ -706,7 +712,7 @@
                 self.addTask({
                     id: self.generateId(), operation, operation_id: operation.id,
                     left: ev.offsetX, top: ev.offsetY, z_index: ++self.currentZIndex, classes,
-                    status: 'WAITING'
+                    status: 'WAITING', height: 0, width: 0
                 });
             },
             allowDrop(ev) {

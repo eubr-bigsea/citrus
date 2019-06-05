@@ -323,7 +323,8 @@
          
             let self = this
             this.$root.$on('onclick-task', (taskComponent, showProperties) => {
-                this.showProperties = showProperties;
+                // If there is a selected task, keep properties opened
+                this.showProperties = showProperties || this.selectedTask !== null;
                 this.selectedTask = taskComponent;
                 this.updateAttributeSuggestion();
             });

@@ -3,8 +3,7 @@
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
         v-on:click.stop="click" @contextmenu="openMenu" tabindex="0">
 
-        <!-- <div style="margin: 0 auto; border: 1px solid black; border-radius: 60px; height: 60px; width: 60px; background:green">
-            </div> -->
+        <div class="hide circle" v-bind:style="getStyle"></div>
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
             {{task.name}}
         </div>
@@ -417,9 +416,10 @@
                         }
                         if (ports[inx].multiplicity !== 'ONE') {
                             if (portType === 'input') {
-                                options['endpoint'] = 'Dot';
-                                options['cssClass'] = 'multiple';
-                                options['anchors'][0] = -0.06;
+                                // options['endpoint'] = 'Dot';
+                                options['endpoint'] = 'Rectangle';
+                                options['cssClass'] = 'multiple-input';
+                                // options['anchors'][0] = -0.06;
                                 //options['paintStyle']['fillStyle'] = 'transparent';
                             }
                             options['maxConnections'] = 100;
@@ -771,12 +771,12 @@
                 background-color: #fff;
                 border-radius: 20px;
                 font-size: 6pt !important;
-                padding: 0px;
+                padding: 1px;
                 position: absolute;
                 display: block;
                 bottom: 1px;
-                height: 16px;
-                width: 20px;
+                height: 18px;
+                width: 18px;
                 text-align: center;
 
                 &.completed {
@@ -1100,7 +1100,53 @@
     }
 </style>
 <style lang="scss">
+    .multiple-input {
+       border: 1px solid white;
+        border-radius: 0 8px 8px 0;
+        width: 16px !important;
+        overflow: hidden;
+    }
+    .hide {
+        display: none;
+    }
     div.size-2 {
-        height: 65px !important
+        height: 65px !important;
+    }
+
+    div.circle-layout {
+        border: none !important;
+        background: transparent !important;
+        width: 80px !important; 
+        height: 80px !important;
+        &.selected, &.jtk-drag-selected{
+            webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            .circle {
+                webkit-box-shadow: 6px 4px 6px 0px #020f57;
+                box-shadow: 6px 4px 6px 0px #020f57; 
+                border: 1px dashed #222;
+            }
+        }
+        .circle {
+            border: 1px solid #888; 
+            margin: 10px auto 0px auto; 
+            background: white;
+            border-radius: 60px; 
+            height: 60px; 
+            width: 60px; 
+            &.hide {
+                display: block;
+            }
+        }
+        .title {
+            background: transparent !important;
+            font-size: .95em;
+            height: auto !important;
+            line-height: normal;
+            width: 100% !important;
+        }
+        .right-decor {
+            bottom: 11px !important;
+        }
     }
 </style>
