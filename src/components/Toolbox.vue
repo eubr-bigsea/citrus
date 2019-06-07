@@ -202,6 +202,7 @@
     .scroll-area {
         width: 100%;
         height: 80vh;
+        max-height: calc(100vh - 300px);
     }
 
     .list-group {

@@ -231,13 +231,13 @@
 
     .props {
         width: 350px;
-        height: calc(79vh + 2px);
+        height: calc(100vh - 300px);
     }
 
     .properties {
         background: #fff;
         border: 1px solid #aaa;
-        height: calc(100vh - 114px);
+        height: calc(100vh - 300px);
         zoom: 100%;
         font-size: .75rem
     }
