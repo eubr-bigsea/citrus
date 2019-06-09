@@ -9,6 +9,10 @@ import Logout from './views/Logout.vue';
 import Register from './views/Register.vue';
 import ResetPassword from './views/ResetPassword.vue';
 
+import ClusterList from './views/ClusterList.vue';
+import ClusterAdd from './views/ClusterAdd.vue';
+import ClusterEdit from './views/ClusterEdit.vue';
+
 import DataSourceList from './views/DataSourceList.vue';
 import DataSourceEdit from './views/DataSourceEdit.vue';
 import DataSourceAdd from './views/DataSourceAdd.vue';
@@ -171,12 +175,37 @@ let router = new Router({
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: () =>
+        import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
       path: '/admin/operations',
       name: 'operations',
       component: OperationList,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters',
+      name: 'clusters',
+      component: ClusterList,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/add',
+      name: 'addCluster',
+      component: ClusterAdd,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/:id',
+      name: 'editCluster',
+      component: ClusterEdit,
       meta: {
         requiresAuth: true
       }
