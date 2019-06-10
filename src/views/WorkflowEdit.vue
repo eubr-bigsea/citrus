@@ -37,7 +37,7 @@
                                     <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
                                         v-if="loaded" :loaded="loaded" :version="workflow.version" tabindex="0"></diagram>
                                     <slideout-panel :opened="showProperties">
-                                        <property-window :task="selectedTask.task"
+                                        <property-window :task="selectedTask.task" v-if="selectedTask.task"
                                             :suggestions="getSuggestions(selectedTask.task.id)" />
                                     </slideout-panel>
                                 </div>
@@ -322,9 +322,13 @@
                  
          
             let self = this
+            this.$root.$on('onclear-selection', () =>{
+                this.selectedTask = {};
+            });
             this.$root.$on('onclick-task', (taskComponent, showProperties) => {
                 // If there is a selected task, keep properties opened
-                this.showProperties = showProperties || this.selectedTask !== null;
+                this.showProperties = showProperties || 
+                    (this.selectedTask.task && this.selectedTask.task.id);
                 this.selectedTask = taskComponent;
                 this.updateAttributeSuggestion();
             });
@@ -610,13 +614,6 @@
                     this.error(e);
                 }.bind(this));
             },
-            // getSuggestions() {
-            //     if (this.attributeSuggestion && this.selectedTask) {
-            //         return this.attributeSuggestion[this.selectedTask.task.id]
-            //     } else {
-            //         return []
-            //     }
-            // },
             saveAsImage() {
                 let self = this
                 let $elem = this.$refs.diagram.$el.querySelector('#lemonade-container')

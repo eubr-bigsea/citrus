@@ -782,7 +782,7 @@
                     ev.preventDefault();
                     this.clearSelection(ev);
                 }
-                this.$emit('onclear-selection');
+                this.$root.$emit('onclear-selection');
             },
             generateId() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -1112,6 +1112,11 @@
     export default DiagramComponent;
 
 </script>
+<style>
+    :focus {
+        outline: none
+    }
+</style>
 <style scoped lang="scss">
     .scroll-area {
         width: 100%;
@@ -1140,6 +1145,10 @@
 
     .not-selectable {
         user-select: none;
+        outline: none;
+        section:focus, div:focus {
+            outline: none;
+        }
     }
 
     .news {
