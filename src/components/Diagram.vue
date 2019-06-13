@@ -1112,11 +1112,7 @@
     export default DiagramComponent;
 
 </script>
-<style>
-    :focus {
-        outline: none
-    }
-</style>
+
 <style scoped lang="scss">
     .scroll-area {
         width: 100%;
