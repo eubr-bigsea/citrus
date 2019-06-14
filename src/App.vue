@@ -2,7 +2,7 @@
   <div>
     <vue-snotify></vue-snotify>
     <l-navbar v-if="isLoggedIn"></l-navbar>
-    <div class="container-fluid">
+    <div class="container-fluid main-container">
       <router-view></router-view>
 
       <vue-progress-bar></vue-progress-bar>
@@ -56,4 +56,7 @@ export default {
 body {
   background-color: #f8f9fa !important;
 }
+.main-container {
+    padding-top: 15px;
+  }
 </style>

@@ -19,13 +19,19 @@
 </template>
 
 <style>
+
+hr {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
 .footer-list {
   list-style: none;
   display: flex;
   margin: 0;
   padding: 0;
   font-size: 12px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .footer-list span {

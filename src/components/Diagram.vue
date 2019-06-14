@@ -233,10 +233,12 @@
                 readyTasks: new Set(),
 
                 selectedTask: null,
+                copiedTask: null,
                 selectedElements: [],
 
                 settings: {
-                    maxScrollbarLength: 60
+                    maxScrollbarLength: 60,
+                    handlers:['click-rail', 'drag-scrollbar', 'wheel', 'touch']
                 },
                 showDeployModal: false,
                 showExecutionModal: false,
@@ -356,6 +358,7 @@
             // @FIXME PerfectScrollbar.initialize(self.diagramElement.parentElement);
 
             this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
+
             /* selection by dragging */
             self.diagramElement.addEventListener("mousedown", (ev) => {
                 if (self.$refs.diagram === ev.target) {
@@ -761,7 +764,29 @@
                             self.selectedTask.top = v;
                             self.instance.repaintEverything();
                             break
+                        case 'KeyC':
+                            if (ev.ctrlKey) {
+                                this.copySelected();
+                                break;
+                            }
+                        case 'KeyV':
+                            if (ev.ctrlKey) {
+                                this.pasteSelected();
+                                break;
+                            }
                     }
+
+                    ev.stopPropagation();
+
+                } else if (self.copiedTask) {
+                    switch (ev.code) {
+                        case 'KeyV':
+                            if (ev.ctrlKey) {
+                                this.pasteSelected();
+                                break;
+                            }
+                    }
+                    
                     ev.stopPropagation();
                 }
             },
@@ -775,6 +800,32 @@
                 } else if (self.selectedFlow) {
                     self.instance.detach(self.selectedFlow);
                     self.selectedFlow = null;
+                }
+            },
+            copySelected(ev) {
+                let self = this;
+                if (self.selectedTask) {
+                    self.copiedTask = self.selectedTask;
+                }
+            },
+            pasteSelected(ev) {
+                let self = this;
+                if (self.copiedTask) {
+                    let copiedTask = JSON.parse(JSON.stringify(self.copiedTask))
+
+                    copiedTask.id = self.generateId()
+                    copiedTask.left = copiedTask.left + Math.floor(Math.random() *  50) + 30;
+                    copiedTask.top = copiedTask.top + Math.floor(Math.random() *  20) + 10;
+                    copiedTask.z_index =  ++self.currentZIndex
+                    copiedTask.name = `${copiedTask.operation.name} ${self.workflow.tasks.length}`;
+                    copiedTask.enabled = true;
+
+                    if(self.selectedTask){
+                        copiedTask.left = self.selectedTask.left + Math.floor(Math.random() *  50) + 30;
+                        copiedTask.top = self.selectedTask.top + Math.floor(Math.random() *  20) + 10;
+                    }
+
+                    this.$root.$emit('addTask', copiedTask)
                 }
             },
             diagramClick(ev) {
@@ -1117,6 +1168,7 @@
     .scroll-area {
         width: 100%;
         height: 82vh;
+        max-height: calc(100vh - 300px);
     }
 
     .ghost-active {
