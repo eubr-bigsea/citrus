@@ -238,7 +238,7 @@
 
                 settings: {
                     maxScrollbarLength: 60,
-                    handlers:['click-rail', 'drag-thumb', 'wheel', 'touch']
+                    handlers:['click-rail', 'drag-scrollbar', 'wheel', 'touch']
                 },
                 showDeployModal: false,
                 showExecutionModal: false,
