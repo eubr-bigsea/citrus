@@ -319,11 +319,10 @@
             window.addEventListener('beforeunload', self.leaving)
         },
         mounted() {
-                 
-         
             let self = this
             this.$root.$on('onclear-selection', () =>{
                 this.selectedTask = {};
+                this.selectedElements = [];
             });
             this.$root.$on('onclick-task', (taskComponent, showProperties) => {
                 // If there is a selected task, keep properties opened

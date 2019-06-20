@@ -287,6 +287,7 @@ const DiagramComponent = Vue.extend({
       selectedTask: null,
       copiedTask: null,
       selectedElements: [],
+      copiedTasks: [],
 
       settings: {
         maxScrollbarLength: 60,
@@ -854,6 +855,7 @@ const DiagramComponent = Vue.extend({
         })
       let inc = ev.ctrlKey ? 10 : 1;
 
+
       switch (ev.code) {
         case 'Delete':
           if (task) {
@@ -892,111 +894,37 @@ const DiagramComponent = Vue.extend({
           break;
         case 'KeyC':
           if (ev.ctrlKey) {
-            debugger;
-            this.copySelected();
+            if (task) {
+              this.copyTask(task)
+            } else if (tasks.length) {
+              this.copyTasks(tasks)
+            }
             break;
           }
         case 'KeyV':
           if (ev.ctrlKey) {
-            this.pasteSelected();
+            let offsetLeft = Math.floor(Math.random() * 50) + 30;
+            let offsetTop = Math.floor(Math.random() * 20) + 10;
+
+            if (self.copiedTask) {
+              this.pasteTask({ task: self.copiedTask, offsetLeft, offsetTop })
+            } else if (self.copiedTasks.length) {
+              this.pasteTasks({ tasks: self.copiedTasks, offsetLeft, offsetTop })
+            }
             break;
           }
       }
 
       self.instance.repaintEverything();
-
       ev.stopPropagation();
-
-
-
-
-
-      // if (task) {
-
-      //   switch (ev.code) {
-      //     case 'Delete':
-      //       this.deleteSelected();
-      //       break;
-      //     case 'ArrowRight':
-      //       this.moveTask({ task, position: 'right', inc })
-      //       break;
-      //     case 'ArrowLeft':
-      //       this.moveTask({ task, position: 'left', inc })
-      //       break;
-      //     case 'ArrowUp':
-      //       this.moveTask({ task, position: 'up', inc })
-      //       break;
-      //     case 'ArrowDown':
-      //       this.moveTask({ task, position: 'down', inc })
-      //       break;
-      //     case 'KeyC':
-      //       if (ev.ctrlKey) {
-      //         debugger;
-      //         this.copySelected();
-      //         break;
-      //       }
-      //     case 'KeyV':
-      //       if (ev.ctrlKey) {
-      //         this.pasteSelected();
-      //         break;
-      //       }
-      //   }
-
-      //   self.instance.repaintEverything();
-
-      //   ev.stopPropagation();
-      // } else if (self.selectedElements) {
-      //   let elems = self.selectedElements;
-      //   let inc = ev.ctrlKey ? 10 : 1;
-      //   let v = 0;
-      //   switch (ev.code) {
-      //     case 'Delete':
-      //       debugger;
-      //       this.deleteSelectedSelection();
-      //       break;
-      //     case 'ArrowRight':
-      //       // this.moveRight(inc)
-      //       break;
-      //     case 'ArrowLeft':
-      //       this.moveLeft(inc)
-      //       break;
-      //     case 'ArrowUp':
-      //       this.moveUp(inc)
-      //       break;
-      //     case 'ArrowDown':
-      //       this.moveDown(inc)
-      //       break;
-      //     case 'KeyC':
-      //       if (ev.ctrlKey) {
-      //         debugger;
-      //         this.copySelected();
-      //         break;
-      //       }
-      //     case 'KeyV':
-      //       if (ev.ctrlKey) {
-      //         this.pasteSelected();
-      //         break;
-      //       }
-      //   }
-
-      //   ev.stopPropagation();
-      // } else if (self.copiedTask) {
-      //   switch (ev.code) {
-      //     case 'KeyV':
-      //       if (ev.ctrlKey) {
-      //         this.pasteSelected();
-      //         break;
-      //       }
-      //   }
-
-      //   ev.stopPropagation();
-      // }
     },
     deleteTask (task) {
       let self = this;
+
       if (self.selectedTask.id == task.id) {
         self.selectedTask = null;
       }
+
       self.$root.$emit('onremove-task', task);
     },
     deleteTasks (tasks) {
@@ -1010,35 +938,6 @@ const DiagramComponent = Vue.extend({
       self.selectedElements = self.selectedElements.filter((v, i, arr) => {
         return !tasks_ids.includes(v)
       })
-    },
-
-    deleteSelected (ev) {
-      let self = this;
-      if (self.selectedTask) {
-        /*self.instance.remove(self.selectedTask);
-                    self.removeTask({ id: self.selectedTask.id });*/
-        self.$root.$emit('onremove-task', self.selectedTask);
-        self.selectedTask = null;
-      } else if (self.selectedFlow) {
-        self.instance.detach(self.selectedFlow);
-        self.selectedFlow = null;
-      }
-    },
-
-    deleteSelectedSelection (ev) {
-      let self = this;
-      if (self.selectedElements) {
-        let selectedTasks = self.workflow.tasks
-          .filter(task => {
-            return lodash.includes(self.selectedElements, task.id);
-          })
-
-        selectedTasks.forEach(task => {
-          self.$root.$emit('onremove-task', task);
-        })
-      }
-      self.selectedElems = null;
-
     },
     moveTask ({ task, position, inc }) {
       let elem = document.getElementById(task.id);
@@ -1066,42 +965,57 @@ const DiagramComponent = Vue.extend({
           task.top = v;
           break;
       }
-
     },
     moveTasks ({ tasks, position, inc }) {
       tasks.forEach(task => {
         this.moveTask({ task, position, inc });
       })
     },
-    copySelected (ev) {
-      let self = this;
-      if (self.selectedTask) {
-        self.copiedTask = self.selectedTask;
-      }
+    copyTask (task) {
+      this.copiedTasks = []
+      this.copiedTask = task;
     },
-    pasteSelected (ev) {
+    copyTasks (tasks) {
+      this.copiedTask = null;
+      this.copiedTasks = tasks;
+    },
+    pasteTask ({ task, offsetLeft, offsetTop }) {
       let self = this;
-      if (self.copiedTask) {
-        let copiedTask = JSON.parse(JSON.stringify(self.copiedTask));
+      let copiedTask = JSON.parse(JSON.stringify(task));
 
-        copiedTask.id = self.generateId();
-        copiedTask.left = copiedTask.left + Math.floor(Math.random() * 50) + 30;
-        copiedTask.top = copiedTask.top + Math.floor(Math.random() * 20) + 10;
-        copiedTask.z_index = ++self.currentZIndex;
-        copiedTask.name = `${copiedTask.operation.name} ${
-          self.workflow.tasks.length
-          }`;
-        copiedTask.enabled = true;
+      copiedTask.id = self.generateId();
+      copiedTask.left = copiedTask.left + offsetLeft
+      copiedTask.top = copiedTask.top + offsetTop
+      copiedTask.z_index = ++self.currentZIndex;
+      copiedTask.name = `${copiedTask.operation.name} ${
+        self.workflow.tasks.length
+        }`;
+      copiedTask.enabled = true;
 
-        if (self.selectedTask) {
-          copiedTask.left =
-            self.selectedTask.left + Math.floor(Math.random() * 50) + 30;
-          copiedTask.top =
-            self.selectedTask.top + Math.floor(Math.random() * 20) + 10;
+      this.$root.$emit('addTask', copiedTask);
+      return copiedTask;
+    },
+    pasteTasks ({ tasks, offsetLeft, offsetTop }) {
+      let self = this;
+      let dic = {};
+      let tasks_ids = tasks.flatMap(task => { return task.id });
+
+      self.clearSelection();
+      self.$emit('onclear-selection');
+
+      tasks.forEach(task => {
+        let newTask = self.pasteTask({ task, offsetLeft, offsetTop });
+        dic[task.id] = newTask.id;
+      })
+
+      self.workflow.flows.forEach(flow => {
+        if (tasks_ids.includes(flow.source_id) && tasks_ids.includes(flow.target_id)) {
+          let copiedFlow = JSON.parse(JSON.stringify(flow));
+          copiedFlow.source_id = dic[flow.source_id];
+          copiedFlow.target_id = dic[flow.target_id];
+          self.$root.$emit('addFlow', copiedFlow);
         }
-
-        this.$root.$emit('addTask', copiedTask);
-      }
+      });
     },
     diagramClick (ev) {
       if (ev.target.classList.contains('diagram')) {
