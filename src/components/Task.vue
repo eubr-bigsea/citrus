@@ -296,7 +296,6 @@
                 } else if (elem.classList.contains('jsplumb-drag-selected')) {
                     //nothing
                 } else {
-                    self.instance.clearDragSelection();
                     this.$el.classList.add('selected');
                     self.selectedTask = this;
                 }
