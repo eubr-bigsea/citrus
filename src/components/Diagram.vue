@@ -1,24 +1,19 @@
 <template>
-    <div class="border" :class="'platform-' + platform">
-        <diagram-toolbar :workflow="workflow" v-if="showToolbar"></diagram-toolbar>
-        <div class="lemonade-container not-selectable" id="lemonade-container" :class="{'with-grid': showGrid}"
-            v-on:click="diagramClick">
-            <VuePerfectScrollbar class="scroll-area" :settings="settings" @ps-scroll-y="scrollHandle">
-                <div class="lemonade" v-on:drop="drop" v-on:dragover="allowDrop" :show-task-decoration="true" id="lemonade-diagram"
-                    v-if="loaded" ref="diagram" :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance" :key="`${$parent.version} - ${task.id}`"
-                        :enableContextMenu="editable" :draggable="editable" :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+    <div :class="'platform-' + platform" class="border">
+        <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
+        <div id="lemonade-container" :class="{'with-grid': showGrid}" class="lemonade-container not-selectable"
+            @click="diagramClick">
+            <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
+                <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
+                    :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}" class="lemonade"
+                    @drop="drop" @dragover="allowDrop">
+                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance"
+                        :key="`${$parent.version} - ${task.id}`" :enable-context-menu="editable" :draggable="editable"
+                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
 
-                    <!-- flow-component v-for="flow of workflow.flows" :flow="flow" :instance="instance" v-if="tasksRendered" :key="`${$parent.version}-${flow['source_id']}/${flow['source_port']}${flow['target_id']}/${flow['target_port']}`"
-                    /-->
-                    <div class="ghost-select" ref="ghostSelect">
-                        <span></span>
+                    <div ref="ghostSelect" class="ghost-select">
+                        <span />
                     </div>
-                    <!--
-                        ctx-menu-component>
-                        /ctx-menu-component>
-                    -->
-
                     <div v-for="group in groups" :key="group.id">
                         <group-component :group="group" :instance="instance" :key="group.id" />
                     </div>
@@ -27,37 +22,35 @@
         </div>
         <modal-component v-if="showExecutionModal" @close="showExecutionModal = false">
             <div slot="header">
-                <h4>Execution of workflow</h4>
-                Please, complete the required information for the execution of the workflow:
+                <h4>Execution of workflow</h4>Please, complete the required information for the execution of the
+                workflow:
             </div>
-            <div class="body" slot="body">
+            <div slot="body" class="body">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
                             <label>Job name (optional):</label>
-                            <input type="text" class="form-control" v-model="name" />
+                            <input v-model="name" type="text" class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label>Cluster:</label>
-                            <select v-model="cluster" class="form-control" v-on:change="changeCluster">
-                                <option v-for="option in clusters" v-bind:value="option.id" :key="option.id">
-                                    {{ option.name }}
+                            <select v-model="cluster" class="form-control" @change="changeCluster">
+                                <option v-for="option in clusters" :value="option.id" :key="option.id">{{ option.name }}
                                 </option>
                             </select>
-                            <span>{{clusterDescription}}</span>
+                            <span>{{ clusterDescription }}</span>
                         </div>
                         <div class="col-md-12">
                             <label>Missing required parameters:</label>
-                            <p>
-                                There is no missing required parameter
-                            </p>
+                            <p>There is no missing required parameter</p>
                         </div>
                     </div>
                 </div>
             </div>
             <div slot="footer">
                 <button class="btn btn-primary" @click="execute">
-                    <span class="fa fa-play"></span> Execute</button>
+                    <span class="fa fa-play" /> Execute
+                </button>
                 <button class="btn btn-danger" @click="cancelExecute">Cancel</button>
             </div>
         </modal-component>
@@ -65,92 +58,112 @@
 </template>
 
 <script>
+
     import Vue from 'vue';
 
     import lodash from 'lodash';
 
-    //import ResizerComponent from 'vue-resize-handle/bidirectional';
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-    //import PerfectScrollbarCss from 'perfect-scrollbar/dist/css/perfect-scrollbar.css';
-    //import CtxMenuComponent from '../ctx-menu/ctx-menu.vue';
-    // import DropDownComponent from '../ui/dropdown.vue';
+    import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 
     import TaskComponent from './Task.vue';
-    import DiagramToolbar from './DiagramToolbar.vue'
-    import jsplumb from 'jsplumb'
-    const GroupComponent = Vue.extend({
+    import DiagramToolbar from './DiagramToolbar.vue';
+    // eslint-disable-next-line
+    import jsplumb from 'jsplumb';
 
+    const DiagramComponent = Vue.extend({
         components: {
-            // "resizer": ResizerComponent,
-
-        },
-        mounted() {
-            let self = this;
-            let el = self.$refs.container;
-            if (el) {
-                self.instance.addGroup({
-                    anchor: "Continuous",
-                    constrain: false,
-                    el: el,
-                    endpoint: ["Rectangle", { width: 10, height: 10 }],
-                    ghost: true,
-                    id: this.group.id,
-                    orphan: true,
-                    proxied: true,
-                    revert: false,
-                });
-            }
+            'task-component': TaskComponent,
+            'diagram-toolbar': DiagramToolbar,
+            VuePerfectScrollbar
         },
         props: {
-            instance: null,
-            group: null,
-            operations: null,
-            version: 0
+            formContainer: {
+                type: Boolean,
+                default: () => { return null },
+            },
+            hack: {
+                type: Boolean,
+                default: () => { return false },
+            },
+            initialZoom: {
+                type: Number,
+                default: () => { return 1.0 },
+            },
+            loaded: {
+                type: Boolean,
+                default: () => { return false },
+            },
+            multipleSelectionEnabled: {
+                type: Boolean,
+                default: () => { return true },
+            },
+            operations: {
+                type: Array,
+                default: () => { return Array },
+            },
+            renderFrom: {
+                type: Boolean,
+                default: () => { return null },
+            },
+            showGrid: {
+                type: Boolean,
+                default: () => { return true },
+            },
+            showTaskDecoration: {
+                type: Boolean,
+                default: () => { return false },
+            },
+            editable: {
+                type: Boolean,
+                default: () => { return true },
+            },
+            shink: {
+                type: Boolean,
+                default: () => { return false },
+            },
+            showToolbar: {
+                type: Boolean,
+                default: () => { return true },
+            },
+            title: {
+                type: String,
+                default: () => { return '' },
+            },
+            workflow: {
+                type: Object,
+                default: () => { return {} },
+                name: ''
+            }
         },
         data() {
             return {
-                collapsed: false,
-                style: {
-                    height: 400,
-                    width: 400,
+                clusters: [],
+                clusterDescription: '',
+                cluster: null,
+                deployInfo: {},
+                name: '',
+                readyTasks: new Set(),
+
+                selectedTask: null,
+                copiedTask: null,
+                selectedElements: [],
+                copiedTasks: [],
+
+                settings: {
+                    maxScrollbarLength: 60,
+                    handlers: ['click-rail', 'drag-scrollbar', 'wheel', 'touch']
                 },
-            }
+                showDeployModal: false,
+                showExecutionModal: false,
+                tasksRendered: false,
+                showToolbarInternal: true,
+                showTaskDecorationInternal: false,
+
+                zoomInEnabled: true,
+                zoomOutEnabled: true,
+                zoom: this.initialZoom
+            };
         },
-        methods: {
-            expand() {
-                this.instance.expandGroup(this.group.id);
-                this.collapsed = false;
-            },
-            collapse() {
-                this.instance.collapseGroup(this.group.id);
-                this.collapsed = true;
-            },
-            resizeEnd(size, component) {
-                let self = this;
-                self.$refs.container._katavorioDrag.setEnabled(true);
-            },
-            resizeStart(size, component) {
-                let self = this;
-                self.$refs.container._katavorioDrag.setEnabled(false);
-                console.info('Started')
-            }
-        },
-        template: `
-        <div v:id="'lem-group-' + group.id" ref="container" :style="{width:style.width+'px', height: style.height + 'px'}">
-                <resizer :size.sync="style" v-on:resize-start="resizeStart" v-on:resize-end="resizeEnd"></resizer>
-            <div class="header">
-                <div>
-                    <b>Group {{group.id}}</b>
-                </div>
-                <div class="command">
-                    <button class="btn btn-sm" v-on:click="collapse()" v-show="!collapsed"><span class="fa fa-sort-down"></span></button>
-                    <button class="btn btn-sm" v-on:click="expand()" v-show="collapsed"><span class="fa fa-sort-up"></span></button>
-                </div>
-            </div>
-        </div>
-        `
-    });
-    const DiagramComponent = Vue.extend({
         computed: {
             flows() {
                 if (this.renderFrom) {
@@ -174,44 +187,12 @@
                     return this.workflow.tasks;
                 }
             },
-            groups() { return this.$store.getters.getGroups; },
+            groups() {
+                return this.$store.getters.getGroups;
+            },
             zoomPercent: function () {
                 return `${Math.round(100 * this.zoom, 0)}%`;
-            },
-        },
-        components: {
-            'task-component': TaskComponent,
-            'diagram-toolbar': DiagramToolbar,
-            VuePerfectScrollbar,
-        },
-        props: {
-            formContainer: null,
-            hack: {
-                default: false
-            },
-            title: {},
-            initialZoom: { default: 1.0 },
-            loaded: false,
-            multipleSelectionEnabled: { default: true },
-            operations: Array,
-            renderFrom: null,
-            showGrid: { default: true },
-            showTaskDecoration: false,
-            editable: {
-                default: true
-            },
-            multipleSelectionEnabled: {
-                default: true,
-            },
-            initialZoom: {
-                default: 1.0
-            },
-            shink: {
-                default: false,
-            },
-            showToolbar: { default: true },
-            title: {},
-            workflow: { name: '' },
+            }
         },
         watch: {
             workflow() {
@@ -223,97 +204,78 @@
                 this.tasksRendered = true;
             });
         },
-        data() {
-            return {
-                clusters: [],
-                clusterDescription: '',
-                cluster: null,
-                deployInfo: {},
-                name: '',
-                readyTasks: new Set(),
-
-                selectedTask: null,
-                copiedTask: null,
-                selectedElements: [],
-
-                settings: {
-                    maxScrollbarLength: 60,
-                    handlers:['click-rail', 'drag-scrollbar', 'wheel', 'touch']
-                },
-                showDeployModal: false,
-                showExecutionModal: false,
-                tasksRendered: false,
-                showToolbarInternal: true,
-                showTaskDecorationInternal: false,
-
-                zoomInEnabled: true,
-                zoomOutEnabled: true,
-                zoom: this.initialZoom,
-            }
-        },
         created() {
             const self = this;
+
             if (this.$route.params.id) {
                 this.changeWorkflowId(this.$route.params.id);
                 this.init();
             }
-            this.$root.$on('onclick-task', (taskComponent) => {
-                this.selectedTask = taskComponent.task;
-                this.selectedElements = [taskComponent.task.id]
+            this.$root.$on('onclick-task', taskComponent => {
+                if (! this.selectedElements.includes(taskComponent.task.id)){
+                    this.selectedTask = taskComponent.task;
+                    this.selectedElements = [taskComponent.task.id];
+                }
             });
             // this.$on('oncancel-deploy', () => {
-            //     this.setZoomPercent(null, this.oldZoom);
-            //     this.showToolbarInternal = true;
-            //     this.showTaskDecorationInternal = false;
+            //   this.setZoomPercent(null, this.oldZoom);
+            //   this.showToolbarInternal = true;
+            //   this.showTaskDecorationInternal = false;
             // });
-            this.$root.$on('onremove-task', (task) => {
+            this.$root.$on('onremove-task', task => {
                 this.removeTask(task);
             });
             this.$root.$on('onkeyboard-keyup', ev => {
                 this.keyboardKeyUpHandler(ev);
             });
             this.$root.$on('on-align-tasks', (pos, fn) => {
-                this.align(pos, fn)
+                this.align(pos, fn);
             });
             // this.$on('xupdate-form-field-value', (field, value) => {
-            //     this.$emit('update-form-field-value-in-diagram', field, value);
-            //     this.updateAttributeSuggestion();
+            //   this.$emit('update-form-field-value-in-diagram', field, value);
+            //   this.updateAttributeSuggestion();
             // });
 
             // Highlight which operations can be target for a new flow.
-            this.$root.$on('onstart-flow', (interfaceName) => {
+            this.$root.$on('onstart-flow', interfaceName => {
                 this.clearSelection(null);
                 let sourceInterfaces = new Set(interfaceName.split(' '));
-                this.instance.selectEndpoints().each((endPoint) => {
+                this.instance.selectEndpoints().each(endPoint => {
                     if (endPoint.isTarget) {
-                        let intersection = endPoint.scope.split(' ').filter(
-                            Set.prototype.has, sourceInterfaces);
+                        let intersection = endPoint.scope
+                            .split(' ')
+                            .filter(Set.prototype.has, sourceInterfaces);
                         if (intersection.length > 0) {
                             endPoint.element.classList.add('selected');
                         }
                     }
                 });
             });
-            this.$root.$on('onstop-flow', (interfaceName) => {
-                this.instance.selectEndpoints().each((endPoint) => {
+
+            this.$root.$on('onstop-flow', interfaceName => {
+                this.instance.selectEndpoints().each(endPoint => {
                     if (endPoint.isTarget) {
                         endPoint.element.classList.remove('selected');
                     }
                 });
             });
-            self.$root.$on('ontask-ready', (task) => {
+
+            self.$root.$on('ontask-ready', task => {
                 self.readyTasks.add(task.id);
                 //Evaluates if flow can be draw now (both endpoints were created)
-                const candidates = self.workflow.flows.filter((flow) => {
-                    return (flow['target_id'] === task.id || flow['source_id'] === task.id)
-                        && self.readyTasks.has(flow['target_id'])
-                        && self.readyTasks.has(flow['source_id']);
+                const candidates = self.workflow.flows.filter(flow => {
+                    return (
+                        (flow['target_id'] === task.id || flow['source_id'] === task.id) &&
+                        self.readyTasks.has(flow['target_id']) &&
+                        self.readyTasks.has(flow['source_id'])
+                    );
                 });
 
-                candidates.forEach((flow) => {
-                    let uuids = flow.uuids ||
-                        [`${flow['source_id']}/${flow['source_port']}`,
-                        `${flow['target_id']}/${flow['target_port']}`];
+                candidates.forEach(flow => {
+                    let uuids = flow.uuids || [
+                        `${flow['source_id']}/${flow['source_port']}`,
+                        `${flow['target_id']}/${flow['target_port']}`
+                    ];
 
                     const connection = self.instance.connect({ uuids });
                     connection.bind('mouseover', (c, originalEvent) => {
@@ -321,30 +283,34 @@
                         if (originalEvent) {
                             const currentStyle = c ? c.getPaintStyle() : null;
                             currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = "#ed8";
+                            currentStyle.outlineColor = '#ed8';
                             c.setPaintStyle(currentStyle);
                             self.instance.repaintEverything();
                         }
                     });
                     const currentStyle = connection ? connection.getPaintStyle() : null;
                     if (currentStyle) {
-                        currentStyle['strokeStyle'] = connection.endpoints[0].getPaintStyle().fillStyle;
+                        currentStyle[
+                            'strokeStyle'
+                        ] = connection.endpoints[0].getPaintStyle().fillStyle;
                         currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
                         connection.setPaintStyle(currentStyle);
                     }
                 });
             });
         },
+
         beforeDestroy() {
             this.$root.$off('ontask-ready');
             this.readyTasks = new Set();
         },
+
         mounted() {
             const self = this;
             // Required, otherwise zoom will not work.
             // It seems that jsplumb is loosing this setting between
             // calls to init() and mounted()
-            this.instance.setContainer("lemonade-diagram");
+            this.instance.setContainer('lemonade-diagram');
 
             this.readyTasks = new Set();
             // this.$root.$refs.toastr.defaultPosition = 'toast-bottom-full-width';
@@ -352,7 +318,12 @@
 
             //this.init();
             self.diagramElement = self.$refs.diagram;
-            this.setZoom(parseFloat(self.zoom), self.instance, null, self.diagramElement);
+            this.setZoom(
+                parseFloat(self.zoom),
+                self.instance,
+                null,
+                self.diagramElement
+            );
 
             /* scroll bars */
             // @FIXME PerfectScrollbar.initialize(self.diagramElement.parentElement);
@@ -360,61 +331,57 @@
             this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
 
             /* selection by dragging */
-            self.diagramElement.addEventListener("mousedown", (ev) => {
+            self.diagramElement.addEventListener('mousedown', ev => {
                 if (self.$refs.diagram === ev.target) {
-                    let rightClick = (ev.which === 3)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-                        || (ev.button == 2); // IE, Opera
+                    let rightClick =
+                        ev.which === 3 || ev.button == 2; // Gecko (Firefox), WebKit (Safari/Chrome) & Opera // IE, Opera
 
                     if (rightClick) {
                         return;
                     }
                     self.clearSelection(ev);
                     let ghostSelect = self.$refs.ghostSelect;
-                    ghostSelect.classList.add("ghost-active");
+                    ghostSelect.classList.add('ghost-active');
                     ghostSelect.style.left = ev.offsetY + 'px';
                     ghostSelect.style.top = ev.offsetX + 'px';
                     ghostSelect.style.width = '0px';
                     ghostSelect.style.height = '0px';
 
-
                     self.initialW = ev.offsetX;
                     self.initialH = ev.offsetY;
-                    document.addEventListener("mouseup", self.selectElements);
-                    document.addEventListener("mousemove", self.openSelector);
+                    document.addEventListener('mouseup', self.selectElements);
+                    document.addEventListener('mousemove', self.openSelector);
                 }
             });
             if (self.shink) {
-                const z = parseFloat(self.zoom);
-                const width = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.left)) + 200);
-                const height = z * (Math.max.apply(null, self.workflow.tasks.map((t) => t.top)) + 200);
+                // const z = parseFloat(self.zoom);
+                // const width = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.left)) + 200);
+                // const height = z * (Math.max.apply(null, self.workflow.tasks.map(t => t.top)) + 200);
                 self.$refs.diagram.style.width = '100%'; //width + 'px';
                 self.$refs.diagram.style.height = '100%';
             }
-
         },
         beforeDestroy() {
             this.$root.$off('onkeyboard-keyup');
         },
         methods: {
-            scrollHandle() {
-
-            },
+            scrollHandle() { },
             changeCluster() {
                 let self = this;
-                let c = self.clusters.filter((c) => c.id === self.cluster)
+                let c = self.clusters.filter(c => c.id === self.cluster);
                 if (c.length) {
                     this.clusterDescription = c[0].description;
                 }
             },
-            removeSelectedTasks(){
+            removeSelectedTasks() {
                 // Two steps, because this.removeTask changes the array used in the loop
-                const tasksToRemove = this.workflow.tasks.filter((task) => {
+                const tasksToRemove = this.workflow.tasks.filter(task => {
                     return lodash.includes(this.selectedElements, task.id);
                 });
                 tasksToRemove.forEach(this.removeTask);
             },
             toggleTasks() {
-                this.workflow.tasks.forEach((task) => {
+                this.workflow.tasks.forEach(task => {
                     if (lodash.includes(this.selectedElements, task.id)) {
                         task.enabled = !task.enabled;
                     }
@@ -422,27 +389,9 @@
             },
             addGroup() {
                 let self = this;
-                let group = {}
-                self.$store.dispatch('addGroup', group)
-                /*
-                if (self.instance.getGroups().length === 0){
-                    let el = document.createElement('div');
-                    el.setAttribute('id', 'lemon-group-1');
-                    el.style.cssText = "width: 200px; height: 400px; border: 2px solid #222; position:absolute";
-                    self.instance.getContainer().appendChild(el);
-    
-                    self.instance.addGroup({
-                        el: el,
-                        constrain: false,
-                        revert: false,
-                        orphan: true
-                        //id: el.getAttribute('id'),
-                    });
-                }
-                */
-
+                let group = {};
+                self.$store.dispatch('addGroup', group);
                 return false;
-
             },
             deploy(ev) {
                 this.$emit('onshow-deploy');
@@ -452,14 +401,16 @@
                 this.showTaskDecorationInternal = true;
                 if (false) {
                     let self = this;
-                    let dataSources = self.tasks.filter((task) => {
-                        return task.operation.categories.filter((cat) => {
-                            return cat.type === 'data source';
-                        }).length > 0;
+                    let dataSources = self.tasks.filter(task => {
+                        return (
+                            task.operation.categories.filter(cat => {
+                                return cat.type === 'data source';
+                            }).length > 0
+                        );
                     });
-                    let ports = self.tasks.map((task) => {
-                        let dataPorts = task.operation.ports.filter((port) => {
-                            let itfs = port.interfaces.filter((iface) => {
+                    let ports = self.tasks.map(task => {
+                        let dataPorts = task.operation.ports.filter(port => {
+                            let itfs = port.interfaces.filter(iface => {
                                 return iface.name === 'Data' || iface.name === 'IData';
                             });
                             return itfs.length > 0 && port.type === 'OUTPUT';
@@ -475,14 +426,14 @@
             },
             addTask(task) {
                 task.forms = {};
-                task.operation.forms.forEach((f) => {
-                    f.fields.forEach((field) => {
+                task.operation.forms.forEach(f => {
+                    f.fields.forEach(field => {
                         task[field.name] = field['default'] || '';
                     });
                 });
                 task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
                 task.enabled = true;
-                this.$root.$emit('addTask', task)
+                this.$root.$emit('addTask', task);
             },
 
             removeTask(task) {
@@ -492,24 +443,23 @@
                 this.instance.removeAllEndpoints(task.id);
                 //this.instance.detach(task.id);
                 /*let elem = document.getElementById(task.id)
-                if (elem){
-                    elem.parentNode.removeChild(elem);
-                }*/
+                          if (elem){
+                              elem.parentNode.removeChild(elem);
+                          }*/
 
                 //console.debug(this.instance.getConnections());
                 this.instance.repaintEverything();
                 const inx = this.workflow.tasks.indexOf(task);
-                if (inx >= 0){
+                if (inx >= 0) {
                     this.workflow.tasks.splice(inx, 1);
                 } else {
-                    console.debug('Not found')
+                    console.debug('Not found');
                 }
 
-                Vue.nextTick(function () {
+                this.nextTick(function () {
                     self.clearSelection();
                     self.instance.repaintEverything();
-                })
-
+                });
             },
             repaint() {
                 this.$nextTick(() => {
@@ -523,11 +473,11 @@
                     oldInstance.deleteEveryConnection();
                     oldInstance.reset();
                     /*
-                    this.instance = this.getJsPlumbInstance();
-                    //this._bindJsPlumbEvents();
-                    this.$nextTick(() => {
-                       this.instance.repaintEverything();
-                    });*/
+                                this.instance = this.getJsPlumbInstance();
+                                //this._bindJsPlumbEvents();
+                                this.$nextTick(() => {
+                                   this.instance.repaintEverything();
+                                });*/
                     resolve();
                 });
             },
@@ -544,7 +494,7 @@
                 this.$root.$emit('clearFlow');
             },
             changeWorkflowName(name) {
-                this.$root.$emit('changeWorkflowName', name)
+                this.$root.$emit('changeWorkflowName', name);
             },
             changeWorkflowId(id) {
                 //@FIXME
@@ -559,12 +509,11 @@
             getJsPlumbInstance() {
                 const instance = jsPlumb.getInstance({
                     //Anchors: anchors,
-                    Endpoints: [["Dot", { radius: 2 }], ["Dot", { radius: 1 }]],
-                    EndpointHoverStyle: { fillStyle: "orange" },
-                    HoverPaintStyle: { strokeStyle: "blue" },
+                    Endpoints: [['Dot', { radius: 2 }], ['Dot', { radius: 1 }]],
+                    EndpointHoverStyle: { fillStyle: 'orange' },
+                    HoverPaintStyle: { strokeStyle: 'blue' }
                 });
-                if (this.initialZoom)
-                    instance.setZoom(this.initialZoom)
+                if (this.initialZoom) instance.setZoom(this.initialZoom);
                 return instance;
             },
             init() {
@@ -577,17 +526,16 @@
                 self.instance = self.getJsPlumbInstance();
                 self._bindJsPlumbEvents();
                 //self.instance.setRenderMode(jsPlumb.CANVAS);
-                window.addEventListener('resize', (e) => {
+                window.addEventListener('resize', e => {
                     self.instance.repaintEverything();
                 });
-
             },
             selectElements(ev) {
                 if (this.multipleSelectionEnabled) {
                     //$("#score>span").text('0');
                     let self = this;
-                    document.removeEventListener("mousemove", self.openSelector);
-                    document.removeEventListener("mouseup", self.selectElements);
+                    document.removeEventListener('mousemove', self.openSelector);
+                    document.removeEventListener('mouseup', self.selectElements);
 
                     self.initialW = 0;
                     self.initialH = 0;
@@ -598,25 +546,30 @@
                     let x2 = parseInt(ghostSelect.style.width) + x1;
                     let y2 = parseInt(ghostSelect.style.height) + y1;
 
-                    ghostSelect.classList.remove("ghost-active");
+                    ghostSelect.classList.remove('ghost-active');
                     ghostSelect.style.width = 0;
                     ghostSelect.style.height = 0;
 
                     this.$emit('onclear-selection');
 
-                    self.workflow.tasks.forEach((task) => {
+                    self.workflow.tasks.forEach(task => {
                         let taskElem = document.getElementById(task.id);
                         if (taskElem) {
                             let bounds = taskElem.getBoundingClientRect();
 
                             // Uses task left and top because offset calculation
                             // was already done
-                            /*console.debug(x1 <= task.left,  x2 >= task.left + bounds.width,
-                                    y1 <= task.top, y2 >= task.top + bounds.height,
-                                    bounds.width, bounds.height, x1, x2, y1, y2)
-                                    */
-                            if (x1 <= task.left && x2 >= task.left + bounds.width
-                                && y1 <= task.top && y2 >= task.top + bounds.height) {
+                            // console.log(x1 <= task.left, x2 >= task.left + bounds.width,
+                            //   y1 <= task.top, y2 >= task.top + bounds.height,
+                            //   bounds.width, bounds.height, x1, x2, y1, y2)
+
+
+                            if (
+                                x1 <= task.left &&
+                                x2 >= task.left + bounds.width &&
+                                y1 <= task.top &&
+                                y2 >= task.top + bounds.height
+                            ) {
                                 // console.debug(`overlap with ${task.operation.name}`)
                                 self.instance.addToDragSelection(task.id);
                                 self.selectedElements.push(task.id);
@@ -628,7 +581,8 @@
                 }
             },
             openSelector(ev) {
-                if (ev.which === 1 && this.multipleSelectionEnabled) { //left mouse
+                if (ev.which === 1 && this.multipleSelectionEnabled) {
+                    //left mouse
                     let self = this;
                     let rect = this.diagramElement.getBoundingClientRect();
                     let x = ev.pageX - rect.left;
@@ -637,7 +591,7 @@
                     let h = Math.abs(self.initialH - y);
 
                     let ghostSelect = self.$refs.ghostSelect;
-                    ghostSelect.style.display = ''
+                    ghostSelect.style.display = '';
 
                     ghostSelect.style.width = w + 'px';
                     ghostSelect.style.height = h + 'px';
@@ -654,7 +608,6 @@
                         elem.style.top = ev.offsetY + 'px';
                         //console.debug('3bopenselector (x, y)', ev.offsetX, ev.offsetY, elem.style.left, elem.style.top)
                     }*/
-
                 }
             },
             clearSelection(ev) {
@@ -663,11 +616,11 @@
                     return;
                 }
                 let self = this;
-                let tasks = document.querySelectorAll(".task");
+                let tasks = document.querySelectorAll('.task');
 
                 self.instance.clearDragSelection();
                 self.selectedElements.length = 0;
-                Array.prototype.slice.call(tasks, 0).forEach((e) => {
+                Array.prototype.slice.call(tasks, 0).forEach(e => {
                     e.classList.remove('selected');
                     //self.instance.clearDragSelection();
                     self.selectedTask = null;
@@ -685,13 +638,13 @@
             flowClick(connection, e) {
                 var self = this;
                 self.selectedFlow = connection;
-                self.instance.select().setPaintStyle(connectorPaintStyle)
+                self.instance.select().setPaintStyle(connectorPaintStyle);
                 connection.setPaintStyle({
                     lineWidth: 2,
                     radius: 1,
-                    strokeStyle: "rgba(242, 141, 0, 1)"
-                })
-                let tasks = document.querySelectorAll(".task.selected");
+                    strokeStyle: 'rgba(242, 141, 0, 1)'
+                });
+                let tasks = document.querySelectorAll('.task.selected');
                 Array.prototype.slice.call(tasks, 0).forEach(e => {
                     e.classList.remove('selected');
                 });
@@ -702,20 +655,28 @@
                 const self = this;
                 ev.preventDefault();
 
-                let operation = this.getOperationFromId(
-                    ev.dataTransfer.getData('id'));
+                let operation = this.getOperationFromId(ev.dataTransfer.getData('id'));
 
                 if (!operation) {
                     return;
                 }
 
-                let classes = operation.categories.map((c) => {
-                    return c.type.replace(' ', '-');
-                }).join(' ');
+                let classes = operation.categories
+                    .map(c => {
+                        return c.type.replace(' ', '-');
+                    })
+                    .join(' ');
                 self.addTask({
-                    id: self.generateId(), operation, operation_id: operation.id,
-                    left: ev.offsetX, top: ev.offsetY, z_index: ++self.currentZIndex, classes,
-                    status: 'WAITING', height: 0, width: 0
+                    id: self.generateId(),
+                    operation,
+                    operation_id: operation.id,
+                    left: ev.offsetX,
+                    top: ev.offsetY,
+                    z_index: ++self.currentZIndex,
+                    classes,
+                    status: 'WAITING',
+                    height: 0,
+                    width: 0
                 });
             },
             allowDrop(ev) {
@@ -732,112 +693,194 @@
             },
             keyboardKeyUpHandler(ev) {
                 let self = this;
-                if (self.selectedTask) {
-                    let elem = document.getElementById(self.selectedTask.id);
-                    let inc = ev.ctrlKey ? 10 : 1;
-                    let v = 0;
-                    switch (ev.code) {
-                        case 'Delete':
-                            this.deleteSelected();
+                let task = self.selectedTask
+                let tasks = self.workflow.tasks
+                    .filter(task => {
+                        return lodash.includes(self.selectedElements, task.id);
+                    })
+                let inc = ev.ctrlKey ? 10 : 1;
+
+
+                switch (ev.code) {
+                    case 'Delete':
+                        if (task) {
+                            this.deleteTask(task);
+                        } else if (tasks.length) {
+                            this.deleteTasks(tasks)
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (task) {
+                            this.moveTask({ task, position: 'right', inc })
+                        } else if (tasks.length) {
+                            this.moveTasks({ tasks, position: 'right', inc })
+                        }
+                        break;
+                    case 'ArrowLeft':
+                        if (task) {
+                            this.moveTask({ task, position: 'left', inc })
+                        } else if (tasks.length) {
+                            this.moveTasks({ tasks, position: 'left', inc })
+                        }
+                        break;
+                    case 'ArrowUp':
+                        if (task) {
+                            this.moveTask({ task, position: 'up', inc })
+                        } else if (tasks.length) {
+                            this.moveTasks({ tasks, position: 'up', inc })
+                        }
+                        break;
+                    case 'ArrowDown':
+                        if (task) {
+                            this.moveTask({ task, position: 'down', inc })
+                        } else if (tasks.length) {
+                            this.moveTasks({ tasks, position: 'down', inc })
+                        }
+                        break;
+                    case 'KeyC':
+                        if (ev.ctrlKey) {
+                            if (task) {
+                                this.copyTask(task)
+                            } else if (tasks.length) {
+                                this.copyTasks(tasks)
+                            }
                             break;
-                        case 'ArrowRight':
-                            v = parseInt(elem.style.left, 10) + inc;
-                            elem.style.left = `${v}px`;
-                            self.selectedTask.left = v;
-                            self.instance.repaintEverything();
-                            break
-                        case 'ArrowLeft':
-                            v = parseInt(elem.style.left, 10) - inc;
-                            elem.style.left = `${v}px`;
-                            self.selectedTask.left = v;
-                            self.instance.repaintEverything();
-                            break
-                        case 'ArrowUp':
-                            v = parseInt(elem.style.top, 10) - inc;
-                            elem.style.top = `${v}px`;
-                            self.selectedTask.top = v;
-                            self.instance.repaintEverything();
-                            break
-                        case 'ArrowDown':
-                            v = parseInt(elem.style.top, 10) + inc;
-                            elem.style.top = `${v}px`;
-                            self.selectedTask.top = v;
-                            self.instance.repaintEverything();
-                            break
-                        case 'KeyC':
-                            if (ev.ctrlKey) {
-                                this.copySelected();
-                                break;
-                            }
-                        case 'KeyV':
-                            if (ev.ctrlKey) {
-                                this.pasteSelected();
-                                break;
-                            }
-                    }
+                        }
+                    case 'KeyV':
+                        if (ev.ctrlKey) {
+                            let offsetLeft = Math.floor(Math.random() * 50) + 30;
+                            let offsetTop = Math.floor(Math.random() * 20) + 10;
 
-                    ev.stopPropagation();
-
-                } else if (self.copiedTask) {
-                    switch (ev.code) {
-                        case 'KeyV':
-                            if (ev.ctrlKey) {
-                                this.pasteSelected();
-                                break;
+                            if (self.copiedTask) {
+                                this.pasteTask({ task: self.copiedTask, offsetLeft, offsetTop })
+                            } else if (self.copiedTasks.length) {
+                                this.pasteTasks({ tasks: self.copiedTasks, offsetLeft, offsetTop })
                             }
-                    }
-                    
-                    ev.stopPropagation();
+                            break;
+                        }
                 }
+
+                self.instance.repaintEverything();
+                ev.stopPropagation();
             },
-            deleteSelected(ev) {
+            deleteTask(task) {
                 let self = this;
-                if (self.selectedTask) {
-                    /*self.instance.remove(self.selectedTask);
-                    self.removeTask({ id: self.selectedTask.id });*/
-                    self.$root.$emit('onremove-task', self.selectedTask);
+
+                if (self.selectedTask.id == task.id) {
                     self.selectedTask = null;
-                } else if (self.selectedFlow) {
-                    self.instance.detach(self.selectedFlow);
-                    self.selectedFlow = null;
+                }
+
+                self.$root.$emit('onremove-task', task);
+            },
+            deleteTasks(tasks) {
+                let self = this;
+                let tasks_ids = tasks.flatMap(task => { return task.id })
+
+                tasks.forEach(task => {
+                    self.$root.$emit('onremove-task', task);
+                })
+
+                self.selectedElements = self.selectedElements.filter((v, i, arr) => {
+                    return !tasks_ids.includes(v)
+                })
+            },
+            moveTask({ task, position, inc }) {
+                let elem = document.getElementById(task.id);
+                let v = 0;
+
+                switch (position) {
+                    case 'right':
+                        v = parseInt(elem.style.left, 10) + inc;
+                        elem.style.left = `${v}px`;
+                        task.left = v;
+                        break;
+                    case 'left':
+                        v = parseInt(elem.style.left, 10) - inc;
+                        elem.style.left = `${v}px`;
+                        task.left = v;
+                        break;
+                    case 'up':
+                        v = parseInt(elem.style.top, 10) - inc;
+                        elem.style.top = `${v}px`;
+                        task.top = v;
+                        break;
+                    case 'down':
+                        v = parseInt(elem.style.top, 10) + inc;
+                        elem.style.top = `${v}px`;
+                        task.top = v;
+                        break;
                 }
             },
-            copySelected(ev) {
-                let self = this;
-                if (self.selectedTask) {
-                    self.copiedTask = self.selectedTask;
-                }
+            moveTasks({ tasks, position, inc }) {
+                tasks.forEach(task => {
+                    this.moveTask({ task, position, inc });
+                })
             },
-            pasteSelected(ev) {
+            copyTask(task) {
+                this.copiedTasks = []
+                this.copiedTask = task;
+            },
+            copyTasks(tasks) {
+                this.copiedTask = null;
+                this.copiedTasks = tasks;
+            },
+            pasteTask({ task, offsetLeft, offsetTop }) {
                 let self = this;
-                if (self.copiedTask) {
-                    let copiedTask = JSON.parse(JSON.stringify(self.copiedTask))
+                let copiedTask = JSON.parse(JSON.stringify(task));
 
-                    copiedTask.id = self.generateId()
-                    copiedTask.left = copiedTask.left + Math.floor(Math.random() *  50) + 30;
-                    copiedTask.top = copiedTask.top + Math.floor(Math.random() *  20) + 10;
-                    copiedTask.z_index =  ++self.currentZIndex
-                    copiedTask.name = `${copiedTask.operation.name} ${self.workflow.tasks.length}`;
-                    copiedTask.enabled = true;
+                copiedTask.id = self.generateId();
+                copiedTask.left = copiedTask.left + offsetLeft
+                copiedTask.top = copiedTask.top + offsetTop
+                copiedTask.z_index = ++self.currentZIndex;
+                copiedTask.name = `${copiedTask.operation.name} ${self.workflow.tasks.length}`;
+                copiedTask.enabled = true;
 
-                    if(self.selectedTask){
-                        copiedTask.left = self.selectedTask.left + Math.floor(Math.random() *  50) + 30;
-                        copiedTask.top = self.selectedTask.top + Math.floor(Math.random() *  20) + 10;
+                this.$root.$emit('addTask', copiedTask);
+                return copiedTask;
+            },
+            pasteTasks({ tasks, offsetLeft, offsetTop }) {
+                const self = this;
+                const dic = {};
+                const tasksIds = tasks.flatMap(task => { return task.id });
+
+                self.clearSelection();
+                self.$emit('onclear-selection');
+
+                tasks.forEach(task => {
+                    let newTask = self.pasteTask({ task, offsetLeft, offsetTop });
+                    dic[task.id] = newTask.id;
+                })
+
+                self.workflow.flows.forEach(flow => {
+                    if (tasksIds.includes(flow.source_id) && tasksIds.includes(flow.target_id)) {
+                        let copiedFlow = JSON.parse(JSON.stringify(flow));
+                        copiedFlow.source_id = dic[flow.source_id];
+                        copiedFlow.target_id = dic[flow.target_id];
+                        self.$root.$emit('addFlow', copiedFlow);
                     }
-
-                    this.$root.$emit('addTask', copiedTask)
-                }
+                });
+                self.$nextTick(() => {
+                    Object.values(dic).forEach((v) => {
+                        // Keep pasted tasks selected
+                        self.instance.addToDragSelection(v);
+                        self.selectedElements.push(v);
+                    });
+                });
+                
             },
             diagramClick(ev) {
-                if (ev.target.classList.contains("diagram")) {
+                if (ev.target.classList.contains('diagram')) {
                     ev.preventDefault();
                     this.clearSelection(ev);
                 }
                 this.$root.$emit('onclear-selection');
             },
             generateId() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
+                    c
+                ) {
+                    let r = (Math.random() * 16) | 0,
+                        v = c == 'x' ? r : (r & 0x3) | 0x8;
                     return v.toString(16);
                 });
             },
@@ -846,20 +889,21 @@
                 transformOrigin = transformOrigin || [0.5, 0.5];
                 //instance = instance || jsPlumb;
                 el = el || instance.getContainer();
-                var p = ["webkit", "moz", "ms", "o"],
-                    s = "scale(" + zoom + ")",
-                    oString = (transformOrigin[0] * 100) + "% " + (transformOrigin[1] * 100) + "%";
+                var p = ['webkit', 'moz', 'ms', 'o'],
+                    s = 'scale(' + zoom + ')',
+                    oString =
+                        transformOrigin[0] * 100 + '% ' + transformOrigin[1] * 100 + '%';
 
                 for (var i = 0; i < p.length; i++) {
-                    el.style[p[i] + "Transform"] = s;
-                    el.style[p[i] + "TransformOrigin"] = oString;
+                    el.style[p[i] + 'Transform'] = s;
+                    el.style[p[i] + 'TransformOrigin'] = oString;
                 }
                 //instance.setZoom(zoom);
 
-                el.style["transform"] = s;
-                el.style["transformOrigin"] = '0% 0% 0px'; //oString;
+                el.style['transform'] = s;
+                el.style['transformOrigin'] = '0% 0% 0px'; //oString;
 
-                let adjust = ((1.0 / zoom) * 5000) + 'px'
+                let adjust = (1.0 / zoom) * 5000 + 'px';
                 el.style.width = adjust;
                 el.style.height = adjust;
                 // @FIXME PerfectScrollbar.update(this.diagramElement.parentElement);
@@ -870,7 +914,7 @@
             },
             zoomIn(ev) {
                 let self = this;
-                self.zoom += .1;
+                self.zoom += 0.1;
                 if (self.zoom > 1.3) {
                     self.zoomInEnabled = false;
                 }
@@ -881,7 +925,7 @@
             },
             zoomOut(ev) {
                 let self = this;
-                self.zoom -= .1;
+                self.zoom -= 0.1;
                 if (self.zoom < 0.8) {
                     self.zoomOutEnabled = false;
                 }
@@ -895,22 +939,24 @@
                     return;
                 }
                 let self = this;
-                let selectedTasks = this.workflow.tasks.filter((task) => {
-                    return lodash.includes(this.selectedElements, task.id);
-                }).sort((a, b) => {
-                    return a[prop] - b[prop];
-                })
+                let selectedTasks = this.workflow.tasks
+                    .filter(task => {
+                        return lodash.includes(this.selectedElements, task.id);
+                    })
+                    .sort((a, b) => {
+                        return a[prop] - b[prop];
+                    });
                 if (selectedTasks.length) {
                     let gap = 0;
                     let pos = 0;
                     selectedTasks.forEach((t, inx) => {
                         let elem = document.getElementById(t.id);
                         if (inx !== 0) {
-                            gap += t[prop] - pos
+                            gap += t[prop] - pos;
                         }
                         pos = t[prop] + parseInt(elem.offsetWidth);
                     });
-                    let distance = gap * 1.0 / (selectedTasks.length - 1);
+                    let distance = (gap * 1.0) / (selectedTasks.length - 1);
                     let finalPos = 0;
                     selectedTasks.forEach((t, inx) => {
                         let elem = document.getElementById(t.id);
@@ -921,7 +967,7 @@
                     });
                     Vue.nextTick(function () {
                         self.instance.repaintEverything();
-                    })
+                    });
                 }
             },
             showHistory() {
@@ -932,13 +978,12 @@
                 self.$http.get(url, { headers }).then(response => {
                     console.debug(response);
                 });
-
             },
             align(pos, fn) {
                 let self = this;
-                let selectedTasks = this.workflow.tasks.filter((task) => {
+                let selectedTasks = this.workflow.tasks.filter(task => {
                     return lodash.includes(this.selectedElements, task.id);
-                })
+                });
                 if (selectedTasks.length) {
                     let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
                         if (fn === 'min') {
@@ -952,7 +997,7 @@
                     });
                     Vue.nextTick(function () {
                         self.instance.repaintEverything();
-                    })
+                    });
                 }
             },
             scrollToTask(taskId) {
@@ -969,7 +1014,7 @@
 
                 let cloned = JSON.parse(JSON.stringify(this.workflow));
                 cloned.platform_id = cloned.platform.id;
-                cloned.tasks.forEach((task) => {
+                cloned.tasks.forEach(task => {
                     task.operation = { id: task.operation.id };
                     delete task.version;
                 });
@@ -979,18 +1024,20 @@
                     cluster: { id: this.cluster },
                     name: this.name,
                     user: {
-                        id: 1, login: 'waltersf@gmail.com',
-                        name: 'Walter dos Santos Filho'
+                        id: 0,
+                        login: '',
+                        name: ''
                     }
-                }
+                };
                 let self = this;
 
                 let locale = this.$store.getters.getLanguage;
                 let headers = {
                     'X-Auth-Token': authToken,
-                    'Locale': locale,
+                    Locale: locale
                 };
-                Vue.http.post(`${standUrl}/jobs`, body, { headers })
+                Vue.http
+                    .post(`${standUrl}/jobs`, body, { headers })
                     .then(function (response) {
                         self.$router.push({
                             name: 'job-child-diagram',
@@ -999,11 +1046,14 @@
                                 platform: self.platform
                             }
                         });
-                    }).catch((ex) => {
+                    })
+                    .catch(ex => {
                         if (ex.body) {
                             self.$root.$refs.toastr.e(ex.body.message);
                         } else if (ex.status === 0) {
-                            self.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
+                            self.$root.$refs.toastr.e(
+                                `Error connecting to the backend (connection refused).`
+                            );
                         } else {
                             self.$root.$refs.toastr.e(`Unhandled error: ${JSON.stringify(ex)}`);
                         }
@@ -1012,11 +1062,12 @@
             onClickExecute() {
                 let self = this;
                 let headers = {
-                    'X-Auth-Token': authToken,
+                    'X-Auth-Token': authToken
                 };
                 // Retrieve clusters
-                Vue.http.get(`${standUrl}/clusters`, { headers })
-                    .then((response) => {
+                Vue.http
+                    .get(`${standUrl}/clusters`, { headers })
+                    .then(response => {
                         self.clusters.length = 0;
                         Array.prototype.push.apply(self.clusters, response.body);
                         if (self.clusters.length) {
@@ -1027,31 +1078,37 @@
                                 self.name = self.workflow.name;
                             }
                         } else {
-                            self.$root.$refs.toastr.e("Unable to execute workflow: There is not cluster available.");
+                            self.$root.$refs.toastr.e(
+                                'Unable to execute workflow: There is not cluster available.'
+                            );
                         }
-                    }).catch((ex) => {
+                    })
+                    .catch(ex => {
                         if (ex.body) {
                             self.$root.$refs.toastr.e(ex.body.message);
                         } else if (ex.status === 0) {
-                            self.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
+                            self.$root.$refs.toastr.e(
+                                `Error connecting to the backend (connection refused).`
+                            );
                         } else {
                             self.$root.$refs.toastr.e(`Unhandled error: ${JSON.stringify(ex)}`);
                         }
                     });
-
             },
             _fixGroupConnections(self) {
                 return function (group) {
                     let members = group.getMembers();
                     let groupConnections = group.connections;
-                    ['internal', 'source', 'target'].forEach((m) => {
+                    ['internal', 'source', 'target'].forEach(m => {
                         groupConnections[m].length = 0;
                     });
-                    members.forEach((member) => {
-                        let connections = self.instance.getConnections(
-                            { scope: '*', target: member.id }).concat(
-                                self.instance.getConnections({ scope: '*', source: member.id }));
-                        connections.forEach((conn) => {
+                    members.forEach(member => {
+                        let connections = self.instance
+                            .getConnections({ scope: '*', target: member.id })
+                            .concat(
+                                self.instance.getConnections({ scope: '*', source: member.id })
+                            );
+                        connections.forEach(conn => {
                             if (conn.target === member) {
                                 if (members.indexOf(conn.source) > -1) {
                                     if (groupConnections.internal.indexOf(conn) === -1) {
@@ -1071,7 +1128,7 @@
                             }
                         });
                     });
-                }
+                };
             },
             _customUpdateConnectionsForGroup(_jsPlumb) {
                 // return function (group) {
@@ -1104,19 +1161,21 @@
             },
             _bindJsPlumbEvents() {
                 let self = this;
-                self.instance.getGroupManager().updateConnectionsForGroup = self._fixGroupConnections(self);
+                self.instance.getGroupManager().updateConnectionsForGroup = self._fixGroupConnections(
+                    self
+                );
                 // self.instance.getContainer().addEventListener('click', function (ev) {
                 //     //self.clearSelection(ev);
                 // });
                 // self.instance.bind("click", self.flowClick);
 
-                self.instance.bind('group:removeMember', (p) => {
-                    console.log("Group", p.group.id, "removed", p.el.id);
+                self.instance.bind('group:removeMember', p => {
+                    console.log('Group', p.group.id, 'removed', p.el.id);
                     self._fixGroupConnections(self, p);
                 });
-                self.instance.bind('group:addMember', (p) => {
+                self.instance.bind('group:addMember', p => {
                     p.el._katavorioDrag.setConstrain(false);
-                    console.log("Group", p.group.id, "added", p.el.id);
+                    console.log('Group', p.group.id, 'added', p.el.id);
                     self._fixGroupConnections(self, p);
                 });
                 self.instance.bind('connectionDetached', (info, originalEvent) => {
@@ -1133,35 +1192,41 @@
                     self.removeFlow(`${source}-${target}`);
                 });
                 /*
-                self.instance.bind('beforeDrop', (info) => {
-                  console.debug(info.sourceId !== info.targetId);
-                  return info.sourceId !== info.targetId;
-                });
-                */
+                          self.instance.bind('beforeDrop', (info) => {
+                            console.debug(info.sourceId !== info.targetId);
+                            return info.sourceId !== info.targetId;
+                          });
+                          */
                 self.instance.bind('connection', (info, originalEvent) => {
                     const con = info.connection;
                     if (originalEvent) {
                         //self.instance.detach(con);
-                        let [source_id, source_port] = info.sourceEndpoint.getUuid().split('/');
-                        let [target_id, target_port] = info.targetEndpoint.getUuid().split('/');
+                        let [source_id, source_port] = info.sourceEndpoint
+                            .getUuid()
+                            .split('/');
+                        let [target_id, target_port] = info.targetEndpoint
+                            .getUuid()
+                            .split('/');
                         let source_port_name = '';
                         let target_port_name = '';
                         // self.instance.detach(con);
                         const flow = {
-                            source_id, source_port,
-                            target_id, target_port,
-                            source_port_name, target_port_name,
+                            source_id,
+                            source_port,
+                            target_id,
+                            target_port,
+                            source_port_name,
+                            target_port_name
                         };
-                        self.$root.$emit("addFlow", flow, con);
+                        self.$root.$emit('addFlow', flow, con);
                     }
                 });
-                self.instance.setContainer("lemonade-diagram");
-            },
+                self.instance.setContainer('lemonade-diagram');
+            }
         },
     });
 
     export default DiagramComponent;
-
 </script>
 
 <style scoped lang="scss">
@@ -1194,7 +1259,9 @@
     .not-selectable {
         user-select: none;
         outline: none;
-        section:focus, div:focus {
+
+        section:focus,
+        div:focus {
             outline: none;
         }
     }
