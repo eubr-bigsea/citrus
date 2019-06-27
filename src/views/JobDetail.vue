@@ -149,41 +149,14 @@
                           :key="log.id"
                           style="font-size:.9em; margin-top: 20px"
                         >
-                          <!-- <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
-    	                                        {{log.level}}
-                          </span> &nbsp;-->
-                          <!-- <span>{{log.date}}</span>
-                          -->
-                          <!-- <span v-if="log.type === 'TEXT'">
-    	                                        {{log.message}}
-                          </span>-->
                           <span v-if="log.type === 'HTML'">
                             <div class="html-div" v-html="log.message"></div>
                           </span>
                           <span v-else-if="log.type === 'IMAGE'">
                             <img :src="'data:image/png;base64,' + log.message">
                           </span>
-                          <!-- <span v-else-if="log.type === 'STATUS'">
-    	                                        &#9733;{{log.message}}
-                          </span>-->
-                          <!-- <div v-else>
-    	                                        {{log}}
-                          </div>-->
                         </div>
-                        <!--
-    	                                <div v-for="(result, taskId) in getResults(step.task.id)" :key="taskId">
-    	                                    <div v-if="result && result.type === 'VISUALIZATION'">
-    	                                        <Visualization :url="getCaipirinhaLink(job.id, result.task.id)"></Visualization>
-    	                                    </div>
-    	                                    <div v-else>
-    	                                        {{result}}
-    	                                    </div>
-    	                                </div>
-                        -->
                       </div>
-                      <!-- <div v-else class="mt-1">
-    	                                <div class="alert alert-info">{{$t('common.noResults')}}</div>
-                      </div>-->
                     </div>
                   </div>
                 </b-card>
@@ -210,24 +183,6 @@
                   <SourceCode v-if="showSourceCode" :job="job.id"/>
                 </b-card>
               </b-tab>
-              <!-- <b-tab :title="$tc('job.logs', 2)" >
-    	                    <div class="row mt-2">
-    	                        <div class="col-md-12" v-for="log in sortedLogs" :key="log.id">
-    	                            <span class="badge-custom" :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">
-    	                                {{log.level}}
-    	                            </span> &nbsp;
-    	                            <span>{{log.date}}</span>&nbsp;
-	
-    	                    <span v-if="log.type === 'TEXT'">
-    	                            {{log.message}}
-    	                        </span>
-    	                        <span v-else-if="log.type === 'STATUS'">
-    	                            &#9733;{{log.message}}
-    	                        </span>
-    	                        <TaskDisplay :task="getTask(log.task.id)"/>
-    	                    </div>
-    	                </div>
-              </b-tab>-->
             </b-tabs>
           </div>
         </div>
