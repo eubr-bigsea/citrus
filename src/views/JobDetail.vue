@@ -163,7 +163,7 @@
               </b-tab>
               <b-tab
                 :title="$tc('job.visualizations', 2)"
-                v-if="job.results && job.results.length"
+                v-show="job.results && job.results.length"
                 @click="showVisualizations = true"
               >
                 <b-card>
