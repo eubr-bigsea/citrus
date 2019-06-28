@@ -113,7 +113,7 @@ export default {
       let password = this.password;
       this.$store
         .dispatch('login', { thornUrl, user: { email, password } })
-        .then(() => this.$router.push('/'))
+        .then(() => this.$router.push('/home'))
         .catch(err => {
           let msg = err.message.startsWith('errors.')
             ? self.$t(err.message)

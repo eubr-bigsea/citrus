@@ -37,7 +37,7 @@ let router = new Router({
   mode: 'hash',
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: Home,
       meta: {
@@ -195,6 +195,10 @@ let router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
+      if (to.path == '/') {
+        next({ name: 'home' });
+        return;
+      }
       next();
       return;
     }
@@ -206,6 +210,12 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     next();
+  }
+  if (store.getters.isLoggedIn) {
+    if (to.path == '/') {
+      next({ name: 'home' });
+      return;
+    }
   }
 });
 export default router;
