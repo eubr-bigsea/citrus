@@ -107,7 +107,7 @@
                           style="max-height: 70vh; overflow: auto"
                           v-if="job.workflow"
                         >
-                          <div class="card" v-for="task in job.workflow.tasks">
+                          <div class="card" v-for="task in job.workflow.tasks" v-bind-key="task.id">
                             <div class="card-body" style="overflow: auto">
                               {{task.name}} ({{task.operation.name}})
                               <table class="table table-sm table-parameters">
@@ -119,7 +119,7 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="(v, k, i) in task.forms">
+                                  <tr v-for="(v, k, i) in task.forms" v-bind-key="k">
                                     <td>{{v.label ? v.label : k}}</td>
                                     <td>{{v.labelValue ? v.labelValue: v.value}}</td>
                                   </tr>
@@ -326,7 +326,7 @@ export default {
       socket.on('connect_error', () => {
         console.debug('Web socket server offline');
       });
-      socket.on('update task', (msg, callback) => {
+      socket.on('update task', (msg) => {
         const task = self.job.workflow.tasks.find(t => {
           return msg.task && t.id === msg.task.id;
         });
@@ -388,8 +388,6 @@ export default {
       this.socket.emit('leave', { room: this.job.id });
       this.socket.close();
     }
-  },
-  beforeDestroy() {
     this.$root.$off('onclick-task');
     this.$root.$off('onblur-selection');
   },

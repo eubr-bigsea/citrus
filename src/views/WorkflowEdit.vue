@@ -241,7 +241,6 @@
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     const standUrl = process.env.VUE_APP_STAND_URL
 
-    // let TahitiAttributeSuggester = undefined;
     export default {
         mixins: [Notifier],
         components: {
@@ -255,12 +254,8 @@
             VuePerfectScrollbar,
             InputHeader,
             TahitiSuggester: () => {
-                let tahitiUrl = process.env.VUE_APP_TAHITI_URL
                 return new Promise((resolve, reject) => {
                     let script = document.createElement('script')
-                    // script.onload = () => {
-                    //     resolve(import('TahitiAttributeSuggester'))
-                    // }
                     script.async = true
                     script.src = `${tahitiUrl}/public/js/tahiti.js`
                     document.head.appendChild(script)
@@ -846,9 +841,6 @@
             },
             showExecuteWindow() {
                 const self = this;
-                // const valid = self._validateTasks(self.workflow.tasks);
-                // if (valid) {
-                // const options = { year: 'numeric', month: 'long', day: 'long' }
                 const d = new Date().toISOString().slice(0, -5);
                 this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
                 axios.get(`${standUrl}/clusters`, {})
@@ -868,9 +860,6 @@
                     }).catch((ex) => {
                         self.error(ex);
                     });
-                //} else {
-                //    self.$refs.validationErrorsModal.show();
-                //}
             },
             execute() {
                 const self = this;
@@ -985,6 +974,11 @@
         }
     }
 </script>
+<style scoped>
+    body {
+        overflow-y: hidden
+    }
+</style>
 <style>
     .blackout {
         background-color: rgba(0, 0, 0, 0) !important;
