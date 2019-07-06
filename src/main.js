@@ -102,11 +102,13 @@ Vue.filter('timeFromNow', (v, l) => distanceInWordsStrict(new Date(), v, { addSu
 import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
 import exporting from 'highcharts/modules/exporting'
+import offlineExporting from 'highcharts/modules/offline-exporting'
 import exportdata from 'highcharts/modules/export-data'
 import highchartsMore from 'highcharts/highcharts-more'
 
 exporting(Highcharts)
 exportdata(Highcharts)
+offlineExporting(Highcharts)
 highchartsMore(Highcharts)
 
 Vue.use(HighchartsVue)
@@ -164,8 +166,6 @@ new Vue({
     router,
     store,
     render: h => h(App),
-    mounted() {
-    }
 });
 // let requestCounter = 0;
 // axios.interceptors.request.use(config => {
