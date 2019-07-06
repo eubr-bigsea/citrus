@@ -1,7 +1,7 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage"
+        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage" readonly
             ref="prism" disabled class="code2"/>
 
         <b-link v-b-modal="'lookupModal' + field.order" variant="sm">
@@ -12,7 +12,7 @@
             <div slot="default">
                 <div class="row" >
 					<div class="col-md-12">
-                        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="programmingLanguage"
+                        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage"
                             ref="prism" disabled class="code"/>
 					</div>
                 </div>
@@ -92,7 +92,7 @@
         computed: {
             computedProgrammingLanguage(){
                 if (this.field && this.field.values){
-                    return JSON.parse(this.field.values).language !== false;
+                    return JSON.parse(this.field.values).language;
                 } else {
                     return this.programmingLanguage;
                 }

@@ -1,7 +1,7 @@
 <template>
 
-    <PrismEditor :code="sourceCode.source" :settings="{maxScrollbarLength: 30}" :language="sourceCode.lang" ref="prism"
-        :autoStyleLineNumbers="true" :lineNumbers="true" 
+    <PrismEditor :code="sourceCode.source || ''" :settings="{maxScrollbarLength: 30}" :language="sourceCode.lang" ref="prism"
+        :autoStyleLineNumbers="true" :lineNumbers="true" readonly
         style="height:80vh;font-size:.9em; overflow-x:hidden" />
 
 </template>
