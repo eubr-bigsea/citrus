@@ -1,43 +1,43 @@
 <template>
   <b-navbar
+    id="l-navbar"
     toggleable="md"
     type="dark"
     variant="dark"
-    id="l-navbar"
   >
-    <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+    <b-navbar-toggle target="nav_collapse" />
 
     <b-navbar-brand :to="{name: 'home'}">
       <div
         class="logo"
         title="Lemonade"
-      ></div>
+      />
     </b-navbar-brand>
 
     <b-collapse
-      is-nav
       id="nav_collapse"
+      is-nav
     >
       <b-navbar-nav>
-        <b-nav-item :to="{name: 'dataSources'}">{{$tc('titles.dataSource', 2)}}</b-nav-item>
-        <b-nav-item :to="{name: 'workflows'}">{{$tc('titles.workflow', 2)}}</b-nav-item>
-        <b-nav-item :to="{name: 'jobs'}">{{$tc('titles.jobs', 2)}}</b-nav-item>
-        <b-nav-item :to="{name: 'dashboards'}">{{$tc('titles.dashboard', 2)}}</b-nav-item>
+        <b-nav-item :to="{name: 'dataSources'}">{{ $tc('titles.dataSource', 2) }}</b-nav-item>
+        <b-nav-item :to="{name: 'workflows'}">{{ $tc('titles.workflow', 2) }}</b-nav-item>
+        <b-nav-item :to="{name: 'jobs'}">{{ $tc('titles.jobs', 2) }}</b-nav-item>
+        <b-nav-item :to="{name: 'dashboards'}">{{ $tc('titles.dashboard', 2) }}</b-nav-item>
 
         <b-nav-item-dropdown
           v-if="getUserIsAdmin()"
-          v-bind:text="$tc('titles.administration', 2)"
+          :text="$tc('titles.administration', 2)"
           right
         >
-          <b-dropdown-item href="#">
-            <router-link :to="{name: 'AdministrationUserList',}">{{$tc('titles.user', 2)}}</router-link>
+          <b-dropdown-item :to="{name: 'AdministrationUserList'}">
+            {{ $tc('titles.user', 2) }}
           </b-dropdown-item>
-          <b-dropdown-item href="#">{{$tc('titles.cluster', 2)}}</b-dropdown-item>
-          <b-dropdown-item href="#">{{$tc('titles.platform', 2)}}</b-dropdown-item>
-          <b-dropdown-item href="#">{{$tc('titles.storage', 2)}}</b-dropdown-item>
-          <b-dropdown-divider></b-dropdown-divider>
-          <b-dropdown-item href="#">{{$tc('titles.template', 2)}}</b-dropdown-item>
-          <b-dropdown-item href="#">{{$t('titles.toolboxCategory')}}</b-dropdown-item>
+          <b-dropdown-item href="#">{{ $tc('titles.cluster', 2) }}</b-dropdown-item>
+          <b-dropdown-item href="#">{{ $tc('titles.platform', 2) }}</b-dropdown-item>
+          <b-dropdown-item href="#">{{ $tc('titles.storage', 2) }}</b-dropdown-item>
+          <b-dropdown-divider />
+          <b-dropdown-item href="#">{{ $tc('titles.template', 2) }}</b-dropdown-item>
+          <b-dropdown-item href="#">{{ $t('titles.toolboxCategory') }}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
@@ -47,9 +47,11 @@
             <img
               :src="getUserAvatar()"
               class="avatar"
-            /> {{getUserFirstName()}}</template>
-          <b-dropdown-item to="/user/profile">{{$t('titles.profile')}}</b-dropdown-item>
-          <b-dropdown-item to="/logout">{{$t('common.logout')}}</b-dropdown-item>
+            >
+            {{ getUserFirstName() }}
+          </template>
+          <b-dropdown-item to="/user/profile">{{ $t('titles.profile') }}</b-dropdown-item>
+          <b-dropdown-item to="/logout">{{ $t('common.logout') }}</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
     </b-collapse>
@@ -105,5 +107,11 @@ export default {
 }
 #l-navbar {
   box-shadow: 0 12px 24px rgba(18, 38, 63, 0.1);
+}
+.dropdown-menu > li > a:hover {
+  color: #007bff;
+}
+.dropdown-menu > li > a:active {
+  color: white;
 }
 </style>

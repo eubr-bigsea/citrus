@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-6 mx-auto">
         <div class="card fat">
-          <div class="card-header text-center bg-secondary text-white">{{ $t('titles.newUser') }}</div>
+          <div class="card-header text-center bg-secondary text-white">{{ $t('actions.edit') }} {{ $tc('titles.user', 1) }}</div>
           <div class="card-body">
             <form @submit.prevent="save">
               <div class="form-group row">
@@ -54,7 +54,6 @@
                     v-model="user.password"
                     type="text"
                     class="form-control"
-                    required
                   >
                 </div>
               </div>
@@ -96,6 +95,8 @@
 <script>
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier';
+import { deserialize } from 'jsonapi-deserializer';
+
 
 let thornUrl = process.env.VUE_APP_THORN_URL;
 
@@ -105,16 +106,41 @@ export default {
   props: {
     user: { type: Object, default: () => { return {} } }
   },
+  mounted () {
+    let self = this;
+    this.load().then(() => {
+      Vue.nextTick(() => {
+        self.isDirty = false;
+      });
+    });
+  },
   methods: {
-    save () {
+    load () {
+      let self = this;
+      let userId = this.$route.params.id
+      const url = `${thornUrl}/administration/users/${userId}`;
 
+      return new Promise((resolve, reject) => {
+        axios
+          .get(url)
+          .then(resp => {
+            self.user = deserialize(resp.data)
+            resolve();
+          })
+          .catch(function (e) {
+            self.error(e);
+          });
+      });
+    },
+    save () {
       const self = this;
-      let url = `${thornUrl}/administration/users`;
+      let userId = this.$route.params.id
+      const url = `${thornUrl}/administration/users/${userId}`;
       let user = self.user
 
       this.$Progress.start();
       return axios
-        .post(url, { user })
+        .put(url, { user })
         .then(resp => {
           this.$Progress.finish();
           this.$router.push({ name: 'AdministrationUserList' });
@@ -122,12 +148,12 @@ export default {
         .catch(
           function (e) {
             var err = e
-            this.$Progress.finish();
+            self.$Progress.finish();
             if (e.response.data.errors[0]) {
               err = { message: `${e.response.data.errors[0].source.pointer} ${e.response.data.errors[0].detail}` }
             }
 
-            this.error(err);
+            self.error(err);
           }.bind(this)
         );
     }

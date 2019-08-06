@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-6 mx-auto">
         <div class="card fat">
-          <div class="card-header text-center bg-secondary text-white">{{ $t('titles.newUser') }}</div>
+          <div class="card-header text-center bg-secondary text-white">{{ $t('actions.new') }} {{ $tc('titles.user', 1) }}</div>
           <div class="card-body">
             <form @submit.prevent="save">
               <div class="form-group row">
