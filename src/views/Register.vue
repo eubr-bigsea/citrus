@@ -15,43 +15,74 @@
                 <div class="form-group col-md-6">
                   <div class="form-group">
                     <label for="firstName">{{$tc('common.firstName')}}</label>
-                    <input required v-model="firstName" class="form-control" autofocus="true">
+                    <input
+                      required
+                      v-model="firstName"
+                      class="form-control"
+                      autofocus="true"
+                    >
                   </div>
                 </div>
                 <div class="form-group col-md-6">
                   <div class="form-group">
                     <label for="lastName">{{$tc('common.lastName')}}</label>
-                    <input required v-model="lastName" class="form-control" autofocus="true">
+                    <input
+                      required
+                      v-model="lastName"
+                      class="form-control"
+                      autofocus="true"
+                    >
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="email">{{$t('common.email')}}</label>
-                <input required v-model="email" type="email" class="form-control">
+                <input
+                  required
+                  v-model="email"
+                  type="email"
+                  class="form-control"
+                >
               </div>
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="password">{{$t('common.password')}}</label>
                   <div style="position:relative">
-                    <input type="password" class="form-control" v-model="password" required>
+                    <input
+                      type="password"
+                      class="form-control"
+                      v-model="password"
+                      required
+                    >
                   </div>
                 </div>
                 <div class="form-group col-md-6">
                   <label for="confirmPassword">{{$t('common.confirmPassword')}}</label>
                   <div style="position:relative">
-                    <input type="password" class="form-control" v-model="confirmPassword" required>
+                    <input
+                      type="password"
+                      class="form-control"
+                      v-model="confirmPassword"
+                      required
+                    >
                   </div>
                 </div>
               </div>
               <div class="form-group no-margin text-center">
                 <label>
-                  <input type="checkbox" v-model="accepted">&nbsp;&nbsp;
+                  <input
+                    type="checkbox"
+                    v-model="accepted"
+                  >&nbsp;&nbsp;
                   <span v-html="$t('messages.acceptTerms')"></span>
                 </label>
               </div>
               <div class="form-group no-margin text-center">
-                <button type="submit" class="btn btn-primary col-md-4">{{$t('titles.register')}}</button>
+                <button
+                  type="submit"
+                  class="btn btn-primary col-md-4"
+                >{{$t('titles.register')}}</button>
               </div>
 
               <div class="margin-top20 border-top text-center">
@@ -69,7 +100,7 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
       firstName: '',
       lastName: '',
@@ -80,7 +111,7 @@ export default {
     };
   },
   methods: {
-    register: function() {
+    register: function () {
       let self = this;
       if (this.password !== self.confirmPassword) {
         self.$snotify.warning(
@@ -91,15 +122,10 @@ export default {
       }
       let thornUrl = process.env.VUE_APP_THORN_URL;
       let data = {
-        data: {
-          attributes: {
-            'first-name': self.firstName,
-            'last-name': self.lastName,
-            email: this.email,
-            password: this.password,
-            'password-confirmation': this.confirmPassword
-          }
-        }
+        first_name: self.firstName,
+        last_name: self.lastName,
+        email: this.email,
+        password: this.password,
       };
       this.$store
         .dispatch('register', { thornUrl, data })

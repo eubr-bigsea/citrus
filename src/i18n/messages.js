@@ -87,6 +87,9 @@ export default {
       pagerShowing:
         'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
       password: 'Senha',
+      current_password: 'Senha Atual',
+      new_password: 'Nova senha',
+      new_password_confirmation: 'Confirmação de nova senha',
       permission: 'Permissão | Permissões',
       platform: 'Plataforma',
       precision: 'Precisão',
@@ -448,6 +451,9 @@ export default {
       pagerShowing:
         'Showing {from} to {to} of {count} records|{count} records|One record',
       password: 'Password',
+      current_password: 'Current password',
+      new_password: 'New password',
+      new_password_confirmation: 'New password confirmation',
       permission: 'Permission | Permissions',
       platform: 'Platform',
       precision: 'Precision',

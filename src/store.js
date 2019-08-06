@@ -52,25 +52,25 @@ export default new Vuex.Store({
   actions: {
     changeProfile({ commit }, params) {
       return new Promise((resolve, reject) => {
-        const url = `${params.thornUrl}/api/users/${params.user.attributes.id}`;
+        const url = `${params.thornUrl}/api/users`;
         const headers = { Accept: 'application/json; charset=utf-8' };
-        axios({ url, data: { data: params.user }, method: 'PATCH', headers })
+        axios({ url, data: { user: params.user }, method: 'PATCH', headers })
           .then(resp => {
             commit('change_profile_success', { user: resp.data.data });
-            const data = resp.data.data;
+            let userData = resp.data.data.attributes;
             const user = {
-              id: data.id,
-              email: data.email,
-              locale: data.locale,
-              login: data.email,
-              name: `${data.attributes['first-name']} ${
-                data.attributes['last-name']
-              }`
+              id: userData.id,
+              email: userData.email,
+              locale: userData.locale,
+              login: userData.email,
+              name: userData.full_name,
+              is_admin: userData.is_admin
             };
             localStorage.setItem('user', JSON.stringify(user));
             resolve(resp);
           })
           .catch(err => {
+            debugger;
             reject(err);
           });
       });
@@ -158,7 +158,7 @@ export default new Vuex.Store({
         commit('register_request');
         axios({
           url: `${params.thornUrl}/api/users`,
-          data: params.data,
+          data: { user: params.data },
           method: 'POST'
         })
           .then(resp => {
