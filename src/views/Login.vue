@@ -18,31 +18,27 @@
                   placeholder="Name"
                   autofocus
                   autocomplete="username"
-                >
+                />
               </div>
 
               <div class="form-group">
                 <label for="password">
                   {{ $t('common.password') }}
-                  <router-link
-                    class="float-right"
-                    to="/reset_password"
-                  >{{ $t('common.forgotPassword') }}</router-link>
+                  <router-link class="float-right" to="/reset_password">{{
+                    $t('common.forgotPassword')
+                  }}</router-link>
                 </label>
                 <div style="position:relative">
                   <input
-                    :type="showingPassword ? 'text' : 'password'"
                     v-model="password"
+                    :type="showingPassword ? 'text' : 'password'"
                     class="form-control"
                     required
                     style="padding-right: 60px;"
                     placeholder="Password"
                     autocomplete="current-password"
-                  >
-                  <input
-                    id="passeye-0"
-                    type="hidden"
-                  >
+                  />
+                  <input id="passeye-0" type="hidden" />
                   <div
                     class="show-password btn btn-primary btn btn-sm"
                     @click="showingPassword = !showingPassword"
@@ -53,29 +49,29 @@
 
               <div class="form-group">
                 <label>
-                  <input
-                    v-model="rememberPassword"
-                    type="checkbox"
-                  >
+                  <input v-model="rememberPassword" type="checkbox" />
                   {{ $t('common.rememberMe') }}
                 </label>
               </div>
 
               <div class="form-group no-margin text-center">
-                <button
-                  type="submit"
-                  class="btn btn-primary col-md-4"
-                >{{ $t('common.login') }}</button>
+                <button type="submit" class="btn btn-primary col-md-4">
+                  {{ $t('common.login') }}
+                </button>
               </div>
               <div class="margin-top20 text-center">
                 {{ $t('common.dontHaveAccount') }}
-                <br>
-                <router-link to="/register">{{ $t('common.createAccount') }}</router-link>
+                <br />
+                <router-link to="/register">{{
+                  $t('common.createAccount')
+                }}</router-link>
               </div>
             </form>
           </div>
         </div>
-        <div class="footer text-center">Copyright © 2018 — Lemonade Project</div>
+        <div class="footer text-center">
+          Copyright © 2018 — Lemonade Project
+        </div>
       </div>
     </div>
   </div>
@@ -104,7 +100,7 @@ import Notifier from '../mixins/Notifier';
 export default {
   name: 'Login',
   mixins: [Notifier],
-  data () {
+  data() {
     return {
       email: '',
       password: '',
@@ -113,12 +109,12 @@ export default {
     };
   },
   computed: {
-    passwordShowText () {
+    passwordShowText() {
       return this.$t(this.showingPassword ? 'common.hide' : 'common.show');
     }
   },
   methods: {
-    login: function () {
+    login: function() {
       let thornUrl = process.env.VUE_APP_THORN_URL;
       let email = this.email;
       let password = this.password;
@@ -126,9 +122,9 @@ export default {
         .dispatch('login', { thornUrl, user: { email, password } })
         .then(() => this.$router.push('/'))
         .catch(e => {
-          var err = e
+          var err = e;
           if (e.response.data.errors[0]) {
-            err = { message: `${e.response.data.errors[0].detail}` }
+            err = { message: `${e.response.data.errors[0].detail}` };
           }
           this.error(err);
         });

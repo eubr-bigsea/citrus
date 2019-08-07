@@ -64,7 +64,7 @@ export default new Vuex.Store({
               locale: userData.locale,
               login: userData.email,
               name: userData.full_name,
-              is_admin: userData.is_admin
+              roles: userData.roles
             };
             localStorage.setItem('user', JSON.stringify(user));
             resolve(resp);
@@ -138,7 +138,7 @@ export default new Vuex.Store({
               locale: userData.locale,
               login: userData.email,
               name: userData.full_name,
-              is_admin: userData.is_admin
+              roles: userData.roles
             };
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
@@ -186,7 +186,7 @@ export default new Vuex.Store({
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     user: state => state.user || {},
-    isAdmin: state => state.user.is_admin,
+    isAdmin: state => state.user.roles.includes('admin'),
     token: state => state.token
   }
 });

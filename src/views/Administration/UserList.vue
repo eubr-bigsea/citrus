@@ -6,11 +6,13 @@
           <div class="d-flex justify-content-between align-items-center">
             <h1>{{ $tc('titles.user', 2) }}</h1>
             <router-link
-              :to="{name: 'AdministrationAddUser'}"
+              :to="{ name: 'AdministrationAddUser' }"
               class="btn btn-sm btn-outline-primary"
-            >{{ $t('actions.addItem') }}</router-link>
+            >
+              {{ $t('actions.addItem') }}
+            </router-link>
           </div>
-          <hr>
+          <hr />
           <div class="row">
             <div class="col-md-12">
               <div class="card">
@@ -21,29 +23,38 @@
                     :options="options"
                     name="userList"
                   >
-                    <template
-                      slot="id"
-                      slot-scope="props"
-                    >
-                      <router-link :to="{name: 'AdministrationEditUser', params: {id: props.row.id } }">{{ props.row.id }}</router-link>
+                    <template slot="id" slot-scope="props">
+                      <router-link
+                        :to="{
+                          name: 'AdministrationEditUser',
+                          params: { id: props.row.id }
+                        }"
+                      >
+                        {{ props.row.id }}
+                      </router-link>
                     </template>
-                    <template
-                      slot="full_name"
-                      slot-scope="props"
-                    >
-                      <router-link :to="{name: 'AdministrationEditUser', params: {id: props.row.id} }">{{ props.row.full_name }}</router-link>
+                    <template slot="full_name" slot-scope="props">
+                      <router-link
+                        :to="{
+                          name: 'AdministrationEditUser',
+                          params: { id: props.row.id }
+                        }"
+                      >
+                        {{ props.row.full_name }}
+                      </router-link>
                     </template>
-                    <template
-                      slot="email"
-                      slot-scope="props"
-                    >
-                      <router-link :to="{name: 'AdministrationEditUser', params: {id: props.row.id} }">{{ props.row.email }}</router-link>
+                    <template slot="email" slot-scope="props">
+                      <router-link
+                        :to="{
+                          name: 'AdministrationEditUser',
+                          params: { id: props.row.id }
+                        }"
+                      >
+                        {{ props.row.email }}
+                      </router-link>
                     </template>
 
-                    <template
-                      slot="confirmed_at"
-                      slot-scope="props"
-                    >
+                    <template slot="confirmed_at" slot-scope="props">
                       <div v-if="isConfirmedUser(props.row.confirmed_at)">
                         {{ props.row.confirmed_at | formatJsonDate }}
                         <font-awesome-icon icon="check" />
@@ -57,11 +68,7 @@
                       </button>
                     </template>
 
-                    <template
-                      slot="actions"
-                      slot-scope="props"
-                    >
-
+                    <template slot="actions" slot-scope="props">
                       <button
                         class="btn btn-sm btn-light"
                         @click="remove(props.row.id)"
@@ -89,17 +96,11 @@ let thornUrl = process.env.VUE_APP_THORN_URL;
 
 export default {
   mixins: [Notifier],
-  data () {
+  data() {
     return {
       platform: '',
       platforms: [],
-      columns: [
-        'id',
-        'full_name',
-        'email',
-        'confirmed_at',
-        'actions'
-      ],
+      columns: ['id', 'full_name', 'email', 'confirmed_at', 'actions'],
       options: {
         debounce: 800,
         skin: 'table-sm table table-hover',
@@ -124,7 +125,7 @@ export default {
         saveState: true,
         customFilters: ['platform'],
         filterByColumn: false,
-        requestFunction: function (data) {
+        requestFunction: function(data) {
           data.sort = data.orderBy;
           data.asc = data.ascending === 1 ? 'true' : 'false';
           data.size = data.limit;
@@ -146,7 +147,7 @@ export default {
               };
             })
             .catch(
-              function (e) {
+              function(e) {
                 this.$Progress.finish();
                 this.error(e);
               }.bind(this)
@@ -163,18 +164,17 @@ export default {
       }
     };
   },
-  mounted () {
-  },
+  mounted() {},
   /* Methods */
   methods: {
-    clearFilters () {
+    clearFilters() {
       this.$refs.userList.setFilter('');
       this.$refs.userList.customQueries = {};
     },
-    isConfirmedUser (confirmed_at) {
-      return confirmed_at !== null
+    isConfirmedUser(confirmed_at) {
+      return confirmed_at !== null;
     },
-    remove (userId) {
+    remove(userId) {
       const self = this;
       this.confirm(
         this.$t('actions.delete'),
@@ -184,15 +184,18 @@ export default {
           axios
             .delete(url, {})
             .then(resp => {
-              self.success(self.$t('messages.successDeletion',
-                { what: this.$tc('titles.user', 1) }));
+              self.success(
+                self.$t('messages.successDeletion', {
+                  what: this.$tc('titles.user', 1)
+                })
+              );
               self.$refs.userList.refresh();
             })
             .catch(e => self.error(e));
         }
       );
     },
-    confirmUser (userId) {
+    confirmUser(userId) {
       const self = this;
       this.confirm(
         self.$t('actions.confirm'),
@@ -202,14 +205,17 @@ export default {
           axios
             .post(url, {})
             .then(resp => {
-              self.success(self.$t('messages.successConfirmation',
-                { what: this.$tc('titles.user', 1) }));
+              self.success(
+                self.$t('messages.successConfirmation', {
+                  what: this.$tc('titles.user', 1)
+                })
+              );
               self.$refs.userList.refresh();
             })
             .catch(e => self.error(e));
         }
       );
     }
-  },
+  }
 };
 </script>

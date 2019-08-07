@@ -1,12 +1,12 @@
 <template>
   <div>
-    <vue-snotify></vue-snotify>
-    <l-navbar v-if="isLoggedIn"></l-navbar>
+    <vue-snotify />
+    <l-navbar v-if="isLoggedIn" />
     <div class="container-fluid main-container">
-      <router-view></router-view>
+      <router-view />
 
-      <vue-progress-bar></vue-progress-bar>
-      <l-footer v-if="isLoggedIn"></l-footer>
+      <vue-progress-bar />
+      <l-footer v-if="isLoggedIn" />
     </div>
   </div>
 </template>
@@ -16,19 +16,12 @@ import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     'l-navbar': Navbar,
     'l-footer': Footer
   },
-  computed: {
-    isLoggedIn() {
-      return this.$store.getters.isLoggedIn;
-    },
-    user() {
-      return this.$store.getters.user;
-    }
-  },
+
   data() {
     return {
       columns: ['code', 'symbol', 'rate'],
@@ -48,6 +41,14 @@ export default {
         filterable: ['name', 'album']
       }
     };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.isLoggedIn;
+    },
+    user() {
+      return this.$store.getters.user;
+    }
   }
 };
 </script>
@@ -57,6 +58,6 @@ body {
   background-color: #f8f9fa !important;
 }
 .main-container {
-    padding-top: 15px;
-  }
+  padding-top: 15px;
+}
 </style>

@@ -2,105 +2,105 @@
   <div class="row">
     <div class="col-12 col-sm-6 col-md-6 col-lg-4 mx-auto">
       <div class="card-wrapper">
-        <div class="brand"></div>
+        <div class="brand" />
         <div class="card fat">
           <div class="card-body">
             <div class="border-bottom clearfix mb-3 pb-3">
-              <h4 class="card-title float-left">{{$t('titles.register')}}</h4>
-              <div class="float-right navbar-brand logo"></div>
+              <h4 class="card-title float-left">{{ $t('titles.register') }}</h4>
+              <div class="float-right navbar-brand logo" />
             </div>
-            <div class="clearfix"></div>
+            <div class="clearfix" />
             <form @submit.prevent="register">
               <div class="row clear">
                 <div class="form-group col-md-6">
                   <div class="form-group">
-                    <label for="firstName">{{$tc('common.firstName')}}</label>
+                    <label for="firstName">{{ $tc('common.firstName') }}</label>
                     <input
-                      required
                       v-model="firstName"
+                      required
                       class="form-control"
                       autofocus="true"
-                    >
+                    />
                   </div>
                 </div>
                 <div class="form-group col-md-6">
                   <div class="form-group">
-                    <label for="lastName">{{$tc('common.lastName')}}</label>
+                    <label for="lastName">{{ $tc('common.lastName') }}</label>
                     <input
-                      required
                       v-model="lastName"
+                      required
                       class="form-control"
                       autofocus="true"
-                    >
+                    />
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="email">{{$t('common.email')}}</label>
+                <label for="email">{{ $t('common.email') }}</label>
                 <input
-                  required
                   v-model="email"
+                  required
                   type="email"
                   class="form-control"
-                >
+                />
               </div>
               <div class="row">
                 <div class="form-group col-md-6">
-                  <label for="password">{{$t('common.password')}}</label>
+                  <label for="password">{{ $t('common.password') }}</label>
                   <div style="position:relative">
                     <input
+                      v-model="password"
                       type="password"
                       class="form-control"
-                      v-model="password"
                       required
-                    >
+                    />
                   </div>
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="confirmPassword">{{$t('common.confirmPassword')}}</label>
+                  <label for="confirmPassword">{{
+                    $t('common.confirmPassword')
+                  }}</label>
                   <div style="position:relative">
                     <input
+                      v-model="confirmPassword"
                       type="password"
                       class="form-control"
-                      v-model="confirmPassword"
                       required
-                    >
+                    />
                   </div>
                 </div>
               </div>
               <div class="form-group no-margin text-center">
                 <label>
-                  <input
-                    type="checkbox"
-                    v-model="accepted"
-                  >&nbsp;&nbsp;
+                  <input v-model="accepted" type="checkbox" />&nbsp;&nbsp;
                   <span v-html="$t('messages.acceptTerms')"></span>
                 </label>
               </div>
               <div class="form-group no-margin text-center">
-                <button
-                  type="submit"
-                  class="btn btn-primary col-md-4"
-                >{{$t('titles.register')}}</button>
+                <button type="submit" class="btn btn-primary col-md-4">
+                  {{ $t('titles.register') }}
+                </button>
               </div>
 
               <div class="margin-top20 border-top text-center">
-                {{$t('common.alreadyHaveAccount')}}
-                <br>
-                <router-link to="/login">{{$t('common.login')}}</router-link>
+                {{ $t('common.alreadyHaveAccount') }}
+                <br />
+                <router-link to="/login">{{ $t('common.login') }}</router-link>
               </div>
             </form>
           </div>
         </div>
-        <div class="footer text-center">Copyright © 2019 — Lemonade Project</div>
+        <div class="footer text-center">
+          Copyright © 2019 — Lemonade Project
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
       firstName: '',
       lastName: '',
@@ -111,7 +111,7 @@ export default {
     };
   },
   methods: {
-    register: function () {
+    register: function() {
       let self = this;
       if (this.password !== self.confirmPassword) {
         self.$snotify.warning(
@@ -125,7 +125,7 @@ export default {
         first_name: self.firstName,
         last_name: self.lastName,
         email: this.email,
-        password: this.password,
+        password: this.password
       };
       this.$store
         .dispatch('register', { thornUrl, data })
