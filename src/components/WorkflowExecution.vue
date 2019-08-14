@@ -42,6 +42,7 @@
                         actions: 'th-5 text-center',
                         status: 'th-5 text-center',
                     },
+                    descOrderColumns: ["id", "created"],
                     headings: {
                         id: 'ID',
                         created: this.$t('common.created'),
@@ -72,15 +73,13 @@
         },
         props: {
             workflowId: null,
-        },
-        mounted() {
-            // this.load({});
+            
         },
         methods: {
             load(params) {
                 this.$Progress.start();
                 params.sort = params.orderBy
-                params.asc = params.ascending === 1 ? 'true' : 'false'
+                params.asc = (params.ascending === 1 && params.orderBy) ? 'true' : 'false';
                 params.size = params.limit
                 params.name = params.query
                 params.workflow_id = this.workflowId
@@ -93,17 +92,6 @@
                     }).catch(function (e) {
                         this.error(e);
                     }.bind(this));
-
-                // axios.get(`${standUrl}/jobs`, { params }).then((resp) => {
-                //     this.jobs = resp.data.data;
-                //     this.jobsTotal = resp.data.pagination.total;
-                // }).catch(function (e) {
-                //     this.error(e);
-                // }.bind(this)).finally(() => {
-                //     Vue.nextTick(() => {
-                //         this.$Progress.finish()
-                //     })
-                // });;
             },
         }
 
