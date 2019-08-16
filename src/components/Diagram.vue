@@ -7,15 +7,14 @@
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                     :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto': 'auto'}" class="lemonade"
                     @drop="drop" @dragover="allowDrop">
-                    <task-component v-for="task of workflow.tasks" :task="task" :instance="instance"
-                        :key="`${$parent.version} - ${task.id}`" :enable-context-menu="editable" :draggable="editable"
+                    <task-component v-for="task of workflow.tasks" :key="`${$parent.version} - ${task.id}`" :task="task"
+                        :instance="instance" :enable-context-menu="editable" :draggable="editable"
                         :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
-
                     <div ref="ghostSelect" class="ghost-select">
                         <span />
                     </div>
                     <div v-for="group in groups" :key="group.id">
-                        <group-component :group="group" :instance="instance" :key="group.id" />
+                        <group-component :key="group.id" :group="group" :instance="instance" />
                     </div>
                 </div>
             </VuePerfectScrollbar>
@@ -35,7 +34,7 @@
                         <div class="col-md-6">
                             <label>Cluster:</label>
                             <select v-model="cluster" class="form-control" @change="changeCluster">
-                                <option v-for="option in clusters" :value="option.id" :key="option.id">{{ option.name }}
+                                <option v-for="option in clusters" :key="option.id" :value="option.id">{{ option.name }}
                                 </option>
                             </select>
                             <span>{{ clusterDescription }}</span>
@@ -69,6 +68,18 @@
     import DiagramToolbar from './DiagramToolbar.vue';
     // eslint-disable-next-line
     import jsplumb from 'jsplumb';
+
+    const tahitiUrl = process.env.VUE_APP_TAHITI_URL
+    const standUrl = process.env.VUE_APP_STAND_URL
+    const authToken = process.env.AUTH_TOKEN
+    const connectorPaintStyle = {
+        lineWidth: 1,
+        radius: 8,
+        strokeStyle: "#111",
+        stroke: "#111",
+        outlineColor: 'white',
+        outlineWidth: 2,
+    };
 
     const DiagramComponent = Vue.extend({
         components: {
@@ -302,6 +313,7 @@
 
         beforeDestroy() {
             this.$root.$off('ontask-ready');
+            this.$root.$off('onkeyboard-keyup');
             this.readyTasks = new Set();
         },
 
@@ -361,9 +373,6 @@
                 self.$refs.diagram.style.height = '100%';
             }
         },
-        beforeDestroy() {
-            this.$root.$off('onkeyboard-keyup');
-        },
         methods: {
             scrollHandle() { },
             changeCluster() {
@@ -399,28 +408,28 @@
                 this.setZoomPercent(ev, 0.85);
                 this.showToolbarInternal = false;
                 this.showTaskDecorationInternal = true;
-                if (false) {
-                    let self = this;
-                    let dataSources = self.tasks.filter(task => {
-                        return (
-                            task.operation.categories.filter(cat => {
-                                return cat.type === 'data source';
-                            }).length > 0
-                        );
-                    });
-                    let ports = self.tasks.map(task => {
-                        let dataPorts = task.operation.ports.filter(port => {
-                            let itfs = port.interfaces.filter(iface => {
-                                return iface.name === 'Data' || iface.name === 'IData';
-                            });
-                            return itfs.length > 0 && port.type === 'OUTPUT';
-                        });
-                        return [task, dataPorts];
-                    });
-                    self.showDeployModal = true;
-                    self.deployInfo['dataSources'] = dataSources;
-                    self.deployInfo['ports'] = ports;
-                }
+                // if (false) {
+                //     let self = this;
+                //     let dataSources = self.tasks.filter(task => {
+                //         return (
+                //             task.operation.categories.filter(cat => {
+                //                 return cat.type === 'data source';
+                //             }).length > 0
+                //         );
+                //     });
+                //     let ports = self.tasks.map(task => {
+                //         let dataPorts = task.operation.ports.filter(port => {
+                //             let itfs = port.interfaces.filter(iface => {
+                //                 return iface.name === 'Data' || iface.name === 'IData';
+                //             });
+                //             return itfs.length > 0 && port.type === 'OUTPUT';
+                //         });
+                //         return [task, dataPorts];
+                //     });
+                //     self.showDeployModal = true;
+                //     self.deployInfo['dataSources'] = dataSources;
+                //     self.deployInfo['ports'] = ports;
+                // }
                 ev.preventDefault();
                 return false;
             },
@@ -476,7 +485,7 @@
                                 this.instance = this.getJsPlumbInstance();
                                 //this._bindJsPlumbEvents();
                                 this.$nextTick(() => {
-                                   this.instance.repaintEverything();
+                                    this.instance.repaintEverything();
                                 });*/
                     resolve();
                 });
@@ -660,7 +669,6 @@
                 if (!operation) {
                     return;
                 }
-
                 let classes = operation.categories
                     .map(c => {
                         return c.type.replace(' ', '-');
@@ -744,8 +752,8 @@
                             } else if (tasks.length) {
                                 this.copyTasks(tasks)
                             }
-                            break;
                         }
+                        break;
                     case 'KeyV':
                         if (ev.ctrlKey) {
                             let offsetLeft = Math.floor(Math.random() * 50) + 30;
@@ -756,8 +764,8 @@
                             } else if (self.copiedTasks.length) {
                                 this.pasteTasks({ tasks: self.copiedTasks, offsetLeft, offsetTop })
                             }
-                            break;
                         }
+                        break;
                 }
 
                 self.instance.repaintEverything();

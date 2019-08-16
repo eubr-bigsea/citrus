@@ -31,7 +31,7 @@
                         <b-card>
                             <div class="row">
                                 <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
-                                    <toolbox :operations="operations"></toolbox>
+                                    <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task'></toolbox>
                                 </div>
                                 <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
                                     <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
@@ -326,7 +326,7 @@
             });
             this.$root.$on('onclick-task', (taskComponent, showProperties) => {
                 // If there is a selected task, keep properties opened
-                this.showProperties = showProperties || 
+                this.showProperties = showProperties ||
                     (this.selectedTask.task && this.selectedTask.task.id);
                 this.selectedTask = taskComponent;
                 this.updateAttributeSuggestion();
