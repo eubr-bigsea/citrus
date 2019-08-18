@@ -94,10 +94,15 @@
                         draggable="true"
                         :data-id="op.operation.id"
                         href="#"
+                        @dblclick="dbClickAddTask"
                         @dragstart="startDrag"
                         @dragend="stopDrag"
                       >
-                        <span class="ml-3" v-text="op.operation.name"></span>
+                        <span
+                          :data-id="op.operation.id"
+                          class="ml-3"
+                          v-text="op.operation.name"
+                        ></span>
                       </a>
                     </b-collapse>
                   </div>
@@ -111,6 +116,7 @@
                 class="list-group-item truncate list-group-item-action flex-column align-items-start"
                 draggable="true"
                 :data-id="op.id"
+                @dblclick="dbClickAddTask"
                 @dragstart="startDrag"
                 @dragend="stopDrag"
               >
@@ -315,6 +321,7 @@ export default {
 
       if (self.selectedTask.id) {
         elem = document.getElementById(self.selectedTask.id);
+        dataTransfer.setData('tryConnections', self.selectedTask.id);
       } else if (self.tasks.length) {
         const index = self.tasks.length - 1;
         const lastTaskId = self.tasks[index].id;
@@ -322,8 +329,8 @@ export default {
       }
       let rect = elem.getBoundingClientRect();
 
-      let offsetLeft = rect.left + Math.floor(Math.random() * 100);
-      let offsetTop = rect.top + Math.floor(Math.random() * 80);
+      let offsetLeft = rect.left + Math.floor(Math.random() * 300);
+      let offsetTop = rect.top + Math.floor(Math.random() * 50);
 
       dataTransfer.setData('id', target.dataset.id);
       diagram.dispatchEvent(
@@ -333,26 +340,6 @@ export default {
           clientY: offsetTop
         })
       );
-    },
-    addTask(task) {
-      task.forms = {};
-      task.operation.forms.forEach(f => {
-        f.fields.forEach(field => {
-          task[field.name] = field['default'] || '';
-        });
-      });
-      task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
-      task.enabled = true;
-      this.$root.$emit('addTask', task);
-    },
-    generateId() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(
-        c
-      ) {
-        let r = (Math.random() * 16) | 0,
-          v = c == 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      });
     }
   }
 };
