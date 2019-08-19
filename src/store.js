@@ -52,23 +52,25 @@ export default new Vuex.Store({
   actions: {
     changeProfile({ commit }, params) {
       return new Promise((resolve, reject) => {
-        const url = `${params.thornUrl}/api/users/${params.user.attributes.id}`;
+        const url = `${params.thornUrl}/api/users`;
         const headers = { Accept: 'application/json; charset=utf-8' };
-        axios({ url, data: { data: params.user }, method: 'PATCH', headers })
+        axios({ url, data: { user: params.user }, method: 'PATCH', headers })
           .then(resp => {
             commit('change_profile_success', { user: resp.data.data });
-            const data = resp.data.data;
+            let userData = resp.data.data.attributes;
             const user = {
-              id: data.id,
-              email: data.email,
-              locale: data.locale,
-              login: data.email,
-              name: `${data.attributes['first-name']} ${data.attributes['last-name']}`
+              id: userData.id,
+              email: userData.email,
+              locale: userData.locale,
+              login: userData.email,
+              name: userData.full_name,
+              roles: userData.roles
             };
             localStorage.setItem('user', JSON.stringify(user));
             resolve(resp);
           })
           .catch(err => {
+            debugger;
             reject(err);
           });
       });
@@ -118,35 +120,30 @@ export default new Vuex.Store({
         let headers = { Accept: 'application/json; charset=utf-8' };
         axios({ url, data: { user: params.user }, method: 'POST', headers })
           .then(resp => {
-            const token = resp.data.token;
+            const token = resp.headers.authorization;
             if (token === undefined) {
               let err = new Error('errors.invalidLoginOrPassword');
               reject(err);
             }
-            const finalToken = `Token token="${token}", email="${resp.data.email}"`;
-            axios.defaults.headers.common['Authorization'] = finalToken;
-            axios.defaults.headers.common['X-Authentication'] = finalToken;
-            axios.defaults.headers.common['X-User-Id'] = resp.data.userId;
 
-            axios
-              .get(`${params.thornUrl}/api/users/${resp.data.userId}`)
-              .then(resp2 => {
-                const user = {
-                  id: resp.data.userId,
-                  email: resp.data.email,
-                  locale: resp.data.locale,
-                  login: resp.data.email,
-                  name: `${resp2.data.data.attributes['first-name']} ${resp2.data.data.attributes['last-name']}`
-                };
-                localStorage.setItem('token', finalToken);
-                localStorage.setItem('user', JSON.stringify(user));
-                commit('auth_success', { token, user });
+            let userData = resp.data.data.attributes;
 
-                resolve(resp);
-              })
-              .catch(function(e) {
-                reject(e);
-              });
+            axios.defaults.headers.common['Authorization'] = token;
+            axios.defaults.headers.common['X-Authentication'] = token;
+            axios.defaults.headers.common['X-User-Id'] = userData.id;
+
+            const user = {
+              id: userData.id,
+              email: userData.email,
+              locale: userData.locale,
+              login: userData.email,
+              name: userData.full_name,
+              roles: userData.roles
+            };
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
+            commit('auth_success', { token, user });
+            resolve(resp);
           })
           .catch(err => {
             commit('auth_error');
@@ -161,7 +158,7 @@ export default new Vuex.Store({
         commit('register_request');
         axios({
           url: `${params.thornUrl}/api/users`,
-          data: params.data,
+          data: { user: params.data },
           method: 'POST'
         })
           .then(resp => {
@@ -189,6 +186,7 @@ export default new Vuex.Store({
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     user: state => state.user || {},
+    isAdmin: state => state.user.roles.includes('admin'),
     token: state => state.token
   }
 });
