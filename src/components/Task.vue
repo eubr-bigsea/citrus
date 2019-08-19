@@ -322,6 +322,11 @@
                 this.contextMenuOpened = false;
                 this.$root.$emit('onremove-task', this.task);
             },
+            endpointClick(endpoint, e){
+                if (e.ctrlKey){
+                    console.debug('Port id: ', endpoint._portId);
+                }
+            }
         },
         props: {
             enableContextMenu: { default: true },
@@ -449,7 +454,8 @@
                         };
                         options.paintStyle.fill = options.paintStyle.fillStyle;
                         if (self.instance && self.instance.addEndpoint) {
-                            let endpoint = self.instance.addEndpoint(elem, options);
+                            const endpoint = self.instance.addEndpoint(elem, options);
+                            endpoint.bind('click', self.endpointClick);
                             endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
                             endpoint._portId = ports[inx].id;
                         }

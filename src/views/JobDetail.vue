@@ -117,7 +117,7 @@
                                 <b-card>
                                     <div class="row" v-for="(step, inx) in job.steps" :key="inx">
                                         <div class="col-md-12 lemonade">
-                                            <div class="mt-2 border-bottom pb-2"
+                                            <div class="mt-2 border-bottom pb-2" 
                                                 v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
                                                 <TaskDisplay :task="getTask(step.task.id)" />
                                                 &nbsp;
@@ -127,9 +127,9 @@
                                                     <span v-if="log.type === 'HTML'">
                                                         <div class="html-div" v-html="log.message"></div>
                                                     </span>
-                                                    <span v-else-if="log.type === 'IMAGE'">
+                                                    <div v-else-if="log.type === 'IMAGE'" class="image-result">
                                                         <img :src="'data:image/png;base64,' + log.message">
-                                                    </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -449,6 +449,10 @@
     };
 </script>
 <style>
+    .image-result {
+        border: 1px dashed #ccc;
+        width: 100%;
+    }
     .badge-custom {
         width: 80px;
     }

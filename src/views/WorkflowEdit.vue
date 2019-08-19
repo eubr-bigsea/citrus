@@ -34,14 +34,16 @@
                                     <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task'></toolbox>
                                 </div>
                                 <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
-                                    <diagram :workflow="workflow" ref="diagram" id="main-diagram" :operations="operations"
-                                        v-if="loaded" :loaded="loaded" :version="workflow.version" tabindex="0"></diagram>
+                                    <diagram :workflow="workflow" ref="diagram" id="main-diagram"
+                                        :operations="operations" v-if="loaded" :loaded="loaded"
+                                        :version="workflow.version" tabindex="0"></diagram>
                                     <slideout-panel :opened="showProperties">
                                         <property-window :task="selectedTask.task" v-if="selectedTask.task"
                                             :suggestions="getSuggestions(selectedTask.task.id)" />
                                     </slideout-panel>
                                 </div>
-                                <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled ref="historyModal">
+                                <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled
+                                    ref="historyModal">
                                     <div class="historyArea">
                                         <table class="table table-sm table-striped text-center">
                                             <tr>
@@ -67,14 +69,15 @@
                                     </div>
                                 </b-modal>
                                 <b-modal id="executeModal" size="lg" :title="$t('workflow.execute')" ref="executeModal">
-                                    <div>
+                                    <em>
                                         {{$t('workflow.required')}}:
-                                    </div>
+                                    </em>
                                     <div v-if="validationErrors.length > 0">
                                         <b-card>
                                             <b-card-body>
                                                 <p class="text-danger">
-                                                    {{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
+                                                    {{$tc('workflow.validationExplanation', validationErrors.length)}}
+                                                </p>
                                                 <table class="table table-sm">
                                                     <tr>
                                                         <th>{{$tc('titles.tasks')}}</th>
@@ -90,40 +93,103 @@
                                             </b-card-body>
                                         </b-card>
                                     </div>
-                                    <div class="mt-1">
-                                        <b-card>
-                                            <b-card-body>
-                                                <div class="container-fluid">
+                                    <div class="mt-2 p-2 border">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <label>{{$tc('titles.cluster')}}:</label>
+                                                    <select v-model="clusterInfo.id"
+                                                        class="form-control-sm form-control"
+                                                        v-on:change="changeCluster">
+                                                        <option v-for="option in clusters" v-bind:value="option.id"
+                                                            v-bind:key="option.id">
+                                                            {{ option.name }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-8">
+                                                    <label>{{$t('workflow.jobName')}}
+                                                        ({{$t('common.optional')}}):</label>
+                                                    <input type="text" class="form-control form-control-sm"
+                                                        v-model="clusterInfo.jobName" maxlength="50" />
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <small>{{clusterInfo.description}}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 p-2 border">
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <strong>Performance models (optional)</strong>
+                                                </div>
+                                                <div class="col-md-6">
                                                     <div class="row">
-                                                        <div class="col-md-12">
-                                                            <label>{{$t('workflow.jobName')}}
-                                                                ({{$t('common.optional')}}):</label>
-                                                            <input type="text" class="form-control"
-                                                                v-model="clusterInfo.jobName" maxlength="50" />
-                                                        </div>
-                                                        <div class="col-md-6 mt-3">
-                                                            <label>{{$tc('titles.cluster')}}:</label>
-                                                            <select v-model="clusterInfo.id" class="form-control"
-                                                                v-on:change="changeCluster">
-                                                                <option v-for="option in clusters" v-bind:value="option.id" v-bind:key="option.id">
-                                                                    {{ option.name }}
-                                                                </option>
+                                                        <div class="col-md-4">
+                                                            <label>Data type:</label>
+                                                            <select class="form-control form-control-sm"
+                                                                v-model="performanceModel.dataType">
+                                                                <option value="IMAGE">Image</option>
+                                                                <option value="VIDEO">Video</option>
+                                                                <option value="TABULAR">Tabular</option>
                                                             </select>
-                                                            <small>{{clusterInfo.description}}</small>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <label>Estimated size (qty or rows):</label>
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                min="1"
+                                                                v-model.number="performanceModel.estimatedSize" />
+                                                        </div>
+                                                        <div class="col-md-4" v-show="workflow.platform.slug === 'keras'">
+                                                            <label>Batch size:</label>
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                min="1" v-model.number="performanceModel.batchSize" />
+                                                        </div>
+                                                        <div class="col-md-8" v-show="workflow.platform.slug === 'keras'">
+                                                            <label>Number of iterations:</label>
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                min="1" v-model.number="performanceModel.iterations" />
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label>Deadline (minutes):</label>
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                min="1" v-model.number="performanceModel.deadline" />
+                                                        </div>
+                                                        <div class="col-md-6"></div>
+                                                        <div class="col-md-4">
+                                                            <label>Cores:</label>
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                min="1" v-model.number="performanceModel.cores"
+                                                                readonly />
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <label>Setup:</label>
+                                                            <input type="text" class="form-control form-control-sm"
+                                                                min="1" v-model.number="performanceModel.setup"
+                                                                readonly />
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </b-card-body>
-                                        </b-card>
+                                                <div class="col-md-6 border-left">
+                                                    <PerformanceModelChart :deadline="performanceModel.deadline"
+                                                        :categories="performanceModel.availableCategories"
+                                                        :cores="performanceModel.availableCores" :data="performanceModel.data" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div slot="modal-footer" class="w-100 text-right">
-                                        <button class="btn btn-sm btn-outline-success" @click="execute" id="mdl-execute-wf">
+                                        <button class="btn btn-sm btn-outline-success" @click="execute"
+                                            id="mdl-execute-wf">
                                             <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
                                         <button class="ml-1 btn btn-sm btn-outline-dark"
                                             @click="cancelExecute">{{$t('actions.cancel')}}</button>
                                     </div>
                                 </b-modal>
-                                <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled ref="saveAsModal">
+                                <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled
+                                    ref="saveAsModal">
                                     <b-form-radio-group v-model="saveOption">
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
@@ -152,7 +218,8 @@
                                     <div slot="modal-footer" class="w-100">
                                         <b-btn @click="closeSaveAs" variant="secondary_sm" class="float-right">
                                             {{$t('actions.cancel')}}</b-btn>
-                                        <b-btn @click="okClicked" variant="primary" class="float-right mr-2">{{$t('common.ok')}}
+                                        <b-btn @click="okClicked" variant="primary" class="float-right mr-2">
+                                            {{$t('common.ok')}}
                                         </b-btn>
                                     </div>
                                 </b-modal>
@@ -212,7 +279,7 @@
                         </b-form-group>
                         <b-form-checkbox v-model="workflow.is_template">
                             {{$t('workflow.useAsTemplate')}}
-                            <br/>
+                            <br />
                             <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
                         </b-form-checkbox>
                     </b-form>
@@ -228,6 +295,7 @@
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import DiagramComponent from '../components/Diagram.vue';
     import PropertyWindow from '../components/PropertyWindow.vue';
+    import PerformanceModelChart from '../components/PerformanceModelChart.vue';
     import WorkflowToolbar from '../components/WorkflowToolbar.vue';
     import ToolboxComponent from '../components/Toolbox.vue';
     import SlideOutPanel from '../components/SlideOutPanel.vue';
@@ -253,6 +321,7 @@
             WorkflowExecution,
             VuePerfectScrollbar,
             InputHeader,
+            PerformanceModelChart,
             TahitiSuggester: () => {
                 return new Promise((resolve, reject) => {
                     let script = document.createElement('script')
@@ -278,6 +347,23 @@
                 newName: '',
                 operations: [],
                 operationsLookup: new Map(),
+                performanceModel: {
+                    dataType: 'IMAGE',
+                    estimatedSize: '',
+                    batchSize: 5,
+                    iterations: 3,
+                    deadline: 60,
+                    cores: null,
+                    setup: null,
+                    availableCores: ['1', '2', '4', '8'],
+                    availableCategories: ['P100-PCIE-16GB', 'V100-SXM2-16GB','V100-PCIE-16GB', 'V100-SMX2-32GB'],
+                    data: [
+                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1),
+                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1),
+                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1),
+                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1)
+                    ]
+                },
                 resultTask: { step: {} },
                 saveOption: 'new',
                 selectedTab: 0,
@@ -310,12 +396,12 @@
             }
         },
         created() {
-            var self  = this;
+            var self = this;
             window.addEventListener('beforeunload', self.leaving)
         },
         mounted() {
             let self = this
-            this.$root.$on('onclear-selection', () =>{
+            this.$root.$on('onclear-selection', () => {
                 this.selectedTask = {};
                 this.selectedElements = [];
             });
@@ -340,14 +426,19 @@
             this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showPropertiesWindow);
-            this.$root.$on('onset-isDirty',this.setIsDirty);
+            this.$root.$on('onset-isDirty', this.setIsDirty);
+            this.$root.$on('onclick-setup', (options) => {
+                this.performanceModel.cores = options.cores;
+                this.performanceModel.setup = options.setup;
+            });
             this.$root.$on('onblur-selection', () => {
                 this.showProperties = false;
                 this.selectedTask = { task: {} };
             });
+
             this.$root.$on('update-form-field-value', (field, value, labelValue) => {
                 if (self.selectedTask.task.forms[field.name]) {
-                    if(self.selectedTask.task.forms[field.name].value !== value) {
+                    if (self.selectedTask.task.forms[field.name].value !== value) {
                         self.selectedTask.task.forms[field.name].value = value
                         this.isDirty = true;
                     }
@@ -383,17 +474,17 @@
                         self.workflow.forms = {}
                     }
                 try {
-                    if (labelValue){
-                        if(self.workflow.forms[field.name].value !== value){
+                    if (labelValue) {
+                        if (self.workflow.forms[field.name].value !== value) {
                             self.workflow.forms[field.name].value = value;
                             this.isDirty = true;
                         }
-                        if(self.workflow.forms[field.name].labelValue !== labelValue){
+                        if (self.workflow.forms[field.name].labelValue !== labelValue) {
                             self.workflow.forms[field.name].labelValue = labelValue;
                             this.isDirty = true;
                         }
                     } else {
-                       if(self.workflow.forms[field.name].value !== value){
+                        if (self.workflow.forms[field.name].value !== value) {
                             self.workflow.forms[field.name].value = value;
                             this.isDirty = true;
                         }
@@ -455,11 +546,12 @@
             });
             this.$root.$on('onshow-result', this.showTaskResult);
             this.load();
+            
         },
-        beforeRouteLeave (to, from, next) {
+        beforeRouteLeave(to, from, next) {
             let self = this;
-            if(self.isDirty){
-                if(confirm(self.$tc('warnings.dirtyCheck'))){
+            if (self.isDirty) {
+                if (confirm(self.$tc('warnings.dirtyCheck'))) {
                     next()
                 }
             } else {
@@ -498,7 +590,7 @@
         methods: {
             leaving(event) {
                 let self = this;
-                if(self.isDirty){
+                if (self.isDirty) {
                     event.preventDefault();
                     event.returnValue = false;
                 }
@@ -572,6 +664,10 @@
                                 this.updateAttributeSuggestion();
                                 self.loaded = true;
                                 self.$nextTick(() => {
+                                    if (self.workflow.platform.slug === 'spark'){
+                                        self.performanceModel.availableCategories = ['4GB RAM', '8GB RAM', 
+                                            '16GB RAM', '32GB RAM', ]
+                                    }
                                 });
                                 const params = { workflow_id: this.$route.params.id }
                                 axios.get(`${standUrl}/jobs/latest`, { params })
@@ -816,7 +912,7 @@
                     this.$refs.saveAsModal.show();
                 }
             },
-            setIsDirty(flag){
+            setIsDirty(flag) {
                 this.isDirty = flag;
             },
             okClicked() {
@@ -920,7 +1016,7 @@
                         t.operation.forms.forEach(form => {
                             if (form.category === 'execution') {
                                 form.fields.forEach(field => {
-                                    if (field.enabled || field.enabled === undefined){
+                                    if (field.enabled || field.enabled === undefined) {
                                         if (field.required && field.enable_conditions !== 'false') {
                                             const value = t.forms[field.name] ? t.forms[field.name].value : null;
                                             if (value === null || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
@@ -983,15 +1079,18 @@
     .blackout {
         background-color: rgba(0, 0, 0, 0) !important;
     }
+
     .historyArea {
         height: 60vh;
         overflow: auto
     }
+
     .edit-area {
         -ms-flex: 0 0 230px;
         flex: 0 0 230px;
         background-color: greenyellow;
     }
+
     .sidebar {
         -ms-flex: 0 0 230px;
         flex: 0 0 230px;
