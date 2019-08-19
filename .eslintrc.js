@@ -1,12 +1,27 @@
 module.exports = {
+  root: true,
+  env: {
+    node: true
+  },
   extends: [
-    // add more generic rulesets here, such as:
-    // 'eslint:recommended',
-    'plugin:vue/recommended'
+    'eslint:recommended',
+    'plugin:prettier/recommended',
+    'plugin:vue/recommended',
+    'prettier/vue'
   ],
   rules: {
-    // override/add rules settings here, such as:
-    // 'vue/no-unused-vars': 'error'
-    'no-unused-vars': ['error', { args: 'none', ignoreRestSiblings: false }]
+    'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-unused-vars': ['error', { args: 'none', ignoreRestSiblings: false }],
+    'prettier/prettier': 'off',
+    'vue/no-v-html': 'off'
+  },
+  globals: {
+    $nuxt: true,
+    Vue: true
+  },
+  parserOptions: {
+    parser: 'babel-eslint'
   }
 };
