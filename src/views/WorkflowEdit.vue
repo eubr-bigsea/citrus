@@ -119,6 +119,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!--
                                     <div class="mt-2 p-2 border">
                                         <div class="container-fluid">
                                             <div class="row">
@@ -180,6 +181,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    -->
                                     <div slot="modal-footer" class="w-100 text-right">
                                         <button class="btn btn-sm btn-outline-success" @click="execute"
                                             id="mdl-execute-wf">
