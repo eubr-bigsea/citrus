@@ -55,3 +55,8 @@
         },
     }
 </script>
+<style>
+    .v-select ul.dropdown-menu {
+        font-size: 1em;
+    }
+</style>

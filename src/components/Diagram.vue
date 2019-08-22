@@ -290,23 +290,25 @@
                     ];
 
                     const connection = self.instance.connect({ uuids });
-                    connection.bind('mouseover', (c, originalEvent) => {
-                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null;
-                            currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = '#ed8';
-                            c.setPaintStyle(currentStyle);
-                            self.instance.repaintEverything();
+                    if (connection) {
+                        connection.bind('mouseover', (c, originalEvent) => {
+                            //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
+                            if (originalEvent) {
+                                const currentStyle = c ? c.getPaintStyle() : null;
+                                currentStyle.lineWidth = 20;
+                                currentStyle.outlineColor = '#ed8';
+                                c.setPaintStyle(currentStyle);
+                                self.instance.repaintEverything();
+                            }
+                        });
+                        const currentStyle = connection ? connection.getPaintStyle() : null;
+                        if (currentStyle) {
+                            currentStyle[
+                                'strokeStyle'
+                            ] = connection.endpoints[0].getPaintStyle().fillStyle;
+                            currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
+                            connection.setPaintStyle(currentStyle);
                         }
-                    });
-                    const currentStyle = connection ? connection.getPaintStyle() : null;
-                    if (currentStyle) {
-                        currentStyle[
-                            'strokeStyle'
-                        ] = connection.endpoints[0].getPaintStyle().fillStyle;
-                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
-                        connection.setPaintStyle(currentStyle);
                     }
                 });
                 if (task.tryConnections) {
@@ -1278,7 +1280,7 @@
 <style scoped lang="scss">
     .scroll-area {
         width: 100%;
-        height: 82vh;
+        height: 95vh;
         max-height: calc(100vh - 300px);
     }
 

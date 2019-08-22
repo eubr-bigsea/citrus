@@ -186,6 +186,11 @@ Vue.filter('formatJsonDate', v => {
 Vue.filter('timeFromNow', (v, l) =>
   distanceInWordsStrict(new Date(), v, { addSuffix: true, locale: locales[l] })
 );
+Vue.filter('formatJsonHourMinute', (v) => { 
+    if (v) { 
+        return format(parse(v), 'HH:MM:ss');
+    }
+});
 
 // Highcharts
 import Highcharts from 'highcharts';
