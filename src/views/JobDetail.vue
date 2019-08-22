@@ -50,7 +50,8 @@
                                                             <div v-for="log in sortedLogs" :key="log.id" class="job-log"
                                                                 :class="{'disabled': selectedTask.id && selectedTask.id !== log.task.id}">
 
-                                                                <small v-show="log.type !== 'SILENT' && log.type !== 'HTML' && log.type !== 'PROGRESS'">
+                                                                <small
+                                                                    v-show="log.type !== 'SILENT' && log.type !== 'HTML' && log.type !== 'PROGRESS'">
                                                                     <span class="badge-custom"
                                                                         :class="'badge badge-' + log.level.replace('ERROR', 'danger').toLowerCase()">{{$t(`juicer.log.${log.level.toLowerCase()}`)}}</span>
                                                                     &nbsp;
@@ -117,7 +118,7 @@
                                 <b-card>
                                     <div class="row" v-for="(step, inx) in job.steps" :key="inx">
                                         <div class="col-md-12 lemonade">
-                                            <div class="mt-2 border-bottom pb-2" 
+                                            <div class="mt-2 border-bottom pb-2"
                                                 v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
                                                 <TaskDisplay :task="getTask(step.task.id)" />
                                                 &nbsp;
@@ -226,7 +227,7 @@
             'slideout-panel': SlideOut,
             'caipirinha-visualization': CapirinhaVisualization,
             SourceCode,
-            ProgressChart, 
+            ProgressChart,
             Visualization,
             TaskDisplay
         },
@@ -453,6 +454,7 @@
         border: 1px dashed #ccc;
         width: 100%;
     }
+
     .badge-custom {
         width: 80px;
     }
