@@ -1,99 +1,60 @@
 <template>
-  <div :class="'platform-' + platform" class="border">
-    <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
-    <div
-      id="lemonade-container"
-      :class="{ 'with-grid': showGrid }"
-      class="lemonade-container not-selectable"
-      @click="diagramClick"
-    >
-      <VuePerfectScrollbar
-        :settings="settings"
-        class="scroll-area"
-        @ps-scroll-y="scrollHandle"
-      >
-        <div
-          v-if="loaded"
-          id="lemonade-diagram"
-          ref="diagram"
-          :show-task-decoration="true"
-          :style="{
-            'pointer-events':
-              showToolbarInternal && showToolbar ? 'auto' : 'auto'
-          }"
-          class="lemonade"
-          @drop="drop"
-          @dragover="allowDrop"
-        >
-          <task-component
-            v-for="task of workflow.tasks"
-            :key="`${$parent.version} - ${task.id}`"
-            :task="task"
-            :instance="instance"
-            :enable-context-menu="editable"
-            :draggable="editable"
-            :show-decoration="showTaskDecoration || showTaskDecorationInternal"
-          />
-          <div ref="ghostSelect" class="ghost-select">
-            <span />
-          </div>
-          <div v-for="group in groups" :key="group.id">
-            <group-component
-              :key="group.id"
-              :group="group"
-              :instance="instance"
-            />
-          </div>
+    <div :class="'platform-' + platform" class="border">
+        <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
+        <div id="lemonade-container" :class="{ 'with-grid': showGrid }" class="lemonade-container not-selectable"
+            @click="diagramClick">
+            <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
+                <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
+                    :style="{'pointer-events':showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
+                    @drop="drop" @dragover="allowDrop">
+                    <task-component v-for="task of workflow.tasks" :key="`${$parent.version} - ${task.id}`" :task="task"
+                        :instance="instance" :enable-context-menu="editable" :draggable="editable"
+                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+                    <div ref="ghostSelect" class="ghost-select">
+                        <span />
+                    </div>
+                    <div v-for="group in groups" :key="group.id">
+                        <group-component :key="group.id" :group="group" :instance="instance" />
+                    </div>
+                </div>
+            </VuePerfectScrollbar>
         </div>
-      </VuePerfectScrollbar>
+        <modal-component v-if="showExecutionModal" @close="showExecutionModal = false">
+            <div slot="header">
+                <h4>Execution of workflow</h4>
+                Please, complete the required information for the execution of the
+                workflow:
+            </div>
+            <div slot="body" class="body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Job name (optional):</label>
+                            <input v-model="name" type="text" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Cluster:</label>
+                            <select v-model="cluster" class="form-control" @change="changeCluster">
+                                <option v-for="option in clusters" :key="option.id" :value="option.id">{{ option.name }}
+                                </option>
+                            </select>
+                            <span>{{ clusterDescription }}</span>
+                        </div>
+                        <div class="col-md-12">
+                            <label>Missing required parameters:</label>
+                            <p>There is no missing required parameter</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div slot="footer">
+                <button class="btn btn-primary" @click="execute">
+                    <span class="fa fa-play" /> Execute
+                </button>
+                <button class="btn btn-danger" @click="cancelExecute">Cancel</button>
+            </div>
+        </modal-component>
     </div>
-    <modal-component
-      v-if="showExecutionModal"
-      @close="showExecutionModal = false"
-    >
-      <div slot="header">
-        <h4>Execution of workflow</h4>
-        Please, complete the required information for the execution of the
-        workflow:
-      </div>
-      <div slot="body" class="body">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-12">
-              <label>Job name (optional):</label>
-              <input v-model="name" type="text" class="form-control" />
-            </div>
-            <div class="col-md-6">
-              <label>Cluster:</label>
-              <select
-                v-model="cluster"
-                class="form-control"
-                @change="changeCluster"
-              >
-                <option
-                  v-for="option in clusters"
-                  :key="option.id"
-                  :value="option.id"
-                  >{{ option.name }}
-                </option>
-              </select>
-              <span>{{ clusterDescription }}</span>
-            </div>
-            <div class="col-md-12">
-              <label>Missing required parameters:</label>
-              <p>There is no missing required parameter</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div slot="footer">
-        <button class="btn btn-primary" @click="execute">
-          <span class="fa fa-play" /> Execute
-        </button>
-        <button class="btn btn-danger" @click="cancelExecute">Cancel</button>
-      </div>
-    </modal-component>
-  </div>
 </template>
 
 <script>
@@ -263,7 +224,7 @@
                 this.init();
             }
             this.$root.$on('onclick-task', taskComponent => {
-                if (! this.selectedElements.includes(taskComponent.task.id)){
+                if (!this.selectedElements.includes(taskComponent.task.id)) {
                     this.selectedTask = taskComponent.task;
                     this.selectedElements = [taskComponent.task.id];
                 }
@@ -348,41 +309,41 @@
                         connection.setPaintStyle(currentStyle);
                     }
                 });
-                if(task.tryConnections){
-                  let elem = document.getElementById(task.id)
-                  elem.dispatchEvent(new MouseEvent('dblclick', {
-                                                                  bubbles: true,
-                                                                  cancelable: true,
-                                                                  view: window
-                                                                }
-                                                    )
-                                    )
-                  let sortFunction = (a,b) =>{
-                      if (a.type < b.type) { return -1 }
-                      if (a.type > b.type) { return 1 }
-                      return 0
-                  }
-                  let endpoints1 = self.instance.getEndpoints(task.tryConnections).reverse(sortFunction)
-                  let endpoints2 = self.instance.getEndpoints(task.id).sort(sortFunction)
-                  let shouldBreak = false
-
-                  for( var i in endpoints1) {
-                    let e1 = endpoints1[i]
-                    for( var j in endpoints2) {
-                      let e2 = endpoints2[j]
-                      if(shouldBreak){
-                        break
-                      }
-                      if(e2.scope == e1.scope && ( (e1.type == 'Rectangle' && e2.type == 'Dot') || (e1.type == 'Dot' && e2.type == 'Rectangle') )) {
-                        if(shouldBreak){
-                          break
-                        }
-                        self.tryConnections =  true;
-                        var con = self.instance.connect({ uuids:[e1.getUuid(),e2.getUuid()] });
-                        shouldBreak = con != undefined
-                      }
+                if (task.tryConnections) {
+                    let elem = document.getElementById(task.id)
+                    elem.dispatchEvent(new MouseEvent('dblclick', {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window
                     }
-                  }
+                    )
+                    )
+                    let sortFunction = (a, b) => {
+                        if (a.type < b.type) { return -1 }
+                        if (a.type > b.type) { return 1 }
+                        return 0
+                    }
+                    let endpoints1 = self.instance.getEndpoints(task.tryConnections).reverse(sortFunction)
+                    let endpoints2 = self.instance.getEndpoints(task.id).sort(sortFunction)
+                    let shouldBreak = false
+
+                    for (var i in endpoints1) {
+                        let e1 = endpoints1[i]
+                        for (var j in endpoints2) {
+                            let e2 = endpoints2[j]
+                            if (shouldBreak) {
+                                break
+                            }
+                            if (e2.scope == e1.scope && ((e1.type == 'Rectangle' && e2.type == 'Dot') || (e1.type == 'Dot' && e2.type == 'Rectangle'))) {
+                                if (shouldBreak) {
+                                    break
+                                }
+                                self.tryConnections = true;
+                                var con = self.instance.connect({ uuids: [e1.getUuid(), e2.getUuid()] });
+                                shouldBreak = con != undefined
+                            }
+                        }
+                    }
                 }
             });
         },
@@ -1283,7 +1244,7 @@
                           */
                 self.instance.bind('connection', (info, originalEvent) => {
                     const con = info.connection;
-                    if (originalEvent || self.tryConnections ) {
+                    if (originalEvent || self.tryConnections) {
                         //self.instance.detach(con);
                         let [source_id, source_port] = info.sourceEndpoint
                             .getUuid()
@@ -1315,44 +1276,44 @@
 </script>
 
 <style scoped lang="scss">
-.scroll-area {
-  width: 100%;
-  height: 82vh;
-  max-height: calc(100vh - 300px);
-}
+    .scroll-area {
+        width: 100%;
+        height: 82vh;
+        max-height: calc(100vh - 300px);
+    }
 
-.ghost-active {
-  display: block !important;
-}
+    .ghost-active {
+        display: block !important;
+    }
 
-.ghost-select > span {
-  border: 1px dashed #000;
-  width: 100%;
-  height: 100%;
-  float: left;
-}
+    .ghost-select>span {
+        border: 1px dashed #000;
+        width: 100%;
+        height: 100%;
+        float: left;
+    }
 
-.ghost-select {
-  display: none;
-  width: 100px;
-  height: 100px;
-  z-index: 100000;
-  position: absolute !important;
-  cursor: default !important;
-}
+    .ghost-select {
+        display: none;
+        width: 100px;
+        height: 100px;
+        z-index: 100000;
+        position: absolute !important;
+        cursor: default !important;
+    }
 
-.not-selectable {
-  user-select: none;
-  outline: none;
+    .not-selectable {
+        user-select: none;
+        outline: none;
 
-  section:focus,
-  div:focus {
-    outline: none;
-  }
-}
+        section:focus,
+        div:focus {
+            outline: none;
+        }
+    }
 
-.news {
-  margin-left: 5px;
-  color: #888;
-}
+    .news {
+        margin-left: 5px;
+        color: #888;
+    }
 </style>
