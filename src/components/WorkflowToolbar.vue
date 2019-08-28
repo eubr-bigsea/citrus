@@ -6,23 +6,34 @@
         <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
             <span class="far fa-copy"></span>
         </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="exportWorkflow" :title="$t('actions.export')">
+            <span class="fa fa-download"></span>
+        </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showHistory" :title="$t('actions.showHistory')">
             <span class="fa fa-history"></span>
         </button>
-        <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')" variant="success" id="tlb-execute-wf">
+        <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')"
+            variant="success" id="tlb-execute-wf">
             <span class="fa fa-play"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
+            variant="danger" id="tlb-restart-wf">
+            <span class="fa fa-stop red"></span>
         </button>
     </div>
 </template>
 
 <style>
+    .red {
+        color: #FF4136;
+    }
     .runBtn {
-        color: #28a745!important;
+        color: #28a745 !important;
     }
 
     .runBtn:hover {
-        color: white!important;
-        background-color: #28a745!important;
+        color: white !important;
+        background-color: #28a745 !important;
     }
 </style>
 
@@ -48,6 +59,9 @@
             execute() {
                 this.$root.$emit('onclick-execute');
             },
+            exportWorkflow() {
+                this.$root.$emit('onclick-export');
+            }
         }
     }
 </script>

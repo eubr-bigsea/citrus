@@ -426,6 +426,7 @@
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
             this.$root.$on('onremove-tasks', this.removeTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
+            this.$root.$on('onclick-export', () => this.exportWorkflow());
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showPropertiesWindow);
             this.$root.$on('onset-isDirty', this.setIsDirty);
@@ -772,6 +773,19 @@
                     let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
+            },
+            exportWorkflow(){
+                const self = this
+                const json = JSON.stringify(self.workflow);
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:application/json;charset=utf-8,' + 
+                    encodeURIComponent(json));
+                element.setAttribute('download', self.workflow.name + '.json');
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+                self.success(self.$t('messages.exportWorkflow'));
             },
             saveWorkflow(savingCopy, newName) {
                 let self = this

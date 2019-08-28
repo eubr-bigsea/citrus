@@ -20,6 +20,8 @@ import {
   faCoffee,
   faCopy,
   faCogs,
+  faDownload,
+  faUpload,
   faHistory,
   faImage,
   faLayerGroup,
@@ -43,7 +45,6 @@ import {
   faDatabase,
   faSearch,
   faEye,
-  faDownload,
   faMinusCircle,
   faChevronCircleDown,
   faChevronCircleUp,
@@ -60,7 +61,8 @@ import {
   faAngleRight,
   faExclamationTriangle,
   faExclamationCircle,
-  faChevronLeft
+  faChevronLeft,
+  faStop,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -96,6 +98,8 @@ library.add(
   faCoffee,
   faCopy,
   faCogs,
+  faDownload,
+  faUpload,
   faHistory,
   faPlay,
   faImage,
@@ -136,7 +140,8 @@ library.add(
   faAngleRight,
   faExclamationTriangle,
   faExclamationCircle,
-  faChevronLeft
+  faChevronLeft,
+  faStop
 );
 
 import {
