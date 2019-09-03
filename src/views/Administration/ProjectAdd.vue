@@ -142,16 +142,9 @@ let thornUrl = process.env.VUE_APP_THORN_URL;
 export default {
   name: 'UserAdd',
   mixins: [Notifier],
-  props: {
-    project: {
-      type: Object,
-      default: () => {
-        return {};
-      }
-    }
-  },
   data() {
     return {
+      project: {},
       users: [],
       usersIdSelected: [],
       managersIdSelected: [],
