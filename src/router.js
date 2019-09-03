@@ -4,9 +4,13 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
 
-import UserList from './views/Administration/UserList.vue';
-import UserAdd from './views/Administration/UserAdd.vue';
-import UserEdit from './views/Administration/UserEdit.vue';
+import userlist from './views/Administration/UserList.vue';
+import useradd from './views/Administration/UserAdd.vue';
+import useredit from './views/Administration/UserEdit.vue';
+
+import ProjectList from './views/Administration/ProjectList.vue';
+import ProjectAdd from './views/Administration/ProjectAdd.vue';
+import ProjectEdit from './views/Administration/ProjectEdit.vue';
 
 import ChangePassword from './views/ChangePassword.vue';
 import Login from './views/Login.vue';
@@ -61,7 +65,7 @@ let router = new Router({
     {
       path: '/administration/users',
       name: 'AdministrationUserList',
-      component: UserList,
+      component: userlist,
       meta: {
         requiresAuth: true,
         requiresAdmin: true
@@ -70,7 +74,7 @@ let router = new Router({
     {
       path: '/administration/users/new',
       name: 'AdministrationAddUser',
-      component: UserAdd,
+      component: useradd,
       meta: {
         requiresAuth: true,
         requiresAdmin: true
@@ -79,7 +83,34 @@ let router = new Router({
     {
       path: '/administration/users/:id',
       name: 'AdministrationEditUser',
-      component: UserEdit,
+      component: useredit,
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
+      }
+    },
+    {
+      path: '/administration/projects',
+      name: 'AdministrationProjectList',
+      component: ProjectList,
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
+      }
+    },
+    {
+      path: '/administration/projects/new',
+      name: 'AdministrationAddProject',
+      component: ProjectAdd,
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
+      }
+    },
+    {
+      path: '/administration/projects/:id',
+      name: 'AdministrationEditProject',
+      component: ProjectEdit,
       meta: {
         requiresAuth: true,
         requiresAdmin: true

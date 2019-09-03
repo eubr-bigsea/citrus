@@ -29,6 +29,9 @@
           <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
             {{ $tc('titles.user', 2) }}
           </b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'AdministrationProjectList' }">
+            {{ $tc('titles.project', 2) }}
+          </b-dropdown-item>
           <b-dropdown-item href="#">{{
             $tc('titles.cluster', 2)
           }}</b-dropdown-item>
