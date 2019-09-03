@@ -4,9 +4,9 @@
       <div class="col">
         <div>
           <div class="d-flex justify-content-between align-items-center">
-            <h1>{{ $tc('titles.user', 2) }}</h1>
+            <h1>{{ $tc('titles.project', 2) }}</h1>
             <router-link
-              :to="{ name: 'AdministrationAddUser' }"
+              :to="{ name: 'AdministrationAddProject' }"
               class="btn btn-sm btn-outline-primary"
             >
               {{ $t('actions.addItem') }}
@@ -18,65 +18,64 @@
               <div class="card">
                 <div class="card-body">
                   <v-server-table
-                    ref="userList"
+                    ref="projectList"
                     :columns="columns"
                     :options="options"
-                    name="userList"
+                    name="projectList"
                   >
                     <template slot="id" slot-scope="props">
                       <router-link
                         :to="{
-                          name: 'AdministrationEditUser',
+                          name: 'AdministrationEditProject',
                           params: { id: props.row.id }
                         }"
                       >
                         {{ props.row.id }}
                       </router-link>
                     </template>
-                    <template slot="full_name" slot-scope="props">
+                    <template slot="name" slot-scope="props">
                       <router-link
                         :to="{
-                          name: 'AdministrationEditUser',
+                          name: 'AdministrationEditProject',
                           params: { id: props.row.id }
                         }"
                       >
-                        {{ props.row.full_name }}
+                        {{ props.row.name }}
                       </router-link>
                     </template>
-                    <template slot="email" slot-scope="props">
+                    <template slot="category" slot-scope="props">
                       <router-link
                         :to="{
-                          name: 'AdministrationEditUser',
+                          name: 'AdministrationEditProject',
                           params: { id: props.row.id }
                         }"
                       >
-                        {{ props.row.email }}
+                        {{ props.row.category }}
                       </router-link>
                     </template>
-                    <template slot="roles" slot-scope="props">
+                    <template slot="subcategory" slot-scope="props">
                       <router-link
                         :to="{
-                          name: 'AdministrationEditUser',
+                          name: 'AdministrationEditProject',
                           params: { id: props.row.id }
                         }"
                       >
-                        {{ props.row.roles[0]}}
+                        {{ props.row.subcategory}}
                       </router-link>
                     </template>
-                    <template slot="confirmed_at" slot-scope="props">
-                      <div v-if="isConfirmedUser(props.row.confirmed_at)">
-                        {{ props.row.confirmed_at | formatJsonDate }}
-                        <font-awesome-icon icon="check" />
-                      </div>
-                      <button
-                        v-else
-                        class="btn btn-sm btn-success"
-                        @click="confirmUser(props.row.id)"
+                    <template slot="managers" slot-scope="props">
+                      <router-link
+                        :to="{
+                          name: 'AdministrationEditProject',
+                          params: { id: props.row.id }
+                        }"
                       >
-                        {{ $t('common.confirm') }}
-                      </button>
+                        <span v-if="props.row.managers">
+                          <p v-for="manager in props.row.managers">
+                          {{ manager.full_name }}</p>
+                        </span>
+                      </router-link>
                     </template>
-
                     <template slot="actions" slot-scope="props">
                       <button
                         class="btn btn-sm btn-light"
@@ -109,7 +108,7 @@ export default {
     return {
       platform: '',
       platforms: [],
-      columns: ['id', 'full_name', 'email', 'roles', 'confirmed_at', 'actions'],
+      columns: ['id', 'name', 'category', 'subcategory','managers', 'actions'],
       options: {
         debounce: 800,
         skin: 'table-sm table table-hover',
@@ -117,14 +116,14 @@ export default {
         columnClasses: { actions: 'th-10' },
         headings: {
           id: 'ID',
-          name: this.$tc('common.name'),
-          email: this.$tc('common.email'),
-          roles: this.$tc('common.roles'),
-          confirmed_at: this.$tc('common.confirmed_at'),
+          name: this.$tc('common.project.name'),
+          category: this.$tc('common.project.category'),
+          subcategory: this.$tc('common.project.subcategory'),
+          managers: this.$tc('common.project.managers'),
           actions: this.$tc('common.action', 2)
         },
-        sortable: ['full_name', 'id', 'email', 'roles'],
-        filterable: ['full_name', 'id', 'email', 'roles'],
+        sortable: ['name', 'id', 'category', 'subcategory'],
+        filterable: ['name', 'id', 'category', 'subcategory'],
         sortIcon: {
           base: 'fa fas',
           is: 'fa-sort ml-10',
@@ -136,14 +135,14 @@ export default {
         customFilters: ['platform'],
         filterByColumn: false,
         requestFunction: function(data) {
-          var sort_opt = data.orderBy == undefined ? 'id' : data.orderBy
-          data.sorted_by = {};
-          data.sorted_by[sort_opt] = data.ascending === 1 ? 'asc' : 'desc';
+          data.sort = data.orderBy;
           data.asc = data.ascending === 1 ? 'true' : 'false';
-          data.per_page = data.limit;
-          data.search_by = data.query;
-          data.fields = 'id,full_name,email,confirmed_at,roles';
-          let url = `${thornUrl}/administration/users`;
+          data.size = data.limit;
+          data.full_name = data.query;
+
+          data.fields = 'id,name,category,subcategory';
+
+          let url = `${thornUrl}/administration/projects`;
           this.$Progress.start();
           return axios
             .get(url, {
@@ -153,7 +152,7 @@ export default {
               this.$Progress.finish();
               return {
                 data: deserialize(resp.data),
-                count: resp.data.meta.pagination.total_objects
+                count: resp.data.meta.pagination.total_pages
               };
             })
             .catch(
@@ -178,49 +177,28 @@ export default {
   /* Methods */
   methods: {
     clearFilters() {
-      this.$refs.userList.setFilter('');
-      this.$refs.userList.customQueries = {};
+      this.$refs.projectList.setFilter('');
+      this.$refs.projectList.customQueries = {};
     },
     isConfirmedUser(confirmed_at) {
       return confirmed_at !== null;
     },
-    remove(userId) {
+    remove(projectId) {
       const self = this;
       this.confirm(
         this.$t('actions.delete'),
         this.$t('messages.doYouWantToDelete'),
         () => {
-          const url = `${thornUrl}/administration/users/${userId}`;
+          const url = `${thornUrl}/administration/projects/${projectId}`;
           axios
             .delete(url, {})
             .then(resp => {
               self.success(
                 self.$t('messages.successDeletion', {
-                  what: this.$tc('titles.user', 1)
+                  what: this.$tc('titles.project', 1)
                 })
               );
-              self.$refs.userList.refresh();
-            })
-            .catch(e => self.error(e));
-        }
-      );
-    },
-    confirmUser(userId) {
-      const self = this;
-      this.confirm(
-        self.$t('actions.confirm'),
-        self.$t('messages.doYouWantToConfirm'),
-        () => {
-          const url = `${thornUrl}/administration/users/${userId}/confirm`;
-          axios
-            .post(url, {})
-            .then(resp => {
-              self.success(
-                self.$t('messages.successConfirmation', {
-                  what: this.$tc('titles.user', 1)
-                })
-              );
-              self.$refs.userList.refresh();
+              self.$refs.projectList.refresh();
             })
             .catch(e => self.error(e));
         }

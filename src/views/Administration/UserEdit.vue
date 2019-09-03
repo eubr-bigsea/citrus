@@ -49,6 +49,19 @@
                 </div>
               </div>
               <div class="form-group row">
+                <label for="inputRole" class="col-sm-3 col-form-label">
+                  {{ $t('common.roles') }}
+                </label>
+                <div class="col-sm-9">
+                  <select v-model="user.roles[0]" class="form-control">
+                    <option value="admin">{{ $t('common.adminRole') }}</option>
+                    <option value="manager">{{ $t('common.managerRole') }}</option>
+                    <option value="monitor">{{ $t('common.monitorRole') }}</option>
+                    <option value="user">{{ $t('common.userRole') }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
                 <label for="inputPassword3" class="col-sm-3 col-form-label">
                   {{ $t('common.password') }}
                 </label>
