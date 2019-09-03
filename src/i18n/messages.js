@@ -44,6 +44,7 @@ export default {
     },
     common: {
       action: 'Ação | Ações',
+      adminRole: 'Administrador',
       author: 'Autor',
       attention: 'Atenção',
       alreadyHaveAccount: 'Já possui uma conta?',
@@ -74,6 +75,8 @@ export default {
       loading: 'Carregando',
       login: 'Entrar',
       logout: 'Sair',
+      managerRole: 'Gestor',
+      monitorRole: 'Monitor',
       more: 'Mais',
       no: 'Não',
       noData: 'Nenhum registro encontrado.',
@@ -87,6 +90,13 @@ export default {
       pagerShowing:
         'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
       password: 'Senha',
+      project: {
+        name: 'Nome',
+        description: 'Descrição',
+        category: 'Categoria',
+        subcategory: 'Categoria Secundária',
+        managers: 'Responsáveis'
+      },
       current_password: 'Senha Atual',
       new_password: 'Nova senha',
       new_password_confirmation: 'Confirmação de nova senha',
@@ -96,6 +106,7 @@ export default {
       preview: 'Pré-visualização',
       rememberMe: 'Lembrar minha senha',
       resetPassword: 'Redefinir',
+      roles: 'Perfil',
       saveBeforeToEnableThis: 'Salve os dados para habilitar a ação {what}',
       scale: 'Escala',
       sharing: 'Compartilhamento',
@@ -109,9 +120,10 @@ export default {
       userId: 'Id de usuário',
       userLogin: 'Login do usuário',
       userName: 'Nome do usuário',
+      userRole: 'Usuário',
       user: {
         name: 'Nome do usuário',
-        login: 'Login do usuário'
+        login: 'Login do usuário',
       },
       version: 'Versão',
       yes: 'Sim'
@@ -293,6 +305,7 @@ export default {
       news: 'Novidades e Dicas',
       platform: 'Platforma | Platformas',
       profile: 'Perfil',
+      project: 'Projeto | Projetos',
       property: 'Propriedade | Propriedades',
       register: 'Registrar',
       resetPassword: 'Redefinir senha',
@@ -408,6 +421,7 @@ export default {
     },
     common: {
       action: 'Action | Actions',
+      adminRole: 'Administrator',
       author: 'Author',
       attention: 'Attention',
       alreadyHaveAccount: 'Already have an account?',
@@ -438,6 +452,8 @@ export default {
       loading: 'Loading',
       login: 'Sign in',
       logout: 'Sign off',
+      managerRole: 'Manager',
+      monitorRole: 'Assistant',
       more: 'More',
       no: 'No',
       name: 'Name | Names',
@@ -451,6 +467,13 @@ export default {
       pagerShowing:
         'Showing {from} to {to} of {count} records|{count} records|One record',
       password: 'Password',
+      project: {
+        name: 'Name',
+        description: 'Description',
+        category: 'Main Category',
+        subcategory: 'Sub Category',
+        managers: 'Managers'
+      },
       current_password: 'Current password',
       new_password: 'New password',
       new_password_confirmation: 'New password confirmation',
@@ -460,6 +483,7 @@ export default {
       preview: 'Preview',
       rememberMe: 'Remember me',
       resetPassword: 'Reset',
+      roles: 'Role',
       saveBeforeToEnableThis: 'Save data to enabled the {what} action',
       scale: 'Scale',
       sharing: 'Sharing',
@@ -473,6 +497,7 @@ export default {
       userId: 'User id',
       userLogin: 'User login',
       userName: 'User name',
+      userRole: 'User',
       user: {
         name: 'User name',
         login: 'User login'
@@ -609,6 +634,7 @@ export default {
       login: 'Login',
       platform: 'Platform | Platforms',
       profile: 'Profile',
+      project: 'Project | Projects',
       property: 'Property | Properties',
       register: 'Sign up',
       resetPassword: 'Reset password',
