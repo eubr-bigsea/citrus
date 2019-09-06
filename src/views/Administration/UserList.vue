@@ -126,7 +126,7 @@ export default {
         customFilters: ['platform'],
         filterByColumn: false,
         requestFunction: function(data) {
-          data.sorted_by = {}
+          data.sorted_by = {};
           data.sorted_by[data.orderBy] = data.ascending === 1 ? 'asc' : 'desc';
           data.asc = data.ascending === 1 ? 'true' : 'false';
           data.per_page = data.limit;
@@ -144,7 +144,7 @@ export default {
               this.$Progress.finish();
               return {
                 data: deserialize(resp.data),
-                count: resp.data.meta.pagination.total_pages
+                count: resp.data.meta.pagination.total_objects
               };
             })
             .catch(
