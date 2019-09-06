@@ -126,8 +126,9 @@ export default {
         customFilters: ['platform'],
         filterByColumn: false,
         requestFunction: function(data) {
+          var sort_opt = data.orderBy == undefined ? 'id' : data.orderBy
           data.sorted_by = {};
-          data.sorted_by[data.orderBy] = data.ascending === 1 ? 'asc' : 'desc';
+          data.sorted_by[sort_opt] = data.ascending === 1 ? 'asc' : 'desc';
           data.asc = data.ascending === 1 ? 'true' : 'false';
           data.per_page = data.limit;
           data.search_by = data.query;
