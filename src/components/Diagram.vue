@@ -701,7 +701,7 @@
                 const self = this;
                 ev.preventDefault();
                 let operation = this.getOperationFromId(ev.dataTransfer.getData('id'));
-                console.log(operation)
+                //console.log(operation)
 
                 if (!operation) {
                     return;

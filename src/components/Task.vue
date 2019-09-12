@@ -444,11 +444,11 @@
                         options['cssClass'] += `  ${cssClass}`;
                         options['dragOptions'] = {
                             start: (event, ui) => {
-                                console.debug("dragEndpointStart")
+                                //console.debug("dragEndpointStart")
                                 this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
                             },
                             stop: (event, ui) => {
-                                console.debug("dragEndpointStop")
+                                //console.debug("dragEndpointStop")
                                 this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
                             }
                         };
