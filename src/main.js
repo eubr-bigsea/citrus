@@ -186,10 +186,10 @@ Vue.filter('formatJsonDate', v => {
 Vue.filter('timeFromNow', (v, l) =>
   distanceInWordsStrict(new Date(), v, { addSuffix: true, locale: locales[l] })
 );
-Vue.filter('formatJsonHourMinute', (v) => { 
-    if (v) { 
-        return format(parse(v), 'HH:MM:ss');
-    }
+Vue.filter('formatJsonHourMinute', v => {
+  if (v) {
+    return format(parse(v), 'HH:MM:ss');
+  }
 });
 
 // Highcharts
@@ -255,22 +255,7 @@ if (token) {
     'POST, GET, PUT, DELETE, OPTIONS';
 }
 
-// axios.interceptors.response.use(
-//   function(response) {
-//     return response;
-//   },
-//   function(error) {
-//     if (error.response.status == 401) {
-//       localStorage.removeItem('token');
-//       localStorage.removeItem('user');
-//       axios.defaults.headers.common['Authorization'] = null;
-//       axios.defaults.headers.common['X-Authentication'] = null;
-//       axios.defaults.headers.common['X-User-Id'] = null;
-//       router.push({name: 'logout'})
-//     }
-//     throw new Error('Invalid token detected');
-//   }
-// );
+
 
 new Vue({
   el: '#app',

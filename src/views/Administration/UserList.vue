@@ -113,7 +113,7 @@ export default {
           confirmed_at: this.$tc('common.confirmed_at'),
           actions: this.$tc('common.action', 2)
         },
-        sortable: ['full_name', 'id', 'email'],
+        sortable: ['full_name', 'id', 'email', 'confirmed_at'],
         filterable: ['full_name', 'id', 'email'],
         sortIcon: {
           base: 'fa fas',
@@ -126,12 +126,14 @@ export default {
         customFilters: ['platform'],
         filterByColumn: false,
         requestFunction: function(data) {
-          data.sort = data.orderBy;
+          var sort_opt = data.orderBy == undefined ? 'id' : data.orderBy
+          data.sorted_by = {};
+          data.sorted_by[sort_opt] = data.ascending === 1 ? 'asc' : 'desc';
           data.asc = data.ascending === 1 ? 'true' : 'false';
-          data.size = data.limit;
-          data.full_name = data.query;
+          data.per_page = data.limit;
+          data.search_by = data.query;
 
-          data.fields = 'id,full_name,email';
+          data.fields = 'id,full_name,email,confirmed_at';
 
           let url = `${thornUrl}/administration/users`;
           this.$Progress.start();
@@ -143,7 +145,7 @@ export default {
               this.$Progress.finish();
               return {
                 data: deserialize(resp.data),
-                count: resp.data.meta.pagination.total_pages
+                count: resp.data.meta.pagination.total_objects
               };
             })
             .catch(

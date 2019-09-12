@@ -14,6 +14,9 @@
 <script>
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
+import axios from 'axios';
+
+const thornUrl = process.env.VUE_APP_THORN_URL;
 
 export default {
   name: 'App',
@@ -48,6 +51,33 @@ export default {
     },
     user() {
       return this.$store.getters.user;
+    }
+  },
+
+  mounted() {
+    this.checkAuth();
+  },
+  methods: {
+    checkAuth: function() {
+      let self = this;
+
+      if (self.isLoggedIn) {
+        let url = `${thornUrl}/api/tokens`;
+        let headers = { Accept: 'application/json; charset=utf-8' };
+        axios({
+          url,
+          data: { data: { id: self.user.id } },
+          method: 'POST',
+          headers
+        }).catch(err => {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          axios.defaults.headers.common['Authorization'] = null;
+          axios.defaults.headers.common['X-Authentication'] = null;
+          axios.defaults.headers.common['X-User-Id'] = null;
+          self.$router.push({ name: 'logout' });
+        });
+      }
     }
   }
 };
