@@ -137,13 +137,13 @@ export default {
           this.$router.push('/');
         })
         .catch(err => {
-          let json = JSON.parse(err.request.responseText);
-          let detail = json['errors'][0]['detail'];
+          const json = JSON.parse(err.request.responseText);
+          const emailTaken = json['email'] === 'has already been taken';
           let msg = '';
-          if (detail === 'has already been taken') {
+          if (emailTaken) {
             msg = self.$tc('errors.loginInUse');
           } else {
-            msg = detail;
+            msg = self.$tc('errors.missingRequiredValue');;
           }
           self.$snotify.error(msg, self.$t('errors.sendingData'));
         });
