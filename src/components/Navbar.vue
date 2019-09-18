@@ -32,6 +32,9 @@
           <b-dropdown-item href="#">{{
             $tc('titles.cluster', 2)
           }}</b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'models' }">
+              {{$tc('titles.model', 2)}}
+          </b-dropdown-item>
           <b-dropdown-item href="#">{{
             $tc('titles.platform', 2)
           }}</b-dropdown-item>

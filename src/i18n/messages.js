@@ -165,7 +165,7 @@ export default {
       treatAsNull: 'Tratar estes valores como valores nulos (opcional)',
       uploadingLog: 'Registro de envio',
       uploadExplanation:
-        'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmertos com os valores padrão (você poderá alterá-los posteriormente).',
+        'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
       whatTypeOfDataSourceToAdd:
         'Que tipo de base de dados você quer adicionar?',
       youCanUploadYourFiles:
@@ -232,6 +232,23 @@ export default {
       usingDisabledOperation:
         'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.'
     },
+    model: {
+uploadExplanation:
+        'Cada arquivo criará um novo model com nome igual ao nome do arquivo e tipo conforme selecionado anteriormente.',
+
+      selectFromComputer: 'selecionar arquivos em seu computador',
+        dropFilesHere: 'Arraste e solte os arquivos aqui', 
+        whatTypeOfModelToAdd: 'Que tipo de modelo você quer adicionar?',
+
+       storage: 'Armazenamento | Armazenamentos',
+       type_KERAS : 'Keras',
+       type_PERFORMANCE_SPARK : 'Desempenho (Spark)',
+       type_PERFORMANCE_KERAS : 'Desempenho (Keras)',
+       type_SPARK_ML_CLASSIFICATION : 'Classificação (Spark)',
+       type_SPARK_ML_REGRESSION : 'Regressão (Spark)' ,
+       type_SPARK_MLLIB_CLASSIFICATION : 'Classificação (MLLib)',
+       type_UNSPECIFIED : 'Não especificado',
+    },
     privacy: {
       anonymizationTechnique: 'Técnica de anonimização',
       privacyType: 'Tipo de privacidade',
@@ -290,6 +307,7 @@ export default {
       lemonade: 'Lemonade',
       lemonadePlatform: 'Plataforma Lemonade',
       login: 'Entrar',
+      model: 'Modelo | Modelos',
       news: 'Novidades e Dicas',
       platform: 'Platforma | Platformas',
       profile: 'Perfil',
@@ -605,6 +623,7 @@ export default {
       jobs: 'Jobs',
       lemonade: 'Lemonade',
       lemonadePlatform: 'Lemonade Platform',
+      model: 'Model | Models',
       news: 'News & Tips',
       login: 'Login',
       platform: 'Platform | Platforms',
@@ -624,6 +643,17 @@ export default {
       whatIfModel: 'What if model?',
       workflow: 'Workflow | Workflows'
     },
+    model: {
+       storage: 'Storage| Storage',
+       type_KERAS : 'Keras',
+       type_PERFORMANCE_SPARK : 'Performance (Spark)',
+       type_PERFORMANCE_KERAS : 'Performance (Keras)',
+       type_SPARK_ML_CLASSIFICATION : 'Classification (Spark)',
+       type_SPARK_ML_REGRESSION : 'Regression (Spark)' ,
+       type_SPARK_MLLIB_CLASSIFICATION : 'Classification (MLLib)',
+       type_UNSPECIFIED : 'Unspecified',
+    },
+
     privacy: {
       anonymizationTechnique: 'Anonymization technique',
       privacyType: 'Privacy type',
