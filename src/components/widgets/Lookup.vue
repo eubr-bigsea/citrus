@@ -4,19 +4,30 @@
 
         <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
 
-        <b-link v-b-modal="'lookupModal'" variant="sm">
+        <b-link v-b-modal="'lookupModal_' + field.name" variant="sm">
             <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
             <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
         </b-link>
-        <b-modal id="lookupModal" size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+        <b-modal :id="'lookupModal_' + field.name" size="lg" :title="field.label" ok-disabled
+            :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             {{field.help}}
-            <v-client-table :data="options" :columns="['key', 'value','tags']" class="lookupTable" :options="tableOptions">
+            <v-client-table :data="options" :columns="['key', 'value','tags']" class="lookupTable"
+                :options="tableOptions">
                 <template slot="value" slot-scope="props">
                     <a href="#" @click.prevent="select($event, props.row)">{{props.row.value}}</a>
                 </template>
+                <template slot="tags" slot-scope="props">
+                    <div v-show="props.row.tags.length && props.row.tags[0]">
+                        <span class="badge badge-pill badge-primary" v-for="t in props.row.tags" :key="t">
+                            {{t}}
+                        </span>
+                    </div>
+                </template>
             </v-client-table>
             <div slot="modal-footer" class="w-100">
-                <b-btn @click="closeModal" variant="secondary_sm" class="float-right">{{$t('actions.cancel')}}</b-btn>
+                <b-btn @click="closeModal" variant="secondary" class="ml-1 float-right">{{$t('actions.cancel')}}</b-btn>
+                <b-btn @click="removeValue" variant="outline-primary" class="float-right">{{$t('actions.removeValue')}}
+                </b-btn>
             </div>
         </b-modal>
     </div>
@@ -77,10 +88,14 @@
                                 "tags": (v.tags || '').split(',')
                             };
                         });
-                        this.label = (self.value) 
-                            ? this.options.find((item) => {
-                                return Number(item.key) === Number(self.value)}).value
-                            : '';
+                        if (self.value) {
+                            const sel = this.options.find((item) => {
+                                return Number(item.key) === Number(self.value)
+                            });
+                            this.label = sel ? sel.value : '';
+                        } else {
+                            this.label = '';
+                        }
                     }
                 ).catch(function (e) {
                     this.$root.$emit('on-error', e);
@@ -105,6 +120,11 @@
             }
         },
         methods: {
+            removeValue() {
+                this.label = '';
+                this.$root.$emit(this.message, this.field, null, null);
+                this.closeModal();
+            },
             closeModal() {
                 this.$refs.modal.hide()
             },
@@ -119,14 +139,10 @@
                 }
                 return tpl;
             },
-            // updated(e) {
-            //     this.selected = e.target.value;
-            //     this.$root.$emit(this.message, this.field, e.target.value);
-            // },
             select(evt, newValue) {
                 this.selected = newValue.key;
                 this.label = newValue.value;
-                this.$root.$emit(this.message, this.field, this.selected, 
+                this.$root.$emit(this.message, this.field, this.selected,
                     this.label);
                 this.closeModal()
             }

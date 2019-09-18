@@ -3,6 +3,11 @@ import Router from 'vue-router';
 
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
+
+import UserList from './views/Administration/UserList.vue';
+import UserAdd from './views/Administration/UserAdd.vue';
+import UserEdit from './views/Administration/UserEdit.vue';
+
 import ChangePassword from './views/ChangePassword.vue';
 import Login from './views/Login.vue';
 import Logout from './views/Logout.vue';
@@ -31,6 +36,8 @@ import OperationList from './views/OperationList.vue';
 
 import Profile from './views/Profile.vue';
 
+import About from './views/About.vue';
+
 import store from './store.js';
 
 Vue.use(Router);
@@ -52,7 +59,34 @@ let router = new Router({
       component: Administration,
       meta: {
         requiresAuth: true,
-        requiresRole: 'admin'
+        requiresAdmin: true
+      }
+    },
+    {
+      path: '/administration/users',
+      name: 'AdministrationUserList',
+      component: UserList,
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
+      }
+    },
+    {
+      path: '/administration/users/new',
+      name: 'AdministrationAddUser',
+      component: UserAdd,
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
+      }
+    },
+    {
+      path: '/administration/users/:id',
+      name: 'AdministrationEditUser',
+      component: UserEdit,
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true
       }
     },
     {
@@ -172,18 +206,15 @@ let router = new Router({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: About
     },
     {
       path: '/admin/operations',
       name: 'operations',
       component: OperationList,
       meta: {
-        requiresAuth: true
+        requiresAuth: true,
+        requiresAdmin: true
       }
     },
     {
@@ -212,9 +243,18 @@ let router = new Router({
     }
   ]
 });
+
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
+      if (to.matched.some(record => record.meta.requiresAdmin)) {
+        if (store.getters.isAdmin) {
+          next();
+          return;
+        } else {
+          next('/');
+        }
+      }
       next();
       return;
     }

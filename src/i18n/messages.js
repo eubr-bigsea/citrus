@@ -11,6 +11,7 @@ export default {
       back: 'Voltar',
       cancel: 'Cancelar',
       changeOption: 'Alterar opção...',
+      confirm: 'Confirmar',
       choose: 'Escolha',
       chooseOption: 'Escolha uma opção ...',
       clearFilters: 'Limpar filtros',
@@ -24,7 +25,9 @@ export default {
       execute: 'Executar ...',
       moveDown: 'Mover para baixo',
       moveUp: 'Mover para cima',
+      new: 'Novo',
       removeSelected: 'Remover',
+      removeValue: 'Remover valor',
       rename: 'Renomear',
       restore: 'Restaurar',
       save: 'Salvar',
@@ -47,6 +50,8 @@ export default {
       attribute: 'Atributo | Atributos',
       changePassword: 'Criar nova Senha',
       command: 'Comando SQL',
+      confirmed_at: 'Confirmado em',
+      confirm: 'Confirmar',
       confirmPassword: 'Confirmar senha',
       created: 'Criado',
       createAccount: 'Criar conta',
@@ -79,8 +84,12 @@ export default {
       operation: 'Operação | Operações',
       optional: 'Opcional',
       owner: 'Proprietário',
-      pagerShowing: 'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
+      pagerShowing:
+        'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
       password: 'Senha',
+      current_password: 'Senha Atual',
+      new_password: 'Nova senha',
+      new_password_confirmation: 'Confirmação de nova senha',
       permission: 'Permissão | Permissões',
       platform: 'Plataforma',
       precision: 'Precisão',
@@ -117,17 +126,20 @@ export default {
       databaseConnectionPreviouslyConfigured:
         'A conexão ao servidor de banco de dados deve ter sido configurada anteriormente por um administrador',
       databaseStorage: 'Armazenamento para a base de dados',
-      differentFormatsSupported: 'Diferentes formatos são suportados (CSV, JSON, XML, TXT)',
+      differentFormatsSupported:
+        'Diferentes formatos são suportados (CSV, JSON, XML, TXT)',
       distributedFileSystem: 'Sistema de arquivos distribuído (HDFS)',
       dropFilesHere: 'Arraste e solte arquivos aqui para carregá-los ou',
       encoding: 'Codificação (opcional)',
       features: 'Atributos',
       file: 'Arquivo',
       format: 'Formato',
-      inconsistentFormat: 'O formato escolhido é incompatível com o armazenamento escolhido.',
+      inconsistentFormat:
+        'O formato escolhido é incompatível com o armazenamento escolhido.',
       inferSchema: 'Inferir o esquema',
       inferSuccess: 'Atributos inferidos com sucesso.',
-      inferSupported: 'Lemonade suporta inferir atributos para o formato {what}.',
+      inferSupported:
+        'Lemonade suporta inferir atributos para o formato {what}.',
       isFirstLineHeader: 'Usar a primeira linha como cabeçalho',
       isMultiline: 'Multilinhas (atributo com quebra de linha)',
       message: 'Mensagem',
@@ -147,42 +159,51 @@ export default {
       someAttributesMayHaveProblem:
         'Um atributo pode estar com problema, por favor, revise-o | Alguns atributos podem estar com problema, por favor, revise-os',
       storage: 'Armazenamento',
-      suggestedOption: 'Se você não sabe qual opção escolher, esta é a opção recomendada.',
+      suggestedOption:
+        'Se você não sabe qual opção escolher, esta é a opção recomendada.',
       textDelimiter: 'Delimitador de texto (apenas CSV)',
       treatAsNull: 'Tratar estes valores como valores nulos (opcional)',
       uploadingLog: 'Registro de envio',
       uploadExplanation:
         'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmertos com os valores padrão (você poderá alterá-los posteriormente).',
-      whatTypeOfDataSourceToAdd: 'Que tipo de base de dados você quer adicionar?',
-      youCanUploadYourFiles: 'Você pdoe carregar seus próprios arquivos para o servidor',
+      whatTypeOfDataSourceToAdd:
+        'Que tipo de base de dados você quer adicionar?',
+      youCanUploadYourFiles:
+        'Você pdoe carregar seus próprios arquivos para o servidor',
       youCanUseSQL: 'Você pode usar comandos SELECT SQL para recuperar os dados'
     },
     diagram: {
-      showProperties: 'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
+      showProperties:
+        'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
     },
     errors: {
-      disconnected: 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
+      disconnected:
+        'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
       emailNotFound: 'Email não cadastrado.',
       invalidDataSource:
         'Pelo menos uma fonte de dados de entrada usada no fluxo de trabalho é inválida, revise a configuração e se você está conectado à internet.',
       invalidLoginOrPassword: 'Senha ou usuário inválidos',
       invalidOperation: 'Operação inválida',
-      invalidVisualizationId: 'Visualização não registrada. Contacte o suporte.',
+      invalidVisualizationId:
+        'Visualização não registrada. Contacte o suporte.',
       missingRequiredValue: 'Valor obrigatório ausente',
       notFound: 'Registro não encontrado',
       passwordDontMatch: 'Senhas são diferentes',
       passwordTooShort: 'Senha deve ter mais que 5 caracteres',
       loginInUse: 'Login/email estão em uso por outro usuário. Tente outro.',
       receivingData: 'Erro recebendo dados do servidor.',
-      resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest: 'Este link expirou, por favor redefina sua senha novamente.',
+      resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest:
+        'Este link expirou, por favor redefina sua senha novamente.',
       sendingData: 'Erro enviando dados do servidor.'
     },
     warnings: {
-      dirtyCheck: 'Existem alterações que ainda não foram salvas. Deseja sair assim mesmo?'
+      dirtyCheck:
+        'Existem alterações que ainda não foram salvas. Deseja sair assim mesmo?'
     },
     job: {
       details: 'Detalhe | Detalhes',
-      error: 'Erro durante a execução. Veja mais detalhes na janela de log acima.',
+      error:
+        'Erro durante a execução. Veja mais detalhes na janela de log acima.',
       logs: 'Log | Logs',
       parameters: 'Parâmetro | Parâmetros',
       results: 'Resultado | Resultados',
@@ -201,9 +222,11 @@ export default {
     messages: {
       acceptTerms: 'Concordo com os termos de uso <a href="{link}">Policy</a>',
       doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
+      doYouWantToConfirm: 'Tem certeza que você quer confirmar esse usuário?',
       confirmRemove: 'Tem certeza que você quer excluir esse registro?',
       successDeletion: '{what} foi removido com sucesso',
-      registeredWithSuccess: 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
+      registeredWithSuccess:
+        'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
       savedWithSuccess: '{what} foi salvo(a) com sucesso!',
       noMatching: 'Lamentamos, nenhuma opção encontrada',
       usingDisabledOperation:
@@ -260,7 +283,8 @@ export default {
       dashboard: 'Dashboard | Dashboards',
       error: 'Erro',
       errorDetail: 'Detalhe do erro (avançado)',
-      globalPrivacyPolicy: 'Política global de privacidade|Políticas globais de privacidade',
+      globalPrivacyPolicy:
+        'Política global de privacidade|Políticas globais de privacidade',
       job: 'Execução | Execuções',
       jobs: 'Execuções',
       lemonade: 'Lemonade',
@@ -300,7 +324,8 @@ export default {
             como produto dos projetos EUBra-BIGSEA e Atmosphere.`
     },
     visualization: {
-      tryRefresh: 'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada',
+      tryRefresh:
+        'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada',
       lowerQuartile: 'Quartil inferior (1o)',
       maximum: 'Máximo',
       median: 'Mediana',
@@ -310,7 +335,8 @@ export default {
     },
     workflow: {
       asImage: 'Como uma imagem (uma janela para baixar a imagem aparecerá)',
-      asTemplate: 'Como um modelo de fluxo de trabalho (poderá ser reusado posteriormente)',
+      asTemplate:
+        'Como um modelo de fluxo de trabalho (poderá ser reusado posteriormente)',
       copyOf: 'Cópia de',
       copySavedWithSuccess: 'Cópia salva com sucesso!',
       execute: 'Executar fluxo de trabalho',
@@ -319,9 +345,12 @@ export default {
       fromUserTemplate: 'A partir de um modelo criado por usuários',
       imageGeneratedAt: 'Imagem gerada em',
       jobName: 'Nome para a execução',
-      newName: 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
-      required: 'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
-      restoreHistory: 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
+      newName:
+        'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
+      required:
+        'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
+      restoreHistory:
+        'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
       versionRestored:
         'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
       useAsTemplate: 'Usar este fluxo de trabalho como modelo',
@@ -347,6 +376,8 @@ export default {
       changeOption: 'Change option...',
       choose: 'Choose',
       chooseOption: 'Choose option...',
+      confirm: 'Confirm',
+      clear: 'Clear',
       clearFilters: 'Clear filters',
       create: 'Create new {type}',
       delete: 'Delete',
@@ -358,7 +389,9 @@ export default {
       execute: 'Execute...',
       moveDown: 'Move down',
       moveUp: 'Move up',
+      new: 'New',
       removeSelected: 'Remove',
+      removeValue: 'Remove value',
       rename: 'Rename',
       restore: 'Restore',
       save: 'Save',
@@ -381,6 +414,8 @@ export default {
       attribute: 'Attribute | Attributes',
       changePassword: 'Create new password',
       command: 'SQL Command',
+      confirm: 'Confirm',
+      confirmed_at: 'Confirmed at',
       confirmPassword: 'Confirm password',
       created: 'Created',
       createAccount: 'Sign up',
@@ -413,8 +448,12 @@ export default {
       operation: 'Operation | Operations',
       optional: 'Optional',
       owner: 'Owner',
-      pagerShowing: 'Showing {from} to {to} of {count} records|{count} records|One record',
+      pagerShowing:
+        'Showing {from} to {to} of {count} records|{count} records|One record',
       password: 'Password',
+      current_password: 'Current password',
+      new_password: 'New password',
+      new_password_confirmation: 'New password confirmation',
       permission: 'Permission | Permissions',
       platform: 'Platform',
       precision: 'Precision',
@@ -442,24 +481,29 @@ export default {
       yes: 'Yes'
     },
     dataSource: {
-      alternativeUseDatabase: 'We recommend this option only if you are sure the database connection is correctly configured.',
+      alternativeUseDatabase:
+        'We recommend this option only if you are sure the database connection is correctly configured.',
       attribute: 'Attribute | Attributes',
       attributeDelimiter: 'Attribute delimiter (CSV only)',
       basicInformation: 'Basic information',
       characteristics: 'Characteristics',
-      databaseConnectionPreviouslyConfigured: 'The database connection must be previously configured by an administrator',
+      databaseConnectionPreviouslyConfigured:
+        'The database connection must be previously configured by an administrator',
       databaseStorage: 'Database storage',
-      differentFormatsSupported: 'Different formats are supported (CSV, JSON, XML, TXT)',
+      differentFormatsSupported:
+        'Different formats are supported (CSV, JSON, XML, TXT)',
       distributedFileSystem: 'Distributed file system (HDFS)',
       dropFilesHere: 'Drop files here to upload or',
       encoding: 'Encoding (optional)',
       features: 'Features',
       file: 'File',
       format: 'Format',
-      inconsistentFormat: 'The chosen format is incompatible with the chosen storage.',
+      inconsistentFormat:
+        'The chosen format is incompatible with the chosen storage.',
       inferSchema: 'Infer schema',
       inferSuccess: 'Attributes infered with success.',
-      inferSupported: 'Lemonade supports infering attributes for the format {what}.',
+      inferSupported:
+        'Lemonade supports infering attributes for the format {what}.',
       isFirstLineHeader: 'Use first line as header',
       isMultiline: 'Is multiline',
       message: 'Message',
@@ -479,7 +523,8 @@ export default {
       someAttributesMayHaveProblem:
         'An attribute may be incorrectly configured, please, check it | Some attributes may be incorrectly configured, please, check them',
       storage: 'Storage',
-      suggestedOption: 'If you do not know what to choose, this is the suggested option.',
+      suggestedOption:
+        'If you do not know what to choose, this is the suggested option.',
       textDelimiter: 'Text delimiter (CSV only)',
       treatAsNull: 'Treat these values as null (optional)',
       uploadingLog: 'Uploading log',
@@ -490,33 +535,39 @@ export default {
       youCanUseSQL: 'You can use SQL to query data'
     },
     diagram: {
-        showProperties: 'Tip: Double click a task to show its properties'
+      showProperties: 'Tip: Double click a task to show its properties'
     },
     errors: {
-      disconnected: 'You are disconnected. Please check if you have access to the Internet.',
+      disconnected:
+        'You are disconnected. Please check if you have access to the Internet.',
       emailNotFound: 'Email not found.',
       invalidDataSource: 'At least one data source is invalid in workflow',
       invalidLoginOrPassword: 'Invalid login or password',
       invalidOperation: 'Invalid operation',
-      invalidVisualizationId: 'Invalid visualization. Please, contact the support.',
+      invalidVisualizationId:
+        'Invalid visualization. Please, contact the support.',
       missingRequiredValue: 'Missing required value',
       notFound: 'Record not found',
       passwordDontMatch: 'Passwords do not match',
       passwordTooShort: 'Passwords must have more than que 5 characters',
       loginInUse: 'Login/email is in use. Try another one.',
       receivingData: 'Error receiving data from the server',
-      resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest: 'This requet has expired. Please make another request.',
+      resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest:
+        'This requet has expired. Please make another request.',
       sendingData: 'Error sending data to the server.'
     },
     warnings: {
-      dirtyCheck: 'This workflow has modifications that has not been saved. Do you want to leave anyway?'
+      dirtyCheck:
+        'This workflow has modifications that has not been saved. Do you want to leave anyway?'
     },
     messages: {
       acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
       doYouWantToDelete: 'Do you want to delete this record?',
+      doYouWantToConfirm: 'Do you want to confirm this user?',
       confirmRemove: 'Are you sure you want to remove this record?',
       successDeletion: '{what} was successfuly removed',
-      registeredWithSuccess: 'You were registered with success. Please, sign in again.',
+      registeredWithSuccess:
+        'You were registered with success. Please, sign in again.',
       savedWithSuccess: '{what} saved with success.',
       noMatching: 'Sorry, no matching options',
       usingDisabledOperation:
@@ -585,7 +636,8 @@ export default {
       attribute: 'Attribute',
       availableAttribute: 'Available attribute | Available attributes',
       clickToMove: 'Click an item to move it between lists',
-      copyAttributeName: 'Double click to copy and paste attribute name to edit box',
+      copyAttributeName:
+        'Double click to copy and paste attribute name to edit box',
       editValue: 'Edit value...',
       function: 'Function',
       help: 'Help',
@@ -630,7 +682,8 @@ export default {
       median: 'Median',
       minimum: 'Minimum',
       outlier: 'Outlier | Outliers',
-      tryRefresh: 'Try refresh the page, visualization may still be generating.',
+      tryRefresh:
+        'Try refresh the page, visualization may still be generating.',
       upperQuartile: 'Upper quartile'
     },
     workflow: {
@@ -644,8 +697,10 @@ export default {
       fromUserTemplate: 'From template created by users',
       imageGeneratedAt: 'Image generated at',
       jobName: 'Job name',
-      newName: 'New name (a copy of the workflow will be created, but not loaded)',
-      required: 'Please, complete the required information for the execution of the workflow',
+      newName:
+        'New name (a copy of the workflow will be created, but not loaded)',
+      required:
+        'Please, complete the required information for the execution of the workflow',
       restoreHistory: 'Do you really want to restore this workflow version?',
       versionRestored:
         'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',

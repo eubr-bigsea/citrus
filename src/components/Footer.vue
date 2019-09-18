@@ -6,10 +6,10 @@
         <span>© 2019 Lemonade Project</span>
       </li>
       <li>
-        <a href="http://www.lemonade.org.br/" target="_blank">About</a>
+        <a href="https://docs.lemonade.org.br/" target="_blank">About</a>
       </li>
       <li>
-        <a href="http://www.lemonade.org.br/reference" target="_blank">Documentation</a>
+        <a href="https://docs.lemonade.org.br/pt-br/spark/visualizacao-de-dados/tabela.html" target="_blank">Documentation</a>
       </li>
       <li>
         <a href="https://github.com/eubr-bigsea/docker-lemonade" target="_blank">GitHub</a>
@@ -19,13 +19,19 @@
 </template>
 
 <style>
+
+hr {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
 .footer-list {
   list-style: none;
   display: flex;
   margin: 0;
   padding: 0;
   font-size: 12px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .footer-list span {

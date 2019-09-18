@@ -180,8 +180,10 @@
                 return result
             },
             'classes': function () {
+                const cssClass = this.task.operation.css_class || 
+                    this.task.operation.cssClass;
                 return [
-                    (this.task.operation.cssClass ? this.task.operation.cssClass : ''),
+                    (cssClass ? cssClass : ''),
                     (this.task.status ? this.task.status.toLowerCase() : ''),
                     (this.isComment ? ' comment ' : '') + 'test'].join(' ');
 
@@ -296,7 +298,6 @@
                 } else if (elem.classList.contains('jsplumb-drag-selected')) {
                     //nothing
                 } else {
-                    self.instance.clearDragSelection();
                     this.$el.classList.add('selected');
                     self.selectedTask = this;
                 }
@@ -321,6 +322,11 @@
                 this.contextMenuOpened = false;
                 this.$root.$emit('onremove-task', this.task);
             },
+            endpointClick(endpoint, e){
+                if (e.ctrlKey){
+                    console.debug('Port id: ', endpoint._portId);
+                }
+            }
         },
         props: {
             enableContextMenu: { default: true },
@@ -386,6 +392,8 @@
                 // note the cssClass and id parameters here
                 ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
             ];
+            const cssClass = this.task.operation.css_class || 
+                    this.task.operation.cssClass;
 
             let elem = this.$refs.task;
             if (this.task.operation.slug === 'comment') {
@@ -396,9 +404,16 @@
                 { ports: inputs, type: 'input', options: endPointOptionsInput },
                 { ports: outputs, type: 'output', options: endPointOptionsOutput }
             ].forEach((item) => {
+                
                 let ports = item.ports;
                 let portType = item.type;
                 lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
+                
+                // FIXME: hard coded layout
+                if (cssClass && cssClass.includes('circle-layout') && ports.length === 2){
+                    anchors[portType][1][0][1] = 0.35;
+                    anchors[portType][1][1][1] = 0.65;
+                }
 
                 if (ports.length > 0) {
                     anchors[portType][ports.length - 1].forEach((anchor, inx) => {
@@ -425,19 +440,22 @@
                             options['maxConnections'] = 100;
                             // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
                         }
+                        
+                        options['cssClass'] += `  ${cssClass}`;
                         options['dragOptions'] = {
                             start: (event, ui) => {
-                                console.debug("dragEndpointStart")
+                                //console.debug("dragEndpointStart")
                                 this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
                             },
                             stop: (event, ui) => {
-                                console.debug("dragEndpointStop")
+                                //console.debug("dragEndpointStop")
                                 this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
                             }
                         };
                         options.paintStyle.fill = options.paintStyle.fillStyle;
                         if (self.instance && self.instance.addEndpoint) {
-                            let endpoint = self.instance.addEndpoint(elem, options);
+                            const endpoint = self.instance.addEndpoint(elem, options);
+                            endpoint.bind('click', self.endpointClick);
                             endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
                             endpoint._portId = ports[inx].id;
                         }
@@ -1112,7 +1130,7 @@
     div.size-2 {
         height: 65px !important;
     }
-
+    
     div.circle-layout {
         border: none !important;
         background: transparent !important;
@@ -1147,6 +1165,9 @@
         }
         .right-decor {
             bottom: 11px !important;
+        }
+        &.endpoint {
+            padding-top: 100px;
         }
     }
 </style>
