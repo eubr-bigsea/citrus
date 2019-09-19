@@ -41,6 +41,7 @@
                     type="email"
                     class="form-control"
                     required
+                    autocomplete="email"
                   >
                 </div>
               </div>
@@ -67,9 +68,10 @@
                 <div class="col-sm-9">
                   <input
                     v-model="user.current_password"
-                    type="text"
+                    type="password"
                     class="form-control"
                     required
+                    autocomplete="current-password"
                   >
                 </div>
               </div>
@@ -181,20 +183,24 @@ export default {
             self.$t('profile.updated'),
             self.$t('titles.success')
           );
-          self.$root.$i18n.locale = self.user.attributes.locale;
+          self.$root.$i18n.locale = self.user.attributes? self.user.attributes.locale: self.user.locale;
           this.$router.push('/');
         })
         .catch(e => {
           var err = e
-          var errors = e.response.data.errors
-          var keysErrors = Object.keys(e.response.data.errors)
+          if (e.response){
+            var errors = e.response.data.errors;
+            var keysErrors = Object.keys(e.response.data.errors)
 
-          self.$Progress.finish();
-          if (keysErrors[0]) {
-            err = { message: `${this.$t(`common.${keysErrors[0]}`)} ${errors[keysErrors[0]]}` }
-          }
+            self.$Progress.finish();
+            if (keysErrors[0]) {
+                err = { message: `${this.$t(`common.${keysErrors[0]}`)} ${this.$t(errors[keysErrors[0]])}` }
+            }
+            self.error(err);
+          } else {
+            self.error(e)
+          } 
 
-          self.error(err);
         });
     }
   }

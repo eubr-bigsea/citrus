@@ -70,7 +70,6 @@ export default new Vuex.Store({
             resolve(resp);
           })
           .catch(err => {
-            debugger;
             reject(err);
           });
       });
@@ -186,7 +185,7 @@ export default new Vuex.Store({
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     user: state => state.user || {},
-    isAdmin: state => state.user.roles.includes('admin'),
+    isAdmin: state => state.user.roles && state.user.roles.includes('admin'),
     token: state => state.token
   }
 });
