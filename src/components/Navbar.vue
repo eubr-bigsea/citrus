@@ -72,8 +72,9 @@ export default {
   components: {},
   methods: {
     getUserFirstName() {
+      const user = this.$store.getters.user.attributes || this.$store.getters.user;
       return (
-        this.$store.getters.user.name || this.$store.getters.user.first_name
+        user.name || user.first_name
       ).split(' ')[0];
     },
     getUserAvatar() {

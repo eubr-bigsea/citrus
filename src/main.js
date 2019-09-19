@@ -224,21 +224,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-// i18n
-const i18n = new VueI18n({
-  locale: user ? user.locale : 'pt',
-  fallbackLocale: 'en',
-  messages
-});
-
-Object.defineProperty(Vue.prototype, '$locale', {
-  get: function() {
-    return i18n.locale;
-  },
-  set: function(locale) {
-    i18n.locale = locale;
-  }
-});
 
 // Auth
 const token = localStorage.getItem('token');
@@ -255,7 +240,22 @@ if (token) {
     'POST, GET, PUT, DELETE, OPTIONS';
 }
 
-
+// i18n
+const i18n = new VueI18n({
+    locale: user ? user.locale : 'pt',
+    fallbackLocale: 'en',
+    messages
+  });
+  
+  Object.defineProperty(Vue.prototype, '$locale', {
+    get: function() {
+      return i18n.locale;
+    },
+    set: function(locale) {
+      i18n.locale = locale;
+    }
+  });
+  
 
 new Vue({
   el: '#app',
