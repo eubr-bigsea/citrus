@@ -23,7 +23,10 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="projectDescTextArea" class="col-sm-3 col-form-label">
+                <label
+                  for="projectDescTextArea"
+                  class="col-sm-3 col-form-label"
+                >
                   {{ $t('common.project.description') }}
                 </label>
                 <div class="col-sm-9">
@@ -31,8 +34,8 @@
                     id="projectDescTextArea"
                     v-model="project.description"
                     class="form-control"
-                    rows="3">
-                  </textarea>
+                    rows="3"
+                  />
                 </div>
               </div>
               <div class="form-group row">
@@ -71,7 +74,9 @@
                   <label for="userSelectBox">{{ $tc('titles.user', 2) }}</label>
                 </div>
                 <div class="col-sm-6">
-                  <label for="managerSelectBox">{{ $t('common.project.managers')  }}</label>
+                  <label for="managerSelectBox">
+                    {{ $t('common.project.managers') }}
+                  </label>
                 </div>
               </div>
               <div class="form-row text-center">
@@ -80,10 +85,17 @@
                     <span v-if="users">
                       <select
                         id="userSelectBox"
+                        v-model="usersIdSelected"
                         class="form-control"
-                        v-model="usersIdSelected" multiple>
-                        <option v-for="user in users"
-                        v-bind:value="user.id" :key="user.id">{{user.full_name}}</option>
+                        multiple
+                      >
+                        <option
+                          v-for="user in users"
+                          :key="user.id"
+                          :value="user.id"
+                        >
+                          {{ user.full_name }} - {{ user.email }}
+                        </option>
                       </select>
                     </span>
                   </div>
@@ -91,23 +103,33 @@
                 <div class="col">
                   <div class="row text-center mt-2">
                     <div class="col align-middle mx-auto">
-                    <b-button-group vertical>
-                      <b-button @click="addManager(usersIdSelected)">+</b-button>
-                      <b-button @click="removeManager(managersIdSelected)">-</b-button>
-                    </b-button-group>
+                      <b-button-group vertical>
+                        <b-button @click="addManager(usersIdSelected)">
+                          +
+                        </b-button>
+                        <b-button @click="removeManager(managersIdSelected)">
+                          -
+                        </b-button>
+                      </b-button-group>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-5">
                   <div class="form-group">
-                      <select
-                        id="managerSelectBox"
-                        class="form-control"
-                        v-model="managersIdSelected"
-                        multiple>
-                        <option v-for="manager in project.managers"
-                                :key="manager.id" v-bind:value="manager">{{manager.full_name}}</option>
-                      </select>
+                    <select
+                      id="managerSelectBox"
+                      v-model="managersIdSelected"
+                      class="form-control"
+                      multiple
+                    >
+                      <option
+                        v-for="manager in project.managers"
+                        :key="manager.id"
+                        :value="manager"
+                      >
+                        {{ manager.full_name }} - {{ manager.email }}
+                      </option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -148,7 +170,7 @@ export default {
       usersIdSelected: [],
       managersIdSelected: [],
       users: []
-    }
+    };
   },
   mounted() {
     let self = this;
@@ -166,17 +188,16 @@ export default {
   methods: {
     addManager(usersIds) {
       if (usersIds) {
-        usersIds.forEach((userId) => {
-          let userObject = this.users.find((element) => {
+        usersIds.forEach(userId => {
+          let userObject = this.users.find(element => {
             return element.id === userId;
           });
-          var found = this.project.managers.find((manager) => {
+          var found = this.project.managers.find(manager => {
             return manager.id === userObject.id;
-          })
-          if(found) {
+          });
+          if (found) {
             return;
-          }
-          else {
+          } else {
             this.project.managers.push(userObject);
           }
         });
@@ -184,7 +205,7 @@ export default {
     },
     removeManager(managersChoosed) {
       if (this.project.managers && managersChoosed) {
-        managersChoosed.forEach((manager) => {
+        managersChoosed.forEach(manager => {
           let index = this.project.managers.indexOf(manager);
           this.project.managers.splice(index, 1);
         });
@@ -201,7 +222,7 @@ export default {
           .then(resp => {
             self.project = deserialize(resp.data);
             if (!self.project.managers) {
-              self.project.managers = []
+              self.project.managers = [];
             }
             resolve();
           })
@@ -220,13 +241,14 @@ export default {
           .get(url)
           .then(resp => {
             usersAttributes = deserialize(resp.data);
-            usersAttributes.forEach((user) => {
-                let info = {};
-                info.id = Number(user.id);
-                info.full_name = user.full_name;
+            usersAttributes.forEach(user => {
+              let info = {};
+              info.id = Number(user.id);
+              info.full_name = user.full_name;
+              info.email = user.email;
 
-                self.users.push(info);
-            })
+              self.users.push(info);
+            });
             resolve();
           })
           .catch(function(e) {
@@ -239,11 +261,11 @@ export default {
       let projectId = this.$route.params.id;
       const url = `${thornUrl}/administration/projects/${projectId}`;
       let project = self.project;
-      let managers_ids = self.project.managers.map((users) => {
+      let managers_ids = self.project.managers.map(users => {
         return users.id.toString();
-      })
+      });
       delete self.project.managers;
-      self.project.managers_ids = managers_ids
+      self.project.managers_ids = managers_ids;
 
       this.$Progress.start();
       return axios

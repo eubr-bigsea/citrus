@@ -60,7 +60,7 @@
                           params: { id: props.row.id }
                         }"
                       >
-                        {{ props.row.roles[0]}}
+                        {{ formatRole(props.row.roles[0]) }}
                       </router-link>
                     </template>
                     <template slot="confirmed_at" slot-scope="props">
@@ -120,11 +120,12 @@ export default {
           name: this.$tc('common.name'),
           email: this.$tc('common.email'),
           roles: this.$tc('common.roles'),
+
           confirmed_at: this.$tc('common.confirmed_at'),
           actions: this.$tc('common.action', 2)
         },
-        sortable: ['full_name', 'id', 'email', 'roles'],
-        filterable: ['full_name', 'id', 'email', 'roles'],
+        sortable: ['full_name', 'id', 'email', 'confirmed_at'],
+        filterable: ['full_name', 'id', 'email'],
         sortIcon: {
           base: 'fa fas',
           is: 'fa-sort ml-10',
@@ -136,13 +137,16 @@ export default {
         customFilters: ['platform'],
         filterByColumn: false,
         requestFunction: function(data) {
-          var sort_opt = data.orderBy == undefined ? 'id' : data.orderBy
+          var sort_opt =
+            data.orderBy == undefined ? 'confirmed_at' : data.orderBy;
           data.sorted_by = {};
           data.sorted_by[sort_opt] = data.ascending === 1 ? 'asc' : 'desc';
           data.asc = data.ascending === 1 ? 'true' : 'false';
           data.per_page = data.limit;
           data.search_by = data.query;
-          data.fields = 'id,full_name,email,confirmed_at,roles';
+
+          data.fields = 'id,full_name,email,confirmed_at';
+
           let url = `${thornUrl}/administration/users`;
           this.$Progress.start();
           return axios
@@ -183,6 +187,11 @@ export default {
     },
     isConfirmedUser(confirmed_at) {
       return confirmed_at !== null;
+    },
+    formatRole(role) {
+      if (role) {
+        return this.$t(`roles.${role}`);
+      }
     },
     remove(userId) {
       const self = this;

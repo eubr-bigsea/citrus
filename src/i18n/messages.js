@@ -1,5 +1,10 @@
 export default {
   pt: {
+    roles: {
+      admin: 'Administrador',
+      manager: 'Professor',
+      monitor: 'Monitor'
+    },
     actions: {
       add: 'Adicionar {type}',
       addItem: 'Adicionar',
@@ -43,6 +48,7 @@ export default {
       toggleTasks: 'Habilitar/desabilitar tarefas'
     },
     common: {
+      makeAdmin: 'Tornar Administrador',
       action: 'Ação | Ações',
       adminRole: 'Administrador',
       author: 'Autor',
@@ -123,7 +129,7 @@ export default {
       userRole: 'Usuário',
       user: {
         name: 'Nome do usuário',
-        login: 'Login do usuário',
+        login: 'Login do usuário'
       },
       version: 'Versão',
       yes: 'Sim'
@@ -376,6 +382,11 @@ export default {
   },
 
   en: {
+    roles: {
+      admin: 'Administrator',
+      manager: 'Teacher',
+      monitor: 'Monitor'
+    },
     actions: {
       add: 'Add new {type}',
       addItem: 'Add',
@@ -420,6 +431,7 @@ export default {
       toggleTasks: 'Enable/disable tasks'
     },
     common: {
+      makeAdmin: 'Make Administrator',
       action: 'Action | Actions',
       adminRole: 'Administrator',
       author: 'Author',

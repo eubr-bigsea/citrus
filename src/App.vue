@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <vue-snotify />
     <l-navbar v-if="isLoggedIn" />
     <div class="container-fluid main-container">
@@ -87,7 +87,11 @@ export default {
 body {
   background-color: #f8f9fa !important;
 }
+.app-container {
+  height: 100%;
+}
 .main-container {
   padding-top: 15px;
+  height: calc(100% - 60px);
 }
 </style>

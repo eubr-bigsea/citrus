@@ -50,16 +50,11 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="inputRole" class="col-sm-3 col-form-label">
-                  {{ $t('common.roles') }}
+                <label for="inputEmail3" class="col-sm-3 col-form-label">
+                  {{ $t('common.makeAdmin') }}
                 </label>
                 <div class="col-sm-9">
-                  <select v-model="user.roles" class="form-control">
-                    <option value="admin">{{ $t('common.adminRole') }}</option>
-                    <option value="manager">{{ $t('common.managerRole') }}</option>
-                    <option value="monitor">{{ $t('common.monitorRole') }}</option>
-                    <option value="user">{{ $t('common.userRole') }}</option>
-                  </select>
+                  <toggle-button v-model="user.admin" />
                 </div>
               </div>
               <div class="form-group row">
@@ -115,20 +110,16 @@ let thornUrl = process.env.VUE_APP_THORN_URL;
 export default {
   name: 'UserAdd',
   mixins: [Notifier],
-  props: {
-    user: {
-      type: Object,
-      default: () => {
-        return {};
-      }
-    }
+  data() {
+    return {
+      user: {}
+    };
   },
   methods: {
     save() {
       const self = this;
       let url = `${thornUrl}/administration/users`;
       let user = self.user;
-      console.log(user);
 
       this.$Progress.start();
       return axios
@@ -143,7 +134,7 @@ export default {
             this.$Progress.finish();
             if (e.response.data.errors[0]) {
               let pointer = e.response.data.errors[0].source.pointer;
-              let detail = e.response.data.errors[0].source.detail;
+              let detail = e.response.data.errors[0].detail;
 
               err = {
                 message: `${pointer} ${detail}`

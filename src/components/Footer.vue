@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <hr>
+  <div class="footer-container">
+    <hr />
     <ul class="footer-list">
       <li>
         <span>© 2019 Lemonade Project</span>
@@ -9,16 +9,28 @@
         <a href="https://docs.lemonade.org.br/" target="_blank">About</a>
       </li>
       <li>
-        <a href="https://docs.lemonade.org.br/pt-br/spark/visualizacao-de-dados/tabela.html" target="_blank">Documentation</a>
+        <a
+          href="https://docs.lemonade.org.br/pt-br/spark/visualizacao-de-dados/tabela.html"
+          target="_blank"
+          >Documentation</a
+        >
       </li>
       <li>
-        <a href="https://github.com/eubr-bigsea/docker-lemonade" target="_blank">GitHub</a>
+        <a href="https://github.com/eubr-bigsea/docker-lemonade" target="_blank"
+          >GitHub</a
+        >
       </li>
     </ul>
   </div>
 </template>
 
 <style>
+.footer-container {
+  position: absolute;
+  bottom: 0;
+  width: calc(100% - 30px);
+  background-color: white;
+}
 
 hr {
   margin-right: -15px;
@@ -45,7 +57,7 @@ hr {
 
 <script>
 export default {
-  name: "l-footer"
-}
+  name: 'LFooter'
+};
 </script>
 

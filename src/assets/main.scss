@@ -1,8 +1,9 @@
 $snotify-width: 600px !default;
 @import '~vue-snotify/styles/dark.scss'; //dark or material.css or simple.css
-// body {
-//    overflow-y: scroll;
-// }
+body {
+  // overflow-y: scroll;
+  height: 100vh;
+}
 
 .snotify {
   .snotifyToast__title {

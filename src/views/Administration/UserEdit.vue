@@ -49,16 +49,26 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="inputRole" class="col-sm-3 col-form-label">
-                  {{ $t('common.roles') }}
+                <label for="inputEmail3" class="col-sm-3 col-form-label">
+                  {{ $t('common.language') }}
                 </label>
                 <div class="col-sm-9">
-                  <select v-model="user.roles[0]" class="form-control">
-                    <option value="admin">{{ $t('common.adminRole') }}</option>
-                    <option value="manager">{{ $t('common.managerRole') }}</option>
-                    <option value="monitor">{{ $t('common.monitorRole') }}</option>
-                    <option value="user">{{ $t('common.userRole') }}</option>
+                  <select v-model="user.locale" class="form-control">
+                    <option value="en">English/Inglês</option>
+                    <option value="pt">Português/Portuguese</option>
                   </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputEmail3" class="col-sm-3 col-form-label">
+                  {{ $t('common.makeAdmin') }}
+                </label>
+                <div class="col-sm-9">
+                  <toggle-button
+                    :value="isAdmin"
+                    :sync="true"
+                    @change="toogleAdmin"
+                  />
                 </div>
               </div>
               <div class="form-group row">
@@ -71,17 +81,6 @@
                     type="text"
                     class="form-control"
                   />
-                </div>
-              </div>
-              <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-3 col-form-label">
-                  {{ $t('common.language') }}
-                </label>
-                <div class="col-sm-9">
-                  <select v-model="user.locale" class="form-control">
-                    <option value="en">English/Inglês</option>
-                    <option value="pt">Português/Portuguese</option>
-                  </select>
                 </div>
               </div>
               <div class="form-group row border-top clearfix pt-3">
@@ -106,6 +105,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier';
 import { deserialize } from 'jsonapi-deserializer';
@@ -115,13 +115,11 @@ let thornUrl = process.env.VUE_APP_THORN_URL;
 export default {
   name: 'UserAdd',
   mixins: [Notifier],
-  props: {
-    user: {
-      type: Object,
-      default: () => {
-        return {};
-      }
-    }
+  data() {
+    return {
+      user: {},
+      isAdmin: false
+    };
   },
   mounted() {
     let self = this;
@@ -141,13 +139,50 @@ export default {
         axios
           .get(url)
           .then(resp => {
-            self.user = deserialize(resp.data);
+            let user = deserialize(resp.data);
+            self.user = user;
+            self.isAdmin = user.roles.includes('admin');
             resolve();
           })
           .catch(function(e) {
             self.error(e);
           });
       });
+    },
+    toogleAdmin({ value, srcEvent }) {
+      const self = this;
+      let user_id = this.user.id;
+      let role = { user_id };
+      const baseUrl = `${thornUrl}/administration/roles/`;
+      let action = 'remove_admin';
+
+      if (value) {
+        action = 'add_admin';
+      }
+
+      this.$Progress.start();
+      return axios
+        .post(baseUrl + action, { role })
+        .then(resp => {
+          this.$Progress.finish();
+          this.isAdmin = value;
+        })
+        .catch(
+          function(e) {
+            var err = e;
+            self.$Progress.finish();
+            if (e.response.data.errors[0]) {
+              let pointer = e.response.data.errors[0].source.pointer;
+              let detail = e.response.data.errors[0].detail;
+
+              err = {
+                message: `${pointer} ${detail}`
+              };
+            }
+
+            self.error(err);
+          }.bind(this)
+        );
     },
     save() {
       const self = this;
@@ -168,7 +203,7 @@ export default {
             self.$Progress.finish();
             if (e.response.data.errors[0]) {
               let pointer = e.response.data.errors[0].source.pointer;
-              let detail = e.response.data.errors[0].source.detail;
+              let detail = e.response.data.errors[0].detail;
 
               err = {
                 message: `${pointer} ${detail}`

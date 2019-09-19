@@ -22,30 +22,33 @@
         }}</b-nav-item>
 
         <b-nav-item-dropdown
-          v-if="getUserIsAdmin()"
+          v-if="currentUserHasRole"
           :text="$tc('titles.administration', 2)"
           right
         >
           <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
             {{ $tc('titles.user', 2) }}
           </b-dropdown-item>
-          <b-dropdown-item :to="{ name: 'AdministrationProjectList' }">
+          <b-dropdown-item
+            v-if="isAdmin || isManager"
+            :to="{ name: 'AdministrationProjectList' }"
+          >
             {{ $tc('titles.project', 2) }}
           </b-dropdown-item>
-          <b-dropdown-item href="#">{{
+          <b-dropdown-item v-if="isAdmin" href="#">{{
             $tc('titles.cluster', 2)
           }}</b-dropdown-item>
-          <b-dropdown-item href="#">{{
+          <b-dropdown-item v-if="isAdmin" href="#">{{
             $tc('titles.platform', 2)
           }}</b-dropdown-item>
-          <b-dropdown-item href="#">{{
+          <b-dropdown-item v-if="isAdmin" href="#">{{
             $tc('titles.storage', 2)
           }}</b-dropdown-item>
           <b-dropdown-divider />
-          <b-dropdown-item href="#">{{
+          <b-dropdown-item v-if="isAdmin" href="#">{{
             $tc('titles.template', 2)
           }}</b-dropdown-item>
-          <b-dropdown-item href="#">{{
+          <b-dropdown-item v-if="isAdmin" href="#">{{
             $t('titles.toolboxCategory')
           }}</b-dropdown-item>
         </b-nav-item-dropdown>
@@ -70,9 +73,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
   name: 'LNavbar',
   components: {},
+  computed: {
+    ...mapGetters(['currentUserHasRole', 'isAdmin', 'isManager', 'isMonitor'])
+  },
   methods: {
     getUserFirstName() {
       return (

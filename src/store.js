@@ -186,7 +186,10 @@ export default new Vuex.Store({
     isLoggedIn: state => !!state.token,
     authStatus: state => state.status,
     user: state => state.user || {},
+    currentUserHasRole: state => state.user.roles.length > 0,
     isAdmin: state => state.user.roles.includes('admin'),
+    isManager: state => state.user.roles.includes('manager'),
+    isMonitor: state => state.user.roles.includes('monitor'),
     token: state => state.token
   }
 });
