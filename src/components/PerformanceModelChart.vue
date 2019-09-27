@@ -1,15 +1,23 @@
 <template>
-    <div class="text-center">
-        <highcharts :options="options"></highcharts>
+    <div>
+        <div class="text-center" v-if="data && data.length">
+            <highcharts :options="options"></highcharts>
+        </div>
+        <div v-else>
+            <h3>Please, fill performance models parameters in order to generate the estimation chart.</h3>
+            <div class="alert alert-warning" v-if="msg">{{msg}}</div>
+        </div>
     </div>
 </template>
 <script>
     export default {
         props: {
             deadline: Number,
+            msg: null,
             categories: Array,
             cores: Array,
             data: Array,
+            performanceModelReady: Boolean,
         },
         computed: {
             options() {
@@ -45,9 +53,9 @@
                         footerFormat: '</table>',
                         shared: true,
                         useHTML: true,
-                        style: {fontSize: '7pt'},
-                        positioner: (boxWidth, boxHeight, point) =>{
-                            return {x: 200, y:0}
+                        style: { fontSize: '7pt' },
+                        positioner: (boxWidth, boxHeight, point) => {
+                            return { x: 200, y: 0 }
                         }
                     },
                     plotOptions: {
@@ -60,8 +68,8 @@
                                 events: {
                                     click: function () {
                                         this.select();
-                                        self.$root.$emit('onclick-setup', 
-                                        {'cores': this.category, 'setup': this.series.name})
+                                        self.$root.$emit('onclick-setup',
+                                            { 'cores': this.category, 'setup': this.series.name })
                                     }
                                 }
                             }
