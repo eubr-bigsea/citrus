@@ -64,8 +64,7 @@
 <style scoped>
     .toolbar {
         position: absolute;
-        right: 20px;
-        top: 10px;
+        top: 4px;
         z-index: 1;
     }
 
