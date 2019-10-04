@@ -6,7 +6,7 @@
 
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}}</h6>
+                        <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
                         <input-header v-model="workflow.name"></input-header>
                     </div>
                     <div>
