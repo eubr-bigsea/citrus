@@ -14,6 +14,10 @@ import Logout from './views/Logout.vue';
 import Register from './views/Register.vue';
 import ResetPassword from './views/ResetPassword.vue';
 
+import ClusterList from './views/ClusterList.vue';
+import ClusterAdd from './views/ClusterAdd.vue';
+import ClusterEdit from './views/ClusterEdit.vue';
+
 import DataSourceList from './views/DataSourceList.vue';
 import DataSourceEdit from './views/DataSourceEdit.vue';
 import DataSourceAdd from './views/DataSourceAdd.vue';
@@ -240,6 +244,30 @@ let router = new Router({
       meta: {
         requiresAuth: true,
         requiresAdmin: true
+      }
+    },
+    {
+      path: '/admin/clusters',
+      name: 'clusters',
+      component: ClusterList,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/add',
+      name: 'addCluster',
+      component: ClusterAdd,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/:id',
+      name: 'editCluster',
+      component: ClusterEdit,
+      meta: {
+        requiresAuth: true
       }
     }
   ]
