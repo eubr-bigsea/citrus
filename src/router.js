@@ -28,6 +28,11 @@ import WorkflowAdd from './views/WorkflowAdd.vue';
 import DashboardList from './views/DashboardList.vue';
 import DashboardDetail from './views/DashboardDetail.vue';
 
+import ModelList from './views/ModelList.vue';
+import ModelAdd from './views/ModelAdd.vue';
+import ModelEdit from './views/ModelEdit.vue';
+//import DashboardDetail from './views/DashboardDetail.vue';
+
 import OperationList from './views/OperationList.vue';
 
 import Profile from './views/Profile.vue';
@@ -105,6 +110,30 @@ let router = new Router({
       path: '/data-sources/:id',
       name: 'editDataSource',
       component: DataSourceEdit,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+        path: '/models',
+        name: 'models',
+        component: ModelList,
+        meta: {
+          requiresAuth: true
+        }
+    },
+    {
+        path: '/models/add',
+        name: 'addModel',
+        component: ModelAdd,
+        meta: {
+          requiresAuth: true
+        }
+      },
+    {
+      path: '/model/:id',
+      name: 'editModel',
+      component: ModelEdit,
       meta: {
         requiresAuth: true
       }

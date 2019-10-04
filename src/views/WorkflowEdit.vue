@@ -6,7 +6,7 @@
 
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}}</h6>
+                        <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
                         <input-header v-model="workflow.name"></input-header>
                     </div>
                     <div>
@@ -119,69 +119,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!--
-                                    <div class="mt-2 p-2 border">
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <strong>Performance models (optional)</strong>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <label>Data type:</label>
-                                                            <select class="form-control form-control-sm"
-                                                                v-model="performanceModel.dataType">
-                                                                <option value="IMAGE">Image</option>
-                                                                <option value="VIDEO">Video</option>
-                                                                <option value="TABULAR">Tabular</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <label>Estimated size (qty or rows):</label>
-                                                            <input type="number" class="form-control form-control-sm"
-                                                                min="1"
-                                                                v-model.number="performanceModel.estimatedSize" />
-                                                        </div>
-                                                        <div class="col-md-4" v-show="workflow.platform.slug === 'keras'">
-                                                            <label>Batch size:</label>
-                                                            <input type="number" class="form-control form-control-sm"
-                                                                min="1" v-model.number="performanceModel.batchSize" />
-                                                        </div>
-                                                        <div class="col-md-8" v-show="workflow.platform.slug === 'keras'">
-                                                            <label>Number of iterations:</label>
-                                                            <input type="number" class="form-control form-control-sm"
-                                                                min="1" v-model.number="performanceModel.iterations" />
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label>Deadline (minutes):</label>
-                                                            <input type="number" class="form-control form-control-sm"
-                                                                min="1" v-model.number="performanceModel.deadline" />
-                                                        </div>
-                                                        <div class="col-md-6"></div>
-                                                        <div class="col-md-4">
-                                                            <label>Cores:</label>
-                                                            <input type="number" class="form-control form-control-sm"
-                                                                min="1" v-model.number="performanceModel.cores"
-                                                                readonly />
-                                                        </div>
-                                                        <div class="col-md-8">
-                                                            <label>Setup:</label>
-                                                            <input type="text" class="form-control form-control-sm"
-                                                                min="1" v-model.number="performanceModel.setup"
-                                                                readonly />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 border-left">
-                                                    <PerformanceModelChart :deadline="performanceModel.deadline"
-                                                        :categories="performanceModel.availableCategories"
-                                                        :cores="performanceModel.availableCores" :data="performanceModel.data" />
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div class="mt-2 p-2 border atmosphere" v-if="atmosphereExtension">
+                                        <PerformanceEstimation :platform="workflow.platform" 
+                                        :clusterId="clusterInfo.id" :cluster="clusterInfo"
+                                        :cores="performanceModel.cores" :setup="performanceModel.setup"
+                                        />
                                     </div>
-                                    -->
                                     <div slot="modal-footer" class="w-100 text-right">
                                         <button class="btn btn-sm btn-outline-success" @click="execute"
                                             id="mdl-execute-wf">
@@ -297,7 +240,7 @@
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import DiagramComponent from '../components/Diagram.vue';
     import PropertyWindow from '../components/PropertyWindow.vue';
-    import PerformanceModelChart from '../components/PerformanceModelChart.vue';
+    import PerformanceEstimation from '../components/PerformanceEstimation.vue';
     import WorkflowToolbar from '../components/WorkflowToolbar.vue';
     import ToolboxComponent from '../components/Toolbox.vue';
     import SlideOutPanel from '../components/SlideOutPanel.vue';
@@ -323,7 +266,7 @@
             WorkflowExecution,
             VuePerfectScrollbar,
             InputHeader,
-            PerformanceModelChart,
+            PerformanceEstimation,
             TahitiSuggester: () => {
                 return new Promise((resolve, reject) => {
                     let script = document.createElement('script')
@@ -335,12 +278,14 @@
         },
         data() {
             return {
+                atmosphereExtension: process.env.VUE_APP_ATMOSPHERE,
+                
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
                 clusters: [],
                 clusterInfo: {
                     name: '', description: '', workflowName: '', id: 0,
-                    jobName: '',
+                    jobName: '', clusterName: ''
                 },
                 history: [],
                 isDirty: false,
@@ -349,23 +294,7 @@
                 newName: '',
                 operations: [],
                 operationsLookup: new Map(),
-                performanceModel: {
-                    dataType: 'IMAGE',
-                    estimatedSize: '',
-                    batchSize: 5,
-                    iterations: 3,
-                    deadline: 60,
-                    cores: null,
-                    setup: null,
-                    availableCores: ['1', '2', '4', '8'],
-                    availableCategories: ['P100-PCIE-16GB', 'V100-SXM2-16GB','V100-PCIE-16GB', 'V100-SMX2-32GB'],
-                    data: [
-                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1),
-                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1),
-                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1),
-                        [...Array(4)].map(e => ~~(Math.random() * 100) + 1)
-                    ]
-                },
+                
                 resultTask: { step: {} },
                 saveOption: 'new',
                 selectedTab: 0,
@@ -374,6 +303,10 @@
                 showProperties: false,
                 validationErrors: [],
                 workflow: { tasks: [], flows: [], platform: {} },
+                performanceModel: {
+                    cores: null,
+                    setup: null
+                }
                 // propertyStyles: [
                 //     {
                 //         top: '112px',
@@ -665,12 +598,6 @@
                                 self._validateTasks(self.workflow.tasks);
                                 this.updateAttributeSuggestion();
                                 self.loaded = true;
-                                self.$nextTick(() => {
-                                    if (self.workflow.platform.slug === 'spark'){
-                                        self.performanceModel.availableCategories = ['4GB RAM', '8GB RAM', 
-                                            '16GB RAM', '32GB RAM', ]
-                                    }
-                                });
                                 const params = { workflow_id: this.$route.params.id }
                                 axios.get(`${standUrl}/jobs/latest`, { params })
                                     .then((resp2 => {
@@ -935,6 +862,7 @@
                 const c = this.clusters.find((c) => c.id === this.clusterInfo.id)
                 if (c) {
                     this.clusterInfo.description = c.description;
+                    this.clusterInfo.clusterName = c.name;
                 }
             },
             showExecuteWindow() {
@@ -947,6 +875,7 @@
                         Array.prototype.push.apply(self.clusters, response.data);
                         if (self.clusters.length) {
                             self.clusterInfo.id = self.clusters[0].id;
+                            self.clusterInfo.name = self.clusters[0].name;
                             self.clusterInfo.description = self.clusters[0].description;
                             self.$refs.executeModal.show();
                             if (self.name === '') {
@@ -1099,5 +1028,9 @@
         flex: 0 0 230px;
         background-color: greenyellow;
         max-width: 250px;
+    }
+    .atmosphere h3{
+        text-align: center;
+        color: #aaa;
     }
 </style>

@@ -134,7 +134,7 @@
                   </table>
                 </div>
                 <div class="border-top mt-5 pt-4">
-                  <button class="btn ml-1" @click="step=1">{{$t('actions.back')}}</button>
+                  <button class="btn btn-outline-secondary ml-1" @click="step=1">{{$t('actions.back')}}</button>
                 </div>
               </div>
             </div>
