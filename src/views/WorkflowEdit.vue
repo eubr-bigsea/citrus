@@ -14,9 +14,9 @@
                     </div>
                 </div>
 
-                <b-tabs @input="updateSelectedTab" ref="formTabs" v-model="selectedTab" nav-class="custom-tab">
+                <b-tabs ref="formTabs" v-model="selectedTab" nav-class="custom-tab" @input="updateSelectedTab">
                     <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
-                        :active="form.order === minFormOrder" :key="form.id">
+                        :key="form.id" :active="form.order === minFormOrder">
                         <template slot="title">
                             <span class="fa fa-cogs"></span> {{form.name}}
                         </template>
@@ -34,16 +34,16 @@
                                     <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task'></toolbox>
                                 </div>
                                 <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
-                                    <diagram :workflow="workflow" ref="diagram" id="main-diagram"
-                                        :operations="operations" v-if="loaded" :loaded="loaded"
+                                    <diagram ref="diagram" id="main-diagram" :workflow="workflow"
+                                        v-if="loaded" :operations="operations" :loaded="loaded"
                                         :version="workflow.version" tabindex="0"></diagram>
                                     <slideout-panel :opened="showProperties">
                                         <property-window :task="selectedTask.task" v-if="selectedTask.task"
                                             :suggestions="getSuggestions(selectedTask.task.id)" />
                                     </slideout-panel>
                                 </div>
-                                <b-modal id="history" size="lg" :title="$t('common.history')" ok-disabled
-                                    ref="historyModal">
+                                <b-modal id="history" size="lg" :title="$t('common.history')" ref="historyModal" 
+                                    ok-disabled>
                                     <div class="historyArea">
                                         <table class="table table-sm table-striped text-center">
                                             <tr>
@@ -64,11 +64,11 @@
                                         </table>
                                     </div>
                                     <div slot="modal-footer" class="w-100">
-                                        <b-btn @click="closeHistory" variant="secondary_sm" class="float-right">
+                                        <b-btn variant="secondary_sm" class="float-right" @click="closeHistory">
                                             {{$t('actions.cancel')}}</b-btn>
                                     </div>
                                 </b-modal>
-                                <b-modal id="executeModal" size="lg" :title="$t('workflow.execute')" ref="executeModal">
+                                <b-modal id="executeModal" size="lg" ref="executeModal" :title="$t('workflow.execute')">
                                     <em>
                                         {{$t('workflow.required')}}:
                                     </em>
@@ -100,9 +100,9 @@
                                                     <label>{{$tc('titles.cluster')}}:</label>
                                                     <select v-model="clusterInfo.id"
                                                         class="form-control-sm form-control"
-                                                        v-on:change="changeCluster">
-                                                        <option v-for="option in clusters" v-bind:value="option.id"
-                                                            v-bind:key="option.id">
+                                                        @change="changeCluster">
+                                                        <option v-for="option in clusters" v-bind:key="option.id" 
+                                                           v-bind:value="option.id">
                                                             {{ option.name }}
                                                         </option>
                                                     </select>
@@ -161,9 +161,9 @@
                                         </div>
                                     </b-form-radio-group>
                                     <div slot="modal-footer" class="w-100">
-                                        <b-btn @click="closeSaveAs" variant="secondary_sm" class="float-right">
+                                        <b-btn variant="secondary_sm" class="float-right" @click="closeSaveAs">
                                             {{$t('actions.cancel')}}</b-btn>
-                                        <b-btn @click="okClicked" variant="primary" class="float-right mr-2">
+                                        <b-btn variant="primary" class="float-right mr-2" @click="okClicked">
                                             {{$t('common.ok')}}
                                         </b-btn>
                                     </div>
@@ -176,7 +176,7 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col justify-content-center">
-                                        <WorkflowExecution :workflow-id="workflow.id" v-if="showPreviousJobs" />
+                                        <WorkflowExecution v-if="showPreviousJobs" :workflow-id="workflow.id"/>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +195,7 @@
                     </div>
                 </b-modal>
 
-                <b-modal id="validationErrorsModal" size="lg" ref="validationErrorsModal" :ok-only="true"
+                <b-modal id="validationErrorsModal" ref="validationErrorsModal" size="lg" :ok-only="true"
                     :title="$tc('titles.validationErrors', 1)">
                     <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
                     <table class="table table-sm">
@@ -212,8 +212,8 @@
                     </table>
                 </b-modal>
                 <b-modal id="workflowProperties" size="lg" ref="workflowProperties" :title="$tc('titles.property', 2)"
-                    :okOnly="true">
-                    <b-form @submit="saveWorkflowProperties" v-if="loaded">
+                    :ok-only="true">
+                    <b-form v-if="loaded" @submit="saveWorkflowProperties">
                         <b-form-group :label="$tc('common.name', 1) + ':'">
                             <b-form-input id="exampleInput1" type="text" v-model="workflow.name" required>
                             </b-form-input>

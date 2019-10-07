@@ -81,8 +81,6 @@
                 }
                 this.$refs.mapRef.mapObject.fitBounds(this.getBounds(this.points));
                 if (this.mode.polygon) {
-
-                    let counter = 0;
                     axios
                         .get(this.visualizationData.geojson.url)
                         .then(response => {

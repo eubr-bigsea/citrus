@@ -437,7 +437,7 @@ export default {
         },
         atmosphere: {
             transparency: 'Explain models',
-        }
+        },
         common: {
             action: 'Action | Actions',
             author: 'Author',
