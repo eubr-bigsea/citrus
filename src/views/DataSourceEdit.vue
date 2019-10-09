@@ -86,7 +86,7 @@
                         >{{ $t('dataSource.isMultiline') }}</b-form-checkbox>
                       </div>
 
-                      <div class="col-md-12 mt-3 pb-1" v-if="dataSource.format === 'JDBC'">
+                      <div class="col-md-12 mt-3 pb-1" v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM'">
                         <label>{{$tc('common.command')}}:</label>
                         <textarea class="form-control" v-model="dataSource.command"></textarea>
                       </div>
@@ -440,11 +440,14 @@ export default {
       }
     },
     save(event) {
-      let self = this;
+      const self = this;
       let inconsistentFormat =
         (self.dataSource.format === 'JDBC' &&
           self.dataSource.storage.type !== 'JDBC') ||
-        (self.dataSource.format !== 'JDBC' &&
+        (self.dataSource.format === 'VALLUM' &&
+          self.dataSource.storage.type !== 'VALLUM') ||
+        (self.dataSource.format !== 'JDBC' && 
+          self.dataSource.storage.type !== 'VALLUM' &&
           self.dataSource.storage.type !== 'HDFS');
 
       if (inconsistentFormat) {
