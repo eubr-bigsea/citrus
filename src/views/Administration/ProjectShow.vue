@@ -4,7 +4,7 @@
       <div class="col-md-8 mx-auto">
         <div class="card fat">
           <div class="card-header text-center bg-secondary text-white">
-            {{ $t('actions.edit') }} {{ $tc('titles.project', 1) }}
+            {{ $t('actions.show') }} {{ $tc('titles.project', 1) }}
           </div>
           <div class="card-body">
             <form @submit.prevent="save">
@@ -13,13 +13,7 @@
                   {{ $t('common.project.name') }}
                 </label>
                 <div class="col-sm-9">
-                  <input
-                    v-model="project.name"
-                    type="text"
-                    class="form-control"
-                    required
-                    autofocus
-                  />
+                  <input v-model="project.name" class="form-control" disabled />
                 </div>
               </div>
               <div class="form-group row">
@@ -35,6 +29,7 @@
                     v-model="project.description"
                     class="form-control"
                     rows="3"
+                    disabled
                   />
                 </div>
               </div>
@@ -47,7 +42,7 @@
                     v-model="project.category"
                     type="text"
                     class="form-control"
-                    required
+                    disabled
                   />
                 </div>
               </div>
@@ -60,89 +55,36 @@
                     v-model="project.subcategory"
                     type="text"
                     class="form-control"
-                    required
+                    disabled
                   />
                 </div>
               </div>
-              <div class="row text-center">
-                <label class="col-sm-12 col-form-label">
+              <div class="form-group row">
+                <label class="col-sm-3 col-form-label">
                   {{ $t('common.project.managers') }}
                 </label>
-              </div>
-              <div class="form-row text-center">
-                <div class="col-sm-6">
-                  <label for="userSelectBox">{{ $tc('titles.user', 2) }}</label>
-                </div>
-                <div class="col-sm-6">
-                  <label for="managerSelectBox">
-                    {{ $t('common.project.managers') }}
-                  </label>
-                </div>
-              </div>
-              <div class="form-row text-center">
-                <div class="col-md-5">
-                  <div class="form-group">
-                    <span v-if="users">
-                      <select
-                        id="userSelectBox"
-                        v-model="usersIdSelected"
-                        class="form-control"
-                        multiple
-                      >
-                        <option
-                          v-for="user in users"
-                          :key="user.id"
-                          :value="user.id"
-                        >
-                          {{ user.full_name }} - {{ user.email }}
-                        </option>
-                      </select>
-                    </span>
-                  </div>
-                </div>
-                <div class="col">
-                  <div class="row text-center mt-2">
-                    <div class="col align-middle mx-auto">
-                      <b-button-group vertical>
-                        <b-button @click="addManager(usersIdSelected)">
-                          +
-                        </b-button>
-                        <b-button @click="removeManager(managersIdSelected)">
-                          -
-                        </b-button>
-                      </b-button-group>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-5">
-                  <div class="form-group">
-                    <select
-                      id="managerSelectBox"
-                      v-model="managersIdSelected"
-                      class="form-control"
-                      multiple
-                    >
-                      <option
-                        v-for="manager in project.managers"
-                        :key="manager.id"
-                        :value="manager"
-                      >
-                        {{ manager.full_name }} - {{ manager.email }}
-                      </option>
-                    </select>
-                  </div>
+                <div v-if="project.managers" class="col-sm-9">
+                  <router-link
+                    v-for="manager in project.managers"
+                    :key="manager.id"
+                    :to="{
+                      name: 'AdministrationEditUser',
+                      params: { id: manager.id }
+                    }"
+                    style="display:block;"
+                  >
+                    {{ manager.full_name }} - {{ manager.email }}
+                  </router-link>
                 </div>
               </div>
+
               <div class="form-group row border-top clearfix pt-3">
                 <div class="col-sm-12 text-center">
-                  <button type="submit" class="btn btn-primary mr-2 pr-5 pl-5">
-                    {{ $t('common.ok') }}
-                  </button>
                   <router-link
                     :to="{ name: 'AdministrationProjectList' }"
-                    class="btn btn-secondary text-white"
+                    class="btn btn-primary mr-2 pr-5 pl-5"
                   >
-                    {{ $t('actions.cancel') }}
+                    {{ $t('common.ok') }}
                   </router-link>
                 </div>
               </div>

@@ -103,6 +103,11 @@ export default {
         subcategory: 'Categoria Secundária',
         managers: 'Responsáveis'
       },
+      team: {
+        name: 'Nome',
+        description: 'Descrição',
+        leaders: 'Líders'
+      },
       current_password: 'Senha Atual',
       new_password: 'Nova senha',
       new_password_confirmation: 'Confirmação de nova senha',
@@ -312,6 +317,7 @@ export default {
       platform: 'Platforma | Platformas',
       profile: 'Perfil',
       project: 'Projeto | Projetos',
+      team: 'Time | Times',
       property: 'Propriedade | Propriedades',
       register: 'Registrar',
       resetPassword: 'Redefinir senha',
@@ -486,6 +492,11 @@ export default {
         subcategory: 'Sub Category',
         managers: 'Managers'
       },
+      team: {
+        name: 'Name',
+        description: 'Description',
+        leaders: 'Leaders'
+      },
       current_password: 'Current password',
       new_password: 'New password',
       new_password_confirmation: 'New password confirmation',
@@ -647,6 +658,7 @@ export default {
       platform: 'Platform | Platforms',
       profile: 'Profile',
       project: 'Project | Projects',
+      team: 'Team | Teams',
       property: 'Property | Properties',
       register: 'Sign up',
       resetPassword: 'Reset password',

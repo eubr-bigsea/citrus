@@ -4,7 +4,7 @@
       <div class="col">
         <div>
           <div class="d-flex justify-content-between align-items-center">
-            <h1>{{ $tc('titles.project', 2) }}</h1>
+            <h1>{{ $tc('titles.team', 2) }}</h1>
             <router-link
               :to="{ name: 'AdministrationAddProject' }"
               class="btn btn-sm btn-outline-primary"
@@ -18,15 +18,15 @@
               <div class="card">
                 <div class="card-body">
                   <v-server-table
-                    ref="projectList"
+                    ref="teamList"
                     :columns="columns"
                     :options="options"
-                    name="projectList"
+                    name="teamList"
                   >
                     <template slot="id" slot-scope="props">
                       <router-link
                         :to="{
-                          name: 'AdministrationShowProject',
+                          name: 'AdministrationShowTeam',
                           params: { id: props.row.id }
                         }"
                       >
@@ -36,45 +36,35 @@
                     <template slot="name" slot-scope="props">
                       <router-link
                         :to="{
-                          name: 'AdministrationShowProject',
+                          name: 'AdministrationShowTeam',
                           params: { id: props.row.id }
                         }"
                       >
                         {{ props.row.name }}
                       </router-link>
                     </template>
-                    <template slot="category" slot-scope="props">
+                    <template slot="project_id" slot-scope="props">
                       <router-link
                         :to="{
                           name: 'AdministrationShowProject',
-                          params: { id: props.row.id }
+                          params: { id: props.row.project.id }
                         }"
                       >
-                        {{ props.row.category }}
+                        {{ props.row.project.name }}
                       </router-link>
                     </template>
-                    <template slot="subcategory" slot-scope="props">
-                      <router-link
-                        :to="{
-                          name: 'AdministrationShowProject',
-                          params: { id: props.row.id }
-                        }"
-                      >
-                        {{ props.row.subcategory }}
-                      </router-link>
-                    </template>
-                    <template slot="managers" slot-scope="props">
-                      <div v-if="props.row.managers">
+                    <template slot="leaders" slot-scope="props">
+                      <div v-if="props.row.leaders">
                         <router-link
-                          v-for="manager in props.row.managers"
-                          :key="manager.id"
+                          v-for="leader in props.row.leaders"
+                          :key="leader.id"
                           :to="{
                             name: 'AdministrationEditUser',
-                            params: { id: manager.id }
+                            params: { id: leader.id }
                           }"
                           style="display:block;"
                         >
-                          {{ manager.full_name }}
+                          {{ leader.full_name }}
                         </router-link>
                       </div>
                     </template>
@@ -82,7 +72,7 @@
                       <router-link
                         class="btn btn-sm btn-light"
                         :to="{
-                          name: 'AdministrationEditProject',
+                          name: 'AdministrationEditTeam',
                           params: { id: props.row.id }
                         }"
                       >
@@ -111,7 +101,6 @@ import axios from 'axios';
 import Notifier from '../../mixins/Notifier';
 import { deserialize } from 'jsonapi-deserializer';
 
-
 let thornUrl = process.env.VUE_APP_THORN_URL;
 
 export default {
@@ -120,7 +109,7 @@ export default {
     return {
       platform: '',
       platforms: [],
-      columns: ['id', 'name', 'category', 'subcategory', 'managers', 'actions'],
+      columns: ['id', 'name', 'project_id', 'leaders', 'actions'],
       options: {
         debounce: 800,
         skin: 'table-sm table table-hover',
@@ -128,14 +117,13 @@ export default {
         columnClasses: { actions: 'th-10' },
         headings: {
           id: 'ID',
-          name: this.$tc('common.project.name'),
-          category: this.$tc('common.project.category'),
-          subcategory: this.$tc('common.project.subcategory'),
-          managers: this.$tc('common.project.managers'),
+          name: this.$tc('common.team.name'),
+          project_id: this.$tc('titles.project'),
+          leaders: this.$tc('common.team.leaders'),
           actions: this.$tc('common.action', 2)
         },
-        sortable: ['name', 'id', 'category', 'subcategory'],
-        filterable: ['name', 'id', 'category', 'subcategory'],
+        sortable: ['name', 'id', 'project_id'],
+        filterable: ['name', 'id'],
         sortIcon: {
           base: 'fa fas',
           is: 'fa-sort ml-10',
@@ -154,7 +142,7 @@ export default {
 
           data.fields = 'id,name,category,subcategory';
 
-          let url = `${thornUrl}/administration/projects`;
+          let url = `${thornUrl}/administration/teams`;
           this.$Progress.start();
           return axios
             .get(url, {
@@ -189,28 +177,28 @@ export default {
   /* Methods */
   methods: {
     clearFilters() {
-      this.$refs.projectList.setFilter('');
-      this.$refs.projectList.customQueries = {};
+      this.$refs.teamList.setFilter('');
+      this.$refs.teamList.customQueries = {};
     },
     isConfirmedUser(confirmed_at) {
       return confirmed_at !== null;
     },
-    remove(projectId) {
+    remove(teamId) {
       const self = this;
       this.confirm(
         this.$t('actions.delete'),
         this.$t('messages.doYouWantToDelete'),
         () => {
-          const url = `${thornUrl}/administration/projects/${projectId}`;
+          const url = `${thornUrl}/administration/teams/${teamId}`;
           axios
             .delete(url, {})
             .then(resp => {
               self.success(
                 self.$t('messages.successDeletion', {
-                  what: this.$tc('titles.project', 1)
+                  what: this.$tc('titles.team', 1)
                 })
               );
-              self.$refs.projectList.refresh();
+              self.$refs.teamList.refresh();
             })
             .catch(e => self.error(e));
         }

@@ -22,18 +22,18 @@
         }}</b-nav-item>
 
         <b-nav-item-dropdown
-          v-if="currentUserHasRole"
+          v-if="hasRoles"
           :text="$tc('titles.administration', 2)"
           right
         >
           <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
             {{ $tc('titles.user', 2) }}
           </b-dropdown-item>
-          <b-dropdown-item
-            v-if="isAdmin || isManager"
-            :to="{ name: 'AdministrationProjectList' }"
-          >
+          <b-dropdown-item :to="{ name: 'AdministrationProjectList' }">
             {{ $tc('titles.project', 2) }}
+          </b-dropdown-item>
+          <b-dropdown-item :to="{ name: 'AdministrationTeamList' }">
+            {{ $tc('titles.team', 2) }}
           </b-dropdown-item>
           <b-dropdown-item v-if="isAdmin" href="#">{{
             $tc('titles.cluster', 2)
@@ -79,7 +79,7 @@ export default {
   name: 'LNavbar',
   components: {},
   computed: {
-    ...mapGetters(['currentUserHasRole', 'isAdmin', 'isManager', 'isMonitor'])
+    ...mapGetters(['hasRoles', 'isAdmin', 'isManager', 'isMonitor'])
   },
   methods: {
     getUserFirstName() {

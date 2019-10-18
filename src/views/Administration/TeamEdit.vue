@@ -4,17 +4,17 @@
       <div class="col-md-8 mx-auto">
         <div class="card fat">
           <div class="card-header text-center bg-secondary text-white">
-            {{ $t('actions.edit') }} {{ $tc('titles.project', 1) }}
+            {{ $t('actions.edit') }} {{ $tc('titles.team', 1) }}
           </div>
           <div class="card-body">
             <form @submit.prevent="save">
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">
-                  {{ $t('common.project.name') }}
+                  {{ $t('common.team.name') }}
                 </label>
                 <div class="col-sm-9">
                   <input
-                    v-model="project.name"
+                    v-model="team.name"
                     type="text"
                     class="form-control"
                     required
@@ -24,15 +24,15 @@
               </div>
               <div class="form-group row">
                 <label
-                  for="projectDescTextArea"
+                  for="teamDescTextArea"
                   class="col-sm-3 col-form-label"
                 >
-                  {{ $t('common.project.description') }}
+                  {{ $t('common.team.description') }}
                 </label>
                 <div class="col-sm-9">
                   <textarea
-                    id="projectDescTextArea"
-                    v-model="project.description"
+                    id="teamDescTextArea"
+                    v-model="team.description"
                     class="form-control"
                     rows="3"
                   />
@@ -40,11 +40,11 @@
               </div>
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">
-                  {{ $t('common.project.category') }}
+                  {{ $t('common.team.category') }}
                 </label>
                 <div class="col-sm-9">
                   <input
-                    v-model="project.category"
+                    v-model="team.category"
                     type="text"
                     class="form-control"
                     required
@@ -53,11 +53,11 @@
               </div>
               <div class="form-group row">
                 <label class="col-sm-3 col-form-label">
-                  {{ $t('common.project.subcategory') }}
+                  {{ $t('common.team.subcategory') }}
                 </label>
                 <div class="col-sm-9">
                   <input
-                    v-model="project.subcategory"
+                    v-model="team.subcategory"
                     type="text"
                     class="form-control"
                     required
@@ -66,7 +66,7 @@
               </div>
               <div class="row text-center">
                 <label class="col-sm-12 col-form-label">
-                  {{ $t('common.project.managers') }}
+                  {{ $t('common.team.managers') }}
                 </label>
               </div>
               <div class="form-row text-center">
@@ -75,7 +75,7 @@
                 </div>
                 <div class="col-sm-6">
                   <label for="managerSelectBox">
-                    {{ $t('common.project.managers') }}
+                    {{ $t('common.team.managers') }}
                   </label>
                 </div>
               </div>
@@ -123,7 +123,7 @@
                       multiple
                     >
                       <option
-                        v-for="manager in project.managers"
+                        v-for="manager in team.managers"
                         :key="manager.id"
                         :value="manager"
                       >
@@ -139,7 +139,7 @@
                     {{ $t('common.ok') }}
                   </button>
                   <router-link
-                    :to="{ name: 'AdministrationProjectList' }"
+                    :to="{ name: 'AdministrationTeamList' }"
                     class="btn btn-secondary text-white"
                   >
                     {{ $t('actions.cancel') }}
@@ -163,11 +163,11 @@ import Vue from 'vue';
 let thornUrl = process.env.VUE_APP_THORN_URL;
 
 export default {
-  name: 'ProjectAdd',
+  name: 'TeamAdd',
   mixins: [Notifier],
   data() {
     return {
-      project: {},
+      team: {},
       usersIdSelected: [],
       managersIdSelected: [],
       users: []
@@ -193,37 +193,37 @@ export default {
           let userObject = this.users.find(element => {
             return element.id === userId;
           });
-          var found = this.project.managers.find(manager => {
+          var found = this.team.managers.find(manager => {
             return manager.id === userObject.id;
           });
           if (found) {
             return;
           } else {
-            this.project.managers.push(userObject);
+            this.team.managers.push(userObject);
           }
         });
       }
     },
     removeManager(managersChoosed) {
-      if (this.project.managers && managersChoosed) {
+      if (this.team.managers && managersChoosed) {
         managersChoosed.forEach(manager => {
-          let index = this.project.managers.indexOf(manager);
-          this.project.managers.splice(index, 1);
+          let index = this.team.managers.indexOf(manager);
+          this.team.managers.splice(index, 1);
         });
       }
     },
     load() {
       let self = this;
-      let projectId = this.$route.params.id;
-      const url = `${thornUrl}/administration/projects/${projectId}`;
+      let teamId = this.$route.params.id;
+      const url = `${thornUrl}/administration/teams/${teamId}`;
 
       return new Promise((resolve, reject) => {
         axios
           .get(url)
           .then(resp => {
-            self.project = deserialize(resp.data);
-            if (!self.project.managers) {
-              self.project.managers = [];
+            self.team = deserialize(resp.data);
+            if (!self.team.managers) {
+              self.team.managers = [];
             }
             resolve();
           })
@@ -259,21 +259,21 @@ export default {
     },
     save() {
       const self = this;
-      let projectId = this.$route.params.id;
-      const url = `${thornUrl}/administration/projects/${projectId}`;
-      let project = self.project;
-      let managers_ids = self.project.managers.map(users => {
+      let teamId = this.$route.params.id;
+      const url = `${thornUrl}/administration/teams/${teamId}`;
+      let team = self.team;
+      let managers_ids = self.team.managers.map(users => {
         return users.id.toString();
       });
-      delete self.project.managers;
-      self.project.managers_ids = managers_ids;
+      delete self.team.managers;
+      self.team.managers_ids = managers_ids;
 
       this.$Progress.start();
       return axios
-        .put(url, { project })
+        .put(url, { team })
         .then(resp => {
           this.$Progress.finish();
-          this.$router.push({ name: 'AdministrationProjectList' });
+          this.$router.push({ name: 'AdministrationTeamList' });
         })
         .catch(
           function(e) {

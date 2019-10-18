@@ -59,7 +59,7 @@
                   </select>
                 </div>
               </div>
-              <div class="form-group row">
+              <div v-if="isAdmin" class="form-group row">
                 <label for="inputEmail3" class="col-sm-3 col-form-label">
                   {{ $t('common.makeAdmin') }}
                 </label>
@@ -71,7 +71,7 @@
                   />
                 </div>
               </div>
-              <div class="form-group row">
+              <div v-if="isAdmin" class="form-group row">
                 <label for="inputPassword3" class="col-sm-3 col-form-label">
                   {{ $t('common.password') }}
                 </label>

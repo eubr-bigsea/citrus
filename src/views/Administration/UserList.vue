@@ -78,6 +78,15 @@
                     </template>
 
                     <template slot="actions" slot-scope="props">
+                      <router-link
+                        class="btn btn-sm btn-light"
+                        :to="{
+                          name: 'AdministrationEditUser',
+                          params: { id: props.row.id }
+                        }"
+                      >
+                        <font-awesome-icon icon="user-edit" />
+                      </router-link>
                       <button
                         class="btn btn-sm btn-light"
                         @click="remove(props.row.id)"
@@ -120,7 +129,6 @@ export default {
           name: this.$tc('common.name'),
           email: this.$tc('common.email'),
           roles: this.$tc('common.roles'),
-
           confirmed_at: this.$tc('common.confirmed_at'),
           actions: this.$tc('common.action', 2)
         },

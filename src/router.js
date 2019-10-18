@@ -4,13 +4,17 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
 
-import userlist from './views/Administration/UserList.vue';
-import useradd from './views/Administration/UserAdd.vue';
-import useredit from './views/Administration/UserEdit.vue';
+import userList from './views/Administration/UserList.vue';
+import userAdd from './views/Administration/UserAdd.vue';
+import userEdit from './views/Administration/UserEdit.vue';
 
 import ProjectList from './views/Administration/ProjectList.vue';
 import ProjectAdd from './views/Administration/ProjectAdd.vue';
+import ProjectShow from './views/Administration/ProjectShow.vue';
 import ProjectEdit from './views/Administration/ProjectEdit.vue';
+
+import TeamList from './views/Administration/TeamList.vue';
+import TeamShow from './views/Administration/TeamShow.vue';
 
 import ChangePassword from './views/ChangePassword.vue';
 import Login from './views/Login.vue';
@@ -59,34 +63,34 @@ let router = new Router({
       component: Administration,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
       }
     },
     {
       path: '/administration/users',
       name: 'AdministrationUserList',
-      component: userlist,
+      component: userList,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
       }
     },
     {
       path: '/administration/users/new',
       name: 'AdministrationAddUser',
-      component: useradd,
+      component: userAdd,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
       }
     },
     {
-      path: '/administration/users/:id',
+      path: '/administration/users/:id/edit',
       name: 'AdministrationEditUser',
-      component: useredit,
+      component: userEdit,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
       }
     },
     {
@@ -95,7 +99,7 @@ let router = new Router({
       component: ProjectList,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
       }
     },
     {
@@ -104,16 +108,52 @@ let router = new Router({
       component: ProjectAdd,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
       }
     },
     {
       path: '/administration/projects/:id',
+      name: 'AdministrationShowProject',
+      component: ProjectShow,
+      meta: {
+        requiresAuth: true,
+        requiresRole: true
+      }
+    },
+    {
+      path: '/administration/projects/:id/edit',
       name: 'AdministrationEditProject',
       component: ProjectEdit,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
+      }
+    },
+    {
+      path: '/administration/teams',
+      name: 'AdministrationTeamList',
+      component: TeamList,
+      meta: {
+        requiresAuth: true,
+        requiresRole: true
+      }
+    },
+    {
+      path: '/administration/teams/:id',
+      name: 'AdministrationShowTeam',
+      component: TeamShow,
+      meta: {
+        requiresAuth: true,
+        requiresRole: true
+      }
+    },
+    {
+      path: '/administration/projects/:id/edit',
+      name: 'AdministrationEditProject',
+      component: ProjectEdit,
+      meta: {
+        requiresAuth: true,
+        requiresRole: true
       }
     },
     {
@@ -241,7 +281,7 @@ let router = new Router({
       component: OperationList,
       meta: {
         requiresAuth: true,
-        requiresAdmin: true
+        requiresRole: true
       }
     }
   ]
@@ -250,8 +290,8 @@ let router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
-      if (to.matched.some(record => record.meta.requiresAdmin)) {
-        if (store.getters.isAdmin) {
+      if (to.matched.some(record => record.meta.requiresRole)) {
+        if (store.getters.hasRoles) {
           next();
           return;
         } else {
