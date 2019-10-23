@@ -11,6 +11,7 @@ export default {
             back: 'Voltar',
             cancel: 'Cancelar',
             changeOption: 'Alterar opção...',
+            close: 'Fechar',
             confirm: 'Confirmar',
             choose: 'Escolha',
             chooseOption: 'Escolha uma opção ...',
@@ -47,6 +48,13 @@ export default {
         },
         atmosphere: {
             transparency: 'Explicação de modelos'
+        },
+        cluster: {
+            address: 'Endereço (nome ou IP)',
+            authToken: 'Token de autenticação',
+            executorMemory: 'Memória dos executores',
+            executors: 'Executores (nós de processamento)',
+            executorCores: 'Núcleos (total de CPUs) dos executures'
         },
         common: {
             action: 'Ação | Ações',
@@ -92,6 +100,7 @@ export default {
             owner: 'Proprietário',
             pagerShowing:
                 'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
+            parameters: 'Parâmetro | Parâmetros',
             password: 'Senha',
             current_password: 'Senha Atual',
             new_password: 'Nova senha',
@@ -259,7 +268,7 @@ export default {
         privacy: {
             anonymizationTechnique: 'Técnica de anonimização',
             privacyType: 'Tipo de privacidade',
-            hierarchy: 'Hierarquia',
+            hierarchy: 'Hierarquia (apenas se tipo de anonimização = GENERALIZATION)',
             attributePrivacyGroup: 'Grupo de atributos para privacidade'
         },
         profile: {
@@ -402,6 +411,7 @@ export default {
             changeOption: 'Change option...',
             choose: 'Choose',
             chooseOption: 'Choose option...',
+            close: 'Close',
             confirm: 'Confirm',
             clear: 'Clear',
             clearFilters: 'Clear filters',
@@ -437,6 +447,13 @@ export default {
         },
         atmosphere: {
             transparency: 'Explain models',
+        },
+        cluster: {
+            address: 'Address (hostname or IP)',
+            authToken: 'Authentication token',
+            executorMemory: 'Executors\' memory',
+            executors: 'Number of executors',
+            executorCores: 'Cores (CPUs) for executors'
         },
         common: {
             action: 'Action | Actions',
@@ -482,6 +499,7 @@ export default {
             owner: 'Owner',
             pagerShowing:
                 'Showing {from} to {to} of {count} records|{count} records|One record',
+            parameters: 'Parameter | Parameters',
             password: 'Password',
             current_password: 'Current password',
             new_password: 'New password',
@@ -673,7 +691,7 @@ export default {
         privacy: {
             anonymizationTechnique: 'Anonymization technique',
             privacyType: 'Privacy type',
-            hierarchy: 'Hierarchy',
+            hierarchy: 'Hierarchy (only if anonymization type = GENERALIZATION)',
             attributePrivacyGroup: 'Attribute privacy group'
         },
 
