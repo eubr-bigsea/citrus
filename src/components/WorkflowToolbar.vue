@@ -16,10 +16,12 @@
             variant="success" id="tlb-execute-wf">
             <span class="fa fa-play"></span>
         </button>
+        <!--
         <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
             variant="danger" id="tlb-restart-wf">
             <span class="fa fa-stop red"></span>
         </button>
+        -->
     </div>
 </template>
 
