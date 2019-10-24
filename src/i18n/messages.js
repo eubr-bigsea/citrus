@@ -314,6 +314,7 @@ export default {
             cluster: 'Cluster | Clusters',
             dataSource: 'Base de dados | Bases de dados',
             dashboard: 'Dashboard | Dashboards',
+            deployment: 'Implantação | Implantações',
             error: 'Erro',
             errorDetail: 'Detalhe do erro (avançado)',
             globalPrivacyPolicy:
@@ -649,6 +650,7 @@ export default {
             cluster: 'Cluster | Clusters',
             dataSource: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
+            deployment: 'Deployment | Deployments',
             error: 'Error',
             errorDetail: 'Error detail (advanced)',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',

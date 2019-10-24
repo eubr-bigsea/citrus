@@ -12,7 +12,7 @@
                             <b-card no-body>
                                 <b-tabs card>
                                     <b-tab :title="$t('dataSource.basicInformation')" active>
-                                        <div class="row">
+                                        <div class="row" :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse': ''">
                                             <div class="col-md-6">
                                                 <label class="font-weight-bold">{{$tc('common.name')}}:</label>
                                                 <input type="text" class="form-control" v-model="dataSource.name">
@@ -53,7 +53,7 @@
                                                 <b-form-checkbox v-model="dataSource.is_first_line_header">
                                                     {{ $t('dataSource.isFirstLineHeader') }}</b-form-checkbox>
                                             </div>
-                                            <div class="col-md-2 col-lg-1 mt-3">
+                                            <div class="col-md-2 col-lg-2 mt-3">
                                                 <b-form-checkbox v-model="dataSource.is_multiline">
                                                     {{ $t('dataSource.isMultiline') }}</b-form-checkbox>
                                             </div>
@@ -66,7 +66,7 @@
                                                 <b-form-checkbox v-model="dataSource.is_public">
                                                     {{ $t('dataSource.public') }}</b-form-checkbox>
                                             </div>
-                                            <div class="col-md-2 col-lg-1 mt-3">
+                                            <div class="col-md-2 col-lg-2 mt-3" v-if="atmosphereExtension">
                                                 <b-form-checkbox v-model="dataSource.privacy_aware"
                                                     v-if="atmosphereExtension">
                                                     {{ $t('dataSource.privacyAware') }}
@@ -123,6 +123,7 @@
                                         <h5 class="card-title">{{$tc('common.attribute', 2)}}</h5>
 
                                         <table class="table table-sm table-stripped"
+                                            :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse': ''"
                                             v-if="dataSource.attributes && dataSource.attributes.length > 0">
                                             <thead>
                                                 <tr>
@@ -196,7 +197,7 @@
                                             <div class="alert alert-info">{{ $t("dataSource.noAttributes") }}</div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :title="$tc('common.sharing', 2)">
+                                    <b-tab :title="$tc('common.sharing', 2)" v-if="loggedUserIsOwnerOrAdmin">
                                         <table class="table table-bordered table-stripped"
                                             v-if="dataSource.permissions && dataSource.permissions.length > 0">
                                             <thead>
@@ -222,7 +223,7 @@
                                     </b-tab>
                                 </b-tabs>
                                 <div class="col-md-12 mb-4 border-top pt-2">
-                                    <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                    <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save" v-if="loggedUserIsOwnerOrAdmin">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <span class="fa fa-save"></span>
                                         {{$tc('actions.save')}}
@@ -230,7 +231,7 @@
                                     <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">
                                         {{$tc('actions.cancel')}}</router-link>
                                     <button class="btn btn-success ml-1 btn-spinner" @click.stop="infer"
-                                        v-if="canInfer">
+                                        v-if="canInfer && loggedUserIsOwnerOrAdmin">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{$tc('dataSource.inferSchema')}}
                                     </button>
@@ -315,7 +316,8 @@
     import axios from 'axios';
     import VueSelect from 'vue-select';
     import SwitchComponent from '../components/widgets/Switch.vue';
-    let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
+    const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
+    
     export default {
         components: {
             'v-select': VueSelect,
@@ -346,6 +348,11 @@
             canInfer() {
                 return this.dataSource.attributeDelimiter !== ''
                     && this.dataSource.storage.type !== 'VALLUM';
+            },
+            loggedUserIsOwnerOrAdmin(){
+                const user = this.$store.getters.user;
+                return this.dataSource.user_id === user.id 
+                    || user.roles.indexOf('admin') >=0;
             }
         },
         data() {
@@ -535,6 +542,8 @@
                     })
                     .catch(e => {
                         self.error(e);
+                        event.target.removeAttribute('disabled');
+                        event.target.classList.add('btn-spinner');
                     });
             },
             preview(event) {
@@ -594,6 +603,10 @@
     };
 </script>
 <style>
+    .disabled-mouse {
+        pointer-events: none;
+        opacity: .9;
+    }
     .v-select .dropdown-toggle::after {
         content: none;
     }
