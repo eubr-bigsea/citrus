@@ -6,6 +6,7 @@ body {
 }
 
 .snotify {
+  z-index: 1000005 !important;
   .snotifyToast__title {
     font-size: 1.2rem;
   }

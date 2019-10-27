@@ -168,7 +168,7 @@
                     if (a.default_order > b.default_order) return 1;
                     const groupCompare = a.group.localeCompare(b.group);
                     if (groupCompare != 0) return groupCompare;
-                    return a.subGroup.localeCompare(b.subGroup);
+                    return a.subGroup? a.subGroup.localeCompare(b.subGroup) : -1;
                 });
                 let grouped = [...groupBy(ops, x => x.group)].map(item => {
                     if (item[1][0].subGroup === '') {
@@ -198,7 +198,7 @@
                                     if (a.subGroupOrder > b.subGroupOrder) return 1;
                                     if (a.subGroupDefaultOrder < b.subGroupDefaultOrder) return -1;
                                     if (a.subGroupDefaultOrder > b.subGroupDefaultOrder) return 1;
-                                    return a.subGroup.localeCompare(b.subGroup);
+                                    return a.subGroup? a.subGroup.localeCompare(b.subGroup): -1;
                                 })
                         };
                     }

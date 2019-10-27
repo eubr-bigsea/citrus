@@ -20,6 +20,8 @@ import {
   faCoffee,
   faCopy,
   faCogs,
+  faDownload,
+  faUpload,
   faHistory,
   faImage,
   faLayerGroup,
@@ -61,7 +63,8 @@ import {
   faAngleRight,
   faExclamationTriangle,
   faExclamationCircle,
-  faChevronLeft
+  faChevronLeft,
+  faStop,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -97,6 +100,8 @@ library.add(
   faCoffee,
   faCopy,
   faCogs,
+  faDownload,
+  faUpload,
   faHistory,
   faPlay,
   faImage,
@@ -138,8 +143,9 @@ library.add(
   faAngleRight,
   faExclamationTriangle,
   faExclamationCircle,
-  faChevronLeft
-);
+  faChevronLeft,
+  faStop
+  );
 
 import {
   faSave as farSave,
@@ -226,21 +232,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-// i18n
-const i18n = new VueI18n({
-  locale: user ? user.locale : 'pt',
-  fallbackLocale: 'en',
-  messages
-});
 
-Object.defineProperty(Vue.prototype, '$locale', {
-  get: function() {
-    return i18n.locale;
-  },
-  set: function(locale) {
-    i18n.locale = locale;
-  }
-});
 
 // Auth
 const token = localStorage.getItem('token');
@@ -256,6 +248,22 @@ if (token) {
   axios.defaults.headers.common['Access-Control-Allow-Methods'] =
     'POST, GET, PUT, DELETE, OPTIONS';
 }
+
+// i18n
+const i18n = new VueI18n({
+  locale: user ? user.locale : 'pt',
+  fallbackLocale: 'en',
+  messages
+});
+
+Object.defineProperty(Vue.prototype, '$locale', {
+  get: function() {
+    return i18n.locale;
+  },
+  set: function(locale) {
+    i18n.locale = locale;
+  }
+});
 
 import ToggleButton from 'vue-js-toggle-button';
 

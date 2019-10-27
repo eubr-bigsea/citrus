@@ -53,7 +53,7 @@
                       </select>
                       <button
                         type="button"
-                        class="btn btn-sm btn-light ml-2"
+                        class="btn btn-sm btn-light btn-outline-secondary ml-2"
                         @click="clearFilters"
                       >{{$tc('actions.clearFilters')}}</button>
                     </div>

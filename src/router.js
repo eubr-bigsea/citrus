@@ -4,9 +4,9 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
 
-import userList from './views/Administration/UserList.vue';
-import userAdd from './views/Administration/UserAdd.vue';
-import userEdit from './views/Administration/UserEdit.vue';
+import UserList from './views/Administration/UserList.vue';
+import UserAdd from './views/Administration/UserAdd.vue';
+import UserEdit from './views/Administration/UserEdit.vue';
 
 import ProjectList from './views/Administration/ProjectList.vue';
 import ProjectAdd from './views/Administration/ProjectAdd.vue';
@@ -22,6 +22,10 @@ import Logout from './views/Logout.vue';
 import Register from './views/Register.vue';
 import ResetPassword from './views/ResetPassword.vue';
 
+import ClusterList from './views/ClusterList.vue';
+import ClusterAdd from './views/ClusterAdd.vue';
+import ClusterEdit from './views/ClusterEdit.vue';
+
 import DataSourceList from './views/DataSourceList.vue';
 import DataSourceEdit from './views/DataSourceEdit.vue';
 import DataSourceAdd from './views/DataSourceAdd.vue';
@@ -35,6 +39,11 @@ import WorkflowAdd from './views/WorkflowAdd.vue';
 
 import DashboardList from './views/DashboardList.vue';
 import DashboardDetail from './views/DashboardDetail.vue';
+
+import ModelList from './views/ModelList.vue';
+import ModelAdd from './views/ModelAdd.vue';
+import ModelEdit from './views/ModelEdit.vue';
+//import DashboardDetail from './views/DashboardDetail.vue';
 
 import OperationList from './views/OperationList.vue';
 
@@ -69,7 +78,7 @@ let router = new Router({
     {
       path: '/administration/users',
       name: 'AdministrationUserList',
-      component: userList,
+      component: UserList,
       meta: {
         requiresAuth: true,
         requiresRole: true
@@ -78,7 +87,7 @@ let router = new Router({
     {
       path: '/administration/users/new',
       name: 'AdministrationAddUser',
-      component: userAdd,
+      component: UserAdd,
       meta: {
         requiresAuth: true,
         requiresRole: true
@@ -87,7 +96,7 @@ let router = new Router({
     {
       path: '/administration/users/:id/edit',
       name: 'AdministrationEditUser',
-      component: userEdit,
+      component: UserEdit,
       meta: {
         requiresAuth: true,
         requiresRole: true
@@ -176,6 +185,30 @@ let router = new Router({
       path: '/data-sources/:id',
       name: 'editDataSource',
       component: DataSourceEdit,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/models',
+      name: 'models',
+      component: ModelList,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/models/add',
+      name: 'addModel',
+      component: ModelAdd,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/model/:id',
+      name: 'editModel',
+      component: ModelEdit,
       meta: {
         requiresAuth: true
       }
@@ -282,6 +315,30 @@ let router = new Router({
       meta: {
         requiresAuth: true,
         requiresRole: true
+      }
+    },
+    {
+      path: '/admin/clusters',
+      name: 'clusters',
+      component: ClusterList,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/add',
+      name: 'addCluster',
+      component: ClusterAdd,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/:id',
+      name: 'editCluster',
+      component: ClusterEdit,
+      meta: {
+        requiresAuth: true
       }
     }
   ]

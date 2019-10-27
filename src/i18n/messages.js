@@ -16,6 +16,7 @@ export default {
       back: 'Voltar',
       cancel: 'Cancelar',
       changeOption: 'Alterar opção...',
+      close: 'Fechar',
       confirm: 'Confirmar',
       choose: 'Escolha',
       chooseOption: 'Escolha uma opção ...',
@@ -28,12 +29,14 @@ export default {
       edit: 'Editar',
       editValue: 'Editar valor...',
       execute: 'Executar ...',
+      export: 'Exportar',
       moveDown: 'Mover para baixo',
       moveUp: 'Mover para cima',
       new: 'Novo',
       removeSelected: 'Remover',
       removeValue: 'Remover valor',
       rename: 'Renomear',
+      restart: 'Reiniciar {what}',
       restore: 'Restaurar',
       save: 'Salvar',
       saveAs: 'Salvar como',
@@ -44,8 +47,19 @@ export default {
       showProperties: 'Exibir propriedades',
       showResults: 'Exibir resultados',
       simpleAdd: 'Adicionar',
+      stop: 'Parar',
       test: 'Testar',
       toggleTasks: 'Habilitar/desabilitar tarefas'
+    },
+    atmosphere: {
+      transparency: 'Explicação de modelos'
+    },
+    cluster: {
+      address: 'Endereço (nome ou IP)',
+      authToken: 'Token de autenticação',
+      executorMemory: 'Memória dos executores',
+      executors: 'Executores (nós de processamento)',
+      executorCores: 'Núcleos (total de CPUs) dos executures'
     },
     common: {
       makeAdmin: 'Tornar Administrador',
@@ -95,6 +109,7 @@ export default {
       owner: 'Proprietário',
       pagerShowing:
         'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
+      parameters: 'Parâmetro | Parâmetros',
       password: 'Senha',
       project: {
         name: 'Nome',
@@ -188,7 +203,7 @@ export default {
       treatAsNull: 'Tratar estes valores como valores nulos (opcional)',
       uploadingLog: 'Registro de envio',
       uploadExplanation:
-        'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmertos com os valores padrão (você poderá alterá-los posteriormente).',
+        'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
       whatTypeOfDataSourceToAdd:
         'Que tipo de base de dados você quer adicionar?',
       youCanUploadYourFiles:
@@ -247,6 +262,7 @@ export default {
       doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
       doYouWantToConfirm: 'Tem certeza que você quer confirmar esse usuário?',
       confirmRemove: 'Tem certeza que você quer excluir esse registro?',
+      exportWorkflow: 'Fluxo de trabalho exportado usando a versão atual.',
       successDeletion: '{what} foi removido com sucesso',
       registeredWithSuccess:
         'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
@@ -255,10 +271,27 @@ export default {
       usingDisabledOperation:
         'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.'
     },
+    model: {
+      uploadExplanation:
+        'Cada arquivo criará um novo model com nome igual ao nome do arquivo e tipo conforme selecionado anteriormente.',
+
+      selectFromComputer: 'selecionar arquivos em seu computador',
+      dropFilesHere: 'Arraste e solte os arquivos aqui',
+      whatTypeOfModelToAdd: 'Que tipo de modelo você quer adicionar?',
+
+      storage: 'Armazenamento | Armazenamentos',
+      type_KERAS: 'Keras',
+      type_PERFORMANCE_SPARK: 'Desempenho (Spark)',
+      type_PERFORMANCE_KERAS: 'Desempenho (Keras)',
+      type_SPARK_ML_CLASSIFICATION: 'Classificação (Spark)',
+      type_SPARK_ML_REGRESSION: 'Regressão (Spark)',
+      type_SPARK_MLLIB_CLASSIFICATION: 'Classificação (MLLib)',
+      type_UNSPECIFIED: 'Não especificado'
+    },
     privacy: {
       anonymizationTechnique: 'Técnica de anonimização',
       privacyType: 'Tipo de privacidade',
-      hierarchy: 'Hierarquia',
+      hierarchy: 'Hierarquia (apenas se tipo de anonimização = GENERALIZATION)',
       attributePrivacyGroup: 'Grupo de atributos para privacidade'
     },
     profile: {
@@ -304,6 +337,7 @@ export default {
       cluster: 'Cluster | Clusters',
       dataSource: 'Base de dados | Bases de dados',
       dashboard: 'Dashboard | Dashboards',
+      deployment: 'Implantação | Implantações',
       error: 'Erro',
       errorDetail: 'Detalhe do erro (avançado)',
       globalPrivacyPolicy:
@@ -313,6 +347,7 @@ export default {
       lemonade: 'Lemonade',
       lemonadePlatform: 'Plataforma Lemonade',
       login: 'Entrar',
+      model: 'Modelo | Modelos',
       news: 'Novidades e Dicas',
       platform: 'Platforma | Platformas',
       profile: 'Perfil',
@@ -326,6 +361,7 @@ export default {
       tasks: 'Tarefa | Tarefas',
       template: 'Modelo | Modelos',
       toolboxCategory: 'Organização das operações',
+      tool: 'Ferramenta | Ferramentas',
       user: 'Usuário | Usuários',
       validationErrors: 'Erro de validação | Erros de validação',
       value: 'Valor',
@@ -406,6 +442,7 @@ export default {
       changeOption: 'Change option...',
       choose: 'Choose',
       chooseOption: 'Choose option...',
+      close: 'Close',
       confirm: 'Confirm',
       clear: 'Clear',
       clearFilters: 'Clear filters',
@@ -417,12 +454,14 @@ export default {
       edit: 'Edit',
       editValue: 'Edit value...',
       execute: 'Execute...',
+      export: 'Export',
       moveDown: 'Move down',
       moveUp: 'Move up',
       new: 'New',
       removeSelected: 'Remove',
       removeValue: 'Remove value',
       rename: 'Rename',
+      restart: 'Restart',
       restore: 'Restore',
       save: 'Save',
       saveAs: 'Save as',
@@ -433,8 +472,19 @@ export default {
       showProperties: 'Show properties',
       showResults: 'Show results',
       simpleAdd: 'Add',
+      stop: 'Stop',
       test: 'Test',
       toggleTasks: 'Enable/disable tasks'
+    },
+    atmosphere: {
+      transparency: 'Explain models'
+    },
+    cluster: {
+      address: 'Address (hostname or IP)',
+      authToken: 'Authentication token',
+      executorMemory: "Executors' memory",
+      executors: 'Number of executors',
+      executorCores: 'Cores (CPUs) for executors'
     },
     common: {
       makeAdmin: 'Make Administrator',
@@ -484,6 +534,7 @@ export default {
       owner: 'Owner',
       pagerShowing:
         'Showing {from} to {to} of {count} records|{count} records|One record',
+      parameters: 'Parameter | Parameters',
       password: 'Password',
       project: {
         name: 'Name',
@@ -612,6 +663,7 @@ export default {
       acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
       doYouWantToDelete: 'Do you want to delete this record?',
       doYouWantToConfirm: 'Do you want to confirm this user?',
+      exportWorkflow: 'Workflow exported using current version.',
       confirmRemove: 'Are you sure you want to remove this record?',
       successDeletion: '{what} was successfuly removed',
       registeredWithSuccess:
@@ -646,6 +698,7 @@ export default {
       cluster: 'Cluster | Clusters',
       dataSource: 'Data source | Data sources',
       dashboard: 'Dashboard | Dashboards',
+      deployment: 'Deployment | Deployments',
       error: 'Error',
       errorDetail: 'Error detail (advanced)',
       globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
@@ -653,6 +706,7 @@ export default {
       jobs: 'Jobs',
       lemonade: 'Lemonade',
       lemonadePlatform: 'Lemonade Platform',
+      model: 'Model | Models',
       news: 'News & Tips',
       login: 'Login',
       platform: 'Platform | Platforms',
@@ -667,6 +721,7 @@ export default {
       tasks: 'Task | Tasks',
       template: 'Template | Templates',
       toolboxCategory: 'Toolbox disposition',
+      tool: 'Tool | Tools',
       user: 'User | Users',
       validationErrors: 'Validation error | Validation errors',
       value: 'Value',
@@ -674,10 +729,20 @@ export default {
       whatIfModel: 'What if model?',
       workflow: 'Workflow | Workflows'
     },
+    model: {
+      storage: 'Storage| Storage',
+      type_KERAS: 'Keras',
+      type_PERFORMANCE_SPARK: 'Performance (Spark)',
+      type_PERFORMANCE_KERAS: 'Performance (Keras)',
+      type_SPARK_ML_CLASSIFICATION: 'Classification (Spark)',
+      type_SPARK_ML_REGRESSION: 'Regression (Spark)',
+      type_SPARK_MLLIB_CLASSIFICATION: 'Classification (MLLib)',
+      type_UNSPECIFIED: 'Unspecified'
+    },
     privacy: {
       anonymizationTechnique: 'Anonymization technique',
       privacyType: 'Privacy type',
-      hierarchy: 'Hierarchy',
+      hierarchy: 'Hierarchy (only if anonymization type = GENERALIZATION)',
       attributePrivacyGroup: 'Attribute privacy group'
     },
 

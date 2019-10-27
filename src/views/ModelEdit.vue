@@ -1,0 +1,150 @@
+<template>
+    <main role="main">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1>{{$tc('titles.model', 1)}}</h1>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12 col-xg-12 mx-auto" v-if="model.id">
+                            <b-card>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                        <input type="text" class="form-control" v-model="model.name">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="font-weight-bold">{{$tc('common.type')}}:</label>
+                                        <select class="form-control" v-model="model.type">
+                                            <option v-for="fmt in types" v-bind:value="fmt" :key="fmt">
+                                                {{$tc('model.type_' + fmt)}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="font-weight-bold">{{$tc('model.storage')}}:</label>
+                                        <input disabled v-model="model.storage.name + ' (' + model.storage.type + ')'"
+                                            class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-5 mb-4 border-top pt-2">
+                                    <router-link :to="{name: 'models'}" class="btn btn-secondary mr-1">
+                                        {{$tc('actions.cancel')}}</router-link>
+                                </div>
+                            </b-card>
+                        </div>
+                        <div class="col-md-12 mx-auto border-top mt-3 pt-3" v-else>{{$t('common.noData')}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</template>
+
+<script>
+    import Vue from 'vue';
+    import axios from 'axios';
+    import VueSelect from 'vue-select';
+    import SwitchComponent from '../components/widgets/Switch.vue';
+    let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
+
+    export default {
+        components: {
+            'v-select': VueSelect,
+            SwitchComponent
+        },
+        computed: {
+        },
+        data() {
+            return {
+                model: {},
+                types: [
+                    'KERAS',
+                    'PERFORMANCE_SPARK',
+                    'PERFORMANCE_KERAS',
+                    'SPARK_ML_CLASSIFICATION',
+                    'SPARK_ML_REGRESSION',
+                    'SPARK_MLLIB_CLASSIFICATION',
+                    'UNSPECIFIED'
+                ]
+            }
+        },
+        mounted() {
+            let self = this;
+            this.load().then(() => {
+                Vue.nextTick(() => {
+                    self.isDirty = false;
+                });
+            });
+        },
+        watch: {
+            '$route.params.id': function (id) {
+                this.load().then(() => {
+                    Vue.nextTick(() => {
+                        this.isDirty = false;
+                    });
+                });
+            },
+        },
+        /* Methods */
+        methods: {
+            getPreviewColumns() {
+                if (
+                    this.model &&
+                    this.model.attributes &&
+                    this.model.attributes.length
+                ) {
+                    return this.model.attributes.map(a => a.name);
+                } else if (this.samples.length) {
+                    return Object.keys(this.samples[0]);
+                } else {
+                    return [];
+                }
+            },
+            load() {
+                let self = this;
+                return new Promise((resolve, reject) => {
+                    axios
+                        .get(`${limoneroUrl}/models/${this.$route.params.id}`)
+                        .then(resp => {
+                            self.model = resp.data;
+                            resolve();
+                        })
+                        .catch(function (e) {
+                            self.error(e);
+                        });
+                });
+            },
+            success(msg) {
+                this.$snotify.success(msg, this.$t('titles.success'));
+            },
+            error(e) {
+                if (e.name === 'NetworkError') {
+                    this.$snotify.error(
+                        this.$t('errors.disconnected'),
+                        this.$t('titles.error')
+                    );
+                } else if (e.response && e.response.data) {
+                    this.$snotify.error(e.response.data.message, this.$t('titles.error'));
+                } else {
+                    this.$snotify.error(e.message, this.$t('titles.error'));
+                }
+            },
+        }
+    };
+</script>
+<style>
+    .v-select .dropdown-toggle::after {
+        content: none;
+    }
+
+    .table-smallest {
+        font-size: 0.8em;
+    }
+
+    .table-smallest td {
+        white-space: nowrap;
+    }
+</style>
