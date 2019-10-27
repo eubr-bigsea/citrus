@@ -70,7 +70,6 @@ export default new Vuex.Store({
             resolve(resp);
           })
           .catch(err => {
-            debugger;
             reject(err);
           });
       });

@@ -340,6 +340,30 @@ let router = new Router({
       meta: {
         requiresAuth: true
       }
+    },
+    {
+      path: '/admin/clusters',
+      name: 'clusters',
+      component: ClusterList,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/add',
+      name: 'addCluster',
+      component: ClusterAdd,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/admin/clusters/:id',
+      name: 'editCluster',
+      component: ClusterEdit,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 });

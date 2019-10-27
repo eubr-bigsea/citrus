@@ -46,7 +46,6 @@ import {
   faDatabase,
   faSearch,
   faEye,
-  faDownload,
   faMinusCircle,
   faChevronCircleDown,
   faChevronCircleUp,
@@ -64,7 +63,7 @@ import {
   faExclamationTriangle,
   faExclamationCircle,
   faChevronLeft,
-  faStop,
+  faStop
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -145,7 +144,7 @@ library.add(
   faExclamationCircle,
   faChevronLeft,
   faStop
-  );
+);
 
 import {
   faSave as farSave,
@@ -231,8 +230,6 @@ L.Icon.Default.mergeOptions({
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
-
-
 
 // Auth
 const token = localStorage.getItem('token');
