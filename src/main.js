@@ -262,10 +262,6 @@ Object.defineProperty(Vue.prototype, '$locale', {
   }
 });
 
-import ToggleButton from 'vue-js-toggle-button';
-
-Vue.use(ToggleButton);
-
 new Vue({
   el: '#app',
   i18n,

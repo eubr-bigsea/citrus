@@ -35,7 +35,6 @@
                   />
                 </div>
               </div>
-
               <div class="form-group row">
                 <label for="inputEmail3" class="col-sm-3 col-form-label">
                   {{ $t('common.email') }}
@@ -49,12 +48,28 @@
                   />
                 </div>
               </div>
-              <div class="form-group row">
+              <div v-if="isAdmin" class="form-group row">
                 <label for="inputEmail3" class="col-sm-3 col-form-label">
-                  {{ $t('common.makeAdmin') }}
+                  {{ $t('common.roles') }}
                 </label>
                 <div class="col-sm-9">
-                  <toggle-button v-model="user.admin" />
+                  <select v-model="user.role" class="form-control">
+                    <option value="">{{ $t('roles.noRole') }}</option>
+                    <option value="admin">{{ $t('roles.admin') }}</option>
+                    <!-- <option value="manager">{{ $t('roles.manager') }}</option> -->
+                    <option value="monitor">{{ $t('roles.monitor') }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="inputEmail3" class="col-sm-3 col-form-label">
+                  {{ $t('common.language') }}
+                </label>
+                <div class="col-sm-9">
+                  <select v-model="user.locale" class="form-control">
+                    <option value="en">English/Inglês</option>
+                    <option value="pt">Português/Portuguese</option>
+                  </select>
                 </div>
               </div>
               <div class="form-group row">
@@ -70,17 +85,6 @@
                   />
                 </div>
               </div>
-              <div class="form-group row">
-                <label for="inputEmail3" class="col-sm-3 col-form-label">
-                  {{ $t('common.language') }}
-                </label>
-                <div class="col-sm-9">
-                  <select v-model="user.locale" class="form-control">
-                    <option value="en">English/Inglês</option>
-                    <option value="pt">Português/Portuguese</option>
-                  </select>
-                </div>
-              </div>
               <div class="form-group row border-top clearfix pt-3">
                 <div class="col-sm-12 text-center">
                   <button type="submit" class="btn btn-primary mr-2 pr-5 pl-5">
@@ -89,8 +93,9 @@
                   <router-link
                     :to="{ name: 'AdministrationUserList' }"
                     class="btn btn-secondary text-white"
-                    >{{ $t('actions.cancel') }}</router-link
                   >
+                    {{ $t('actions.cancel') }}
+                  </router-link>
                 </div>
               </div>
             </form>
@@ -103,6 +108,7 @@
 
 <script>
 import axios from 'axios';
+import { mapGetters } from 'vuex';
 import Notifier from '../../mixins/Notifier';
 
 let thornUrl = process.env.VUE_APP_THORN_URL;
@@ -112,8 +118,11 @@ export default {
   mixins: [Notifier],
   data() {
     return {
-      user: {}
+      user: { locale: 'en', role: '' }
     };
+  },
+  computed: {
+    ...mapGetters(['isAdmin'])
   },
   methods: {
     save() {

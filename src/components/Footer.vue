@@ -12,13 +12,17 @@
         <a
           href="https://docs.lemonade.org.br/pt-br/spark/visualizacao-de-dados/tabela.html"
           target="_blank"
-          >Documentation</a
         >
+          Documentation
+        </a>
       </li>
       <li>
-        <a href="https://github.com/eubr-bigsea/docker-lemonade" target="_blank"
-          >GitHub</a
+        <a
+          href="https://github.com/eubr-bigsea/docker-lemonade"
+          target="_blank"
         >
+          GitHub
+        </a>
       </li>
     </ul>
   </div>

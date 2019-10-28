@@ -61,14 +61,15 @@
               </div>
               <div v-if="isAdmin" class="form-group row">
                 <label for="inputEmail3" class="col-sm-3 col-form-label">
-                  {{ $t('common.makeAdmin') }}
+                  {{ $t('common.roles') }}
                 </label>
                 <div class="col-sm-9">
-                  <toggle-button
-                    :value="isAdmin"
-                    :sync="true"
-                    @change="toogleAdmin"
-                  />
+                  <select v-model="user.role" class="form-control">
+                    <option value="">{{ $t('roles.noRole') }}</option>
+                    <option value="admin">{{ $t('roles.admin') }}</option>
+                    <!-- <option value="manager">{{ $t('roles.manager') }}</option> -->
+                    <option value="monitor">{{ $t('roles.monitor') }}</option>
+                  </select>
                 </div>
               </div>
               <div v-if="isAdmin" class="form-group row">
@@ -108,6 +109,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier';
+import { mapGetters } from 'vuex';
 import { deserialize } from 'jsonapi-deserializer';
 
 let thornUrl = process.env.VUE_APP_THORN_URL;
@@ -117,9 +119,11 @@ export default {
   mixins: [Notifier],
   data() {
     return {
-      user: {},
-      isAdmin: false
+      user: {}
     };
+  },
+  computed: {
+    ...mapGetters(['isAdmin'])
   },
   mounted() {
     let self = this;
@@ -140,49 +144,15 @@ export default {
           .get(url)
           .then(resp => {
             let user = deserialize(resp.data);
+            user.role = user.roles[0];
             self.user = user;
-            self.isAdmin = user.roles.includes('admin');
+
             resolve();
           })
           .catch(function(e) {
             self.error(e);
           });
       });
-    },
-    toogleAdmin({ value, srcEvent }) {
-      const self = this;
-      let user_id = this.user.id;
-      let role = { user_id };
-      const baseUrl = `${thornUrl}/administration/roles/`;
-      let action = 'remove_admin';
-
-      if (value) {
-        action = 'add_admin';
-      }
-
-      this.$Progress.start();
-      return axios
-        .post(baseUrl + action, { role })
-        .then(resp => {
-          this.$Progress.finish();
-          this.isAdmin = value;
-        })
-        .catch(
-          function(e) {
-            var err = e;
-            self.$Progress.finish();
-            if (e.response.data.errors[0]) {
-              let pointer = e.response.data.errors[0].source.pointer;
-              let detail = e.response.data.errors[0].detail;
-
-              err = {
-                message: `${pointer} ${detail}`
-              };
-            }
-
-            self.error(err);
-          }.bind(this)
-        );
     },
     save() {
       const self = this;

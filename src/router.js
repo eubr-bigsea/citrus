@@ -8,13 +8,13 @@ import UserList from './views/Administration/UserList.vue';
 import UserAdd from './views/Administration/UserAdd.vue';
 import UserEdit from './views/Administration/UserEdit.vue';
 
-import ProjectList from './views/Administration/ProjectList.vue';
-import ProjectAdd from './views/Administration/ProjectAdd.vue';
-import ProjectShow from './views/Administration/ProjectShow.vue';
-import ProjectEdit from './views/Administration/ProjectEdit.vue';
+// import ProjectList from './views/Administration/ProjectList.vue';
+// import ProjectAdd from './views/Administration/ProjectAdd.vue';
+// import ProjectShow from './views/Administration/ProjectShow.vue';
+// import ProjectEdit from './views/Administration/ProjectEdit.vue';
 
-import TeamList from './views/Administration/TeamList.vue';
-import TeamShow from './views/Administration/TeamShow.vue';
+// import TeamList from './views/Administration/TeamList.vue';
+// import TeamShow from './views/Administration/TeamShow.vue';
 
 import ChangePassword from './views/ChangePassword.vue';
 import Login from './views/Login.vue';
@@ -102,69 +102,60 @@ let router = new Router({
         requiresRole: true
       }
     },
-    {
-      path: '/administration/projects',
-      name: 'AdministrationProjectList',
-      component: ProjectList,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/projects/new',
-      name: 'AdministrationAddProject',
-      component: ProjectAdd,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/projects/:id',
-      name: 'AdministrationShowProject',
-      component: ProjectShow,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/projects/:id/edit',
-      name: 'AdministrationEditProject',
-      component: ProjectEdit,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/teams',
-      name: 'AdministrationTeamList',
-      component: TeamList,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/teams/:id',
-      name: 'AdministrationShowTeam',
-      component: TeamShow,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/projects/:id/edit',
-      name: 'AdministrationEditProject',
-      component: ProjectEdit,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
+    // {
+    //   path: '/administration/projects',
+    //   name: 'AdministrationProjectList',
+    //   component: ProjectList,
+    //   meta: {
+    //     requiresAuth: true,
+    //     requiresRole: true
+    //   }
+    // },
+    // {
+    //   path: '/administration/projects/new',
+    //   name: 'AdministrationAddProject',
+    //   component: ProjectAdd,
+    //   meta: {
+    //     requiresAuth: true,
+    //     requiresRole: true
+    //   }
+    // },
+    // {
+    //   path: '/administration/projects/:id',
+    //   name: 'AdministrationShowProject',
+    //   component: ProjectShow,
+    //   meta: {
+    //     requiresAuth: true,
+    //     requiresRole: true
+    //   }
+    // },
+    // {
+    //   path: '/administration/projects/:id/edit',
+    //   name: 'AdministrationEditProject',
+    //   component: ProjectEdit,
+    //   meta: {
+    //     requiresAuth: true,
+    //     requiresRole: true
+    //   }
+    // },
+    // {
+    //   path: '/administration/teams',
+    //   name: 'AdministrationTeamList',
+    //   component: TeamList,
+    //   meta: {
+    //     requiresAuth: true,
+    //     requiresRole: true
+    //   }
+    // },
+    // {
+    //   path: '/administration/teams/:id',
+    //   name: 'AdministrationShowTeam',
+    //   component: TeamShow,
+    //   meta: {
+    //     requiresAuth: true,
+    //     requiresRole: true
+    //   }
+    // },
     {
       path: '/data-sources',
       name: 'dataSources',
@@ -315,30 +306,6 @@ let router = new Router({
       meta: {
         requiresAuth: true,
         requiresRole: true
-      }
-    },
-    {
-      path: '/admin/clusters',
-      name: 'clusters',
-      component: ClusterList,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/clusters/add',
-      name: 'addCluster',
-      component: ClusterAdd,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/clusters/:id',
-      name: 'editCluster',
-      component: ClusterEdit,
-      meta: {
-        requiresAuth: true
       }
     },
     {

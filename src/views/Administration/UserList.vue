@@ -60,7 +60,7 @@
                           params: { id: props.row.id }
                         }"
                       >
-                        {{ formatRole(props.row.roles[0]) }}
+                        {{ props.row.roles[0] && $t(`roles.${props.row.roles[0]}`) }}
                       </router-link>
                     </template>
                     <template slot="confirmed_at" slot-scope="props">
@@ -186,8 +186,6 @@ export default {
       }
     };
   },
-  mounted() {},
-  /* Methods */
   methods: {
     clearFilters() {
       this.$refs.userList.setFilter('');
@@ -195,11 +193,6 @@ export default {
     },
     isConfirmedUser(confirmed_at) {
       return confirmed_at !== null;
-    },
-    formatRole(role) {
-      if (role) {
-        return this.$t(`roles.${role}`);
-      }
     },
     remove(userId) {
       const self = this;

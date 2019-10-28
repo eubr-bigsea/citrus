@@ -3,7 +3,8 @@ export default {
     roles: {
       admin: 'Administrador',
       manager: 'Professor',
-      monitor: 'Monitor'
+      monitor: 'Monitor',
+      noRole: 'Sem perfil'
     },
     actions: {
       add: 'Adicionar {type}',
@@ -427,7 +428,8 @@ export default {
     roles: {
       admin: 'Administrator',
       manager: 'Teacher',
-      monitor: 'Monitor'
+      monitor: 'Monitor',
+      noRole: 'Without Role'
     },
     actions: {
       add: 'Add new {type}',
