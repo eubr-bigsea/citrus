@@ -1,10 +1,10 @@
 <template>
-    <b-modal id="share-modal" v-model="showModal" :title="$t(`${resource}.shareModal.title`)" size="lg" centered>
+    <b-modal id="share-modal" v-model="showModal" :title="$t(`${resourceType}.shareModal.title`)" size="lg" centered>
         <div v-if="loading" class="text-center">
             <b-spinner label="Spinning"></b-spinner>
         </div>
         <div v-else>
-            {{ datasource.name }}
+            {{ resource.name }}
             <div id="users-table">
                 <v-client-table :data="users" :columns="columns" :options="options">
                     <template slot="actions" slot-scope="props">
@@ -13,7 +13,8 @@
                             <option value="NONE">NONE</option>
                             <option value="READ">READ</option>
                             <option value="WRITE">WRITE</option>
-                            <option value="MANAGE">MANAGE</option>
+                            <option v-if="isDataSource" value="MANAGE">MANAGE</option>
+                            <option v-if="isWorkflow" value="EXECUTE">MANAGE</option>
                         </select>
                     </template>
                 </v-client-table>
@@ -27,6 +28,8 @@
     import Vue from 'vue';
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
+    const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+
 
     export default {
         components: {},
@@ -45,7 +48,7 @@
                     return [];
                 }
             },
-            resource: {
+            resourceType: {
                 required: true,
                 type: String,
                 default: () => {
@@ -58,7 +61,7 @@
                 isDirty: false,
                 loading: false,
                 showModal: false,
-                datasource: {},
+                resource: {},
                 users: [],
                 columns: ['full_name', 'email', 'actions'],
                 options: {
@@ -97,6 +100,12 @@
         computed: {
             title() {
                 return this.$t('roles');
+            },
+            isDataSource() {
+                return this.resourceType == 'dataSource'
+            },
+            isWorkflow() {
+                return this.resourceType == 'workflow'
             }
         },
         watch: {
@@ -110,24 +119,24 @@
                 }
             },
             allUsers: function (users) {
-                let datasource = this.datasource;
-                if (!lodash.isEmpty(datasource)) {
+                let resource = this.resource;
+                if (!lodash.isEmpty(resource)) {
                     this.loading = false;
                 }
             },
-            users: function (users) {
-                console.log(' aaa');
-            }
         },
         mounted() { },
         methods: {
             mountUrl() {
                 let baseUrl = '';
-                let resource = this.resource;
+                let resourceType = this.resourceType;
 
-                switch (resource) {
+                switch (resourceType) {
                     case 'dataSource':
                         baseUrl = limoneroUrl + '/datasources';
+                        break;
+                    case 'workflow':
+                        baseUrl = limoneroUrl + '/workflows';
                         break;
                     default:
                         console.log('resource invalid');
@@ -142,13 +151,13 @@
                     axios
                         .get(url)
                         .then(resp => {
-                            let datasource = resp.data;
-                            self.datasource = datasource;
+                            let resource = resp.data;
+                            self.resource = resource;
                             let users = [];
 
                             self.allUsers.forEach(user => {
                                 user.permission = 'NONE';
-                                datasource.permissions.forEach(elem => {
+                                resource.permissions.forEach(elem => {
                                     if (elem.user_id == user.id) {
                                         user.permission = elem.permission;
                                     }
@@ -177,13 +186,13 @@
 
                 let url = self.mountUrl() + '/permission/' + user.id;
                 let method = data.permission == 'NONE' ? 'DELETE' : 'POST';
-                let resource = this.resource;
+                let resourceType = this.resourceType;
 
                 return new Promise((resolve, reject) => {
                     axios({ url, method, data })
                         .then(resp => {
                             self.loading = false;
-                            let msg = this.$t(`${resource}.shareModal.success`);
+                            let msg = this.$t(`${resourceType}.shareModal.success`);
                             this.$snotify.success(msg, this.$t('titles.success'));
                         })
                         .catch(function (e) {

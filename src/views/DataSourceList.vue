@@ -59,7 +59,7 @@
                 </div>
             </div>
         </div>
-        <shared-modal :resource-id="datasourceId" :all-users="users" :resource="'dataSource'" />
+        <shared-modal :resource-id="datasourceId" :all-users="users" :resource-type="'dataSource'" />
     </main>
 </template>
 
