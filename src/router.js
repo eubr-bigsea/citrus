@@ -56,303 +56,303 @@ import store from './store.js';
 Vue.use(Router);
 
 let router = new Router({
-  mode: 'hash',
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/administration',
-      name: 'administration',
-      component: Administration,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/users',
-      name: 'AdministrationUserList',
-      component: UserList,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/users/new',
-      name: 'AdministrationAddUser',
-      component: UserAdd,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/administration/users/:id/edit',
-      name: 'AdministrationEditUser',
-      component: UserEdit,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    // {
-    //   path: '/administration/projects',
-    //   name: 'AdministrationProjectList',
-    //   component: ProjectList,
-    //   meta: {
-    //     requiresAuth: true,
-    //     requiresRole: true
-    //   }
-    // },
-    // {
-    //   path: '/administration/projects/new',
-    //   name: 'AdministrationAddProject',
-    //   component: ProjectAdd,
-    //   meta: {
-    //     requiresAuth: true,
-    //     requiresRole: true
-    //   }
-    // },
-    // {
-    //   path: '/administration/projects/:id',
-    //   name: 'AdministrationShowProject',
-    //   component: ProjectShow,
-    //   meta: {
-    //     requiresAuth: true,
-    //     requiresRole: true
-    //   }
-    // },
-    // {
-    //   path: '/administration/projects/:id/edit',
-    //   name: 'AdministrationEditProject',
-    //   component: ProjectEdit,
-    //   meta: {
-    //     requiresAuth: true,
-    //     requiresRole: true
-    //   }
-    // },
-    // {
-    //   path: '/administration/teams',
-    //   name: 'AdministrationTeamList',
-    //   component: TeamList,
-    //   meta: {
-    //     requiresAuth: true,
-    //     requiresRole: true
-    //   }
-    // },
-    // {
-    //   path: '/administration/teams/:id',
-    //   name: 'AdministrationShowTeam',
-    //   component: TeamShow,
-    //   meta: {
-    //     requiresAuth: true,
-    //     requiresRole: true
-    //   }
-    // },
-    {
-      path: '/data-sources',
-      name: 'dataSources',
-      component: DataSourceList,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/data-sources/add',
-      name: 'addDataSource',
-      component: DataSourceAdd,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/data-sources/:id',
-      name: 'editDataSource',
-      component: DataSourceEdit,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/models',
-      name: 'models',
-      component: ModelList,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/models/add',
-      name: 'addModel',
-      component: ModelAdd,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/model/:id',
-      name: 'editModel',
-      component: ModelEdit,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/jobs',
-      name: 'jobs',
-      component: JobList,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/jobs/:platform/:id',
-      name: 'jobDetail',
-      component: JobDetail,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/workflows',
-      name: 'workflows',
-      component: WorkflowList,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/workflows/:platform/:id',
-      name: 'editWorkflow',
-      component: WorkflowEdit,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/workflows/add',
-      name: 'addWorkflow',
-      component: WorkflowAdd,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    // start dashboards
-    {
-      path: '/dashboards',
-      name: 'dashboards',
-      component: DashboardList,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/dashboards/:id',
-      name: 'dashboardDetail',
-      component: DashboardDetail,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/user/profile',
-      name: 'profile',
-      component: Profile,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/change_password',
-      name: 'change_password',
-      component: ChangePassword
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
-    },
-    {
-      path: '/logout',
-      name: 'logout',
-      component: Logout
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: Register
-    },
-    {
-      path: '/reset_password',
-      name: 'reset_password',
-      component: ResetPassword
-    },
-    {
-      path: '/about',
-      name: 'about',
-      component: About
-    },
-    {
-      path: '/admin/operations',
-      name: 'operations',
-      component: OperationList,
-      meta: {
-        requiresAuth: true,
-        requiresRole: true
-      }
-    },
-    {
-      path: '/admin/clusters',
-      name: 'clusters',
-      component: ClusterList,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/clusters/add',
-      name: 'addCluster',
-      component: ClusterAdd,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/admin/clusters/:id',
-      name: 'editCluster',
-      component: ClusterEdit,
-      meta: {
-        requiresAuth: true
-      }
-    }
-  ]
+    mode: 'hash',
+    routes: [
+        {
+            path: '/',
+            name: 'home',
+            component: Home,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/administration',
+            name: 'administration',
+            component: Administration,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true
+            }
+        },
+        {
+            path: '/administration/users',
+            name: 'AdministrationUserList',
+            component: UserList,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true
+            }
+        },
+        {
+            path: '/administration/users/new',
+            name: 'AdministrationAddUser',
+            component: UserAdd,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true
+            }
+        },
+        {
+            path: '/administration/users/:id/edit',
+            name: 'AdministrationEditUser',
+            component: UserEdit,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true
+            }
+        },
+        // {
+        //   path: '/administration/projects',
+        //   name: 'AdministrationProjectList',
+        //   component: ProjectList,
+        //   meta: {
+        //     requiresAuth: true,
+        //     requiresRole: true
+        //   }
+        // },
+        // {
+        //   path: '/administration/projects/new',
+        //   name: 'AdministrationAddProject',
+        //   component: ProjectAdd,
+        //   meta: {
+        //     requiresAuth: true,
+        //     requiresRole: true
+        //   }
+        // },
+        // {
+        //   path: '/administration/projects/:id',
+        //   name: 'AdministrationShowProject',
+        //   component: ProjectShow,
+        //   meta: {
+        //     requiresAuth: true,
+        //     requiresRole: true
+        //   }
+        // },
+        // {
+        //   path: '/administration/projects/:id/edit',
+        //   name: 'AdministrationEditProject',
+        //   component: ProjectEdit,
+        //   meta: {
+        //     requiresAuth: true,
+        //     requiresRole: true
+        //   }
+        // },
+        // {
+        //   path: '/administration/teams',
+        //   name: 'AdministrationTeamList',
+        //   component: TeamList,
+        //   meta: {
+        //     requiresAuth: true,
+        //     requiresRole: true
+        //   }
+        // },
+        // {
+        //   path: '/administration/teams/:id',
+        //   name: 'AdministrationShowTeam',
+        //   component: TeamShow,
+        //   meta: {
+        //     requiresAuth: true,
+        //     requiresRole: true
+        //   }
+        // },
+        {
+            path: '/data-sources',
+            name: 'dataSources',
+            component: DataSourceList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/data-sources/add',
+            name: 'addDataSource',
+            component: DataSourceAdd,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/data-sources/:id',
+            name: 'editDataSource',
+            component: DataSourceEdit,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/models',
+            name: 'models',
+            component: ModelList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/models/add',
+            name: 'addModel',
+            component: ModelAdd,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/model/:id',
+            name: 'editModel',
+            component: ModelEdit,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/jobs',
+            name: 'jobs',
+            component: JobList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/jobs/:platform/:id',
+            name: 'jobDetail',
+            component: JobDetail,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/workflows',
+            name: 'workflows',
+            component: WorkflowList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/workflows/:platform/:id',
+            name: 'editWorkflow',
+            component: WorkflowEdit,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/workflows/add',
+            name: 'addWorkflow',
+            component: WorkflowAdd,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        // start dashboards
+        {
+            path: '/dashboards',
+            name: 'dashboards',
+            component: DashboardList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/dashboards/:id',
+            name: 'dashboardDetail',
+            component: DashboardDetail,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/user/profile',
+            name: 'profile',
+            component: Profile,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/change_password',
+            name: 'change_password',
+            component: ChangePassword
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: Login
+        },
+        {
+            path: '/logout',
+            name: 'logout',
+            component: Logout
+        },
+        {
+            path: '/register',
+            name: 'register',
+            component: Register
+        },
+        {
+            path: '/reset_password',
+            name: 'reset_password',
+            component: ResetPassword
+        },
+        {
+            path: '/about',
+            name: 'about',
+            component: About
+        },
+        {
+            path: '/admin/operations',
+            name: 'operations',
+            component: OperationList,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true
+            }
+        },
+        {
+            path: '/admin/clusters',
+            name: 'clusters',
+            component: ClusterList,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/admin/clusters/add',
+            name: 'addCluster',
+            component: ClusterAdd,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/admin/clusters/:id',
+            name: 'editCluster',
+            component: ClusterEdit,
+            meta: {
+                requiresAuth: true
+            }
+        }
+    ]
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters.isLoggedIn) {
-      if (to.matched.some(record => record.meta.requiresRole)) {
-        if (store.getters.hasRoles) {
-          next();
-          return;
-        } else {
-          next('/');
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (store.getters.isLoggedIn) {
+            if (to.matched.some(record => record.meta.requiresRole)) {
+                if (store.getters.hasRoles) {
+                    next();
+                    return;
+                } else {
+                    next('/');
+                }
+            }
+            next();
+            return;
         }
-      }
-      next();
-      return;
+        next('/login');
+    } else {
+        next();
     }
-    next('/login');
-  } else {
-    next();
-  }
 });
 
 export default router;
