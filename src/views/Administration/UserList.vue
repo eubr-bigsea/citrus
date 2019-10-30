@@ -121,12 +121,14 @@ export default {
           up: 'fa-sort-amount-up',
           down: 'fa-sort-amount-down'
         },
+        orderBy: 'confirmed_at',
+        ascending: false,
         preserveState: true,
         saveState: true,
         customFilters: ['platform'],
         filterByColumn: false,
         requestFunction: function(data) {
-          var sort_opt = data.orderBy == undefined ? 'id' : data.orderBy
+          var sort_opt = data.orderBy == undefined ? 'id' : data.orderBy;
           data.sorted_by = {};
           data.sorted_by[sort_opt] = data.ascending === 1 ? 'asc' : 'desc';
           data.asc = data.ascending === 1 ? 'true' : 'false';
