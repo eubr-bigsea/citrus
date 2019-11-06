@@ -1,26 +1,40 @@
+// Place your settings in this file to overwrite the default settings
 {
-  "vetur.format.defaultFormatter.html": "prettier",
-  "vetur.format.defaultFormatter.css": "prettier",
-  "vetur.format.defaultFormatter.postcss": "prettier",
-  "vetur.format.defaultFormatter.scss": "prettier",
-  "vetur.format.defaultFormatter.less": "prettier",
-  "vetur.format.defaultFormatter.stylus": "stylus-supremacy",
-  "vetur.format.defaultFormatter.js": "prettier-eslint",
-  "vetur.format.defaultFormatter.ts": "prettier",
-  "eslint.validate": [
-    {
-      "language": "vue",
-      "autoFix": true
+    //"editor.renderWhitespace": "all",
+    "editor.selectionClipboard": true,
+    "editor.detectIndentation": false,
+    "editor.multiCursorModifier": "ctrlCmd",
+    "editor.insertSpaces": true,
+    "editor.rulers": [
+        80,
+        120
+    ],
+    "files.exclude": {
+        "**/._*": true,
+        "**/*.pyc": true
     },
-    {
-      "language": "javascript",
-      "autoFix": true
+    // Controls the rendering size of tabs in characters. Accepted values: "auto", 2, 4, 6, etc. If set to "auto", the value will be guessed when a file is opened.
+    "editor.tabSize": 4,
+    // Controls if the editor will insert spaces for tabs. Accepted values:  "auto", true, false. If set to "auto", the value will be guessed when a file is opened.
+    "files.associations": {
+        "*.vue": "html"
     },
-    {
-      "language": "javascriptreact",
-      "autoFix": true
-    }
-  ],
-  "eslint.autoFixOnSave": true,
-  "vetur.validation.template": false
+    "importCost.javascriptExtensions": [
+        "\\.jsx?$",
+        "\\.vue$"
+    ],
+    "importCost.typescriptExtensions": [
+        "\\.tsx?$",
+        "\\.vue$"
+    ],
+    "window.zoomLevel": 0,
+    "files.autoSave": "off",
+    "vetur.format.defaultFormatter.html": "prettyhtml",
+    "vetur.format.defaultFormatter.js": "prettier",
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
 }

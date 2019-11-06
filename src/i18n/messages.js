@@ -42,7 +42,7 @@ export default {
             showProperties: 'Exibir propriedades',
             showResults: 'Exibir resultados',
             simpleAdd: 'Adicionar',
-            stop: 'Parar', 
+            stop: 'Parar',
             test: 'Testar',
             toggleTasks: 'Habilitar/desabilitar tarefas'
         },
@@ -171,6 +171,10 @@ export default {
             scalability: 'Escalabilidade',
             selectCommand: 'Comando SQL SELECT',
             selectFromComputer: 'selecionar arquivos em seu computador',
+            shareModal: {
+                title: 'Compartilhando Base de Dados',
+                success: 'Permissão alterada'
+            },
             someAttributesMayHaveProblem:
                 'Um atributo pode estar com problema, por favor, revise-o | Alguns atributos podem estar com problema, por favor, revise-os',
             storage: 'Armazenamento',
@@ -263,7 +267,7 @@ export default {
             type_SPARK_ML_CLASSIFICATION: 'Classificação (Spark)',
             type_SPARK_ML_REGRESSION: 'Regressão (Spark)',
             type_SPARK_MLLIB_CLASSIFICATION: 'Classificação (MLLib)',
-            type_UNSPECIFIED: 'Não especificado',
+            type_UNSPECIFIED: 'Não especificado'
         },
         privacy: {
             anonymizationTechnique: 'Técnica de anonimização',
@@ -336,7 +340,7 @@ export default {
             tasks: 'Tarefa | Tarefas',
             template: 'Modelo | Modelos',
             toolboxCategory: 'Organização das operações',
-            tool:   'Ferramenta | Ferramentas',
+            tool: 'Ferramenta | Ferramentas',
             user: 'Usuário | Usuários',
             validationErrors: 'Erro de validação | Erros de validação',
             value: 'Valor',
@@ -424,14 +428,14 @@ export default {
             edit: 'Edit',
             editValue: 'Edit value...',
             execute: 'Execute...',
-            export : 'Export',
+            export: 'Export',
             moveDown: 'Move down',
             moveUp: 'Move up',
             new: 'New',
             removeSelected: 'Remove',
             removeValue: 'Remove value',
             rename: 'Rename',
-            restart: 'Restart', 
+            restart: 'Restart',
             restore: 'Restore',
             save: 'Save',
             saveAs: 'Save as',
@@ -442,17 +446,17 @@ export default {
             showProperties: 'Show properties',
             showResults: 'Show results',
             simpleAdd: 'Add',
-            stop: 'Stop', 
+            stop: 'Stop',
             test: 'Test',
             toggleTasks: 'Enable/disable tasks'
         },
         atmosphere: {
-            transparency: 'Explain models',
+            transparency: 'Explain models'
         },
         cluster: {
             address: 'Address (hostname or IP)',
             authToken: 'Authentication token',
-            executorMemory: 'Executors\' memory',
+            executorMemory: "Executors' memory",
             executors: 'Number of executors',
             executorCores: 'Cores (CPUs) for executors'
         },
@@ -571,6 +575,10 @@ export default {
             scalability: 'Scalability',
             selectCommand: 'SQL SELECT command',
             selectFromComputer: 'select them from your computer',
+            shareModal: {
+                title: 'Sharing Data Source',
+                success: 'Permissions changed'
+            },
             someAttributesMayHaveProblem:
                 'An attribute may be incorrectly configured, please, check it | Some attributes may be incorrectly configured, please, check them',
             storage: 'Storage',
@@ -687,7 +695,7 @@ export default {
             type_SPARK_ML_CLASSIFICATION: 'Classification (Spark)',
             type_SPARK_ML_REGRESSION: 'Regression (Spark)',
             type_SPARK_MLLIB_CLASSIFICATION: 'Classification (MLLib)',
-            type_UNSPECIFIED: 'Unspecified',
+            type_UNSPECIFIED: 'Unspecified'
         },
 
         privacy: {

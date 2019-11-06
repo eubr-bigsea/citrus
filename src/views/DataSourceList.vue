@@ -4,40 +4,51 @@
             <div class="col">
                 <div class>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.dataSource', 2)}}</h1>
-                        <router-link :to="{name: 'addDataSource'}" class="btn btn-sm btn-outline-primary">
-                            {{$t('actions.addItem')}}</router-link>
+                        <h1>{{ $tc('titles.dataSource', 2) }}</h1>
+                        <router-link :to="{ name: 'addDataSource' }" class="btn btn-sm btn-outline-primary">
+                            {{ $t('actions.addItem') }}
+                        </router-link>
                     </div>
-                    <hr>
+                    <hr />
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <v-server-table :data="tableData" :columns="columns" :options="options"
-                                        name="dataSourceList" ref="dataSourceList">
+                                    <v-server-table ref="dataSourceList" :data="tableData" :columns="columns"
+                                        :options="options" name="dataSourceList">
                                         <template slot="id" slot-scope="props">
-                                            <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">
-                                                {{props.row.id}}</router-link>
+                                            <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                                                {{ props.row.id }}
+                                            </router-link>
                                         </template>
                                         <template slot="name" slot-scope="props">
-                                            <router-link :to="{name: 'editDataSource', params: {id: props.row.id}}">
-                                                {{props.row.name}}</router-link>
+                                            <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                                                {{ props.row.name }}
+                                            </router-link>
                                         </template>
                                         <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)" v-if="loggedUserIsOwnerOrAdmin(props.row)">
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
+                                            <button v-if="loggedUserIsOwnerOrAdmin(props.row)"
+                                                class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                                                <font-awesome-icon icon="trash" />
                                             </button>
-                                            <button class="btn btn-sm btn-light" @click="download(props.row)"
-                                                :title="$t('actions.download')">
-                                                <span class="fa fa-download"></span>
+                                            <button class="btn btn-sm btn-light" :title="$t('actions.download')"
+                                                @click="download(props.row)">
+                                                <span class="fa fa-download" />
+                                            </button>
+                                            <button class="btn btn-sm btn-light" :title="$t('actions.download')"
+                                                @click="showShareModal(props.row)">
+                                                <span class="fa fa-share-alt" />
                                             </button>
                                         </template>
-                                        <template slot="created"
-                                            slot-scope="props">{{props.row.created | formatJsonDate}}</template>
+                                        <template slot="created" slot-scope="props">
+                                            {{ props.row.created | formatJsonDate }}
+                                        </template>
                                         <template slot="tags" slot-scope="props">
                                             <div v-if="props.row.tags">
-                                                <div v-for="tag in (props.row.tags || '').split(',')"
-                                                    class="badge badge-info mr-1" :key="tag">{{tag}}</div>
+                                                <div v-for="tag in (props.row.tags || '').split(',')" :key="tag"
+                                                    class="badge badge-info mr-1">
+                                                    {{ tag }}
+                                                </div>
                                             </div>
                                         </template>
                                     </v-server-table>
@@ -48,17 +59,28 @@
                 </div>
             </div>
         </div>
+        <shared-modal :resource-id="datasourceId" :all-users="users" :resource="'dataSource'" />
     </main>
 </template>
 
 <script>
     import axios from 'axios';
     import Notifier from '../mixins/Notifier';
+    import { deserialize } from 'jsonapi-deserializer';
+    import SharedModal from '../components/ShareModal';
+
+    let thornUrl = process.env.VUE_APP_THORN_URL;
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
+
     export default {
+        components: {
+            'shared-modal': SharedModal
+        },
         mixins: [Notifier],
         data() {
             return {
+                datasourceId: 1,
+                users: [],
                 columns: [
                     'id',
                     'name',
@@ -132,12 +154,14 @@
                 }
             };
         },
+        mounted() {
+            this.getAvailableUsers();
+        },
         /* Methods */
         methods: {
             loggedUserIsOwnerOrAdmin(dataSource) {
                 const user = this.$store.getters.user;
-                return dataSource.user_id === user.id
-                    || user.roles.indexOf('admin') >= 0;
+                return dataSource.user_id === user.id || user.roles.indexOf('admin') >= 0;
             },
             getPermissions(permissions) {
                 return (
@@ -202,13 +226,38 @@
                         axios
                             .delete(url, {})
                             .then(resp => {
-                                self.success(self.$t('messages.successDeletion',
-                                    { what: this.$tc('titles.dataSource', 1) }));
+                                self.success(
+                                    self.$t('messages.successDeletion', {
+                                        what: this.$tc('titles.dataSource', 1)
+                                    })
+                                );
                                 self.$refs.dataSourceList.refresh();
                             })
                             .catch(e => self.error(e));
                     }
                 );
+            },
+            showShareModal(datasource) {
+                this.datasourceId = datasource.id;
+                this.$root.$emit('bv::show::modal', 'share-modal', '#btnShow');
+            },
+            getAvailableUsers() {
+                let url = `${thornUrl}/api/users/available`;
+
+                this.$Progress.start();
+                return axios
+                    .get(url)
+                    .then(resp => {
+                        this.$Progress.finish();
+                        this.users = deserialize(resp.data);
+                        return deserialize(resp.data);
+                    })
+                    .catch(
+                        function (e) {
+                            this.$Progress.finish();
+                            this.error(e);
+                        }.bind(this)
+                    );
             }
         }
     };
