@@ -2,48 +2,51 @@
     <main role="main">
         <div class="row">
             <div class="col">
-                <TahitiSuggester />
+                <tahiti-suggester />
 
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
-                        <input-header v-model="workflow.name"></input-header>
+                        <input-header v-model="workflow.name" :can-edit="writePermission" />
                     </div>
                     <div>
-                        <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
+                        <workflow-toolbar v-if="loaded" :workflow="workflow" :user-permission="userPermission" />
                     </div>
                 </div>
 
                 <b-tabs ref="formTabs" v-model="selectedTab" nav-class="custom-tab" @input="updateSelectedTab">
-                    <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
-                        :key="form.id" :active="form.order === minFormOrder">
+                    <b-tab v-if="executePermission" v-for="form of workflow.platform.forms"
+                        :title-item-class="'tab-order-' + form.order" :key="form.id"
+                        :active="form.order === minFormOrder">
                         <template slot="title">
-                            <span class="fa fa-cogs"></span> {{form.name}}
+                            <span class="fa fa-cogs" /> {{form.name}}
                         </template>
                         <div class="card mt-1" style="min-height: 90vh">
                             <div class="card-body">
-                                <WorkflowProperty v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded">
-                                </WorkflowProperty>
+                                <workflow-property v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded" />
                             </div>
                         </div>
                     </b-tab>
                     <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
                         <b-card>
                             <div class="row">
-                                <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
-                                    <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task'></toolbox>
+                                <div v-if="executePermission" class="col col-md-4 col-lg-3 col-xl-2 pr-0">
+                                    <toolbox :operations="operations" :workflow="workflow"
+                                        :selected-task='selectedTask.task' />
                                 </div>
-                                <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
-                                    <diagram ref="diagram" id="main-diagram" :workflow="workflow"
-                                        v-if="loaded" :operations="operations" :loaded="loaded"
-                                        :version="workflow.version" tabindex="0"></diagram>
+                                <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative"
+                                    :class="{ 'col-12': readPermission, 'col-md-12': readPermission,'col-lg-12': readPermission,'col-xl-12': readPermission }">
+                                    <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
+                                        :operations="operations" :loaded="loaded" :version="workflow.version"
+                                        tabindex="0" :user-permission="userPermission" />
                                     <slideout-panel :opened="showProperties">
                                         <property-window :task="selectedTask.task" v-if="selectedTask.task"
-                                            :suggestions="getSuggestions(selectedTask.task.id)" />
+                                            :suggestions="getSuggestions(selectedTask.task.id)"
+                                            :user-permission="userPermission" />
                                     </slideout-panel>
                                 </div>
-                                <b-modal id="history" size="lg" :title="$t('common.history')" ref="historyModal" 
-                                    ok-disabled>
+                                <b-modal v-if="executePermission" id="history" size="lg" :title="$t('common.history')"
+                                    ref="historyModal" ok-disabled>
                                     <div class="historyArea">
                                         <table class="table table-sm table-striped text-center">
                                             <tr>
@@ -57,18 +60,22 @@
                                                 <td>{{h.date}}</td>
                                                 <td>{{h.user_name}}</td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-danger"
-                                                        @click="restore(h.version)">{{$t('actions.restore')}}</button>
+                                                    <button v-if="writePermission" class="btn btn-sm btn-danger"
+                                                        @click="restore(h.version)">
+                                                        {{$t('actions.restore')}}
+                                                    </button>
                                                 </td>
                                             </tr>
                                         </table>
                                     </div>
                                     <div slot="modal-footer" class="w-100">
                                         <b-btn variant="secondary_sm" class="float-right" @click="closeHistory">
-                                            {{$t('actions.cancel')}}</b-btn>
+                                            {{$t('actions.cancel')}}
+                                        </b-btn>
                                     </div>
                                 </b-modal>
-                                <b-modal id="executeModal" size="lg" ref="executeModal" :title="$t('workflow.execute')">
+                                <b-modal v-if="executePermission" id="executeModal" size="lg" ref="executeModal"
+                                    :title="$t('workflow.execute')">
                                     <em>
                                         {{$t('workflow.required')}}:
                                     </em>
@@ -99,17 +106,17 @@
                                                 <div class="col-md-4">
                                                     <label>{{$tc('titles.cluster')}}:</label>
                                                     <select v-model="clusterInfo.id"
-                                                        class="form-control-sm form-control"
-                                                        @change="changeCluster">
-                                                        <option v-for="option in clusters" v-bind:key="option.id" 
-                                                           v-bind:value="option.id">
+                                                        class="form-control-sm form-control" @change="changeCluster">
+                                                        <option v-for="option in clusters" v-bind:key="option.id"
+                                                            v-bind:value="option.id">
                                                             {{ option.name }}
                                                         </option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <label>{{$t('workflow.jobName')}}
-                                                        ({{$t('common.optional')}}):</label>
+                                                    <label>
+                                                        {{$t('workflow.jobName')}} ({{$t('common.optional')}}):
+                                                    </label>
                                                     <input type="text" class="form-control form-control-sm"
                                                         v-model="clusterInfo.jobName" maxlength="50" />
                                                 </div>
@@ -120,22 +127,24 @@
                                         </div>
                                     </div>
                                     <div class="mt-2 p-2 border atmosphere" v-if="atmosphereExtension">
-                                        <PerformanceEstimation :platform="workflow.platform" 
-                                        :clusterId="clusterInfo.id" :cluster="clusterInfo"
-                                        :cores="performanceModel.cores" :setup="performanceModel.setup"
-                                        ref="performanceModel"
-                                        />
+                                        <performance-estimation :platform="workflow.platform"
+                                            :clusterId="clusterInfo.id" :cluster="clusterInfo"
+                                            :cores="performanceModel.cores" :setup="performanceModel.setup"
+                                            ref="performanceModel" />
                                     </div>
                                     <div slot="modal-footer" class="w-100 text-right">
                                         <button class="btn btn-sm btn-outline-success" @click="execute"
                                             id="mdl-execute-wf">
-                                            <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
+                                            <span class="fa fa-play"></span> {{$t('actions.execute')}}
+                                        </button>
                                         <button class="ml-1 btn btn-sm btn-outline-dark"
-                                            @click="cancelExecute">{{$t('actions.cancel')}}</button>
+                                            @click="cancelExecute">{{$t('actions.cancel')}}
+                                        </button>
                                     </div>
                                 </b-modal>
-                                <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled
-                                    ref="saveAsModal">
+
+                                <b-modal v-if="writePermission" id="saveAsModal" size="lg" :title="$t('actions.saveAs')"
+                                    ok-disabled ref="saveAsModal">
                                     <b-form-radio-group v-model="saveOption">
                                         <div class="row">
                                             <div class="col-md-12 mb-3">
@@ -147,7 +156,8 @@
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <b-form-radio name="saveOption" v-model="saveOption" value="image">
-                                                    {{$t('workflow.asImage')}}</b-form-radio>
+                                                    {{$t('workflow.asImage')}}
+                                                </b-form-radio>
                                             </div>
                                             <!--
                                             <div class="col-md-12 mb-3">
@@ -163,7 +173,8 @@
                                     </b-form-radio-group>
                                     <div slot="modal-footer" class="w-100">
                                         <b-btn variant="secondary_sm" class="float-right" @click="closeSaveAs">
-                                            {{$t('actions.cancel')}}</b-btn>
+                                            {{$t('actions.cancel')}}
+                                        </b-btn>
                                         <b-btn variant="primary" class="float-right mr-2" @click="okClicked">
                                             {{$t('common.ok')}}
                                         </b-btn>
@@ -172,21 +183,22 @@
                             </div>
                         </b-card>
                     </b-tab>
-                    <b-tab :title="$tc('titles.job', 2)" title-item-class="tab-order-6" @click="showJobs">
+
+                    <b-tab v-if="executePermission" :title="$tc('titles.job', 2)" title-item-class="tab-order-6"
+                        @click="showJobs">
                         <b-card>
                             <div class="container">
                                 <div class="row">
                                     <div class="col justify-content-center">
-                                        <WorkflowExecution v-if="showPreviousJobs" :workflow-id="workflow.id"/>
+                                        <workflow-execution v-if="showPreviousJobs" :workflow-id="workflow.id" />
                                     </div>
                                 </div>
                             </div>
                         </b-card>
                     </b-tab>
-
                 </b-tabs>
 
-                <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
+                <b-modal v-if="executePermission" id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
                     <p>{{resultTask.step.status}}</p>
                     <div v-for="log in resultTask.step.logs" :key="log.id">
                         {{log}}
@@ -196,8 +208,8 @@
                     </div>
                 </b-modal>
 
-                <b-modal id="validationErrorsModal" ref="validationErrorsModal" size="lg" :ok-only="true"
-                    :title="$tc('titles.validationErrors', 1)">
+                <b-modal v-if="executePermission" id="validationErrorsModal" ref="validationErrorsModal" size="lg"
+                    :ok-only="true" :title="$tc('titles.validationErrors', 1)">
                     <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
                     <table class="table table-sm">
                         <tr>
@@ -216,14 +228,14 @@
                     :ok-only="true">
                     <b-form v-if="loaded" @submit="saveWorkflowProperties">
                         <b-form-group :label="$tc('common.name', 1) + ':'">
-                            <b-form-input id="exampleInput1" type="text" v-model="workflow.name" required>
-                            </b-form-input>
+                            <b-form-input id="exampleInput1" type="text" v-model="workflow.name" required
+                                readonly="readPermission" />
                         </b-form-group>
                         <b-form-group id="exampleInputGroup1" :label="$tc('common.description', 1) + ':'">
-                            <b-form-textarea id="textarea1" v-model="workflow.description" :rows="3" :max-rows="6">
-                            </b-form-textarea>
+                            <b-form-textarea id="textarea1" v-model="workflow.description" :rows="3" :max-rows="6"
+                                readonly="readPermission" />
                         </b-form-group>
-                        <b-form-checkbox v-model="workflow.is_template">
+                        <b-form-checkbox v-model="workflow.is_template" readonly="readPermission">
                             {{$t('workflow.useAsTemplate')}}
                             <br />
                             <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
@@ -263,12 +275,12 @@
             'workflow-toolbar': WorkflowToolbar,
             'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
-            WorkflowProperty,
-            WorkflowExecution,
-            VuePerfectScrollbar,
-            InputHeader,
-            PerformanceEstimation,
-            TahitiSuggester: () => {
+            'workflow-property': WorkflowProperty,
+            'workflow-execution': WorkflowExecution,
+            'vue-perfect-scrollbar': VuePerfectScrollbar,
+            'input-header': InputHeader,
+            'performance-estimation': PerformanceEstimation,
+            'tahiti-suggester': () => {
                 return new Promise((resolve, reject) => {
                     let script = document.createElement('script')
                     script.async = true
@@ -280,7 +292,6 @@
         data() {
             return {
                 atmosphereExtension: false,
-                
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
                 clusters: [],
@@ -295,7 +306,6 @@
                 newName: '',
                 operations: [],
                 operationsLookup: new Map(),
-                
                 resultTask: { step: {} },
                 saveOption: 'new',
                 selectedTab: 0,
@@ -303,11 +313,12 @@
                 showPreviousJobs: false,
                 showProperties: false,
                 validationErrors: [],
-                workflow: { tasks: [], flows: [], platform: {} },
+                workflow: { tasks: [], flows: [], platform: {}, permissions: [] },
                 performanceModel: {
                     cores: null,
                     setup: null
-                }
+                },
+                userPermission: 'READ'
                 // propertyStyles: [
                 //     {
                 //         top: '112px',
@@ -483,7 +494,20 @@
             });
             this.$root.$on('onshow-result', this.showTaskResult);
             this.load();
-            
+        },
+        computed: {
+            readPermission() {
+                let p = this.userPermission
+                return p == 'READ' || p == 'EXECUTE' || p == 'WRITE';
+            },
+            executePermission() {
+                let p = this.userPermission
+                return p == 'EXECUTE' || p == 'WRITE';
+            },
+            writePermission() {
+                let p = this.userPermission
+                return p == 'WRITE';
+            }
         },
         beforeRouteLeave(to, from, next) {
             let self = this;
@@ -522,6 +546,16 @@
             '$route.params.id': function (id) {
                 this.$refs.diagram.clearWorkflow();
                 this.load(id);
+            },
+            workflow: function (val) {
+                const user = this.$store.getters.user;
+                if (val.user.id == user.id) {
+                    this.userPermission = 'WRITE'
+                } else if (val.permissions && val.permissions.length) {
+                    let obj = val.permissions.find(p => { return p.user_id == user.id })
+                    this.userPermission = obj.permission
+                }
+                this.userPermission = 'WRITE'
             }
         },
         methods: {
@@ -702,11 +736,11 @@
                     return v.toString(16);
                 });
             },
-            exportWorkflow(){
+            exportWorkflow() {
                 const self = this
                 const json = JSON.stringify(self.workflow);
                 const element = document.createElement('a');
-                element.setAttribute('href', 'data:application/json;charset=utf-8,' + 
+                element.setAttribute('href', 'data:application/json;charset=utf-8,' +
                     encodeURIComponent(json));
                 element.setAttribute('download', self.workflow.name + '.json');
                 element.style.display = 'none';
@@ -876,7 +910,7 @@
             changeCluster() {
                 const c = this.clusters.find((c) => c.id === this.clusterInfo.id);
                 if (c) {
-                    const uiParameters = c.ui_parameters 
+                    const uiParameters = c.ui_parameters
                         ? new Map(c.ui_parameters.split(",").map(item => item.split("=")))
                         : new Map();
                     this.atmosphereExtension = uiParameters.get('atmosphere') === 'true';
@@ -918,7 +952,7 @@
                 const self = this;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
                 cloned.platform_id = cloned.platform.id;
-                if (self.atmosphereExtension){
+                if (self.atmosphereExtension) {
                     cloned['atmosphere'] = this.$refs.performanceModel.payload;
                 }
                 cloned.tasks.forEach((task) => {
@@ -1051,7 +1085,8 @@
         background-color: greenyellow;
         max-width: 250px;
     }
-    .atmosphere h3{
+
+    .atmosphere h3 {
         text-align: center;
         color: #aaa;
     }

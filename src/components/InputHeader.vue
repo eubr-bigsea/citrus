@@ -1,6 +1,7 @@
 <template>
     <h2>
-        <input :title="$t('actions.rename')" :value="value" :size="titleSize" @input="$emit('input', $event.target.value)"/>
+        <input :title="$t('actions.rename')" :value="value" :size="titleSize"
+            @input="$emit('input', $event.target.value)" :readonly="!canEdit" :class="{ active: canEdit } " />
     </h2>
 </template>
 
@@ -13,19 +14,19 @@
         display: inline-block;
     }
 
-    input:hover {
+    input.active:hover {
         border-color: #CCC;
     }
 </style>
 
 <script>
-export default {
-    name: 'input-header',
-    props: ['value'],
-    computed: {
-        titleSize() {
-            return (this.value || '').length;
+    export default {
+        name: 'input-header',
+        props: ['value', 'canEdit'],
+        computed: {
+            titleSize() {
+                return (this.value || '').length;
+            }
         }
     }
-}
 </script>

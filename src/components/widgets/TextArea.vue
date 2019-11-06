@@ -1,8 +1,9 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <textarea class="form-control input-sm" @keyup="updated" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-            :value="value === null ? field.default: value" rows="3"></textarea>
+        <textarea class="form-control input-sm" @keyup="updated" autocomplete="off" autocorrect="off"
+            autocapitalize="off" spellcheck="false" :value="value === null ? field.default: value" rows="3"
+            :readonly="readonly"></textarea>
     </div>
 </template>
 <script>
@@ -18,9 +19,15 @@
             }
         },
         props: {
-            value: '', field: {}, message: {
+            value: '',
+            field: {},
+            message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
 

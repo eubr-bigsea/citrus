@@ -2,9 +2,9 @@
     <div class="row">
         <div class="col-md-4 offset-md-4">
             <div v-for="(field, index2) in form.fields" class="mb-2 property" v-bind:key="index2">
-                <component
-                    :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)" language="language"
-                    context="context" message="update-workflow-form-field-value">
+                <component :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)"
+                    language="language" context="context" message="update-workflow-form-field-value"
+                    :readonly="readonly">
                 </component>
             </div>
         </div>
@@ -52,6 +52,12 @@
             form: { type: Object, default: {} },
             workflow: { type: Object, default: {} },
             loaded: false,
+            userPermission: { type: Object, default: 'READ' }
+        },
+        computed: {
+            readonly: function(){
+                return this.userPermission != 'WRITE'
+            }
         },
         methods: {
             getValue(name) {
@@ -61,7 +67,7 @@
                     ? this.workflow.forms[name].value : null;
             },
         },
-        mounted(){
+        mounted() {
         }
     }
 </script>

@@ -1,20 +1,24 @@
 <template>
     <div class="btn-group" role="group">
-        <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
-            <span class="far fa-save"></span>
+        <button v-if="writePermission" class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow"
+            :title="$t('actions.save')">
+            <span class="far fa-save" />
         </button>
-        <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
-            <span class="far fa-copy"></span>
+        <button v-if="writePermission" class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs"
+            :title="$t('actions.saveAs')">
+            <span class="far fa-copy" />
         </button>
-        <button class="btn btn-sm btn-outline-dark" @click.prevent="exportWorkflow" :title="$t('actions.export')">
-            <span class="fa fa-download"></span>
+        <button v-if="writePermission" class="btn btn-sm btn-outline-dark" @click.prevent="exportWorkflow"
+            :title="$t('actions.export')">
+            <span class="fa fa-download" />
         </button>
-        <button class="btn btn-sm btn-outline-dark" @click.prevent="showHistory" :title="$t('actions.showHistory')">
-            <span class="fa fa-history"></span>
+        <button v-if="writePermission" class="btn btn-sm btn-outline-dark" @click.prevent="showHistory"
+            :title="$t('actions.showHistory')">
+            <span class="fa fa-history" />
         </button>
-        <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')"
-            variant="success" id="tlb-execute-wf">
-            <span class="fa fa-play"></span>
+        <button v-if="executePermission" class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute"
+            :title="$t('actions.execute')" variant="success" id="tlb-execute-wf">
+            <span class="fa fa-play" />
         </button>
         <!--
         <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
@@ -29,6 +33,7 @@
     .red {
         color: #FF4136;
     }
+
     .runBtn {
         color: #28a745 !important;
     }
@@ -46,7 +51,22 @@
         mixins: [Notifier],
         name: 'WorkflowToolbar',
         props: {
-            workflow: {}
+            workflow: {},
+            userPermission: { default: () => { return 'READ' } }
+        },
+        computed: {
+            readPermission() {
+                let p = this.userPermission
+                return p == 'READ' || p == 'EXECUTE' || p == 'WRITE';
+            },
+            executePermission() {
+                let p = this.userPermission
+                return p == 'EXECUTE' || p == 'WRITE';
+            },
+            writePermission() {
+                let p = this.userPermission
+                return p == 'WRITE';
+            }
         },
         methods: {
             saveWorkflow() {

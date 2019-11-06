@@ -8,9 +8,12 @@
                         <div>
                             <router-link :to="{name: 'addWorkflow'}"
                                 class="btn btn-sm btn-outline-primary float-left mr-1">
-                                {{$t('actions.addItem')}}</router-link>
+                                {{$t('actions.addItem')}}
+                            </router-link>
                             <button @click.prevent="showImportWorkflow"
-                                class="btn btn-sm btn-outline-secondary float-left">{{$t('actions.import')}}</button>
+                                class="btn btn-sm btn-outline-secondary float-left">
+                                {{$t('actions.import')}}
+                            </button>
                         </div>
                     </div>
                     <hr>
@@ -23,34 +26,48 @@
                                         <template slot="id" slot-scope="props">
                                             <router-link
                                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                                {{props.row.id}}</router-link>
+                                                {{props.row.id}}
+                                            </router-link>
                                         </template>
                                         <template slot="name" slot-scope="props">
                                             <router-link
                                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                                {{props.row.name}}</router-link>
+                                                {{props.row.name}}
+                                            </router-link>
                                         </template>
-                                        <template slot="platform"
-                                            slot-scope="props">{{props.row.platform.name}}</template>
-                                        <template slot="is_template"
-                                            slot-scope="props">{{$tc(props.row.is_template ? 'common.yes': 'common.no')}}</template>
-                                        <template slot="user_name" slot-scope="props">{{props.row.user.name}}</template>
-                                        <template slot="updated"
-                                            slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
+                                        <template slot="platform" slot-scope="props">
+                                            {{props.row.platform.name}}
+                                        </template>
+                                        <template slot="is_template" slot-scope="props">
+                                            {{$tc(props.row.is_template ? 'common.yes': 'common.no')}}
+                                        </template>
+                                        <template slot="user_name" slot-scope="props">
+                                            {{props.row.user.name}}
+                                        </template>
+                                        <template slot="updated" slot-scope="props">
+                                            {{props.row.updated | formatJsonDate}}
+                                        </template>
                                         <div slot="afterFilter" class="ml-2">
                                             <label>{{$tc('common.platform')}}</label>
                                             <select class="form-control" v-model="platform">
                                                 <option></option>
                                                 <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">
-                                                    {{p.name}}</option>
+                                                    {{p.name}}
+                                                </option>
                                             </select>
                                             <button type="button"
                                                 class="btn btn-sm btn-light btn-outline-secondary ml-2"
-                                                @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
+                                                @click="clearFilters">
+                                                {{$tc('actions.clearFilters')}}
+                                            </button>
                                         </div>
                                         <template slot="actions" slot-scope="props">
                                             <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
                                                 <font-awesome-icon icon="trash"></font-awesome-icon>
+                                            </button>
+                                            <button class="btn btn-sm btn-light" :title="$t('actions.download')"
+                                                @click="showShareModal(props.row)">
+                                                <span class="fa fa-share-alt" />
                                             </button>
                                         </template>
                                     </v-server-table>
@@ -83,6 +100,7 @@
                 </b-btn>
             </div>
         </b-modal>
+        <shared-modal :resource-id="workflowId" :all-users="users" :resource-type="'workflow'" />
     </main>
 </template>
 
@@ -90,11 +108,21 @@
     import axios from 'axios';
     import { Event } from 'vue-tables-2';
     import Notifier from '../mixins/Notifier';
-    let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+    import { deserialize } from 'jsonapi-deserializer';
+    import SharedModal from '../components/ShareModal';
+
+    const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+    const thornUrl = process.env.VUE_APP_THORN_URL;
+
     export default {
+        components: {
+            'shared-modal': SharedModal
+        },
         mixins: [Notifier],
         data() {
             return {
+                workflowId: 0,
+                users: [],
                 platform: '',
                 platforms: [],
                 columns: [
@@ -175,6 +203,7 @@
             };
         },
         mounted() {
+            this.getAvailableUsers();
             let url = `${tahitiUrl}/platforms`;
             this.$Progress.start();
             axios
@@ -220,8 +249,8 @@
             importWorkflow() {
                 const self = this;
                 const file = self.$refs.importFile.files.length
-                ? self.$refs.importFile.files[0]
-                : null;
+                    ? self.$refs.importFile.files[0]
+                    : null;
                 if (file !== null) {
                     var content;
                     const reader = new FileReader();
@@ -229,13 +258,13 @@
                         const headers = { 'Content-Type': 'application/json' };
                         const url = `${tahitiUrl}/workflows/import`;
                         content = new TextDecoder("utf-8").decode(event.target.result);
-                        const payload = {content};
+                        const payload = { content };
                         axios.post(url, payload, { headers }).then(
-                        (resp) => {
-                            self.success(self.$t('messages.successImport',
+                            (resp) => {
+                                self.success(self.$t('messages.successImport',
                                     { what: resp.data.workflow }));
-                        })
-                        .catch(e => self.error(e));
+                            })
+                            .catch(e => self.error(e));
                     };
                     reader.readAsArrayBuffer(file);
                     self.closeImport();
@@ -249,7 +278,29 @@
             },
             showImportWorkflow() {
                 this.$refs.importModal.show();
-            }
+            },
+            getAvailableUsers() {
+                let url = `${thornUrl}/api/users/available`;
+
+                this.$Progress.start();
+                return axios
+                    .get(url)
+                    .then(resp => {
+                        this.$Progress.finish();
+                        this.users = deserialize(resp.data);
+                        return deserialize(resp.data);
+                    })
+                    .catch(
+                        function (e) {
+                            this.$Progress.finish();
+                            this.error(e);
+                        }.bind(this)
+                    );
+            },
+            showShareModal(workflow) {
+                this.workflowId = workflow.id;
+                this.$root.$emit('bv::show::modal', 'share-modal', '#btnShow');
+            },
         },
         watch: {
             platform(v) {

@@ -15,11 +15,13 @@
                     <div class="row">
                         <div class="col-md-8">
                             <label>{{$t('property.taskName')}}</label>
-                            <input type="text" maxlength="50" v-model="task.name" class="form-control" />
+                            <input type="text" maxlength="50" v-model="task.name" class="form-control"
+                                readonly="readonly" />
                         </div>
-                        <div class="col-md-3">
+                        <div class=" col-md-3">
                             <label type="checkbox">
-                                <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}
+                                <SwitchComponent v-if="!readonly" v-model="task.enabled" :checked="task.enabled">
+                                    {{$t('common.enabled')}}
                                 </SwitchComponent>
                             </label>
                         </div>
@@ -38,15 +40,13 @@
                                                 :value="getValue(field.name)" :suggestions="suggestions"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
-                                                context="context">
+                                                context="context" :readonly="readonly">
                                             </component>
-
                                         </keep-alive>
                                     </div>
                                 </b-tab>
                             </b-tabs>
                         </b-card>
-
                     </form>
                     <div class="card-body">
                         {{task.id}}
@@ -90,7 +90,13 @@
         computed: {
             docReferenceUrl() {
                 return `${referenceUrl}/${this.task.operation.slug}`;
+            },
+            readonly: function () {
+                return this.userPermission != 'WRITE'
             }
+        },
+        props: {
+            userPermission: { type: Object, default: 'READ' },
         },
         components: {
             'attribute-function-component': AttributeFunctionComponent,
@@ -120,7 +126,7 @@
                 filledForm: [],
                 tabIndex: 0,
                 allFields: new Map(),
-                conditionalFields: new Map()
+                conditionalFields: new Map(),
             }
         },
         methods: {

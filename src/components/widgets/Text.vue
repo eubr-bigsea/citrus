@@ -1,8 +1,8 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <input type="text" maxlenght="100" class="form-control input-sm" :value="value === null ? field.default: value" @input="updated"
-        />
+        <input type="text" maxlenght="100" class="form-control input-sm" :value="value === null ? field.default: value"
+            @input="updated" :readonly="readonly" />
     </div>
 </template>
 <script>
@@ -18,10 +18,15 @@
             }
         },
         props: {
-            value: '', field: {},
+            value: '',
+            field: {},
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
 
