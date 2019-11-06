@@ -63,7 +63,8 @@ import {
     faExclamationTriangle,
     faExclamationCircle,
     faChevronLeft,
-    faStop
+    faStop,
+    faShareAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -143,7 +144,8 @@ library.add(
     faExclamationTriangle,
     faExclamationCircle,
     faChevronLeft,
-    faStop
+    faStop,
+    faShareAlt
 );
 
 import {

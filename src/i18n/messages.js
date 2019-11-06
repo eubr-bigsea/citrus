@@ -195,6 +195,10 @@ export default {
             scalability: 'Escalabilidade',
             selectCommand: 'Comando SQL SELECT',
             selectFromComputer: 'selecionar arquivos em seu computador',
+            shareModal: {
+                title: 'Compartilhando Base de Dados',
+                success: 'Permissão alterada'
+            },
             someAttributesMayHaveProblem:
                 'Um atributo pode estar com problema, por favor, revise-o | Alguns atributos podem estar com problema, por favor, revise-os',
             storage: 'Armazenamento',
@@ -621,6 +625,10 @@ export default {
             scalability: 'Scalability',
             selectCommand: 'SQL SELECT command',
             selectFromComputer: 'select them from your computer',
+            shareModal: {
+                title: 'Sharing Data Source',
+                success: 'Permissions changed'
+            },
             someAttributesMayHaveProblem:
                 'An attribute may be incorrectly configured, please, check it | Some attributes may be incorrectly configured, please, check them',
             storage: 'Storage',
