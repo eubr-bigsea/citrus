@@ -15,55 +15,56 @@ import VueAxios from 'vue-axios';
 import { ClientTable, ServerTable } from 'vue-tables-2';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-  faCheck,
-  faCheckDouble,
-  faCoffee,
-  faCopy,
-  faCogs,
-  faDownload,
-  faUpload,
-  faHistory,
-  faImage,
-  faLayerGroup,
-  faArrowsAltV,
-  faArrowsAltH,
-  faHome,
-  faUser,
-  faPlay,
-  faPlus,
-  faSortAmountUp,
-  faSort,
-  faSortAmountDown,
-  faSave,
-  faEdit,
-  faTrash,
-  faToggleOn,
-  faObjectGroup,
-  faQuestionCircle,
-  faAsterisk,
-  faSpinner,
-  faDatabase,
-  faSearch,
-  faEye,
-  faMinusCircle,
-  faChevronCircleDown,
-  faChevronCircleUp,
-  faCheckCircle,
-  faTimesCircle,
-  faHandPaper,
-  faStopCircle,
-  faPauseCircle,
-  faSync,
-  faCheckSquare,
-  faSquare,
-  faLightbulb,
-  faAngleDown,
-  faAngleRight,
-  faExclamationTriangle,
-  faExclamationCircle,
-  faChevronLeft,
-  faStop,
-  faShareAlt
+    faCheck,
+    faCheckDouble,
+    faCoffee,
+    faCopy,
+    faCogs,
+    faDownload,
+    faUpload,
+    faHistory,
+    faImage,
+    faLayerGroup,
+    faArrowsAltV,
+    faArrowsAltH,
+    faHome,
+    faUser,
+    faUserEdit,
+    faPlay,
+    faPlus,
+    faSortAmountUp,
+    faSort,
+    faSortAmountDown,
+    faSave,
+    faEdit,
+    faTrash,
+    faToggleOn,
+    faObjectGroup,
+    faQuestionCircle,
+    faAsterisk,
+    faSpinner,
+    faDatabase,
+    faSearch,
+    faEye,
+    faMinusCircle,
+    faChevronCircleDown,
+    faChevronCircleUp,
+    faCheckCircle,
+    faTimesCircle,
+    faHandPaper,
+    faStopCircle,
+    faPauseCircle,
+    faSync,
+    faCheckSquare,
+    faSquare,
+    faLightbulb,
+    faAngleDown,
+    faAngleRight,
+    faExclamationTriangle,
+    faExclamationCircle,
+    faChevronLeft,
+    faStop,
+    faShareAlt
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -72,11 +73,11 @@ import './assets/main.scss';
 // Snotify
 import Snotify from 'vue-snotify';
 Vue.use(Snotify, {
-  toast: {
-    titleMaxLength: 100,
-    timeout: 5000,
-    xposition: 'centerTop'
-  }
+    toast: {
+        titleMaxLength: 100,
+        timeout: 5000,
+        xposition: 'centerTop'
+    }
 });
 
 /**
@@ -94,61 +95,62 @@ import { dom } from '@fortawesome/fontawesome-svg-core';
 dom.watch();
 
 library.add(
-  faCheck,
-  faCheckDouble,
-  faCoffee,
-  faCopy,
-  faCogs,
-  faDownload,
-  faUpload,
-  faHistory,
-  faPlay,
-  faImage,
-  faLayerGroup,
-  faArrowsAltH,
-  faArrowsAltV,
-  faHome,
-  faUser,
-  faPlus,
-  faSortAmountUp,
-  faSort,
-  faSortAmountDown,
-  faSave,
-  faEdit,
-  faTrash,
-  faToggleOn,
-  faObjectGroup,
-  faQuestionCircle,
-  faAsterisk,
-  faSpinner,
-  faDatabase,
-  faSearch,
-  faEye,
-  faDownload,
-  faMinusCircle,
-  faChevronCircleDown,
-  faChevronCircleUp,
-  faTimesCircle,
-  faHandPaper,
-  faStopCircle,
-  faCheckCircle,
-  faPauseCircle,
-  faSync,
-  faCheckSquare,
-  faSquare,
-  faLightbulb,
-  faAngleDown,
-  faAngleRight,
-  faExclamationTriangle,
-  faExclamationCircle,
-  faChevronLeft,
-  faStop,
-  faShareAlt
+    faCheck,
+    faCheckDouble,
+    faCoffee,
+    faCopy,
+    faCogs,
+    faDownload,
+    faUpload,
+    faHistory,
+    faPlay,
+    faImage,
+    faLayerGroup,
+    faArrowsAltH,
+    faArrowsAltV,
+    faHome,
+    faUser,
+    faPlus,
+    faSortAmountUp,
+    faSort,
+    faSortAmountDown,
+    faSave,
+    faEdit,
+    faUserEdit,
+    faTrash,
+    faToggleOn,
+    faObjectGroup,
+    faQuestionCircle,
+    faAsterisk,
+    faSpinner,
+    faDatabase,
+    faSearch,
+    faEye,
+    faDownload,
+    faMinusCircle,
+    faChevronCircleDown,
+    faChevronCircleUp,
+    faTimesCircle,
+    faHandPaper,
+    faStopCircle,
+    faCheckCircle,
+    faPauseCircle,
+    faSync,
+    faCheckSquare,
+    faSquare,
+    faLightbulb,
+    faAngleDown,
+    faAngleRight,
+    faExclamationTriangle,
+    faExclamationCircle,
+    faChevronLeft,
+    faStop,
+    faShareAlt
 );
 
 import {
-  faSave as farSave,
-  faCopy as farCopy
+    faSave as farSave,
+    faCopy as farCopy
 } from '@fortawesome/free-regular-svg-icons';
 
 library.add(farSave, farCopy);
@@ -162,17 +164,17 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.config.productionTip = false;
 
 const options = {
-  color: '#ed8',
-  failedColor: '#874b4b',
-  thickness: '5px',
-  transition: {
-    speed: '0.2s',
-    opacity: '0.2s',
-    termination: 300
-  },
-  autoRevert: true,
-  location: 'top',
-  inverse: false
+    color: '#ed8',
+    failedColor: '#874b4b',
+    thickness: '5px',
+    transition: {
+        speed: '0.2s',
+        opacity: '0.2s',
+        termination: 300
+    },
+    autoRevert: true,
+    location: 'top',
+    inverse: false
 };
 Vue.use(VueI18n);
 Vue.use(VueProgressBar, options);
@@ -181,22 +183,22 @@ Vue.use(VueProgressBar, options);
 import { distanceInWordsStrict, format, parse } from 'date-fns';
 
 const locales = {
-  en: require('date-fns/locale/en'),
-  pt: require('date-fns/locale/pt')
+    en: require('date-fns/locale/en'),
+    pt: require('date-fns/locale/pt')
 };
 
 Vue.filter('formatJsonDate', v => {
-  if (v) {
-    return format(parse(v), 'DD/MM/YYYY HH:MM');
-  }
+    if (v) {
+        return format(parse(v), 'DD/MM/YYYY HH:MM');
+    }
 });
 Vue.filter('timeFromNow', (v, l) =>
-  distanceInWordsStrict(new Date(), v, { addSuffix: true, locale: locales[l] })
+    distanceInWordsStrict(new Date(), v, { addSuffix: true, locale: locales[l] })
 );
 Vue.filter('formatJsonHourMinute', v => {
-  if (v) {
-    return format(parse(v), 'HH:MM:ss');
-  }
+    if (v) {
+        return format(parse(v), 'HH:MM:ss');
+    }
 });
 
 // Highcharts
@@ -226,25 +228,24 @@ Vue.component('l-marker', LMarker);
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
-
 
 // Auth
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user'), '{}');
 if (token) {
-  axios.defaults.headers.common['Authorization'] = token;
-  axios.defaults.headers.common['X-Authentication'] = token;
-  axios.defaults.headers.common['X-User-Id'] = user['id'];
-  axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
-  axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-  axios.defaults.headers.common['Access-Control-Allow-Headers'] =
-    'Origin, X-Requested-With, Content-Type, Accept';
-  axios.defaults.headers.common['Access-Control-Allow-Methods'] =
-    'POST, GET, PUT, DELETE, OPTIONS';
+    axios.defaults.headers.common['Authorization'] = token;
+    axios.defaults.headers.common['X-Authentication'] = token;
+    axios.defaults.headers.common['X-User-Id'] = user['id'];
+    axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
+    axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+    axios.defaults.headers.common['Access-Control-Allow-Headers'] =
+        'Origin, X-Requested-With, Content-Type, Accept';
+    axios.defaults.headers.common['Access-Control-Allow-Methods'] =
+        'POST, GET, PUT, DELETE, OPTIONS';
 }
 
 // i18n
@@ -252,24 +253,23 @@ const i18n = new VueI18n({
     locale: user ? user.locale : 'pt',
     fallbackLocale: 'en',
     messages
-  });
-  
-  Object.defineProperty(Vue.prototype, '$locale', {
-    get: function() {
-      return i18n.locale;
+});
+
+Object.defineProperty(Vue.prototype, '$locale', {
+    get: function () {
+        return i18n.locale;
     },
-    set: function(locale) {
-      i18n.locale = locale;
+    set: function (locale) {
+        i18n.locale = locale;
     }
-  });
-  
+});
 
 new Vue({
-  el: '#app',
-  i18n,
-  router,
-  store,
-  render: h => h(App)
+    el: '#app',
+    i18n,
+    router,
+    store,
+    render: h => h(App)
 });
 // let requestCounter = 0;
 // axios.interceptors.request.use(config => {
