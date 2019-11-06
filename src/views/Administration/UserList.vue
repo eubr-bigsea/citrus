@@ -73,6 +73,7 @@
 
     let thornUrl = process.env.VUE_APP_THORN_URL;
 
+
     export default {
         mixins: [Notifier],
         data() {
@@ -113,6 +114,8 @@
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.per_page = data.limit;
                         data.search_by = data.query;
+
+
 
                         data.fields = 'id,full_name,email,confirmed_at';
 
