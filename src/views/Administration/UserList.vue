@@ -17,22 +17,26 @@
                                     <v-server-table ref="userList" :columns="columns" :options="options"
                                         name="userList">
                                         <template slot="id" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                            <router-link
+                                                :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 {{ props.row.id }}
                                             </router-link>
                                         </template>
                                         <template slot="full_name" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                            <router-link
+                                                :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 {{ props.row.full_name }}
                                             </router-link>
                                         </template>
                                         <template slot="email" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                            <router-link
+                                                :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 {{ props.row.email }}
                                             </router-link>
                                         </template>
                                         <template slot="roles" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                            <router-link
+                                                :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 {{ props.row.roles[0] && $t(`roles.${props.row.roles[0]}`) }}
                                             </router-link>
                                         </template>
@@ -48,7 +52,8 @@
                                         </template>
 
                                         <template slot="actions" slot-scope="props">
-                                            <router-link class="btn btn-sm btn-light" :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                            <router-link class="btn btn-sm btn-light"
+                                                :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 <font-awesome-icon icon="user-edit" />
                                             </router-link>
                                             <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
