@@ -89,7 +89,7 @@
     }
 
     .app-container {
-        height: 100%;
+        height: calc(100% - 45px);
     }
 
     .main-container {
