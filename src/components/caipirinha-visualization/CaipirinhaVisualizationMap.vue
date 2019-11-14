@@ -1,8 +1,11 @@
 <template>
-    <div style="height: 800px; padding: 0 5px 5px 0">
-        <l-map ref="mapRef">
-            <l-tile-layer :url="url"></l-tile-layer>
-        </l-map>
+    <div>
+        <h2 style="margin-bottom: 5px;">{{ visualizationData.title }}</h2>
+        <div style="height: 800px; padding: 0px 5px 5px 0;">
+            <l-map ref="mapRef">
+                <l-tile-layer :url="url"></l-tile-layer>
+            </l-map>
+        </div>
     </div>
 </template>
 
@@ -100,7 +103,7 @@
                                 //clickable: false,
                                 onEachFeature: (feature, layer) => {
                                     if (feature.properties) {
-                                        layer.bindPopup(JSON.stringify(feature.properties), 
+                                        layer.bindPopup(JSON.stringify(feature.properties),
                                             { closeButton: false, offset: L.point(0, -10) });
                                         layer.on('click', function () { layer.openPopup(); });
                                         //layer.on('mouseout', function () { layer.closePopup(); });

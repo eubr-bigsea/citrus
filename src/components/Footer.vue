@@ -1,5 +1,5 @@
 <template>
-    <div class="footer-container">
+    <footer class="footer-page fixed-bottom">
         <hr />
         <ul class="footer-list">
             <li>
@@ -19,20 +19,12 @@
                 </a>
             </li>
         </ul>
-    </div>
+    </footer>
 </template>
 
 <style>
-    .footer-container {
-        position: absolute;
-        bottom: 0;
-        width: calc(100% - 30px);
-        background-color: white;
-    }
-
     hr {
-        margin-right: -15px;
-        margin-left: -15px;
+        margin: 10px -15px !important;
     }
 
     .footer-list {
@@ -41,7 +33,8 @@
         margin: 0;
         padding: 0;
         font-size: 12px;
-        margin-bottom: 20px;
+        padding-bottom: 6px;
+        padding-left: 15px;
     }
 
     .footer-list span {

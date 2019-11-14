@@ -1,5 +1,5 @@
 <template>
-    <div class="myview">
+    <div class="myview" style="margin-top: 15px;">
         <p v-if="loading">{{$t('common.loading')}}</p>
 
         <div v-if="error">
@@ -7,7 +7,7 @@
             {{$t('visualization.tryRefresh')}}
         </div>
 
-        <component class="myview" v-bind:is="visualizationComponent" :visualizationData="visualizationData"></component>
+        <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData"></component>
     </div>
 </template>
 
