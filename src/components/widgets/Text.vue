@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <input type="text" maxlenght="100" class="form-control input-sm" :value="value === null ? field.default: value"
             @input="updated" :readonly="readonly" />
     </div>
@@ -8,7 +8,7 @@
 <script>
     import LabelComponent from './Label.vue'
     export default {
-        components: { LabelComponent },
+        components: { 'label-component': LabelComponent },
         methods: {
             updated: _.debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
         },

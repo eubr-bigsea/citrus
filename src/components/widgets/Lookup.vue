@@ -1,14 +1,14 @@
 <template>
     <div class="mb-1">
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
 
-        <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
+        <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" readonly="readonly" />
 
-        <b-link v-b-modal="'lookupModal_' + field.name" variant="sm">
+        <b-link v-if="!readonly" v-b-modal="'lookupModal_' + field.name" variant="sm">
             <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
             <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
         </b-link>
-        <b-modal :id="'lookupModal_' + field.name" size="lg" :title="field.label" ok-disabled
+        <b-modal v-if="!readonly" :id="'lookupModal_' + field.name" size="lg" :title="field.label" ok-disabled
             :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             {{field.help}}
             <v-client-table :data="options" :columns="['key', 'value','tags']" class="lookupTable"
@@ -38,7 +38,7 @@
 
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     export default {
-        components: { LabelComponent },
+        components: { 'label-component': LabelComponent },
         data() {
             return {
                 label: '',
@@ -152,6 +152,10 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
         ready: function () {

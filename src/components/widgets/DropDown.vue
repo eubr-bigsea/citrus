@@ -1,7 +1,8 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
-        <select class="form-control input-sm" v-bind:data-field="field.name" v-model="selected" @change="updated">
+        <label-component :field="field" :value="value" />
+        <select class="form-control input-sm" v-bind:data-field="field.name" v-model="selected" @change="updated"
+            :disabled="readonly">
             <option v-if="!field.default"></option>
             <option v-for="opt in pairOptionValueList" :value="opt.key">
                 {{opt[language] || opt.value}}
@@ -12,7 +13,7 @@
 <script>
     import LabelComponent from './Label.vue'
     export default {
-        components: { LabelComponent },
+        components: { 'label-component': LabelComponent },
         mounted() {
             this.$root.$emit(this.message,
                 this.field, this.value || this.field.default);
@@ -32,7 +33,7 @@
         methods: {
             updated(e) {
                 this.selected = e.target.value;
-                this.$root.$emit(this.message, this.field, e.target.value, 
+                this.$root.$emit(this.message, this.field, e.target.value,
                     e.target.options[e.target.selectedIndex].text);
             }
         },
@@ -40,7 +41,11 @@
             value: 0, field: null, language: { default: 'en' }, message: {
                 type: String,
                 default: 'update-form-field-value'
-            }        
+            },
+            readonly: {
+                type: Boolean,
+                default: true
+            }
         },
         ready: function () {
             //console.debug(this.field, this.field['default'], this.value)

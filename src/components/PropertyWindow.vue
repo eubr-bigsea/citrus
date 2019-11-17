@@ -1,28 +1,31 @@
 <template>
     <div class="properties">
-        <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true">
+        <vue-perfect-scrollbar ref="scrollBar" use-both-wheel-axes="true">
             <div class="props card text-dark bg-light p0 mb-1">
                 <div class="border-bottom card-header special">
                     <strong>{{task.operation.name}}</strong>
                     <br />
                     <small>
                         <div class="property-description">{{task.operation.description}}</div>
-                        <a class="property-help" :href="docReferenceUrl"><span class="fa fa-question-circle"></span>
-                            {{$t('property.help')}}</a>
+                        <a class="property-help" :href="docReferenceUrl">
+                            <i class="fa fa-question-circle" />
+                            {{$t('property.help')}}
+                        </a>
                     </small>
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-8"
+                            :class="{ 'col-12': readonly, 'col-md-12': readonly,'col-lg-12': readonly,'col-xl-12': readonly }">
                             <label>{{$t('property.taskName')}}</label>
                             <input type="text" maxlength="50" v-model="task.name" class="form-control"
                                 readonly="readonly" />
                         </div>
-                        <div class=" col-md-3">
+                        <div class=" col-md-3" v-if="!readonly">
                             <label type="checkbox">
-                                <SwitchComponent v-if="!readonly" v-model="task.enabled" :checked="task.enabled">
+                                <switch-component v-model="task.enabled" :checked="task.enabled">
                                     {{$t('common.enabled')}}
-                                </SwitchComponent>
+                                </switch-component>
                             </label>
                         </div>
                     </div>
@@ -38,7 +41,7 @@
                                         <keep-alive>
                                             <component :is="field.suggested_widget + '-component'" :field="field"
                                                 :value="getValue(field.name)" :suggestions="suggestions"
-                                                :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
+                                                :programming-language="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
                                                 context="context" :readonly="readonly">
                                             </component>
@@ -59,7 +62,7 @@
                     </fieldset>
                 </div>
             </div>
-        </VuePerfectScrollbar>
+        </vue-perfect-scrollbar>
     </div>
 </template>
 <script>
@@ -91,12 +94,9 @@
             docReferenceUrl() {
                 return `${referenceUrl}/${this.task.operation.slug}`;
             },
-            readonly: function () {
-                return this.userPermission != 'WRITE'
+            readonly() {
+                return this.userPermission == 'READ'
             }
-        },
-        props: {
-            userPermission: { type: Object, default: 'READ' },
         },
         components: {
             'attribute-function-component': AttributeFunctionComponent,
@@ -116,9 +116,8 @@
             'tag-component': TagComponent,
             'text-component': TextComponent,
             'textarea-component': TextAreaComponent,
-            SwitchComponent,
-            VuePerfectScrollbar,
-
+            'switch-component': SwitchComponent,
+            'vue-perfect-scrollbar': VuePerfectScrollbar,
         },
         data() {
             return {
@@ -209,7 +208,8 @@
         },
         props: {
             task: { type: Object, default: {} },
-            suggestions: { type: Array, default: () => [] }
+            suggestions: { type: Array, default: () => [] },
+            userPermission: { type: String, default: 'READ' },
         },
         watch: {
             task() {

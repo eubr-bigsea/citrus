@@ -1,14 +1,15 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <div>
             <v-select v-if="type !== 'tag'" :options="suggestions" :multiple="true || (!params || params.multiple)"
-                :value.sync="values" :on-change="updated" label="value" :taggable="false" :closeOnSelect="false">
-                <div slot="no-options"></div>
+                :value.sync="values" :on-change="updated" label="value" :taggable="false" :close-on-select="false"
+                :disabled="readonly">
+                <div slot="no-options" />
             </v-select>
             <v-select v-else :multiple="true" :value.sync="values" :on-change="updated" label="value" :taggable="true"
-                :closeOnSelect="true">
-                <div slot="no-options"></div>
+                :close-on-select="true" :disabled="readonly">
+                <div slot="no-options" />
             </v-select>
         </div>
     </div>
@@ -19,7 +20,7 @@
     export default {
         components: {
             'v-select': vSelect,
-            LabelComponent
+            'label-component': LabelComponent
         },
         computed: {
             suggestions() {
@@ -51,6 +52,10 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
     }

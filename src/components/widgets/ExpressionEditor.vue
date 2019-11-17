@@ -1,12 +1,12 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
-        <b-link v-b-modal="'expressionModal'" variant="sm">
-            {{$t('property.editValue')}}
+        <b-link v-if="!readonly" v-b-modal="'expressionModal'" variant="sm">
+            {{$t('property.editValue')}} aaaaaaaaaa
         </b-link>
-        <b-modal id="expressionModal" size="lg" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
-            ref="modal">
+        <b-modal v-if="!readonly" id="expressionModal" size="lg" :title="field.label" :hide-header="true"
+            :cancel-title="$t('actions.cancel')" ref="modal">
             <div class="row">
                 <div class="col-md-9">
                     <table class="table table-sm" v-if="expressionList && expressionList.length">
@@ -19,12 +19,15 @@
                             <template v-for="(row, index) in expressionList">
                                 <tr>
                                     <td style="width: 65%">
-                                        <textarea type="text" class="form-control" @keyup="changed($event, row, 'expression')"
-                                            @blur="elementBlur(row, $event)" style="height: 40px" @paste="changed($event, row, 'expression')">{{row.expression}}</textarea>
+                                        <textarea type="text" class="form-control"
+                                            @keyup="changed($event, row, 'expression')" @blur="elementBlur(row, $event)"
+                                            style="height: 40px"
+                                            @paste="changed($event, row, 'expression')">{{row.expression}}</textarea>
                                         <div class="label label-danger" v-if="row.error">{{row.error}}</div>
                                     </td>
                                     <td v-if="values.alias !== false" style="width: 35%">
-                                        <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
+                                        <input class="form-control" :value="row.alias"
+                                            @change="updated($event, row, 'alias')" />
                                     </td>
                                     <td style="width:2%" class="text-center">
                                         <a href="#" @click.prevent="remove($event, index)">
@@ -76,7 +79,7 @@
             displayValue() {
                 if (this.value) {
                     return this.value.map((v) => {
-                        if (this.values.alias !== false){
+                        if (this.values.alias !== false) {
                             return `${v.alias} = ${v.expression}`
                         } else {
                             return v.expression;
@@ -86,12 +89,12 @@
                     return ''
                 }
             },
-            values(){
-                return this.field.values ? JSON.parse(this.field.values): {}
+            values() {
+                return this.field.values ? JSON.parse(this.field.values) : {}
             },
         },
         components: {
-            LabelComponent
+            'label-component': LabelComponent
         },
         data() {
             return {
@@ -146,7 +149,7 @@
                 return false;
             },
             copyAttributeName(v) {
-                if (this.lastEdited && this.lastEdited.el){
+                if (this.lastEdited && this.lastEdited.el) {
                     // console.debug(this.lastEdited.row)
                     // if (this.lastEdited.row && 
                     //     this.expressionList.includes(this.lastEdited.row)){
@@ -156,10 +159,10 @@
                     const startPos = el.selectionStart;
                     const endPos = el.selectionEnd;
                     const value = el.value.substring(0, startPos) +
-                         v.target.value + el.value.substring(endPos, el.value.length);
-                         el.value = value;
-                         // this.lastEdited.row.expression = value;
-                    this.updated({target: el}, this.lastEdited.row, 'expression')
+                        v.target.value + el.value.substring(endPos, el.value.length);
+                    el.value = value;
+                    // this.lastEdited.row.expression = value;
+                    this.updated({ target: el }, this.lastEdited.row, 'expression')
                     this.lastEdited.el.focus();
                 }
             }
@@ -176,6 +179,10 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
     }

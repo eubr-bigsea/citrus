@@ -1,20 +1,20 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
-        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage" readonly
-            ref="prism" disabled class="code2"/>
+        <label-component :field="field" :value="value" />
+        <prism-editor :code="value === null ? field.default: value" v-model="code"
+            :language="computedProgrammingLanguage" readonly ref="prism" disabled class="code2" />
 
-        <b-link v-b-modal="'lookupModal' + field.order" variant="sm">
+        <b-link v-if="!readonly" v-b-modal="'lookupModal' + field.order" variant="sm">
             <span>{{$t('actions.edit')}}...</span>
         </b-link>
-        <b-modal :id="'lookupModal' + field.order" size="lg" :title="field.label" ok-disabled
+        <b-modal v-if="!readonly" :id="'lookupModal' + field.order" size="lg" :title="field.label" ok-disabled
             :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             <div slot="default">
-                <div class="row" >
-					<div class="col-md-12">
-                        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage"
-                            ref="prism" disabled class="code"/>
-					</div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <prism-editor :code="value === null ? field.default: value" v-model="code"
+                            :language="computedProgrammingLanguage" ref="prism" disabled class="code" />
+                    </div>
                 </div>
             </div>
             <div slot="modal-footer">
@@ -90,8 +90,8 @@
 
     export default {
         computed: {
-            computedProgrammingLanguage(){
-                if (this.field && this.field.values){
+            computedProgrammingLanguage() {
+                if (this.field && this.field.values) {
                     return JSON.parse(this.field.values).language;
                 } else {
                     return this.programmingLanguage;
@@ -105,7 +105,8 @@
             }
         },
         components: {
-            LabelComponent, PrismEditor
+            'label-component': LabelComponent,
+            'prism-editor': PrismEditor
         },
         mounted() {
             this.code = this.value || this.field.default || '';
@@ -123,13 +124,17 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
         methods: {
-            okModal(){
+            okModal() {
                 this.$refs.modal.hide();
             },
-            cancelModal(){
+            cancelModal() {
                 this.code = this.originalCode;
                 this.$root.$emit(this.message, this.field, this.code);
                 this.$refs.modal.hide();
@@ -143,6 +148,7 @@
         height: 100px;
         border: 1px solid #ccc;
     }
+
     .code {
         height: 60vh;
         border: 1px solid #ccc;

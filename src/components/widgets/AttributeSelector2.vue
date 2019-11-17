@@ -1,14 +1,14 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <div v-if="multiple">
-            <textarea disabled :value="value ? value.join(', '): ''" class="form-control bold"></textarea>
+            <textarea disabled :value="value ? value.join(', '): ''" class="form-control bold" readonly="readonly" />
 
-            <b-link v-b-modal="'lookupModal' + field.order" variant="sm">
+            <b-link v-if="!readonly" v-b-modal="'lookupModal' + field.order" variant="sm">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
             </b-link>
-            <b-modal :id="'lookupModal' + field.order" size="lg" :title="field.label" ok-disabled
+            <b-modal v-if="!readonly" :id="'lookupModal' + field.order" size="lg" :title="field.label" ok-disabled
                 :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
                 <div slot="default">
                     <div class="row">
@@ -69,8 +69,8 @@
             </b-modal>
         </div>
         <div v-else>
-            <v-select :options="suggestions" :multiple="multiple" :value.sync="value"
-                :on-change="updated" :taggable="true" :closeOnSelect="true">
+            <v-select :options="suggestions" :multiple="multiple" :value.sync="value" :on-change="updated"
+                :taggable="true" :close-on-select="true" :disabled="readonly">
                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
             </v-select>
         </div>
@@ -82,10 +82,10 @@
     export default {
         components: {
             'v-select': vSelect,
-            LabelComponent
+            'label-component': LabelComponent
         },
         computed: {
-            multiple(){
+            multiple() {
                 return true;
                 /*
                 if (this.field && this.field.values){
@@ -143,7 +143,7 @@
                 } else if (direction === 'all-left') {
                     this.updated([]);
                 } else if (direction === 'right') {
-                    if (!this.value){
+                    if (!this.value) {
                         this.updated([this.available[index]]);
                     } else {
                         this.updated([... this.value.concat(this.available[index])]);
@@ -153,7 +153,7 @@
                 }
             },
             updated(val) {
-                if (Array.isArray(val)){
+                if (Array.isArray(val)) {
                     this.$root.$emit(this.message, this.field, val);
                 } else {
                     this.$root.$emit(this.message, this.field, [val]);
@@ -176,7 +176,11 @@
                 type: String,
                 default: 'update-form-field-value'
             },
-            suggestions: { default: [] }
+            suggestions: { default: [] },
+            readonly: {
+                type: Boolean,
+                default: true
+            }
         },
     }
 </script>

@@ -35,7 +35,7 @@
                                         :selected-task='selectedTask.task' />
                                 </div>
                                 <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative"
-                                    :class="{ 'col-12': readPermission, 'col-md-12': readPermission,'col-lg-12': readPermission,'col-xl-12': readPermission }">
+                                    :class="{ 'col-12': readonly, 'col-md-12': readonly,'col-lg-12': readonly,'col-xl-12': readonly }">
                                     <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
                                         :operations="operations" :loaded="loaded" :version="workflow.version"
                                         tabindex="0" :user-permission="userPermission" />
@@ -229,13 +229,13 @@
                     <b-form v-if="loaded" @submit="saveWorkflowProperties">
                         <b-form-group :label="$tc('common.name', 1) + ':'">
                             <b-form-input id="exampleInput1" type="text" v-model="workflow.name" required
-                                readonly="readPermission" />
+                                readonly="readonly" />
                         </b-form-group>
                         <b-form-group id="exampleInputGroup1" :label="$tc('common.description', 1) + ':'">
                             <b-form-textarea id="textarea1" v-model="workflow.description" :rows="3" :max-rows="6"
-                                readonly="readPermission" />
+                                readonly="readonly" />
                         </b-form-group>
-                        <b-form-checkbox v-model="workflow.is_template" readonly="readPermission">
+                        <b-form-checkbox v-model="workflow.is_template" readonly="readonly">
                             {{$t('workflow.useAsTemplate')}}
                             <br />
                             <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
@@ -496,9 +496,9 @@
             this.load();
         },
         computed: {
-            readPermission() {
+            readonly() {
                 let p = this.userPermission
-                return p == 'READ' || p == 'EXECUTE' || p == 'WRITE';
+                return p == 'READ'
             },
             executePermission() {
                 let p = this.userPermission
@@ -555,7 +555,9 @@
                     let obj = val.permissions.find(p => { return p.user_id == user.id })
                     this.userPermission = obj.permission
                 }
-                this.userPermission = 'WRITE'
+
+                this.userPermission = 'READ'
+                console.log(this.userPermission)
             }
         },
         methods: {

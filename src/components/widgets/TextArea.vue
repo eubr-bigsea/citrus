@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <textarea class="form-control input-sm" @keyup="updated" autocomplete="off" autocorrect="off"
             autocapitalize="off" spellcheck="false" :value="value === null ? field.default: value" rows="3"
             :readonly="readonly"></textarea>
@@ -9,7 +9,7 @@
 <script>
     import LabelComponent from './Label.vue'
     export default {
-        components: { LabelComponent },
+        components: { 'label-component': LabelComponent },
         methods: {
             updated: _.debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
         },

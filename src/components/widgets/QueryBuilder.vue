@@ -1,12 +1,13 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <textarea disabled :value="field.value" class="form-control code" rows="8"></textarea>
-        <b-link v-b-modal="'queryBuilderModal'" variant="sm">
+        <b-link v-if="!readonly" v-b-modal="'queryBuilderModal'" variant="sm">
             {{$t('property.editValue')}}
         </b-link>
 
-        <b-modal id="queryBuilderModal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')" ref="modal">
+        <b-modal v-if="!readonly" id="queryBuilderModal" size="lg" :title="field.label"
+            :cancel-title="$t('actions.cancel')" ref="modal">
             <p>
                 {{$t('property.queryBuilder.explanation')}}
             </p>
@@ -24,7 +25,7 @@
     import jsep from 'jsep';
     export default {
         components: {
-            LabelComponent
+            'label-component': LabelComponent
         },
         data() {
             return {
@@ -50,6 +51,10 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
     }

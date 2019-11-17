@@ -1,9 +1,9 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <div>
-            <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
-                :taggable="true" :closeOnSelect="false">
+            <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value"
+                :on-change="updated" :taggable="true" :close-on-select="false" :disabled="readonly">
                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
             </v-select>
         </div>
@@ -15,7 +15,7 @@
     export default {
         components: {
             'v-select': vSelect,
-            LabelComponent
+            'label-component': LabelComponent
         },
         computed: {
             params() {
@@ -36,6 +36,10 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
     }

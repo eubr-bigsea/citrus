@@ -1,7 +1,7 @@
 <template>
-    <label class="switch">
-        <input :class="classes" type="checkbox" :checked="checked" :name="name" :disabled="disabled || readonly" v-model="value"
-            @change="changed">
+    <label class="switch" :class="{ 'disabled': readonly }">
+        <input type="checkbox" :checked="checked" :name="name" :disabled="disabled || readonly" v-model="value"
+            @change="changed" :class="classes">
         <span>
             <slot></slot>
         </span>
@@ -112,6 +112,17 @@
 
             &:checked+span &:after {
                 transform: translate(80%, -50%);
+            }
+        }
+    }
+
+    .disabled {
+        span {
+            cursor: default !important;
+
+            &:before,
+            &:after {
+                cursor: default !important;
             }
         }
     }

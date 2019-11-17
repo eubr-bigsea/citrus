@@ -1,7 +1,9 @@
 <template>
     <div ref="fieldElement">
         <div class="float-left" :data-name="field.name">
-            <SwitchComponent class="float-left" :onchange="changed" :checked="checked">{{field.label}}</SwitchComponent>
+            <switch-component class="float-left" :onchange="changed" :checked="checked" readonly="readonly">
+                {{field.label}}
+            </switch-component>
         </div>
         <div class="float-right">
             <span class="fa fa-question-circle float-right" :title="field.help"></span>
@@ -9,16 +11,16 @@
     </div>
 </template>
 <script>
-    import LabelComponent from './Label.vue'
     import SwitchComponent from './Switch.vue'
+
     export default {
         name: 'checkbox-component',
-        components: { LabelComponent, SwitchComponent },
+        components: { 'switch-component': SwitchComponent },
         methods: {
-            changed(newValue){
+            changed(newValue) {
                 this.checked = newValue ? '1' : '0';
-                this.$root.$emit(this.message, this.field, this.checked, 
-                    this.checked? this.$t('common.yes'): this.$t('common.no'));
+                this.$root.$emit(this.message, this.field, this.checked,
+                    this.checked ? this.$t('common.yes') : this.$t('common.no'));
             }
         },
         data() {
@@ -28,7 +30,7 @@
             };
         },
         mounted() {
-            this.$on('input', () => {alert('fff')})
+            this.$on('input', () => { alert('fff') })
             let input = this.$refs.fieldElement //this.$el.querySelector('input[type="checkbox"]');
             input.id = `checkboxComponentInput-${this.field.name}`;
             this.checked = this.value === 1 || this.value === '1';
@@ -43,10 +45,14 @@
             field: {},
             message: {
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
         watch: {
-            value: function() {
+            value: function () {
                 this.checked = this.value === 1 || this.value === '1';
             }
         }

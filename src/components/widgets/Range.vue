@@ -1,14 +1,14 @@
 <template>
     <div class="clear mb-4">
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <label-component :field="field" :value="value" />
         <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)"
-            @mousedown="mouseDown" @mouseup="mouseUp" :required="field.required" ref="slider" />
+            @mousedown="mouseDown" @mouseup="mouseUp" :required="field.required" ref="slider" :readonly="readonly" />
         <div class="float-left">
             {{values[language] ? values[language][0] : ''}}:
             {{split || 0}}%
         </div>
         <div class="float-right text-right">
-                {{values[language] ? values[language][1] : ''}}:
+            {{values[language] ? values[language][1] : ''}}:
             {{100-split}}%
         </div>
     </div>
@@ -16,7 +16,9 @@
 <script>
     import LabelComponent from './Label.vue'
     export default {
-        components: { LabelComponent },
+        components: {
+            'label-component': LabelComponent
+        },
         data() {
             return {
                 split: 50,
@@ -57,6 +59,10 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
+            },
+            readonly: {
+                type: Boolean,
+                default: true
             }
         },
 
@@ -92,5 +98,4 @@
         background: #4CAF50;
         cursor: pointer;
     }
-
 </style>
