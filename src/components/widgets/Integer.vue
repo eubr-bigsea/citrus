@@ -3,7 +3,7 @@
         <label-component :field="field" :value="value" />
         <input type="number" maxlenght="10" class="form-control input-sm"
             :value="value === null ? field['default']: value" pattern="\\d*" @input="updated" :required="field.required"
-            readonly="readonly" />
+            :readonly="readonly" />
     </div>
 </template>
 <script>

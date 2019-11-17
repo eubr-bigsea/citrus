@@ -2,7 +2,7 @@
     <div class="mb-1">
         <label-component :field="field" :value="value" />
 
-        <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" readonly="readonly" />
+        <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" :readonly="readonly" />
 
         <b-link v-if="!readonly" v-b-modal="'lookupModal_' + field.name" variant="sm">
             <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>

@@ -3,7 +3,7 @@
         <label-component :field="field" :value="value" />
         <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
         <b-link v-if="!readonly" v-b-modal="'expressionModal'" variant="sm">
-            {{$t('property.editValue')}} aaaaaaaaaa
+            {{$t('property.editValue')}}
         </b-link>
         <b-modal v-if="!readonly" id="expressionModal" size="lg" :title="field.label" :hide-header="true"
             :cancel-title="$t('actions.cancel')" ref="modal">

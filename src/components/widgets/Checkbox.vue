@@ -1,7 +1,7 @@
 <template>
     <div ref="fieldElement">
         <div class="float-left" :data-name="field.name">
-            <switch-component class="float-left" :onchange="changed" :checked="checked" readonly="readonly">
+            <switch-component class="float-left" :onchange="changed" :checked="checked" :readonly="readonly">
                 {{field.label}}
             </switch-component>
         </div>

@@ -19,11 +19,11 @@
                             :class="{ 'col-12': readonly, 'col-md-12': readonly,'col-lg-12': readonly,'col-xl-12': readonly }">
                             <label>{{$t('property.taskName')}}</label>
                             <input type="text" maxlength="50" v-model="task.name" class="form-control"
-                                readonly="readonly" />
+                                :readonly="readonly" />
                         </div>
                         <div class=" col-md-3" v-if="!readonly">
                             <label type="checkbox">
-                                <switch-component v-model="task.enabled" :checked="task.enabled">
+                                <switch-component v-model="task.enabled" :checked="task.enabled" :readonly="readonly">
                                     {{$t('common.enabled')}}
                                 </switch-component>
                             </label>

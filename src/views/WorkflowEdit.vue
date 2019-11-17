@@ -229,13 +229,13 @@
                     <b-form v-if="loaded" @submit="saveWorkflowProperties">
                         <b-form-group :label="$tc('common.name', 1) + ':'">
                             <b-form-input id="exampleInput1" type="text" v-model="workflow.name" required
-                                readonly="readonly" />
+                                :readonly="readonly" />
                         </b-form-group>
                         <b-form-group id="exampleInputGroup1" :label="$tc('common.description', 1) + ':'">
                             <b-form-textarea id="textarea1" v-model="workflow.description" :rows="3" :max-rows="6"
-                                readonly="readonly" />
+                                :readonly="readonly" />
                         </b-form-group>
-                        <b-form-checkbox v-model="workflow.is_template" readonly="readonly">
+                        <b-form-checkbox v-model="workflow.is_template" :readonly="readonly">
                             {{$t('workflow.useAsTemplate')}}
                             <br />
                             <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
@@ -555,9 +555,6 @@
                     let obj = val.permissions.find(p => { return p.user_id == user.id })
                     this.userPermission = obj.permission
                 }
-
-                this.userPermission = 'READ'
-                console.log(this.userPermission)
             }
         },
         methods: {

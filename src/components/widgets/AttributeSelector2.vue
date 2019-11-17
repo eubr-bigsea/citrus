@@ -2,7 +2,7 @@
     <div>
         <label-component :field="field" :value="value" />
         <div v-if="multiple">
-            <textarea disabled :value="value ? value.join(', '): ''" class="form-control bold" readonly="readonly" />
+            <textarea disabled :value="value ? value.join(', '): ''" class="form-control bold" :readonly="readonly" />
 
             <b-link v-if="!readonly" v-b-modal="'lookupModal' + field.order" variant="sm">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
