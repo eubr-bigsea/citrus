@@ -148,7 +148,7 @@
                     prop => this.payload[prop] !== null && this.payload[prop] !== '');
             },
             checkSchedule() {
-                axios.get(`${standUrl}/performance-models/${this.schedule_id}`)
+                axios.get(`${standUrl}/performance/result/${this.schedule_id}`)
                     .then((response) => {
                         if (response.data.status === 'ERROR') {
                             if (this.timeoutHandler) {
@@ -192,10 +192,10 @@
                     this.error(null, this.$tc('errors.missingRequiredValue'));
                 } else {
                     window.clearTimeout(this.timeoutHandler);
-                    axios.post(`${standUrl}/performance-models`, this.payload)
+                    axios.post(`${standUrl}/performance/${this.payload.model_id}`, this.payload)
                         .then((response) => {
                             this.estimatingStep = 1;
-                            this.schedule_id = response.data.schedule_id;
+                            this.schedule_id = response.data;
                             this.timeoutHandler = window.setTimeout(this.checkSchedule, 500);
                         });
                 }

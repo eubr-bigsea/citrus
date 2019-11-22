@@ -6,9 +6,10 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>{{$tc('titles.workflow', 2)}}</h1>
                         <div>
-                            <router-link :to="{name: 'addWorkflow'}" class="btn btn-sm btn-outline-primary float-left mr-1">
+                            <router-link :to="{name: 'addWorkflow'}"
+                                class="btn btn-sm btn-outline-primary float-left mr-1">
                                 {{$t('actions.addItem')}}</router-link>
-                            <button
+                            <button @click.prevent="showImportWorkflow"
                                 class="btn btn-sm btn-outline-secondary float-left">{{$t('actions.import')}}</button>
                         </div>
                     </div>
@@ -60,6 +61,28 @@
                 </div>
             </div>
         </div>
+        <b-modal id="importModal" size="lg" :title="$t('actions.import') + ' ' + $tc('titles.workflow', 1)" ok-disabled
+            ref="importModal">
+            <b-form-radio-group>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <p>{{$t('import.description')}}</p>
+
+                        <p><u>{{$t('import.review')}}</u></p>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <input type="file" ref="importFile" />
+                    </div>
+                </div>
+            </b-form-radio-group>
+            <div slot="modal-footer" class="w-100">
+                <b-btn variant="secondary_sm" class="float-right btn-sm btn-outline-secondary" @click="closeImport">
+                    {{$t('actions.cancel')}}</b-btn>
+                <b-btn variant="primary" class="float-right mr-2 btn-sm " @click="importWorkflow">
+                    {{$t('common.ok')}}
+                </b-btn>
+            </div>
+        </b-modal>
     </main>
 </template>
 
@@ -193,6 +216,39 @@
                             .catch(e => self.error(e));
                     }
                 );
+            },
+            importWorkflow() {
+                const self = this;
+                const file = self.$refs.importFile.files.length
+                ? self.$refs.importFile.files[0]
+                : null;
+                if (file !== null) {
+                    var content;
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const headers = { 'Content-Type': 'application/json' };
+                        const url = `${tahitiUrl}/workflows/import`;
+                        content = new TextDecoder("utf-8").decode(event.target.result);
+                        const payload = {content};
+                        axios.post(url, payload, { headers }).then(
+                        (resp) => {
+                            self.success(self.$t('messages.successImport',
+                                    { what: resp.data.workflow }));
+                        })
+                        .catch(e => self.error(e));
+                    };
+                    reader.readAsArrayBuffer(file);
+                    self.closeImport();
+
+                } else {
+                    this.warning(this.$tc('import.selectFile'));
+                }
+            },
+            closeImport() {
+                this.$refs.importModal.hide();
+            },
+            showImportWorkflow() {
+                this.$refs.importModal.show();
             }
         },
         watch: {

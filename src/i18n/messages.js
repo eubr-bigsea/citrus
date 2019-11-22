@@ -244,6 +244,13 @@ export default {
             dirtyCheck:
                 'Existem alterações que ainda não foram salvas. Deseja sair assim mesmo?'
         },
+        import: {
+            description: 'Importe um arquivo com a definição do fluxo de trabalho.' + 
+                'O arquivo deve estar no formato correto e ser compatível com a versão do Lemonade. ',
+            review: 'Após a importação, certifique-se de atualizar as fontes de dados, pois elas NÃO são importadas ' +
+                    'junto com o fluxo de trabalho.',
+            selectFile: 'Por favor, selecione um arquivo.'
+        },
         job: {
             details: 'Detalhe | Detalhes',
             error:
@@ -270,6 +277,7 @@ export default {
             confirmRemove: 'Tem certeza que você quer excluir esse registro?',
             exportWorkflow: 'Fluxo de trabalho exportado usando a versão atual.',
             successDeletion: '{what} foi removido com sucesso',
+            successImport: 'Fluxo de trabalho foi importado com o id={what}.',
             registeredWithSuccess:
                 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
             savedWithSuccess: '{what} foi salvo(a) com sucesso!',
@@ -678,12 +686,20 @@ export default {
             exportWorkflow: 'Workflow exported using current version.',
             confirmRemove: 'Are you sure you want to remove this record?',
             successDeletion: '{what} was successfuly removed',
+            successImport: 'Workflow was imported as id={what}.',
             registeredWithSuccess:
                 'You were registered with success. Please, sign in again.',
             savedWithSuccess: '{what} saved with success.',
             noMatching: 'Sorry, no matching options',
             usingDisabledOperation:
                 'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.'
+        },
+        import: {
+            description: 'You may import a file containing a workflow definition. ' + 
+                'Imported file must be in the correct format and be compatible with Lemonade version. ',
+            review: 'After importing, be sure to update the data sources because they are NOT imported ' +
+                    'with the workflow.',
+            selectFile: 'Please, select a file'
         },
         job: {
             details: 'Detail | Details',

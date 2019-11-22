@@ -123,6 +123,7 @@
                                         <PerformanceEstimation :platform="workflow.platform" 
                                         :clusterId="clusterInfo.id" :cluster="clusterInfo"
                                         :cores="performanceModel.cores" :setup="performanceModel.setup"
+                                        ref="performanceModel"
                                         />
                                     </div>
                                     <div slot="modal-footer" class="w-100 text-right">
@@ -278,7 +279,7 @@
         },
         data() {
             return {
-                atmosphereExtension: process.env.VUE_APP_ATMOSPHERE,
+                atmosphereExtension: false,
                 
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
@@ -712,7 +713,7 @@
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
-                self.success(self.$t('messages.exportWorkflow'));
+                // self.success(self.$t('messages.exportWorkflow'));
             },
             saveWorkflow(savingCopy, newName) {
                 let self = this
@@ -873,8 +874,12 @@
                 this.$refs.executeModal.hide();
             },
             changeCluster() {
-                const c = this.clusters.find((c) => c.id === this.clusterInfo.id)
+                const c = this.clusters.find((c) => c.id === this.clusterInfo.id);
                 if (c) {
+                    const uiParameters = c.ui_parameters 
+                        ? new Map(c.ui_parameters.split(",").map(item => item.split("=")))
+                        : new Map();
+                    this.atmosphereExtension = uiParameters.get('atmosphere') === 'true';
                     this.clusterInfo.description = c.description;
                     this.clusterInfo.clusterName = c.name;
                 }
@@ -883,7 +888,7 @@
                 const self = this;
                 const d = new Date().toISOString().slice(0, -5);
                 this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
-                axios.get(`${standUrl}/clusters`, {})
+                axios.get(`${standUrl}/clusters?enabled=true`, {})
                     .then((response) => {
                         self.clusters.length = 0;
                         Array.prototype.push.apply(self.clusters, response.data);
@@ -913,6 +918,9 @@
                 const self = this;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
                 cloned.platform_id = cloned.platform.id;
+                if (self.atmosphereExtension){
+                    cloned['atmosphere'] = this.$refs.performanceModel.payload;
+                }
                 cloned.tasks.forEach((task) => {
                     task.operation = { id: task.operation.id };
                     delete task.version;
