@@ -45,6 +45,7 @@ export default new Vuex.Store({
         change_profile_success (state, { user }) {
             user.email = user.attributes.email;
             user.locale = user.attributes.locale;
+            user.roles = user.attributes.roles || [];
             state.status = 'success';
             state.user = user;
         }
