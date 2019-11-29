@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container">
+    <div>
         <vue-snotify />
         <l-navbar v-if="isLoggedIn" />
         <div class="container-fluid main-container">
@@ -23,27 +23,6 @@
         components: {
             'l-navbar': Navbar,
             'l-footer': Footer
-        },
-
-        data() {
-            return {
-                columns: ['code', 'symbol', 'rate'],
-                tableData: [],
-                options: {
-                    xtemplates: {
-                        symbol: function (row) {
-                            return row.symbol;
-                        }
-                    },
-                    headings: {
-                        code: 'ID',
-                        symbol: 'Symbol',
-                        rate: 'Rate'
-                    },
-                    sortable: ['name', 'album'],
-                    filterable: ['name', 'album']
-                }
-            };
         },
         computed: {
             isLoggedIn() {

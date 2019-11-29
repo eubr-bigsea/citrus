@@ -203,6 +203,7 @@
                     this.fsStorage = this.fsStorages.length ? this.fsStorages[0].id : '';
                     this.sqlStorage = this.sqlStorages.length ? this.sqlStorages[0].id : '';
                     this.vallumStorage = this.vallumStorages.length ? this.vallumStorages[0].id : '';
+                    this.atmosphereExtension = this.vallumStorages.length > 0;
                 })
                 .catch(function (e) {
                     self.error(e);
@@ -210,7 +211,7 @@
         },
         data() {
             return {
-                atmosphereExtension: process.env.VUE_APP_ATMOSPHERE,
+                atmosphereExtension: false,
                 storageType: '',
                 step: 1,
                 format: '',

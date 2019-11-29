@@ -79,11 +79,16 @@
 
                     ]
                 };
-                this.data.forEach((serie, i) =>
+                
+                this.data.forEach((serie, i) => {
+                    console.debug(serie)
                     result['series'].push({
-                        name: this.categories[i],
+                        name: self.categories[i],
                         data: serie
-                    }));
+                    })
+                }
+                    );
+
                 result['yAxis']['plotLines'] = [{
                     color: '#FF4136',
                     value: this.deadline,

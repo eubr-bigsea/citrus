@@ -43,17 +43,20 @@
                                                 </v-select>
                                             </div>
                                             <div class="col-md-3">
-                                                <label>{{$tc('dataSource.treatAsNull')}}:</label>
-                                                <v-select multiple :close-on-select="false" style="width: 100%"
-                                                    v-model="customTreatAsMissing" :taggable="true" class="custom">
-                                                    <span slot="no-options">{{$t('messages.noMatching')}}.</span>
-                                                </v-select>
+                                                <div v-if="dataSource.storage.type !== 'VALLUM'">
+                                                    <label>{{$tc('dataSource.treatAsNull')}}:</label>
+                                                    <v-select multiple :close-on-select="false" style="width: 100%"
+                                                        v-model="customTreatAsMissing" :taggable="true" class="custom">
+                                                        <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                    </v-select>
+                                                </div>
                                             </div>
                                             <div class="col-md-3 col-lg-2 mt-3" v-if="dataSource.format === 'CSV'">
                                                 <b-form-checkbox v-model="dataSource.is_first_line_header">
                                                     {{ $t('dataSource.isFirstLineHeader') }}</b-form-checkbox>
                                             </div>
-                                            <div class="col-md-2 col-lg-2 mt-3">
+                                            <div class="col-md-2 col-lg-2 mt-3"
+                                                v-if="dataSource.storage.type !== 'VALLUM'">
                                                 <b-form-checkbox v-model="dataSource.is_multiline">
                                                     {{ $t('dataSource.isMultiline') }}</b-form-checkbox>
                                             </div>
@@ -77,6 +80,19 @@
                                                 v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM'">
                                                 <label>{{$tc('common.command')}}:</label>
                                                 <textarea class="form-control" v-model="dataSource.command"></textarea>
+                                            </div>
+                                            <div class="col-md-12 mt-3 pb-1"
+                                                v-if="dataSource.storage.type === 'VALLUM'">
+                                                <label>Initialization: </label>
+                                                <div v-if="dataSource.initialization === 'NO_INITIALIZED'">
+                                                    Vallum data source is not initialized (cached).
+                                                    You have to copy data to another (Local) storage.
+                                                    <p>
+                                                        <button class="btn btn-sm btn-outline-secondary"
+                                                            @click="showInitializationModal">Initialize data
+                                                            source</button>
+                                                    </p>
+                                                </div>
                                             </div>
                                             <div class="col-md-12 mt-3 mt-3 pb-1" v-if="dataSource.format === 'CSV'">
                                                 <div class="row">
@@ -223,7 +239,8 @@
                                     </b-tab>
                                 </b-tabs>
                                 <div class="col-md-12 mb-4 border-top pt-2">
-                                    <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save" v-if="loggedUserIsOwnerOrAdmin">
+                                    <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save"
+                                        v-if="loggedUserIsOwnerOrAdmin">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <span class="fa fa-save"></span>
                                         {{$tc('actions.save')}}
@@ -285,7 +302,7 @@
                                     <label>
                                         {{ $tc('privacy.attributePrivacyGroup') }}:
                                     </label>
-                                    <select class="form-control" v-if="currentAttribute.attribute_privacy" 
+                                    <select class="form-control" v-if="currentAttribute.attribute_privacy"
                                         v-model="currentAttribute.attribute_privacy.attribute_privacy_group_id">
                                         <option></option>
                                         <option v-for="t in attributeGroups" v-bind:value="t.id" :key="t.id">{{t.name}}
@@ -296,11 +313,46 @@
                             <label>
                                 {{ $tc('privacy.hierarchy') }}:
                             </label>
-                            <textarea class="form-control" type="text" rows="5" v-if="currentAttribute.attribute_privacy"
+                            <textarea class="form-control" type="text" rows="5"
+                                v-if="currentAttribute.attribute_privacy"
                                 v-model="currentAttribute.attribute_privacy.hierarchy"></textarea>
                             <div slot="modal-footer" class="w-100">
                                 <b-btn variant="primary" class="float-right mr-2" @click="okPrivacy">
                                     {{$t('actions.close')}}
+                                </b-btn>
+                            </div>
+                        </b-modal>
+                        <b-modal size="lg" ref="modalInitialization" title="Initialize Vallum">
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    Destination (local storage):
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    Destination path (relative to storage's base path):
+                                </div>
+                                <div class="col-md-6">
+                                    <select class="form-control" v-model="vallumSelectedStorage">
+                                        <option></option>
+                                        <option v-for="storage in localStorages" :key="storage.id"
+                                            v-bind:value="storage.id">
+                                            {{storage.name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" v-model="vallumPath" />
+                                </div>
+                            </div>
+
+                            <div slot="modal-footer" class="w-100">
+                                <b-btn variant="outline-secondary" class="float-right mr-2" @click="hideInitialization">
+                                    {{$t('actions.close')}}
+                                </b-btn>
+                                <b-btn variant="primary" class="float-right mr-2" v-if="vallumSelectedStorage !== ''"
+                                    @click.prevent="initializeVallum">
+                                    <b-spinner small v-if="copyingStep === 1"></b-spinner>
+                                    <span v-if="copyingStep !== 1">Copy data</span>
+                                    <span v-else> Copying data, please wait</span>
                                 </b-btn>
                             </div>
                         </b-modal>
@@ -317,7 +369,8 @@
     import VueSelect from 'vue-select';
     import SwitchComponent from '../components/widgets/Switch.vue';
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
-    
+    const standUrl = process.env.VUE_APP_STAND_URL;
+
     export default {
         components: {
             'v-select': VueSelect,
@@ -349,18 +402,21 @@
                 return this.dataSource.attributeDelimiter !== ''
                     && this.dataSource.storage.type !== 'VALLUM';
             },
-            loggedUserIsOwnerOrAdmin(){
+            loggedUserIsOwnerOrAdmin() {
                 const user = this.$store.getters.user;
-                return this.dataSource.user_id === user.id 
-                    || user.roles.indexOf('admin') >=0;
+                return this.dataSource.user_id === user.id
+                    || user.roles.indexOf('admin') >= 0;
             }
         },
         data() {
             return {
+                copyingStep: 0,
                 atmosphereExtension: process.env.VUE_APP_ATMOSPHERE,
                 isDirty: false,
+                vallumSelectedStorage: '',
+                vallumPath: '',
                 samples: [],
-                storages: [],
+                localStorages: [],
                 dataSource: {},
                 attributeGroups: {},
                 anonymization: ['ENCRYPTION', 'GENERALIZATION', 'MASK',
@@ -383,19 +439,27 @@
                     'VECTOR'
                 ].sort(),
                 formats: [
-                    'XML_FILE',
-                    'NETCDF4',
-                    'HDF5',
-                    'SHAPEFILE',
-                    'TEXT',
-                    'UNKNOWN',
+                    'CSV',
                     'CUSTOM',
                     'GEO_JSON',
+                    'HAR_IMAGE_FOLDER',
+                    'HDF5',
+                    'DATA_FOLDER',
+                    'IMAGE_FOLDER',
+                    'JDBC',
                     'JSON',
-                    'CSV',
+                    'NETCDF4',
+                    'NPY',
                     'PARQUET',
                     'PICKLE',
-                    'JDBC'
+                    'SAV',
+                    'SHAPEFILE',
+                    'TAR_IMAGE_FOLDER',
+                    'TEXT',
+                    'VIDEO_FOLDER',
+                    'UNKNOWN',
+                    'VALLUM',
+                    'XML_FILE'
                 ].sort(),
                 delimiters: [
                     ',',
@@ -408,7 +472,8 @@
                 textDelimiters: ['"', "'"],
                 previewWarnings: [],
                 encodings: ['ISO-8859-1', 'UTF-8', 'UTF-16'],
-                currentAttribute: { attribute_privacy: {} }
+                currentAttribute: { attribute_privacy: {} },
+                timeoutHandler: null
             };
         },
         mounted() {
@@ -436,6 +501,65 @@
         },
         /* Methods */
         methods: {
+            hideInitialization() {
+                this.$refs.modalInitialization.hide();
+            },
+            showInitializationModal() {
+                const self = this;
+                axios
+                    .get(`${limoneroUrl}/storages`)
+                    .then(resp => {
+                        self.localStorages = resp.data.filter(st => st.type === 'LOCAL');
+                        self.$refs.modalInitialization.show();
+                    })
+                    .catch(function (e) {
+                        self.error(e);
+                    });
+            },
+            initializeVallum() {
+                const self = this;
+                if (this.vallumSelectedStorage !== '') {
+                    const self = this;
+                    const payload = {data_source_id: this.dataSource.id,
+                        storage_id: this.vallumSelectedStorage,
+                        path: this.vallumPath
+                    };
+                    self.copyingStep = 1;
+                    axios
+                        .post(`${standUrl}/datasource/init`, payload)
+                        .then(resp => {
+                            this.schedule_id = resp.data;
+                            self.success('Vallum data copy scheduled with success');
+                            //self.hideInitialization();
+                            self.timeoutHandler = window.setTimeout(self.checkSchedule, 500);
+                        })
+                        .catch(function (e) {
+                            self.error(e);
+                        });
+                } else {
+                    this.$warn('You must select a storage');
+                }
+            },
+            checkSchedule(){
+                const params = {key: this.schedule_id};
+                const self = this;
+                axios.get(`${standUrl}/datasource/init`, {params})
+                    .then((response) => {
+                        if (response.data.status === 'ERROR') {
+                            if (this.timeoutHandler) {
+                                window.clearTimeout(this.timeoutHandler);
+                            }
+                            this.error(null, `Copying process reported an error. Try again: ${response.data.result.message}`)
+                            this.estimatingStep = 0;
+                        } else if (response.data.status === 'PROCESSING') {
+                            this.timeoutHandler = window.setTimeout(this.checkSchedule, 500);
+                        } else {
+                            self.copyingStep = 0;
+                            self.hideInitialization();
+                            self.success(response.data.result.message);
+                        }
+                    });
+            },
             okPrivacy() {
                 this.$refs.privacy.hide();
             },
@@ -450,7 +574,7 @@
                         self.error(e);
                     });
                 this.currentAttribute = attr;
-                if (attr.attribute_privacy === null){
+                if (attr.attribute_privacy === null) {
                     attr.attribute_privacy = {
                         attribute_name: attr.name
                     };
@@ -512,11 +636,11 @@
                         self.dataSource.storage.type !== 'VALLUM' &&
                         self.dataSource.storage.type !== 'HDFS');
                 self.dataSource.attributes.forEach(attr => {
-                    if (attr.attribute_privacy && 
-                        (!attr.attribute_privacy.anonymization_technique 
-                            || !attr.attribute_privacy.privacy_type)){
-                                attr.attribute_privacy = null;
-                            }
+                    if (attr.attribute_privacy &&
+                        (!attr.attribute_privacy.anonymization_technique
+                            || !attr.attribute_privacy.privacy_type)) {
+                        attr.attribute_privacy = null;
+                    }
                 });
                 if (inconsistentFormat) {
                     self.error({ message: self.$t('dataSource.inconsistentFormat') });
@@ -607,6 +731,7 @@
         pointer-events: none;
         opacity: .9;
     }
+
     .v-select .dropdown-toggle::after {
         content: none;
     }

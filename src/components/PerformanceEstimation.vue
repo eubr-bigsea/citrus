@@ -154,12 +154,11 @@
                             if (this.timeoutHandler) {
                                 window.clearTimeout(this.timeoutHandler);
                             }
-                            this.error(null, 'Performance model estimation reported an error. Try again.')
+                            this.error(null, `Performance model estimation reported an error. Try again: ${response.data.result.message}`)
                             this.estimatingStep = 0;
                         } else if (response.data.status === 'PROCESSING') {
                             this.timeoutHandler = window.setTimeout(this.checkSchedule, 500);
                         } else {
-                            console.debug(response.data);
                             this.performanceModelReady = true;
                             if (this.platform.slug === 'spark'){
                                 if (response.data.result && response.data.result.every(v => v == -1)) {
@@ -175,10 +174,11 @@
                                     this.data = [];
                                     this.msg = `Unable to find a setup for data size = ${this.payload.data_size}`;
                                 } else {
-                                    this.data = response.data.result;
+                                    this.availableCategories = response.data.result.models;
+                                    this.data = response.data.result.result || [];
                                 }
                                 this.availableCores = response.data.cores;
-                                this.availableCategories = response.data.models;
+                                this.availableCategories = response.data.result.models;
                             }
                             this.estimatingStep = 2;
                         }
