@@ -14,7 +14,7 @@
                             <option value="READ">READ</option>
                             <option value="WRITE">WRITE</option>
                             <option v-if="isDataSource" value="MANAGE">MANAGE</option>
-                            <option v-if="isWorkflow" value="EXECUTE">MANAGE</option>
+                            <option v-if="isWorkflow" value="EXECUTE">EXECUTE</option>
                         </select>
                     </template>
                 </v-client-table>
