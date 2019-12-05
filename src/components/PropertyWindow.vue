@@ -21,7 +21,7 @@
                             <input type="text" maxlength="50" v-model="task.name" class="form-control"
                                 :readonly="readonly" />
                         </div>
-                        <div class=" col-md-3" v-if="!readonly">
+                        <div class="col-md-3" v-if="!readonly">
                             <label type="checkbox">
                                 <switch-component v-model="task.enabled" :checked="task.enabled" :readonly="readonly">
                                     {{$t('common.enabled')}}
