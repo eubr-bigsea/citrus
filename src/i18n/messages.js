@@ -154,7 +154,8 @@ export default {
                 login: 'Login do usuário'
             },
             version: 'Versão',
-            yes: 'Sim'
+            yes: 'Sim',
+            motive: 'Diga um pouco sobre você e seus objetivos com o lemonade'
         },
         dataSource: {
             alternativeUseDatabase:
@@ -593,7 +594,8 @@ export default {
                 login: 'User login'
             },
             version: 'Version',
-            yes: 'Yes'
+            yes: 'Yes',
+            motive: 'Tell us a little about you and your goals with lemonade'
         },
         dataSource: {
             alternativeUseDatabase:
