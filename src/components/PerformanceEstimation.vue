@@ -137,6 +137,14 @@
                 }
             );
         },
+        watch: {
+            cores(val){
+                this.payload.cores = val;
+            },
+            setup(val){
+                this.payload.setup = val;
+            }
+        },
         methods: {
             validate() {
 

@@ -549,7 +549,7 @@
                             if (this.timeoutHandler) {
                                 window.clearTimeout(this.timeoutHandler);
                             }
-                            this.error(null, `Copying process reported an error. Try again: ${response.data.result.message}`)
+                            this.error({name: ''}, `Copying process reported an error. Try again: ${response.data.result.message}`)
                             this.estimatingStep = 0;
                         } else if (response.data.status === 'PROCESSING') {
                             this.timeoutHandler = window.setTimeout(this.checkSchedule, 500);
@@ -631,10 +631,7 @@
                     (self.dataSource.format === 'JDBC' &&
                         self.dataSource.storage.type !== 'JDBC') ||
                     (self.dataSource.format === 'VALLUM' &&
-                        self.dataSource.storage.type !== 'VALLUM') ||
-                    (self.dataSource.format !== 'JDBC' &&
-                        self.dataSource.storage.type !== 'VALLUM' &&
-                        self.dataSource.storage.type !== 'HDFS');
+                        self.dataSource.storage.type !== 'VALLUM');
                 self.dataSource.attributes.forEach(attr => {
                     if (attr.attribute_privacy &&
                         (!attr.attribute_privacy.anonymization_technique
