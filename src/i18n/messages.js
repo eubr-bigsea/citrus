@@ -356,6 +356,7 @@ export default {
             errorDetail: 'Detalhe do erro (avançado)',
             globalPrivacyPolicy:
                 'Política global de privacidade|Políticas globais de privacidade',
+            home: 'Bem-vindo ao Lemonade',
             job: 'Execução | Execuções',
             jobs: 'Execuções',
             lemonade: 'Lemonade',

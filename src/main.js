@@ -264,6 +264,35 @@ Object.defineProperty(Vue.prototype, '$locale', {
     }
 });
 
+router.beforeEach((to, from, next) => {
+    if (to.meta.title) {
+        let title = i18n.tc('titles.lemonade') + ' :: ' + 
+            i18n.tc(to.meta.title[0], to.meta.title[1]);
+        if (to.params.id){
+            title += ' #' + to.params.id;
+        }
+        document.title = title;
+    } else {
+        document.title = i18n.tc('titles.lemonade', 2)
+    }
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (store.getters.isLoggedIn) {
+            if (to.matched.some(record => record.meta.requiresRole)) {
+                if (store.getters.hasRoles) {
+                    next();
+                    return;
+                } else {
+                    next('/');
+                }
+            }
+            next();
+            return;
+        }
+        next('/login');
+    } else {
+        next();
+    }
+});
 new Vue({
     el: '#app',
     i18n,

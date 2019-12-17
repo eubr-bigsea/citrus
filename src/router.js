@@ -63,7 +63,8 @@ let router = new Router({
             name: 'home',
             component: Home,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.home', 1]
             }
         },
         {
@@ -72,7 +73,8 @@ let router = new Router({
             component: Administration,
             meta: {
                 requiresAuth: true,
-                requiresRole: true
+                requiresRole: true,
+                title: ['titles.administration', 1]
             }
         },
         {
@@ -81,7 +83,8 @@ let router = new Router({
             component: UserList,
             meta: {
                 requiresAuth: true,
-                requiresRole: true
+                requiresRole: true,
+                title: ['titles.user', 2]
             }
         },
         {
@@ -90,7 +93,8 @@ let router = new Router({
             component: UserAdd,
             meta: {
                 requiresAuth: true,
-                requiresRole: true
+                requiresRole: true,
+                title: ['titles.user', 1]
             }
         },
         {
@@ -99,7 +103,8 @@ let router = new Router({
             component: UserEdit,
             meta: {
                 requiresAuth: true,
-                requiresRole: true
+                requiresRole: true,
+                title: ['titles.user', 1]
             }
         },
         // {
@@ -161,7 +166,8 @@ let router = new Router({
             name: 'dataSources',
             component: DataSourceList,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.dataSource', 2]
             }
         },
         {
@@ -169,7 +175,8 @@ let router = new Router({
             name: 'addDataSource',
             component: DataSourceAdd,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.dataSource', 1]
             }
         },
         {
@@ -177,7 +184,8 @@ let router = new Router({
             name: 'editDataSource',
             component: DataSourceEdit,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.dataSource', 1]
             }
         },
         {
@@ -193,7 +201,8 @@ let router = new Router({
             name: 'addModel',
             component: ModelAdd,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.model', 2]
             }
         },
         {
@@ -201,7 +210,8 @@ let router = new Router({
             name: 'editModel',
             component: ModelEdit,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.model', 1]
             }
         },
         {
@@ -209,7 +219,8 @@ let router = new Router({
             name: 'jobs',
             component: JobList,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.job', 2]
             }
         },
         {
@@ -217,7 +228,8 @@ let router = new Router({
             name: 'jobDetail',
             component: JobDetail,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.job', 1]
             }
         },
         {
@@ -225,7 +237,8 @@ let router = new Router({
             name: 'workflows',
             component: WorkflowList,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.workflow', 2]
             }
         },
         {
@@ -233,7 +246,8 @@ let router = new Router({
             name: 'editWorkflow',
             component: WorkflowEdit,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.workflow', 1]
             }
         },
         {
@@ -241,7 +255,8 @@ let router = new Router({
             name: 'addWorkflow',
             component: WorkflowAdd,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.workflow', 1]
             }
         },
         // start dashboards
@@ -250,7 +265,8 @@ let router = new Router({
             name: 'dashboards',
             component: DashboardList,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.dashboard', 2]
             }
         },
         {
@@ -258,7 +274,8 @@ let router = new Router({
             name: 'dashboardDetail',
             component: DashboardDetail,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.dashboard', 1]
             }
         },
         {
@@ -266,18 +283,26 @@ let router = new Router({
             name: 'profile',
             component: Profile,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.profile', 1]
             }
         },
         {
             path: '/change_password',
             name: 'change_password',
-            component: ChangePassword
+            component: ChangePassword,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.changePassword', 1]
+            }
         },
         {
             path: '/login',
             name: 'login',
-            component: Login
+            component: Login,
+            meta: {
+                title: ['titles.login', 1]
+            }
         },
         {
             path: '/logout',
@@ -287,17 +312,26 @@ let router = new Router({
         {
             path: '/register',
             name: 'register',
-            component: Register
+            component: Register,
+            meta: {
+                title: ['titles.register', 1]
+            }
         },
         {
             path: '/reset_password',
             name: 'reset_password',
-            component: ResetPassword
+            component: ResetPassword,
+            meta: {
+                title: ['titles.resetPassword', 2]
+            }
         },
         {
             path: '/about',
             name: 'about',
-            component: About
+            component: About,
+            meta: {
+                title: ['titles.lemonade', 1]
+            }
         },
         {
             path: '/admin/operations',
@@ -313,7 +347,8 @@ let router = new Router({
             name: 'clusters',
             component: ClusterList,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.cluster', 2]
             }
         },
         {
@@ -321,7 +356,8 @@ let router = new Router({
             name: 'addCluster',
             component: ClusterAdd,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.cluster', 1]
             }
         },
         {
@@ -329,30 +365,11 @@ let router = new Router({
             name: 'editCluster',
             component: ClusterEdit,
             meta: {
-                requiresAuth: true
+                requiresAuth: true,
+                title: ['titles.cluster', 1]
             }
         }
     ]
-});
-
-router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.getters.isLoggedIn) {
-            if (to.matched.some(record => record.meta.requiresRole)) {
-                if (store.getters.hasRoles) {
-                    next();
-                    return;
-                } else {
-                    next('/');
-                }
-            }
-            next();
-            return;
-        }
-        next('/login');
-    } else {
-        next();
-    }
 });
 
 export default router;
