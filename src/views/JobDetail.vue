@@ -289,12 +289,11 @@
                     console.debug('You are not connected');
                 });
                 socket.on('response', msg => {
-                    console.debug('response', msg);
+                    // console.debug('response', msg);
                 });
                 socket.on('connect', () => {
-                    let room = self.job.id;
-                    console.debug('Connecting to room', room);
-                    socket.emit('join', { room: room });
+                    // console.debug('Connecting to room', room);
+                    socket.emit('join', { room: self.job.id });
                     self.socket = socket;
                 });
                 socket.on('connect_error', () => {
@@ -468,7 +467,9 @@
     .html-div .table th {
         padding: 0.3rem;
     }
-
+    .html-div h4 {
+        font-size: 1.1em;
+    }
     .alternate {
         background: #eee;
     }

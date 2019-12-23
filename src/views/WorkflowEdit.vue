@@ -31,144 +31,18 @@
                         <b-card>
                             <div class="row">
                                 <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
-                                    <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task'></toolbox>
+                                    <toolbox :operations="operations" :workflow="workflow"
+                                        :selected-task='selectedTask.task'></toolbox>
                                 </div>
                                 <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
-                                    <diagram ref="diagram" id="main-diagram" :workflow="workflow"
-                                        v-if="loaded" :operations="operations" :loaded="loaded"
-                                        :version="workflow.version" tabindex="0"></diagram>
+                                    <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
+                                        :operations="operations" :loaded="loaded" :version="workflow.version"
+                                        tabindex="0"></diagram>
                                     <slideout-panel :opened="showProperties">
                                         <property-window :task="selectedTask.task" v-if="selectedTask.task"
                                             :suggestions="getSuggestions(selectedTask.task.id)" />
                                     </slideout-panel>
                                 </div>
-                                <b-modal id="history" size="lg" :title="$t('common.history')" ref="historyModal" 
-                                    ok-disabled>
-                                    <div class="historyArea">
-                                        <table class="table table-sm table-striped text-center">
-                                            <tr>
-                                                <th>{{$tc('common.version')}}</th>
-                                                <th>{{$tc('common.date')}}</th>
-                                                <th>{{$tc('common.author')}}</th>
-                                                <th>{{$tc('common.action')}}</th>
-                                            </tr>
-                                            <tr v-for="h in history" :key="h.id">
-                                                <td>{{h.version}}</td>
-                                                <td>{{h.date}}</td>
-                                                <td>{{h.user_name}}</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-danger"
-                                                        @click="restore(h.version)">{{$t('actions.restore')}}</button>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                    <div slot="modal-footer" class="w-100">
-                                        <b-btn variant="secondary_sm" class="float-right" @click="closeHistory">
-                                            {{$t('actions.cancel')}}</b-btn>
-                                    </div>
-                                </b-modal>
-                                <b-modal id="executeModal" size="lg" ref="executeModal" :title="$t('workflow.execute')">
-                                    <em>
-                                        {{$t('workflow.required')}}:
-                                    </em>
-                                    <div v-if="validationErrors.length > 0">
-                                        <b-card>
-                                            <b-card-body>
-                                                <p class="text-danger">
-                                                    {{$tc('workflow.validationExplanation', validationErrors.length)}}
-                                                </p>
-                                                <table class="table table-sm">
-                                                    <tr>
-                                                        <th>{{$tc('titles.tasks')}}</th>
-                                                        <th>{{$tc('titles.value')}}</th>
-                                                        <th>{{$tc('titles.error')}}</th>
-                                                    </tr>
-                                                    <tr v-for="err in validationErrors" :key="err.sequential">
-                                                        <td>{{err.task.name}}</td>
-                                                        <td>{{err.field}}</td>
-                                                        <td>{{err.message}}</td>
-                                                    </tr>
-                                                </table>
-                                            </b-card-body>
-                                        </b-card>
-                                    </div>
-                                    <div class="mt-2 p-2 border">
-                                        <div class="container-fluid">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <label>{{$tc('titles.cluster')}}:</label>
-                                                    <select v-model="clusterInfo.id"
-                                                        class="form-control-sm form-control"
-                                                        @change="changeCluster">
-                                                        <option v-for="option in clusters" v-bind:key="option.id" 
-                                                           v-bind:value="option.id">
-                                                            {{ option.name }}
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-8">
-                                                    <label>{{$t('workflow.jobName')}}
-                                                        ({{$t('common.optional')}}):</label>
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        v-model="clusterInfo.jobName" maxlength="50" />
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <small>{{clusterInfo.description}}</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-2 p-2 border atmosphere" v-if="atmosphereExtension">
-                                        <PerformanceEstimation :platform="workflow.platform" 
-                                        :clusterId="clusterInfo.id" :cluster="clusterInfo"
-                                        :cores="performanceModel.cores" :setup="performanceModel.setup"
-                                        ref="performanceModel"
-                                        />
-                                    </div>
-                                    <div slot="modal-footer" class="w-100 text-right">
-                                        <button class="btn btn-sm btn-outline-success" @click="execute"
-                                            id="mdl-execute-wf">
-                                            <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
-                                        <button class="ml-1 btn btn-sm btn-outline-dark"
-                                            @click="cancelExecute">{{$t('actions.cancel')}}</button>
-                                    </div>
-                                </b-modal>
-                                <b-modal id="saveAsModal" size="lg" :title="$t('actions.saveAs')" ok-disabled
-                                    ref="saveAsModal">
-                                    <b-form-radio-group v-model="saveOption">
-                                        <div class="row">
-                                            <div class="col-md-12 mb-3">
-                                                <b-form-radio name="saveOption" v-model="saveOption" value="new">
-                                                    {{$t('workflow.newName')}}
-                                                </b-form-radio>
-                                                <input type="text" maxlength="40" class="form-control"
-                                                    :disabled="saveOption != 'new'" v-model="newName" />
-                                            </div>
-                                            <div class="col-md-12 mb-3">
-                                                <b-form-radio name="saveOption" v-model="saveOption" value="image">
-                                                    {{$t('workflow.asImage')}}</b-form-radio>
-                                            </div>
-                                            <!--
-                                            <div class="col-md-12 mb-3">
-                                                <b-form-radio name="saveOption" v-model="saveOption" value="template">
-                                                    {{$t('workflow.asTemplate')}}</b-form-radio>
-                                                <p>
-                                                    <label>Description</label>
-                                                    <textarea class="form-control" :disabled="saveOption != 'template'"></textarea>
-                                                </p>
-                                            </div>
-                                            -->
-                                        </div>
-                                    </b-form-radio-group>
-                                    <div slot="modal-footer" class="w-100">
-                                        <b-btn variant="secondary_sm" class="float-right" @click="closeSaveAs">
-                                            {{$t('actions.cancel')}}</b-btn>
-                                        <b-btn variant="primary" class="float-right mr-2" @click="okClicked">
-                                            {{$t('common.ok')}}
-                                        </b-btn>
-                                    </div>
-                                </b-modal>
                             </div>
                         </b-card>
                     </b-tab>
@@ -177,7 +51,7 @@
                             <div class="container">
                                 <div class="row">
                                     <div class="col justify-content-center">
-                                        <WorkflowExecution v-if="showPreviousJobs" :workflow-id="workflow.id"/>
+                                        <WorkflowExecution v-if="showPreviousJobs" :workflow-id="workflow.id" />
                                     </div>
                                 </div>
                             </div>
@@ -185,71 +59,37 @@
                     </b-tab>
 
                 </b-tabs>
-
-                <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
-                    <p>{{resultTask.step.status}}</p>
-                    <div v-for="log in resultTask.step.logs" :key="log.id">
-                        {{log}}
-                    </div>
-                    <div>
-                        {{resultTask.result}}
-                    </div>
-                </b-modal>
-
-                <b-modal id="validationErrorsModal" ref="validationErrorsModal" size="lg" :ok-only="true"
-                    :title="$tc('titles.validationErrors', 1)">
-                    <p>{{$tc('workflow.validationExplanation', validationErrors.length)}}</p>
-                    <table class="table table-sm">
-                        <tr>
-                            <th>{{$tc('titles.tasks')}}</th>
-                            <th>{{$tc('titles.value')}}</th>
-                            <th>{{$tc('titles.error')}}</th>
-                        </tr>
-                        <tr v-for="err in validationErrors" :key="err.sequential">
-                            <td>{{err.task.name}}</td>
-                            <td>{{err.field}}</td>
-                            <td>{{err.message}}</td>
-                        </tr>
-                    </table>
-                </b-modal>
-                <b-modal id="workflowProperties" size="lg" ref="workflowProperties" :title="$tc('titles.property', 2)"
-                    :ok-only="true">
-                    <b-form v-if="loaded" @submit="saveWorkflowProperties">
-                        <b-form-group :label="$tc('common.name', 1) + ':'">
-                            <b-form-input id="exampleInput1" type="text" v-model="workflow.name" required>
-                            </b-form-input>
-                        </b-form-group>
-                        <b-form-group id="exampleInputGroup1" :label="$tc('common.description', 1) + ':'">
-                            <b-form-textarea id="textarea1" v-model="workflow.description" :rows="3" :max-rows="6">
-                            </b-form-textarea>
-                        </b-form-group>
-                        <b-form-checkbox v-model="workflow.is_template">
-                            {{$t('workflow.useAsTemplate')}}
-                            <br />
-                            <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
-                        </b-form-checkbox>
-                    </b-form>
-                </b-modal>
+                <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" 
+                    :clusterInfo="clusterInfo" :validationErrors="validationErrors"
+                    :workflow="workflow"/>
+                <ModalWorkflowHistory ref="historyModal" :history="history"/>
+                <ModalSaveWorkflowAs ref="saveAsModal" />
+                <ModalTaskResults ref="taskResultModal" :task="resultTask" />
+                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
             </div>
         </div>
     </main>
 </template>
 
 <script>
-    import Vue from 'vue';
     import axios from 'axios';
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import DiagramComponent from '../components/Diagram.vue';
-    import PropertyWindow from '../components/PropertyWindow.vue';
-    import PerformanceEstimation from '../components/PerformanceEstimation.vue';
-    import WorkflowToolbar from '../components/WorkflowToolbar.vue';
-    import ToolboxComponent from '../components/Toolbox.vue';
-    import SlideOutPanel from '../components/SlideOutPanel.vue';
-    import WorkflowProperty from '../components/WorkflowProperty.vue';
-    import WorkflowExecution from '../components/WorkflowExecution.vue';
-    import InputHeader from '../components/InputHeader.vue';
     import html2canvas from 'html2canvas';
+    import InputHeader from '../components/InputHeader.vue';
+    import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
+    import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
+    import ModalTaskResults from './modal/ModalTaskResults.vue'
+    import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue'
+    import ModalExecuteWorkflow from './modal/ModalExecuteWorkflow.vue'
+    import PropertyWindow from '../components/PropertyWindow.vue';
     import Notifier from '../mixins/Notifier';
+    import SlideOutPanel from '../components/SlideOutPanel.vue';
+    import ToolboxComponent from '../components/Toolbox.vue';
+    import Vue from 'vue';
+    import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+    import WorkflowExecution from '../components/WorkflowExecution.vue';
+    import WorkflowProperty from '../components/WorkflowProperty.vue';
+    import WorkflowToolbar from '../components/WorkflowToolbar.vue';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
@@ -263,11 +103,17 @@
             'workflow-toolbar': WorkflowToolbar,
             'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
+
+            ModalExecuteWorkflow,
+            ModalSaveWorkflowAs,
+            ModalTaskResults,
+            ModalWorkflowHistory,
+            ModalWorkflowProperties,
+
             WorkflowProperty,
             WorkflowExecution,
             VuePerfectScrollbar,
             InputHeader,
-            PerformanceEstimation,
             TahitiSuggester: () => {
                 return new Promise((resolve, reject) => {
                     let script = document.createElement('script')
@@ -280,7 +126,7 @@
         data() {
             return {
                 atmosphereExtension: false,
-                
+
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
                 clusters: [],
@@ -295,7 +141,7 @@
                 newName: '',
                 operations: [],
                 operationsLookup: new Map(),
-                
+
                 resultTask: { step: {} },
                 saveOption: 'new',
                 selectedTab: 0,
@@ -308,27 +154,6 @@
                     cores: null,
                     setup: null
                 }
-                // propertyStyles: [
-                //     {
-                //         top: '112px',
-                //         height: 'calc(92vh - 112px)'
-                //     },
-                //     {
-                //         backgroundColor: '#fff',
-                //         paddingTop: '2rem',
-                //         paddingBottom: '1rem',
-                //         overflow: 'hidden'
-                //     },
-                //     {
-                //         overflow: 'hidden'
-                //     },
-                //     {
-                //         color: '#555',
-                //         textDecoration: 'none',
-                //         top: '8px',
-                //         right: '1rem'
-                //     }
-                // ],
             }
         },
         created() {
@@ -336,7 +161,7 @@
             window.addEventListener('beforeunload', self.leaving)
         },
         mounted() {
-            let self = this
+            const self = this
             this.$root.$on('onclear-selection', () => {
                 this.selectedTask = {};
                 this.selectedElements = [];
@@ -355,14 +180,28 @@
                 this.saveAsImage()
             });
             this.$root.$on('onsave-workflow', () => this.saveWorkflow(false));
+            this.$root.$on('onsave-workflow-as', (saveOption, newName) => {
+                if (saveOption === 'new') {
+                    this.saveWorkflow(true, newName);
+                } else if (saveOption === 'image') {
+                    this.saveAsImage();
+                }
+            });
+            // Modal
             this.$root.$on('onsaveas-workflow', this.showSaveAs);
+            this.$root.$on('onupdate-workflow-properties', this.saveWorkflowProperties);
+            this.$root.$on('onrestore-workflow', this.restore);
+            this.$root.$on('onchange-cluster', this.changeCluster);
+            this.$root.$on('onexecute-workflow', this.execute);
+
+
             this.$root.$on('onalign-tasks', this.align);
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
             this.$root.$on('onremove-tasks', this.removeTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-export', () => this.exportWorkflow());
             this.$root.$on('onclick-execute', this.showExecuteWindow);
-            this.$root.$on('onshow-properties', this.showPropertiesWindow);
+            this.$root.$on('onshow-properties', this.showWorkflowProperties);
             this.$root.$on('onset-isDirty', this.setIsDirty);
             this.$root.$on('onclick-setup', (options) => {
                 this.performanceModel.cores = options.cores;
@@ -483,7 +322,7 @@
             });
             this.$root.$on('onshow-result', this.showTaskResult);
             this.load();
-            
+
         },
         beforeRouteLeave(to, from, next) {
             let self = this;
@@ -516,6 +355,11 @@
             this.$root.$off('onzoom');
             this.$root.$off('onshow-result');
             this.$root.$off('onset-isDirty');
+            this.$root.$off('onsaveas-workflow');
+            this.$root.$off('onupdate-workflow-properties');
+            this.$root.$off('onrestore-workflow');
+            this.$root.$off('onchange-cluster');
+            this.$root.$off('onexecute-workflow');
             window.removeEventListener('beforeunload', this.leaving)
         },
         watch: {
@@ -702,11 +546,11 @@
                     return v.toString(16);
                 });
             },
-            exportWorkflow(){
+            exportWorkflow() {
                 const self = this
                 const json = JSON.stringify(self.workflow);
                 const element = document.createElement('a');
-                element.setAttribute('href', 'data:application/json;charset=utf-8,' + 
+                element.setAttribute('href', 'data:application/json;charset=utf-8,' +
                     encodeURIComponent(json));
                 element.setAttribute('download', self.workflow.name + '.json');
                 element.style.display = 'none';
@@ -828,55 +672,40 @@
                 }
             },
             showHistory() {
-                let self = this;
-                let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`
+                const self = this;
+                const url = `${tahitiUrl}/workflows/history/${this.workflow.id}`
                 axios.get(url)
                     .then((resp) => {
                         self.history = resp.data.data
+                        if (self.$refs.historyModal) {
+                            self.$refs.historyModal.show();
+                        }
                     })
                     .catch(function (e) {
                         self.error(e);
                     }.bind(this));
-                if (this.$refs.historyModal) {
-                    this.$refs.historyModal.show();
-                }
             },
             closeHistory() {
                 this.$refs.historyModal.hide();
             },
             saveWorkflowProperties() {
             },
-            showPropertiesWindow() {
-                if (this.$refs.workflowProperties)
-                    this.$refs.workflowProperties.show();
+            showWorkflowProperties() {
+                if (this.$refs.workflowPropertiesModal)
+                    this.$refs.workflowPropertiesModal.show();
             },
             showSaveAs() {
                 if (this.$refs.saveAsModal) {
-                    this.newName = `${this.$t('workflow.copyOf')} ${this.workflow.name}`;
-                    this.$refs.saveAsModal.show();
+                    this.$refs.saveAsModal.show(`${this.$t('workflow.copyOf')} ${this.workflow.name}`);
                 }
             },
             setIsDirty(flag) {
                 this.isDirty = flag;
             },
-            okClicked() {
-                if (this.saveOption === 'new') {
-                    this.saveWorkflow(true, this.newName);
-                } else if (this.saveOption === 'image') {
-                    this.saveAsImage();
-                }
-                this.$refs.saveAsModal.hide();
-            },
-            closeSaveAs() {
-                this.$refs.saveAsModal.hide();
-            },
-            cancelExecute() {
-                this.$refs.executeModal.hide();
-            },
-            changeCluster() {
-                const c = this.clusters.find((c) => c.id === this.clusterInfo.id);
+
+            changeCluster(c) {
                 if (c) {
-                    const uiParameters = c.ui_parameters 
+                    const uiParameters = c.ui_parameters
                         ? new Map(c.ui_parameters.split(",").map(item => item.split("=")))
                         : new Map();
                     this.atmosphereExtension = uiParameters.get('atmosphere') === 'true';
@@ -910,7 +739,6 @@
             execute() {
                 const self = this;
                 this.saveWorkflow(false).then(() => {
-                    self.$refs.executeModal.hide();
                     self._execute();
                 });
             },
@@ -918,7 +746,7 @@
                 const self = this;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
                 cloned.platform_id = cloned.platform.id;
-                if (self.atmosphereExtension){
+                if (self.atmosphereExtension) {
                     cloned['atmosphere'] = this.$refs.performanceModel.payload;
                 }
                 cloned.tasks.forEach((task) => {
@@ -1051,7 +879,8 @@
         background-color: greenyellow;
         max-width: 250px;
     }
-    .atmosphere h3{
+
+    .atmosphere h3 {
         text-align: center;
         color: #aaa;
     }

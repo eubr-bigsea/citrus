@@ -37,6 +37,8 @@ import WorkflowList from './views/WorkflowList.vue';
 import WorkflowEdit from './views/WorkflowEdit.vue';
 import WorkflowAdd from './views/WorkflowAdd.vue';
 
+import NotebookEdit from './views/NotebookEdit.vue';
+
 import DashboardList from './views/DashboardList.vue';
 import DashboardDetail from './views/DashboardDetail.vue';
 
@@ -50,6 +52,8 @@ import OperationList from './views/OperationList.vue';
 import Profile from './views/Profile.vue';
 
 import About from './views/About.vue';
+
+import PageNotFound from './views/PageNotFound.vue';
 
 import store from './store.js';
 
@@ -112,14 +116,14 @@ let router = new Router({
         //   name: 'AdministrationProjectList',
         //   component: ProjectList,
         //   meta: {
-        //     requiresAuth: true,
-        //     requiresRole: true
-        //   }
-        // },
-        // {
-        //   path: '/administration/projects/new',
-        //   name: 'AdministrationAddProject',
-        //   component: ProjectAdd,
+        //     requiresAuth: true,notebook
+        //     requiresRole: truenotebook
+        //   }notebook
+        // },notebook
+        // {notebook
+        //   path: '/administrationotebookn/projects/new',
+        //   name: 'AdministrationnotebookAddProject',
+        //   component: ProjectAddnotebook,
         //   meta: {
         //     requiresAuth: true,
         //     requiresRole: true
@@ -259,6 +263,15 @@ let router = new Router({
                 title: ['titles.workflow', 1]
             }
         },
+        {
+            path: '/notebook/:platform/:id',
+            name: 'editNotebook',
+            component: NotebookEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.notebook', 1]
+            }
+        },
         // start dashboards
         {
             path: '/dashboards',
@@ -368,7 +381,8 @@ let router = new Router({
                 requiresAuth: true,
                 title: ['titles.cluster', 1]
             }
-        }
+        },
+        {path: '*', component: PageNotFound}
     ]
 });
 
