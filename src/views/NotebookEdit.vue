@@ -3,90 +3,90 @@
         <TahitiSuggester />
         <div class="border-bottom d-flex justify-content-between align-items-center">
             <div>
-                <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
+                <h6 class="header-pretitle">{{$tc('titles.notebook', 1)}} - {{$tc('titles.workflow', 1)}}
+                    #{{workflow.id}}</h6>
                 <input-header v-model="workflow.name"></input-header>
             </div>
             <div>
                 <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
             </div>
         </div>
-        <div class="border-bottom d-flex">
-            <button class="mr-1 btn btn-sm btn-outline-secondary">a</button>
-            <button class="mr-1 btn btn-sm btn-outline-secondary">a</button>
-            <button class="mr-1 btn btn-sm btn-outline-secondary">a</button>
-            <button class="mr-1 btn btn-sm btn-outline-secondary">a</button>
-            <button class="mr-1 btn btn-sm btn-outline-secondary">a</button>
-        </div>
+
         <div class="notebook">
-            <div class="row" v-for="task in workflow.tasks" :key="task.id">
-                <div class="col-md-1 text-right">
-                    In [{{task.order}}]:
-                    <p><a href="#">Nova célula</a></p>
-                    <p><a href="#">Executar até esta célula</a></p>
-                    <p><a href="#">Excluir</a></p>
+            <div class="row" v-for="(task, counter) in workflow.tasks" :key="task.id">
+                <div class="col-md-10 cell offset-1">
+                    <div class="props card text-dark bg-light p1 mb-1">
+                        <div class="special card-header">
+                            <div class="row">
+                                <div class="col-md-3"
+                                    :class="'decor ' + (task.step? task.step.status.toLowerCase() : 'pending')">
+                                    <strong>[ <span
+                                            :class="getClassesForDecor(task.step? task.step.status : 'PENDING')"></span>
+                                        ] - {{task.operation.name}}</strong>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-1 text-right">
+                                    <SwitchComponent v-model="task.enabled" :checked="task.enabled">
+                                        {{$t('common.enabled')}}
+                                    </SwitchComponent>
+                                </div>
+                                <div class="col-md-4 text-right">
+                                    <button class="btn btn-sm btn-outline-secondary ml-1"
+                                        :title="$tc('notebook.newCell')">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary ml-1"
+                                        :title="$tc('notebook.executeUntil')">
+                                        <span class="fa fa-play"></span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary ml-1"
+                                        :title="$tc('notebook.delete')">
+                                        <span class="fa fa-trash"></span>
+                                    </button>
+                                    <a class="btn btn-sm btn-outline-secondary ml-1" :href="'docReferenceUrl'"><span
+                                            class="fa fa-question-circle"></span>
+                                        {{$t('property.help')}}</a>
+                                </div>
 
-                </div>
-                <div class="col-md-11 cell">
-                    <div style="clear:both">
-                        <div class="props card text-dark bg-light p0 mb-1">
-                          <div class="border-bottom card-header special">
-                              <strong>{{task.operation.name}}</strong>
-                              <div style="float: right; font-size:.7em">{{task.id}}</div>
-                              <br />
-                              <small>
-                                  <div class="property-description">{{task.operation.description}}</div>
-                                  <a class="property-help" :href="docReferenceUrl"><span class="fa fa-question-circle"></span>
-                                      {{$t('property.help')}}</a>
-                              </small>
-                          </div>
-                          <div class="card-body">
-                              <div class="row">
-                                  <div class="col-md-8">
-                                      <label>{{$t('property.taskName')}}</label>
-                                      <input type="text" maxlength="50" v-model="task.name" class="form-control" />
-                                  </div>
-                                  <div class="col-md-3">
-                                      <label type="checkbox">
-                                          <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}
-                                          </SwitchComponent>
-                                      </label>
-                                  </div>
-                              </div>
-                          </div>
-                          <div>
-                              <form>
-                                  <b-card no-body>
-                                      <div v-for="(form, index) in task.operation.forms" v-bind:key="form.id" :title="form.name">
-                                          <div v-for="field in form.fields" class="mb-2 property clearfix"
-                                              v-bind:key="task.id + field.name" v-if="true || field.enabled" :data-name="field.name">
-                                                  <component :is="field.suggested_widget + '-component'" :field="field"
-                                                      value="getValue(field.name)" :suggestions="suggestions"
-                                                      :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
-                                                      :language="$root.$i18n.locale" :type="field.suggested_widget"
-                                                      context="context">
-                                                  </component>
-                                            </div>
-                                      </div>
-                                  </b-card>
-
-                              </form>
-                          </div>
-                          <div v-for="form in task.operation.forms" v-bind:key="form.id">
-                              {{form.ca}}
-                              <fieldset>
-                                  <caption>{{form.label}}</caption>
-                              </fieldset>
-                          </div>
+                            </div>
                         </div>
+                        <div style="display: flex; padding:4px; flex-wrap: wrap; flex-direction: row;">
+                            <div class="col">
+                                <label>{{$t('property.taskName')}}</label>
+                                <input type="text" maxlength="50" v-model="task.name" class="form-control" />
+                                <div v-for="port in getInputPorts(task)" :key="port.id">
+                                    <label>{{port.name.charAt(0).toUpperCase()}}{{port.name.slice(1)}}</label>
+                                    <select class="form-control">
+                                        <option></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col" v-for="(form, index) in task.operation.forms" v-bind:key="form.id"
+                                :title="form.name">
+                                <div>
+                                    <div v-for="field in form.fields" class="mb-2 property clearfix"
+                                        v-bind:key="task.id + field.name" v-if="true || field.enabled"
+                                        :data-name="field.name">
+                                        <component :is="field.suggested_widget + '-component'" :field="field"
+                                            :value="getValue(task, field.name)" 
+                                            :suggestionEvent="() => getSuggestions(task.id)"
+                                            :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
+                                            :language="$root.$i18n.locale" :type="field.suggested_widget"
+                                            context="context" :parentId="task.id">
+                                        </component>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="taskId">{{task.id}}</div>
                     </div>
                 </div>
-                <div class="col-md-11 offset-1">
-                    {{task.result}}
+                <div class="col-md-10 offset-1">
                     <div v-if="task.step">
                         <div class="step-log" v-for="log in task.step.logs" :key="log.id">
                             <div class="step-date">{{log.date | formatJsonDate}}</div>
                             <div v-if="log.type==='TEXT'">
-                                {{log.message}}
+                                <small>{{log.message}}</small>
                             </div>
                             <div v-if="log.type === 'HTML'">
                                 <div class="html-div" v-html="log.message"></div>
@@ -94,16 +94,13 @@
                             <div v-if="log.type === 'IMAGE'">
                                 <img class="image" :src="'data:image/png;base64,' + log.message">
                             </div>
-    
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--
-                                <property-window :task="selectedTask.task" v-if="selectedTask.task"
-                                    :suggestions="getSuggestions(selectedTask.task.id)" />
-                                    -->
+
         <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
             :validationErrors="validationErrors" :workflow="workflow" />
         <ModalWorkflowHistory ref="historyModal" :history="history" />
@@ -188,7 +185,7 @@
             'tag-component': TagComponent,
             'text-component': TextComponent,
             'textarea-component': TextAreaComponent,
- 
+
 
             WorkflowProperty,
             WorkflowExecution,
@@ -205,7 +202,6 @@
         },
         data() {
             return {
-                forms: [],
                 tabIndex: 0,
                 atmosphereExtension: false,
 
@@ -244,6 +240,8 @@
         },
         mounted() {
             const self = this
+            //self.updateAttributeSuggestion();
+
             this.$root.$on('onclear-selection', () => {
                 this.selectedTask = {};
                 this.selectedElements = [];
@@ -253,7 +251,7 @@
                 this.showProperties = showProperties ||
                     (this.selectedTask.task && this.selectedTask.task.id);
                 this.selectedTask = taskComponent;
-                this.updateAttributeSuggestion();
+                //this.updateAttributeSuggestion();
             });
             this.$root.$on('on-error', (e) => {
                 this.error(e);
@@ -451,6 +449,41 @@
             }
         },
         methods: {
+            getClassesForDecor(value) {
+                const result = [];
+                switch (value) {
+                    case 'ERROR':
+                        result.push("fa fa-times-circle");
+                        break;
+                    case 'PENDING':
+                        result.push("fa fa-pause-circle");
+                        break;
+                    case 'CANCELED':
+                        result.push("fa fa-stop-circle");
+                        break;
+                    case 'RUNNING':
+                        result.push("fa fa-sync fa-spin");
+                        break;
+                    case 'COMPLETED':
+                        result.push("fa fa-check-circle");
+                        break;
+                    default:
+                }
+                result.push(value.toLowerCase());
+                return result.join(' ');
+            },
+            getValue(task, name) {
+                return task
+                    && task.forms
+                    && task.forms[name]
+                    ? task.forms[name].value : null;
+            },
+            getInputPorts(task) {
+                if (task.outputs === undefined) {
+                    task.outputs = task.operation.ports.filter(p => p.type === 'INPUT');
+                }
+                return task.outputs;
+            },
             leaving(event) {
                 let self = this;
                 if (self.isDirty) {
@@ -480,7 +513,9 @@
                 let self = this;
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                     (resp) => {
-                        let workflow = resp.data;
+                        const workflow = resp.data;
+                        workflow.tasks = workflow.tasks.sort((a, b) => { console.debug(b.order, a.order); return b.order - a.order; });
+
                         this.$Progress.start()
                         const params = {
                             platform: this.$route.params.platform,
@@ -504,6 +539,9 @@
                                     } else {
                                         task.warning = null;
                                     }
+                                    op.forms.sort((a, b) => {
+                                        return a.order - b.order;
+                                    });
                                 });
                                 if (usingDisabledOp) {
                                     self.warning(self.$t('messages.usingDisabledOperation',
@@ -516,17 +554,13 @@
                                     if (form.order < self.minFormOrder) {
                                         self.minFormOrder = form.order;
                                     }
-                                    // form.fields.forEach((field) => {
-                                    //     // console.debug("Aqui", workflow.forms[field.name])
-                                    //     // workflow.forms[field.name] = workflow.forms[field.name].value ||
-                                    //     //     field['default'] || ''
-                                    // });
                                 });
                                 self.workflow = workflow;
                                 self._validateTasks(self.workflow.tasks);
-                                this.updateAttributeSuggestion();
+                                //this.updateAttributeSuggestion();
                                 self.loaded = true;
                                 const params = { workflow_id: this.$route.params.id }
+
                                 axios.get(`${standUrl}/jobs/latest`, { params })
                                     .then((resp2 => {
                                         const job = resp2.data;
@@ -544,8 +578,8 @@
                                                 return t.id === result.task.id;
                                             });
                                             if (foundTask) {
-                                                console.debug(foundTask.id)
-                                                console.debug(result)
+                                                //console.debug(foundTask.id)
+                                                //console.debug(result)
                                                 foundTask.result = result;
                                             }
                                         });
@@ -554,8 +588,8 @@
                                                 return t.id === step.task.id;
                                             });
                                             if (foundTask) {
-                                                console.debug(foundTask.id)
-                                                console.debug(step)
+                                                //console.debug(foundTask.id)
+                                                //console.debug(step)
                                                 foundTask.step = step;
                                             }
                                         });
@@ -732,7 +766,9 @@
                         });
                     });
             },
+            
             getSuggestions(taskId) {
+
                 if (window.hasOwnProperty('TahitiAttributeSuggester')) {
                     if (window.TahitiAttributeSuggester.processed === undefined) {
                         this.updateAttributeSuggestion();
@@ -747,20 +783,22 @@
                 }
             },
             updateAttributeSuggestion(callback) {
-                let self = this;
-                let attributeSuggestion = {};
+                const self = this;
+                const attributeSuggestion = {};
                 try {
-                    window.TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
-                        (result) => {
-                            Object.keys(result).forEach(key => {
-                                attributeSuggestion[key] = result[key].uiPorts;
+                    if (window.TahitiAttributeSuggester) {
+                        window.TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
+                            (result) => {
+                                Object.keys(result).forEach(key => {
+                                    attributeSuggestion[key] = result[key].uiPorts;
+                                });
+                                Object.assign(self.attributeSuggestion, attributeSuggestion);
+                                window.TahitiAttributeSuggester.processed = true;
+                                if (callback) {
+                                    callback();
+                                }
                             });
-                            Object.assign(self.attributeSuggestion, attributeSuggestion);
-                            window.TahitiAttributeSuggester.processed = true;
-                            if (callback) {
-                                callback();
-                            }
-                        });
+                    }
                 } catch (e) {
                     console.log(e);
                 }
@@ -949,19 +987,21 @@
 <style>
     .notebook .cell {
         background-color: #fff;
-        border: 1px solid #ddd;
+        border: 0px solid #ddd;
+        padding: 0;
     }
 
-    .notebook .row{
+    .notebook .row {
         margin: 5px 0 0 0;
     }
+
     .notebook {
         background: #fff;
         height: 80vh;
         overflow: auto;
     }
 
-    .notebook .row > div {
+    .notebook .row>div {
         padding: 10px 5px;
     }
 
@@ -1001,5 +1041,73 @@
 
     .notebook .image {
         border: 1px dashed #ddd;
+    }
+
+    .taskId {
+        color: #777;
+        padding: 0 1px;
+        font-size: .7em;
+        text-align: right;
+    }
+
+    .switch {
+        font-size: .8em
+    }
+</style>
+<style scoped lang="scss">
+    div.decor {
+        &.completed {
+            color: seagreen;
+
+            span {
+                /* @extend .fa-check; */
+            }
+        }
+
+        &.running {
+            color: dodgerblue;
+
+            span {
+                /* @extend .fa-spin;
+                        @extend .fa-refresh; */
+                display: block;
+                width: 16px;
+                height: 16px;
+                display: inline-block;
+                text-align: center;
+            }
+        }
+
+        &.interrupted {
+            color: black;
+
+            span {
+                /* @extend .fa-hand-stop-o; */
+            }
+        }
+
+        &.canceled {
+            color: darkgray;
+
+            span {
+                /* @extend .fa-close; */
+            }
+        }
+
+        &.waiting {
+            color: #aaa;
+
+            span {
+                /* @extend .fa-clock-o; */
+            }
+        }
+
+        &.error {
+            color: red;
+
+            span {
+                /* @extend .fa-warning; */
+            }
+        }
     }
 </style>

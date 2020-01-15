@@ -40,7 +40,7 @@
                                         tabindex="0"></diagram>
                                     <slideout-panel :opened="showProperties">
                                         <property-window :task="selectedTask.task" v-if="selectedTask.task"
-                                            :suggestions="getSuggestions(selectedTask.task.id)" />
+                                        :suggestionEvent="() => getSuggestions(selectedTask.task.id)" />
                                     </slideout-panel>
                                 </div>
                             </div>

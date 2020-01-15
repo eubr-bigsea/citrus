@@ -194,27 +194,6 @@
                 } else {
                     return this.getClassesForDecor(this.task.status || '')
                 }
-                // let result = [];
-                // switch (this.task.name && this.task.status) {
-                //     case 'ERROR':
-                //         result.push("fa fa-times-circle fa-2x");
-                //         break;
-                //     case 'PENDING':
-                //         result.push("fa fa-pause-circle fa-2x");
-                //         break;
-                //     case 'CANCELED':
-                //         result.push("fa fa-stop-circle fa-2x");
-                //         break;
-                //     case 'RUNNING':
-                //         result.push("fa fa-sync fa-spin fa-2x");
-                //         break;
-                //     case 'COMPLETED':
-                //         result.push("fa fa-check-circle fa-2x");
-                //         break;
-                //     default:
-                // }
-                // result.push(this.task.status.toLowerCase());
-                // return result.join(' ');
             },
             getBorder() {
                 let color = '#fff'

@@ -14,8 +14,8 @@
     export default {
         components: { LabelComponent },
         mounted() {
-            this.$root.$emit(this.message,
-                this.field, this.value || this.field.default);
+            // this.$root.$emit(this.message,
+            //     this.field, this.value || this.field.default);
         },
         computed: {
             pairOptionValueList() {

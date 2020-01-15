@@ -303,6 +303,12 @@ export default {
             type_SPARK_MLLIB_CLASSIFICATION: 'Classificação (MLLib)',
             type_UNSPECIFIED: 'Não especificado'
         },
+        notebook: {
+            executeUntil: 'Executar até esta célula',
+            delete: 'Excluir célula',
+            newCell: 'Nova célula',
+            input: 'Entrada | Entradas'
+        },
         privacy: {
             anonymizationTechnique: 'Técnica de anonimização',
             privacyType: 'Tipo de privacidade',
@@ -697,6 +703,12 @@ export default {
             noMatching: 'Sorry, no matching options',
             usingDisabledOperation:
                 'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.'
+        },
+        notebook: {
+            delete: 'Delete cell',
+            executeUntil: 'Execute until this cell',
+            input: 'Input | Inputs',
+            newCell: 'New cell',
         },
         import: {
             description: 'You may import a file containing a workflow definition. ' + 

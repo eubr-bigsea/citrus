@@ -35,7 +35,8 @@
                                         v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
                                             <component :is="field.suggested_widget + '-component'" :field="field"
-                                                :value="getValue(field.name)" :suggestions="suggestions"
+                                                :value="getValue(field.name)" 
+                                                :suggestionEvent="suggestionEvent"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
                                                 context="context">
@@ -178,11 +179,7 @@
                     container.scrollTop = 0;
                 }
                 this.tabIndex = 0;
-                if (false) {
-                    self.updateAttributeSuggestion(callback);
-                } else {
-                    callback();
-                }
+                callback();
             },
         },
         mounted() {
@@ -203,7 +200,7 @@
         },
         props: {
             task: { type: Object, default: {} },
-            suggestions: { type: Array, default: () => [] }
+            suggestionEvent: null,
         },
         watch: {
             task() {

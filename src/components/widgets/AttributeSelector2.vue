@@ -4,23 +4,13 @@
         <div v-if="multiple">
             <textarea disabled :value="value ? value.join(', '): ''" class="form-control bold"></textarea>
 
-            <b-link v-b-modal="'lookupModal' + field.order" variant="sm">
+            <a href="#" @click.prevent="openModal">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
-            </b-link>
-            <b-modal :id="'lookupModal' + field.order" size="lg" :title="field.label" ok-disabled
-                :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+            </a>
+            <b-modal size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
                 <div slot="default">
                     <div class="row">
-                        <!--
-					<div class="col-md-12">
-                        <b-form-group>
-                          <b-form-checkbox-group id="checkbox-group-2" v-model="value" name="flavour-2">
-                            <b-form-checkbox v-for="s in suggestions" :value="s" class="col-md-3">{{s}}</b-form-checkbox>
-                          </b-form-checkbox-group>
-                        </b-form-group>
-					</div>
-					-->
                         <div class="col-md-4 offset-md-1 p-0">
                             <span>{{$tc('property.availableAttribute', 2)}}:</span>
                             <div class="left options border mt-1 p-2">
@@ -69,8 +59,8 @@
             </b-modal>
         </div>
         <div v-else>
-            <v-select :options="suggestions" :multiple="multiple" :value.sync="value"
-                :on-change="updated" :taggable="true" :closeOnSelect="true">
+            <v-select :options="suggestions" :multiple="multiple" :value.sync="value" :on-change="updated"
+                :taggable="true" :closeOnSelect="true">
                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
             </v-select>
         </div>
@@ -85,7 +75,7 @@
             LabelComponent
         },
         computed: {
-            multiple(){
+            multiple() {
                 return true;
                 /*
                 if (this.field && this.field.values){
@@ -117,7 +107,8 @@
         data() {
             return {
                 extra: '',
-                originalValue: { default: [] }
+                originalValue: { default: [] },
+                suggestions: [],
             }
         },
         mounted() {
@@ -143,7 +134,7 @@
                 } else if (direction === 'all-left') {
                     this.updated([]);
                 } else if (direction === 'right') {
-                    if (!this.value){
+                    if (!this.value) {
                         this.updated([this.available[index]]);
                     } else {
                         this.updated([... this.value.concat(this.available[index])]);
@@ -153,7 +144,7 @@
                 }
             },
             updated(val) {
-                if (Array.isArray(val)){
+                if (Array.isArray(val)) {
                     this.$root.$emit(this.message, this.field, val);
                 } else {
                     this.$root.$emit(this.message, this.field, [val]);
@@ -168,15 +159,22 @@
                 this.updated([... this.originalValue]);
                 this.$refs.modal.hide();
             },
+            openModal(){
+                this.$refs.modal.show();
+                if (this.suggestionEvent){
+                    this.suggestions = this.suggestionEvent();
+                }
+            }
         },
         props: {
             single: { default: false },
-            value: "", field: null, suggestions: { required: true },
+            value: "", field: null, 
+            parentId: null,
             message: {
                 type: String,
                 default: 'update-form-field-value'
             },
-            suggestions: { default: [] }
+            suggestionEvent: null,
         },
     }
 </script>
