@@ -68,7 +68,7 @@
                 display: inline-block;
                 cursor: pointer;
                 font-weight: normal;
-                font-size: .85em;
+                font-size: .9em;
                 text-align: left;
                 margin: 0px;
                 padding: 0px 0px 0px 44px;

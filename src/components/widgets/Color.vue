@@ -39,9 +39,9 @@
 
     .color-item {
         float: left;
-        height: 27px;
+        height: 20px;
         margin-right: 0px;
-        width: 27px;
+        width: 20px;
         border: 1px solid #CCC;
     }
 

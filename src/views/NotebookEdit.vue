@@ -13,10 +13,13 @@
         </div>
 
         <div class="notebook">
-            <div class="row" v-for="(task, counter) in workflow.tasks" :key="task.id">
+            <button @click="getLatestJob2">Teste</button>
+            <div class="row" v-for="(task, counter) in workflow.tasks" :key="task.id" @mousedown="selectTask(task)"
+                :tabindex="counter + 1">
                 <div class="col-md-10 cell offset-1">
-                    <div class="props card text-dark bg-light p1 mb-1">
-                        <div class="special card-header">
+                    <div class="props card xbg-light p1 mb-1">
+                        <div class="special card-header"
+                            v-bind:style="{borderWidth: '2px', borderColor: task.forms && task.forms.color ? task.forms.color.value.background : 'rgba(0,0,0,.03)'}">
                             <div class="row">
                                 <div class="col-md-3"
                                     :class="'decor ' + (task.step? task.step.status.toLowerCase() : 'pending')">
@@ -50,11 +53,14 @@
 
                             </div>
                         </div>
+                        <!--
                         <div style="display: flex; padding:4px; flex-wrap: wrap; flex-direction: row;">
                             <div class="col">
-                                <label>{{$t('property.taskName')}}</label>
-                                <input type="text" maxlength="50" v-model="task.name" class="form-control" />
-                                <div v-for="port in getInputPorts(task)" :key="port.id">
+                                <div class="property">
+                                    <label>{{$t('property.taskName')}}</label>
+                                    <input type="text" maxlength="50" v-model="task.name" class="form-control" />
+                                </div>
+                                <div v-for="port in getInputPorts(task)" :key="port.id" class="property">
                                     <label>{{port.name.charAt(0).toUpperCase()}}{{port.name.slice(1)}}</label>
                                     <select class="form-control">
                                         <option></option>
@@ -62,13 +68,13 @@
                                 </div>
                             </div>
                             <div class="col" v-for="(form, index) in task.operation.forms" v-bind:key="form.id"
-                                :title="form.name">
+                                :title="form.name" v-if="form.category !== 'appearance'">
                                 <div>
                                     <div v-for="field in form.fields" class="mb-2 property clearfix"
                                         v-bind:key="task.id + field.name" v-if="true || field.enabled"
                                         :data-name="field.name">
                                         <component :is="field.suggested_widget + '-component'" :field="field"
-                                            :value="getValue(task, field.name)" 
+                                            :value="getValue(task, field.name)"
                                             :suggestionEvent="() => getSuggestions(task.id)"
                                             :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                             :language="$root.$i18n.locale" :type="field.suggested_widget"
@@ -78,7 +84,42 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="taskId">{{task.id}}</div>
+                        -->
+                        <div class="flex-props">
+                            <div class="property">
+                                <label>{{$t('property.taskName')}}</label>
+                                <input type="text" maxlength="50" v-model="task.name" class="form-control" />
+                            </div>
+                            <div v-for="port in getInputPorts(task)" :key="port.id" class="property">
+                                <label>
+                                    {{port.name.charAt(0).toUpperCase()}}{{port.name.slice(1)}}
+                                    <a href="#"><span class="fa fa-link" /></a>
+                                </label>
+                                <select class=" form-control">
+                                    <option></option>
+                                </select>
+                            </div>
+                        </div>
+                        <template v-for="(form, index) in task.operation.forms" :title="form.name"
+                            v-if="form.category !== 'appearance'">
+                            <div class="flex-props">
+                                <div v-for="field in form.fields" class="mb-2 property clearfix"
+                                    v-bind:key="task.id + field.name" v-if="true || field.enabled"
+                                    :data-name="field.name">
+                                    <component :is="field.suggested_widget + '-component'" :field="field"
+                                        :value="getValue(task, field.name)"
+                                        :suggestionEvent="() => getSuggestions(task.id)"
+                                        :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
+                                        :language="$root.$i18n.locale" :type="field.suggested_widget" context="context"
+                                        :parentId="task.id">
+                                    </component>
+                                </div>
+                            </div>
+                        </template>
+                        <div v-if="task.forms.comment">
+                            {{task.forms.comment.value}}
+                        </div>
+                        <div class="taskId m-1">{{task.id}}</div>
                     </div>
                 </div>
                 <div class="col-md-10 offset-1">
@@ -112,21 +153,19 @@
 
 <script>
     import axios from 'axios';
-    import DiagramComponent from '../components/Diagram.vue';
-    import html2canvas from 'html2canvas';
+    import stand from '../services/stand.js';
     import InputHeader from '../components/InputHeader.vue';
+
     import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
     import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
     import ModalTaskResults from './modal/ModalTaskResults.vue'
     import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue'
     import ModalExecuteWorkflow from './modal/ModalExecuteWorkflow.vue'
-    import PropertyWindow from '../components/PropertyWindow.vue';
+
     import Notifier from '../mixins/Notifier';
-    import SlideOutPanel from '../components/SlideOutPanel.vue';
-    import ToolboxComponent from '../components/Toolbox.vue';
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
-    import WorkflowExecution from '../components/WorkflowExecution.vue';
+
     import WorkflowProperty from '../components/WorkflowProperty.vue';
     import WorkflowToolbar from '../components/WorkflowToolbar.vue';
 
@@ -155,11 +194,8 @@
     export default {
         mixins: [Notifier],
         components: {
-            'diagram': DiagramComponent,
-            'toolbox': ToolboxComponent,
+
             'workflow-toolbar': WorkflowToolbar,
-            'slideout-panel': SlideOutPanel,
-            'property-window': PropertyWindow,
 
             ModalExecuteWorkflow,
             ModalSaveWorkflowAs,
@@ -188,7 +224,6 @@
 
 
             WorkflowProperty,
-            WorkflowExecution,
             VuePerfectScrollbar,
             InputHeader,
             TahitiSuggester: () => {
@@ -202,8 +237,7 @@
         },
         data() {
             return {
-                tabIndex: 0,
-                atmosphereExtension: false,
+
 
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
@@ -212,55 +246,45 @@
                     name: '', description: '', workflowName: '', id: 0,
                     jobName: '', clusterName: ''
                 },
+
                 history: [],
                 isDirty: false,
                 loaded: false,
-                minFormOrder: 5,
+
                 newName: '',
                 operations: [],
                 operationsLookup: new Map(),
 
                 resultTask: { step: {} },
                 saveOption: 'new',
-                selectedTab: 0,
                 selectedTask: { task: { operation: {} } },
                 showPreviousJobs: false,
-                showProperties: false,
                 validationErrors: [],
                 workflow: { tasks: [], flows: [], platform: {} },
+
+                atmosphereExtension: false,
                 performanceModel: {
                     cores: null,
                     setup: null
-                }
+                },
+                busEvents: []
             }
         },
         created() {
-            var self = this;
-            window.addEventListener('beforeunload', self.leaving)
+            window.addEventListener('beforeunload', this.leaving)
         },
         mounted() {
             const self = this
-            //self.updateAttributeSuggestion();
 
-            this.$root.$on('onclear-selection', () => {
-                this.selectedTask = {};
-                this.selectedElements = [];
-            });
-            this.$root.$on('onclick-task', (taskComponent, showProperties) => {
-                // If there is a selected task, keep properties opened
-                this.showProperties = showProperties ||
-                    (this.selectedTask.task && this.selectedTask.task.id);
-                this.selectedTask = taskComponent;
-                //this.updateAttributeSuggestion();
-            });
-            this.$root.$on('on-error', (e) => {
+            //self.updateAttributeSuggestion();
+            this.on('on-error', (e) => {
                 this.error(e);
             });
-            this.$root.$on('onsave-as-image', () => {
+            this.on('onsave-as-image', () => {
                 this.saveAsImage()
             });
-            this.$root.$on('onsave-workflow', () => this.saveWorkflow(false));
-            this.$root.$on('onsave-workflow-as', (saveOption, newName) => {
+            this.on('onsave-workflow', () => this.saveWorkflow(false));
+            this.on('onsave-workflow-as', (saveOption, newName) => {
                 if (saveOption === 'new') {
                     this.saveWorkflow(true, newName);
                 } else if (saveOption === 'image') {
@@ -268,31 +292,19 @@
                 }
             });
             // Modal
-            this.$root.$on('onsaveas-workflow', this.showSaveAs);
-            this.$root.$on('onupdate-workflow-properties', this.saveWorkflowProperties);
-            this.$root.$on('onrestore-workflow', this.restore);
-            this.$root.$on('onchange-cluster', this.changeCluster);
-            this.$root.$on('onexecute-workflow', this.execute);
+            this.on('onsaveas-workflow', this.showSaveAs);
+            this.on('onupdate-workflow-properties', this.saveWorkflowProperties);
+            this.on('onrestore-workflow', this.restore);
+            this.on('onchange-cluster', this.changeCluster);
+            this.on('onexecute-workflow', this.execute);
 
 
-            this.$root.$on('onalign-tasks', this.align);
-            this.$root.$on('ontoggle-tasks', this.toggleTasks);
-            this.$root.$on('onremove-tasks', this.removeTasks);
-            this.$root.$on('ondistribute-tasks', this.distribute);
-            this.$root.$on('onclick-export', () => this.exportWorkflow());
-            this.$root.$on('onclick-execute', this.showExecuteWindow);
-            this.$root.$on('onshow-properties', this.showWorkflowProperties);
-            this.$root.$on('onset-isDirty', this.setIsDirty);
-            this.$root.$on('onclick-setup', (options) => {
-                this.performanceModel.cores = options.cores;
-                this.performanceModel.setup = options.setup;
-            });
-            this.$root.$on('onblur-selection', () => {
-                this.showProperties = false;
-                this.selectedTask = { task: {} };
-            });
+            this.on('onremove-tasks', this.removeTasks);
+            this.on('onclick-export', () => this.exportWorkflow());
+            this.on('onclick-execute', this.showExecuteWindow);
+            this.on('onset-isDirty', this.setIsDirty);
 
-            this.$root.$on('update-form-field-value', (field, value, labelValue) => {
+            this.on('update-form-field-value', (field, value, labelValue) => {
                 if (self.selectedTask.task.forms[field.name]) {
                     if (self.selectedTask.task.forms[field.name].value !== value) {
                         self.selectedTask.task.forms[field.name].value = value
@@ -323,7 +335,7 @@
                 // self._validateTasks([self.selectedTask.task]);
                 // this.isDirty = true;
             });
-            this.$root.$on('update-workflow-form-field-value', (field, value, labelValue) => {
+            this.on('update-workflow-form-field-value', (field, value, labelValue) => {
                 const self = this;
                 if (self.workflow)
                     if (!self.workflow.forms || !(self.workflow.forms instanceof Object)) {
@@ -351,12 +363,12 @@
                 }
             })
             /* Task related */
-            this.$root.$on('addTask', (task) => {
+            this.on('addTask', (task) => {
                 task.step = null;
                 this.workflow.tasks.push(task);
                 this.isDirty = true;
             });
-            this.$root.$on('onremove-task', (task) => {
+            this.on('onremove-task', (task) => {
                 // const self = this;
                 // this.instance.deleteConnectionsForElement(task.id);
                 // this.instance.removeAllEndpoints(task.id);
@@ -381,12 +393,12 @@
                 }
                 this.isDirty = true;
             });
-            this.$root.$on('addFlow', (flow, jsPlumbConn) => {
+            this.on('addFlow', (flow, jsPlumbConn) => {
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
                 this.isDirty = true;
             });
-            this.$root.$on('removeFlow', (flowId) => {
+            this.on('removeFlow', (flowId) => {
                 const inx = this.workflow.flows.findIndex((n) => {
                     const id = `${n.source_id}/${n.source_port}-${n.target_id}/${n.target_port}`;
                     return id === flowId;
@@ -396,11 +408,8 @@
                 }
                 this.isDirty = true;
             });
-            this.$root.$on('onshow-history', this.showHistory);
-            this.$root.$on('onzoom', (zoom) => {
-                this.$refs.diagram.setZoomPercent(zoom);
-            });
-            this.$root.$on('onshow-result', this.showTaskResult);
+            this.on('onshow-history', this.showHistory);
+            this.on('onshow-result', this.showTaskResult);
             this.load();
 
         },
@@ -415,31 +424,8 @@
             }
         },
         beforeDestroy() {
-            this.$root.$off('onclick-task');
-            this.$root.$off('on-error');
-            this.$root.$off('onsave-as-image');
-            this.$root.$off('onsave-workflow');
-            this.$root.$off('onsaveas-workflow');
-            this.$root.$off('onalign-tasks');
-            this.$root.$off('ontoggle-tasks');
-            this.$root.$off('ondistribute-tasks');
-            this.$root.$off('onclick-execute');
-            this.$root.$off('onblur-selection');
-            this.$root.$off('update-form-field-value');
-            this.$root.$off('update-workflow-form-field-value');
-            this.$root.$off('addTask');
-            this.$root.$off('onremove-task');
-            this.$root.$off('addFlow');
-            this.$root.$off('removeFlow');
-            this.$root.$off('onshow-history');
-            this.$root.$off('onzoom');
-            this.$root.$off('onshow-result');
-            this.$root.$off('onset-isDirty');
-            this.$root.$off('onsaveas-workflow');
-            this.$root.$off('onupdate-workflow-properties');
-            this.$root.$off('onrestore-workflow');
-            this.$root.$off('onchange-cluster');
-            this.$root.$off('onexecute-workflow');
+            const self = this;
+            self.busEvents.forEach(event => { self.$root.$off(event); })
             window.removeEventListener('beforeunload', this.leaving)
         },
         watch: {
@@ -449,6 +435,18 @@
             }
         },
         methods: {
+            on(event, action) {
+                this.busEvents.push(event);
+                this.$root.$on(event, action);
+            },
+            getLatestJob2() {
+                stand.getLatestJob(this.workflow.id)
+                    .then(response => console.debug(response))
+                    .catch(error => { console.debug("Not found") });
+            },
+            selectTask(task) {
+                this.selectedTask = { task };
+            },
             getClassesForDecor(value) {
                 const result = [];
                 switch (value) {
@@ -500,14 +498,6 @@
             },
             align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
-            },
-            toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
-            removeTasks() { this.$refs.diagram.removeSelectedTasks(); },
-            distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
-            updateSelectedTab(index) {
-                //this.selectedTab = index;
-                console.debug(index)
-                this.$refs.diagram.repaint();
             },
             load() {
                 let self = this;
@@ -607,67 +597,6 @@
                     this.error(e);
                 }.bind(this));
             },
-            saveAsImage() {
-                let self = this
-                let $elem = this.$refs.diagram.$el.querySelector('#lemonade-container')
-                html2canvas($elem, {
-                    width: 3000, height: 3000, logging: false, allowTaint: false,
-                    onclone(clone) {
-                        let elem = clone.getElementById($elem.id);
-                        elem.parentElement.style.height = '10000px';
-                        elem.style.transform = 'inherit'; // remove zoom
-                        elem.parentElement.scrollTop = 0;
-                    },
-                }).then(
-                    (canvas) => {
-                        //inversed, to get smallest 
-                        let x0 = canvas.width, y0 = canvas.height, x1 = 0, y1 = 0;
-                        self.workflow.tasks.forEach((task) => {
-                            let elem = document.getElementById(task.id);
-                            x0 = Math.min(task.left, x0);
-                            x1 = Math.max(task.left + elem.style.width, x1);
-                            y0 = Math.min(task.top, y0);
-                            y1 = Math.max(task.top + elem.style.height, y1);
-                        });
-                        const targetCanvas = document.createElement('canvas');
-                        const targetCtx = targetCanvas.getContext('2d');
-                        const padding = 100;
-                        targetCanvas.width = x1 + 2 * padding;
-                        targetCanvas.height = y1 + 2 * padding;
-                        targetCtx.fillStyle = "white";
-                        // targetCtx.translate(-x0 + 150, -y0 + 150);
-                        targetCtx.drawImage(canvas, 0, 0);
-                        // let ctx = canvas.getContext('2d');
-                        for (let flow of $elem.getElementsByClassName('jtk-connector')) {
-                            const DOMURL = window.URL || window.webkitURL || window;
-                            const xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${flow.innerHTML}</svg>`;
-                            const url = DOMURL.createObjectURL(
-                                new Blob([xml], { type: 'image/svg+xml' }));
-                            const left = parseInt(flow.style.left);
-                            const top = parseInt(flow.style.top);
-                            const img = new Image();
-                            img.onload = () => {
-                                targetCtx.drawImage(img, left, top);
-                                DOMURL.revokeObjectURL(url);
-                            };
-                            img.src = url;
-                        }
-                        window.setTimeout(() => {
-                            targetCtx.fillStyle = "black";
-                            targetCtx.font = "10pt Verdana";
-                            targetCtx.fillText(
-                                `${self.workflow.name}. ${self.$t('workflow.imageGeneratedAt')} ${new Date()}`,
-                                20, targetCanvas.height - 20);
-                            const link = document.createElement('a');
-                            link.setAttribute('download', `workflow_${self.workflow.id}.png`);
-                            link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-                            document.getElementsByTagName("body")[0].appendChild(link)
-                            link.click();
-                            link.remove();
-                            //link.text = "Click"
-                        }, 1000);
-                    });
-            },
             _generateId() {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -766,7 +695,7 @@
                         });
                     });
             },
-            
+
             getSuggestions(taskId) {
 
                 if (window.hasOwnProperty('TahitiAttributeSuggester')) {
@@ -997,8 +926,9 @@
 
     .notebook {
         background: #fff;
-        height: 80vh;
+        height: 92vh;
         overflow: auto;
+        zoom: 90%;
     }
 
     .notebook .row>div {
@@ -1109,5 +1039,20 @@
                 /* @extend .fa-warning; */
             }
         }
+    }
+
+    .flex-props {
+        align-items: top;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        padding: 2px 4px;
+    }
+
+    div.property {
+        flex-grow: 1;
+        flex: 1 1 20%;
+        margin: 0 15px 5px 5px !important;
+        border: 0px dashed green;
     }
 </style>

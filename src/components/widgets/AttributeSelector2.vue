@@ -2,12 +2,13 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="multiple">
-            <textarea disabled :value="value ? value.join(', '): ''" class="form-control bold"></textarea>
-
+            <textarea readonly :value="value ? value.join(', '): ''" class="form-control pointer" @click.prevent="openModal"></textarea>
+            <!--
             <a href="#" @click.prevent="openModal">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
             </a>
+            -->
             <b-modal size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
                 <div slot="default">
                     <div class="row">
@@ -236,5 +237,8 @@
 
     div.selected-attr {
         background: #DDDDDD
+    }
+    .pointer {
+        cursor: pointer;
     }
 </style>
