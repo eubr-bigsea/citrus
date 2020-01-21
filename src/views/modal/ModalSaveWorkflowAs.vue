@@ -35,7 +35,9 @@
     </b-modal>
 </template>
 <script>
+    import Notifier from '../../mixins/Notifier';
     export default {
+        mixins: [Notifier],
         data() {
             return {
                 newName: '',

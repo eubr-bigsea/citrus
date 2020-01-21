@@ -8,12 +8,17 @@
                 <input-header v-model="workflow.name"></input-header>
             </div>
             <div>
+                <b-btn size="sm mr-1" variant="outline-secondary" @click.prevent="showWorkflowProperties"
+                    :title="$t('actions.showProperties')">
+                    <span class="fa fa-cogs"></span>
+                </b-btn>
                 <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
             </div>
         </div>
 
         <div class="notebook">
-            <button @click="getLatestJob2">Teste</button>
+            {{JSON.stringify(Array.from(inputPortsByInterface.entries()))}}
+            | {{JSON.stringify(Array.from(outputPortsByInterface.entries()))}}
             <div class="row" v-for="(task, counter) in workflow.tasks" :key="task.id" @mousedown="selectTask(task)"
                 :tabindex="counter + 1">
                 <div class="col-md-10 cell offset-1">
@@ -95,8 +100,12 @@
                                     {{port.name.charAt(0).toUpperCase()}}{{port.name.slice(1)}}
                                     <a href="#"><span class="fa fa-link" /></a>
                                 </label>
-                                <select class=" form-control">
-                                    <option></option>
+                                <select class="form-control">
+                                    <template v-for="ifce in port.interfaces">
+                                        <option v-for="port in outputPortsByInterface.get(ifce.name)" :key="port.id" v-if="port[0] !== task.id">
+                                            {{port[1].task.name}}
+                                        </option>
+                                    </template>
                                 </select>
                             </div>
                         </div>
@@ -122,21 +131,23 @@
                         <div class="taskId m-1">{{task.id}}</div>
                     </div>
                 </div>
-                <div class="col-md-10 offset-1">
-                    <div v-if="task.step">
-                        <div class="step-log" v-for="log in task.step.logs" :key="log.id">
-                            <div class="step-date">{{log.date | formatJsonDate}}</div>
-                            <div v-if="log.type==='TEXT'">
-                                <small>{{log.message}}</small>
-                            </div>
-                            <div v-if="log.type === 'HTML'">
-                                <div class="html-div" v-html="log.message"></div>
-                            </div>
-                            <div v-if="log.type === 'IMAGE'">
-                                <img class="image" :src="'data:image/png;base64,' + log.message">
-                            </div>
 
-                        </div>
+                <div class="col-md-10 offset-1">
+                    <div v-if="latestJob.steps.has(task.id)">
+                        <template v-for="step in latestJob.steps.get(task.id)">
+                            <div class="step-log" v-for="log in step.logs" :key="log.id">
+                                <div class="step-date">{{log.date | formatJsonDate}}</div>
+                                <div v-if="log.type==='TEXT'">
+                                    <small>{{log.message}}</small>
+                                </div>
+                                <div v-if="log.type === 'HTML'">
+                                    <div class="html-div" v-html="log.message"></div>
+                                </div>
+                                <div v-if="log.type === 'IMAGE'">
+                                    <img class="image" :src="'data:image/png;base64,' + log.message">
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -154,6 +165,7 @@
 <script>
     import axios from 'axios';
     import stand from '../services/stand.js';
+    import WorkflowService from '../services/workflow.js';
     import InputHeader from '../components/InputHeader.vue';
 
     import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
@@ -237,8 +249,6 @@
         },
         data() {
             return {
-
-
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
                 clusters: [],
@@ -267,7 +277,10 @@
                     cores: null,
                     setup: null
                 },
-                busEvents: []
+                busEvents: [], // turn on/off bus events
+                latestJob: { steps: new Map(), results: new Map() }, // latest job execution
+                inputPortsByInterface: new Map(),
+                outputPortsByInterface: new Map(),
             }
         },
         created() {
@@ -277,12 +290,8 @@
             const self = this
 
             //self.updateAttributeSuggestion();
-            this.on('on-error', (e) => {
-                this.error(e);
-            });
-            this.on('onsave-as-image', () => {
-                this.saveAsImage()
-            });
+            this.on('on-error', this.error);
+            this.on('onsave-as-image', this.saveAsImage);
             this.on('onsave-workflow', () => this.saveWorkflow(false));
             this.on('onsave-workflow-as', (saveOption, newName) => {
                 if (saveOption === 'new') {
@@ -300,7 +309,7 @@
 
 
             this.on('onremove-tasks', this.removeTasks);
-            this.on('onclick-export', () => this.exportWorkflow());
+            this.on('onclick-export', () => WorkflowService().exportWorkflow(this.workflow));
             this.on('onclick-execute', this.showExecuteWindow);
             this.on('onset-isDirty', this.setIsDirty);
 
@@ -410,6 +419,7 @@
             });
             this.on('onshow-history', this.showHistory);
             this.on('onshow-result', this.showTaskResult);
+            self.getLatestJob(this.$route.params.id);
             this.load();
 
         },
@@ -435,13 +445,33 @@
             }
         },
         methods: {
+            fillPortsByInterface() {
+                const self = this;
+                self.workflow.tasks.forEach(task => {
+                    task.operation.ports.forEach(port => {
+                        port.interfaces.forEach(ifce => {
+                            let ports = [];
+                            if (port.type === 'INPUT') {
+                                ports = self.inputPortsByInterface;
+                            } else if (port.type === 'OUTPUT') {
+                                ports = self.outputPortsByInterface;
+                            }
+                            if (!ports.has(ifce.name)) {
+                                ports.set(ifce.name, new Map());
+                            }
+                            ports.get(ifce.name).set(task.id, {task, portId: port.id});
+                        });
+                    });
+                });
+            },
             on(event, action) {
                 this.busEvents.push(event);
                 this.$root.$on(event, action);
             },
-            getLatestJob2() {
-                stand.getLatestJob(this.workflow.id)
-                    .then(response => console.debug(response))
+            getLatestJob(workflowId) {
+                const self = this;
+                stand.getLatestJob(workflowId)
+                    .then(result => { self.latestJob = result })
                     .catch(error => { console.debug("Not found") });
             },
             selectTask(task) {
@@ -504,7 +534,7 @@
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                     (resp) => {
                         const workflow = resp.data;
-                        workflow.tasks = workflow.tasks.sort((a, b) => { console.debug(b.order, a.order); return b.order - a.order; });
+                        workflow.tasks = workflow.tasks.sort((a, b) => { return b.order - a.order; });
 
                         this.$Progress.start()
                         const params = {
@@ -548,42 +578,8 @@
                                 self.workflow = workflow;
                                 self._validateTasks(self.workflow.tasks);
                                 //this.updateAttributeSuggestion();
+                                self.fillPortsByInterface();
                                 self.loaded = true;
-                                const params = { workflow_id: this.$route.params.id }
-
-                                axios.get(`${standUrl}/jobs/latest`, { params })
-                                    .then((resp2 => {
-                                        const job = resp2.data;
-                                        const tasks = self.workflow.tasks;
-                                        job.steps.forEach((step) => {
-                                            const foundTask = tasks.find((t) => {
-                                                return t.id === step.task.id;
-                                            });
-                                            if (foundTask) {
-                                                foundTask.step = step;
-                                            }
-                                        });
-                                        job.results.forEach((result) => {
-                                            const foundTask = tasks.find((t) => {
-                                                return t.id === result.task.id;
-                                            });
-                                            if (foundTask) {
-                                                //console.debug(foundTask.id)
-                                                //console.debug(result)
-                                                foundTask.result = result;
-                                            }
-                                        });
-                                        job.steps.forEach((step) => {
-                                            const foundTask = tasks.find((t) => {
-                                                return t.id === step.task.id;
-                                            });
-                                            if (foundTask) {
-                                                //console.debug(foundTask.id)
-                                                //console.debug(step)
-                                                foundTask.step = step;
-                                            }
-                                        });
-                                    })).catch(() => { });
                             }
                         ).catch(function (e) {
                             this.error(e);
@@ -602,19 +598,6 @@
                     let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
-            },
-            exportWorkflow() {
-                const self = this
-                const json = JSON.stringify(self.workflow);
-                const element = document.createElement('a');
-                element.setAttribute('href', 'data:application/json;charset=utf-8,' +
-                    encodeURIComponent(json));
-                element.setAttribute('download', self.workflow.name + '.json');
-                element.style.display = 'none';
-                document.body.appendChild(element);
-                element.click();
-                document.body.removeChild(element);
-                // self.success(self.$t('messages.exportWorkflow'));
             },
             saveWorkflow(savingCopy, newName) {
                 let self = this
@@ -695,9 +678,7 @@
                         });
                     });
             },
-
-            getSuggestions(taskId) {
-
+            getSuggestions(taskcomputeId) {
                 if (window.hasOwnProperty('TahitiAttributeSuggester')) {
                     if (window.TahitiAttributeSuggester.processed === undefined) {
                         this.updateAttributeSuggestion();
