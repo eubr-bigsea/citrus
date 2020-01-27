@@ -306,6 +306,8 @@ export default {
         notebook: {
             executeUntil: 'Executar até esta célula',
             delete: 'Excluir célula',
+            moveDown: 'Mover para baixo',
+            moveUp: 'Mover para cima',
             newCell: 'Nova célula',
             input: 'Entrada | Entradas'
         },
@@ -708,6 +710,8 @@ export default {
             delete: 'Delete cell',
             executeUntil: 'Execute until this cell',
             input: 'Input | Inputs',
+            moveDown: 'Move down',
+            moveUp: 'Move up',
             newCell: 'New cell',
         },
         import: {

@@ -12,24 +12,29 @@
                     :title="$t('actions.showProperties')">
                     <span class="fa fa-cogs"></span>
                 </b-btn>
+                <b-btn size="sm mr-1" variant="outline-secondary" @click.prevent="toggleResults"
+                    :title="$t('actions.showResults')">
+                    <span class="fa fa-toggle-on" v-if="showResults"></span>
+                    <span class="fa fa-toggle-off" v-if="!showResults"></span>
+                    {{$t('actions.showResults')}}
+                </b-btn>
+
                 <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
             </div>
         </div>
 
         <div class="notebook">
-            {{JSON.stringify(Array.from(inputPortsByInterface.entries()))}}
-            | {{JSON.stringify(Array.from(outputPortsByInterface.entries()))}}
             <div class="row" v-for="(task, counter) in workflow.tasks" :key="task.id" @mousedown="selectTask(task)"
                 :tabindex="counter + 1">
-                <div class="col-md-10 cell offset-1">
+                <div class="col-md-10 cell offset-1" :class="{'selected-row': task.id === selectedTask.task.id}">
                     <div class="props card xbg-light p1 mb-1">
                         <div class="special card-header"
                             v-bind:style="{borderWidth: '2px', borderColor: task.forms && task.forms.color ? task.forms.color.value.background : 'rgba(0,0,0,.03)'}">
                             <div class="row">
                                 <div class="col-md-3"
                                     :class="'decor ' + (task.step? task.step.status.toLowerCase() : 'pending')">
-                                    <strong>[ <span
-                                            :class="getClassesForDecor(task.step? task.step.status : 'PENDING')"></span>
+                                    <strong>
+                                        [ {{task.display_order}}
                                         ] - {{task.operation.name}}</strong>
                                 </div>
                                 <div class="col-md-4"></div>
@@ -39,17 +44,30 @@
                                     </SwitchComponent>
                                 </div>
                                 <div class="col-md-4 text-right">
+
                                     <button class="btn btn-sm btn-outline-secondary ml-1"
                                         :title="$tc('notebook.newCell')">
                                         <span class="fa fa-plus"></span>
                                     </button>
+
+                                    <button class="btn btn-sm btn-outline-secondary ml-1"
+                                        :title="$tc('notebook.moveDown')"
+                                        v-if="task.display_order < workflow.tasks.length" @click.prevent="moveDown">
+                                        <span class="fa fa-chevron-circle-down"></span>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary ml-1"
+                                        :title="$tc('notebook.moveUp')" v-if="task.display_order > 1"
+                                        @click.prevent="moveUp">
+                                        <span class="fa fa-chevron-circle-up"></span>
+                                    </button>
+
+                                    <button class="btn btn-sm btn-outline-secondary ml-1"
+                                        :title="$tc('notebook.delete')" @click.prevent="removeTask(task)">
+                                        <span class="fa fa-trash"></span>
+                                    </button>
                                     <button class="btn btn-sm btn-outline-secondary ml-1"
                                         :title="$tc('notebook.executeUntil')">
                                         <span class="fa fa-play"></span>
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-secondary ml-1"
-                                        :title="$tc('notebook.delete')">
-                                        <span class="fa fa-trash"></span>
                                     </button>
                                     <a class="btn btn-sm btn-outline-secondary ml-1" :href="'docReferenceUrl'"><span
                                             class="fa fa-question-circle"></span>
@@ -96,17 +114,24 @@
                                 <input type="text" maxlength="50" v-model="task.name" class="form-control" />
                             </div>
                             <div v-for="port in getInputPorts(task)" :key="port.id" class="property">
-                                <label>
-                                    {{port.name.charAt(0).toUpperCase()}}{{port.name.slice(1)}}
-                                    <a href="#"><span class="fa fa-link" /></a>
-                                </label>
-                                <select class="form-control">
-                                    <template v-for="ifce in port.interfaces">
-                                        <option v-for="port in outputPortsByInterface.get(ifce.name)" :key="port.id" v-if="port[0] !== task.id">
-                                            {{port[1].task.name}}
-                                        </option>
-                                    </template>
-                                </select>
+                                <label>{{port.name.charAt(0).toUpperCase()}}{{port.name.slice(1)}}</label>
+                                <div class="input-group">
+                                    <select class="form-control">
+                                        <template v-for="ifce in port.interfaces">
+                                            <option></option>
+                                            <option v-for="port in outputPortsByInterface.get(ifce.name)" :key="port.id"
+                                                v-if="port[0] !== task.id">
+                                                {{port[1].task.name}}
+                                            </option>
+                                        </template>
+                                    </select>
+                                    <div class="input-group-append p-0">
+                                        <label class="input-group-text p-0 pl-2 pr-2">
+                                            <a href="#" click.prevent="scrollToTask()"><span
+                                                    class="fa fa-project-diagram" /></a>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <template v-for="(form, index) in task.operation.forms" :title="form.name"
@@ -126,30 +151,36 @@
                             </div>
                         </template>
                         <div v-if="task.forms.comment">
-                            {{task.forms.comment.value}}
+                            <Markdown :text="task.forms.comment.value"
+                                :css-style="{border: '1px dashed #ddd', borderRadius: '5px', background: '#fbfcf0', margin: '5px', padding: '5px'}" />
                         </div>
                         <div class="taskId m-1">{{task.id}}</div>
                     </div>
                 </div>
-
-                <div class="col-md-10 offset-1">
-                    <div v-if="latestJob.steps.has(task.id)">
-                        <template v-for="step in latestJob.steps.get(task.id)">
-                            <div class="step-log" v-for="log in step.logs" :key="log.id">
-                                <div class="step-date">{{log.date | formatJsonDate}}</div>
-                                <div v-if="log.type==='TEXT'">
-                                    <small>{{log.message}}</small>
+                <transition name="slide-fade">
+                    <div class="col-md-10 offset-1" v-if="showResults">
+                        <div v-if="latestJob.steps.has(task.id)">
+                            <!--
+                            <span
+                            :class="getClassesForDecor(task.step? task.step.status : 'PENDING')"></span>
+                            -->
+                            <template v-for="step in latestJob.steps.get(task.id)">
+                                <div class="step-log" v-for="log in step.logs" :key="log.id">
+                                    <div class="step-date">{{log.date | formatJsonDate}}</div>
+                                    <div v-if="log.type==='TEXT'">
+                                        <small>{{log.message}}</small>
+                                    </div>
+                                    <div v-if="log.type === 'HTML'">
+                                        <div class="html-div" v-html="log.message"></div>
+                                    </div>
+                                    <div v-if="log.type === 'IMAGE'">
+                                        <img class="image" :src="'data:image/png;base64,' + log.message">
+                                    </div>
                                 </div>
-                                <div v-if="log.type === 'HTML'">
-                                    <div class="html-div" v-html="log.message"></div>
-                                </div>
-                                <div v-if="log.type === 'IMAGE'">
-                                    <img class="image" :src="'data:image/png;base64,' + log.message">
-                                </div>
-                            </div>
-                        </template>
+                            </template>
+                        </div>
                     </div>
-                </div>
+                </transition>
             </div>
         </div>
 
@@ -198,6 +229,7 @@
     import TagComponent from '../components/widgets/Select2.vue'
     import TextComponent from '../components/widgets/Text.vue'
     import TextAreaComponent from '../components/widgets/TextArea.vue'
+    import Markdown from '../components/widgets/Markdown.vue'
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
@@ -238,6 +270,7 @@
             WorkflowProperty,
             VuePerfectScrollbar,
             InputHeader,
+            Markdown,
             TahitiSuggester: () => {
                 return new Promise((resolve, reject) => {
                     let script = document.createElement('script')
@@ -268,7 +301,8 @@
                 resultTask: { step: {} },
                 saveOption: 'new',
                 selectedTask: { task: { operation: {} } },
-                showPreviousJobs: false,
+                showResults: true,
+
                 validationErrors: [],
                 workflow: { tasks: [], flows: [], platform: {} },
 
@@ -308,7 +342,6 @@
             this.on('onexecute-workflow', this.execute);
 
 
-            this.on('onremove-tasks', this.removeTasks);
             this.on('onclick-export', () => WorkflowService().exportWorkflow(this.workflow));
             this.on('onclick-execute', this.showExecuteWindow);
             this.on('onset-isDirty', this.setIsDirty);
@@ -377,31 +410,6 @@
                 this.workflow.tasks.push(task);
                 this.isDirty = true;
             });
-            this.on('onremove-task', (task) => {
-                // const self = this;
-                // this.instance.deleteConnectionsForElement(task.id);
-                // this.instance.removeAllEndpoints(task.id);
-                // let elem = document.getElementById(task.id)
-                // elem.parentNode.removeChild(elem);
-                // //console.debug(this.instance.getConnections());
-                // this.instance.repaintEverything();
-                // Vue.nextTick(function () {
-                //     self.$store.dispatch('removeTask', task);
-                //     self.clearSelection();
-                //     self.instance.repaintEverything();
-                // })
-                const inx = this.workflow.tasks.findIndex((n) => n.id === task.id);
-                if (inx > -1) {
-                    this.workflow.tasks.splice(inx, 1);
-                    // const flows = this.workflow.flows;
-                    // for (let i = flows.length - 1; i > 0; i--) {
-                    //     if (flows[i].source_id === task.id) {
-                    //         state.workflow.flows.splice(i, 1);
-                    //     }
-                    // }
-                }
-                this.isDirty = true;
-            });
             this.on('addFlow', (flow, jsPlumbConn) => {
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
@@ -445,6 +453,39 @@
             }
         },
         methods: {
+            scrollToTask(){
+
+            },
+            moveUp() {
+                const selected = this.selectedTask.task;
+                if (selected && selected.display_order > 1) {
+                    selected.display_order--;
+                    this.workflow.tasks.some((task, inx) => {
+                        if (task != selected && task.display_order === selected.display_order) {
+                            task.display_order++;
+                            const moved = this.workflow.tasks.splice(inx, 1); // remove item from old location
+                            this.workflow.tasks.splice(inx + 1, 0, moved[0]) // reinsert it at new location
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+            },
+            moveDown() {
+                const selected = this.selectedTask.task;
+                if (selected && selected.display_order < this.workflow.tasks.length) {
+                    selected.display_order++;
+                    this.workflow.tasks.some((task, inx) => {
+                        if (task != selected && task.display_order === selected.display_order) {
+                            task.display_order--;
+                            const moved = this.workflow.tasks.splice(inx, 1); // remove item from old location
+                            this.workflow.tasks.splice(inx - 1, 0, moved[0]) // reinsert it at new location
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+            },
             fillPortsByInterface() {
                 const self = this;
                 self.workflow.tasks.forEach(task => {
@@ -459,7 +500,7 @@
                             if (!ports.has(ifce.name)) {
                                 ports.set(ifce.name, new Map());
                             }
-                            ports.get(ifce.name).set(task.id, {task, portId: port.id});
+                            ports.get(ifce.name).set(task.id, { task, portId: port.id });
                         });
                     });
                 });
@@ -523,9 +564,6 @@
                 this.resultTask = task;
                 this.$refs.taskResultModal.show();
             },
-            showJobs() {
-                this.showPreviousJobs = true
-            },
             align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
             },
@@ -534,7 +572,7 @@
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                     (resp) => {
                         const workflow = resp.data;
-                        workflow.tasks = workflow.tasks.sort((a, b) => { return b.order - a.order; });
+                        workflow.tasks = workflow.tasks.sort((a, b) => { return a.display_order - b.display_order; });
 
                         this.$Progress.start()
                         const params = {
@@ -783,6 +821,23 @@
                 this.saveWorkflow(false).then(() => {
                     self._execute();
                 });
+            },
+            removeTask(task) {
+                const inx = this.workflow.tasks.findIndex((n) => n.id === task.id);
+                if (inx > -1) {
+                    this.workflow.tasks.splice(inx, 1);
+                    const flows = this.workflow.flows;
+                    const flowCount = flows.length;
+                    for (let i = flowCount - 1; i >= 0; i--) {
+                        if (flows[i].source_id === task.id || flows[i].target_id === task.id) {
+                            flows.splice(i, 1);
+                        }
+                    }
+                }
+                this.isDirty = true;
+            },
+            toggleResults() {
+                this.showResults = !this.showResults;
             },
             _execute() {
                 const self = this;
@@ -1035,5 +1090,23 @@
         flex: 1 1 20%;
         margin: 0 15px 5px 5px !important;
         border: 0px dashed green;
+    }
+
+    div.selected-row {
+        box-shadow: inset 0px 0px 20px 20px #dfe9f2;
+    }
+
+    .slide-fade-enter-active {
+        transition: all .3s ease;
+    }
+
+    .slide-fade-leave-active {
+        transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+
+    .slide-fade-enter,
+    .slide-fade-leave-to
+        {
+            line-height: 0;
     }
 </style>

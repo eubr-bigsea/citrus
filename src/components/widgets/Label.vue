@@ -28,4 +28,7 @@
     }
 </script>
 <style scoped>
+    .label {
+        font-size: .9em;
+    }
 </style>

@@ -39,6 +39,7 @@ import {
     faEdit,
     faTrash,
     faToggleOn,
+    faToggleOff,
     faObjectGroup,
     faQuestionCircle,
     faAsterisk,
@@ -64,7 +65,8 @@ import {
     faExclamationCircle,
     faChevronLeft,
     faStop,
-    faShareAlt
+    faShareAlt,
+    faProjectDiagram
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -119,6 +121,7 @@ library.add(
     faUserEdit,
     faTrash,
     faToggleOn,
+    faToggleOff,
     faObjectGroup,
     faQuestionCircle,
     faAsterisk,
@@ -145,7 +148,8 @@ library.add(
     faExclamationCircle,
     faChevronLeft,
     faStop,
-    faShareAlt
+    faShareAlt,
+    faProjectDiagram,
 );
 
 import {
