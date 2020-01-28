@@ -1,5 +1,8 @@
 <template>
-    <div>
+    <div v-if="readOnly">
+        {{selected}}
+    </div>
+    <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <select class="form-control input-sm" v-bind:data-field="field.name" v-model="selected" @change="updated">
             <option v-if="!field.default"></option>
@@ -32,7 +35,7 @@
         methods: {
             updated(e) {
                 this.selected = e.target.value;
-                this.$root.$emit(this.message, this.field, e.target.value, 
+                this.$root.$emit(this.message, this.field, e.target.value,
                     e.target.options[e.target.selectedIndex].text);
             }
         },
@@ -40,7 +43,8 @@
             value: 0, field: null, language: { default: 'en' }, message: {
                 type: String,
                 default: 'update-form-field-value'
-            }        
+            },
+            readOnly: false
         },
         ready: function () {
             //console.debug(this.field, this.field['default'], this.value)

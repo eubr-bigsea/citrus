@@ -1,15 +1,20 @@
 <template>
-    <div>
+    <div v-if="readOnly">
+        <span>{{value ? value.join(', '): ''}}</span>
+    </div>
+    <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="multiple">
-            <textarea readonly :value="value ? value.join(', '): ''" class="form-control pointer" @click.prevent="openModal"></textarea>
+            <textarea readonly :value="value ? value.join(', '): ''" class="form-control pointer"
+                @click.prevent="openModal"></textarea>
             <!--
             <a href="#" @click.prevent="openModal">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
             </a>
             -->
-            <b-modal size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+            <b-modal size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal"
+                no-fade>
                 <div slot="default">
                     <div class="row">
                         <div class="col-md-4 offset-md-1 p-0">
@@ -66,6 +71,7 @@
             </v-select>
         </div>
     </div>
+
 </template>
 <script>
     import vSelect from "vue-select";
@@ -160,17 +166,18 @@
                 this.updated([... this.originalValue]);
                 this.$refs.modal.hide();
             },
-            openModal(){
+            openModal() {
                 this.$refs.modal.show();
-                if (this.suggestionEvent){
+                if (this.suggestionEvent) {
                     this.suggestions = this.suggestionEvent();
                 }
             }
         },
         props: {
             single: { default: false },
-            value: "", field: null, 
+            value: "", field: null,
             parentId: null,
+            readOnly: false,
             message: {
                 type: String,
                 default: 'update-form-field-value'
@@ -238,6 +245,7 @@
     div.selected-attr {
         background: #DDDDDD
     }
+
     .pointer {
         cursor: pointer;
     }

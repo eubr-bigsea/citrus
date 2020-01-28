@@ -1,5 +1,8 @@
 <template>
-    <div class="mb-1">
+    <div v-if="readOnly">
+        {{label ? (selected + ' - ' + label): ''}}
+    </div>
+    <div v-else class="mb-1">
         <LabelComponent :field="field" :value="value"></LabelComponent>
 
         <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
@@ -152,7 +155,8 @@
             message: {
                 type: String,
                 default: 'update-form-field-value'
-            }
+            },
+            readOnly: false,
         },
         ready: function () {
             //console.debug(this.field, this.field['default'], this.value)
