@@ -35,19 +35,48 @@
                                         v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
                                             <component :is="field.suggested_widget + '-component'" :field="field"
-                                                :value="getValue(field.name)" 
-                                                :suggestionEvent="suggestionEvent"
+                                                :value="getValue(field.name)" :suggestionEvent="suggestionEvent"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
                                                 context="context">
                                             </component>
-
                                         </keep-alive>
+                                        
                                     </div>
+                                </b-tab>
+                                <b-tab v-if="publishingEnabled" :title="$tc('titles.publication')"
+                                    :title-link-class="'small-nav-link'">
+                                    {{$t('workflow.publishingEnabledExplanation')}}
+                                    <table class="table table-sm table-striped table-bordered">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th></th>
+                                                <th>{{$tc('titles.property')}}</th>
+                                                <th>{{$tc('titles.value')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-for="(form, index) in forms">
+                                                <tr v-for="field in form.fields" :key="field.name" v-if="form.category === 'execution' && field.enabled" >
+                                                    <td>
+                                                        <b-checkbox></b-checkbox>
+                                                    </td>
+                                                    <td>{{field.label}}</td>
+                                                    <td>
+                                                        <component :is="field.suggested_widget + '-component'"
+                                                            :field="field" :value="getValue(field.name)"
+                                                            :type="field.suggested_widget" context="context"
+                                                            :read-only="true">
+                                                        </component>
+                                                        {{task.forms[field.name]}}
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
                                 </b-tab>
                             </b-tabs>
                         </b-card>
-
                     </form>
                     <div class="card-body">
                         {{task.id}}
@@ -67,7 +96,6 @@
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
-    // import AttributeSelectorComponent from './widgets/AttributeSelector2.vue'
     import AttributeSelector2Component from './widgets/AttributeSelector2.vue'
     import CheckboxComponent from './widgets/Checkbox.vue'
     import CodeComponent from './widgets/Code.vue'
@@ -91,11 +119,13 @@
         computed: {
             docReferenceUrl() {
                 return `${referenceUrl}/${this.task.operation.slug}`;
+            },
+            propertiesForPublishing() {
+                return Object.keys(this.task.forms).sort((a, b) => a.localeCompare(b));
             }
         },
         components: {
             'attribute-function-component': AttributeFunctionComponent,
-            // 'attribute-selector-component': AttributeSelectorComponent,
             'attribute-selector-component': AttributeSelector2Component,
             'checkbox-component': CheckboxComponent,
             'code-component': CodeComponent,
@@ -136,8 +166,8 @@
                 return function () { return eval(js); }.call(context);
             },
             update() {
-                let self = this;
-                let callback = () => {
+                const self = this;
+                const callback = () => {
                     self.filledForm = self.task.forms;
                     self.forms = self.task.operation.forms.sort((a, b) => {
                         return a.order - b.order;
@@ -201,6 +231,7 @@
         props: {
             task: { type: Object, default: {} },
             suggestionEvent: null,
+            publishingEnabled: false
         },
         watch: {
             task() {
@@ -210,10 +241,6 @@
     }
 </script>
 <style scoped>
-    .property {
-        padding: 3px 0;
-    }
-
     .property-help {
         font-size: 1.2em;
     }
@@ -233,7 +260,6 @@
 
     .properties {
         background: #fff;
-        border: 1px solid #aaa;
         height: calc(100vh - 300px);
         zoom: 100%;
         font-size: .75rem
@@ -243,9 +269,8 @@
     .props .card-body {
         flex: inherit
     }
-
     .small-nav-link {
-        padding: 5px 10px !important;
+        padding: 5px 8px !important;
         margin: 0;
     }
 
