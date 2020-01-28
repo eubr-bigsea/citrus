@@ -7,21 +7,29 @@
             <b-form-group :label="$tc('common.description', 1) + ':'">
                 <b-form-textarea v-model="workflow.description" :rows="3" :max-rows="6" />
             </b-form-group>
-            <b-form-checkbox v-model="workflow.is_template">
+            <SwitchComponent v-model="workflow.is_template" :checked="workflow.is_template">
                 {{$t('workflow.useAsTemplate')}}
-                <br />
-                <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
-            </b-form-checkbox>
+            </SwitchComponent>
+            <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
+
+            <SwitchComponent v-model="workflow.publishing_enabled" :checked="workflow.publishing_enabled">
+                {{$t('workflow.publishingEnabled')}}
+            </SwitchComponent>
+            <small><em>{{$t('workflow.publishingEnabledExplanation')}}</em></small>
         </b-form>
         <div slot="modal-footer">
-                <b-btn variant="primary" class="float-right mr-1" @click="okClicked" :disabled="(workflow.name === '')">
-                    {{$t('common.ok')}}
-                </b-btn>
-            </div>
+            <b-btn variant="primary" class="float-right mr-1" @click="okClicked" :disabled="(workflow.name === '')">
+                {{$t('common.ok')}}
+            </b-btn>
+        </div>
     </b-modal>
 </template>
 <script>
+    import SwitchComponent from '../../components/widgets/Switch.vue'
     export default {
+        components: {
+            SwitchComponent
+        },
         props: {
             loaded: false,
             workflow: {},

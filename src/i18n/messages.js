@@ -83,6 +83,7 @@ export default {
             dontHaveAccount: 'Não possui uma conta?',
             email: 'E-mail',
             enabled: 'Habilitado',
+            false: 'Falso',
             filter: 'Filtro',
             filterPlaceholder: 'Busca',
             firstName: 'Primeiro nome',
@@ -143,6 +144,7 @@ export default {
             tag: 'Tag | Tags',
             tags: 'Tags',
             title: 'Título',
+            true: 'Verdadeiro',
             type: 'Tipo | Tipos',
             updated: 'Atualizado',
             userId: 'Id de usuário',
@@ -246,10 +248,10 @@ export default {
                 'Existem alterações que ainda não foram salvas. Deseja sair assim mesmo?'
         },
         import: {
-            description: 'Importe um arquivo com a definição do fluxo de trabalho.' + 
+            description: 'Importe um arquivo com a definição do fluxo de trabalho.' +
                 'O arquivo deve estar no formato correto e ser compatível com a versão do Lemonade. ',
             review: 'Após a importação, certifique-se de atualizar as fontes de dados, pois elas NÃO são importadas ' +
-                    'junto com o fluxo de trabalho.',
+                'junto com o fluxo de trabalho.',
             selectFile: 'Por favor, selecione um arquivo.'
         },
         job: {
@@ -379,6 +381,7 @@ export default {
             project: 'Projeto | Projetos',
             team: 'Time | Times',
             property: 'Propriedade | Propriedades',
+            publication: 'Publicação | Publicações',
             register: 'Registrar',
             resetPassword: 'Redefinir senha',
             storage: 'Armazenamento | Armazenamentos',
@@ -433,6 +436,8 @@ export default {
             jobName: 'Nome para a execução',
             newName:
                 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
+            publishingEnabled: 'Habilitar publicação do fluxo de trabalho',
+            publishingEnabledExplanation: 'Permite que o fluxo de trabalho seja publicado para os usuários.',
             required:
                 'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
             restoreHistory:
@@ -533,6 +538,7 @@ export default {
             dontHaveAccount: "Don't have an account?",
             email: 'E-mail',
             enabled: 'Enabled',
+            false: 'False',
             filter: 'Filter',
             filterPlaceholder: 'Search',
             firstName: 'First name',
@@ -593,6 +599,7 @@ export default {
             tag: 'Tag | Tags',
             tags: 'Tags',
             title: 'Title',
+            true: 'True',
             type: 'Type | Types',
             updated: 'Updated',
             userId: 'User id',
@@ -715,10 +722,10 @@ export default {
             newCell: 'New cell',
         },
         import: {
-            description: 'You may import a file containing a workflow definition. ' + 
+            description: 'You may import a file containing a workflow definition. ' +
                 'Imported file must be in the correct format and be compatible with Lemonade version. ',
             review: 'After importing, be sure to update the data sources because they are NOT imported ' +
-                    'with the workflow.',
+                'with the workflow.',
             selectFile: 'Please, select a file'
         },
         job: {
@@ -763,6 +770,7 @@ export default {
             project: 'Project | Projects',
             team: 'Team | Teams',
             property: 'Property | Properties',
+            publication: 'Publications | Publications',
             register: 'Sign up',
             resetPassword: 'Reset password',
             storage: 'Storage | Storages',
@@ -863,6 +871,8 @@ export default {
             jobName: 'Job name',
             newName:
                 'New name (a copy of the workflow will be created, but not loaded)',
+            publishingEnabled: 'Enable workflow to be published',
+            publishingEnabledExplanation: 'Allows workflow to be published to users.',
             required:
                 'Please, complete the required information for the execution of the workflow',
             restoreHistory: 'Do you really want to restore this workflow version?',

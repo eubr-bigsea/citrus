@@ -22,8 +22,7 @@
                         </template>
                         <div class="card mt-1" style="min-height: 90vh">
                             <div class="card-body">
-                                <WorkflowProperty v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded">
-                                </WorkflowProperty>
+                                <WorkflowProperty v-if="loaded" :form="form" :workflow="workflow" :loaded="loaded" />
                             </div>
                         </div>
                     </b-tab>
@@ -32,7 +31,7 @@
                             <div class="row">
                                 <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
                                     <toolbox :operations="operations" :workflow="workflow"
-                                        :selected-task='selectedTask.task'></toolbox>
+                                        :selected-task='selectedTask.task' />
                                 </div>
                                 <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
                                     <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
@@ -40,7 +39,8 @@
                                         tabindex="0"></diagram>
                                     <slideout-panel :opened="showProperties">
                                         <property-window :task="selectedTask.task" v-if="selectedTask.task"
-                                        :suggestionEvent="() => getSuggestions(selectedTask.task.id)" />
+                                            :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
+                                            :publishingEnabled="workflow.publishing_enabled" />
                                     </slideout-panel>
                                 </div>
                             </div>
@@ -59,10 +59,9 @@
                     </b-tab>
 
                 </b-tabs>
-                <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" 
-                    :clusterInfo="clusterInfo" :validationErrors="validationErrors"
-                    :workflow="workflow"/>
-                <ModalWorkflowHistory ref="historyModal" :history="history"/>
+                <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
+                    :validationErrors="validationErrors" :workflow="workflow" />
+                <ModalWorkflowHistory ref="historyModal" :history="history" />
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
@@ -223,25 +222,24 @@
                     self.selectedTask.task.forms[field.name] = { value: value }
                 }
                 self._validateTasks([self.selectedTask.task]);
-                return;
-                // FIXME: Review this code. It is used to save the label
-                // if (! self.selectedTask.task.forms){
-                //     self.selectedTask.task.forms = {};
-                // }
-                // let fieldInSelectedTask = self.selectedTask.task.forms[field.name];
-                // if (fieldInSelectedTask) {
-                //     fieldInSelectedTask.value = value
-                // } else {
-                //     fieldInSelectedTask = { value: value }
-                // }
-                // fieldInSelectedTask.label = field.label;
-                // if (labelValue) {
-                //     fieldInSelectedTask.labelValue = labelValue
-                // } else if (fieldInSelectedTask.labelValue){
-                //     delete fieldInSelectedTask.labelValue
-                // }
-                // self._validateTasks([self.selectedTask.task]);
-                // this.isDirty = true;
+
+                // Used to save the label with the job
+                if (! self.selectedTask.task.forms){
+                    self.selectedTask.task.forms = {};
+                }
+                const fieldInSelectedTask = self.selectedTask.task.forms[field.name];
+                if (fieldInSelectedTask) {
+                    fieldInSelectedTask.value = value
+                } else {
+                    fieldInSelectedTask = { value: value }
+                }
+                fieldInSelectedTask.label = field.label;
+                if (labelValue) {
+                    console.debug('Label', labelValue)
+                    fieldInSelectedTask.labelValue = labelValue
+                } else if (fieldInSelectedTask.labelValue){
+                    delete fieldInSelectedTask.labelValue
+                }
             });
             this.$root.$on('update-workflow-form-field-value', (field, value, labelValue) => {
                 const self = this;
@@ -370,8 +368,7 @@
         },
         methods: {
             leaving(event) {
-                let self = this;
-                if (self.isDirty) {
+                if (this.isDirty) {
                     event.preventDefault();
                     event.returnValue = false;
                 }
@@ -391,7 +388,6 @@
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
             updateSelectedTab(index) {
                 //this.selectedTab = index;
-                console.debug(index)
                 this.$refs.diagram.repaint();
             },
             load() {
@@ -866,20 +862,6 @@
         height: 60vh;
         overflow: auto
     }
-
-    .edit-area {
-        -ms-flex: 0 0 230px;
-        flex: 0 0 230px;
-        background-color: greenyellow;
-    }
-
-    .sidebar {
-        -ms-flex: 0 0 230px;
-        flex: 0 0 230px;
-        background-color: greenyellow;
-        max-width: 250px;
-    }
-
     .atmosphere h3 {
         text-align: center;
         color: #aaa;
