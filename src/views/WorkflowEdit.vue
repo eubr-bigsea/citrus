@@ -13,7 +13,22 @@
                         <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
                     </div>
                 </div>
-
+                <div class="row border-top pt-1">
+                    <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
+                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
+                    </div>
+                    <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
+                        <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
+                            :operations="operations" :loaded="loaded" :version="workflow.version" tabindex="0">
+                        </diagram>
+                        <slideout-panel :opened="showProperties">
+                            <property-window :task="selectedTask.task" v-if="selectedTask.task"
+                                :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
+                                :publishingEnabled="workflow && workflow.publishing_enabled" />
+                        </slideout-panel>
+                    </div>
+                </div>
+                <!--
                 <b-tabs ref="formTabs" v-model="selectedTab" nav-class="custom-tab" @input="updateSelectedTab">
                     <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
                         :key="form.id" :active="form.order === minFormOrder">
@@ -59,12 +74,15 @@
                     </b-tab>
 
                 </b-tabs>
+                -->
+                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow"/>
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
                     :validationErrors="validationErrors" :workflow="workflow" />
                 <ModalWorkflowHistory ref="historyModal" :history="history" />
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
+                <WorkflowExecution ref="executionModal" :workflow-id="workflow.id" />
             </div>
         </div>
     </main>
@@ -77,6 +95,7 @@
     import InputHeader from '../components/InputHeader.vue';
     import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
     import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
+    import ModalWorkflowVariables from './modal/ModalWorkflowVariables.vue'
     import ModalTaskResults from './modal/ModalTaskResults.vue'
     import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue'
     import ModalExecuteWorkflow from './modal/ModalExecuteWorkflow.vue'
@@ -108,6 +127,7 @@
             ModalTaskResults,
             ModalWorkflowHistory,
             ModalWorkflowProperties,
+            ModalWorkflowVariables,
 
             WorkflowProperty,
             WorkflowExecution,
@@ -179,6 +199,8 @@
                 this.saveAsImage()
             });
             this.$root.$on('onsave-workflow', () => this.saveWorkflow(false));
+            this.$root.$on('onshow-executions', () => this.$refs.executionModal.show());
+            this.$root.$on('onshow-variables', () => this.$refs.variablesModal.show());
             this.$root.$on('onsave-workflow-as', (saveOption, newName) => {
                 if (saveOption === 'new') {
                     this.saveWorkflow(true, newName);
@@ -224,7 +246,7 @@
                 self._validateTasks([self.selectedTask.task]);
 
                 // Used to save the label with the job
-                if (! self.selectedTask.task.forms){
+                if (!self.selectedTask.task.forms) {
                     self.selectedTask.task.forms = {};
                 }
                 const fieldInSelectedTask = self.selectedTask.task.forms[field.name];
@@ -237,7 +259,7 @@
                 if (labelValue) {
                     console.debug('Label', labelValue)
                     fieldInSelectedTask.labelValue = labelValue
-                } else if (fieldInSelectedTask.labelValue){
+                } else if (fieldInSelectedTask.labelValue) {
                     delete fieldInSelectedTask.labelValue
                 }
             });
@@ -862,6 +884,7 @@
         height: 60vh;
         overflow: auto
     }
+
     .atmosphere h3 {
         text-align: center;
         color: #aaa;

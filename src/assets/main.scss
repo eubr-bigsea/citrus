@@ -343,3 +343,9 @@ h1 {
 .modal-dialog {
     margin: 2vh auto 0px auto;
 }
+.modal-header {
+     padding: .5rem 1rem;
+     h5 {
+        font-size: 1em !important;
+     }
+}

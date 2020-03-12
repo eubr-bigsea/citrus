@@ -87,25 +87,41 @@
                                                 </b-tab>
                                                 <b-tab :title="$tc('job.parameters', 2)"
                                                     style="max-height: 70vh; overflow: auto" v-if="job.workflow">
-                                                    <div class="card" v-for="task in job.workflow.tasks">
+                                                    <div class="card">
                                                         <div class="card-body" style="overflow: auto">
-                                                            {{task.name}} ({{task.operation.name}})
-                                                            <table class="table table-sm table-parameters">
-                                                                <thead>
-                                                                    <tr></tr>
-                                                                    <tr>
-                                                                        <th>{{$tc('job.parameters', 1)}}</th>
-                                                                        <th>{{$tc('job.values', 1)}}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr v-for="(v, k, i) in task.forms">
-                                                                        <td>{{v.label ? v.label : k}}</td>
-                                                                        <td>{{v.labelValue ? v.labelValue: v.value}}
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
+                                                            <template v-for="task in job.workflow.tasks">
+                                                                {{task.name}} ({{task.operation.name}})
+                                                                <table class="table table-sm table-parameters">
+                                                                    <thead>
+                                                                        <tr></tr>
+                                                                        <tr>
+                                                                            <th>{{$tc('job.parameters', 1)}}</th>
+                                                                            <th>{{$tc('job.values', 1)}}</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <template v-for="f in task.operation.forms"
+                                                                            v-if="f.category === 'execution'">
+                                                                            <tr v-for="field in f.fields"
+                                                                                v-if="task.forms[field.name]">
+                                                                                <td>{{task.forms[field.name].label ? task.forms[field.name].label : field.name}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    <component
+                                                                                        :is="field.suggested_widget + '-component'"
+                                                                                        :field="field"
+                                                                                        :value="task.forms[field.name].labelValue ? task.forms[field.name].labelValue: task.forms[field.name].value"
+                                                                                        :type="field.suggested_widget"
+                                                                                        context="context"
+                                                                                        :read-only="true">
+                                                                                    </component>
+                                                                                    
+                                                                                </td>
+                                                                            </tr>
+                                                                        </template>
+                                                                    </tbody>
+                                                                </table>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                 </b-tab>
@@ -467,9 +483,11 @@
     .html-div .table th {
         padding: 0.3rem;
     }
+
     .html-div h4 {
         font-size: 1.1em;
     }
+
     .alternate {
         background: #eee;
     }

@@ -158,6 +158,22 @@ export default {
             version: 'Versão',
             yes: 'Sim'
         },
+        dataTypes: {
+            'BINARY': 'Binário',
+            'CHARACTER': 'Texto curto',
+            'DOUBLE': 'Ponto flutuante com mais precisão',
+            'DECIMAL': 'Decimal',
+            'DATE': 'Data',
+            'DATETIME': 'Data e hora',
+            'FILE': 'Envio de arquivo',
+            'FLOAT': 'Ponto flutante com menor precisão',
+            'INTEGER': 'Inteiro',
+            'LONG': 'Inteiro longo',
+            'TEXT': 'Texto longo',
+            'TIME': 'Hora',
+            'TIMESTAMP': 'Timestamp',
+            'VECTOR': 'Vetor'
+        },
         dataSource: {
             alternativeUseDatabase:
                 'Recomenda-se esta opção apenas se você está seguro que a conexão ao servidor de banco de dados está corretamente configurada.',
@@ -438,6 +454,7 @@ export default {
                 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
             publishingEnabled: 'Habilitar publicação do fluxo de trabalho',
             publishingEnabledExplanation: 'Permite que o fluxo de trabalho seja publicado para os usuários.',
+            publishingSelect: 'Selecione as propriedades que podem ser alteradas pelos usuários para fluxos de trabalho publicados.',
             required:
                 'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
             restoreHistory:
@@ -449,7 +466,8 @@ export default {
                 'Você poderá criar outros fluxos de trabalho a partir deste. Na tela de novo fluxo de trabalho, escolha a opção "A partir de um modelo".',
             usingDisabledOperation: 'Tarefa usa operação desabilitada no Lemonade',
             validationExplanation:
-                'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.'
+                'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.',
+            variables: 'Variável | Variáveis',
         }
     },
 
@@ -612,6 +630,22 @@ export default {
             },
             version: 'Version',
             yes: 'Yes'
+        },
+        dataTypes: {
+            'BINARY': 'Binary',
+            'CHARACTER': 'Short text',
+            'DOUBLE': 'Float with double precision',
+            'DECIMAL': 'Decimal',
+            'DATE': 'Date',
+            'DATETIME': 'Date and hour',
+            'FILE': 'File upload',
+            'FLOAT': 'Float',
+            'INTEGER': 'Integer',
+            'LONG': 'Long integer',
+            'TEXT': 'Long text',
+            'TIME': 'Time',
+            'TIMESTAMP': 'Timestamp',
+            'VECTOR': 'Vector'
         },
         dataSource: {
             alternativeUseDatabase:
@@ -873,6 +907,7 @@ export default {
                 'New name (a copy of the workflow will be created, but not loaded)',
             publishingEnabled: 'Enable workflow to be published',
             publishingEnabledExplanation: 'Allows workflow to be published to users.',
+            publishingSelect: 'Select properties that may be changed by users for published workflows.',
             required:
                 'Please, complete the required information for the execution of the workflow',
             restoreHistory: 'Do you really want to restore this workflow version?',
@@ -883,7 +918,8 @@ export default {
                 'You will be able to create a new workflow from this. When adding a new workflow, choose the option  "From template".',
             usingDisabledOperation: 'Task is using a disabled operation in Lemonade',
             validationExplanation:
-                'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.'
+                'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.',
+            variables: 'Variable | Variables',
         }
     }
 };

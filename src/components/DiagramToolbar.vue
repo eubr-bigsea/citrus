@@ -38,11 +38,6 @@
             </b-btn>
 
         </b-button-group>
-        <b-button-group>
-            <b-btn size="sm" variant="secondary" @click.prevent="showProperties" :title="$t('actions.showProperties')">
-                <span class="fa fa-cogs"></span>
-            </b-btn>
-        </b-button-group>
 
         <b-input-group size="sm" class="mx-1 zoom">
             <b-form-select v-model="zoom" :options="[
@@ -117,9 +112,6 @@
             execute() {
                 this.$root.$emit('onclick-execute');
             },
-            showProperties() {
-                this.$root.$emit('onshow-properties')
-            }
         },
         watch: {
             zoom() {

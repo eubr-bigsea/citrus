@@ -41,12 +41,14 @@
                                                 context="context">
                                             </component>
                                         </keep-alive>
-                                        
+
                                     </div>
                                 </b-tab>
                                 <b-tab v-if="publishingEnabled" :title="$tc('titles.publication')"
                                     :title-link-class="'small-nav-link'">
-                                    {{$t('workflow.publishingEnabledExplanation')}}
+                                    <div class="alert alert-info p-2 mt-1 mb-1">
+                                        {{$t('workflow.publishingSelect')}}
+                                    </div>
                                     <table class="table table-sm table-striped table-bordered">
                                         <thead class="thead-light">
                                             <tr>
@@ -57,9 +59,11 @@
                                         </thead>
                                         <tbody>
                                             <template v-for="(form, index) in forms">
-                                                <tr v-for="field in form.fields" :key="field.name" v-if="form.category === 'execution' && field.enabled" >
+                                                <tr v-for="field in form.fields" :key="field.name"
+                                                    v-if="form.category === 'execution' && field.enabled">
                                                     <td>
-                                                        <b-checkbox></b-checkbox>
+                                                        <b-checkbox v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
+                                                        </b-checkbox>
                                                     </td>
                                                     <td>{{field.label}}</td>
                                                     <td>
@@ -95,22 +99,7 @@
 <script>
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-    import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
-    import AttributeSelector2Component from './widgets/AttributeSelector2.vue'
-    import CheckboxComponent from './widgets/Checkbox.vue'
-    import CodeComponent from './widgets/Code.vue'
-    import ColorComponent from './widgets/Color.vue'
-    import DecimalComponent from './widgets/Decimal.vue'
-    import DropDownComponent from './widgets/DropDown.vue'
-    import ExpressionComponent from './widgets/ExpressionEditor.vue'
-    import IntegerComponent from './widgets/Integer.vue'
-    import LookupComponent from './widgets/Lookup.vue'
-    import RangeComponent from './widgets/Range.vue'
-    import Select2Component from './widgets/Select2.vue'
     import SwitchComponent from './widgets/Switch.vue'
-    import TagComponent from './widgets/Select2.vue'
-    import TextComponent from './widgets/Text.vue'
-    import TextAreaComponent from './widgets/TextArea.vue'
 
     const referenceUrl = process.env.VUE_APP_REFERENCE_BASE_URL;
 
@@ -125,22 +114,6 @@
             }
         },
         components: {
-            'attribute-function-component': AttributeFunctionComponent,
-            'attribute-selector-component': AttributeSelector2Component,
-            'checkbox-component': CheckboxComponent,
-            'code-component': CodeComponent,
-            'color-component': ColorComponent,
-            'decimal-component': DecimalComponent,
-            'dropdown-component': DropDownComponent,
-            'expression-component': ExpressionComponent,
-            'integer-component': IntegerComponent,
-            'lookup-component': LookupComponent,
-            'percentage-component': RangeComponent,
-            'range-component': RangeComponent,
-            'select2-component': Select2Component,
-            'tag-component': TagComponent,
-            'text-component': TextComponent,
-            'textarea-component': TextAreaComponent,
             SwitchComponent,
             VuePerfectScrollbar,
 
@@ -255,7 +228,7 @@
 
     .props {
         width: 350px;
-        height: calc(100vh - 300px);
+        height: calc(100vh - 200px);
     }
 
     .properties {
@@ -269,6 +242,7 @@
     .props .card-body {
         flex: inherit
     }
+
     .small-nav-link {
         padding: 5px 8px !important;
         margin: 0;
