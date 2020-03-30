@@ -9,14 +9,14 @@
                         <div class="float-right navbar-brand logo" />
                         <form @submit.prevent="login">
                             <div class="form-group">
-                                <label for="email">{{ $t('common.email') }}</label>
+                                <label for="email">{{ $t('common.email') }}:</label>
                                 <input v-model="email" required type="email" class="form-control" placeholder="Name"
                                     autofocus autocomplete="username" />
                             </div>
 
                             <div class="form-group">
                                 <label for="password">
-                                    {{ $t('common.password') }}
+                                    {{ $t('common.password') }}:
                                     <router-link class="float-right" to="/reset_password">{{$t('common.forgotPassword')}}</router-link>
                                 </label>
                                 <div style="position:relative">
@@ -31,8 +31,9 @@
 
                             <div class="form-group">
                                 <label>
-                                    <input v-model="rememberPassword" type="checkbox" />
+                                    <b-check v-model="rememberPassword">
                                     {{ $t('common.rememberMe') }}
+                                    </b-check>
                                 </label>
                             </div>
 
@@ -103,11 +104,7 @@
                     .dispatch('login', { thornUrl, user: { email, password } })
                     .then(() => this.$router.push('/'))
                     .catch(e => {
-                        var err = e;
-                        if (e.response.data.errors[0]) {
-                            err = { message: `${e.response.data.errors[0].detail}` };
-                        }
-                        this.error(err);
+                       this.error(e.response.data);
                     });
             }
         }

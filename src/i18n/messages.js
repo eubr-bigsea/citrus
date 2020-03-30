@@ -44,6 +44,7 @@ export default {
             saveAs: 'Salvar como',
             saveAsImage: 'Salvar como imagem',
             search: 'Pesquisar',
+            share: 'Compartilhar',
             show: 'Exibir',
             showHistory: 'Exibir histórico',
             showProperties: 'Exibir propriedades',
@@ -85,14 +86,14 @@ export default {
             enabled: 'Habilitado',
             filter: 'Filtro',
             filterPlaceholder: 'Busca',
-            firstName: 'Primeiro nome',
+            firstName: 'Nome',
             forgotPassword: 'Esqueceu a senha?',
             format: 'Formato',
             hide: 'Ocultar',
             history: 'Histórico',
             id: 'Id',
             language: 'Idioma',
-            lastName: 'Último nome',
+            lastName: 'Sobrenome',
             limit: 'Limite',
             loading: 'Carregando',
             login: 'Entrar',
@@ -134,7 +135,7 @@ export default {
             preview: 'Pré-visualização',
             rememberMe: 'Lembrar minha senha',
             resetPassword: 'Redefinir',
-            roles: 'Perfil',
+            roles: 'Perfil | Perfis',
             saveBeforeToEnableThis: 'Salve os dados para habilitar a ação {what}',
             scale: 'Escala',
             sharing: 'Compartilhamento',
@@ -150,8 +151,14 @@ export default {
             userName: 'Nome do usuário',
             userRole: 'Usuário',
             user: {
+                authenticationType: 'Tipo de autenticação',
+                authenticationInternal: 'Interna',
+                authenticationLdap: 'LDAP',
+                authenticationAd: 'AD',
+                full_name: 'Nome',
                 name: 'Nome do usuário',
-                login: 'Login do usuário'
+                login: 'Login do usuário',
+                notes: 'Nota | Notas',
             },
             version: 'Versão',
             yes: 'Sim'
@@ -221,6 +228,7 @@ export default {
                 'Para exibir as propriedades de uma tarefa, clique 2x sobre ela.'
         },
         errors: {
+            acceptTerms: 'Você deve concordar com os termos de uso',
             disconnected:
                 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
             emailNotFound: 'Email não cadastrado.',
@@ -271,19 +279,27 @@ export default {
             }
         },
         messages: {
-            acceptTerms: 'Concordo com os termos de uso <a href="{link}">Policy</a>',
+            acceptTerms: 'Concordo com os <a href="{link}">termos de uso</a>.',
             doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
             doYouWantToConfirm: 'Tem certeza que você quer confirmar esse usuário?',
             confirmRemove: 'Tem certeza que você quer excluir esse registro?',
             exportWorkflow: 'Fluxo de trabalho exportado usando a versão atual.',
             successDeletion: '{what} foi removido com sucesso',
             successImport: 'Fluxo de trabalho foi importado com o id={what}.',
+            resetPasswordInstructions: '<p>Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.</p>' +
+                '<p>Se você não receber esse e-mail, ' +
+                'verifique suas pastas de spam ou de lixo eletrônico e também ' + 
+                'adicione o endereço <strong>{email}</strong> ao seu catálogo de endereços. Você pode tentar redefinir sua senha a qualquer momento.</p>',
             registeredWithSuccess:
                 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
             savedWithSuccess: '{what} foi salvo(a) com sucesso!',
             noMatching: 'Lamentamos, nenhuma opção encontrada',
+            notesDescription: 'Essa descrição opcional é usada pelos administradores para aprovar novos usuários.',
             usingDisabledOperation:
-                'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.'
+                'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.',
+            welcome: '<p>A autorização para uso do Lemonade está depende da análise do seu registro por um administrador. </p>' +
+                '<p>Uma notificação já foi enviada para os administradores e em breve você receberá um e-email com a confirmação de seu registro.</p>' +
+                'Enquanto isto, você pode iniciar a leitura da documentação disponível em <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.'
         },
         model: {
             uploadExplanation:
@@ -300,7 +316,8 @@ export default {
             type_SPARK_ML_CLASSIFICATION: 'Classificação (Spark)',
             type_SPARK_ML_REGRESSION: 'Regressão (Spark)',
             type_SPARK_MLLIB_CLASSIFICATION: 'Classificação (MLLib)',
-            type_UNSPECIFIED: 'Não especificado'
+            type_UNSPECIFIED: 'Não especificado',
+
         },
         privacy: {
             anonymizationTechnique: 'Técnica de anonimização',
@@ -349,6 +366,7 @@ export default {
             administration: 'Administração',
             changePassword: 'Nova senha',
             cluster: 'Cluster | Clusters',
+            configuration: 'Configuração | Configurações',
             dataSource: 'Base de dados | Bases de dados',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Implantação | Implantações',
@@ -381,6 +399,7 @@ export default {
             validationErrors: 'Erro de validação | Erros de validação',
             value: 'Valor',
             warning: 'Aviso',
+            welcome: 'Bem-vindo(a) ao Lemonade!',
             whatIfModel: 'What if model?',
             workflow: 'Fluxo de trabalho | Fluxos de trabalho'
         },
@@ -484,6 +503,7 @@ export default {
             saveAs: 'Save as',
             saveAsImage: 'Save as image',
             search: 'Search',
+            share: 'Share',
             show: 'Show',
             showHistory: 'Show history',
             showProperties: 'Show properties',
@@ -574,7 +594,7 @@ export default {
             preview: 'Preview',
             rememberMe: 'Remember me',
             resetPassword: 'Reset',
-            roles: 'Role',
+            roles: 'Role | Roles',
             saveBeforeToEnableThis: 'Save data to enabled the {what} action',
             scale: 'Scale',
             sharing: 'Sharing',
@@ -590,8 +610,14 @@ export default {
             userName: 'User name',
             userRole: 'User',
             user: {
+                authenticationType: 'Authentication type',
+                authenticationInternal: 'Internal',
+                authenticationLdap: 'LDAP',
+                authenticationAd: 'AD',
+                full_name: 'Name',
                 name: 'User name',
-                login: 'User login'
+                login: 'User login',
+                notes: 'Note | Notes',
             },
             version: 'Version',
             yes: 'Yes'
@@ -658,6 +684,7 @@ export default {
             showProperties: 'Tip: Double click a task to show its properties'
         },
         errors: {
+            acceptTerms: 'You must accept the terms of service', 
             disconnected:
                 'You are disconnected. Please check if you have access to the Internet.',
             emailNotFound: 'Email not found.',
@@ -681,7 +708,7 @@ export default {
                 'This workflow has modifications that has not been saved. Do you want to leave anyway?'
         },
         messages: {
-            acceptTerms: 'I agree with the policy terms <a href="{link}">Policy</a>',
+            acceptTerms: 'I agree to the <a href="{link}">terms of service</a>.',
             doYouWantToDelete: 'Do you want to delete this record?',
             doYouWantToConfirm: 'Do you want to confirm this user?',
             exportWorkflow: 'Workflow exported using current version.',
@@ -690,10 +717,17 @@ export default {
             successImport: 'Workflow was imported as id={what}.',
             registeredWithSuccess:
                 'You were registered with success. Please, sign in again.',
+            resetPasswordInstructions: '<p>An email has been sent to your address. Follow the instructions to reset your password.</p>' +
+                '<p>If you do not receive this email, check your spam or junk folders and also ' + 
+                'add <strong>{email}</strong> to your address book. You can try to reset your password at any time.',
             savedWithSuccess: '{what} saved with success.',
             noMatching: 'Sorry, no matching options',
+            notesDescription: 'This optional description is used by administrators to approve new users.',
             usingDisabledOperation:
-                'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.'
+                'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.',
+            welcome: '<p>Approval for use of Lemonade depends on an administrator reviewing your registration.</p>' +
+                '<p>A notification has already been sent to administrators and you will soon receive an email with confirmation of your registration.</p>' +
+                '<p>In the meantime, you can start reading the documentation available at <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.'
         },
         import: {
             description: 'You may import a file containing a workflow definition. ' + 
@@ -725,6 +759,7 @@ export default {
             administration: 'Administration',
             changePassword: 'New password',
             cluster: 'Cluster | Clusters',
+            configuration: 'Configuration | Configurations',
             dataSource: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Deployment | Deployments',
@@ -755,6 +790,7 @@ export default {
             validationErrors: 'Validation error | Validation errors',
             value: 'Value',
             warning: 'Warning',
+            welcome: 'Welcome to Lemonade!',
             whatIfModel: 'What if model?',
             workflow: 'Workflow | Workflows'
         },

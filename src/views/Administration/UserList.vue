@@ -26,6 +26,9 @@
                                                 {{ props.row.full_name }}
                                             </router-link>
                                         </template>
+                                        <template slot="enabled" slot-scope="props">
+                                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                                        </template>
                                         <template slot="email" slot-scope="props">
                                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 {{ props.row.email }}
@@ -33,7 +36,9 @@
                                         </template>
                                         <template slot="roles" slot-scope="props">
                                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                {{ props.row.roles[0] && $t(`roles.${props.row.roles[0]}`) }}
+                                                <span v-for="role in props.row.roles" :key="role.id">
+                                                {{role.name}}
+                                                </span>
                                             </router-link>
                                         </template>
                                         <template slot="confirmed_at" slot-scope="props">
@@ -48,9 +53,6 @@
                                         </template>
 
                                         <template slot="actions" slot-scope="props">
-                                            <router-link class="btn btn-sm btn-light" :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                <font-awesome-icon icon="user-edit" />
-                                            </router-link>
                                             <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
                                                 <font-awesome-icon icon="trash" />
                                             </button>
@@ -69,18 +71,17 @@
 <script>
     import axios from 'axios';
     import Notifier from '../../mixins/Notifier';
-    import { deserialize } from 'jsonapi-deserializer';
-
     let thornUrl = process.env.VUE_APP_THORN_URL;
 
 
     export default {
         mixins: [Notifier],
         data() {
+            const self = this;
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'full_name', 'email', 'roles', 'confirmed_at', 'actions'],
+                columns: ['id', 'full_name', 'enabled', 'email', 'roles', 'confirmed_at', 'actions'],
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
@@ -88,7 +89,8 @@
                     columnClasses: { actions: 'th-10' },
                     headings: {
                         id: 'ID',
-                        name: this.$tc('common.name'),
+                        full_name: this.$tc('common.name'),
+                        enabled: this.$tc('common.enabled'),
                         email: this.$tc('common.email'),
                         roles: this.$tc('common.roles'),
                         confirmed_at: this.$tc('common.confirmed_at'),
@@ -107,19 +109,13 @@
                     customFilters: ['platform'],
                     filterByColumn: false,
                     requestFunction: function (data) {
-                        var sort_opt =
-                            data.orderBy == undefined ? 'confirmed_at' : data.orderBy;
-                        data.sorted_by = {};
-                        data.sorted_by[sort_opt] = data.ascending === 1 ? 'asc' : 'desc';
+                        data.sort = data.orderBy;
                         data.asc = data.ascending === 1 ? 'true' : 'false';
-                        data.per_page = data.limit;
-                        data.search_by = data.query;
+                        data.size = data.limit;
+                        data.name = data.query;
+                        data.fields = 'id,full_name,enabled,email,confirmed_at,roles';
 
-
-
-                        data.fields = 'id,full_name,email,confirmed_at';
-
-                        let url = `${thornUrl}/administration/users`;
+                        const url = `${thornUrl}/users`;
                         this.$Progress.start();
                         return axios
                             .get(url, {
@@ -128,14 +124,14 @@
                             .then(resp => {
                                 this.$Progress.finish();
                                 return {
-                                    data: deserialize(resp.data),
-                                    count: resp.data.meta.pagination.total_objects
+                                    data: resp.data.data,
+                                    count: resp.data.pagination.total
                                 };
                             })
                             .catch(
                                 function (e) {
-                                    this.$Progress.finish();
-                                    this.error(e);
+                                    self.$Progress.finish();
+                                    self.error(e);
                                 }.bind(this)
                             );
                     },
@@ -164,7 +160,7 @@
                     this.$t('actions.delete'),
                     this.$t('messages.doYouWantToDelete'),
                     () => {
-                        const url = `${thornUrl}/administration/users/${userId}`;
+                        const url = `${thornUrl}/users/${userId}`;
                         axios
                             .delete(url, {})
                             .then(resp => {
@@ -185,7 +181,7 @@
                     self.$t('actions.confirm'),
                     self.$t('messages.doYouWantToConfirm'),
                     () => {
-                        const url = `${thornUrl}/administration/users/${userId}/confirm`;
+                        const url = `${thornUrl}/users/${userId}/confirm`;
                         axios
                             .post(url, {})
                             .then(resp => {

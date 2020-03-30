@@ -35,7 +35,7 @@
                                                 @click="download(props.row)">
                                                 <span class="fa fa-download" />
                                             </button>
-                                            <button class="btn btn-sm btn-light" :title="$t('actions.download')"
+                                            <button class="btn btn-sm btn-light" :title="$t('actions.share')"
                                                 @click="showShareModal(props.row)">
                                                 <span class="fa fa-share-alt" />
                                             </button>
@@ -155,7 +155,6 @@
             };
         },
         mounted() {
-            this.getAvailableUsers();
         },
         /* Methods */
         methods: {
@@ -242,7 +241,7 @@
                 this.$root.$emit('bv::show::modal', 'share-modal', '#btnShow');
             },
             getAvailableUsers() {
-                let url = `${thornUrl}/api/users/available`;
+                let url = `${thornUrl}/users`;
 
                 this.$Progress.start();
                 return axios

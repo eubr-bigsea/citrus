@@ -45,6 +45,7 @@ import ModelAdd from './views/ModelAdd.vue';
 import ModelEdit from './views/ModelEdit.vue';
 //import DashboardDetail from './views/DashboardDetail.vue';
 
+
 import OperationList from './views/OperationList.vue';
 
 import Profile from './views/Profile.vue';
@@ -52,6 +53,11 @@ import Profile from './views/Profile.vue';
 import About from './views/About.vue';
 
 import store from './store.js';
+
+// Lazy routes
+const TermsOfService = () => import('./views/TermsOfService.vue');
+const Welcome = () => import('./views/Welcome.vue');
+const ConfigurationList = () => import('./views/ConfigurationList.vue')
 
 Vue.use(Router);
 
@@ -161,6 +167,17 @@ let router = new Router({
         //     requiresRole: true
         //   }
         // },
+        //
+        {
+            path: '/configuration',
+            name: 'configuration',
+            component: ConfigurationList,
+            meta: {
+                title: ['titles.configuration', 1],
+                requiresAuth: true,
+            }
+        },
+
         {
             path: '/data-sources',
             name: 'dataSources',
@@ -318,6 +335,15 @@ let router = new Router({
             }
         },
         {
+            path: '/welcome',
+            name: 'welcome',
+            component: Welcome,
+            meta: {
+                title: ['titles.welcome', 1]
+            }
+        },
+
+        {
             path: '/reset_password',
             name: 'reset_password',
             component: ResetPassword,
@@ -368,7 +394,16 @@ let router = new Router({
                 requiresAuth: true,
                 title: ['titles.cluster', 1]
             }
-        }
+        },
+        {
+            path: '/conditions',
+            name: 'conditions',
+            component: TermsOfService,
+            meta: {
+                title: ['titles.termsOfService', 2]
+            }
+        },
+
     ]
 });
 

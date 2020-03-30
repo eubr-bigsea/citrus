@@ -7,7 +7,7 @@
           <div class="card-body">
             <form @submit.prevent="save">
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">{{ $t('common.firstName') }}</label>
+                <label class="col-sm-3 col-form-label">{{ $t('common.firstName') }}:</label>
                 <div class="col-sm-9">
                   <input
                     v-model="user.first_name"
@@ -19,7 +19,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label class="col-sm-3 col-form-label">{{ $t('common.lastName') }}</label>
+                <label class="col-sm-3 col-form-label">{{ $t('common.lastName') }}:</label>
                 <div class="col-sm-9">
                   <input
                     v-model="user.last_name"
@@ -34,7 +34,7 @@
                 <label
                   for="inputEmail3"
                   class="col-sm-3 col-form-label"
-                >{{ $t('common.email') }}</label>
+                >{{ $t('common.email') }}:</label>
                 <div class="col-sm-9">
                   <input
                     v-model="user.email"
@@ -49,7 +49,7 @@
                 <label
                   for="inputEmail3"
                   class="col-sm-3 col-form-label"
-                >{{ $t('common.language') }}</label>
+                >{{ $t('common.language') }}:</label>
                 <div class="col-sm-9">
                   <select
                     v-model="user.locale"
@@ -64,7 +64,7 @@
                 <label
                   for="inputPassword3"
                   class="col-sm-3 col-form-label"
-                >{{ $t('common.current_password') }}</label>
+                >{{ $t('common.current_password') }}:</label>
                 <div class="col-sm-9">
                   <input
                     v-model="user.current_password"
@@ -88,12 +88,12 @@
                       <label
                         for="inputPassword3"
                         class="col-sm-3 col-form-label"
-                      >{{ $t('common.new_password') }}</label>
+                      >{{ $t('common.new_password') }}:</label>
                       <div class="col-sm-9">
                         <div class="col-sm-9">
                           <input
                             v-model="user.password"
-                            type="text"
+                            type="password"
                             class="form-control"
                           >
                         </div>
@@ -103,12 +103,12 @@
                       <label
                         for="inputPassword3"
                         class="col-sm-3 col-form-label"
-                      >{{ $t('common.new_password_confirmation') }}</label>
+                      >{{ $t('common.new_password_confirmation') }}:</label>
                       <div class="col-sm-9">
                         <div class="col-sm-9">
-                          <input
+                          <input 
                             v-model="user.password_confirmation"
-                            type="text"
+                            type="password"
                             class="form-control"
                           >
                         </div>
@@ -139,7 +139,6 @@
 <script>
 import SlideOutPanel from '../components/SlideOutPanel.vue';
 import axios from 'axios';
-import { deserialize } from 'jsonapi-deserializer';
 import Notifier from '../mixins/Notifier'
 
 export default {
@@ -156,12 +155,12 @@ export default {
   },
   mounted () {
     let thornUrl = process.env.VUE_APP_THORN_URL;
-    let url = `${thornUrl}/api/users/me`;
+    let url = `${thornUrl}/users/me`;
     let self = this;
     axios
       .get(url)
       .then(resp => {
-        self.user = deserialize(resp.data)
+        self.user = resp.data.data[0];
       })
       .catch(
         function (e) {
@@ -189,14 +188,8 @@ export default {
         .catch(e => {
           var err = e
           if (e.response){
-            var errors = e.response.data.errors;
-            var keysErrors = Object.keys(e.response.data.errors)
-
             self.$Progress.finish();
-            if (keysErrors[0]) {
-                err = { message: `${this.$t(`common.${keysErrors[0]}`)} ${this.$t(errors[keysErrors[0]])}` }
-            }
-            self.error(err);
+            self.error({message: e.response.data.message});
           } else {
             self.error(e)
           } 

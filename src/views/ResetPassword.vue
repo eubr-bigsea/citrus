@@ -7,17 +7,11 @@
           <div class="card-body">
             <h4 class="card-title float-left">{{$t('titles.resetPassword')}}</h4>
             <div class="float-right navbar-brand logo"></div>
-            <form @submit.prevent="resetPassword">
+
+            <form @submit.prevent="resetPassword" v-if="!showSuccess">
               <div class="form-group">
                 <label for="email">{{$t('common.email')}}</label>
-                <input
-                  required
-                  v-model="email"
-                  type="email"
-                  class="form-control"
-                  placeholder="Email"
-                  autofocus
-                >
+                <input required v-model="email" type="email" class="form-control" placeholder="Email" autofocus/>
               </div>
 
               <div class="form-group no-margin text-center">
@@ -26,17 +20,22 @@
                   class="btn btn-primary col-md-4"
                 >{{$t('common.resetPassword')}}</button>
               </div>
+           </form>
+            <br/>
+            <div style="clear: both" class="mt-2 border-top" v-if="showSuccess" 
+                    v-html="$t('messages.resetPasswordInstructions', {email: supportEmail})">
+              </div>
               <div class="margin-top20 border-top text-center">
                 {{$t('common.alreadyHaveAccount')}}
                 <br>
                 <router-link to="/login">{{$t('common.login')}}</router-link>
               </div>
+ 
               <div class="margin-top20 text-center">
                 {{$t('common.dontHaveAccount')}}
                 <br>
                 <router-link to="/register">{{$t('common.createAccount')}}</router-link>
               </div>
-            </form>
           </div>
         </div>
         <div class="footer text-center">Copyright © 2018 — Lemonade Project</div>
@@ -52,11 +51,16 @@ label {
 }
 </style>
 <script>
+import axios from 'axios';
+import Notifier from '../mixins/Notifier';
 export default {
+  mixins: [Notifier],
   name: "ResetPassword",
   data() {
     return {
-      email: ""
+      email: "",
+      showSuccess: false,
+      supportEmail: ''
     };
   },
   methods: {
@@ -64,18 +68,18 @@ export default {
       let self = this;
       let thornUrl = process.env.VUE_APP_THORN_URL;
       let email = this.email;
-      this.$store
-        .dispatch("resetPassword", { thornUrl, user: { email } })
-        .then(() => this.$router.push("/"))
-        .catch(err => {
-          console.log(err.message.startsWith("errors."), err.message);
-
-          let msg = err.message.startsWith("errors.")
-            ? self.$t(err.message)
-            : err.message;
-          self.$snotify.error(msg, self.$t("titles.error"));
-        });
+      let url = `${thornUrl}/password/reset`;
+      let headers = { Accept: 'application/json; charset=utf-8' };
+      axios({ url, data: {email}, method: 'POST', headers })
+          .then(resp => {
+              self.supportEmail = resp.data.supportEmail;
+              self.showSuccess = true;
+          })
+          .catch(err => {
+              self.error(err.response.data.message);
+              self.showSuccess = false;
+          });
     }
   }
-};
+}
 </script>

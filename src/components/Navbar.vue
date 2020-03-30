@@ -28,6 +28,9 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'configuration' }">
+                        {{ $tc('titles.configuration', 2) }}
+                    </b-dropdown-item>
                     <!--    <b-dropdown-item href="#">
                                 {{ $tc('titles.platform', 2) }}
                             </b-dropdown-item>
@@ -47,6 +50,7 @@
                             <b-dropdown-item :to="{ name: 'AdministrationTeamList' }">
                                 {{ $tc('titles.team', 2) }}
                             </b-dropdown-item>
+
                     -->
                 </b-nav-item-dropdown>
             </b-navbar-nav>
