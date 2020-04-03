@@ -45,6 +45,7 @@ import ModelAdd from './views/ModelAdd.vue';
 import ModelEdit from './views/ModelEdit.vue';
 //import DashboardDetail from './views/DashboardDetail.vue';
 
+import PageNotFound from './views/PageNotFound.vue';
 
 import OperationList from './views/OperationList.vue';
 
@@ -305,11 +306,10 @@ let router = new Router({
             }
         },
         {
-            path: '/change_password',
+            path: '/change-password/:id/:token',
             name: 'change_password',
             component: ChangePassword,
             meta: {
-                requiresAuth: true,
                 title: ['titles.changePassword', 1]
             }
         },
@@ -344,7 +344,7 @@ let router = new Router({
         },
 
         {
-            path: '/reset_password',
+            path: '/reset-password',
             name: 'reset_password',
             component: ResetPassword,
             meta: {
@@ -403,6 +403,14 @@ let router = new Router({
                 title: ['titles.termsOfService', 2]
             }
         },
+        {
+            path: '*',
+            name: 'not-found',
+            component: PageNotFound,
+            meta: {
+                title: ['titles.notFound']
+            }
+        }
 
     ]
 });

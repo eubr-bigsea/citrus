@@ -299,7 +299,9 @@ export default {
                 'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.',
             welcome: '<p>A autorização para uso do Lemonade está depende da análise do seu registro por um administrador. </p>' +
                 '<p>Uma notificação já foi enviada para os administradores e em breve você receberá um e-email com a confirmação de seu registro.</p>' +
-                'Enquanto isto, você pode iniciar a leitura da documentação disponível em <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.'
+                'Enquanto isto, você pode iniciar a leitura da documentação disponível em <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.',
+            tokenNotFound: 'Token para reiniciar senha não foi encontrado. Tente iniciar o processo novamente ou veja se você recebeu um novo link em outro e-mail.',
+            validatingToken: 'Validando o token, por favor, aguarde...',
         },
         model: {
             uploadExplanation:
@@ -382,6 +384,7 @@ export default {
             login: 'Entrar',
             model: 'Modelo | Modelos',
             news: 'Novidades e Dicas',
+            pageNotFound: 'Página não encontrada',
             platform: 'Platforma | Platformas',
             profile: 'Perfil',
             project: 'Projeto | Projetos',
@@ -727,7 +730,9 @@ export default {
                 'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.',
             welcome: '<p>Approval for use of Lemonade depends on an administrator reviewing your registration.</p>' +
                 '<p>A notification has already been sent to administrators and you will soon receive an email with confirmation of your registration.</p>' +
-                '<p>In the meantime, you can start reading the documentation available at <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.'
+                '<p>In the meantime, you can start reading the documentation available at <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.',
+            tokenNotFound: 'Reset password token not found. Try to do the reset password action and check if you received another email with a new link.',
+            validatingToken: 'Validating token, please wait...',
         },
         import: {
             description: 'You may import a file containing a workflow definition. ' + 
@@ -773,6 +778,7 @@ export default {
             model: 'Model | Models',
             news: 'News & Tips',
             login: 'Login',
+            pageNotFound: 'Page not found',
             platform: 'Platform | Platforms',
             profile: 'Profile',
             project: 'Project | Projects',

@@ -5,9 +5,23 @@
         <div class="brand"></div>
         <div class="card fat">
           <div class="card-body">
-            <h4 class="card-title float-left">{{$t('titles.changePassword')}}</h4>
-            <div class="float-right navbar-brand logo"></div>
-            <form @submit.prevent="changePassword">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="card-title float-left">{{$t('titles.changePassword')}}</h4>
+                    <div class="float-right navbar-brand logo"></div>
+                </div>
+            </div>
+            <div v-if="tokenOk==='PENDING'" class="row mt-2 mb-2 pt-2 border-top">
+                <div class="col-md-12">
+                {{$t('messages.validatingToken')}}
+                </div>
+            </div>
+            <div v-if="tokenOk==='NOK'" class="row mt-2 mb-2 pt-2 border-top">
+                <div class="col-md-12">
+                {{$t('messages.tokenNotFound')}}
+                </div>
+            </div>
+            <form @submit.prevent="changePassword"  v-if="tokenOk==='OK'">
               <div class="form-group">
                 <label for="password">{{$t('common.password')}}</label>
                 <div style="position:relative">
@@ -46,7 +60,7 @@
                 <button
                   type="submit"
                   class="btn btn-primary col-md-4"
-                >{{$t('common.changePassword')}}</button>
+                >{{$t('common.ok')}}</button>
               </div>
               <div class="margin-top20 border-top text-center">
                 {{$t('common.alreadyHaveAccount')}}
@@ -61,7 +75,7 @@
             </form>
           </div>
         </div>
-        <div class="footer text-center">Copyright © 2018 — Lemonade Project</div>
+        <div class="footer text-center">Copyright © 2020 — Lemonade Project</div>
       </div>
     </div>
   </div>
@@ -85,19 +99,36 @@ label {
 }
 </style>
 <script>
+import Notifier from '../mixins/Notifier';
+import axios from 'axios';
+const thornUrl = process.env.VUE_APP_THORN_URL;
+
 export default {
   name: 'ChangePassword',
+  mixins: [Notifier],
   data() {
     return {
       password: '',
       passwordConfirmation: '',
-      showingPassword: false
+      showingPassword: false,
+      tokenOk: 'PENDING' 
     };
   },
   computed: {
     passwordShowText() {
       return this.$t(this.showingPassword ? 'common.hide' : 'common.show');
     }
+  },
+  mounted(){
+      const self = this;
+      axios.get(`${thornUrl}/password/reset`, 
+        {params: this.$route.params})
+      .then(resp => {
+        self.tokenOk= 'OK';
+      }).catch(err => {
+          self.tokenOk = "NOK";
+          self.error(err.response.data);
+     });
   },
   methods: {
     changePassword: function() {
@@ -118,17 +149,18 @@ export default {
           .dispatch('changePassword', {
             thornUrl,
             user: {
+              id: self.$route.params.id,
               password,
               password_confirmation,
-              reset_password_token
+              token: self.$route.params.token, 
             }
           })
-          .then(() => this.$router.push('/'))
+          .then((resp) => {
+              self.success(resp.data.message);
+              this.$router.push('/');
+          })
           .catch(err => {
-            let msg = err.message.startsWith('errors.')
-              ? self.$t(err.message)
-              : err.message;
-            self.$snotify.error(msg, self.$t('titles.error'));
+              self.error(err.response.data);
           });
       }
     }

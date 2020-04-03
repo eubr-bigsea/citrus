@@ -26,6 +26,7 @@
                                                 {{ props.row.full_name }}
                                             </router-link>
                                         </template>
+
                                         <template slot="enabled" slot-scope="props">
                                             {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
                                         </template>
@@ -37,10 +38,14 @@
                                         <template slot="roles" slot-scope="props">
                                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 <span v-for="role in props.row.roles" :key="role.id">
-                                                {{role.name}}
+                                                <div class="badge badge-secondary p-1 mr-1">{{role.description}}</div>
                                                 </span>
                                             </router-link>
                                         </template>
+                                        <template slot="notes" slot-scope="props">
+                                                {{props.row.notes}}
+                                        </template>
+
                                         <template slot="confirmed_at" slot-scope="props">
                                             <div v-if="isConfirmedUser(props.row.confirmed_at)">
                                                 {{ props.row.confirmed_at | formatJsonDate }}
@@ -81,7 +86,7 @@
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'full_name', 'enabled', 'email', 'roles', 'confirmed_at', 'actions'],
+                columns: ['id', 'full_name', 'enabled', 'email', 'notes', 'roles', 'confirmed_at', 'actions'],
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
@@ -92,7 +97,8 @@
                         full_name: this.$tc('common.name'),
                         enabled: this.$tc('common.enabled'),
                         email: this.$tc('common.email'),
-                        roles: this.$tc('common.roles'),
+                        roles: this.$tc('common.roles', 2),
+                        notes: this.$tc('common.user.notes'),
                         confirmed_at: this.$tc('common.confirmed_at'),
                         actions: this.$tc('common.action', 2)
                     },
@@ -113,7 +119,7 @@
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
                         data.name = data.query;
-                        data.fields = 'id,full_name,enabled,email,confirmed_at,roles';
+                        data.fields = 'id,full_name,enabled,email,confirmed_at,roles,notes';
 
                         const url = `${thornUrl}/users`;
                         this.$Progress.start();

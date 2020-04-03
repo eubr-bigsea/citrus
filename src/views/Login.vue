@@ -17,7 +17,7 @@
                             <div class="form-group">
                                 <label for="password">
                                     {{ $t('common.password') }}:
-                                    <router-link class="float-right" to="/reset_password">{{$t('common.forgotPassword')}}</router-link>
+                                    <router-link class="float-right" :to="{name: 'reset_password'}">{{$t('common.forgotPassword')}}</router-link>
                                 </label>
                                 <div style="position:relative">
                                     <input v-model="password" :type="showingPassword ? 'text' : 'password'"
@@ -45,7 +45,7 @@
                             <div class="margin-top20 text-center">
                                 {{ $t('common.dontHaveAccount') }}
                                 <br />
-                                <router-link to="/register">{{$t('common.createAccount')}}</router-link>
+                                <router-link :to="{name: 'register'}">{{$t('common.createAccount')}}</router-link>
                             </div>
                         </form>
                     </div>

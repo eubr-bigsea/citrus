@@ -76,12 +76,10 @@
                                             <div class="col-sm-3">
                                                 <label class="col-form-label">
                                                     {{ $tc('common.roles', 2) }}:
-                                                    {{user.roles}}
                                                 </label>
-                                                <select v-model="user.roles" class="form-control" multiple>
-                                                    <option value="admin">{{ $t('roles.admin') }}</option>
-                                                    <option value="monitor">{{ $t('roles.monitor') }}</option>
-                                                </select>
+                                                <v-select :options="roles" :multiple="true"
+                                                    v-model="user.roles" label="description" :taggable="false" :closeOnSelect="false">
+                                                </v-select>
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
@@ -117,27 +115,36 @@
     import axios from 'axios';
     import Notifier from '../../mixins/Notifier';
     import { mapGetters } from 'vuex';
-    import { deserialize } from 'jsonapi-deserializer';
+    import vSelect from "vue-select";
 
     let thornUrl = process.env.VUE_APP_THORN_URL;
 
     export default {
         name: 'UserAdd',
+        components: {
+            'v-select': vSelect,
+        },
         mixins: [Notifier],
         data() {
             return {
-                user: {}
+                user: {},
+                roles: [],
+                teste: [{description: "Funciona"}]
             };
         },
         computed: {
             ...mapGetters(['isAdmin'])
         },
         mounted() {
-            let self = this;
+            const self = this;
             this.load().then(() => {
-                Vue.nextTick(() => {
-                    self.isDirty = false;
-                });
+                const rolesUrl = `${thornUrl}/roles`;
+                axios.get(rolesUrl)
+                    .then(resp => {
+                        self.roles = resp.data.data;
+                    }).catch(function (e) {
+                        self.error(e);
+                    });
             });
         },
         methods: {
@@ -174,9 +181,6 @@
                 return axios
                     .patch(url, user)
                     .then(resp => {
-                        event.target.removeAttribute('disabled');
-                        event.target.classList.add('btn-spinner');
-                        this.$Progress.finish();
                         this.$router.push({ name: 'AdministrationUserList' });
                         self.success(
                             this.$t('messages.savedWithSuccess', {
@@ -187,20 +191,13 @@
                     })
                     .catch(
                         function (e) {
-                            var err = e;
-                            self.$Progress.finish();
-                            if (e.response.data.errors[0]) {
-                                let pointer = e.response.data.errors[0].source.pointer;
-                                let detail = e.response.data.errors[0].detail;
-
-                                err = {
-                                    message: `${pointer} ${detail}`
-                                };
-                            }
-
-                            self.error(err);
+                           self.error(e);
                         }.bind(this)
-                    );
+                    ).finally(()=> {
+                        event.target.removeAttribute('disabled');
+                        event.target.classList.add('btn-spinner');
+                        this.$Progress.finish();
+                    });
             }
         }
     };

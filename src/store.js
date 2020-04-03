@@ -79,19 +79,16 @@ export default new Vuex.Store({
         changePassword ({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('reset_password_request');
-                let url = `${params.thornUrl}/app/password/reset`;
+                let url = `${params.thornUrl}/password/reset`;
                 let headers = { Accept: 'application/json; charset=utf-8' };
-                axios({ url, data: { user: params.user }, method: 'PATCH', headers })
+                axios({ url, data: params.user, method: 'PATCH', headers })
                     .then(resp => {
                         commit('reset_password_success');
                         resolve(resp);
                     })
                     .catch(err => {
                         commit('reset_password_error');
-                        let errors = err.response.data.errors;
-                        let key = Object.keys(errors)[0];
-                        let message = 'errors.' + _.camelCase(`${key} ${errors[key]}`);
-                        reject({ message });
+                        reject(err);
                     });
             });
         },
