@@ -135,7 +135,10 @@
                                             </div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :title="$tc('dataSource.attribute', 2)">
+                                    <b-tab>
+                                        <template slot="title">
+                                            {{$tc('dataSource.attribute', 2)}}
+                                        </template>
                                         <h5 class="card-title">{{$tc('common.attribute', 2)}}</h5>
 
                                         <table class="table table-sm table-stripped"
@@ -213,28 +216,35 @@
                                             <div class="alert alert-info">{{ $t("dataSource.noAttributes") }}</div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :title="$tc('common.sharing', 2)" v-if="loggedUserIsOwnerOrAdmin">
-                                        <table class="table table-bordered table-stripped"
-                                            v-if="dataSource.permissions && dataSource.permissions.length > 0">
-                                            <thead>
-                                                <tr>
-                                                    <th class="primary col-md-1 text-center">{{ $t("common.userId") }}
-                                                    </th>
-                                                    <th class="primary text-center">{{ $t("common.userName") }}</th>
-                                                    <th class="primary text-center">{{ $t("common.userLogin") }}</th>
-                                                    <th class="primary text-center">{{ $tc("common.permission", 1) }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="p in dataSource.permissions" :key="p.id">
-                                                    <td class="text-center">{{p.user_id}}</td>
-                                                    <td>{{p.user_name}}</td>
-                                                    <td>{{p.login}}</td>
-                                                    <td>{{p.permission}}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <b-tab v-if="loggedUserIsOwnerOrAdmin">
+                                        <template slot="title">
+                                            <span class="fa fa-share-alt"></span> {{$tc('common.sharing', 2)}}
+                                        </template>
+                                        <p class="pb-1 border-bottom">
+                                            <button class="btn btn-sm btn-primary">{{$t('actions.add', {type: $tc('common.permission', 1)})}}</button>
+                                        </p>
+                                        <template v-if="dataSource.permissions && dataSource.permissions.length > 0">
+                                            <table class="table table-borderless table-sm">
+                                                <tbody>
+                                                    <tr v-for="p in dataSource.permissions" :key="p.id">
+                                                        <td style="width:80px">
+                                                            <div class="badge badge-secondary pt-1 pb-1 pr-2 pl-2" 
+                                                                :title="$t('permissions.descriptions.' +p.permission)">{{$t('permissions.' +p.permission).toUpperCase()}}</div>
+                                                        </td>
+                                                        <td>
+                                                            <strong><router-link :to="{name: 'userInfo', params: {id: p.user_id}}">{{p.user_name}}</router-link></strong> ({{p.user_login}})
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <button v-if="loggedUserIsOwnerOrAdmin"
+                                                                class="btn btn-sm btn-light">
+                                                                <font-awesome-icon icon="trash" />
+                                                            </button>
+                                                            <button class="btn btn-sm btn-light" :title="$t('actions.edit')"><font-awesome-icon icon="edit" /></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </template>
                                         <div v-else>{{ $t("dataSource.noPermissions") }}</div>
                                     </b-tab>
                                 </b-tabs>

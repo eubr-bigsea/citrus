@@ -457,6 +457,16 @@ export default {
             usingDisabledOperation: 'Tarefa usa operação desabilitada no Lemonade',
             validationExplanation:
                 'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.'
+        },
+        permissions: {
+            MANAGE: 'Gerenciar',
+            READ: 'Ler',
+            WRITE: 'Escrever',
+            descriptions: {
+                MANAGE: 'Permite todas as ações ao item',
+                READ: 'Permite ler o item',
+                WRITE: 'Permite alterar ou excluir o item',
+            }
         }
     },
 
@@ -896,6 +906,17 @@ export default {
             usingDisabledOperation: 'Task is using a disabled operation in Lemonade',
             validationExplanation:
                 'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.'
+        },
+        permissions: {
+            MANAGE: 'Manage',
+            READ: 'Read',
+            WRITE: 'Write',
+            descriptions: {
+                MANAGE: 'Allows all actions over the item',
+                READ: 'Allows to read the item',
+                WRITE: 'Allows to change or remove the item',
+            }
         }
+
     }
 };
