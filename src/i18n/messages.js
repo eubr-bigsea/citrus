@@ -141,6 +141,7 @@ export default {
             sharing: 'Compartilhamento',
             show: 'Exibir',
             size: 'Tamanho',
+            system: 'Sistema',
             tag: 'Tag | Tags',
             tags: 'Tags',
             title: 'Título',
@@ -364,6 +365,7 @@ export default {
             taskName: 'Nome da tarefa (opcional)'
         },
         titles: {
+            about: 'Sobre',
             action: 'Ação | Ações',
             administration: 'Administração',
             changePassword: 'Nova senha',
@@ -372,6 +374,7 @@ export default {
             dataSource: 'Base de dados | Bases de dados',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Implantação | Implantações',
+            documentation: 'Documentação',
             error: 'Erro',
             errorDetail: 'Detalhe do erro (avançado)',
             globalPrivacyPolicy:
@@ -392,6 +395,7 @@ export default {
             property: 'Propriedade | Propriedades',
             register: 'Registrar',
             resetPassword: 'Redefinir senha',
+            role: 'Grupo | Grupos',
             storage: 'Armazenamento | Armazenamentos',
             success: 'Successo',
             tasks: 'Tarefa | Tarefas',
@@ -613,6 +617,7 @@ export default {
             sharing: 'Sharing',
             show: 'Show',
             size: 'Size',
+            system: 'System',
             tag: 'Tag | Tags',
             tags: 'Tags',
             title: 'Title',
@@ -770,6 +775,7 @@ export default {
             }
         },
         titles: {
+            about: 'About',
             action: 'Action | Actions',
             administration: 'Administration',
             changePassword: 'New password',
@@ -778,6 +784,7 @@ export default {
             dataSource: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Deployment | Deployments',
+            documentation: 'Documentation',
             error: 'Error',
             errorDetail: 'Error detail (advanced)',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
@@ -796,6 +803,7 @@ export default {
             property: 'Property | Properties',
             register: 'Sign up',
             resetPassword: 'Reset password',
+            role: 'Role | Roles', 
             storage: 'Storage | Storages',
             success: 'Success',
             tasks: 'Task | Tasks',

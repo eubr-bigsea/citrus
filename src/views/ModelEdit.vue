@@ -8,24 +8,24 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-12 col-xg-12 mx-auto" v-if="model.id">
+                        <div v-if="model.id" class="col-md-12 col-xg-12 mx-auto">
                             <b-card>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                        <input type="text" class="form-control" v-model="model.name">
+                                        <input v-model="model.name" type="text" class="form-control">
                                     </div>
                                     <div class="col-md-3">
                                         <label class="font-weight-bold">{{$tc('common.type')}}:</label>
-                                        <select class="form-control" v-model="model.type">
-                                            <option v-for="fmt in types" v-bind:value="fmt" :key="fmt">
+                                        <select v-model="model.type" class="form-control">
+                                            <option v-for="fmt in types" :key="fmt" :value="fmt">
                                                 {{$tc('model.type_' + fmt)}}
                                             </option>
                                         </select>
                                     </div>
                                     <div class="col-md-3">
                                         <label class="font-weight-bold">{{$tc('model.storage')}}:</label>
-                                        <input disabled v-model="model.storage.name + ' (' + model.storage.type + ')'"
+                                        <input v-model="model.storage.name + ' (' + model.storage.type + ')'" disabled
                                             class="form-control" />
                                     </div>
                                 </div>
@@ -35,7 +35,7 @@
                                 </div>
                             </b-card>
                         </div>
-                        <div class="col-md-12 mx-auto border-top mt-3 pt-3" v-else>{{$t('common.noData')}}</div>
+                        <div v-else class="col-md-12 mx-auto border-top mt-3 pt-3">{{$t('common.noData')}}</div>
                     </div>
                 </div>
             </div>
@@ -55,8 +55,6 @@
             'v-select': VueSelect,
             SwitchComponent
         },
-        computed: {
-        },
         data() {
             return {
                 model: {},
@@ -71,13 +69,7 @@
                 ]
             }
         },
-        mounted() {
-            let self = this;
-            this.load().then(() => {
-                Vue.nextTick(() => {
-                    self.isDirty = false;
-                });
-            });
+        computed: {
         },
         watch: {
             '$route.params.id': function (id) {
@@ -87,6 +79,14 @@
                     });
                 });
             },
+        },
+        mounted() {
+            let self = this;
+            this.load().then(() => {
+                Vue.nextTick(() => {
+                    self.isDirty = false;
+                });
+            });
         },
         /* Methods */
         methods: {

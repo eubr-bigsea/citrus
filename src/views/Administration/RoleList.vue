@@ -4,31 +4,37 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.model', 2)}}</h1>
-                        <router-link :to="{name: 'addModel'}" class="btn btn-sm btn-outline-primary">
-                            {{$t('actions.addItem')}}
+                        <h1>{{ $tc('titles.role', 2) }}</h1>
+                        <router-link :to="{ name: 'AdministrationAddRole' }" class="btn btn-sm btn-outline-primary">
+                            {{ $t('actions.addItem') }}
                         </router-link>
                     </div>
-                    <hr>
+                    <hr />
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <v-server-table ref="listTable" :columns="columns" :options="options"
-                                        name="modelList">
+                                    <v-server-table ref="roleList" :columns="columns" :options="options"
+                                        name="roleList">
                                         <template slot="id" slot-scope="props">
-                                            <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
-                                                {{props.row.id}}</router-link>
+                                            <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
+                                                {{ props.row.id }}
+                                            </router-link>
                                         </template>
                                         <template slot="name" slot-scope="props">
-                                            <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
-                                                {{props.row.name}}</router-link>
+                                            <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
+                                                {{ props.row.name }}
+                                            </router-link>
                                         </template>
-                                        <template slot="created"
-                                            slot-scope="props">{{props.row.created | formatJsonDate}}</template>
+                                        <template slot="enabled" slot-scope="props">
+                                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                                        </template>
+                                        <template slot="system" slot-scope="props">
+                                            {{$tc(props.row.system? 'common.yes': 'common.no')}}
+                                        </template>
                                         <template slot="actions" slot-scope="props">
                                             <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
+                                                <font-awesome-icon icon="trash" />
                                             </button>
                                         </template>
                                     </v-server-table>
@@ -44,30 +50,32 @@
 
 <script>
     import axios from 'axios';
-    import Notifier from '../mixins/Notifier';
+    import Notifier from '../../mixins/Notifier';
+    let thornUrl = process.env.VUE_APP_THORN_URL;
 
-    const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 
     export default {
         mixins: [Notifier],
         data() {
+            const self = this;
             return {
-                columns: ['id', 'name', 'type', 'created', 'actions'],
-
-                showSideBar: false,
+                platform: '',
+                platforms: [],
+                columns: ['id', 'name', 'enabled', 'system', 'actions'],
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
-                    dateColumns: ['created'],
+                    dateColumns: ['updated'],
+                    columnClasses: { actions: 'th-2' },
                     headings: {
                         id: 'ID',
                         name: this.$tc('common.name'),
-                        type: this.$tc('common.type'),
-                        created: this.$tc('common.created'),
+                        enabled: this.$tc('common.enabled'),
+                        system: this.$tc('common.system'),
                         actions: this.$tc('common.action', 2)
                     },
-                    sortable: ['id', 'name', 'type', 'created'],
-                    filterable: ['id', 'name', 'type', 'created'],
+                    sortable: ['name', 'id', 'email', 'confirmed_at'],
+                    filterable: ['name', 'id', 'email'],
                     sortIcon: {
                         base: 'fa fas',
                         is: 'fa-sort ml-10',
@@ -76,18 +84,16 @@
                     },
                     preserveState: true,
                     saveState: true,
+                    customFilters: ['platform'],
                     filterByColumn: false,
                     requestFunction: function (data) {
-                        const self = this;
                         data.sort = data.orderBy;
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
-                        data.q = data.query;
+                        data.name = data.query;
+                        data.fields = 'id,name,enabled,system';
 
-                        data.fields = 'id,name,created,type';
-
-                        let url = `${limoneroUrl}/models`;
-
+                        const url = `${thornUrl}/roles`;
                         this.$Progress.start();
                         return axios
                             .get(url, {
@@ -103,7 +109,7 @@
                             .catch(
                                 function (e) {
                                     self.$Progress.finish();
-                                    self.$parent.error(e);
+                                    self.error(e);
                                 }.bind(this)
                             );
                     },
@@ -118,26 +124,55 @@
                 }
             };
         },
-        /* Methods */
         methods: {
-            remove(modelId) {
+            clearFilters() {
+                this.$refs.roleList.setFilter('');
+                this.$refs.roleList.customQueries = {};
+            },
+            isConfirmedRole(confirmed_at) {
+                return confirmed_at !== null;
+            },
+            remove(roleId) {
                 const self = this;
                 this.confirm(
                     this.$t('actions.delete'),
                     this.$t('messages.doYouWantToDelete'),
                     () => {
-                        const url = `${limoneroUrl}/models/${modelId}`;
+                        const url = `${thornUrl}/roles/${roleId}`;
                         axios
                             .delete(url, {})
                             .then(resp => {
-                                self.success(self.$t('messages.successDeletion',
-                                    { what: this.$tc('titles.model', 1) }));
-                                self.$refs.listTable.refresh();
+                                self.success(
+                                    self.$t('messages.successDeletion', {
+                                        what: this.$tc('titles.role', 1)
+                                    })
+                                );
+                                self.$refs.roleList.refresh();
                             })
                             .catch(e => self.error(e));
                     }
                 );
-
+            },
+            confirmRole(roleId) {
+                const self = this;
+                this.confirm(
+                    self.$t('actions.confirm'),
+                    self.$t('messages.doYouWantToConfirm'),
+                    () => {
+                        const url = `${thornUrl}/roles/${roleId}/confirm`;
+                        axios
+                            .post(url, {})
+                            .then(resp => {
+                                self.success(
+                                    self.$t('messages.successConfirmation', {
+                                        what: this.$tc('titles.role', 1)
+                                    })
+                                );
+                                self.$refs.roleList.refresh();
+                            })
+                            .catch(e => self.error(e));
+                    }
+                );
             }
         }
     };

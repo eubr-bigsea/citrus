@@ -15,7 +15,7 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-body">
-                  <v-server-table :columns="table.columns" :options="table.options" ref="configurationList" name="configurationList">
+                  <v-server-table ref="configurationList" :columns="table.columns" :options="table.options" name="configurationList">
                     <template slot="id" slot-scope="props">
                       {{props.row.id}}
                     </template>
@@ -37,8 +37,8 @@
         </div>
       </div>
     </div>
-    <b-modal ref="modalConfig" id="modalConfig" :title="currentRow? currentRow.name: ''">
-        <div class="row" v-if="currentRow">
+    <b-modal id="modalConfig" ref="modalConfig" :title="currentRow? currentRow.name: ''">
+        <div v-if="currentRow" class="row">
             <div class="col-md-12">
                 <label>{{currentRow.description}}:</label>
             </div>
@@ -47,16 +47,16 @@
                     <textarea v-model="editableValue" class="form-control text-monospace"></textarea>
                 </template>
                 <template v-if="currentRow.editor === 'TEXT' || currentRow.editor === 'URL'">
-                    <input type="text" v-model="editableValue" class="form-control text-monospace"/>
+                    <input v-model="editableValue" type="text" class="form-control text-monospace"/>
                 </template>
                 <template v-if="currentRow.editor === 'EMAIL'">
-                    <input type="email" v-model="editableValue" class="form-control text-monospace"/>
+                    <input v-model="editableValue" type="email" class="form-control text-monospace"/>
                 </template>
                 <template v-if="currentRow.editor === 'PASSWORD'">
-                    <input type="password" v-model="editableValue" class="form-control text-monospace"/>
+                    <input v-model="editableValue" type="password" class="form-control text-monospace"/>
                 </template>
                 <template v-if="currentRow.editor === 'INTEGER'">
-                    <input type="number" v-model="editableValue" class="form-control text-monospace"/>
+                    <input v-model="editableValue" type="number" class="form-control text-monospace"/>
                 </template>
             </div>
         </div>

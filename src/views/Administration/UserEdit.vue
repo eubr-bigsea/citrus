@@ -36,7 +36,7 @@
                                                  <label for="login" class=" col-form-label">
                                                      {{ $t('common.user.login') }}:
                                                  </label>
-                                                <input name="login" v-model="user.login" type="text" class="form-control" required maxlength="100"/>
+                                                <input v-model="user.login" name="login" type="text" class="form-control" required maxlength="100"/>
                                             </div>
  
                                        </div>
@@ -77,15 +77,14 @@
                                                 <label class="col-form-label">
                                                     {{ $tc('common.roles', 2) }}:
                                                 </label>
-                                                <v-select :options="roles" :multiple="true"
-                                                    v-model="user.roles" label="description" :taggable="false" :closeOnSelect="false">
+                                                <v-select v-model="user.roles" :options="roles" :multiple="true" label="description" :taggable="false" :close-on-select="false">
                                                 </v-select>
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
                                                     {{ $tc('common.user.notes', 2) }}:
                                                 </label>
-                                                <textarea rows="4" class="form-control" v-model="user.notes"></textarea>
+                                                <textarea v-model="user.notes" rows="4" class="form-control"></textarea>
                                             </div>
                                         </div>
                                     <div class="row">
@@ -111,7 +110,6 @@
 </template>
 
 <script>
-    import Vue from 'vue';
     import axios from 'axios';
     import Notifier from '../../mixins/Notifier';
     import { mapGetters } from 'vuex';

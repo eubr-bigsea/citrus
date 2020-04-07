@@ -16,9 +16,9 @@
               <div class="card">
                 <div class="card-body">
                   <v-server-table
+                    ref="clusterList"
                     :columns="columns"
                     :options="options"
-                    ref="clusterList"
                     name="clusterList"
                   >
                     <template slot="id" slot-scope="props">
@@ -126,6 +126,18 @@ export default {
       }
     };
   },
+  watch: {
+    // platform(v) {
+    //     // This is not working
+    //     // Event.$emit('vue-tables.clusterList.filter::platform', v);
+    //     // Event.$emit('vue-tables.filter::platform', v);
+    //     // This works, but use internal details of component
+    //     const table = this.$refs.clusterList;
+    //     table.customQueries['platform'] = v;
+    //     table.updateState('customQueries', table.customQueries);
+    //     table.getData();
+    // }
+  },
   mounted() {},
   /* Methods */
   methods: {
@@ -156,18 +168,6 @@ export default {
         }
       );
     }
-  },
-  watch: {
-    // platform(v) {
-    //     // This is not working
-    //     // Event.$emit('vue-tables.clusterList.filter::platform', v);
-    //     // Event.$emit('vue-tables.filter::platform', v);
-    //     // This works, but use internal details of component
-    //     const table = this.$refs.clusterList;
-    //     table.customQueries['platform'] = v;
-    //     table.updateState('customQueries', table.customQueries);
-    //     table.getData();
-    // }
   }
 };
 </script>

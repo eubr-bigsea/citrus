@@ -8,10 +8,10 @@
             <h4 class="card-title float-left">{{$t('titles.resetPassword')}}</h4>
             <div class="float-right navbar-brand logo"></div>
 
-            <form @submit.prevent="resetPassword" v-if="!showSuccess">
+            <form v-if="!showSuccess" @submit.prevent="resetPassword">
               <div class="form-group">
                 <label for="email">{{$t('common.email')}}</label>
-                <input required v-model="email" type="email" class="form-control" placeholder="Email" autofocus/>
+                <input v-model="email" required type="email" class="form-control" placeholder="Email" autofocus/>
               </div>
 
               <div class="form-group no-margin text-center">
@@ -22,7 +22,7 @@
               </div>
            </form>
             <br/>
-            <div style="clear: both" class="mt-2 border-top" v-if="showSuccess" 
+            <div v-if="showSuccess" style="clear: both" class="mt-2 border-top" 
                     v-html="$t('messages.resetPasswordInstructions', {email: supportEmail})">
               </div>
               <div class="margin-top20 border-top text-center">
@@ -54,8 +54,8 @@ label {
 import axios from 'axios';
 import Notifier from '../mixins/Notifier';
 export default {
-  mixins: [Notifier],
   name: "ResetPassword",
+  mixins: [Notifier],
   data() {
     return {
       email: "",

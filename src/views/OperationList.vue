@@ -11,11 +11,11 @@
           <div class="row">
             <div class="col-md-12">
               <v-server-table
+                ref="jobList"
                 :data="tableData"
                 :columns="columns"
                 :options="options"
                 name="jobList"
-                ref="jobList"
               >
                 <!--
                     <template slot="id" slot-scope="props">

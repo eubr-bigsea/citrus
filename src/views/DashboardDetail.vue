@@ -6,7 +6,7 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h6 class="header-pretitle">{{$tc('titles.dashboard', 1)}}</h6>
-              <input-header v-model="title"></input-header>
+              <InputHeader v-model="title"></InputHeader>
             </div>
             <div>
               <button class="btn btn-sm btn-outline-dark" @click.stop="save">
@@ -76,17 +76,29 @@ import VueGridLayout from 'vue-grid-layout';
 const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
 export default {
-  mixins: [Notifier],
   components: {
     'caipirinha-visualization': CapirinhaVisualization,
     InputHeader
   },
+  mixins: [Notifier],
   data() {
     return {
       title: '',
       configuration: {},
       layout: []
     };
+  },
+  mounted() {
+    axios
+      .get(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`)
+      .then(response => {
+        this.title = response.data.title;
+        this.configuration = this.getConfiguration(response);
+        this.layout = this.getLayout();
+      })
+      .catch(e => {
+        this.error(e);
+      });
   },
   methods: {
     layoutUpdatedEvent: function(newLayout) {
@@ -168,18 +180,6 @@ export default {
         return this.createInitialConfiguration(response);
       else return response.data.configuration;
     }
-  },
-  mounted() {
-    axios
-      .get(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`)
-      .then(response => {
-        this.title = response.data.title;
-        this.configuration = this.getConfiguration(response);
-        this.layout = this.getLayout();
-      })
-      .catch(e => {
-        this.error(e);
-      });
   }
 };
 </script>

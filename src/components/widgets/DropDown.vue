@@ -3,7 +3,7 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <select class="form-control input-sm" v-bind:data-field="field.name" v-model="selected" @change="updated">
             <option v-if="!field.default"></option>
-            <option v-for="opt in pairOptionValueList" :value="opt.key">
+            <option v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key">
                 {{opt[language] || opt.value}}
             </option>
         </select>
@@ -37,7 +37,11 @@
             }
         },
         props: {
-            value: 0, field: null, language: { default: 'en' }, message: {
+            value: {
+                type: Number,
+                default: 0
+            }, 
+            field: null, language: { default: 'en' }, message: {
                 type: String,
                 default: 'update-form-field-value'
             }        

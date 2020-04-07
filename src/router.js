@@ -4,10 +4,6 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
 
-import UserList from './views/Administration/UserList.vue';
-import UserAdd from './views/Administration/UserAdd.vue';
-import UserEdit from './views/Administration/UserEdit.vue';
-
 // import ProjectList from './views/Administration/ProjectList.vue';
 // import ProjectAdd from './views/Administration/ProjectAdd.vue';
 // import ProjectShow from './views/Administration/ProjectShow.vue';
@@ -40,25 +36,32 @@ import WorkflowAdd from './views/WorkflowAdd.vue';
 import DashboardList from './views/DashboardList.vue';
 import DashboardDetail from './views/DashboardDetail.vue';
 
-import ModelList from './views/ModelList.vue';
-import ModelAdd from './views/ModelAdd.vue';
-import ModelEdit from './views/ModelEdit.vue';
 //import DashboardDetail from './views/DashboardDetail.vue';
 
 import PageNotFound from './views/PageNotFound.vue';
-
+import About from './views/About.vue';
 import OperationList from './views/OperationList.vue';
 
 import Profile from './views/Profile.vue';
-
-import About from './views/About.vue';
 
 import store from './store.js';
 
 // Lazy routes
 const TermsOfService = () => import('./views/TermsOfService.vue');
 const Welcome = () => import('./views/Welcome.vue');
-const ConfigurationList = () => import('./views/ConfigurationList.vue')
+const ConfigurationList = () => import('./views/ConfigurationList.vue');
+
+const RoleList = () => import('./views/Administration/RoleList.vue');
+const RoleAdd = () => import('./views/Administration/RoleAdd.vue');
+const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
+
+const UserList = () => import('./views/Administration/UserList.vue');
+const UserAdd = () => import('./views/Administration/UserAdd.vue');
+const UserEdit = () => import('./views/Administration/UserEdit.vue');
+
+const ModelList = () => import('./views/ModelList.vue');
+const ModelAdd = () => import('./views/ModelAdd.vue');
+const ModelEdit = () => import('./views/ModelEdit.vue');
 
 Vue.use(Router);
 
@@ -84,6 +87,37 @@ let router = new Router({
                 title: ['titles.administration', 1]
             }
         },
+        {
+            path: '/administration/roles',
+            name: 'AdministrationRoleList',
+            component: RoleList,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.role', 2]
+            }
+        },
+        {
+            path: '/administration/roles/new',
+            name: 'AdministrationRoleAdd',
+            component: RoleAdd,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.role', 2]
+            }
+        },
+        {
+            path: '/administration/roles',
+            name: 'AdministrationRoleEdit',
+            component: RoleEdit,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.role', 2]
+            }
+        },
+
         {
             path: '/administration/users',
             name: 'AdministrationUserList',

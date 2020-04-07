@@ -21,19 +21,19 @@
                 {{$t('messages.tokenNotFound')}}
                 </div>
             </div>
-            <form @submit.prevent="changePassword"  v-if="tokenOk==='OK'">
+            <form v-if="tokenOk==='OK'"  @submit.prevent="changePassword">
               <div class="form-group">
                 <label for="password">{{$t('common.password')}}</label>
                 <div style="position:relative">
                   <input
+                    v-model="password"
                     :type="showingPassword ? 'text' : 'password'"
                     class="form-control"
-                    v-model="password"
                     required
                     style="padding-right: 60px;"
                     placeholder="Password"
                   >
-                  <input type="hidden" id="passeye-0">
+                  <input id="passeye-0" type="hidden">
                   <div
                     class="show-password btn btn-primary btn btn-sm"
                     @click="showingPassword = !showingPassword"
@@ -46,9 +46,9 @@
                 <label for="password-confirmation">{{$t('common.confirmPassword')}}</label>
                 <div style="position:relative">
                   <input
+                    v-model="passwordConfirmation"
                     :type="showingPassword ? 'text' : 'password'"
                     class="form-control"
-                    v-model="passwordConfirmation"
                     required
                     style="padding-right: 60px;"
                     placeholder="Password"
