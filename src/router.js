@@ -99,7 +99,7 @@ let router = new Router({
         },
         {
             path: '/administration/roles/new',
-            name: 'AdministrationRoleAdd',
+            name: 'AdministrationAddRole',
             component: RoleAdd,
             meta: {
                 requiresAuth: true,
@@ -108,8 +108,8 @@ let router = new Router({
             }
         },
         {
-            path: '/administration/roles',
-            name: 'AdministrationRoleEdit',
+            path: '/administration/roles/:id/edit',
+            name: 'AdministrationEditRole',
             component: RoleEdit,
             meta: {
                 requiresAuth: true,

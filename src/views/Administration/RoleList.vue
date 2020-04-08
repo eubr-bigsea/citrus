@@ -33,7 +33,7 @@
                                             {{$tc(props.row.system? 'common.yes': 'common.no')}}
                                         </template>
                                         <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                                            <button v-if="!props.row.system" class="btn btn-sm btn-light" @click="remove(props.row.id)">
                                                 <font-awesome-icon icon="trash" />
                                             </button>
                                         </template>
@@ -61,7 +61,7 @@
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'name', 'enabled', 'system', 'actions'],
+                columns: ['id', 'name', 'description', 'enabled', 'system', 'actions'],
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
@@ -70,6 +70,7 @@
                     headings: {
                         id: 'ID',
                         name: this.$tc('common.name'),
+                        description: this.$tc('common.description'),
                         enabled: this.$tc('common.enabled'),
                         system: this.$tc('common.system'),
                         actions: this.$tc('common.action', 2)
@@ -91,7 +92,7 @@
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
                         data.name = data.query;
-                        data.fields = 'id,name,enabled,system';
+                        data.fields = 'id,name,description,enabled,system';
 
                         const url = `${thornUrl}/roles`;
                         this.$Progress.start();

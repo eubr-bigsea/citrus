@@ -1,5 +1,5 @@
 <template>
-    <b-navbar id="l-navbar" toggleable="md" type="dark" variant="dark">
+    <b-navbar id="l-navbar" toggleable="md" type="dark" variant="dark" sticky>
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand :to="{ name: 'home' }">
             <div class="logo" title="Lemonade" />
@@ -22,14 +22,18 @@
                     <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
                         {{ $tc('titles.user', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'AdministrationRoleList' }">
+                        {{ $tc('titles.role', 2) }}
+                   </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'configuration' }">
+                        {{ $tc('titles.configuration', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item v-if="isAdmin" :to="{ name: 'clusters' }">
                         {{ $tc('titles.cluster', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
-                    </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'configuration' }">
-                        {{ $tc('titles.configuration', 2) }}
                     </b-dropdown-item>
                     <!--    <b-dropdown-item href="#">
                                 {{ $tc('titles.platform', 2) }}
