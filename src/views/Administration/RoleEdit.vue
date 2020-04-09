@@ -26,19 +26,33 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-8">
                         <label class="col-form-label">
                             {{ $tc('common.permission', 2) }}:
                         </label>
-                    </div>
-                    <div v-for="p in permissions" :key="p.id" class="col-md-6">
-                        <b-form-checkbox v-model="selectedPermissions" :value="p.id">{{p.description}}</b-form-checkbox>
-                    </div>
-                    <div class="col-md-12">
+					    <div class="row">
+                            <div v-for="p in permissions" :key="p.id" class="col-md-6">
+                                <b-form-checkbox v-model="selectedPermissions" :value="p.id">{{p.description}} 
+								<small>({{p.name}})</small></b-form-checkbox>
+                            </div>
+						</div>
+					</div>
+                    <div class="col-md-4">
                         <label class="col-form-label">
                             {{ $tc('titles.user', 2) }}:
                         </label>
-                        <v-select v-model="role.permissions" :options="permissions" :multiple="true" label="description" :taggable="false" :close-on-select="false">
+                        <v-select style="font-size: .9em" v-model="role.users" :multiple="true" :options="users" @search="onSearchUsers" :taggable="false" 
+							:get-option-label="getUserLabel" :close-on-select="true" label="id">
+							<template #no-options="{ search, searching, loading }">
+								{{$t('common.noResults')}}
+                            </template>
+                           <template slot="selected-option" slot-scope="option">
+                               {{ option.first_name}} {{option.last_name}} &nbsp;<small>({{option.email}})</small>
+                           </template>
+                           <template slot="option" slot-scope="option">
+                               <span class="fa fa-user"></span>
+                               {{ option.first_name}} {{option.last_name}} &nbsp;<small>({{option.email}})</small>
+                           </template>
                         </v-select>
                     </div>
                  </div>
@@ -81,7 +95,9 @@
                 role: {},
                 idsPermissions: [],
                 permissions: [],
-                selectedPermissions: []
+				users: [],
+                selectedPermissions: [],
+				selectedUsers: [],
             };
         },
         computed: {},
@@ -97,7 +113,11 @@
                 const self = this
                 self.role.permissions = self.permissions.filter(
                          p => v.includes(p.id));
+            },
+            selectedUsers(v){
+                this.role.users = this.selectedUsers;
             }
+
         },
         mounted() {
             let self = this;
@@ -106,16 +126,16 @@
                     self.isDirty = false;
                 });
                 self.selectedPermissions = self.role.permissions.map(p=>p.id);
-                const permissionsUrl = `${thornUrl}/permissions`;
-                axios.get(permissionsUrl)
-                    .then(resp => {
-                        self.permissions = resp.data.data.sort((a, b) => a.description.localeCompare(b.description));
-                    }).catch(function (e) {
-                        self.error(e);
-                    });
- 
-            });
 
+            });
+            const permissionsUrl = `${thornUrl}/permissions`;
+            axios.get(permissionsUrl)
+                .then(resp => {
+                    self.permissions = resp.data.data.sort((a, b) => a.description.localeCompare(b.description));
+                }).catch(function (e) {
+                    self.error(e);
+                });
+ 
         },
         /* Methods */
         methods: {
@@ -149,6 +169,25 @@
                     this.$snotify.error(e.message, this.$t('titles.error'));
                 }
             },
+			onSearchUsers(search, loading){
+				loading(true);
+				this.searchUsers(loading, search, this);
+			},
+			getUserLabel(opt){
+				return `${opt.first_name}|${opt.last_name}|${opt.email}`; 
+			},
+			searchUsers: _.debounce((loading, search, vm) => {
+				const url = `${thornUrl}/users`;
+				const params = {query: search, size: 10, fields: 'id,first_name,last_name,email'};
+				axios.get(url, {params})
+					.then(resp => {
+						vm.users = resp.data.data;
+						loading(false);
+					})
+					.catch(resp => {
+						vm.error(vm.data);
+					})
+			}, 350),
             save(event) {
                 let self = this;
                 const url = `${thornUrl}/roles/${this.role.id}`;
