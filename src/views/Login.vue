@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="footer text-center">
-                    Copyright © 2018 — Lemonade Project
+                    Copyright © 2020 — Lemonade Project
                 </div>
             </div>
         </div>
