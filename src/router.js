@@ -100,7 +100,8 @@ let router = new Router({
         {
             path: '/administration/roles/new',
             name: 'AdministrationAddRole',
-            component: RoleAdd,
+            component: RoleEdit,
+            props: {add: true},
             meta: {
                 requiresAuth: true,
                 requiresRole: true,

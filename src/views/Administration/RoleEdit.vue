@@ -8,9 +8,10 @@
           </div>
           <hr>
           <div class="row">
-            <div v-if="role.id" class="col-md-12 col-xg-12 mx-auto">
+            <div class="col-md-12 col-xg-12 mx-auto">
               <div class="card">
                 <div class="card-body">
+                  <form @submit.prevent="save">
                   <div class="row">
                     <div class="col-md-3">
                       <label class="font-weight-bold">{{$tc('common.name')}}:</label>
@@ -18,7 +19,7 @@
                     </div>
                     <div class="col-md-6">
                       <label class="font-weight-bold">{{$tc('common.description')}}:</label>
-                      <input v-model="role.description" type="text" maxlength="100" class="form-control">
+                      <input v-model="role.description" type="text" maxlength="100" class="form-control" required>
                     </div>
                     <div class="col-md-3 mt-3 mb-3 mt-3">
                       <b-form-checkbox v-model="role.enabled">{{ $t('common.enabled') }}
@@ -37,7 +38,7 @@
                             </div>
 						</div>
 					</div>
-                    <div class="col-md-4">
+                    <div v-if="!role.all_user" class="col-md-4">
                         <label class="col-form-label">
                             {{ $tc('titles.user', 2) }}:
                         </label>
@@ -58,7 +59,7 @@
                  </div>
                   <div class="row">
                     <div class="col-md-12 mt-4 border-top pt-2">
-                      <button v-if="!role.system" class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                      <button v-if="!role.system" class="btn btn-primary mr-1 btn-spinner" type="submit">
                         <font-awesome-icon icon="spinner" pulse class="icon" />
                         <span class="fa fa-save"></span>
                         {{$tc('actions.save')}}
@@ -67,6 +68,7 @@
                         {{$tc('actions.cancel')}}</router-link>
                     </div>
                   </div>
+                </form>
                 </div>
               </div>
             </div>
@@ -101,6 +103,12 @@
             };
         },
         computed: {},
+        props: {
+            add: {
+                type: Boolean,
+                default: false
+            }
+        },
         watch: {
             '$route.params.id': function (id) {
                 this.load().then(() => {
@@ -141,18 +149,24 @@
         methods: {
             load() {
                 let self = this;
-                return new Promise((resolve, reject) => {
-                    axios
-                        .get(`${thornUrl}/roles/${this.$route.params.id}`)
-                        .then(resp => {
-                            self.role = resp.data.data[0];
-                            resolve();
-                        })
-                        .catch(function (e) {
-                            self.error(e);
-                            reject();
-                        });
-                });
+                if (!self.add) {
+                    return new Promise((resolve, reject) => {
+                        axios
+                            .get(`${thornUrl}/roles/${this.$route.params.id}`)
+                            .then(resp => {
+                                self.role = resp.data.data[0];
+                                resolve();
+                            })
+                            .catch(function (e) {
+                                self.error(e);
+                                reject();
+                            });
+                    });
+                } else {
+                    return new Promise((resolve, reject) => {
+                        self.role = {id: '', enabled: false};
+                    });
+                }
             },
             success(msg) {
                 this.$snotify.success(msg, this.$t('titles.success'));
@@ -178,7 +192,7 @@
 			},
 			searchUsers: _.debounce((loading, search, vm) => {
 				const url = `${thornUrl}/users`;
-				const params = {query: search, size: 10, fields: 'id,first_name,last_name,email'};
+				const params = {enabled: 1, query: search, size: 10, fields: 'id,first_name,last_name,email'};
 				axios.get(url, {params})
 					.then(resp => {
 						vm.users = resp.data.data;
@@ -190,13 +204,17 @@
 			}, 350),
             save(event) {
                 let self = this;
-                const url = `${thornUrl}/roles/${this.role.id}`;
+                let url = `${thornUrl}/roles/${this.role.id}`;
+                let axiosCall = axios.patch
+                if (self.add){
+                    url = `${thornUrl}/roles`;
+                    axiosCall = axios.post
+                }
 
                 event.target.setAttribute('disabled', 'disabled');
                 event.target.classList.remove('btn-spinner');
 
-                return axios
-                    .patch(url, this.role)
+                return axiosCall(url, this.role)
                     .then(resp => {
                         event.target.removeAttribute('disabled');
                         event.target.classList.add('btn-spinner');
