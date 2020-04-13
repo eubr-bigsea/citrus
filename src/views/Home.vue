@@ -8,10 +8,10 @@
     </div>
 
     <div class="row">
-      <home-card :type="'dataSource'" :items="dataSources" :total="total.dataSources"></home-card>
-      <home-card :type="'workflow'" :items="workflows" :total="total.workflows"></home-card>
-      <home-card :type="'job'" :items="jobs" :total="total.jobs"></home-card>
-      <home-card :type="'dashboard'" :items="dashboards" :total="total.dashboards"></home-card>
+      <HomeCard :type="'dataSource'" :items="dataSources" :total="total.dataSources"></HomeCard>
+      <HomeCard :type="'workflow'" :items="workflows" :total="total.workflows"></HomeCard>
+      <HomeCard :type="'job'" :items="jobs" :total="total.jobs"></HomeCard>
+      <HomeCard :type="'dashboard'" :items="dashboards" :total="total.dashboards"></HomeCard>
     </div>
   </main>
 </template>
@@ -26,7 +26,7 @@ let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 let caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
 export default {
-  name: 'home',
+  name: 'Home',
   components: {
     HomeCard
   },

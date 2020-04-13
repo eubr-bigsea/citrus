@@ -9,15 +9,15 @@
                         <div class="float-right navbar-brand logo" />
                         <form @submit.prevent="login">
                             <div class="form-group">
-                                <label for="email">{{ $t('common.email') }}</label>
+                                <label for="email">{{ $t('common.email') }}:</label>
                                 <input v-model="email" required type="email" class="form-control" placeholder="Name"
                                     autofocus autocomplete="username" />
                             </div>
 
                             <div class="form-group">
                                 <label for="password">
-                                    {{ $t('common.password') }}
-                                    <router-link class="float-right" to="/reset_password">{{$t('common.forgotPassword')}}</router-link>
+                                    {{ $t('common.password') }}:
+                                    <router-link class="float-right" :to="{name: 'reset_password'}">{{$t('common.forgotPassword')}}</router-link>
                                 </label>
                                 <div style="position:relative">
                                     <input v-model="password" :type="showingPassword ? 'text' : 'password'"
@@ -31,8 +31,9 @@
 
                             <div class="form-group">
                                 <label>
-                                    <input v-model="rememberPassword" type="checkbox" />
+                                    <b-check v-model="rememberPassword">
                                     {{ $t('common.rememberMe') }}
+                                    </b-check>
                                 </label>
                             </div>
 
@@ -44,7 +45,7 @@
                             <div class="margin-top20 text-center">
                                 {{ $t('common.dontHaveAccount') }}
                                 <br />
-                                <router-link to="/register">{{$t('common.createAccount')}}</router-link>
+                                <router-link :to="{name: 'register'}">{{$t('common.createAccount')}}</router-link>
                             </div>
                         </form>
                     </div>
@@ -103,11 +104,7 @@
                     .dispatch('login', { thornUrl, user: { email, password } })
                     .then(() => this.$router.push('/'))
                     .catch(e => {
-                        var err = e;
-                        if (e.response.data.errors[0]) {
-                            err = { message: `${e.response.data.errors[0].detail}` };
-                        }
-                        this.error(err);
+                       this.error(e.response.data);
                     });
             }
         }

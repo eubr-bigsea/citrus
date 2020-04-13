@@ -41,7 +41,7 @@
                 let self = this;
 
                 if (self.isLoggedIn) {
-                    let url = `${thornUrl}/api/tokens`;
+                    const url = '/tokens';
                     let headers = { Accept: 'application/json; charset=utf-8' };
                     axios({
                         url,

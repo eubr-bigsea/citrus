@@ -12,9 +12,9 @@
               <div class="card">
                 <div class="card-body">
                   <v-server-table
+                    ref="listTable"
                     :columns="columns"
                     :options="options"
-                    ref="listTable"
                     name="dashboardList"
                   >
                     <template slot="id" slot-scope="props">

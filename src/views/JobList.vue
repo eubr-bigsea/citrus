@@ -12,11 +12,11 @@
               <div class="card">
                 <div class="card-body">
                   <v-server-table
+                    ref="jobList"
                     :data="tableData"
                     :columns="columns"
                     :options="options"
                     name="jobList"
-                    ref="jobList"
                   >
                     <template slot="id" slot-scope="props">
                       <router-link
@@ -31,8 +31,8 @@
                     <template slot="actions" slot-scope="props">
                       <button
                         class="btn btn-sm btn-light"
-                        @click="remove(props.row)"
                         :title="$t('actions.delete')"
+                        @click="remove(props.row)"
                       >
                         <font-awesome-icon icon="trash"></font-awesome-icon>
                       </button>

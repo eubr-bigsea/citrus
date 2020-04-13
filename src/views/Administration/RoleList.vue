@@ -4,8 +4,8 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ $tc('titles.user', 2) }}</h1>
-                        <router-link :to="{ name: 'AdministrationAddUser' }" class="btn btn-sm btn-outline-primary">
+                        <h1>{{ $tc('titles.role', 2) }}</h1>
+                        <router-link :to="{ name: 'AdministrationAddRole' }" class="btn btn-sm btn-outline-primary">
                             {{ $t('actions.addItem') }}
                         </router-link>
                     </div>
@@ -14,51 +14,26 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <v-server-table ref="userList" :columns="columns" :options="options"
-                                        name="userList">
+                                    <v-server-table ref="roleList" :columns="columns" :options="options"
+                                        name="roleList">
                                         <template slot="id" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                            <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
                                                 {{ props.row.id }}
                                             </router-link>
                                         </template>
-                                        <template slot="full_name" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                {{ props.row.full_name }}
+                                        <template slot="name" slot-scope="props">
+                                            <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
+                                                {{ props.row.name }}
                                             </router-link>
                                         </template>
-
                                         <template slot="enabled" slot-scope="props">
                                             {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
                                         </template>
-                                        <template slot="email" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                {{ props.row.email }}
-                                            </router-link>
+                                        <template slot="system" slot-scope="props">
+                                            {{$tc(props.row.system? 'common.yes': 'common.no')}}
                                         </template>
-                                        <template slot="roles" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                <span v-for="role in props.row.roles" :key="role.id">
-                                                <div class="badge badge-secondary p-1 mr-1">{{role.description}}</div>
-                                                </span>
-                                            </router-link>
-                                        </template>
-                                        <template slot="notes" slot-scope="props">
-                                                {{props.row.notes}}
-                                        </template>
-
-                                        <template slot="confirmed_at" slot-scope="props">
-                                            <div v-if="isConfirmedUser(props.row.confirmed_at)">
-                                                {{ props.row.confirmed_at | formatJsonDate }}
-                                                <font-awesome-icon icon="check" />
-                                            </div>
-                                            <button v-else class="btn btn-sm btn-success"
-                                                @click="confirmUser(props.row.id)">
-                                                {{ $t('common.confirm') }}
-                                            </button>
-                                        </template>
-
                                         <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                                            <button v-if="!props.row.system" class="btn btn-sm btn-light" @click="remove(props.row.id)">
                                                 <font-awesome-icon icon="trash" />
                                             </button>
                                         </template>
@@ -86,24 +61,22 @@
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'full_name', 'enabled', 'email', 'notes', 'roles', 'confirmed_at', 'actions'],
+                columns: ['id', 'name', 'description', 'enabled', 'system', 'actions'],
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
                     dateColumns: ['updated'],
-                    columnClasses: { actions: 'th-10' },
+                    columnClasses: { actions: 'th-2' },
                     headings: {
                         id: 'ID',
-                        full_name: this.$tc('common.name'),
+                        name: this.$tc('common.name'),
+                        description: this.$tc('common.description'),
                         enabled: this.$tc('common.enabled'),
-                        email: this.$tc('common.email'),
-                        roles: this.$tc('common.roles', 2),
-                        notes: this.$tc('common.user.notes'),
-                        confirmed_at: this.$tc('common.confirmed_at'),
+                        system: this.$tc('common.system'),
                         actions: this.$tc('common.action', 2)
                     },
-                    sortable: ['full_name', 'id', 'email', 'confirmed_at'],
-                    filterable: ['full_name', 'id', 'email'],
+                    sortable: ['name', 'id', 'email', 'confirmed_at'],
+                    filterable: ['name', 'id', 'email'],
                     sortIcon: {
                         base: 'fa fas',
                         is: 'fa-sort ml-10',
@@ -119,9 +92,9 @@
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
                         data.name = data.query;
-                        data.fields = 'id,full_name,enabled,email,confirmed_at,roles,notes';
+                        data.fields = 'id,name,description,enabled,system';
 
-                        const url = `${thornUrl}/users`;
+                        const url = `${thornUrl}/roles`;
                         this.$Progress.start();
                         return axios
                             .get(url, {
@@ -154,49 +127,49 @@
         },
         methods: {
             clearFilters() {
-                this.$refs.userList.setFilter('');
-                this.$refs.userList.customQueries = {};
+                this.$refs.roleList.setFilter('');
+                this.$refs.roleList.customQueries = {};
             },
-            isConfirmedUser(confirmed_at) {
+            isConfirmedRole(confirmed_at) {
                 return confirmed_at !== null;
             },
-            remove(userId) {
+            remove(roleId) {
                 const self = this;
                 this.confirm(
                     this.$t('actions.delete'),
                     this.$t('messages.doYouWantToDelete'),
                     () => {
-                        const url = `${thornUrl}/users/${userId}`;
+                        const url = `${thornUrl}/roles/${roleId}`;
                         axios
                             .delete(url, {})
                             .then(resp => {
                                 self.success(
                                     self.$t('messages.successDeletion', {
-                                        what: this.$tc('titles.user', 1)
+                                        what: this.$tc('titles.role', 1)
                                     })
                                 );
-                                self.$refs.userList.refresh();
+                                self.$refs.roleList.refresh();
                             })
                             .catch(e => self.error(e));
                     }
                 );
             },
-            confirmUser(userId) {
+            confirmRole(roleId) {
                 const self = this;
                 this.confirm(
                     self.$t('actions.confirm'),
                     self.$t('messages.doYouWantToConfirm'),
                     () => {
-                        const url = `${thornUrl}/users/${userId}/confirm`;
+                        const url = `${thornUrl}/roles/${roleId}/confirm`;
                         axios
                             .post(url, {})
                             .then(resp => {
                                 self.success(
                                     self.$t('messages.successConfirmation', {
-                                        what: this.$tc('titles.user', 1)
+                                        what: this.$tc('titles.role', 1)
                                     })
                                 );
-                                self.$refs.userList.refresh();
+                                self.$refs.roleList.refresh();
                             })
                             .catch(e => self.error(e));
                     }
