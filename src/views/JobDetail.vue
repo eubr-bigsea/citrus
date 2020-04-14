@@ -368,9 +368,8 @@
             },
             connectWebSocket() {
                 const self = this;
-                const socket = io(`${standUrl}${standNamespace}`, {
+                const socket = io(standNamespace, {
                     upgrade: true,
-                    path: `${standSocketIOPath}/socket.io`
                 });
 
                 self.socket = socket;
