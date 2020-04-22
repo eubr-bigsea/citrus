@@ -1,5 +1,8 @@
 <template>
     <div class="btn-group" role="group">
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
+            <span class="fa fa-cogs"></span>
+        </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
             <span class="far fa-save"></span>
         </button>
@@ -29,6 +32,7 @@
     .red {
         color: #FF4136;
     }
+
     .runBtn {
         color: #28a745 !important;
     }
@@ -63,7 +67,10 @@
             },
             exportWorkflow() {
                 this.$root.$emit('onclick-export');
-            }
+            },
+            showProperties() {
+                this.$root.$emit('onshow-properties')
+            },
         }
     }
 </script>

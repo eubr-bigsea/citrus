@@ -43,6 +43,12 @@ export default {
                             { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                         );
                         this.$router.push({name: 'home'});
+                    } else if (e.response.status === 401) {
+                            this.$snotify.error(
+                                this.$t('errors.accessDenied'), this.$t('titles.error'),
+                                { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
+                            );
+                            this.$router.push({name: 'home'});
                     } else {
                         this.$snotify.error(
                             e.response.data.message, this.$t('titles.error'),

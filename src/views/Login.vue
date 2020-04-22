@@ -6,7 +6,7 @@
                 <div class="card fat">
                     <div class="card-body">
                         <h4 class="card-title float-left">{{ $t('titles.login') }}</h4>
-                        <div class="float-right navbar-brand logo" />
+                        <div class="float-right navbar-brand logo" style="width:32px; margin:0"/>
                         <form @submit.prevent="login">
                             <div class="form-group">
                                 <label for="email">{{ $t('common.email') }}:</label>

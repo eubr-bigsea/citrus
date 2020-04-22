@@ -18,10 +18,6 @@ import Logout from './views/Logout.vue';
 import Register from './views/Register.vue';
 import ResetPassword from './views/ResetPassword.vue';
 
-import ClusterList from './views/ClusterList.vue';
-import ClusterAdd from './views/ClusterAdd.vue';
-import ClusterEdit from './views/ClusterEdit.vue';
-
 import DataSourceList from './views/DataSourceList.vue';
 import DataSourceEdit from './views/DataSourceEdit.vue';
 import DataSourceAdd from './views/DataSourceAdd.vue';
@@ -33,8 +29,6 @@ import WorkflowList from './views/WorkflowList.vue';
 import WorkflowEdit from './views/WorkflowEdit.vue';
 import WorkflowAdd from './views/WorkflowAdd.vue';
 
-import DashboardList from './views/DashboardList.vue';
-import DashboardDetail from './views/DashboardDetail.vue';
 
 //import DashboardDetail from './views/DashboardDetail.vue';
 
@@ -59,9 +53,16 @@ const UserList = () => import('./views/Administration/UserList.vue');
 const UserAdd = () => import('./views/Administration/UserAdd.vue');
 const UserEdit = () => import('./views/Administration/UserEdit.vue');
 
+const ClusterList = () => ('./views/ClusterList.vue');
+const ClusterAdd = () => ('./views/ClusterAdd.vue');
+const ClusterEdit = () => ('./views/ClusterEdit.vue');
+
 const ModelList = () => import('./views/ModelList.vue');
 const ModelAdd = () => import('./views/ModelAdd.vue');
 const ModelEdit = () => import('./views/ModelEdit.vue');
+
+const DashboardList = () => import('./views/DashboardList.vue');
+const DashboardDetail = () => import('./views/DashboardDetail.vue');
 
 Vue.use(Router);
 
@@ -328,6 +329,15 @@ let router = new Router({
             component: DashboardDetail,
             meta: {
                 requiresAuth: true,
+                title: ['titles.dashboard', 1]
+            }
+        },
+        {
+            path: '/public/dashboard/:hash',
+            name: 'publicDashboard',
+            component: DashboardDetail,
+            meta: {
+                requiresAuth: false,
                 title: ['titles.dashboard', 1]
             }
         },

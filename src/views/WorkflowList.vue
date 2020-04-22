@@ -24,11 +24,12 @@
                                             <router-link
                                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
                                                 {{props.row.id}}</router-link>
-                                        </template>
-                                        <template slot="name" slot-scope="props">
-                                            <router-link
+                                            </template>
+                                            <template slot="name" slot-scope="props">
+                                                <router-link
                                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
                                                 {{props.row.name}}</router-link>
+                                                <small v-if="props.row.description" class="break-word">{{props.row.description}}</small>
                                         </template>
                                         <template slot="platform"
                                             slot-scope="props">{{props.row.platform.name}}</template>
@@ -140,7 +141,7 @@
                         data.size = data.limit;
                         data.name = data.query;
 
-                        data.fields = 'id,name,platform,updated,user,version,is_template';
+                        data.fields = 'id,name,platform,updated,user,version,is_template,description';
 
                         let url = `${tahitiUrl}/workflows?enabled=1`;
                         let headers = {};

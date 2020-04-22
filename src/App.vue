@@ -62,17 +62,3 @@
     };
 </script>
 
-<style>
-    body {
-        background-color: #f8f9fa !important;
-    }
-
-    .app-container {
-        height: calc(100% - 45px);
-    }
-
-    .main-container {
-        padding-top: 15px;
-        height: calc(100% - 60px);
-    }
-</style>

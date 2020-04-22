@@ -1,0 +1,96 @@
+<template>
+    <div>
+        <div v-if="editing" class="ml-2 float-left">
+            {{$t('dashboard.markupVisualization')}}:
+        </div>
+        <div class="float-right mr-1">
+            <span v-if="editing">
+                <small class="mr-1"><a href="#" @click.prevent="cancel">{{$t('actions.cancel')}}</a></small>
+                <small><a href="#" @click.prevent="save">{{$t('actions.save')}}</a></small>
+            </span>
+            <small v-if="!editing && !publicRoute" class="d-print-none">
+                
+                <a href="#" @click.prevent="edit" :title="$t('actions.edit')"> <span class="fa fa-edit"></span></a>
+                &nbsp;
+                <a href="#" @click.prevent="deleteText" :title="$t('actions.delete')"> <span
+                        class="fa fa-trash"></span></a>
+            </small>
+        </div>
+        <div v-if="editing" class="pl-2 pr-2 editor-container">
+            <textarea v-model="visualizationData.markdown" class="markdown-editor"></textarea>
+        </div>
+        <div v-else class="pl-2 pr-2">
+            <div v-html="markdown"></div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import snarkdown from 'snarkdown';
+    import Notifier from '../../mixins/Notifier';
+    import axios from 'axios';
+    const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
+    export default {
+        mixins: [Notifier],
+        name: "caipirinha-visualization-markdown",
+        props: {
+            visualizationData: {},
+            publicRoute: { default: true }
+        },
+        data: function () {
+            return {
+                editing: false,
+                markdown: snarkdown(this.visualizationData.markdown || ""),
+            }
+        },
+        methods: {
+            edit() {
+                this.editing = true;
+            },
+            deleteText() {
+                this.$root.$emit('ondelete-visualization', this.visualizationData.id);
+            },
+            save() {
+                const data = {
+                    data: JSON.stringify({
+                        markdown: this.visualizationData.markdown
+                    })
+                };
+                axios
+                    .patch(`${caipirinhaUrl}/visualizations/0/0/${this.visualizationData.id}`, data)
+                    .then(response => {
+                        this.success(
+                            this.$t('messages.savedWithSuccess', {
+                                what: this.$tc('titles.visualization')
+                            })
+                        );
+                        this.editing = false;
+                        this.markdown = snarkdown(JSON.parse(response.data.data.data).markdown || "");
+                    })
+                    .catch(e => {
+                        this.error(e);
+                    });
+            },
+            cancel() {
+                this.editing = false;
+                this.markdown = snarkdown(this.visualizationData.markdown || "");
+            },
+        }
+    };
+</script>
+<style>
+    .editor-container {
+        padding: 5px;
+    }
+
+    .editor-container .markdown-editor {
+        border: 1px solid #ddd;
+        font-family: 'Courier New', Courier, monospace;
+        width: 100%;
+        resize: none;
+        outline: none;
+        padding: 5px;
+        height: 65%;
+        min-height: 120px;
+    }
+</style>

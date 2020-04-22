@@ -65,7 +65,6 @@ export default {
             executorCores: 'Núcleos (total de CPUs) dos executures'
         },
         common: {
-            makeAdmin: 'Tornar Administrador',
             action: 'Ação | Ações',
             adminRole: 'Administrador',
             author: 'Autor',
@@ -79,6 +78,7 @@ export default {
             confirmPassword: 'Confirmar senha',
             created: 'Criado',
             createAccount: 'Criar conta',
+            current_password: 'Senha Atual',
             date: 'Data',
             description: 'Descrição',
             dontHaveAccount: 'Não possui uma conta?',
@@ -98,6 +98,7 @@ export default {
             loading: 'Carregando',
             login: 'Entrar',
             logout: 'Sair',
+            makeAdmin: 'Tornar Administrador',
             managerRole: 'Gestor',
             monitorRole: 'Monitor',
             more: 'Mais',
@@ -115,18 +116,17 @@ export default {
             parameters: 'Parâmetro | Parâmetros',
             password: 'Senha',
             project: {
-                name: 'Nome',
-                description: 'Descrição',
                 category: 'Categoria',
+                description: 'Descrição',
+                managers: 'Responsáveis',
+                name: 'Nome',
                 subcategory: 'Categoria Secundária',
-                managers: 'Responsáveis'
             },
             team: {
-                name: 'Nome',
                 description: 'Descrição',
-                leaders: 'Líders'
+                leaders: 'Líders',
+                name: 'Nome',
             },
-            current_password: 'Senha Atual',
             new_password: 'Nova senha',
             new_password_confirmation: 'Confirmação de nova senha',
             permission: 'Permissão | Permissões',
@@ -163,6 +163,11 @@ export default {
             },
             version: 'Versão',
             yes: 'Sim'
+        },
+        dashboard: {
+            public: 'Público',
+            publicExplanation: 'Este dashboard pode ser visto por outros sem a solicitação de autenticação.',
+            markupVisualization: 'Texto (Markdown)',
         },
         dataSource: {
             alternativeUseDatabase:
@@ -230,6 +235,7 @@ export default {
         },
         errors: {
             acceptTerms: 'Você deve concordar com os termos de uso',
+            accessDenied: 'Acesso negado.',
             disconnected:
                 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
             emailNotFound: 'Email não cadastrado.',
@@ -254,10 +260,10 @@ export default {
                 'Existem alterações que ainda não foram salvas. Deseja sair assim mesmo?'
         },
         import: {
-            description: 'Importe um arquivo com a definição do fluxo de trabalho.' + 
+            description: 'Importe um arquivo com a definição do fluxo de trabalho.' +
                 'O arquivo deve estar no formato correto e ser compatível com a versão do Lemonade. ',
             review: 'Após a importação, certifique-se de atualizar as fontes de dados, pois elas NÃO são importadas ' +
-                    'junto com o fluxo de trabalho.',
+                'junto com o fluxo de trabalho.',
             selectFile: 'Por favor, selecione um arquivo.'
         },
         job: {
@@ -289,7 +295,7 @@ export default {
             successImport: 'Fluxo de trabalho foi importado com o id={what}.',
             resetPasswordInstructions: '<p>Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.</p>' +
                 '<p>Se você não receber esse e-mail, ' +
-                'verifique suas pastas de spam ou de lixo eletrônico e também ' + 
+                'verifique suas pastas de spam ou de lixo eletrônico e também ' +
                 'adicione o endereço <strong>{email}</strong> ao seu catálogo de endereços. Você pode tentar redefinir sua senha a qualquer momento.</p>',
             registeredWithSuccess:
                 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
@@ -405,6 +411,7 @@ export default {
             user: 'Usuário | Usuários',
             validationErrors: 'Erro de validação | Erros de validação',
             value: 'Valor',
+            visualization: 'Visualização | Visualizações',
             warning: 'Aviso',
             welcome: 'Bem-vindo(a) ao Lemonade!',
             whatIfModel: 'What if model?',
@@ -426,14 +433,14 @@ export default {
             como produto dos projetos EUBra-BIGSEA e Atmosphere.`
         },
         visualization: {
-            tryRefresh:
-                'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada',
             lowerQuartile: 'Quartil inferior (1o)',
             maximum: 'Máximo',
             median: 'Mediana',
             minimum: 'Mínimo',
             outlier: 'Discrepante | Discrepantes',
-            upperQuartile: 'Quartil superior (3o)'
+            tryRefresh:
+                'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada',
+            upperQuartile: 'Quartil superior (3o)',
         },
         workflow: {
             asImage: 'Como uma imagem (uma janela para baixar a imagem aparecerá)',
@@ -640,6 +647,11 @@ export default {
             version: 'Version',
             yes: 'Yes'
         },
+        dashboard: {
+            public: 'Public',
+            publicExplanation: 'This dashboard can be viewed by other people without requiring authentication.',
+            markupVisualization: 'Text (Markdown)',
+        },
         dataSource: {
             alternativeUseDatabase:
                 'We recommend this option only if you are sure the database connection is correctly configured.',
@@ -702,7 +714,8 @@ export default {
             showProperties: 'Tip: Double click a task to show its properties'
         },
         errors: {
-            acceptTerms: 'You must accept the terms of service', 
+            acceptTerms: 'You must accept the terms of service',
+            accessDenied: 'Access denied.',
             disconnected:
                 'You are disconnected. Please check if you have access to the Internet.',
             emailNotFound: 'Email not found.',
@@ -736,7 +749,7 @@ export default {
             registeredWithSuccess:
                 'You were registered with success. Please, sign in again.',
             resetPasswordInstructions: '<p>An email has been sent to your address. Follow the instructions to reset your password.</p>' +
-                '<p>If you do not receive this email, check your spam or junk folders and also ' + 
+                '<p>If you do not receive this email, check your spam or junk folders and also ' +
                 'add <strong>{email}</strong> to your address book. You can try to reset your password at any time.',
             savedWithSuccess: '{what} saved with success.',
             noMatching: 'Sorry, no matching options',
@@ -750,10 +763,10 @@ export default {
             validatingToken: 'Validating token, please wait...',
         },
         import: {
-            description: 'You may import a file containing a workflow definition. ' + 
+            description: 'You may import a file containing a workflow definition. ' +
                 'Imported file must be in the correct format and be compatible with Lemonade version. ',
             review: 'After importing, be sure to update the data sources because they are NOT imported ' +
-                    'with the workflow.',
+                'with the workflow.',
             selectFile: 'Please, select a file'
         },
         job: {
@@ -803,7 +816,7 @@ export default {
             property: 'Property | Properties',
             register: 'Sign up',
             resetPassword: 'Reset password',
-            role: 'Role | Roles', 
+            role: 'Role | Roles',
             storage: 'Storage | Storages',
             success: 'Success',
             tasks: 'Task | Tasks',
@@ -813,6 +826,7 @@ export default {
             user: 'User | Users',
             validationErrors: 'Validation error | Validation errors',
             value: 'Value',
+            visualization: 'Visualization | Visualizations',
             warning: 'Warning',
             welcome: 'Welcome to Lemonade!',
             whatIfModel: 'What if model?',
