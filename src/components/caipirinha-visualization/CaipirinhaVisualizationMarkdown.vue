@@ -27,9 +27,14 @@
 
 <script>
     import snarkdown from 'snarkdown';
+    import DOMPurify from 'dompurify';
     import Notifier from '../../mixins/Notifier';
     import axios from 'axios';
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
+    
+    function sanitizeMarkdown(markdownCode){
+        return DOMPurify.sanitize(snarkdown(markdownCode));
+    }
     export default {
         mixins: [Notifier],
         name: "caipirinha-visualization-markdown",
@@ -40,10 +45,11 @@
         data: function () {
             return {
                 editing: false,
-                markdown: snarkdown(this.visualizationData.markdown || ""),
+                markdown: sanitizeMarkdown(this.visualizationData.markdown || ""),
             }
         },
         methods: {
+
             edit() {
                 this.editing = true;
             },
@@ -65,7 +71,7 @@
                             })
                         );
                         this.editing = false;
-                        this.markdown = snarkdown(JSON.parse(response.data.data.data).markdown || "");
+                        this.markdown = sanitizeMarkdown(JSON.parse(response.data.data.data).markdown || "");
                     })
                     .catch(e => {
                         this.error(e);
@@ -73,7 +79,7 @@
             },
             cancel() {
                 this.editing = false;
-                this.markdown = snarkdown(this.visualizationData.markdown || "");
+                this.markdown = sanitizeMarkdown(this.visualizationData.markdown || "");
             },
         }
     };
