@@ -1,7 +1,7 @@
 <template>
     <div class="properties">
         <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true">
-            <div class="props card text-dark bg-light p0 mb-1">
+            <div class="props text-dark bg-light p0 mb-1">
                 <div class="border-bottom card-header special">
                     <strong>{{task.operation.name}}</strong>
                     <br />

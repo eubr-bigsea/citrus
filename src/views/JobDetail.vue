@@ -143,7 +143,7 @@
                                     <div v-for="result in job.results" :key="result.id" class="row">
                                         <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
                                             style="margin-top: 14px; display:table">
-                                            <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)">
+                                            <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id, 0)">
                                             </caipirinha-visualization>
                                         </div>
                                     </div>
@@ -363,8 +363,8 @@
             getResults(taskId) {
                 return { taskId: this.results[taskId] };
             },
-            getCaipirinhaLink(jobId, taskId) {
-                return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}?token=123456`;
+            getCaipirinhaLink(jobId, taskId, visId) {
+                return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;
             },
             connectWebSocket() {
                 const self = this;
