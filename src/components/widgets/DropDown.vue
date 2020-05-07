@@ -38,8 +38,7 @@
         },
         props: {
             value: {
-                type: Number,
-                default: 0
+                default: '0'
             }, 
             field: null, language: { default: 'en' }, message: {
                 type: String,
