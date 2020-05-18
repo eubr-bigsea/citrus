@@ -187,7 +187,7 @@
                     self.$t('actions.confirm'),
                     self.$t('messages.doYouWantToConfirm'),
                     () => {
-                        const url = `${thornUrl}/users/${userId}/confirm`;
+                        const url = `${thornUrl}/approve/${userId}`;
                         axios
                             .post(url, {})
                             .then(resp => {
