@@ -73,7 +73,6 @@ import {
     faStop,
     faShareAlt,
     faProjectDiagram,
-    faFlask,
     faUserLock,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -199,7 +198,6 @@ library.add(
     faStop,
     faShareAlt,
     faProjectDiagram,
-    faFlask,
     faUserLock,
 );
 

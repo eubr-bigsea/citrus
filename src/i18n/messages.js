@@ -501,7 +501,6 @@ export default {
             validationExplanation:
                 'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.',
             variables: 'Variável | Variáveis',
-                'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.'
         },
         permissions: {
             MANAGE: 'Gerenciar',
@@ -698,7 +697,7 @@ export default {
             'TIME': 'Time',
             'TIMESTAMP': 'Timestamp',
             'VECTOR': 'Vector'
-        }
+        },
         dashboard: {
             public: 'Public',
             publicExplanation: 'This dashboard can be viewed by other people without requiring authentication.',
@@ -862,6 +861,7 @@ export default {
             error: 'Error',
             errorDetail: 'Error detail (advanced)',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
+            home: 'Welcome to Lemonade',
             job: 'Job | Jobs',
             jobs: 'Jobs',
             lemonade: 'Lemonade',

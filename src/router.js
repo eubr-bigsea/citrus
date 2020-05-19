@@ -31,17 +31,8 @@ import WorkflowAdd from './views/WorkflowAdd.vue';
 
 import NotebookEdit from './views/NotebookEdit.vue';
 
-import DashboardList from './views/DashboardList.vue';
-import DashboardDetail from './views/DashboardDetail.vue';
-
-//import DashboardDetail from './views/DashboardDetail.vue';
-
-import PageNotFound from './views/PageNotFound.vue';
-import About from './views/About.vue';
 import OperationList from './views/OperationList.vue';
-
 import Profile from './views/Profile.vue';
-
 import About from './views/About.vue';
 
 import PageNotFound from './views/PageNotFound.vue';
