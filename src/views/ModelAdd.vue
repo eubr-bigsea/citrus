@@ -4,15 +4,15 @@
             <div class="col">
                 <div class="row">
                     <div class="mx-auto overflow-hidden" :class="step === 1 ? 'col-lg-4':'col-lg-8'">
-                        <div class="card animated" v-show="step === 1">
+                        <div v-show="step === 1" class="card animated">
                             <div class="card-body">
                                 <form @submit="choose">
                                     <h4 class="card-title">{{$t('model.whatTypeOfModelToAdd')}}</h4>
                                     <div>
                                         <label class="font-weight-bold">{{$tc('common.type')}}:</label>
-                                        <select class="form-control" v-model="model.type" required>
+                                        <select v-model="model.type" class="form-control" required>
                                             <option></option>
-                                            <option v-for="fmt in types" v-bind:value="fmt" :key="fmt">
+                                            <option v-for="fmt in types" :key="fmt" :value="fmt">
                                                 {{$tc('model.type_' + fmt)}}
                                             </option>
                                         </select>
@@ -35,7 +35,7 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="card animated" v-if="step === 2">
+                        <div v-if="step === 2" class="card animated">
                             <div class="card-body">
                                 <h4 class="card-title">{{$tc('titles.model')}}</h4>
 
@@ -44,7 +44,7 @@
                                         <div class="resumable-drop"
                                             :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
                                             {{$t('model.dropFilesHere')}}
-                                            <a class="resumable-browse" ref="browse">
+                                            <a ref="browse" class="resumable-browse">
                                                 <u>{{$t('model.selectFromComputer')}}</u>
                                             </a>.
                                             <br>
@@ -52,22 +52,22 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="resumable-progress col-md-12" v-if="storageType === 'HDFS' ">
+                                <div v-if="storageType === 'HDFS' " class="resumable-progress col-md-12">
                                     <table v-if="showProgress">
                                         <tr>
                                             <td width="100%">
                                                 <div class="progress-container">
-                                                    <div class="progress-bar" ref="progress"></div>
+                                                    <div ref="progress" class="progress-bar"></div>
                                                 </div>
                                             </td>
                                             <td class="progress-text" nowrap="nowrap"></td>
                                             <td class="progress-pause" nowrap="nowrap">
-                                                <a href="#" @click.prevent="resume" class="progress-resume-link"
-                                                    v-if="showResume">
+                                                <a v-if="showResume" href="#" class="progress-resume-link"
+                                                    @click.prevent="resume">
                                                     <span class="fa fa-2x fa-play"></span>
                                                 </a>
-                                                <a href="#" @click.prevent="pause" class="progress-pause-link"
-                                                    v-if="showPause">
+                                                <a v-if="showPause" href="#" class="progress-pause-link"
+                                                    @click.prevent="pause">
                                                     <span class="fa fa-2x fa-pause"></span>
                                                 </a>
                                             </td>
@@ -76,7 +76,7 @@
                                 </div>
                                 <div v-if="resumableList.length">
                                     <h3>{{$t('model.uploadingLog')}}</h3>
-                                    <table class="table table-bordered table-stripped" v-if="resumableList.length > 0">
+                                    <table v-if="resumableList.length > 0" class="table table-bordered table-stripped">
                                         <thead>
                                             <tr>
                                                 <th>{{$t('model.file')}}</th>
@@ -103,14 +103,14 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card animated" v-if="step === 3">
+                        <div v-if="step === 3" class="card animated">
                             <div class="card-bod">
                                 <h4 class="card-title">{{$t('model.databaseStorage')}}</h4>
                                 <label>{{$tc('common.name', 1)}}:</label>
-                                <input type="text" class="form-control" v-model="model.name">
+                                <input v-model="model.name" type="text" class="form-control">
 
                                 <label>{{$t('model.selectCommand')}}:</label>
-                                <textarea class="form-control" rows="4" v-model="model.command"></textarea>
+                                <textarea v-model="model.command" class="form-control" rows="4"></textarea>
 
                                 <div class="border-top mt-5 pt-4">
                                     <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
@@ -131,22 +131,6 @@
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     import Resumable from 'resumablejs';
     export default {
-        mounted() {
-            let self = this;
-            axios
-                .get(`${limoneroUrl}/storages`)
-                .then(resp => {
-                    resp.data.forEach(storage => {
-                        if (storage.type === 'HDFS') {
-                            self.fsStorages.push(storage);
-                        }
-                    });
-                    this.fsStorage = this.fsStorages.length ? this.fsStorages[0].id : '';
-                })
-                .catch(function (e) {
-                    self.error(e);
-                });
-        },
         data() {
             return {
                 storageType: '',
@@ -177,6 +161,22 @@
                 showResume: false,
                 resumableList: []
             };
+        },
+        mounted() {
+            let self = this;
+            axios
+                .get(`${limoneroUrl}/storages`)
+                .then(resp => {
+                    resp.data.forEach(storage => {
+                        if (storage.type === 'HDFS') {
+                            self.fsStorages.push(storage);
+                        }
+                    });
+                    this.fsStorage = this.fsStorages.length ? this.fsStorages[0].id : '';
+                })
+                .catch(function (e) {
+                    self.error(e);
+                });
         },
         methods: {
             fileStatus(fileInfo) {

@@ -1,13 +1,13 @@
 <template>
     <div class="myview" style="margin-top: 15px;">
-        <p v-if="loading">{{$t('common.loading')}}</p>
+        <p v-if="loading"><font-awesome-icon icon="spinner" pulse class="icon"></font-awesome-icon> {{$t('common.loading')}}</p>
 
         <div v-if="error">
             <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
             {{$t('visualization.tryRefresh')}}
         </div>
 
-        <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData"></component>
+        <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData" :public-route="publicRoute"></component>
     </div>
 </template>
 
@@ -22,6 +22,7 @@
     import Highcharts from 'highcharts'
 
     import CaipirinhaVisualizationHtml from "./CaipirinhaVisualizationHtml"
+    import CaipirinhaVisualizationMarkdown from "./CaipirinhaVisualizationMarkdown"
     import CaipirinhaVisualizationTable from "./CaipirinhaVisualizationTable"
     import CaipirinhaVisualizationLine from "./CaipirinhaVisualizationLine"
     import CaipirinhaVisualizationBar from "./CaipirinhaVisualizationBar"
@@ -75,9 +76,13 @@
 
     export default {
         name: "caipirinha-visualization",
-        props: ["url"],
+        props: {
+            url: {},
+            publicRoute: { default: true }
+        },
         components: {
             CaipirinhaVisualizationHtml,
+            CaipirinhaVisualizationMarkdown,
             CaipirinhaVisualizationTable,
             CaipirinhaVisualizationLine,
             CaipirinhaVisualizationBar,
@@ -113,6 +118,8 @@
                         return "caipirinha-visualization-pie";
                     case 71:
                         return "caipirinha-visualization-area";
+                    case 72:
+                        return "caipirinha-visualization-markdown";
                     case 87:
                         return "caipirinha-visualization-scatter";
                     case 88:

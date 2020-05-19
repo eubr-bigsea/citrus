@@ -4,10 +4,6 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
 
-import UserList from './views/Administration/UserList.vue';
-import UserAdd from './views/Administration/UserAdd.vue';
-import UserEdit from './views/Administration/UserEdit.vue';
-
 // import ProjectList from './views/Administration/ProjectList.vue';
 // import ProjectAdd from './views/Administration/ProjectAdd.vue';
 // import ProjectShow from './views/Administration/ProjectShow.vue';
@@ -21,10 +17,6 @@ import Login from './views/Login.vue';
 import Logout from './views/Logout.vue';
 import Register from './views/Register.vue';
 import ResetPassword from './views/ResetPassword.vue';
-
-import ClusterList from './views/ClusterList.vue';
-import ClusterAdd from './views/ClusterAdd.vue';
-import ClusterEdit from './views/ClusterEdit.vue';
 
 import DataSourceList from './views/DataSourceList.vue';
 import DataSourceEdit from './views/DataSourceEdit.vue';
@@ -42,11 +34,10 @@ import NotebookEdit from './views/NotebookEdit.vue';
 import DashboardList from './views/DashboardList.vue';
 import DashboardDetail from './views/DashboardDetail.vue';
 
-import ModelList from './views/ModelList.vue';
-import ModelAdd from './views/ModelAdd.vue';
-import ModelEdit from './views/ModelEdit.vue';
 //import DashboardDetail from './views/DashboardDetail.vue';
 
+import PageNotFound from './views/PageNotFound.vue';
+import About from './views/About.vue';
 import OperationList from './views/OperationList.vue';
 
 import Profile from './views/Profile.vue';
@@ -56,6 +47,30 @@ import About from './views/About.vue';
 import PageNotFound from './views/PageNotFound.vue';
 
 import store from './store.js';
+
+// Lazy routes
+const TermsOfService = () => import('./views/TermsOfService.vue');
+const Welcome = () => import('./views/Welcome.vue');
+const ConfigurationList = () => import('./views/ConfigurationList.vue');
+
+const RoleList = () => import('./views/Administration/RoleList.vue');
+const RoleAdd = () => import('./views/Administration/RoleAdd.vue');
+const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
+
+const UserList = () => import('./views/Administration/UserList.vue');
+const UserAdd = () => import('./views/Administration/UserAdd.vue');
+const UserEdit = () => import('./views/Administration/UserEdit.vue');
+
+const ClusterList = () => ('./views/ClusterList.vue');
+const ClusterAdd = () => ('./views/ClusterAdd.vue');
+const ClusterEdit = () => ('./views/ClusterEdit.vue');
+
+const ModelList = () => import('./views/ModelList.vue');
+const ModelAdd = () => import('./views/ModelAdd.vue');
+const ModelEdit = () => import('./views/ModelEdit.vue');
+
+const DashboardList = () => import('./views/DashboardList.vue');
+const DashboardDetail = () => import('./views/DashboardDetail.vue');
 
 Vue.use(Router);
 
@@ -81,6 +96,38 @@ let router = new Router({
                 title: ['titles.administration', 1]
             }
         },
+        {
+            path: '/administration/roles',
+            name: 'AdministrationRoleList',
+            component: RoleList,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.role', 2]
+            }
+        },
+        {
+            path: '/administration/roles/new',
+            name: 'AdministrationAddRole',
+            component: RoleEdit,
+            props: {add: true},
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.role', 2]
+            }
+        },
+        {
+            path: '/administration/roles/:id/edit',
+            name: 'AdministrationEditRole',
+            component: RoleEdit,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.role', 2]
+            }
+        },
+
         {
             path: '/administration/users',
             name: 'AdministrationUserList',
@@ -165,6 +212,17 @@ let router = new Router({
         //     requiresRole: true
         //   }
         // },
+        //
+        {
+            path: '/configuration',
+            name: 'configuration',
+            component: ConfigurationList,
+            meta: {
+                title: ['titles.configuration', 1],
+                requiresAuth: true,
+            }
+        },
+
         {
             path: '/data-sources',
             name: 'dataSources',
@@ -292,6 +350,15 @@ let router = new Router({
             }
         },
         {
+            path: '/public/dashboard/:hash',
+            name: 'publicDashboard',
+            component: DashboardDetail,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.dashboard', 1]
+            }
+        },
+        {
             path: '/user/profile',
             name: 'profile',
             component: Profile,
@@ -301,11 +368,10 @@ let router = new Router({
             }
         },
         {
-            path: '/change_password',
+            path: '/change-password/:id/:token',
             name: 'change_password',
             component: ChangePassword,
             meta: {
-                requiresAuth: true,
                 title: ['titles.changePassword', 1]
             }
         },
@@ -331,7 +397,16 @@ let router = new Router({
             }
         },
         {
-            path: '/reset_password',
+            path: '/welcome',
+            name: 'welcome',
+            component: Welcome,
+            meta: {
+                title: ['titles.welcome', 1]
+            }
+        },
+
+        {
+            path: '/reset-password',
             name: 'reset_password',
             component: ResetPassword,
             meta: {
@@ -382,7 +457,22 @@ let router = new Router({
                 title: ['titles.cluster', 1]
             }
         },
-        {path: '*', component: PageNotFound}
+        {
+            path: '/conditions',
+            name: 'conditions',
+            component: TermsOfService,
+            meta: {
+                title: ['titles.termsOfService', 2]
+            }
+        },
+        {
+            path: '*',
+            name: 'not-found',
+            component: PageNotFound,
+            meta: {
+                title: ['titles.notFound']
+            }
+        }
     ]
 });
 

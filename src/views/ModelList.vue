@@ -14,7 +14,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <v-server-table :columns="columns" :options="options" ref="listTable"
+                                    <v-server-table ref="listTable" :columns="columns" :options="options"
                                         name="modelList">
                                         <template slot="id" slot-scope="props">
                                             <router-link :to="{name: 'editModel', params: {id: props.row.id}}">

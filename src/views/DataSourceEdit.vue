@@ -8,55 +8,55 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-12 col-xg-12 mx-auto" v-if="dataSource.id">
+                        <div v-if="dataSource.id" class="col-md-12 col-xg-12 mx-auto">
                             <b-card no-body>
                                 <b-tabs card>
                                     <b-tab :title="$t('dataSource.basicInformation')" active>
                                         <div class="row" :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse': ''">
                                             <div class="col-md-6">
                                                 <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                                <input type="text" class="form-control" v-model="dataSource.name">
+                                                <input v-model="dataSource.name" type="text" class="form-control">
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="font-weight-bold">{{$tc('common.format')}}:</label>
-                                                <select class="form-control" v-model="dataSource.format">
-                                                    <option v-for="fmt in formats" v-bind:value="fmt" :key="fmt">{{fmt}}
+                                                <select v-model="dataSource.format" class="form-control">
+                                                    <option v-for="fmt in formats" :key="fmt" :value="fmt">{{fmt}}
                                                     </option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="font-weight-bold">{{$t('dataSource.storage')}}:</label>
-                                                <input disabled
-                                                    v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
+                                                <input v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
+                                                    disabled
                                                     class="form-control">
                                             </div>
                                             <div class="col-md-6">
                                                 <label>{{$tc('common.description')}}:</label>
-                                                <textarea class="form-control"
-                                                    v-model="dataSource.description"></textarea>
+                                                <textarea v-model="dataSource.description"
+                                                    class="form-control"></textarea>
                                             </div>
                                             <div class="col-md-3">
                                                 <label>{{$t('common.tags')}}:</label>
-                                                <v-select multiple :close-on-select="false" style="width: 100%"
-                                                    v-model="customTags" :taggable="true" class="custom">
+                                                <v-select v-model="customTags" multiple :close-on-select="false"
+                                                    style="width: 100%" :taggable="true" class="custom">
                                                     <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                                 </v-select>
                                             </div>
                                             <div class="col-md-3">
                                                 <div v-if="dataSource.storage.type !== 'VALLUM'">
                                                     <label>{{$tc('dataSource.treatAsNull')}}:</label>
-                                                    <v-select multiple :close-on-select="false" style="width: 100%"
-                                                        v-model="customTreatAsMissing" :taggable="true" class="custom">
+                                                    <v-select v-model="customTreatAsMissing" multiple :close-on-select="false"
+                                                        style="width: 100%" :taggable="true" class="custom">
                                                         <span slot="no-options">{{$t('messages.noMatching')}}.</span>
                                                     </v-select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 col-lg-2 mt-3" v-if="dataSource.format === 'CSV'">
+                                            <div v-if="dataSource.format === 'CSV'" class="col-md-3 col-lg-2 mt-3">
                                                 <b-form-checkbox v-model="dataSource.is_first_line_header">
                                                     {{ $t('dataSource.isFirstLineHeader') }}</b-form-checkbox>
                                             </div>
-                                            <div class="col-md-2 col-lg-2 mt-3"
-                                                v-if="dataSource.storage.type !== 'VALLUM'">
+                                            <div v-if="dataSource.storage.type !== 'VALLUM'"
+                                                class="col-md-2 col-lg-2 mt-3">
                                                 <b-form-checkbox v-model="dataSource.is_multiline">
                                                     {{ $t('dataSource.isMultiline') }}</b-form-checkbox>
                                             </div>
@@ -69,20 +69,20 @@
                                                 <b-form-checkbox v-model="dataSource.is_public">
                                                     {{ $t('dataSource.public') }}</b-form-checkbox>
                                             </div>
-                                            <div class="col-md-2 col-lg-2 mt-3" v-if="atmosphereExtension">
-                                                <b-form-checkbox v-model="dataSource.privacy_aware"
-                                                    v-if="atmosphereExtension">
+                                            <div v-if="atmosphereExtension" class="col-md-2 col-lg-2 mt-3">
+                                                <b-form-checkbox v-if="atmosphereExtension"
+                                                    v-model="dataSource.privacy_aware">
                                                     {{ $t('dataSource.privacyAware') }}
                                                 </b-form-checkbox>
                                             </div>
 
-                                            <div class="col-md-12 mt-3 pb-1"
-                                                v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM'">
+                                            <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM'"
+                                                class="col-md-12 mt-3 pb-1">
                                                 <label>{{$tc('common.command')}}:</label>
-                                                <textarea class="form-control" v-model="dataSource.command"></textarea>
+                                                <textarea v-model="dataSource.command" class="form-control"></textarea>
                                             </div>
-                                            <div class="col-md-12 mt-3 pb-1"
-                                                v-if="dataSource.storage.type === 'VALLUM'">
+                                            <div v-if="dataSource.storage.type === 'VALLUM'"
+                                                class="col-md-12 mt-3 pb-1">
                                                 <label>Initialization: </label>
                                                 <div v-if="dataSource.initialization === 'NO_INITIALIZED'">
                                                     Vallum data source is not initialized (cached).
@@ -94,12 +94,12 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12 mt-3 mt-3 pb-1" v-if="dataSource.format === 'CSV'">
+                                            <div v-if="dataSource.format === 'CSV'" class="col-md-12 mt-3 mt-3 pb-1">
                                                 <div class="row">
                                                     <div class="col-md-3">
                                                         <label>{{ $t('dataSource.attributeDelimiter') }}:</label>
-                                                        <v-select style="width: 100%"
-                                                            v-model="dataSource.attribute_delimiter"
+                                                        <v-select v-model="dataSource.attribute_delimiter"
+                                                            style="width: 100%"
                                                             :options="delimiters" :taggable="true">
                                                             <span
                                                                 slot="no-options">{{$t('messages.noMatching')}}.</span>
@@ -107,8 +107,8 @@
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label>{{ $t('dataSource.recordDelimiter') }}:</label>
-                                                        <v-select style="width: 100%"
-                                                            v-model="dataSource.record_delimiter" :options="delimiters"
+                                                        <v-select v-model="dataSource.record_delimiter"
+                                                            style="width: 100%" :options="delimiters"
                                                             :taggable="true">
                                                             <span
                                                                 slot="no-options">{{$t('messages.noMatching')}}.</span>
@@ -116,8 +116,8 @@
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label>{{ $t('dataSource.textDelimiter') }}:</label>
-                                                        <v-select style="width: 100%"
-                                                            v-model="dataSource.text_delimiter"
+                                                        <v-select v-model="dataSource.text_delimiter"
+                                                            style="width: 100%"
                                                             :options="textDelimiters" :taggable="true">
                                                             <span
                                                                 slot="no-options">{{$t('messages.noMatching')}}.</span>
@@ -125,7 +125,7 @@
                                                     </div>
                                                     <div class="col-md-3">
                                                         <label>{{ $t('dataSource.encoding') }}:</label>
-                                                        <v-select style="width: 100%" v-model="dataSource.encoding"
+                                                        <v-select v-model="dataSource.encoding" style="width: 100%"
                                                             :options="encodings" :taggable="true">
                                                             <span
                                                                 slot="no-options">{{$t('messages.noMatching')}}.</span>
@@ -135,12 +135,15 @@
                                             </div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :title="$tc('dataSource.attribute', 2)">
+                                    <b-tab>
+                                        <template slot="title">
+                                            {{$tc('dataSource.attribute', 2)}}
+                                        </template>
                                         <h5 class="card-title">{{$tc('common.attribute', 2)}}</h5>
 
-                                        <table class="table table-sm table-stripped"
-                                            :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse': ''"
-                                            v-if="dataSource.attributes && dataSource.attributes.length > 0">
+                                        <table v-if="dataSource.attributes && dataSource.attributes.length > 0"
+                                            class="table table-sm table-stripped"
+                                            :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse': ''">
                                             <thead>
                                                 <tr>
                                                     <th class="primary text-center" style="width:3%">#</th>
@@ -153,7 +156,7 @@
 
                                                     <th class="primary text-center" style="width:25%">
                                                         {{$tc('dataSource.missingRepresentation')}}</th>
-                                                    <th class="primary text-center" v-if="dataSource.privacy_aware"
+                                                    <th v-if="dataSource.privacy_aware" class="primary text-center"
                                                         style="width:5%">
                                                         {{$tc('dataSource.privacy')}}</th>
                                                     <!--
@@ -172,15 +175,15 @@
                                                         <input v-model="attr.name" class="form-control-sm form-control">
                                                     </td>
                                                     <td>
-                                                        <select class="form-control-sm form-control"
-                                                            v-model="attr.type">
-                                                            <option v-for="dt in dataTypes" v-bind:value="dt" :key="dt">
+                                                        <select v-model="attr.type"
+                                                            class="form-control-sm form-control">
+                                                            <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                                                 {{dt}}</option>
                                                         </select>
                                                     </td>
                                                     <td class="text-center">
-                                                        <input type="text" class="form-control-sm form-control"
-                                                            maxlenght="50" v-model="attr.format">
+                                                        <input v-model="attr.format" type="text"
+                                                            class="form-control-sm form-control" maxlenght="50">
                                                     </td>
                                                     <!--
     		                                    <td class="text-center">
@@ -197,8 +200,8 @@
     		                                    </td>
                           -->
                                                     <td>
-                                                        <input class="form-control-sm form-control"
-                                                            v-model="attr.missing_representation" maxlength="200">
+                                                        <input v-model="attr.missing_representation"
+                                                            class="form-control-sm form-control" maxlength="200">
                                                     </td>
                                                     <td v-if="dataSource.privacy_aware" class="text-center">
                                                         <button class="btn btn-sm btn-outline-success hover-action"
@@ -213,47 +216,54 @@
                                             <div class="alert alert-info">{{ $t("dataSource.noAttributes") }}</div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :title="$tc('common.sharing', 2)" v-if="loggedUserIsOwnerOrAdmin">
-                                        <table class="table table-bordered table-stripped"
-                                            v-if="dataSource.permissions && dataSource.permissions.length > 0">
-                                            <thead>
-                                                <tr>
-                                                    <th class="primary col-md-1 text-center">{{ $t("common.userId") }}
-                                                    </th>
-                                                    <th class="primary text-center">{{ $t("common.userName") }}</th>
-                                                    <th class="primary text-center">{{ $t("common.userLogin") }}</th>
-                                                    <th class="primary text-center">{{ $tc("common.permission", 1) }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr v-for="p in dataSource.permissions" :key="p.id">
-                                                    <td class="text-center">{{p.user_id}}</td>
-                                                    <td>{{p.user_name}}</td>
-                                                    <td>{{p.login}}</td>
-                                                    <td>{{p.permission}}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                    <b-tab v-if="loggedUserIsOwnerOrAdmin">
+                                        <template slot="title">
+                                            <span class="fa fa-share-alt"></span> {{$tc('common.sharing', 2)}}
+                                        </template>
+                                        <p class="pb-1 border-bottom text-right">
+                                            <button class="btn btn-sm btn-primary" @click="addShare"><span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('common.sharing', 1)})}}</button>
+                                        </p>
+                                        <template v-if="dataSource.permissions && dataSource.permissions.length > 0">
+                                            <table class="table table-sm">
+                                                <tbody>
+                                                    <tr v-for="p in dataSource.permissions" :key="p.id">
+                                                        <td style="width:80px" class="text-center">
+                                                            <div class="badge badge-secondary pt-1 pb-1 pr-2 pl-2" 
+                                                                :title="$t('permissions.descriptions.' +p.permission)">{{$t('permissions.' +p.permission).toUpperCase()}}</div>
+                                                        </td>
+                                                        <td>
+                                                            <strong><router-link :to="{name: 'userInfo', params: {id: p.user_id}}">{{p.user_name}}</router-link></strong> ({{p.user_login}})
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <button v-if="loggedUserIsOwnerOrAdmin"
+                                                                class="btn btn-sm btn-light">
+                                                                <font-awesome-icon icon="trash" />
+                                                            </button>
+                                                            <button class="btn btn-sm btn-light" :title="$t('actions.edit')"><font-awesome-icon icon="edit" /></button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </template>
                                         <div v-else>{{ $t("dataSource.noPermissions") }}</div>
                                     </b-tab>
                                 </b-tabs>
                                 <div class="col-md-12 mb-4 border-top pt-2">
-                                    <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save"
-                                        v-if="loggedUserIsOwnerOrAdmin">
+                                    <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-primary mr-1 btn-spinner"
+                                        @click.stop="save">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <span class="fa fa-save"></span>
                                         {{$tc('actions.save')}}
                                     </button>
                                     <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">
                                         {{$tc('actions.cancel')}}</router-link>
-                                    <button class="btn btn-success ml-1 btn-spinner" @click.stop="infer"
-                                        v-if="canInfer && loggedUserIsOwnerOrAdmin">
+                                    <button v-if="canInfer && loggedUserIsOwnerOrAdmin" class="btn btn-success ml-1 btn-spinner"
+                                        @click.stop="infer">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{$tc('dataSource.inferSchema')}}
                                     </button>
-                                    <button class="btn btn-spinner ml-1 btn-outline-info" @click.stop="preview"
-                                        :disabled="isDirty" v-if="dataSource.storage.type !== 'VALLUM'">
+                                    <button v-if="dataSource.storage.type !== 'VALLUM'" class="btn btn-spinner ml-1 btn-outline-info"
+                                        :disabled="isDirty" @click.stop="preview">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <span class="fa fa-eye"></span>
                                         &nbsp;
@@ -263,8 +273,8 @@
                                 </div>
                             </b-card>
                         </div>
-                        <div class="col-md-12 mx-auto border-top mt-3 pt-3" v-else>{{$t('common.noData')}}</div>
-                        <b-modal size="lg" ref="preview" :title="$t('common.preview')">
+                        <div v-else class="col-md-12 mx-auto border-top mt-3 pt-3">{{$t('common.noData')}}</div>
+                        <b-modal ref="preview" size="lg" :title="$t('common.preview')">
                             {{$t('dataSource.previewExplanation', {amount: 40})}}
                             <v-client-table :columns="getPreviewColumns()" :data="samples"
                                 :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}">
@@ -274,16 +284,33 @@
                                 {{previewWarnings.join(", ")}}
                             </div>
                         </b-modal>
-                        <b-modal size="lg" ref="privacy" :title="$t('dataSource.privacy')">
+                        <b-modal ref="shareModal" size="lg" :title="$t('actions.share')">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <label>{{$tc('titles.user', 1)}}:</label>
+                                    <v-select></v-select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{$tc('common.permission', 1)}}:</label>
+                                    <select class="form-control">
+                                        <option>{{$t('permissions.MANAGE')}}</option>
+                                        <option>{{$t('permissions.READ')}}</option>
+                                        <option>{{$t('permissions.WRITE')}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </b-modal>
+ 
+                        <b-modal ref="privacy" size="lg" :title="$t('dataSource.privacy')">
                             <div class="row">
                                 <div class="col-md-4">
                                     <label>
                                         {{ $tc('privacy.privacyType') }}:
                                     </label>
-                                    <select class="form-control" v-if="currentAttribute.attribute_privacy"
-                                        v-model="currentAttribute.attribute_privacy.privacy_type">
+                                    <select v-if="currentAttribute.attribute_privacy" v-model="currentAttribute.attribute_privacy.privacy_type"
+                                        class="form-control">
                                         <option></option>
-                                        <option v-for="t in privacy_types" v-bind:value="t" :key="t">{{t}}
+                                        <option v-for="t in privacy_types" :key="t" :value="t">{{t}}
                                         </option>
                                     </select>
                                 </div>
@@ -291,10 +318,10 @@
                                     <label>
                                         {{ $tc('privacy.anonymizationTechnique') }}:
                                     </label>
-                                    <select class="form-control" v-if="currentAttribute.attribute_privacy"
-                                        v-model="currentAttribute.attribute_privacy.anonymization_technique">
+                                    <select v-if="currentAttribute.attribute_privacy" v-model="currentAttribute.attribute_privacy.anonymization_technique"
+                                        class="form-control">
                                         <option></option>
-                                        <option v-for="t in anonymization" v-bind:value="t" :key="t">{{t}}
+                                        <option v-for="t in anonymization" :key="t" :value="t">{{t}}
                                         </option>
                                     </select>
                                 </div>
@@ -302,10 +329,10 @@
                                     <label>
                                         {{ $tc('privacy.attributePrivacyGroup') }}:
                                     </label>
-                                    <select class="form-control" v-if="currentAttribute.attribute_privacy"
-                                        v-model="currentAttribute.attribute_privacy.attribute_privacy_group_id">
+                                    <select v-if="currentAttribute.attribute_privacy" v-model="currentAttribute.attribute_privacy.attribute_privacy_group_id"
+                                        class="form-control">
                                         <option></option>
-                                        <option v-for="t in attributeGroups" v-bind:value="t.id" :key="t.id">{{t.name}}
+                                        <option v-for="t in attributeGroups" :key="t.id" :value="t.id">{{t.name}}
                                         </option>
                                     </select>
                                 </div>
@@ -313,16 +340,17 @@
                             <label>
                                 {{ $tc('privacy.hierarchy') }}:
                             </label>
-                            <textarea class="form-control" type="text" rows="5"
+                            <textarea
                                 v-if="currentAttribute.attribute_privacy"
-                                v-model="currentAttribute.attribute_privacy.hierarchy"></textarea>
+                                v-model="currentAttribute.attribute_privacy.hierarchy"
+                                class="form-control" type="text" rows="5"></textarea>
                             <div slot="modal-footer" class="w-100">
                                 <b-btn variant="primary" class="float-right mr-2" @click="okPrivacy">
                                     {{$t('actions.close')}}
                                 </b-btn>
                             </div>
                         </b-modal>
-                        <b-modal size="lg" ref="modalInitialization" title="Initialize Vallum">
+                        <b-modal ref="modalInitialization" size="lg" title="Initialize Vallum">
                             <div class="row">
                                 <div class="col-md-6 mb-2">
                                     Destination (local storage):
@@ -331,16 +359,16 @@
                                     Destination path (relative to storage's base path):
                                 </div>
                                 <div class="col-md-6">
-                                    <select class="form-control" v-model="vallumSelectedStorage">
+                                    <select v-model="vallumSelectedStorage" class="form-control">
                                         <option></option>
                                         <option v-for="storage in localStorages" :key="storage.id"
-                                            v-bind:value="storage.id">
+                                            :value="storage.id">
                                             {{storage.name}}
                                         </option>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" v-model="vallumPath" />
+                                    <input v-model="vallumPath" type="text" class="form-control"/>
                                 </div>
                             </div>
 
@@ -348,9 +376,9 @@
                                 <b-btn variant="outline-secondary" class="float-right mr-2" @click="hideInitialization">
                                     {{$t('actions.close')}}
                                 </b-btn>
-                                <b-btn variant="primary" class="float-right mr-2" v-if="vallumSelectedStorage !== ''"
+                                <b-btn v-if="vallumSelectedStorage !== ''" variant="primary" class="float-right mr-2"
                                     @click.prevent="initializeVallum">
-                                    <b-spinner small v-if="copyingStep === 1"></b-spinner>
+                                    <b-spinner v-if="copyingStep === 1" small></b-spinner>
                                     <span v-if="copyingStep !== 1">Copy data</span>
                                     <span v-else> Copying data, please wait</span>
                                 </b-btn>
@@ -367,46 +395,12 @@
     import Vue from 'vue';
     import axios from 'axios';
     import VueSelect from 'vue-select';
-    import SwitchComponent from '../components/widgets/Switch.vue';
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const standUrl = process.env.VUE_APP_STAND_URL;
 
     export default {
         components: {
             'v-select': VueSelect,
-            SwitchComponent
-        },
-        computed: {
-            inferableDataSource() {
-                return ['CSV', 'JDBC', 'PARQUET'].includes(this.dataSource.format);
-            },
-            customTags: {
-                get() {
-                    return this.dataSource.tags ? this.dataSource.tags.split(',') : [];
-                },
-                set(value) {
-                    this.dataSource.tags = value.join(',');
-                }
-            },
-            customTreatAsMissing: {
-                get() {
-                    return this.dataSource.treat_as_missing
-                        ? this.dataSource.treat_as_missing.split(',')
-                        : [];
-                },
-                set(value) {
-                    this.dataSource.treat_as_missing = value.join(',');
-                }
-            },
-            canInfer() {
-                return this.dataSource.attributeDelimiter !== ''
-                    && this.dataSource.storage.type !== 'VALLUM';
-            },
-            loggedUserIsOwnerOrAdmin() {
-                const user = this.$store.getters.user;
-                return this.dataSource.user_id === user.id
-                    || user.roles.indexOf('admin') >= 0;
-            }
         },
         data() {
             return {
@@ -476,15 +470,40 @@
                 timeoutHandler: null
             };
         },
-        mounted() {
-            let self = this;
-            this.load().then(() => {
-                Vue.nextTick(() => {
-                    self.isDirty = false;
-                });
-            });
+        
+        computed: {
+            inferableDataSource() {
+                return ['CSV', 'JDBC', 'PARQUET'].includes(this.dataSource.format);
+            },
+            customTags: {
+                get() {
+                    return this.dataSource.tags ? this.dataSource.tags.split(',') : [];
+                },
+                set(value) {
+                    this.dataSource.tags = value.join(',');
+                }
+            },
+            customTreatAsMissing: {
+                get() {
+                    return this.dataSource.treat_as_missing
+                        ? this.dataSource.treat_as_missing.split(',')
+                        : [];
+                },
+                set(value) {
+                    this.dataSource.treat_as_missing = value.join(',');
+                }
+            },
+            canInfer() {
+                return this.dataSource.attributeDelimiter !== ''
+                    && this.dataSource.storage.type !== 'VALLUM';
+            },
+            loggedUserIsOwnerOrAdmin() {
+                const user = this.$store.getters.user;
+                return this.dataSource.user_id === user.id
+                    || user.roles.indexOf('admin') >= 0;
+            }
         },
-        watch: {
+      watch: {
             '$route.params.id': function (id) {
                 this.load().then(() => {
                     Vue.nextTick(() => {
@@ -499,8 +518,19 @@
                 deep: true
             }
         },
+         mounted() {
+            let self = this;
+            this.load().then(() => {
+                Vue.nextTick(() => {
+                    self.isDirty = false;
+                });
+            });
+        },
         /* Methods */
         methods: {
+            addShare(){
+                this.$refs.shareModal.show();
+            },
             hideInitialization() {
                 this.$refs.modalInitialization.hide();
             },
@@ -517,7 +547,6 @@
                     });
             },
             initializeVallum() {
-                const self = this;
                 if (this.vallumSelectedStorage !== '') {
                     const self = this;
                     const payload = {data_source_id: this.dataSource.id,

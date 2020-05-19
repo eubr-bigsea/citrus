@@ -13,12 +13,12 @@
             <div class="row">
               <div class="col-md-6">
                 <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                <input type="text" class="form-control" v-model="cluster.name">
+                <input v-model="cluster.name" type="text" class="form-control">
               </div>
               <div class="col-md-3">
                 <label class="font-weight-bold">{{$tc('common.type')}}:</label>
-                <select class="form-control" v-model="cluster.type">
-                  <option v-for="typ in types" v-bind:value="typ" :key="typ">{{typ}}</option>
+                <select v-model="cluster.type" class="form-control">
+                  <option v-for="typ in types" :key="typ" :value="typ">{{typ}}</option>
                 </select>
               </div>
               <div class="col-md-3">
@@ -42,11 +42,11 @@
               </div>
               <div class="col-md-6">
                 <label>{{$tc('common.description')}}:</label>
-                <textarea class="form-control" v-model="cluster.description"></textarea>
+                <textarea v-model="cluster.description" class="form-control"></textarea>
               </div>
               <div class="col-md-6">
                 <label>{{$tc('common.general_parameters')}}:</label>
-                <textarea class="form-control" v-model="cluster.general_parameters"></textarea>
+                <textarea v-model="cluster.general_parameters" class="form-control"></textarea>
               </div>
             </div>
             <div class="col-md-12 mb-4 border-top pt-2">
@@ -74,16 +74,16 @@ import Notifier from '../mixins/Notifier';
 let standUrl = process.env.VUE_APP_STAND_URL;
 
 export default {
-  mixins: [Notifier],
   name: 'ClusterAdd',
+  mixins: [Notifier],
   data() {
     return {
       cluster: {},
       types: ['SPARK_LOCAL', 'MESOS', 'YARN'].sort()
     };
   },
-  mounted() {},
   computed: {},
+  mounted() {},
   methods: {
     save(event) {
       const data = this.cluster;

@@ -35,10 +35,6 @@
                                                 @click="download(props.row)">
                                                 <span class="fa fa-download" />
                                             </button>
-                                            <button class="btn btn-sm btn-light" :title="$t('actions.download')"
-                                                @click="showShareModal(props.row)">
-                                                <span class="fa fa-share-alt" />
-                                            </button>
                                         </template>
                                         <template slot="created" slot-scope="props">
                                             {{ props.row.created | formatJsonDate }}
@@ -59,7 +55,6 @@
                 </div>
             </div>
         </div>
-        <shared-modal :resource-id="datasourceId" :all-users="users" :resource="'dataSource'" />
     </main>
 </template>
 
@@ -74,13 +69,12 @@
 
     export default {
         components: {
-            'shared-modal': SharedModal
         },
         mixins: [Notifier],
         data() {
             return {
-                datasourceId: 1,
-                users: [],
+                dataSourceId: 1,
+                dataSourceName: '',
                 columns: [
                     'id',
                     'name',
@@ -155,7 +149,6 @@
             };
         },
         mounted() {
-            this.getAvailableUsers();
         },
         /* Methods */
         methods: {
@@ -237,28 +230,6 @@
                     }
                 );
             },
-            showShareModal(datasource) {
-                this.datasourceId = datasource.id;
-                this.$root.$emit('bv::show::modal', 'share-modal', '#btnShow');
-            },
-            getAvailableUsers() {
-                let url = `${thornUrl}/api/users/available`;
-
-                this.$Progress.start();
-                return axios
-                    .get(url)
-                    .then(resp => {
-                        this.$Progress.finish();
-                        this.users = deserialize(resp.data);
-                        return deserialize(resp.data);
-                    })
-                    .catch(
-                        function (e) {
-                            this.$Progress.finish();
-                            this.error(e);
-                        }.bind(this)
-                    );
-            }
         }
     };
 </script>

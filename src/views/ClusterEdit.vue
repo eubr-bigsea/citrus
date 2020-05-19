@@ -8,18 +8,18 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-12 col-xg-12 mx-auto" v-if="cluster.id">
+                        <div v-if="cluster.id" class="col-md-12 col-xg-12 mx-auto">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                            <input type="text" class="form-control" v-model="cluster.name">
+                                            <input v-model="cluster.name" type="text" class="form-control">
                                         </div>
                                         <div class="col-md-3">
                                             <label class="font-weight-bold">{{$tc('common.type')}}:</label>
-                                            <select class="form-control" v-model="cluster.type">
-                                                <option v-for="typ in types" v-bind:value="typ" :key="typ">{{typ}}
+                                            <select v-model="cluster.type" class="form-control">
+                                                <option v-for="typ in types" :key="typ" :value="typ">{{typ}}
                                                 </option>
                                             </select>
                                         </div>
@@ -45,28 +45,30 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label>{{$tc('common.description')}}:</label>
-                                            <textarea class="form-control" v-model="cluster.description"
+                                            <textarea v-model="cluster.description" class="form-control"
                                                 rows="5"></textarea>
                                         </div>
                                         <div class="col-md-6">
                                             <label>{{$tc('common.parameters', 2)}}:</label>
-                                            <textarea class="form-control" v-model="cluster.general_parameters"
+                                            <textarea v-model="cluster.general_parameters" class="form-control"
                                                 rows="5"></textarea>
                                         </div>
                                         <div class="col-md-12">
                                             <label>{{$tc('cluster.authToken')}}:</label>
-                                            <input type="password" class="form-control" v-model="cluster.auth_token"/>
+                                            <input v-model="cluster.auth_token" type="password" class="form-control"/>
                                                 
                                         </div>
                                     </div>
-                                    <div class="col-md-12 mt-4 border-top pt-2">
-                                        <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
-                                            <font-awesome-icon icon="spinner" pulse class="icon" />
-                                            <span class="fa fa-save"></span>
-                                            {{$tc('actions.save')}}
-                                        </button>
-                                        <router-link :to="{name: 'clusters'}" class="btn btn-secondary mr-1">
-                                            {{$tc('actions.cancel')}}</router-link>
+                                    <div class="row">
+                                        <div class="col-md-12 mt-4 border-top pt-2">
+                                            <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                                <font-awesome-icon icon="spinner" pulse class="icon" />
+                                                <span class="fa fa-save"></span>
+                                                {{$tc('actions.save')}}
+                                            </button>
+                                            <router-link :to="{name: 'clusters'}" class="btn btn-secondary mr-1">
+                                                {{$tc('actions.cancel')}}</router-link>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +93,6 @@
             'v-select': VueSelect,
             SwitchComponent
         },
-        computed: {},
         data() {
             return {
                 isDirty: false,
@@ -99,14 +100,7 @@
                 types: ['KUBERNETES', 'SPARK_LOCAL', 'MESOS', 'YARN'].sort()
             };
         },
-        mounted() {
-            let self = this;
-            this.load().then(() => {
-                Vue.nextTick(() => {
-                    self.isDirty = false;
-                });
-            });
-        },
+        computed: {},
         watch: {
             '$route.params.id': function (id) {
                 this.load().then(() => {
@@ -121,6 +115,14 @@
                 },
                 deep: true
             }
+        },
+        mounted() {
+            let self = this;
+            this.load().then(() => {
+                Vue.nextTick(() => {
+                    self.isDirty = false;
+                });
+            });
         },
         /* Methods */
         methods: {

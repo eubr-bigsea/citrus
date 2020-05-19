@@ -33,12 +33,19 @@ export default {
       title: {
         text: this.visualizationData.title
       },
+      yAxis: {
+        title: {
+            text: this.visualizationData.y.title || 'Y'
+        }
+      },
       xAxis: {
-        categories: this.visualizationData.data.map(item => item.name)
+        categories: this.visualizationData.data.map(item => item.name),
+        title: {
+            text: this.visualizationData.x.title || 'X'
+        }
       },
       series: getBarData(this.visualizationData)
     };
-
     return { options };
   }
 };

@@ -1,21 +1,9 @@
 <template>
     <div class="btn-group" role="group">
-        <button class="btn btn-sm btn-outline-dark mr-1" @click.prevent="$root.$emit('onshow-variables')"
-            :title="$t('actions.save')" v-if="workflow.publishing_enabled">
-            <span class="fa fa-dollar-sign"></span> {{$tc('workflow.variables', 2)}}
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
+            <span class="fa fa-cogs"></span>
         </button>
-
-        <button class="btn btn-sm btn-outline-dark mr-1" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
-            <span class="fa fa-flask"></span> {{$tc('titles.job', 2)}}
-        </button>
-
-
-        <button class="btn btn-sm btn-outline-dark " @click.prevent="showProperties" :title="$t('actions.showProperties')">
-            <span class="fa fa-cogs"></span> 
-        </button>
-
-        <button class="btn btn-sm btn-outline-dark text-primary" @click.prevent="saveWorkflow"
-            :title="$t('actions.save')">
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
             <span class="far fa-save"></span>
         </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
@@ -65,12 +53,6 @@
             workflow: {}
         },
         methods: {
-            showProperties() {
-                this.$root.$emit('onshow-properties')
-            },
-            showExecutions() {
-                this.$root.$emit('onshow-executions')
-            },
             saveWorkflow() {
                 this.$root.$emit('onsave-workflow')
             },
@@ -85,7 +67,10 @@
             },
             exportWorkflow() {
                 this.$root.$emit('onclick-export');
-            }
+            },
+            showProperties() {
+                this.$root.$emit('onshow-properties')
+            },
         }
     }
 </script>

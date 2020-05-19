@@ -38,7 +38,6 @@
             </b-btn>
 
         </b-button-group>
-
         <b-input-group size="sm" class="mx-1 zoom">
             <b-form-select v-model="zoom" :options="[
                     {value: .6, text: '60%'},

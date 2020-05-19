@@ -1,208 +1,156 @@
 <template>
-  <main role="main">
-    <div class="row">
-      <div class="col-md-6 mx-auto">
-        <div class="card fat">
-          <div class="card-header text-center bg-secondary text-white">{{ $t('titles.profile') }}</div>
-          <div class="card-body">
-            <form @submit.prevent="save">
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label">{{ $t('common.firstName') }}</label>
-                <div class="col-sm-9">
-                  <input
-                    v-model="user.first_name"
-                    type="text"
-                    class="form-control"
-                    required
-                    autofocus
-                  >
-                </div>
-              </div>
-              <div class="form-group row">
-                <label class="col-sm-3 col-form-label">{{ $t('common.lastName') }}</label>
-                <div class="col-sm-9">
-                  <input
-                    v-model="user.last_name"
-                    type="text"
-                    class="form-control"
-                    required
-                  >
-                </div>
-              </div>
+    <main role="main">
+        <div class="row">
+            <div class="col-md-6 mx-auto">
+                <div class="card fat">
+                    <div class="card-header text-center bg-secondary text-white">{{ $t('titles.profile') }}</div>
+                    <div class="card-body">
+                        <form @submit.prevent="save">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">{{ $t('common.firstName') }}:</label>
+                                <div class="col-sm-9">
+                                    <input v-model="user.first_name" type="text" class="form-control" required
+                                        autofocus>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">{{ $t('common.lastName') }}:</label>
+                                <div class="col-sm-9">
+                                    <input v-model="user.last_name" type="text" class="form-control" required>
+                                </div>
+                            </div>
 
-              <div class="form-group row">
-                <label
-                  for="inputEmail3"
-                  class="col-sm-3 col-form-label"
-                >{{ $t('common.email') }}</label>
-                <div class="col-sm-9">
-                  <input
-                    v-model="user.email"
-                    type="email"
-                    class="form-control"
-                    required
-                    autocomplete="email"
-                  >
-                </div>
-              </div>
-              <div class="form-group row">
-                <label
-                  for="inputEmail3"
-                  class="col-sm-3 col-form-label"
-                >{{ $t('common.language') }}</label>
-                <div class="col-sm-9">
-                  <select
-                    v-model="user.locale"
-                    class="form-control"
-                  >
-                    <option value="en">English/Inglês</option>
-                    <option value="pt">Português/Portuguese</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group row">
-                <label
-                  for="inputPassword3"
-                  class="col-sm-3 col-form-label"
-                >{{ $t('common.current_password') }}</label>
-                <div class="col-sm-9">
-                  <input
-                    v-model="user.current_password"
-                    type="password"
-                    class="form-control"
-                    required
-                    autocomplete="current-password"
-                  >
-                </div>
-              </div>
-              <div class="form-group row">
-                <div class="col-md-12">
-                  <b-link
-                    v-b-toggle.changePassword
-                    class="float-right"
-                  >{{ $t('profile.alsoChangePassword') }}</b-link>
-                </div>
-                <div class="col-md-12">
-                  <b-collapse id="changePassword">
-                    <div class="form-group row">
-                      <label
-                        for="inputPassword3"
-                        class="col-sm-3 col-form-label"
-                      >{{ $t('common.new_password') }}</label>
-                      <div class="col-sm-9">
-                        <div class="col-sm-9">
-                          <input
-                            v-model="user.password"
-                            type="text"
-                            class="form-control"
-                          >
-                        </div>
-                      </div>
+                            <div class="form-group row">
+                                <label for="inputEmail3"
+                                    class="col-sm-3 col-form-label">{{ $t('common.email') }}:</label>
+                                <div class="col-sm-9">
+                                    <input v-model="user.email" type="email" class="form-control" required
+                                        autocomplete="email">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputEmail3"
+                                    class="col-sm-3 col-form-label">{{ $t('common.language') }}:</label>
+                                <div class="col-sm-9">
+                                    <select v-model="user.locale" class="form-control">
+                                        <option value="en">English/Inglês</option>
+                                        <option value="pt">Português/Portuguese</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputPassword3"
+                                    class="col-sm-3 col-form-label">{{ $t('common.current_password') }}:</label>
+                                <div class="col-sm-9">
+                                    <input v-model="user.current_password" type="password" class="form-control" required
+                                        autocomplete="current-password">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-md-12">
+                                    <b-link v-b-toggle.changePassword class="float-right">
+                                        {{ $t('profile.alsoChangePassword') }}</b-link>
+                                </div>
+                                <div class="col-md-12">
+                                    <b-collapse id="changePassword">
+                                        <div class="form-group row">
+                                            <label for="inputPassword3"
+                                                class="col-sm-3 col-form-label">{{ $t('common.new_password') }}:</label>
+                                            <div class="col-sm-9">
+                                                <div class="col-sm-9">
+                                                    <input v-model="user.password" type="password" class="form-control"
+                                                    autocomplete="new-password">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputPassword3"
+                                                class="col-sm-3 col-form-label">{{ $t('common.new_password_confirmation') }}:</label>
+                                            <div class="col-sm-9">
+                                                <div class="col-sm-9">
+                                                    <input v-model="user.password_confirmation" type="password"
+                                                        class="form-control" autocomplete="new-password">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </b-collapse>
+                                </div>
+                            </div>
+                            <div class="form-group row border-top clearfix pt-3">
+                                <div class="col-sm-12 text-center">
+                                    <button type="submit"
+                                        class="btn btn-primary mr-2 pr-5 pl-5">{{ $t('common.ok') }}</button>
+                                    <router-link :to="{name: 'home'}" class="btn btn-secondary text-white">
+                                        {{ $t('actions.cancel') }}</router-link>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="form-group row">
-                      <label
-                        for="inputPassword3"
-                        class="col-sm-3 col-form-label"
-                      >{{ $t('common.new_password_confirmation') }}</label>
-                      <div class="col-sm-9">
-                        <div class="col-sm-9">
-                          <input
-                            v-model="user.password_confirmation"
-                            type="text"
-                            class="form-control"
-                          >
-                        </div>
-                      </div>
-                    </div>
-                  </b-collapse>
                 </div>
-              </div>
-              <div class="form-group row border-top clearfix pt-3">
-                <div class="col-sm-12 text-center">
-                  <button
-                    type="submit"
-                    class="btn btn-primary mr-2 pr-5 pl-5"
-                  >{{ $t('common.ok') }}</button>
-                  <router-link
-                    :to="{name: 'home'}"
-                    class="btn btn-secondary text-white"
-                  >{{ $t('actions.cancel') }}</router-link>
-                </div>
-              </div>
-            </form>
-          </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </main>
+    </main>
 </template>
 <script>
-import SlideOutPanel from '../components/SlideOutPanel.vue';
-import axios from 'axios';
-import { deserialize } from 'jsonapi-deserializer';
-import Notifier from '../mixins/Notifier'
+    import SlideOutPanel from '../components/SlideOutPanel.vue';
+    import axios from 'axios';
+    import Notifier from '../mixins/Notifier'
 
-export default {
-  name: 'Profile',
-  components: {
-    'slideout-panel': SlideOutPanel
-  },
-  mixins: [Notifier],
-  data () {
-    return {
-      changePassword: false,
-      user: {}
-    }
-  },
-  mounted () {
-    let thornUrl = process.env.VUE_APP_THORN_URL;
-    let url = `${thornUrl}/api/users/me`;
-    let self = this;
-    axios
-      .get(url)
-      .then(resp => {
-        self.user = deserialize(resp.data)
-      })
-      .catch(
-        function (e) {
-          self.error(
-            self.$t('errors.sendingData'),
-            self.$t('titles.error')
-          );
-        }.bind(this)
-      );
-  },
-  methods: {
-    save () {
-      const self = this;
-      let thornUrl = process.env.VUE_APP_THORN_URL;
-      this.$store
-        .dispatch('changeProfile', { thornUrl, user: this.user })
-        .then(() => {
-          self.success(
-            self.$t('profile.updated'),
-            self.$t('titles.success')
-          );
-          self.$root.$i18n.locale = self.user.attributes? self.user.attributes.locale: self.user.locale;
-          this.$router.push('/');
-        })
-        .catch(e => {
-          var err = e
-          if (e.response){
-            var errors = e.response.data.errors;
-            var keysErrors = Object.keys(e.response.data.errors)
-
-            self.$Progress.finish();
-            if (keysErrors[0]) {
-                err = { message: `${this.$t(`common.${keysErrors[0]}`)} ${this.$t(errors[keysErrors[0]])}` }
+    export default {
+        name: 'Profile',
+        components: {
+            'slideout-panel': SlideOutPanel
+        },
+        mixins: [Notifier],
+        data() {
+            return {
+                changePassword: false,
+                user: {}
             }
-            self.error(err);
-          } else {
-            self.error(e)
-          } 
+        },
+        mounted() {
+            let thornUrl = process.env.VUE_APP_THORN_URL;
+            let url = `${thornUrl}/users/me`;
+            let self = this;
+            axios
+                .get(url)
+                .then(resp => {
+                    self.user = resp.data.data[0];
+                })
+                .catch(
+                    function (e) {
+                        self.error(
+                            self.$t('errors.sendingData'),
+                            self.$t('titles.error')
+                        );
+                    }.bind(this)
+                );
+        },
+        methods: {
+            save() {
+                const self = this;
+                let thornUrl = process.env.VUE_APP_THORN_URL;
+                this.$store
+                    .dispatch('changeProfile', { thornUrl, user: this.user })
+                    .then(() => {
+                        self.success(
+                            self.$t('profile.updated'),
+                            self.$t('titles.success')
+                        );
+                        self.$root.$i18n.locale = self.user.attributes ? self.user.attributes.locale : self.user.locale;
+                        this.$router.push('/');
+                    })
+                    .catch(e => {
+                        var err = e
+                        if (e.response) {
+                            self.$Progress.finish();
+                            self.error({ message: e.response.data.message });
+                        } else {
+                            self.error(e)
+                        }
 
-        });
-    }
-  }
-};
+                    });
+            }
+        }
+    };
 </script>

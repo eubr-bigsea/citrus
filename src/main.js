@@ -14,7 +14,10 @@ import axios from 'axios';
 import VueAxios from 'vue-axios';
 import { ClientTable, ServerTable } from 'vue-tables-2';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import Gravatar from 'vue-gravatar';
+
 import {
+    faChartLine,
     faCheck,
     faCheckDouble,
     faCoffee,
@@ -22,6 +25,8 @@ import {
     faCogs,
     faDollarSign,
     faDownload,
+    faFlask,
+    faTasks,
     faUpload,
     faHistory,
     faImage,
@@ -69,6 +74,7 @@ import {
     faShareAlt,
     faProjectDiagram,
     faFlask,
+    faUserLock,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -136,6 +142,7 @@ import { dom } from '@fortawesome/fontawesome-svg-core';
 dom.watch();
 
 library.add(
+    faChartLine,
     faCheck,
     faCheckDouble,
     faCoffee,
@@ -143,6 +150,8 @@ library.add(
     faCogs,
     faDollarSign,
     faDownload,
+    faFlask,
+    faTasks,
     faUpload,
     faHistory,
     faPlay,
@@ -191,6 +200,7 @@ library.add(
     faShareAlt,
     faProjectDiagram,
     faFlask,
+    faUserLock,
 );
 
 import {
@@ -206,6 +216,8 @@ Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('v-gravatar', Gravatar);
+
 Vue.config.productionTip = false;
 
 const options = {
@@ -284,7 +296,7 @@ const user = JSON.parse(localStorage.getItem('user'), '{}');
 if (token) {
     axios.defaults.headers.common['Authorization'] = token;
     axios.defaults.headers.common['X-Authentication'] = token;
-    axios.defaults.headers.common['X-User-Id'] = user['id'];
+    axios.defaults.headers.common['X-User-Id'] = user ? user.id : null;
     axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
     axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
     axios.defaults.headers.common['Access-Control-Allow-Headers'] =

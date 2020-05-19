@@ -1,82 +1,107 @@
 <template>
     <main role="main">
         <div class="row">
-            <div class="col-md-6 mx-auto">
-                <div class="card fat">
-                    <div class="card-header text-center bg-secondary text-white">
-                        {{ $t('actions.edit') }} {{ $tc('titles.user', 1) }}
+            <div class="col">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1>{{$tc('titles.user', 1)}}</h1>
                     </div>
-                    <div class="card-body">
-                        <form @submit.prevent="save">
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">
-                                    {{ $t('common.firstName') }}
-                                </label>
-                                <div class="col-sm-9">
-                                    <input v-model="user.first_name" type="text" class="form-control" required
-                                        autofocus />
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-3 col-form-label">
-                                    {{ $t('common.lastName') }}
-                                </label>
-                                <div class="col-sm-9">
-                                    <input v-model="user.last_name" type="text" class="form-control" required />
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputEmail3" class="col-sm-3 col-form-label">
-                                    {{ $t('common.email') }}
-                                </label>
-                                <div class="col-sm-9">
-                                    <input v-model="user.email" type="email" class="form-control" required />
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="inputEmail3" class="col-sm-3 col-form-label">
-                                    {{ $t('common.language') }}
-                                </label>
-                                <div class="col-sm-9">
-                                    <select v-model="user.locale" class="form-control">
-                                        <option value="en">English/Inglês</option>
-                                        <option value="pt">Português/Portuguese</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div v-if="isAdmin" class="form-group row">
-                                <label for="inputEmail3" class="col-sm-3 col-form-label">
-                                    {{ $t('common.roles') }}
-                                </label>
-                                <div class="col-sm-9">
-                                    <select v-model="user.role" class="form-control">
-                                        <option value="">{{ $t('roles.noRole') }}</option>
-                                        <option value="admin">{{ $t('roles.admin') }}</option>
-                                        <!-- <option value="manager">{{ $t('roles.manager') }}</option> -->
-                                        <option value="monitor">{{ $t('roles.monitor') }}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div v-if="isAdmin" class="form-group row">
-                                <label for="inputPassword3" class="col-sm-3 col-form-label">
-                                    {{ $t('common.password') }}
-                                </label>
-                                <div class="col-sm-9">
-                                    <input v-model="user.password" type="text" class="form-control" />
-                                </div>
-                            </div>
-                            <div class="form-group row border-top clearfix pt-3">
-                                <div class="col-sm-12 text-center">
-                                    <button type="submit" class="btn btn-primary mr-2 pr-5 pl-5">
-                                        {{ $t('common.ok') }}
-                                    </button>
-                                    <router-link :to="{ name: 'AdministrationUserList' }"
-                                        class="btn btn-secondary text-white">
-                                        {{ $t('actions.cancel') }}
-                                    </router-link>
-                                </div>
-                            </div>
-                        </form>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12 col-xg-12 mx-auto" xxv-if="user.id">
+                            <div class="card">
+                                <div class="card-body">
+                                    <form @submit.prevent="save">
+                                        <div class="form-group row">
+                                            <div class="col-sm-3">
+                                                <label class="col-form-label">
+                                                    {{ $t('common.firstName') }}:
+                                                </label>
+                                                <input v-model="user.first_name" type="text" class="form-control" required
+                                                    autofocus maxlength="50"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="col-form-label">
+                                                    {{ $t('common.lastName') }}:
+                                                </label>
+                                                <input v-model="user.last_name" type="text" class="form-control" required maxlength="50"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label for="inputEmail3" class="col-sm-3 col-form-label">
+                                                    {{ $t('common.email') }}:
+                                                </label>
+                                                <input v-model="user.email" type="email" class="form-control" required maxlength="100"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                 <label for="login" class=" col-form-label">
+                                                     {{ $t('common.user.login') }}:
+                                                 </label>
+                                                <input v-model="user.login" name="login" type="text" class="form-control" required maxlength="100"/>
+                                            </div>
+ 
+                                       </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-3">
+                                                 <label for="inputEmail3" class=" col-form-label">
+                                                     {{ $t('common.language') }}:
+                                                 </label>
+                                                <select v-model="user.locale" class="form-control">
+                                                    <option value="en">English/Inglês</option>
+                                                    <option value="pt">Português/Portuguese</option>
+                                                </select>
+                                            </div>
+ 
+                                           <div class="col-sm-3">
+                                                <label for="inputPassword3" class="col-form-label">
+                                                    {{ $t('common.password') }}:
+                                                </label>
+                                                <input v-model="user.password" type="text" class="form-control" maxlength="50"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="col-form-label">
+                                                    {{ $t('common.user.authenticationType') }}:
+                                                </label>
+                                                <select v-model="user.authentication_type" class="form-control">
+                                                    <option value="INTERNAL">{{ $t('common.user.authenticationInternal') }}</option>
+                                                    <option value="AD">{{ $t('common.user.authenticationAd') }}</option>
+                                                    <option value="LDAP">{{ $t('common.user.authenticationLdap') }}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <b-form-checkbox v-model="user.enabled">{{ $t('common.enabled') }}
+                                                </b-form-checkbox>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-3">
+                                                <label class="col-form-label">
+                                                    {{ $tc('common.roles', 2) }}:
+                                                </label>
+                                                <v-select v-model="user.roles" :options="roles" :multiple="true" label="description" :taggable="false" :close-on-select="false">
+                                                </v-select>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="col-form-label">
+                                                    {{ $tc('common.user.notes', 2) }}:
+                                                </label>
+                                                <textarea v-model="user.notes" rows="4" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                    <div class="row">
+                                        <div class="col-md-12 mt-4 border-top pt-2">
+                                            <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                                <font-awesome-icon icon="spinner" pulse class="icon" />
+                                                <span class="fa fa-save"></span>
+                                                {{$tc('actions.save')}}
+                                            </button>
+                                            <router-link :to="{name: 'AdministrationUserList'}" class="btn btn-secondary mr-1">
+                                                {{$tc('actions.cancel')}}</router-link>
+                                        </div>
+                                    </div>
+                                    </form>
+                                    </div>
+                                    </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -85,47 +110,55 @@
 </template>
 
 <script>
-    import Vue from 'vue';
     import axios from 'axios';
     import Notifier from '../../mixins/Notifier';
     import { mapGetters } from 'vuex';
-    import { deserialize } from 'jsonapi-deserializer';
+    import vSelect from "vue-select";
 
     let thornUrl = process.env.VUE_APP_THORN_URL;
 
     export default {
         name: 'UserAdd',
+        components: {
+            'v-select': vSelect,
+        },
         mixins: [Notifier],
         data() {
             return {
-                user: {}
+                user: {},
+                roles: [],
+                teste: [{description: "Funciona"}]
             };
         },
         computed: {
             ...mapGetters(['isAdmin'])
         },
         mounted() {
-            let self = this;
+            const self = this;
             this.load().then(() => {
-                Vue.nextTick(() => {
-                    self.isDirty = false;
-                });
+                const rolesUrl = `${thornUrl}/roles`;
+                axios.get(rolesUrl)
+                    .then(resp => {
+                        self.roles = resp.data.data;
+                    }).catch(function (e) {
+                        self.error(e);
+                    });
             });
         },
         methods: {
             load() {
-                let self = this;
-                let userId = this.$route.params.id;
-                const url = `${thornUrl}/administration/users/${userId}`;
+                const self = this;
+                const userId = this.$route.params.id;
+                const url = `${thornUrl}/users/${userId}`;
 
                 return new Promise((resolve, reject) => {
                     axios
                         .get(url)
                         .then(resp => {
-                            let user = deserialize(resp.data);
-                            user.role = user.roles[0];
-                            self.user = user;
-
+                            self.user = resp.data.data[0];
+                            if (self.user.roles === undefined){
+                                self.user.roles = [];
+                            }
                             resolve();
                         })
                         .catch(function (e) {
@@ -133,35 +166,36 @@
                         });
                 });
             },
-            save() {
+            save(event) {
                 const self = this;
                 let userId = this.$route.params.id;
-                const url = `${thornUrl}/administration/users/${userId}`;
+                const url = `${thornUrl}/users/${userId}`;
                 let user = self.user;
+
+                event.target.setAttribute('disabled', 'disabled');
+                event.target.classList.remove('btn-spinner');
 
                 this.$Progress.start();
                 return axios
-                    .put(url, { user })
+                    .patch(url, user)
                     .then(resp => {
-                        this.$Progress.finish();
                         this.$router.push({ name: 'AdministrationUserList' });
+                        self.success(
+                            this.$t('messages.savedWithSuccess', {
+                                what: this.$tc('titles.user', 1)
+                            })
+                        );
+
                     })
                     .catch(
                         function (e) {
-                            var err = e;
-                            self.$Progress.finish();
-                            if (e.response.data.errors[0]) {
-                                let pointer = e.response.data.errors[0].source.pointer;
-                                let detail = e.response.data.errors[0].detail;
-
-                                err = {
-                                    message: `${pointer} ${detail}`
-                                };
-                            }
-
-                            self.error(err);
+                           self.error(e);
                         }.bind(this)
-                    );
+                    ).finally(()=> {
+                        event.target.removeAttribute('disabled');
+                        event.target.classList.add('btn-spinner');
+                        this.$Progress.finish();
+                    });
             }
         }
     };

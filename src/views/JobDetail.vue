@@ -4,13 +4,13 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1 class="header-title" v-if="loaded">
-                            <span v-bind:title="$tc('titles.job', 1)">{{job.id}}</span>
+                        <h1 v-if="loaded" class="header-title">
+                            <span :title="$tc('titles.job', 1)">{{job.id}}</span>
                             {{workflow.name}}
                         </h1>
                         <router-link
-                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                            v-if="workflow.id" class="btn btn-sm btn-outline-primary">
+                            v-if="workflow.id"
+                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="btn btn-sm btn-outline-primary">
                             <i class="fa fa-chevron-left"></i>
                             &nbsp; {{$t('actions.back')}} -
                             {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
@@ -24,11 +24,11 @@
                                         <b-card>
                                             <div style="position: relative;  height: 75vh;">
                                                 <div>
-                                                    <diagram :workflow="workflow" ref="diagram" id="main-diagram"
-                                                        :operations="operations" :version="job.id" initial-zoom="1"
-                                                        :showToolbar="false" :editable="false" :shink="true"
-                                                        v-if="loaded" :loaded="loaded" :showTaskDecoration="true"
-                                                        :initialZoom=".7" />
+                                                    <diagram v-if="loaded" id="main-diagram" ref="diagram"
+                                                        :workflow="workflow" :operations="operations" :version="job.id"
+                                                        initial-zoom="1" :show-toolbar="false" :editable="false"
+                                                        :shink="true" :loaded="loaded" :show-task-decoration="true"
+                                                        :initial-zoom=".7" />
                                                 </div>
                                             </div>
                                         </b-card>
@@ -38,12 +38,12 @@
                                             <b-tabs card>
                                                 <b-tab active>
                                                     <template slot="title">
-                                                        <div class="job-status-circle lemonade-job" :class="jobStatus"
-                                                            :title="job.status" id="dtl-job-status"></div>
+                                                        <div id="dtl-job-status" class="job-status-circle lemonade-job"
+                                                            :class="jobStatus" :title="job.status"></div>
                                                         {{$tc('job.logs', 2)}}
                                                     </template>
                                                     <div class="job-log-list">
-                                                        <div class="alert alert-secondary" id="dtl-job-status-text">
+                                                        <div id="dtl-job-status-text" class="alert alert-secondary">
                                                             {{job.status_text}}</div>
                                                         <ProgressChart :logs="sortedLogs" />
                                                         <div class="job-log-list">
@@ -68,7 +68,7 @@
                                                         </div>
                                                     </div>
                                                 </b-tab>
-                                                <b-tab :title="$t('titles.errorDetail')" v-if="job.exception_stack">
+                                                <b-tab v-if="job.exception_stack" :title="$t('titles.errorDetail')">
                                                     <div style="font-size:.8em">
                                                         <code>
                               <pre>{{job.exception_stack}}</pre>
@@ -85,43 +85,27 @@
                                                         <dd>{{job.cluster.name}}</dd>
                                                     </dl>
                                                 </b-tab>
-                                                <b-tab :title="$tc('job.parameters', 2)"
-                                                    style="max-height: 70vh; overflow: auto" v-if="job.workflow">
-                                                    <div class="card">
+                                                <b-tab v-if="job.workflow"
+                                                    :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto">
+                                                    <div v-for="task in job.workflow.tasks" class="card">
                                                         <div class="card-body" style="overflow: auto">
-                                                            <template v-for="task in job.workflow.tasks">
-                                                                {{task.name}} ({{task.operation.name}})
-                                                                <table class="table table-sm table-parameters">
-                                                                    <thead>
-                                                                        <tr></tr>
-                                                                        <tr>
-                                                                            <th>{{$tc('job.parameters', 1)}}</th>
-                                                                            <th>{{$tc('job.values', 1)}}</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <template v-for="f in task.operation.forms"
-                                                                            v-if="f.category === 'execution'">
-                                                                            <tr v-for="field in f.fields"
-                                                                                v-if="task.forms[field.name]">
-                                                                                <td>{{task.forms[field.name].label ? task.forms[field.name].label : field.name}}
-                                                                                </td>
-                                                                                <td>
-                                                                                    <component
-                                                                                        :is="field.suggested_widget + '-component'"
-                                                                                        :field="field"
-                                                                                        :value="task.forms[field.name].labelValue ? task.forms[field.name].labelValue: task.forms[field.name].value"
-                                                                                        :type="field.suggested_widget"
-                                                                                        context="context"
-                                                                                        :read-only="true">
-                                                                                    </component>
-                                                                                    
-                                                                                </td>
-                                                                            </tr>
-                                                                        </template>
-                                                                    </tbody>
-                                                                </table>
-                                                            </template>
+                                                            {{task.name}} ({{task.operation.name}})
+                                                            <table class="table table-sm table-parameters">
+                                                                <thead>
+                                                                    <tr></tr>
+                                                                    <tr>
+                                                                        <th>{{$tc('job.parameters', 1)}}</th>
+                                                                        <th>{{$tc('job.values', 1)}}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr v-for="(v, k, i) in task.forms">
+                                                                        <td>{{v.label ? v.label : k}}</td>
+                                                                        <td>{{v.labelValue ? v.labelValue: v.value}}
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                     </div>
                                                 </b-tab>
@@ -132,10 +116,10 @@
                             </b-tab>
                             <b-tab :title="$tc('job.results', 2)">
                                 <b-card>
-                                    <div class="row" v-for="(step, inx) in job.steps" :key="inx">
+                                    <div v-for="(step, inx) in job.steps" :key="inx" class="row">
                                         <div class="col-md-12 lemonade">
-                                            <div class="mt-2 border-bottom pb-2"
-                                                v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )">
+                                            <div v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
+                                                class="mt-2 border-bottom pb-2">
                                                 <TaskDisplay :task="getTask(step.task.id)" />
                                                 &nbsp;
                                                 {{step.status}}
@@ -153,13 +137,13 @@
                                     </div>
                                 </b-card>
                             </b-tab>
-                            <b-tab :title="$tc('job.visualizations', 2)" v-show="job.results && job.results.length"
+                            <b-tab v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
                                 @click="showVisualizations = true">
                                 <b-card>
-                                    <div class="row" v-for="result in job.results" :key="result.id">
-                                        <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; display:table"
-                                            v-if="showVisualizations">
-                                            <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id)">
+                                    <div v-for="result in job.results" :key="result.id" class="row">
+                                        <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
+                                            style="margin-top: 14px; display:table">
+                                            <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id, 0)">
                                             </caipirinha-visualization>
                                         </div>
                                     </div>
@@ -237,7 +221,6 @@
         }
     });
     export default {
-        mixins: [Notifier],
         components: {
             diagram: DiagramComponent,
             'slideout-panel': SlideOut,
@@ -247,20 +230,7 @@
             Visualization,
             TaskDisplay
         },
-        computed: {
-            sortedLogs() {
-                let logs = [];
-                this.job.steps.forEach(step => {
-                    step.logs.forEach(info => {
-                        info.task = step.task;
-                        logs.push(info);
-                    });
-                });
-                return logs.sort((a, b) => {
-                    return a.id - b.id;
-                });
-            }
-        },
+        mixins: [Notifier],
         data() {
             return {
                 sourceCode: '',
@@ -281,94 +251,17 @@
                 progressIndicators: [],
             };
         },
-        methods: {
-            getTask(taskId) {
-                return this.tasks[taskId];
-            },
-
-            getResults(taskId) {
-                return { taskId: this.results[taskId] };
-            },
-            getCaipirinhaLink(jobId, taskId) {
-                return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}?token=123456`;
-            },
-            connectWebSocket() {
-                const self = this;
-                const socket = io(`${standUrl}${standNamespace}`, {
-                    upgrade: true,
-                    path: `${standSocketIOPath}/socket.io`
-                });
-
-                self.socket = socket;
-
-                socket.on('disconnect', () => {
-                    console.debug('You are not connected');
-                });
-                socket.on('response', msg => {
-                    // console.debug('response', msg);
-                });
-                socket.on('connect', () => {
-                    // console.debug('Connecting to room', room);
-                    socket.emit('join', { room: self.job.id });
-                    self.socket = socket;
-                });
-                socket.on('connect_error', () => {
-                    console.debug('Web socket server offline');
-                });
-                socket.on('update task', (msg, callback) => {
-                    const task = self.job.workflow.tasks.find(t => {
-                        return msg.task && t.id === msg.task.id;
+        computed: {
+            sortedLogs() {
+                let logs = [];
+                this.job.steps.forEach(step => {
+                    step.logs.forEach(info => {
+                        info.task = step.task;
+                        logs.push(info);
                     });
-                    // const task = self.tasks[msg.task.id];
-                    if (task) {
-                        task.status = msg.status;
-                        let step = self.job.steps.find(step => step.task.id === task.id);
-                        if (step) {
-                            step.status = msg.status;
-                            const found = step.logs.filter(v => v.id === msg.id);
-                            if (found.length === 0) {
-                                step.logs.push({
-                                    id: msg.step_id,
-                                    level: msg.level,
-                                    date: msg.date,
-                                    type: msg.type,
-                                    message: msg.message
-                                });
-                            }
-                        }
-                    }
                 });
-                socket.on('update job', msg => {
-                    self.jobStatus = msg.status.toLowerCase();
-                    if (msg.id === self.job.id && self.job.status !== 'COMPLETED') {
-                        self.job.status = msg.status;
-                        self.job.finished = msg.finished;
-
-                        if (msg.message) {
-                            // let finalMsg = msg.message.replace(/&/g, '&amp;')
-                            //     .replace(/"/g, '&quot;')
-                            //     .replace(/</g, '&lt;')
-                            //     .replace(/>/g, '&gt;');;
-                            const finalMsg = msg.message;
-                            self.job.status_text = finalMsg;
-                            if (msg.status === 'COMPLETED') {
-                                // hack
-                                window.setTimeout(() => (self.jobStatus = 'COMPLETED'), 10);
-                                self.success(finalMsg);
-                            } else if (msg.status === 'ERROR') {
-                                if (msg.exception_stack) {
-                                    self.job.exception_stack = msg.exception_stack.replace(
-                                        /(^[ \t]*\n)/gm,
-                                        ''
-                                    );
-                                }
-                                self.error(null, self.$t('job.error'));
-                            }
-                        }
-                    }
-                });
-                socket.on('task result', msg => {
-                    self.job.results.push(msg);
+                return logs.sort((a, b) => {
+                    return a.id - b.id;
                 });
             }
         },
@@ -461,6 +354,97 @@
                 this.selectedTask = {};
                 this.showProperties = false;
             });
+        },
+        methods: {
+            getTask(taskId) {
+                return this.tasks[taskId];
+            },
+
+            getResults(taskId) {
+                return { taskId: this.results[taskId] };
+            },
+            getCaipirinhaLink(jobId, taskId, visId) {
+                return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;
+            },
+            connectWebSocket() {
+                const self = this;
+                const socket = io(standNamespace, {
+                    upgrade: true,
+                });
+
+                self.socket = socket;
+
+                socket.on('disconnect', () => {
+                    console.debug('You are not connected');
+                });
+                socket.on('response', msg => {
+                    console.debug('response', msg);
+                });
+                socket.on('connect', () => {
+                    let room = self.job.id;
+                    console.debug('Connecting to room', room);
+                    socket.emit('join', { room: room });
+                    self.socket = socket;
+                });
+                socket.on('connect_error', () => {
+                    console.debug('Web socket server offline');
+                });
+                socket.on('update task', (msg, callback) => {
+                    const task = self.job.workflow.tasks.find(t => {
+                        return msg.task && t.id === msg.task.id;
+                    });
+                    // const task = self.tasks[msg.task.id];
+                    if (task) {
+                        task.status = msg.status;
+                        let step = self.job.steps.find(step => step.task.id === task.id);
+                        if (step) {
+                            step.status = msg.status;
+                            const found = step.logs.filter(v => v.id === msg.id);
+                            if (found.length === 0) {
+                                step.logs.push({
+                                    id: msg.step_id,
+                                    level: msg.level,
+                                    date: msg.date,
+                                    type: msg.type,
+                                    message: msg.message
+                                });
+                            }
+                        }
+                    }
+                });
+                socket.on('update job', msg => {
+                    self.jobStatus = msg.status.toLowerCase();
+                    if (msg.id === self.job.id && self.job.status !== 'COMPLETED') {
+                        self.job.status = msg.status;
+                        self.job.finished = msg.finished;
+
+                        if (msg.message) {
+                            // let finalMsg = msg.message.replace(/&/g, '&amp;')
+                            //     .replace(/"/g, '&quot;')
+                            //     .replace(/</g, '&lt;')
+                            //     .replace(/>/g, '&gt;');;
+                            const finalMsg = msg.message;
+                            self.job.status_text = finalMsg;
+                            if (msg.status === 'COMPLETED') {
+                                // hack
+                                window.setTimeout(() => (self.jobStatus = 'COMPLETED'), 10);
+                                self.success(finalMsg);
+                            } else if (msg.status === 'ERROR') {
+                                if (msg.exception_stack) {
+                                    self.job.exception_stack = msg.exception_stack.replace(
+                                        /(^[ \t]*\n)/gm,
+                                        ''
+                                    );
+                                }
+                                self.error(null, self.$t('job.error'));
+                            }
+                        }
+                    }
+                });
+                socket.on('task result', msg => {
+                    self.job.results.push(msg);
+                });
+            }
         }
     };
 </script>
@@ -482,10 +466,6 @@
     .html-div .table td,
     .html-div .table th {
         padding: 0.3rem;
-    }
-
-    .html-div h4 {
-        font-size: 1.1em;
     }
 
     .alternate {

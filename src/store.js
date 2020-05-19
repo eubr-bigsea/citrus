@@ -43,9 +43,10 @@ export default new Vuex.Store({
             console.info('User', user);
         },
         change_profile_success (state, { user }) {
-            user.email = user.attributes.email;
-            user.locale = user.attributes.locale;
-            user.roles = user.attributes.roles || [];
+            user.email = user.email;
+            user.login = user.login;
+            user.locale = user.locale;
+            user.roles = user.roles || [];
             state.status = 'success';
             state.user = user;
         }
@@ -53,20 +54,20 @@ export default new Vuex.Store({
     actions: {
         changeProfile ({ commit }, params) {
             return new Promise((resolve, reject) => {
-                const url = `${params.thornUrl}/api/users`;
+                const url = `${params.thornUrl}/users/me`;
                 const headers = { Accept: 'application/json; charset=utf-8' };
-                axios({ url, data: { user: params.user }, method: 'PATCH', headers })
+                axios({ url, data: params.user, method: 'PATCH', headers })
                     .then(resp => {
-                        commit('change_profile_success', { user: resp.data.data });
-                        let userData = resp.data.data.attributes;
+                        const userData = resp.data.data[0];
                         const user = {
                             id: userData.id,
                             email: userData.email,
                             locale: userData.locale,
                             login: userData.email,
-                            name: userData.full_name,
+                            name: `${userData.first_name} ${userData.last_name}`.trim(),
                             roles: userData.roles
                         };
+                        commit('change_profile_success', { user});
                         localStorage.setItem('user', JSON.stringify(user));
                         resolve(resp);
                     })
@@ -78,68 +79,54 @@ export default new Vuex.Store({
         changePassword ({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('reset_password_request');
-                let url = `${params.thornUrl}/api/users/password`;
+                let url = `${params.thornUrl}/password/reset`;
                 let headers = { Accept: 'application/json; charset=utf-8' };
-                axios({ url, data: { user: params.user }, method: 'PATCH', headers })
+                axios({ url, data: params.user, method: 'PATCH', headers })
                     .then(resp => {
                         commit('reset_password_success');
                         resolve(resp);
                     })
                     .catch(err => {
                         commit('reset_password_error');
-                        let errors = err.response.data.errors;
-                        let key = Object.keys(errors)[0];
-                        let message = 'errors.' + _.camelCase(`${key} ${errors[key]}`);
-                        reject({ message });
+                        reject(err);
                     });
             });
         },
         resetPassword ({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('reset_password_request');
-                let url = `${params.thornUrl}/api/users/password`;
+                let url = `${params.thornUrl}/password/reset`;
                 let headers = { Accept: 'application/json; charset=utf-8' };
-                axios({ url, data: { user: params.user }, method: 'POST', headers })
+                axios({ url, data: params.user, method: 'POST', headers })
                     .then(resp => {
                         commit('reset_password_success');
                         resolve(resp);
                     })
                     .catch(err => {
                         commit('reset_password_error');
-                        let errors = err.response.data.errors;
-                        let key = Object.keys(errors)[0];
-                        let message = 'errors.' + _.camelCase(`${key} ${errors[key]}`);
-                        reject({ message });
+                        reject(err.response.data);
                     });
             });
         },
         login ({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('auth_request');
-                let url = `${params.thornUrl}/api/users/sign_in`;
+                let url = `${params.thornUrl}/auth/login`;
                 let headers = { Accept: 'application/json; charset=utf-8' };
                 axios({ url, data: { user: params.user }, method: 'POST', headers })
                     .then(resp => {
-                        const token = resp.headers.authorization;
+                        const token = resp.data.token;
                         if (token === undefined) {
                             let err = new Error('errors.invalidLoginOrPassword');
                             reject(err);
                         }
 
-                        let userData = resp.data.data.attributes;
+                        let user= resp.data.user;
 
                         axios.defaults.headers.common['Authorization'] = token;
                         axios.defaults.headers.common['X-Authentication'] = token;
-                        axios.defaults.headers.common['X-User-Id'] = userData.id;
+                        axios.defaults.headers.common['X-User-Id'] = user.id;
 
-                        const user = {
-                            id: userData.id,
-                            email: userData.email,
-                            locale: userData.locale,
-                            login: userData.email,
-                            name: userData.full_name,
-                            roles: userData.roles
-                        };
                         localStorage.setItem('token', token);
                         localStorage.setItem('user', JSON.stringify(user));
                         commit('auth_success', { token, user });
@@ -157,8 +144,8 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 commit('register_request');
                 axios({
-                    url: `${params.thornUrl}/api/users`,
-                    data: { user: params.data },
+                    url: `${params.thornUrl}/register`,
+                    data: params.data,
                     method: 'POST'
                 })
                     .then(resp => {
