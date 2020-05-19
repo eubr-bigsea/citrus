@@ -16,8 +16,6 @@
     import Footer from './components/Footer.vue';
     import axios from 'axios';
 
-    const thornUrl = process.env.VUE_APP_THORN_URL;
-
     export default {
         name: 'App',
         components: {
@@ -34,7 +32,7 @@
         },
 
         mounted() {
-            this.checkAuth();
+            //this.checkAuth();
         },
         methods: {
             checkAuth: function () {

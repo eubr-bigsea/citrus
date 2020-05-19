@@ -89,7 +89,6 @@
 
 <script>
     import axios from 'axios';
-    import { Event } from 'vue-tables-2';
     import Notifier from '../mixins/Notifier';
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
     export default {
@@ -144,7 +143,6 @@
                         data.fields = 'id,name,platform,updated,user,version,is_template,description';
 
                         let url = `${tahitiUrl}/workflows?enabled=1`;
-                        let headers = {};
                         this.$Progress.start();
                         return axios
                             .get(url, {

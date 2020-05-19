@@ -61,8 +61,6 @@
 
     import Vue from 'vue';
 
-    import lodash from 'lodash';
-
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 
     import TaskComponent from './Task.vue';
@@ -424,13 +422,13 @@
             removeSelectedTasks() {
                 // Two steps, because this.removeTask changes the array used in the loop
                 const tasksToRemove = this.workflow.tasks.filter(task => {
-                    return lodash.includes(this.selectedElements, task.id);
+                    return this.selectedElements.includes(task.id);
                 });
                 tasksToRemove.forEach(this.removeTask);
             },
             toggleTasks() {
                 this.workflow.tasks.forEach(task => {
-                    if (lodash.includes(this.selectedElements, task.id)) {
+                    if (this.selectedElements.includes(task.id)) {
                         task.enabled = !task.enabled;
                     }
                 });
@@ -744,7 +742,7 @@
                 let task = self.selectedTask
                 let tasks = self.workflow.tasks
                     .filter(task => {
-                        return lodash.includes(self.selectedElements, task.id);
+                        return self.selectedElements.includes(task.id);
                     })
                 let inc = ev.ctrlKey ? 10 : 1;
 
@@ -988,7 +986,7 @@
                 let self = this;
                 let selectedTasks = this.workflow.tasks
                     .filter(task => {
-                        return lodash.includes(this.selectedElements, task.id);
+                        return this.selectedElements.includes(task.id);
                     })
                     .sort((a, b) => {
                         return a[prop] - b[prop];
@@ -1029,7 +1027,7 @@
             align(pos, fn) {
                 let self = this;
                 let selectedTasks = this.workflow.tasks.filter(task => {
-                    return lodash.includes(this.selectedElements, task.id);
+                    return this.selectedElements.includes(task.id);
                 });
                 if (selectedTasks.length) {
                     let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {

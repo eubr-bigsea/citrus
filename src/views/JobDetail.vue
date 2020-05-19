@@ -26,7 +26,7 @@
                                                 <div>
                                                     <diagram v-if="loaded" id="main-diagram" ref="diagram"
                                                         :workflow="workflow" :operations="operations" :version="job.id"
-                                                        initial-zoom="1" :show-toolbar="false" :editable="false"
+                                                        :show-toolbar="false" :editable="false"
                                                         :shink="true" :loaded="loaded" :show-task-decoration="true"
                                                         :initial-zoom=".7" />
                                                 </div>
@@ -87,9 +87,9 @@
                                                 </b-tab>
                                                 <b-tab v-if="job.workflow"
                                                     :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto">
-                                                    <div v-for="task in job.workflow.tasks" class="card">
+                                                    <div v-for="ttask in job.workflow.tasks" class="card" :key="ttask.id">
                                                         <div class="card-body" style="overflow: auto">
-                                                            {{task.name}} ({{task.operation.name}})
+                                                            {{ttask.name}} ({{ttask.operation.name}})
                                                             <table class="table table-sm table-parameters">
                                                                 <thead>
                                                                     <tr></tr>
@@ -99,7 +99,7 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    <tr v-for="(v, k, i) in task.forms">
+                                                                    <tr v-for="(v, k, i) in ttask.forms">
                                                                         <td>{{v.label ? v.label : k}}</td>
                                                                         <td>{{v.labelValue ? v.labelValue: v.value}}
                                                                         </td>
@@ -167,11 +167,9 @@
     import DiagramComponent from '../components/Diagram.vue';
     import SourceCode from '../components/SourceCode.vue';
     import ProgressChart from '../components/ProgressChart.vue';
-    import Visualization from '../components/Visualization.vue';
     import Notifier from '../mixins/Notifier';
     import axios from 'axios';
     import io from 'socket.io-client';
-    import SlideOut from '../components/SlideOutPanel.vue';
     import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
     const standUrl = process.env.VUE_APP_STAND_URL;
@@ -183,7 +181,7 @@
     const TaskDisplay = Vue.extend({
         props: {
             task: {},
-            simple: false
+            simple: {default: false}
         },
         render(createElement) {
             const color =
@@ -223,11 +221,9 @@
     export default {
         components: {
             diagram: DiagramComponent,
-            'slideout-panel': SlideOut,
             'caipirinha-visualization': CapirinhaVisualization,
             SourceCode,
             ProgressChart,
-            Visualization,
             TaskDisplay
         },
         mixins: [Notifier],
@@ -270,8 +266,6 @@
                 this.socket.emit('leave', { room: this.job.id });
                 this.socket.close();
             }
-        },
-        beforeDestroy() {
             this.$root.$off('onclick-task');
             this.$root.$off('onblur-selection');
         },

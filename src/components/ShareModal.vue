@@ -23,7 +23,6 @@
 </template>
 <script>
     import axios from 'axios';
-    import lodash from 'lodash';
     import Vue from 'vue';
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
@@ -110,8 +109,9 @@
                 }
             },
             allUsers: function (users) {
+                const isEmpty = obj => [Object, Array].includes((obj || {}).constructor) && !Object.entries((obj || {})).length;
                 let datasource = this.datasource;
-                if (!lodash.isEmpty(datasource)) {
+                if (!isEmpty(datasource)) {
                     this.loading = false;
                 }
             },

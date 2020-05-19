@@ -1,11 +1,20 @@
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+    .BundleAnalyzerPlugin;
+
 module.exports = {
-  configureWebpack: {
-    devtool: 'source-map'
-  },
-  publicPath: './',
-  pluginOptions: {
-    webpackBundleAnalyzer: {
-      openAnalyzer: false
+    configureWebpack: {
+        devtool: 'source-map',
+        plugins: [
+            //new BundleAnalyzerPlugin(),
+        ]
+    },
+    publicPath: './',
+    pluginOptions: {
+        webpackBundleAnalyzer: {
+            openAnalyzer: false
+        }
+    },
+    chainWebpack: config => {
+        config.module.rules.delete('eslint');
     }
-  }
 };

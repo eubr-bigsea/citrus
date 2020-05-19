@@ -238,7 +238,6 @@
 <script>
     import Vue from 'vue';
     import axios from 'axios';
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import DiagramComponent from '../components/Diagram.vue';
     import PropertyWindow from '../components/PropertyWindow.vue';
     import PerformanceEstimation from '../components/PerformanceEstimation.vue';
@@ -265,7 +264,6 @@
             'property-window': PropertyWindow,
             WorkflowProperty,
             WorkflowExecution,
-            VuePerfectScrollbar,
             InputHeader,
             PerformanceEstimation,
             TahitiSuggester: () => {

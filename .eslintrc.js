@@ -1,5 +1,5 @@
 module.exports = {
-  root: true,
+  root: false,
   env: {
     node: true
   },
@@ -11,9 +11,9 @@ module.exports = {
   ],
   rules: {
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-console': 'off', // process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-unused-vars': ['error', { args: 'none', ignoreRestSiblings: false }],
+    'no-unused-vars': 'off', //['error', { args: 'none', ignoreRestSiblings: false }],
     'prettier/prettier': 'off',
     'vue/no-v-html': 'off'
   },
