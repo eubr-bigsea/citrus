@@ -270,8 +270,6 @@
                 this.socket.emit('leave', { room: this.job.id });
                 this.socket.close();
             }
-        },
-        beforeDestroy() {
             this.$root.$off('onclick-task');
             this.$root.$off('onblur-selection');
         },

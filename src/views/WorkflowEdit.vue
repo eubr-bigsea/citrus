@@ -186,13 +186,19 @@
 
                 </b-tabs>
 
-                <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name">
+                <b-modal id="taskResultModal" ref="taskResultModal" :title="resultTask.name" size="lg" modal-class="full_modal-dialog" :ok-only="true">
                     <p>{{resultTask.step.status}}</p>
                     <div v-for="log in resultTask.step.logs" :key="log.id">
-                        {{log}}
+                        <span v-if="log.type === 'HTML'">
+                            <div class="html-div" v-html="log.message"></div>
+                        </span>
+                        <div v-else-if="log.type === 'IMAGE'" class="image-result">
+                            <img :src="'data:image/png;base64,' + log.message">
+                        </div>
                     </div>
-                    <div>
-                        {{resultTask.result}}
+                    <div class="col-md-8 lemonade offset-2" style="margin-top: 14px; display:table">
+                        <caipirinha-visualization v-if="resultTask.result && resultTask.result.task" :url="getCaipirinhaLink(job.id, resultTask.result.task.id, 0)">
+                        </caipirinha-visualization>
                     </div>
                 </b-modal>
 
@@ -250,14 +256,17 @@
     import InputHeader from '../components/InputHeader.vue';
     import html2canvas from 'html2canvas';
     import Notifier from '../mixins/Notifier';
+    import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     const standUrl = process.env.VUE_APP_STAND_URL
+    const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
     export default {
         mixins: [Notifier],
         components: {
+            'caipirinha-visualization': CapirinhaVisualization,
             'diagram': DiagramComponent,
             'toolbox': ToolboxComponent,
             'workflow-toolbar': WorkflowToolbar,
@@ -280,7 +289,7 @@
         data() {
             return {
                 atmosphereExtension: false,
-                
+        		job: {},        
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
                 clusters: [],
@@ -525,6 +534,10 @@
             }
         },
         methods: {
+			getCaipirinhaLink(jobId, taskId, visId) {
+                return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;
+            },
+
             leaving(event) {
                 let self = this;
                 if (self.isDirty) {
@@ -604,6 +617,7 @@
                                 axios.get(`${standUrl}/jobs/latest`, { params })
                                     .then((resp2 => {
                                         const job = resp2.data;
+										self.job = job;
                                         const tasks = self.workflow.tasks;
                                         job.steps.forEach((step) => {
                                             const foundTask = tasks.find((t) => {
@@ -1055,4 +1069,21 @@
         text-align: center;
         color: #aaa;
     }
+.full_modal-dialog .modal-dialog {
+  width: 98% !important;
+  height: 92% !important;
+  min-width: 98% !important;
+  min-height: 92% !important;
+  max-width: 98% !important;
+  max-height: 92% !important;
+  padding: 0 !important;
+}
+
+.full_modal-dialog .modal-content{
+  height: 99% !important;
+  min-height: 99% !important;
+  max-height: 99% !important;
+  border-radius: 0;
+  overflow-y: auto;
+}
 </style>

@@ -14,7 +14,7 @@ export default {
         item.values.forEach(value => {
           const name = value.x;
 
-          if (series.hasOwnProperty(name) == false) series[name] = [];
+          if (Object.prototype.hasOwnProperty.call(series, name) == false) series[name] = [];
 
           series[name].push(value.y);
         });
