@@ -39,7 +39,7 @@
                                                 <label>{{$t('common.tags')}}:</label>
                                                 <v-select v-model="customTags" multiple :close-on-select="false"
                                                     style="width: 100%" :taggable="true" class="custom">
-                                                    <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                    <span slot="no-options"></span>
                                                 </v-select>
                                             </div>
                                             <div class="col-md-3">
@@ -55,7 +55,7 @@
                                                 <b-form-checkbox v-model="dataSource.is_first_line_header">
                                                     {{ $t('dataSource.isFirstLineHeader') }}</b-form-checkbox>
                                             </div>
-                                            <div v-if="dataSource.storage.type !== 'VALLUM'"
+                                            <div v-if="dataSource.storage.type !== 'VALLUM' && dataSource.storage.type !== 'HIVE' "
                                                 class="col-md-2 col-lg-2 mt-3">
                                                 <b-form-checkbox v-model="dataSource.is_multiline">
                                                     {{ $t('dataSource.isMultiline') }}</b-form-checkbox>
@@ -76,7 +76,7 @@
                                                 </b-form-checkbox>
                                             </div>
 
-                                            <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM'"
+                                            <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM' || dataSource.storage.type === 'HIVE'"
                                                 class="col-md-12 mt-3 pb-1">
                                                 <label>{{$tc('common.command')}}:</label>
                                                 <textarea v-model="dataSource.command" class="form-control"></textarea>
@@ -216,6 +216,14 @@
                                             <div class="alert alert-info">{{ $t("dataSource.noAttributes") }}</div>
                                         </div>
                                     </b-tab>
+                                    <b-tab v-if="loggedUserIsOwnerOrAdmin">
+                                        <template slot="title">
+                                            <span class="fa fa-link"></span> {{$tc('dataSource.relationship', 2)}}
+                                        </template>
+                                        <p class="pb-1 border-bottom text-right">
+                                            <button class="btn btn-sm btn-primary" @click="addShare"><span class="fa fa-link"></span> {{$t('actions.add', {type: $tc('common.sharing', 1)})}}</button>
+                                        </p>
+                                    </b-tab> 
                                     <b-tab v-if="loggedUserIsOwnerOrAdmin">
                                         <template slot="title">
                                             <span class="fa fa-share-alt"></span> {{$tc('common.sharing', 2)}}
@@ -440,9 +448,9 @@
                     'HDF5',
                     'DATA_FOLDER',
                     'IMAGE_FOLDER',
+                    'HIVE',
                     'JDBC',
                     'JSON',
-                    'NETCDF4',
                     'NPY',
                     'PARQUET',
                     'PICKLE',
@@ -452,7 +460,6 @@
                     'TEXT',
                     'VIDEO_FOLDER',
                     'UNKNOWN',
-                    'VALLUM',
                     'XML_FILE'
                 ].sort(),
                 delimiters: [

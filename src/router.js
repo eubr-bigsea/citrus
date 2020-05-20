@@ -64,6 +64,9 @@ const ModelEdit = () => import('./views/ModelEdit.vue');
 const DashboardList = () => import('./views/DashboardList.vue');
 const DashboardDetail = () => import('./views/DashboardDetail.vue');
 
+const WebSocketPing = () => import('./views/WebSocketPing.vue');
+const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
+
 Vue.use(Router);
 
 let router = new Router({
@@ -448,6 +451,25 @@ let router = new Router({
                 title: ['titles.termsOfService', 2]
             }
         },
+        {
+            path: '/admin/ws-ping',
+            name: 'webSocketPing',
+            component: WebSocketPing,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.admin', 1]
+            }
+        },
+        {
+            path: '/admin/sandbox',
+            name: 'jsplumb-sandbox',
+            component: JsPlumbSandbox,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.admin', 1]
+            }
+        },
+
         {
             path: '*',
             name: 'not-found',
