@@ -69,7 +69,7 @@
 
 <script>
 import axios from 'axios';
-import Notifier from '../mixins/Notifier';
+import Notifier from '../../mixins/Notifier';
 
 let standUrl = process.env.VUE_APP_STAND_URL;
 

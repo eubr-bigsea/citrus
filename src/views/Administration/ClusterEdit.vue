@@ -84,7 +84,7 @@
     import Vue from 'vue';
     import axios from 'axios';
     import VueSelect from 'vue-select';
-    import SwitchComponent from '../components/widgets/Switch.vue';
+    import SwitchComponent from '../../components/widgets/Switch.vue';
 
     let standUrl = process.env.VUE_APP_STAND_URL;
 

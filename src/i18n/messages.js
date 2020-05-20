@@ -116,6 +116,7 @@ export default {
                 'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
             parameters: 'Parâmetro | Parâmetros',
             password: 'Senha',
+            plugin: 'Plugin',
             project: {
                 category: 'Categoria',
                 description: 'Descrição',
@@ -142,6 +143,7 @@ export default {
             sharing: 'Compartilhamento',
             show: 'Exibir',
             size: 'Tamanho',
+            slug: 'Slug',
             system: 'Sistema',
             tag: 'Tag | Tags',
             tags: 'Tags',
@@ -636,6 +638,7 @@ export default {
                 'Showing {from} to {to} of {count} records|{count} records|One record',
             parameters: 'Parameter | Parameters',
             password: 'Password',
+            plugin: 'Plugin',
             project: {
                 name: 'Name',
                 description: 'Description',
@@ -663,6 +666,7 @@ export default {
             sharing: 'Sharing',
             show: 'Show',
             size: 'Size',
+            slug: 'Slug',
             system: 'System',
             tag: 'Tag | Tags',
             tags: 'Tags',
