@@ -119,6 +119,7 @@
         },
         beforeDestroy() {
             this.$root.$off('ondelete-visualization');
+            this.$root.$off('onsave-visualization');
         },
         mounted() {
             const path = this.publicRoute ? 'public/dashboard' : 'dashboards';
@@ -158,6 +159,24 @@
                             });
                     })
             });
+            this.$root.$on('onsave-visualization', (visualizationId, visualizationData, callback) => {
+                const params = { data: visualizationData };
+                axios
+                    .patch(`${caipirinhaUrl}/visualizations/0/0/${visualizationId}`, params)
+                    .then(response => {
+                        this.success(
+                            this.$t('messages.savedWithSuccess', {
+                                what: this.$tc('titles.visualization')
+                            })
+                        );
+                        if (callback){
+                            callback(true, response.data.data.data);
+                        }
+                    })
+                    .catch(e => {
+                        this.error(e);
+                    });
+            });
         },
         methods: {
             addText() {
@@ -170,7 +189,7 @@
                                 what: this.$tc('dashboard.markupVisualization')
                             })
                         );
-                        const maxY = Math.max.apply(null, this.layout.map(l=> l.y)) + 1;
+                        const maxY = Math.max.apply(null, this.layout.map(l => l.y)) + 1;
                         const newItem = {
                             x: 1,
                             y: maxY,

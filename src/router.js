@@ -63,6 +63,7 @@ const ModelEdit = () => import('./views/ModelEdit.vue');
 
 const DashboardList = () => import('./views/DashboardList.vue');
 const DashboardDetail = () => import('./views/DashboardDetail.vue');
+const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
 
 Vue.use(Router);
 
@@ -324,7 +325,7 @@ let router = new Router({
             }
         },
         {
-            path: '/dashboards/:id',
+            path: '/dashboards/detail/:id',
             name: 'dashboardDetail',
             component: DashboardDetail,
             meta: {
@@ -336,6 +337,15 @@ let router = new Router({
             path: '/public/dashboard/:hash',
             name: 'publicDashboard',
             component: DashboardDetail,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.dashboard', 1]
+            }
+        },
+        {
+            path: '/dashboards/builder',
+            name: 'dashboardBuilder',
+            component: DashboardBuilder,
             meta: {
                 requiresAuth: false,
                 title: ['titles.dashboard', 1]

@@ -29,8 +29,9 @@
 <script>
     import snarkdown from 'snarkdown';
     import DOMPurify from 'dompurify';
-    import Notifier from '../../mixins/Notifier';
     import axios from 'axios';
+    
+    import Notifier from '../../mixins/Notifier';
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
     function sanitizeMarkdown(markdownCode) {
@@ -58,25 +59,11 @@
                 this.$root.$emit('ondelete-visualization', this.visualizationData.id);
             },
             save() {
-                const data = {
-                    data: JSON.stringify({
-                        markdown: this.visualizationData.markdown
-                    })
-                };
-                axios
-                    .patch(`${caipirinhaUrl}/visualizations/0/0/${this.visualizationData.id}`, data)
-                    .then(response => {
-                        this.success(
-                            this.$t('messages.savedWithSuccess', {
-                                what: this.$tc('titles.visualization')
-                            })
-                        );
-                        this.editing = false;
-                        this.markdown = sanitizeMarkdown(JSON.parse(response.data.data.data).markdown || "");
-                    })
-                    .catch(e => {
-                        this.error(e);
-                    });
+                const data = JSON.stringify({markdown: this.visualizationData.markdown});
+                this.$root.$emit('onsave-visualization', this.visualizationData.id, data, (result, responseData) => {
+                    this.editing = false;
+                    this.markdown = sanitizeMarkdown(JSON.parse(responseData).markdown || "");
+                });
             },
             cancel() {
                 this.editing = false;
