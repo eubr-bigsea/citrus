@@ -36,6 +36,9 @@
                     <b-dropdown-item v-if="isAdmin" :to="{ name: 'clusters' }">
                         {{ $tc('titles.cluster', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-item v-if="isAdmin" :to="{ name: 'platforms' }">
+                        {{ $tc('titles.platform', 2) }}
+                    </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>

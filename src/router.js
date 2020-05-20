@@ -53,9 +53,9 @@ const UserList = () => import('./views/Administration/UserList.vue');
 const UserAdd = () => import('./views/Administration/UserAdd.vue');
 const UserEdit = () => import('./views/Administration/UserEdit.vue');
 
-const ClusterList = () => ('./views/ClusterList.vue');
-const ClusterAdd = () => ('./views/ClusterAdd.vue');
-const ClusterEdit = () => ('./views/ClusterEdit.vue');
+const ClusterList = () => import('./views/Administration/ClusterList.vue');
+const ClusterAdd = () => import('./views/Administration/ClusterAdd.vue');
+const ClusterEdit = () => import('./views/Administration/ClusterEdit.vue');
 
 const ModelList = () => import('./views/ModelList.vue');
 const ModelAdd = () => import('./views/ModelAdd.vue');
@@ -64,6 +64,10 @@ const ModelEdit = () => import('./views/ModelEdit.vue');
 const DashboardList = () => import('./views/DashboardList.vue');
 const DashboardDetail = () => import('./views/DashboardDetail.vue');
 const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
+
+const PlatformList = () => import('./views/Administration/PlatformList.vue');
+const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
+const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
 
 Vue.use(Router);
 
@@ -207,7 +211,7 @@ let router = new Router({
         // },
         //
         {
-            path: '/configuration',
+            path: '/administration/configuration',
             name: 'configuration',
             component: ConfigurationList,
             meta: {
@@ -415,7 +419,7 @@ let router = new Router({
             }
         },
         {
-            path: '/admin/operations',
+            path: '/administration/operations',
             name: 'operations',
             component: OperationList,
             meta: {
@@ -424,7 +428,7 @@ let router = new Router({
             }
         },
         {
-            path: '/admin/clusters',
+            path: '/administration/clusters',
             name: 'clusters',
             component: ClusterList,
             meta: {
@@ -433,7 +437,7 @@ let router = new Router({
             }
         },
         {
-            path: '/admin/clusters/add',
+            path: '/administration/clusters/add',
             name: 'addCluster',
             component: ClusterAdd,
             meta: {
@@ -442,12 +446,39 @@ let router = new Router({
             }
         },
         {
-            path: '/admin/clusters/:id',
+            path: '/administration/clusters/:id',
             name: 'editCluster',
             component: ClusterEdit,
             meta: {
                 requiresAuth: true,
                 title: ['titles.cluster', 1]
+            }
+        },
+        {
+            path: '/administration/platforms',
+            name: 'platforms',
+            component: PlatformList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.platform', 2]
+            }
+        },
+        {
+            path: '/administration/clusters/add',
+            name: 'addPlatform',
+            component: PlatformAdd,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.platform', 1]
+            }
+        },
+        {
+            path: '/administration/platform/:id',
+            name: 'editPlatform',
+            component: PlatformEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.platform', 1]
             }
         },
         {
