@@ -8,7 +8,7 @@
                             <div class="card-body">
                                 <h4 class="card-title">{{$t('dataSource.whatTypeOfDataSourceToAdd')}}</h4>
                                 <div class="row">
-                                    <div :class="atmosphereExtension? 'col-md-4': 'col-md-6'">
+                                    <div :class="'col-md-' + colSize">
                                         <b-card bg-variant :title="$t('dataSource.distributedFileSystem')"
                                             class="card-option">
                                             {{$t('dataSource.characteristics')}}:
@@ -29,7 +29,7 @@
                                                 @click="choose('fs')">{{$t('actions.choose')}}</button>
                                         </b-card>
                                     </div>
-                                    <div :class="atmosphereExtension? 'col-md-4': 'col-md-6'">
+                                    <div :class="'col-md-' + colSize">
                                         <b-card :title="$t('dataSource.databaseStorage')" class="card-option">
                                             {{$t('dataSource.characteristics')}}:
                                             <ul>
@@ -48,7 +48,7 @@
                                                 @click="choose('sql')">{{$t('actions.choose')}}</button>
                                         </b-card>
                                     </div>
-                                    <div v-if="atmosphereExtension" class="col-md-4">
+                                    <div v-if="atmosphereExtension" :class="atmosphereExtension? 'col-md-4': 'col-md-6'">
                                         <b-card title="Vallum (Experimental)" class="card-option">
                                             {{$t('dataSource.characteristics')}}:
                                             <ul>
@@ -67,6 +67,25 @@
                                             <button class="btn btn-success" :disabled="sqlStorage === null"
                                                 @click="choose('vallum')">{{$t('actions.choose')}}</button>
                                         </b-card>
+                                    </div>
+                                    <div :class="'col-md-' + colSize">
+                                         <b-card title="Hive (Experimental)" class="card-option">
+                                            {{$t('dataSource.characteristics')}}:
+                                            <ul>
+                                                <li>{{$t('dataSource.youCanUseSQL')}};</li>
+                                                <li>Desempenho;</li>
+                                            </ul>
+                                            <p class="mt-4">
+                                                <label>{{$t('dataSource.storage')}}:</label>
+                                                <select v-model="hiveStorage" class="form-control">
+                                                    <option v-for="s in hiveStorages" :key="s.id" :value="s.id">
+                                                        {{s.name}}</option>
+                                                </select>
+                                            </p>
+                                            <button class="btn btn-success" :disabled="sqlStorage === null"
+                                                @click="choose('hive')">{{$t('actions.choose')}}</button>
+                                        </b-card>
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -188,6 +207,7 @@
     export default {
         data() {
             return {
+                colSize: 6,
                 atmosphereExtension: false,
                 storageType: '',
                 step: 1,
@@ -195,9 +215,11 @@
                 fsStorage: null,
                 sqlStorage: null,
                 vallumStorage: null,
+                hiveStorage: null,
                 fsStorages: [],
                 sqlStorages: [],
                 vallumStorages: [],
+                hiveStorages: [],
                 dataSource: {
                     name: null,
                     command: null,
@@ -224,12 +246,17 @@
                             self.sqlStorages.push(storage);
                         } else if (storage.type === 'VALLUM') {
                             self.vallumStorages.push(storage);
+                        } else if (storage.type === 'HIVE') {
+                            self.hiveStorages.push(storage);
                         }
                     });
                     this.fsStorage = this.fsStorages.length ? this.fsStorages[0].id : '';
                     this.sqlStorage = this.sqlStorages.length ? this.sqlStorages[0].id : '';
                     this.vallumStorage = this.vallumStorages.length ? this.vallumStorages[0].id : '';
+                    this.hiveStorage = this.hiveStorages.length ? this.hiveStorages[0].id : '';
                     this.atmosphereExtension = this.vallumStorages.length > 0;
+                    this.colSize = 12 / (2 + (this.atmosphereExtension ? 1 : 0) + 
+                        (this.hiveStorages.length > 0 ? 1 :0));
                 })
                 .catch(function (e) {
                     self.error(e);
@@ -266,6 +293,10 @@
                     this.step = 4;
                     this.dataSource.format = 'UNKNOWN';
                     this.dataSource.storage_id = this.vallumStorage;
+                } else if (method === 'hive') {
+                    this.step = 3;
+                    this.dataSource.format = 'HIVE';
+                    this.dataSource.storage_id = this.hiveStorage;
                 } else {
                     this.step = 2;
                     this.dataSource.format = 'UNKNOWN';
