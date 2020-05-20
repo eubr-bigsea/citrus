@@ -1,13 +1,16 @@
 <template>
     <div class="myview" style="margin-top: 15px;">
-        <p v-if="loading"><font-awesome-icon icon="spinner" pulse class="icon"></font-awesome-icon> {{$t('common.loading')}}</p>
+        <p v-if="loading">
+            <font-awesome-icon icon="spinner" pulse class="icon"></font-awesome-icon> {{$t('common.loading')}}
+        </p>
 
         <div v-if="error">
             <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
             {{$t('visualization.tryRefresh')}}
         </div>
 
-        <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData" :public-route="publicRoute"></component>
+        <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData"
+            :public-route="publicRoute"></component>
     </div>
 </template>
 
@@ -78,7 +81,8 @@
         name: "caipirinha-visualization",
         props: {
             url: {},
-            publicRoute: { default: true }
+            publicRoute: { default: true },
+            dataSourceType: { default: 'caipirinha' },
         },
         components: {
             CaipirinhaVisualizationHtml,
@@ -156,21 +160,22 @@
             this.error = false;
 
             this.setLang();
-
-            axios
-                .get(this.url)
-                .then(response => {
-                    this.visualizationComponent = this.getVisualizationComponent(
-                        response.data.type.id
-                    );
-                    this.visualizationData = getVisualizationData(response.data);
-                    this.loading = false;
-                })
-                .catch(response => {
-                    this.error = true;
-                    this.errorMessage = response.message;
-                    this.loading = false;
-                });
+            if (this.dataSourceType === 'caipirinha') {
+                axios
+                    .get(this.url)
+                    .then(response => {
+                        this.visualizationComponent = this.getVisualizationComponent(
+                            response.data.type.id
+                        );
+                        this.visualizationData = getVisualizationData(response.data);
+                        this.loading = false;
+                    })
+                    .catch(response => {
+                        this.error = true;
+                        this.errorMessage = response.message;
+                        this.loading = false;
+                    });
+            }
         }
     };
 </script>
