@@ -172,9 +172,9 @@ export default new Vuex.Store({
         isLoggedIn: state => !!state.token,
         authStatus: state => state.status,
         user: state => state.user || {},
-        isAdmin: state => state.user.roles.includes('admin'),
-        isManager: state => state.user.roles.includes('manager'),
-        isMonitor: state => state.user.roles.includes('monitor'),
+        isAdmin: state => state.user.roles.map(r => r.name).includes('admin'),
+        isManager: state => state.user.roles.map(r => r.name).includes('manager'),
+        isMonitor: state => state.user.roles.map(r => r.name).includes('monitor'),
         hasRoles: state => state.user.roles.length > 0,
         userPermissions: state => state.user.roles.flatMap(r => r.permissions.map(p => p.name)) || {},
         token: state => state.token

@@ -16,7 +16,7 @@
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
                 <b-nav-item :to="{ name: 'dashboards' }">
-                    <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
+                    <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }} 
                 </b-nav-item>
                 <b-nav-item-dropdown v-if="hasRoles" right>
                     <template v-slot:button-content>
@@ -42,28 +42,7 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
-                    <!--    <b-dropdown-item href="#">
-                                {{ $tc('titles.platform', 2) }}
-                            </b-dropdown-item>
-                            <b-dropdown-item href="#">
-                                {{ $tc('titles.storage', 2) }}
-                            </b-dropdown-item>
-                            <b-dropdown-divider />
-                            <b-dropdown-item href="#">
-                                {{ $tc('titles.template', 2) }}
-                            </b-dropdown-item>
-                            <b-dropdown-item href="#">
-                                {{ $t('titles.toolboxCategory') }}
-                            </b-dropdown-item>
-                            <b-dropdown-item :to="{ name: 'AdministrationProjectList' }">
-                                {{ $tc('titles.project', 2) }}
-                            </b-dropdown-item>
-                            <b-dropdown-item :to="{ name: 'AdministrationTeamList' }">
-                                {{ $tc('titles.team', 2) }}
-                            </b-dropdown-item>
-
-                    -->
-                </b-nav-item-dropdown>
+               </b-nav-item-dropdown>
             </b-navbar-nav>
 
             <b-navbar-nav class="ml-auto">
@@ -99,13 +78,13 @@
         name: 'LNavbar',
         components: {},
         computed: {
-            ...mapGetters(['hasRoles', 'isAdmin', 'isManager', 'isMonitor'])
+            ...mapGetters(['hasRoles', 'isAdmin', 'isManager', 'isMonitor', 'user'])
         },
         data() {
-            return { user: {} }
+            return { xuser: {} }
         },
         mounted() {
-            this.user = this.$store.getters.user;
+            //this.user = this.$store.getters.user;
         },
         methods: {
             profile(evt) {
