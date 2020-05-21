@@ -21,7 +21,7 @@
                     :prevent-collision="false"
                     ref="grid"
                     class="dashboard-grid">
-                    <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i">
+                    <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i">
                         <caipirinha-visualization :url="item.url" :public-route="publicRoute" data-source-type="sql">
                         </caipirinha-visualization>
                     </grid-item>

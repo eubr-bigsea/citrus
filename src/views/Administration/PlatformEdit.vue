@@ -14,12 +14,12 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                            <br/>
+                                            <br />
                                             {{platform.name}}
                                         </div>
                                         <div class="col-md-3">
                                             <label class="font-weight-bold">{{$tc('common.slug')}}:</label>
-                                            <br/>{{platform.slug}}
+                                            <br />{{platform.slug}}
                                         </div>
                                         <div class="col-md-3">
                                             <b-form-checkbox v-model="platform.enabled">{{ $t('common.enabled') }}
@@ -29,8 +29,18 @@
                                         </div>
                                         <div class="col-md-12 mt-4">
                                             <label class="font-weight-bold">{{$tc('common.description')}}:</label>
-                                            <br/>{{platform.description}}
+                                            <br />{{platform.description}}
                                         </div>
+                                        <template v-if="true || !platform.plugin">
+                                            <div class="col-md-12 mt-4">
+                                                <h5>{{$t('common.plugin')}}</h5>
+                                                {{$t('message.platformIsPluginExplanation')}}
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label class="font-weight-bold">{{$tc('common.url')}}:</label>
+                                                <br />{{platform.description}}
+                                            </div>
+                                        </template>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-12 mt-4 border-top pt-2">
