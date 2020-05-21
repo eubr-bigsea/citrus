@@ -84,6 +84,7 @@ export default {
             dontHaveAccount: 'Não possui uma conta?',
             email: 'E-mail',
             enabled: 'Habilitado',
+            false: 'Falso',
             filter: 'Filtro',
             filterPlaceholder: 'Busca',
             firstName: 'Nome',
@@ -145,6 +146,7 @@ export default {
             tag: 'Tag | Tags',
             tags: 'Tags',
             title: 'Título',
+            true: 'Verdadeiro',
             type: 'Tipo | Tipos',
             updated: 'Atualizado',
             userId: 'Id de usuário',
@@ -163,6 +165,22 @@ export default {
             },
             version: 'Versão',
             yes: 'Sim'
+        },
+        dataTypes: {
+            'BINARY': 'Binário',
+            'CHARACTER': 'Texto curto',
+            'DOUBLE': 'Ponto flutuante com mais precisão',
+            'DECIMAL': 'Decimal',
+            'DATE': 'Data',
+            'DATETIME': 'Data e hora',
+            'FILE': 'Envio de arquivo',
+            'FLOAT': 'Ponto flutante com menor precisão',
+            'INTEGER': 'Inteiro',
+            'LONG': 'Inteiro longo',
+            'TEXT': 'Texto longo',
+            'TIME': 'Hora',
+            'TIMESTAMP': 'Timestamp',
+            'VECTOR': 'Vetor'
         },
         dashboard: {
             public: 'Público',
@@ -248,6 +266,7 @@ export default {
                 'Visualização não registrada. Contacte o suporte.',
             missingRequiredValue: 'Valor obrigatório ausente',
             notFound: 'Registro não encontrado',
+            pageNotFound: 'Página não encontrada',
             passwordDontMatch: 'Senhas são diferentes',
             passwordTooShort: 'Senha deve ter mais que 5 caracteres',
             loginInUse: 'Login/email estão em uso por outro usuário. Tente outro.',
@@ -329,6 +348,14 @@ export default {
             type_UNSPECIFIED: 'Não especificado',
 
         },
+        notebook: {
+            executeUntil: 'Executar até esta célula',
+            delete: 'Excluir célula',
+            moveDown: 'Mover para baixo',
+            moveUp: 'Mover para cima',
+            newCell: 'Nova célula',
+            input: 'Entrada | Entradas'
+        },
         privacy: {
             anonymizationTechnique: 'Técnica de anonimização',
             privacyType: 'Tipo de privacidade',
@@ -394,17 +421,19 @@ export default {
             login: 'Entrar',
             model: 'Modelo | Modelos',
             news: 'Novidades e Dicas',
+            notebook: 'Notebook | Notebooks',
             pageNotFound: 'Página não encontrada',
             platform: 'Platforma | Platformas',
             profile: 'Perfil',
             project: 'Projeto | Projetos',
             team: 'Time | Times',
             property: 'Propriedade | Propriedades',
+            publication: 'Publicação | Publicações',
             register: 'Registrar',
             resetPassword: 'Redefinir senha',
             role: 'Grupo | Grupos',
             storage: 'Armazenamento | Armazenamentos',
-            success: 'Successo',
+            success: 'Sucesso',
             tasks: 'Tarefa | Tarefas',
             template: 'Modelo | Modelos',
             toolboxCategory: 'Organização das operações',
@@ -457,18 +486,26 @@ export default {
             jobName: 'Nome para a execução',
             newName:
                 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
+            publishingEnabled: 'Habilitar publicação do fluxo de trabalho',
+            publishingEnabledExplanation: 'Permite que o fluxo de trabalho seja publicado para os usuários.',
+            publishingSelect: 'Selecione as propriedades que podem ser alteradas pelos usuários para fluxos de trabalho publicados.',
             required:
                 'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
             restoreHistory:
                 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored:
                 'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
-            useAsTemplate: 'Usar este fluxo de trabalho como modelo',
+            useAsTemplate: 'Disponibilizar este fluxo de trabalho como modelo',
             useAsTemplateExplanation:
                 'Você poderá criar outros fluxos de trabalho a partir deste. Na tela de novo fluxo de trabalho, escolha a opção "A partir de um modelo".',
+
+            useAsSystemTemplate: 'Disponibilizar este fluxo de trabalho como modelo para todos os usuários',
+            useAsSystemTemplateExplanation:
+                'Qualquer usuário poderá criar outros fluxos de trabalho a partir deste. Na tela de novo fluxo de trabalho, escolha a opção "A partir de um modelo".',
             usingDisabledOperation: 'Tarefa usa operação desabilitada no Lemonade',
             validationExplanation:
-                'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.'
+                'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.',
+            variables: 'Variável | Variáveis',
         },
         permissions: {
             MANAGE: 'Gerenciar',
@@ -568,6 +605,7 @@ export default {
             dontHaveAccount: "Don't have an account?",
             email: 'E-mail',
             enabled: 'Enabled',
+            false: 'False',
             filter: 'Filter',
             filterPlaceholder: 'Search',
             firstName: 'First name',
@@ -629,6 +667,7 @@ export default {
             tag: 'Tag | Tags',
             tags: 'Tags',
             title: 'Title',
+            true: 'True',
             type: 'Type | Types',
             updated: 'Updated',
             userId: 'User id',
@@ -647,6 +686,22 @@ export default {
             },
             version: 'Version',
             yes: 'Yes'
+        },
+        dataTypes: {
+            'BINARY': 'Binary',
+            'CHARACTER': 'Short text',
+            'DOUBLE': 'Float with double precision',
+            'DECIMAL': 'Decimal',
+            'DATE': 'Date',
+            'DATETIME': 'Date and hour',
+            'FILE': 'File upload',
+            'FLOAT': 'Float',
+            'INTEGER': 'Integer',
+            'LONG': 'Long integer',
+            'TEXT': 'Long text',
+            'TIME': 'Time',
+            'TIMESTAMP': 'Timestamp',
+            'VECTOR': 'Vector'
         },
         dashboard: {
             public: 'Public',
@@ -728,6 +783,7 @@ export default {
                 'Invalid visualization. Please, contact the support.',
             missingRequiredValue: 'Missing required value',
             notFound: 'Record not found',
+            pageNotFound: 'Page not found',
             passwordDontMatch: 'Passwords do not match',
             passwordTooShort: 'Passwords must have more than que 5 characters',
             loginInUse: 'Login/email is in use. Try another one.',
@@ -763,6 +819,14 @@ export default {
                 '<p>In the meantime, you can start reading the documentation available at <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.',
             tokenNotFound: 'Reset password token not found. Try to do the reset password action and check if you received another email with a new link.',
             validatingToken: 'Validating token, please wait...',
+        },
+        notebook: {
+            delete: 'Delete cell',
+            executeUntil: 'Execute until this cell',
+            input: 'Input | Inputs',
+            moveDown: 'Move down',
+            moveUp: 'Move up',
+            newCell: 'New cell',
         },
         import: {
             description: 'You may import a file containing a workflow definition. ' +
@@ -803,12 +867,14 @@ export default {
             error: 'Error',
             errorDetail: 'Error detail (advanced)',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
+            home: 'Welcome to Lemonade',
             job: 'Job | Jobs',
             jobs: 'Jobs',
             lemonade: 'Lemonade',
             lemonadePlatform: 'Lemonade Platform',
             model: 'Model | Models',
             news: 'News & Tips',
+            notebook: 'Notebook | Notebooks',
             login: 'Login',
             pageNotFound: 'Page not found',
             platform: 'Platform | Platforms',
@@ -816,6 +882,7 @@ export default {
             project: 'Project | Projects',
             team: 'Team | Teams',
             property: 'Property | Properties',
+            publication: 'Publications | Publications',
             register: 'Sign up',
             resetPassword: 'Reset password',
             role: 'Role | Roles',
@@ -919,17 +986,25 @@ export default {
             jobName: 'Job name',
             newName:
                 'New name (a copy of the workflow will be created, but not loaded)',
+            publishingEnabled: 'Enable workflow to be published',
+            publishingEnabledExplanation: 'Allows workflow to be published to users.',
+            publishingSelect: 'Select properties that may be changed by users for published workflows.',
             required:
                 'Please, complete the required information for the execution of the workflow',
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored:
                 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
-            useAsTemplate: 'Use this workflow as a template',
+            useAsTemplate: 'This workflow is a template',
             useAsTemplateExplanation:
-                'You will be able to create a new workflow from this. When adding a new workflow, choose the option  "From template".',
+                'You will be able to create a new workflow from it. When adding a new workflow, choose the option  "From template".',
+
+            useAsSystemTemplate: 'This workflow is a system template',
+            useAsSystemTemplateExplanation:
+                'Anyone in the system will be able to create a new workflow from it. When adding a new workflow, choose the option  "From template".',
             usingDisabledOperation: 'Task is using a disabled operation in Lemonade',
             validationExplanation:
-                'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.'
+                'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.',
+            variables: 'Variable | Variables',
         },
         permissions: {
             MANAGE: 'Manage',

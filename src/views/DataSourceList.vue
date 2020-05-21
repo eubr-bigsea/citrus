@@ -165,20 +165,7 @@
                         .join(', ') || 'ALL'
                 );
             },
-            // download(id) {
-            //     let self = this;
-            //     let headers = {};
-            //     let params = {}
-            //     let url = `${limoneroUrl}/datasources/infer-schema/${id}`
-            //     Vue.http.post(url, params, { headers }).then(
-            //         (response) => {
-            //             self.$root.$refs.toastr.s('Success');
-            //         },
-            //         (error) => {
-            //             self.$root.$refs.toastr.e(error.body.message);
-            //         });
-            // },
-            infer(id) {
+           infer(id) {
                 let self = this;
                 let headers = {};
                 let params = {};

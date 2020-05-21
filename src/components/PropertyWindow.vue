@@ -35,18 +35,52 @@
                                         v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
                                             <component :is="field.suggested_widget + '-component'" :field="field"
-                                                :value="getValue(field.name)" :suggestions="suggestions"
+                                                :value="getValue(field.name)" :suggestionEvent="suggestionEvent"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
                                                 context="context">
                                             </component>
-
                                         </keep-alive>
+
                                     </div>
+                                </b-tab>
+                                <b-tab v-if="publishingEnabled" :title="$tc('titles.publication')"
+                                    :title-link-class="'small-nav-link'">
+                                    <div class="alert alert-info p-2 mt-1 mb-1">
+                                        {{$t('workflow.publishingSelect')}}
+                                    </div>
+                                    <table class="table table-sm table-striped table-bordered">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th></th>
+                                                <th>{{$tc('titles.property')}}</th>
+                                                <th>{{$tc('titles.value')}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template v-for="(form, index) in forms">
+                                                <tr v-for="field in form.fields" :key="field.name"
+                                                    v-if="form.category === 'execution' && field.enabled">
+                                                    <td>
+                                                        <b-checkbox v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
+                                                        </b-checkbox>
+                                                    </td>
+                                                    <td>{{field.label}}</td>
+                                                    <td>
+                                                        <component :is="field.suggested_widget + '-component'"
+                                                            :field="field" :value="getValue(field.name)"
+                                                            :type="field.suggested_widget" context="context"
+                                                            :read-only="true">
+                                                        </component>
+                                                        {{task.forms[field.name]}}
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
                                 </b-tab>
                             </b-tabs>
                         </b-card>
-
                     </form>
                     <div class="card-body">
                         {{task.id}}
@@ -65,23 +99,7 @@
 <script>
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-    import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
-    // import AttributeSelectorComponent from './widgets/AttributeSelector2.vue'
-    import AttributeSelector2Component from './widgets/AttributeSelector2.vue'
-    import CheckboxComponent from './widgets/Checkbox.vue'
-    import CodeComponent from './widgets/Code.vue'
-    import ColorComponent from './widgets/Color.vue'
-    import DecimalComponent from './widgets/Decimal.vue'
-    import DropDownComponent from './widgets/DropDown.vue'
-    import ExpressionComponent from './widgets/ExpressionEditor.vue'
-    import IntegerComponent from './widgets/Integer.vue'
-    import LookupComponent from './widgets/Lookup.vue'
-    import RangeComponent from './widgets/Range.vue'
-    import Select2Component from './widgets/Select2.vue'
     import SwitchComponent from './widgets/Switch.vue'
-    import TagComponent from './widgets/Select2.vue'
-    import TextComponent from './widgets/Text.vue'
-    import TextAreaComponent from './widgets/TextArea.vue'
 
     const referenceUrl = process.env.VUE_APP_REFERENCE_BASE_URL;
 
@@ -90,26 +108,12 @@
         computed: {
             docReferenceUrl() {
                 return `${referenceUrl}/${this.task.operation.slug}`;
+            },
+            propertiesForPublishing() {
+                return Object.keys(this.task.forms).sort((a, b) => a.localeCompare(b));
             }
         },
         components: {
-            'attribute-function-component': AttributeFunctionComponent,
-            // 'attribute-selector-component': AttributeSelectorComponent,
-            'attribute-selector-component': AttributeSelector2Component,
-            'checkbox-component': CheckboxComponent,
-            'code-component': CodeComponent,
-            'color-component': ColorComponent,
-            'decimal-component': DecimalComponent,
-            'dropdown-component': DropDownComponent,
-            'expression-component': ExpressionComponent,
-            'integer-component': IntegerComponent,
-            'lookup-component': LookupComponent,
-            'percentage-component': RangeComponent,
-            'range-component': RangeComponent,
-            'select2-component': Select2Component,
-            'tag-component': TagComponent,
-            'text-component': TextComponent,
-            'textarea-component': TextAreaComponent,
             SwitchComponent,
             VuePerfectScrollbar,
 
@@ -135,8 +139,8 @@
                 return function () { return eval(js); }.call(context);
             },
             update() {
-                let self = this;
-                let callback = () => {
+                const self = this;
+                const callback = () => {
                     self.filledForm = self.task.forms;
                     self.forms = self.task.operation.forms.sort((a, b) => {
                         return a.order - b.order;
@@ -178,11 +182,7 @@
                     container.scrollTop = 0;
                 }
                 this.tabIndex = 0;
-                if (false) {
-                    self.updateAttributeSuggestion(callback);
-                } else {
-                    callback();
-                }
+                callback();
             },
         },
         mounted() {
@@ -203,7 +203,8 @@
         },
         props: {
             task: { type: Object, default: {} },
-            suggestions: { type: Array, default: () => [] }
+            suggestionEvent: null,
+            publishingEnabled: false
         },
         watch: {
             task() {
@@ -213,10 +214,6 @@
     }
 </script>
 <style scoped>
-    .property {
-        padding: 3px 0;
-    }
-
     .property-help {
         font-size: 1.2em;
     }
@@ -231,12 +228,11 @@
 
     .props {
         width: 350px;
-        height: calc(100vh - 300px);
+        height: calc(100vh - 200px);
     }
 
     .properties {
         background: #fff;
-        border: 1px solid #aaa;
         height: calc(100vh - 300px);
         zoom: 100%;
         font-size: .75rem
@@ -248,7 +244,7 @@
     }
 
     .small-nav-link {
-        padding: 5px 10px !important;
+        padding: 5px 8px !important;
         margin: 0;
     }
 

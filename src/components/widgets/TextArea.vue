@@ -1,8 +1,14 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
-        <textarea class="form-control input-sm" @keyup="updated" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-            :value="value === null ? field.default: value" rows="3"></textarea>
+        <div v-if="readOnly">
+            {{value === null ? field.default: value}}
+        </div>
+        <div v-else>
+            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <textarea class="form-control input-sm" @keyup="updated" autocomplete="off" autocorrect="off"
+                autocapitalize="off" spellcheck="false" :value="value === null ? field.default: value"
+                rows="3"></textarea>
+        </div>
     </div>
 </template>
 <script>
@@ -21,7 +27,8 @@
             value: '', field: {}, message: {
                 type: String,
                 default: 'update-form-field-value'
-            }
+            },
+            readOnly: false,
         },
 
     }
