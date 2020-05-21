@@ -248,7 +248,7 @@
                     document.dispatchEvent(new Event('click'));
                     document.addEventListener('click', this.hideMenu);
                     this.zIndex = this.$el.style.zIndex;
-                    this.$el.style.zIndex = 100;
+                    this.$el.style.zIndex = 100000;
                     e.preventDefault()
                 }
             },
