@@ -1,11 +1,16 @@
 <template>
-    <label class="switch">
-        <input :class="classes" type="checkbox" :checked="checked" :name="name" 
-            :disabled="disabled" v-model="value" @change="changed">
-        <span>
-            <slot></slot>
-        </span>
-    </label>
+    <div>
+        <div v-if="readOnly">
+            {{value === null ? field.default: value}}
+        </div>
+        <label class="switch" v-else>
+            <input :class="classes" type="checkbox" :checked="checked" :name="name" :disabled="disabled" v-model="value"
+                @change="changed">
+            <span>
+                <slot></slot>
+            </span>
+        </label>
+    </div>
 </template>
 
 <script>
@@ -16,7 +21,8 @@
             classes: String,
             checked: null,
             name: String,
-            onchange: null
+            onchange: null,
+            readOnly: false,
         },
         data() {
             return {
@@ -24,7 +30,7 @@
             }
         },
         methods: {
-            changed(){
+            changed() {
                 if (this.onchange) {
                     this.onchange(this.value);
                 }
@@ -50,27 +56,33 @@
 <style lang="scss">
     label.switch {
         display: block;
+
         input[type="checkbox"] {
             display: none;
+
             &:checked {
                 +span {
                     &:before {
                         background-color: rgba(#007FEB, 0.5);
                     }
+
                     &:after {
                         background-color: #007FEB;
                         transform: translate(80%, -50%);
                     }
                 }
             }
+
             +span {
                 position: relative;
                 display: inline-block;
                 cursor: pointer;
-                font-weight: 500;
+                font-weight: normal;
+                font-size: .9em;
                 text-align: left;
                 margin: 0px;
                 padding: 0px 0px 0px 44px;
+
                 &:before,
                 &:after {
                     content: '';
@@ -82,6 +94,7 @@
                     transform: translate(0, -50%);
                     transition: all 200ms ease-out;
                 }
+
                 &:before {
                     left: 1px;
                     width: 34px;
@@ -89,6 +102,7 @@
                     background-color: rgba(0, 0, 0, 0.2);
                     border-radius: 8px;
                 }
+
                 &:after {
                     left: 0;
                     width: 20px;
@@ -98,6 +112,7 @@
                     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .14), 0 2px 2px 0 rgba(0, 0, 0, .098), 0 1px 5px 0 rgba(0, 0, 0, .084);
                 }
             }
+
             &:checked+span &:after {
                 transform: translate(80%, -50%);
             }

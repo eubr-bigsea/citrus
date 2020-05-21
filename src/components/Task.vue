@@ -1,5 +1,5 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ')" class="operation task" :title="task.operation.description + '\n' + ((task.forms && task.forms.comment)? task.forms.comment.value || '': '')"
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')" class="operation task"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
         v-on:click.stop="click" @contextmenu="openMenu" tabindex="0">
 
@@ -194,27 +194,6 @@
                 } else {
                     return this.getClassesForDecor(this.task.status || '')
                 }
-                // let result = [];
-                // switch (this.task.name && this.task.status) {
-                //     case 'ERROR':
-                //         result.push("fa fa-times-circle fa-2x");
-                //         break;
-                //     case 'PENDING':
-                //         result.push("fa fa-pause-circle fa-2x");
-                //         break;
-                //     case 'CANCELED':
-                //         result.push("fa fa-stop-circle fa-2x");
-                //         break;
-                //     case 'RUNNING':
-                //         result.push("fa fa-sync fa-spin fa-2x");
-                //         break;
-                //     case 'COMPLETED':
-                //         result.push("fa fa-check-circle fa-2x");
-                //         break;
-                //     default:
-                // }
-                // result.push(this.task.status.toLowerCase());
-                // return result.join(' ');
             },
             getBorder() {
                 let color = '#fff'
@@ -261,11 +240,15 @@
                     const self = this;
                     Vue.nextTick(function () {
                         self.$refs.right.focus();
-                        self.setMenu(e.y, e.x)
+                        //self.$refs.right.style.left = e.offsetX;
+                        //self.$refs.right.style.top = e.offsetY;
+                        self.setMenu(e.offsetY, e.offsetX)
                     }.bind(this));
+                    // Force close previously opened menus
+                    document.dispatchEvent(new Event('click'));
                     document.addEventListener('click', this.hideMenu);
                     this.zIndex = this.$el.style.zIndex;
-                    this.$el.style.zIndex = 100;
+                    this.$el.style.zIndex = 100000;
                     e.preventDefault()
                 }
             },
@@ -283,8 +266,8 @@
 
                 if (left > largestWidth) left = largestWidth;
 
-                this.top = top + 'px';
-                this.left = left + 'px';
+                this.$refs.right.style.top = top + 'px';
+                this.$refs.right.style.left = left + 'px';
             },
             _click(ev, showProperties) {
                 const self = this;
@@ -558,9 +541,8 @@
         background: #FAFAFA;
         border: 1px solid #BDBDBD;
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
-        display: block;
         list-style: none;
-        margin: 3px 0 0 20px;
+        xmargin: 3px 0 0 20px;
         padding: 0;
         position: absolute;
         width: 150px;
@@ -1118,6 +1100,9 @@
     }
 </style>
 <style lang="scss" scoped>
+    .contextMenuOpened {
+        cursor: default !important;
+    }
     .multiple-input {
        border: 1px solid white;
         border-radius: 0 8px 8px 0;

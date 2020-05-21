@@ -10,6 +10,7 @@
     </div>
 </template>
 <script>
+    // Deprecated
     import vSelect from "vue-select";
     import LabelComponent from './Label.vue'
     export default {
