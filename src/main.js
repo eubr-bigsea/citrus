@@ -23,6 +23,7 @@ import {
     faCoffee,
     faCopy,
     faCogs,
+    faDollarSign,
     faDownload,
     faFlask,
     faTasks,
@@ -45,6 +46,7 @@ import {
     faEdit,
     faTrash,
     faToggleOn,
+    faToggleOff,
     faObjectGroup,
     faQuestionCircle,
     faAsterisk,
@@ -71,9 +73,47 @@ import {
     faChevronLeft,
     faStop,
     faShareAlt,
+    faProjectDiagram,
     faUserLock,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+/* Widgets */
+import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
+import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue'
+import CheckboxComponent from './components/widgets/Checkbox.vue'
+import CodeComponent from './components/widgets/Code.vue'
+import ColorComponent from './components/widgets/Color.vue'
+import DecimalComponent from './components/widgets/Decimal.vue'
+import DropDownComponent from './components/widgets/DropDown.vue'
+import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
+import IntegerComponent from './components/widgets/Integer.vue'
+import LookupComponent from './components/widgets/Lookup.vue'
+import RangeComponent from './components/widgets/Range.vue'
+import Select2Component from './components/widgets/Select2.vue'
+import TagComponent from './components/widgets/Select2.vue'
+import TextComponent from './components/widgets/Text.vue'
+import TextAreaComponent from './components/widgets/TextArea.vue'
+
+const widgets = new Map([
+    ['attribute-function-component', AttributeFunctionComponent],
+    ['attribute-selector-component', AttributeSelector2Component],
+    ['checkbox-component', CheckboxComponent],
+    ['code-component', CodeComponent],
+    ['color-component', ColorComponent],
+    ['decimal-component', DecimalComponent],
+    ['dropdown-component', DropDownComponent],
+    ['expression-component', ExpressionComponent],
+    ['integer-component', IntegerComponent],
+    ['lookup-component', LookupComponent],
+    ['percentage-component', RangeComponent],
+    ['range-component', RangeComponent],
+    ['select2-component', Select2Component],
+    ['tag-component', TagComponent],
+    ['text-component', TextComponent],
+    ['textarea-component', TextAreaComponent]])
+
+widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
 import './assets/main.scss';
 
@@ -108,6 +148,7 @@ library.add(
     faCoffee,
     faCopy,
     faCogs,
+    faDollarSign,
     faDownload,
     faFlask,
     faTasks,
@@ -130,6 +171,7 @@ library.add(
     faUserEdit,
     faTrash,
     faToggleOn,
+    faToggleOff,
     faObjectGroup,
     faQuestionCircle,
     faAsterisk,
@@ -157,6 +199,7 @@ library.add(
     faChevronLeft,
     faStop,
     faShareAlt,
+    faProjectDiagram,
     faUserLock,
 );
 
@@ -280,9 +323,9 @@ Object.defineProperty(Vue.prototype, '$locale', {
 
 router.beforeEach((to, from, next) => {
     if (to.meta.title) {
-        let title = i18n.tc('titles.lemonade') + ' :: ' + 
+        let title = i18n.tc('titles.lemonade') + ' :: ' +
             i18n.tc(to.meta.title[0], to.meta.title[1]);
-        if (to.params.id){
+        if (to.params.id) {
             title += ' #' + to.params.id;
         }
         document.title = title;

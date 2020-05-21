@@ -1,5 +1,5 @@
 <template>
-    <div :class="'platform-' + platform" class="border">
+    <div :class="'platform-' + platform" class="border" oncontextmenu="return false;">
         <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
         <div id="lemonade-container" :class="{ 'with-grid': showGrid }" class="lemonade-container not-selectable"
             @click="diagramClick">
@@ -1230,9 +1230,9 @@
                     let target = info.targetEndpoint.getUuid();
                     this.removeFlow(`${source}-${target}`);
                 });
-                self.instance.bind('contextmenu', (component, originalEvent) => {
-                    console.debug(component);
-                });
+                // self.instance.bind('contextmenu', (component, originalEvent) => {
+                //     console.debug(component);
+                // });
                 self.instance.bind('connectionMoved', (info, originalEvent) => {
                     let source = info.originalSourceEndpoint.getUuid();
                     let target = info.originalTargetEndpoint.getUuid();
@@ -1281,7 +1281,7 @@
     .scroll-area {
         width: 100%;
         height: 95vh;
-        max-height: calc(100vh - 300px);
+        max-height: calc(100vh - 180px);
     }
 
     .ghost-active {

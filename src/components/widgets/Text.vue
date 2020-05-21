@@ -1,8 +1,11 @@
 <template>
-    <div>
+    <div v-if="readOnly">
+        {{value === null ? field.default: value}}
+    </div>
+    <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <input type="text" maxlenght="100" class="form-control input-sm" :value="value === null ? field.default: value" @input="updated"
-        />
+        <input type="text" maxlenght="100" class="form-control input-sm" :value="value === null ? field.default: value"
+            @input="updated" />
     </div>
 </template>
 <script>
@@ -18,6 +21,7 @@
             }
         },
         props: {
+            readOnly: false,
             value: '', field: {},
             message: {
                 type: String,

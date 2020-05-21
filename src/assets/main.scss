@@ -350,7 +350,15 @@ h1 {
 :focus {
   outline: none;
 }
-
+.modal-dialog {
+    margin: 2vh auto 0px auto;
+}
+.modal-header {
+     padding: .5rem 1rem;
+     h5 {
+        font-size: 1em !important;
+     }
+ }
 .main-container {
     padding-top: 15px;
     height: calc(100% - 60px);
