@@ -495,9 +495,13 @@ export default {
                 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored:
                 'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
-            useAsTemplate: 'Usar este fluxo de trabalho como modelo',
+            useAsTemplate: 'Disponibilizar este fluxo de trabalho como modelo',
             useAsTemplateExplanation:
                 'Você poderá criar outros fluxos de trabalho a partir deste. Na tela de novo fluxo de trabalho, escolha a opção "A partir de um modelo".',
+
+            useAsSystemTemplate: 'Disponibilizar este fluxo de trabalho como modelo para todos os usuários',
+            useAsSystemTemplateExplanation:
+                'Qualquer usuário poderá criar outros fluxos de trabalho a partir deste. Na tela de novo fluxo de trabalho, escolha a opção "A partir de um modelo".',
             usingDisabledOperation: 'Tarefa usa operação desabilitada no Lemonade',
             validationExplanation:
                 'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.',
@@ -990,9 +994,13 @@ export default {
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored:
                 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
-            useAsTemplate: 'Use this workflow as a template',
+            useAsTemplate: 'This workflow is a template',
             useAsTemplateExplanation:
-                'You will be able to create a new workflow from this. When adding a new workflow, choose the option  "From template".',
+                'You will be able to create a new workflow from it. When adding a new workflow, choose the option  "From template".',
+
+            useAsSystemTemplate: 'This workflow is a system template',
+            useAsSystemTemplateExplanation:
+                'Anyone in the system will be able to create a new workflow from it. When adding a new workflow, choose the option  "From template".',
             usingDisabledOperation: 'Task is using a disabled operation in Lemonade',
             validationExplanation:
                 'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.',
