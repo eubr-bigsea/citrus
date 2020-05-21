@@ -475,7 +475,7 @@ let router = new Router({
             }
         },
         {
-            path: '/administration/clusters/add',
+            path: '/administration/platform/add',
             name: 'addPlatform',
             component: PlatformAdd,
             meta: {

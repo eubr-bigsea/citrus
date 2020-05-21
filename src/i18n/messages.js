@@ -151,6 +151,7 @@ export default {
             true: 'Verdadeiro',
             type: 'Tipo | Tipos',
             updated: 'Atualizado',
+            url: 'URL',
             userId: 'Id de usuário',
             userLogin: 'Login do usuário',
             userName: 'Nome do usuário',
@@ -349,6 +350,20 @@ export default {
             type_SPARK_MLLIB_CLASSIFICATION: 'Classificação (MLLib)',
             type_UNSPECIFIED: 'Não especificado',
 
+        },
+        platform: {
+            gitUrl: 'URL para clonar o repositório Git',
+            pluginExplanation: `<p>Apenas platformas definidas como plugins podem ser adicionadas ao sistema.
+                Você precisa criar um repositório Git acessível por este servidor, opcionalmente fornecendo
+                todos os detalhes de autenticação necessários.</p>
+                <p>Plugins podem conter códigos maliciosos que poderão danificar o sistema, usar recursos para fins ilícitos 
+                ou roubar informações importantes. <strong>Certifique-se de importar plugins somente de fontes confiáveis</strong>.
+                Esta ação poderá demorar alguns minutos para terminar.
+                </p>
+                <p>
+                Para mais detalhes sobre a estrutura de código necessária e os passos para definir um plugin, visite: 
+                <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
+            `
         },
         notebook: {
             executeUntil: 'Executar até esta célula',
@@ -674,6 +689,7 @@ export default {
             true: 'True',
             type: 'Type | Types',
             updated: 'Updated',
+            url: 'URL',
             userId: 'User id',
             userLogin: 'User login',
             userName: 'User name',
@@ -914,6 +930,19 @@ export default {
             type_SPARK_ML_REGRESSION: 'Regression (Spark)',
             type_SPARK_MLLIB_CLASSIFICATION: 'Classification (MLLib)',
             type_UNSPECIFIED: 'Unspecified'
+        },
+        platform: {
+            gitUrl: 'Git repository URL used to clone the plugin',
+            pluginExplanation: `<p>Only platforms defined as a plugin can be added to the system.
+                You need to create a Git repository accessible by this server, optionally providing
+                all authentication details.</p>
+                <p>Plugins may contain malicious code that may damage the system, use resources for illicit purposes
+                 or steal important information. <strong> Make sure you only import plugins from trusted sources </strong>. 
+                This action may take minutes to finish.
+                </p>
+                <p>For more details about the required code and steps to define a plugin, please visit: 
+                <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
+            `
         },
         privacy: {
             anonymizationTechnique: 'Anonymization technique',
