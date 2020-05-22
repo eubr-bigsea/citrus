@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
-import _ from 'lodash';
 
 Vue.use(Vuex);
 
@@ -43,10 +42,10 @@ export default new Vuex.Store({
             console.info('User', user);
         },
         change_profile_success (state, { user }) {
-            user.email = user.email;
-            user.login = user.login;
-            user.locale = user.locale;
-            user.roles = user.roles || [];
+            state.user.email = user.email;
+            state.user.login = user.login;
+            state.user.locale = user.locale;
+            state.user.roles = user.roles || [];
             state.status = 'success';
             state.user = user;
         }
