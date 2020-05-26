@@ -27,14 +27,22 @@
                                             </router-link>
                                         </template>
                                         <template slot="actions" slot-scope="props">
-                                            <button v-if="loggedUserIsOwnerOrAdmin(props.row)"
-                                                class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash" />
-                                            </button>
-                                            <button class="btn btn-sm btn-light" :title="$t('actions.download')"
-                                                @click="download(props.row)">
-                                                <span class="fa fa-download" />
-                                            </button>
+                                            <div class="text-nowrap">
+                                                <button v-if="loggedUserIsOwnerOrAdmin(props.row)"
+                                                    class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                                                    <font-awesome-icon icon="trash" />
+                                                </button>
+                                                <button class="btn btn-sm btn-light" :title="$t('actions.download')"
+                                                    @click="download(props.row)">
+                                                    <span class="fa fa-download" />
+                                                </button>
+                                                <button v-if="visualizable(props.row)" :title="$t('common.preview')"
+                                                    class="btn btn-spinner btn-light btn-sm"
+                                                    @click.stop="preview(props.row.id)">
+                                                    <font-awesome-icon icon="spinner" pulse class="icon" />
+                                                    <span class="fa fa-eye"></span>
+                                                </button>
+                                            </div>
                                         </template>
                                         <template slot="created" slot-scope="props">
                                             {{ props.row.created | formatJsonDate }}
@@ -55,6 +63,7 @@
                 </div>
             </div>
         </div>
+        <ModalPreviewDataSource ref="preview"/>
     </main>
 </template>
 
@@ -63,6 +72,7 @@
     import Notifier from '../mixins/Notifier';
     import { deserialize } from 'jsonapi-deserializer';
     import SharedModal from '../components/ShareModal';
+    import ModalPreviewDataSource from './modal/ModalPreviewDataSource';
 
     let thornUrl = process.env.VUE_APP_THORN_URL;
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
@@ -71,6 +81,9 @@
         components: {
         },
         mixins: [Notifier],
+        components: {
+            ModalPreviewDataSource
+        },
         data() {
             return {
                 dataSourceId: 1,
@@ -92,7 +105,7 @@
                     columnsClasses: {
                         name: 'th-20',
                         description: 'th-20',
-                        actions: 'th-10'
+                        actions: 'th-15'
                     },
                     texts: {
                         filter: this.$tc('common.filter'),
@@ -152,6 +165,9 @@
         },
         /* Methods */
         methods: {
+            preview(dataSource){
+                this.$refs.preview.show(dataSource);
+            },
             loggedUserIsOwnerOrAdmin(dataSource) {
                 const user = this.$store.getters.user;
                 return dataSource.user_id === user.id || user.roles.indexOf('admin') >= 0;
@@ -165,7 +181,7 @@
                         .join(', ') || 'ALL'
                 );
             },
-           infer(id) {
+            infer(id) {
                 let self = this;
                 let headers = {};
                 let params = {};
@@ -217,6 +233,9 @@
                     }
                 );
             },
+            visualizable(ds) {
+                return ['JDBC', 'CSV', 'HIVE'].includes(ds.format);
+            }
         }
     };
 </script>
