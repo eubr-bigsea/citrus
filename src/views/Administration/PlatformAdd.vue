@@ -22,12 +22,12 @@
                 </div>
                 <div class="row border-bottom pb-3 mt-3">
                     <div class="col-md-4">
-                        <label class="font-weight-bold">{{$tc('common.userLogin')}}:</label>
-                        <input type="text" class="form-control" v-model="login">
+                        <label>{{$tc('common.userLogin')}} (Git):</label>
+                        <input type="text" class="form-control" v-model="login" :placeholder="$tc('common.optional')">
                     </div>
                     <div class="col-md-2">
-                        <label class="font-weight-bold">{{$t('common.password')}}:</label>
-                        <input v-model="password" type="password" class="form-control">
+                        <label>{{$t('common.password')}} (Git):</label>
+                        <input v-model="password" type="password" class="form-control" :placeholder="$tc('common.optional')">
                     </div>
                 </div>
                 <div class="row mt-2">
