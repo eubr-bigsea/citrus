@@ -34,11 +34,11 @@
                                         <template v-if="true || !platform.plugin">
                                             <div class="col-md-12 mt-4">
                                                 <h5>{{$t('common.plugin')}}</h5>
-                                                {{$t('platform.pluginDetailExplanation')}}
+                                                {{$t('message.platformIsPluginExplanation')}}
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="font-weight-bold">{{$tc('common.url')}}:</label>
-                                                <br />{{platform.pluginUrl}}
+                                                <br />{{platform.description}}
                                             </div>
                                         </template>
                                     </div>
