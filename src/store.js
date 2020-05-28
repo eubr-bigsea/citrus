@@ -177,6 +177,6 @@ export default new Vuex.Store({
         isMonitor: state => state.user.roles.map(r => r.name).includes('monitor'),
         hasRoles: state => state.user.roles.length > 0,
         userPermissions: state => state.user.roles.flatMap(r => r.permissions.map(p => p.name)) || {},
-        token: state => state.token
+        token: state => state.token,
     }
 });

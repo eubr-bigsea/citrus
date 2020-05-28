@@ -29,6 +29,10 @@
                         <label class="font-weight-bold">{{$t('common.password')}}:</label>
                         <input v-model="password" type="password" class="form-control">
                     </div>
+                    <div class="col-md-2">
+                        <label>{{$t('common.password')}} (Git):</label>
+                        <input v-model="password" type="password" class="form-control" :placeholder="$tc('common.optional')">
+                    </div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-md-12">

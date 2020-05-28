@@ -37,15 +37,13 @@ import About from './views/About.vue';
 
 import PageNotFound from './views/PageNotFound.vue';
 
-import store from './store.js';
-
 // Lazy routes
 const TermsOfService = () => import('./views/TermsOfService.vue');
 const Welcome = () => import('./views/Welcome.vue');
 const ConfigurationList = () => import('./views/ConfigurationList.vue');
 
 const RoleList = () => import('./views/Administration/RoleList.vue');
-const RoleAdd = () => import('./views/Administration/RoleAdd.vue');
+//const RoleAdd = () => import('./views/Administration/RoleAdd.vue');
 const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
 
 const UserList = () => import('./views/Administration/UserList.vue');
@@ -64,12 +62,12 @@ const DashboardList = () => import('./views/DashboardList.vue');
 const DashboardDetail = () => import('./views/DashboardDetail.vue');
 const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
 
+const WebSocketPing = () => import('./views/WebSocketPing.vue');
+const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
+
 const PlatformList = () => import('./views/Administration/PlatformList.vue');
 const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
 const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
-
-const WebSocketPing = () => import('./views/WebSocketPing.vue');
-const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
 
 Vue.use(Router);
 

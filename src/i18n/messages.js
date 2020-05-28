@@ -353,6 +353,8 @@ export default {
         },
         platform: {
             gitUrl: 'URL para clonar o repositório Git',
+            pluginDetailExplanation: 'Esta plataforma é um plugin. Ela foi instalada a partir de um código fonte de fora do Lemonade ' +
+                'e é usada como uma extensão.',
             pluginExplanation: `<p>Apenas platformas definidas como plugins podem ser adicionadas ao sistema.
                 Você precisa criar um repositório Git acessível por este servidor, opcionalmente fornecendo
                 todos os detalhes de autenticação necessários.</p>
@@ -933,6 +935,8 @@ export default {
         },
         platform: {
             gitUrl: 'Git repository URL used to clone the plugin',
+            pluginDetailExplanation: 'This platform is a plugin. It was installed from code provided by others ' +
+                'and it is used as an extension.',
             pluginExplanation: `<p>Only platforms defined as a plugin can be added to the system.
                 You need to create a Git repository accessible by this server, optionally providing
                 all authentication details.</p>

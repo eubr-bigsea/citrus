@@ -282,16 +282,6 @@
                             </b-card>
                         </div>
                         <div v-else class="col-md-12 mx-auto border-top mt-3 pt-3">{{$t('common.noData')}}</div>
-                        <b-modal ref="preview" size="lg" :title="$t('common.preview')">
-                            {{$t('dataSource.previewExplanation', {amount: 40})}}
-                            <v-client-table :columns="getPreviewColumns()" :data="samples"
-                                :options="{perPage: 5, perPageValues:[5,], skin:'table-smallest table-sm table table-striped', filterable: false}">
-                            </v-client-table>
-                            <div v-if="previewWarnings.length">
-                                <strong>{{$tc('dataSource.someAttributesMayHaveProblem', previewWarnings.length)}}:</strong>
-                                {{previewWarnings.join(", ")}}
-                            </div>
-                        </b-modal>
                         <b-modal ref="shareModal" size="lg" :title="$t('actions.share')">
                             <div class="row">
                                 <div class="col-md-8">
@@ -396,6 +386,7 @@
                 </div>
             </div>
         </div>
+        <ModalPreviewDataSource ref="preview"/>
     </main>
 </template>
 
@@ -403,12 +394,17 @@
     import Vue from 'vue';
     import axios from 'axios';
     import VueSelect from 'vue-select';
+    import Notifier from '../mixins/Notifier';
+    import ModalPreviewDataSource from './modal/ModalPreviewDataSource';
+
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const standUrl = process.env.VUE_APP_STAND_URL;
 
     export default {
+        mixins: [Notifier],
         components: {
             'v-select': VueSelect,
+            ModalPreviewDataSource,
         },
         data() {
             return {
@@ -471,7 +467,6 @@
                     '{new_line \\r\\n}'
                 ],
                 textDelimiters: ['"', "'"],
-                previewWarnings: [],
                 encodings: ['ISO-8859-1', 'UTF-8', 'UTF-16'],
                 currentAttribute: { attribute_privacy: {} },
                 timeoutHandler: null
@@ -619,19 +614,6 @@
                     this.$refs.privacy.show();
                 }
             },
-            getPreviewColumns() {
-                if (
-                    this.dataSource &&
-                    this.dataSource.attributes &&
-                    this.dataSource.attributes.length
-                ) {
-                    return this.dataSource.attributes.map(a => a.name);
-                } else if (this.samples.length) {
-                    return Object.keys(this.samples[0]);
-                } else {
-                    return [];
-                }
-            },
             load() {
                 let self = this;
                 return new Promise((resolve, reject) => {
@@ -703,28 +685,8 @@
                         event.target.classList.add('btn-spinner');
                     });
             },
-            preview(event) {
-                let url = `${limoneroUrl}/datasources/sample/${
-                    this.dataSource.id
-                    }?limit=40`;
-                let self = this;
-                event.target.setAttribute('disabled', 'disabled');
-                event.target.classList.remove('btn-spinner');
-                axios
-                    .get(url, {})
-                    .then(resp => {
-                        self.samples = resp.data.data;
-                        self.previewWarnings = resp.data.warnings || [];
-                        self.$refs.preview.show();
-                    })
-                    .catch(e => {
-                        console.debug(e);
-                        self.error(e);
-                    })
-                    .finally(() => {
-                        event.target.removeAttribute('disabled');
-                        event.target.classList.add('btn-spinner');
-                    });
+            preview(){
+                this.$refs.preview.show(this.dataSource.id);
             },
             _doInfer(event) {
                 const self = this;

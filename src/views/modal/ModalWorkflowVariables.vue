@@ -11,7 +11,7 @@
 
                 <template v-slot:cell(type)="row">
                     <select v-model="row.item.type">
-                        <option v-for="dt in dataTypes">
+                        <option v-for="dt in dataTypes" :key="dt">
                             {{$t('dataTypes.' + dt)}}
                         </option>
                     </select>
@@ -32,7 +32,9 @@
     export default {
         data() {
             return {
-                dataTypes: [
+                dataTypes: {
+                    type: Object,
+                    default: () => [
                     //'BINARY',
                     //'CHARACTER',
                     //'DOUBLE',
@@ -47,7 +49,9 @@
                     'TIME',
                     //'TIMESTAMP',
                     //'VECTOR'
-                ],
+                ]}
+                ,
+
                 fields: [{ Name: "name", Description: 'description' }],
                 items: [
                     {
