@@ -1,6 +1,6 @@
 <template>
     <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only no-stacking button-size="sm"
-        header-bg-variant="dark" headerTextVariant="light">
+        header-bg-variant="dark" header-text-variant="light">
 
         <small><strong>*{{$t('dataSource.previewExplanation', {amount: 40})}}</strong></small>
 
@@ -12,7 +12,6 @@
 <script>
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 
-    import Vue from 'vue';
     import axios from 'axios';
     import Notifier from '../../mixins/Notifier';
     export default {
