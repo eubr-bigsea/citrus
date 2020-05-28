@@ -59,6 +59,12 @@
                             <br />
                             <small>{{user.email}}</small>
                         </p>
+                        <p class="text-center">
+                            <strong>{{$tc('titles.role', 2)}}</strong><br/>
+                            <span class="badge badge-info mr-1 p-1" v-for="role in user.roles" :key="role.id">
+                                {{role.label}}
+                            </span>
+                        </p>
                         <p class="border-top pt-2">
                             <b-button variant="primary" size="sm" @click="profile">{{ $t('titles.profile') }}</b-button>
                             <router-link :to="{name: 'logout'}" class="ml-2 btn btn-sm btn-danger">

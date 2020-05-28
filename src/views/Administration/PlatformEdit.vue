@@ -8,7 +8,7 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div v-if="platform.id" class="col-md-12 col-xg-12 mx-auto">
+                        <div v-if="platform.id" class="col-md-6 col-xg-4 mx-auto">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
@@ -24,14 +24,12 @@
                                         <div class="col-md-3">
                                             <b-form-checkbox v-model="platform.enabled">{{ $t('common.enabled') }}
                                             </b-form-checkbox>
-                                            <b-form-checkbox v-model="platform.plugin">{{ $t('common.plugin') }}
-                                            </b-form-checkbox>
                                         </div>
                                         <div class="col-md-12 mt-4">
                                             <label class="font-weight-bold">{{$tc('common.description')}}:</label>
                                             <br />{{platform.description}}
                                         </div>
-                                        <template v-if="true || !platform.plugin">
+                                        <template v-if="platform.plugin">
                                             <div class="col-md-12 mt-4">
                                                 <h5>{{$t('common.plugin')}}</h5>
                                                 {{$t('message.platformIsPluginExplanation')}}
@@ -149,8 +147,6 @@
                 return axios
                     .patch(url, this.platform)
                     .then(resp => {
-                        event.target.removeAttribute('disabled');
-                        event.target.classList.add('btn-spinner');
                         self.platform = resp.data;
                         Vue.nextTick(() => {
                             self.isDirty = false;
@@ -164,6 +160,10 @@
                     })
                     .catch(e => {
                         self.error(e);
+                    })
+                    .finally(() => {
+                        event.target.removeAttribute('disabled');
+                        event.target.classList.add('btn-spinner');
                     });
             }
         }

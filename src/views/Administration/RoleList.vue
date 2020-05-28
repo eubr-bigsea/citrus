@@ -61,7 +61,7 @@
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'name', 'description', 'enabled', 'system', 'actions'],
+                columns: ['id', 'name', 'label', 'description', 'enabled', 'system', 'actions'],
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
@@ -71,12 +71,13 @@
                         id: 'ID',
                         name: this.$tc('common.name'),
                         description: this.$tc('common.description'),
+                        label: this.$tc('common.label'),
                         enabled: this.$tc('common.enabled'),
                         system: this.$tc('common.system'),
                         actions: this.$tc('common.action', 2)
                     },
-                    sortable: ['name', 'id', 'email', 'confirmed_at'],
-                    filterable: ['name', 'id', 'email'],
+                    sortable: ['name', 'id'],
+                    filterable: ['name', 'id', 'description', 'label'],
                     sortIcon: {
                         base: 'fa fas',
                         is: 'fa-sort ml-10',
@@ -92,7 +93,7 @@
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
                         data.name = data.query;
-                        data.fields = 'id,name,description,enabled,system';
+                        data.fields = 'id,name,label,description,enabled,system';
 
                         const url = `${thornUrl}/roles`;
                         this.$Progress.start();

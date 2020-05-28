@@ -77,7 +77,7 @@
                                                 <label class="col-form-label">
                                                     {{ $tc('common.roles', 2) }}:
                                                 </label>
-                                                <v-select v-model="user.roles" :options="roles" :multiple="true" label="description" :taggable="false" :close-on-select="false">
+                                                <v-select v-model="user.roles" :options="roles" :multiple="true" label="label" :taggable="false" :close-on-select="false">
                                                 </v-select>
                                             </div>
                                             <div class="col-sm-6">

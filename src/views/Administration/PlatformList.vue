@@ -93,6 +93,7 @@
                         data.name = data.query;
 
                         data.fields = 'id,name,type,address,enabled,plugin,version';
+                        data['all'] = 'true';
 
                         let url = `${tahitiUrl}/platforms`;
                         let headers = {};
