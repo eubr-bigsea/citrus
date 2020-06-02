@@ -18,6 +18,9 @@
                 <b-nav-item :to="{ name: 'dashboards' }">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }} 
                 </b-nav-item>
+                <b-nav-item :to="{ name: 'dashboards' }">
+                    <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }} 
+                </b-nav-item>
                 <b-nav-item-dropdown v-if="hasRoles" right>
                     <template v-slot:button-content>
                         <span class="fa fa-user-lock"></span>
@@ -42,6 +45,11 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item :to="{ name: 'models' }">
+                        {{ $tc('titlesi.apiToken', 2) }}
+                    </b-dropdown-item>
+
                </b-nav-item-dropdown>
             </b-navbar-nav>
 

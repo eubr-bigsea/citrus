@@ -11,7 +11,7 @@
                 <strong>{{$t('workflow.useAsTemplate')}}</strong>
             </SwitchComponent>
             <small><em>{{$t('workflow.useAsTemplateExplanation')}}</em></small>
-            <div v-if="userPermissions.includes('ADMINISTRATOR')">
+            <div v-if="userPermissions.includes && userPermissions.includes('ADMINISTRATOR')">
                 <SwitchComponent v-model="workflow.is_system_template" :checked="workflow.is_system_template" class="mt-3">
                     <strong>{{$t('workflow.useAsSystemTemplate')}}</strong>
                 </SwitchComponent>

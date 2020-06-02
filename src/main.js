@@ -18,6 +18,7 @@ import Gravatar from 'vue-gravatar';
 
 import {
     faBars,
+    faMicroscope,
     faChartLine,
     faCheck,
     faCheckDouble,
@@ -144,6 +145,7 @@ dom.watch();
 
 library.add(
     faBars,
+    faMicroscope,
     faChartLine,
     faCheck,
     faCheckDouble,
