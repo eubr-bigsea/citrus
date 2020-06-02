@@ -427,7 +427,8 @@
                         let workflow = resp.data;
                         this.$Progress.start()
                         const params = {
-                            platform: this.$route.params.platform,
+                            platform: workflow.platform.id, //this.$route.params.platform,
+                            subset: workflow.subset ? workflow.subset.id : null,
                             lang: this.$root.$i18n.locale,
                             disabled: true // even disabled operations must be returned to keep compatibility
                         }
