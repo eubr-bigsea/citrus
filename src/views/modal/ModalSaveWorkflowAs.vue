@@ -49,7 +49,7 @@
                 this.$refs.saveAsModal && this.$refs.saveAsModal.hide();
             },
             okClicked() {
-                if (this.name && this.name.trim()) {
+                if (this.newName && this.newName.trim()) {
                     this.$root.$emit('onsave-workflow-as', this.saveOption, this.newName);
                     this.$refs.saveAsModal.hide();
                 } else {

@@ -29,7 +29,7 @@
                                                 <router-link
                                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
                                                 {{props.row.name}}</router-link>
-                                                <small v-if="props.row.description" class="break-word">{{props.row.description}}</small>
+                                                <small v-if="props.row.description" class="break-word"><br/>{{props.row.description}}</small>
                                         </template>
                                         <template slot="platform"
                                             slot-scope="props">{{props.row.platform.name}}</template>
