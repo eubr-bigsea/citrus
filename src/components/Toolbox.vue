@@ -14,15 +14,16 @@
                     </li>
                     <div v-if="search === ''" class="menu">
                         <div v-for="(group, index) in groupedOperations" :key="group.group" :title="group.order"
-                            class="unstyled">
-                            <b-link v-b-toggle="'submenu' + index" draggable="false" data-parent="submenus"
+                            class="unstyled" :data-category="JSON.stringify(group)">
+                            <!-- https://github.com/bootstrap-vue/bootstrap-vue/issues/5352 -->
+                            <b-button v-b-toggle="'submenu' + index" draggable="false" data-parent="submenus"
                                 class="list-group-item truncate list-group-item-action flex-column align-items-start">
                                 <span class="when-closed"><span class="fa fa-angle-right"></span></span>
                                 <span class="when-opened"><span class="fa fa-angle-down"></span></span>
                                 <strong>
                                     {{ group.group }}
                                 </strong>
-                            </b-link>
+                            </b-button>
 
                             <b-collapse :id="'submenu' + index" data-parent="submenus">
                                 <div v-if="group.operations">
@@ -38,14 +39,14 @@
                                 </div>
                                 <div v-else>
                                     <div v-for="(subGroup, index2) in group.subGroups" :key="subGroup.subGroup">
-                                        <b-link v-b-toggle="`subsubmenu_${index}+${index2}`" draggable="false"
+                                        <b-button v-b-toggle="`subsubmenu_${index}+${index2}`" draggable="false"
                                             class="list-group-item truncate list-group-item-action flex-column align-items-start">
                                             <span class="when-closed fa fa-angle-right"></span>
                                             <span class="when-opened fa fa-angle-down"></span>
                                             <span class="menu-collapsed pl-2">
                                                 <strong> {{ subGroup.subGroup }}</strong>
                                             </span>
-                                        </b-link>
+                                        </b-button>
                                         <b-collapse v-for="op in subGroup.operations"
                                             :id="`subsubmenu_${index}+${index2}`" :key="op.operation.id"
                                             :title="op.operation.name">
@@ -92,6 +93,8 @@
 </template>
 <script>
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+    import _ from 'lodash';
+
     const groupBy = function (xs, keySelector) {
         return xs.reduce(function (rv, x) {
             var key = keySelector(x);
@@ -329,7 +332,9 @@
     :not(.collapsed)>.when-closed {
         display: none;
     }
-
+    .menu button {
+        font-size: 9pt;
+    }
     /* MENU BORDERS */
     .menu>div .list-group-item {
         border-radius: 0 !important;
@@ -352,31 +357,31 @@
     }
 
     /* group > subgroup */
-    .menu div[data-parent='submenus']>div>div>a {
+    .menu div[data-parent='submenus']>div>div>button {
         padding-left: 32px;
         background-color: #f5f6f8;
     }
 
     /* group > subgroup > operation */
-    .menu div[data-parent='submenus']>div>div>div>a {
+    .menu div[data-parent='submenus']>div>div>div>button {
         padding-left: 34px;
         background-color: #f5f6f8 !important;
         border-bottom: 0;
     }
 
     /* group > operation */
-    .menu div[data-parent='submenus']>div>span>a {
+    .menu div[data-parent='submenus']>div>span>button {
         padding-left: 32px;
         background-color: #f5f6f8;
         border-bottom: 0;
     }
 
     /* -- MENU LAST ITEMS */
-    .menu>div:last-child>div[data-parent='submenus']>div>span:last-child>a {
+    .menu>div:last-child>div[data-parent='submenus']>div>span:last-child>button {
         border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     }
 
-    .menu>div:last-child>div[data-parent='submenus']>div>div:last-child>div:last-child>a {
+    .menu>div:last-child>div[data-parent='submenus']>div>div:last-child>div:last-child>button {
         border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     }
 </style>
