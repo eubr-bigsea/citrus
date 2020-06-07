@@ -3,7 +3,7 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
 
-        <b-link v-b-modal="'lookupModal'" variant="sm">
+        <b-link variant="sm" @click.prevent="openModal">
             {{$t('actions.chooseOption')}}
         </b-link>
 
@@ -87,13 +87,20 @@
                 showModal: false,
                 valueList: JSON.parse(JSON.stringify(this.value || [])),
                 ok: this.okClicked,
-                cancel: this.cancelClicked
+                cancel: this.cancelClicked,
+                suggestions: [],
             }
         },
         mounted() {
             this.updateDisplayValue(this.value);
         },
         methods: {
+            openModal() {
+                this.$refs.modal.show();
+                if (this.suggestionEvent) {
+                    this.suggestions = this.suggestionEvent();
+                }
+            },
             updateDisplayValue(v) {
                 if (v) {
                     this.displayValue = v.map((v) => {
@@ -148,10 +155,7 @@
             }
         },
         props: {
-            suggestions: {
-                type: Array,
-                default: []
-            },
+            suggestionEvent: { required: true},
             value: '',
             field: {},
             options: {},
