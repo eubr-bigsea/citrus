@@ -81,7 +81,7 @@
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
-                <WorkflowExecution ref="executionModal" :workflow-id="workflow.id" />
+                <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
         </div>
     </main>
@@ -200,7 +200,7 @@
                 this.saveAsImage()
             });
             this.$root.$on('onsave-workflow', () => this.saveWorkflow(false));
-            this.$root.$on('onshow-executions', () => this.$refs.executionModal.show());
+            this.$root.$on('onshow-executions', () => this.$refs.executionsModal.show());
             this.$root.$on('onshow-variables', () => this.$refs.variablesModal.show());
             this.$root.$on('onsave-workflow-as', (saveOption, newName) => {
                 if (saveOption === 'new') {
@@ -382,6 +382,8 @@
             this.$root.$off('onrestore-workflow');
             this.$root.$off('onchange-cluster');
             this.$root.$off('onexecute-workflow');
+            this.$root.$off('onshow-properties');
+            this.$root.$off('onshow-executions');
             window.removeEventListener('beforeunload', this.leaving)
         },
         watch: {

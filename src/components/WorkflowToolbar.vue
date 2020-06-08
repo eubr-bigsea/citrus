@@ -1,4 +1,10 @@
 <template>
+    <div>
+    <div class="btn-group mr-2" role="group">
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
+            <span class="fa fa-tasks"></span> {{$tc('titles.job', 2)}}
+        </button>
+    </div>
     <div class="btn-group" role="group">
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
             <span class="fa fa-cogs"></span>
@@ -25,6 +31,7 @@
             <span class="fa fa-stop red"></span>
         </button>
         -->
+    </div>
     </div>
 </template>
 
@@ -70,6 +77,9 @@
             },
             showProperties() {
                 this.$root.$emit('onshow-properties')
+            },
+            showExecutions(){
+                this.$root.$emit('onshow-executions')
             },
         }
     }

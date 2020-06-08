@@ -498,8 +498,6 @@
                 const inx = this.workflow.tasks.indexOf(task);
                 if (inx >= 0) {
                     this.workflow.tasks.splice(inx, 1);
-                } else {
-                    console.debug('Not found');
                 }
 
                 self.clearSelection();

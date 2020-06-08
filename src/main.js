@@ -17,6 +17,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import Gravatar from 'vue-gravatar';
 
 import {
+    faBars,
     faChartLine,
     faCheck,
     faCheckDouble,
@@ -142,6 +143,7 @@ import { dom } from '@fortawesome/fontawesome-svg-core';
 dom.watch();
 
 library.add(
+    faBars,
     faChartLine,
     faCheck,
     faCheckDouble,

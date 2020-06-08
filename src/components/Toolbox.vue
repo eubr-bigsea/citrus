@@ -34,6 +34,7 @@
                                             @dblclick.prevent="dbClickAddTask" @dragstart="startDrag" @dragend="stopDrag">
                                             <span :data-id="op.operation.id" :title="op.operation.name"
                                                 v-text="op.operation.name"></span>
+                                            <span class="fa fa-bars fa-1x float-right"></span>
                                         </a>
                                     </span>
                                 </div>
@@ -55,6 +56,7 @@
                                                 @dblclick="dbClickAddTask" @dragstart="startDrag" @dragend="stopDrag">
                                                 <span :data-id="op.operation.id" class="ml-3"
                                                     v-text="op.operation.name"></span>
+                                                <span class="fa fa-bars fa-1x float-right"></span>
                                             </a>
                                         </b-collapse>
                                     </div>
@@ -314,6 +316,10 @@
         -moz-user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
+        cursor: move; /* fallback if grab cursor is unsupported */
+        cursor: grab;
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
     }
 
     .dragging {
