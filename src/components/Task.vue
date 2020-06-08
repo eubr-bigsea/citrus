@@ -1,7 +1,8 @@
 <template>
     <div :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')" class="operation task"
         :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
-        v-on:click.stop="click" @contextmenu="openMenu" tabindex="0">
+        v-on:click.stop="click" @contextmenu="openMenu" tabindex="0"
+        :title="task.forms.comment ? task.forms.comment.value: ''">
 
         <div class="hide circle" v-bind:style="getStyle"></div>
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
@@ -322,7 +323,7 @@
                 default: false
             },
             task: {
-                'default': function () { return { name: '', icon: '', status: '' }; }
+                'default': function () { return { name: '', icon: '', status: '', forms:{color: {value: '#fff'} } }; }
             },
         },
         data() {
@@ -335,9 +336,6 @@
         watch: {
             enableContextMenu: function (newVal, oldVal) {
                 console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-            },
-            task: function (n, o) {
-
             },
         },
         mounted() {

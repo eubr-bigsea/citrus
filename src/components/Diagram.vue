@@ -7,7 +7,7 @@
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                     :style="{'pointer-events':showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
                     @drop="drop" @dragover="allowDrop">
-                    <task-component v-for="task of workflow.tasks" :key="`${$parent.version} - ${task.id}`" :task="task"
+                    <task-component v-for="task of workflow.tasks" :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task"
                         :instance="instance" :enable-context-menu="editable" :draggable="editable"
                         :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
                     <div ref="ghostSelect" class="ghost-select">
@@ -471,7 +471,7 @@
                 return false;
             },
             addTask(task) {
-                task.forms = {};
+                task.forms = {comment: {value: ''}, color: {value: {background: '#fff'} }};
                 task.operation.forms.forEach(f => {
                     f.fields.forEach(field => {
                         task[field.name] = field['default'] || '';
