@@ -2,13 +2,13 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
-        <b-link v-b-modal="'expressionModal'" variant="sm">
+        <b-link @click.prevent="openModal" variant="sm">
             {{$t('property.editValue')}}
         </b-link>
-        <b-modal id="expressionModal" size="lg" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
+        <b-modal id="expressionModal" size="xl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
             ref="modal">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <table class="table table-sm" v-if="expressionList && expressionList.length">
                         <thead>
                             <th> {{$t('property.expression.title')}}</th>
@@ -19,7 +19,7 @@
                             <template v-for="(row, index) in expressionList">
                                 <tr>
                                     <td style="width: 65%">
-                                        <textarea type="text" class="form-control" @keyup="changed($event, row, 'expression')"
+                                        <textarea type="text" class="form-control" @keyup="changed($event, row, 'expression')" ref="expr"
                                             @blur="elementBlur(row, $event)" style="height: 40px" @paste="changed($event, row, 'expression')">{{row.expression}}</textarea>
                                         <div class="label label-danger" v-if="row.error">{{row.error}}</div>
                                     </td>
@@ -28,7 +28,7 @@
                                     </td>
                                     <td style="width:2%" class="text-center">
                                         <a href="#" @click.prevent="remove($event, index)">
-                                            <span class="fa fa-2x fa-minus-circle"></span>
+                                            <span class="fa fa-2x fa-minus-circle text-danger"></span>
                                         </a>
                                     </td>
                                 </tr>
@@ -40,9 +40,9 @@
                         <div class="label label-info">{{$t('property.noExpressions')}}</div>
                     </div>
                 </div>
-                <div class="col-md-3 border-left">
+                <div class="col-md-4 border-left">
                     <strong>{{$tc('property.expression.availableAttribute', 2)}}:</strong>
-                    <select class="form-control no-border mt-2" size="10" @dblclick="copyAttributeName">
+                    <select class="form-control no-border mt-2" size="10" @dblclick="copyAttributeName" style="font-size:.9em">
                         <option v-for="sg in suggestions">{{sg}}</option>
                     </select>
                     <small>{{$t('property.copyAttributeName')}}</small>
@@ -98,9 +98,16 @@
                 expressionValue: '',
                 expressionList: this.value,
                 lastEdited: {},
+                suggestions: [],
             }
         },
         methods: {
+            openModal() {
+                this.$refs.modal.show();
+                if (this.suggestionEvent) {
+                    this.suggestions = this.suggestionEvent();
+                }
+            },
             elementBlur(row, event) {
                 this.lastEdited = { row, el: event.target }
             },
@@ -137,6 +144,13 @@
                 this.expressionList.push({
                     alias: '', expression: '', error: '',
                     tree: ''
+                });
+                this.$nextTick(() => {
+                    this.$nextTick(() => {
+                        let j = this.expressionList.length - 1;
+                        if(this.$refs.expr[j])
+                            this.$refs.expr[j].focus()
+                    })
                 })
             },
             remove(e, index) {
@@ -169,10 +183,7 @@
             value: {},
             removeOperators: {},
             field: {},
-            suggestions: {
-                type: Array,
-                default: []
-            },
+            suggestionEvent: null,
             message: {
                 type: String,
                 default: 'update-form-field-value'
