@@ -360,6 +360,7 @@
             this.$root.$off('on-error');
             this.$root.$off('onsave-as-image');
             this.$root.$off('onsave-workflow');
+            this.$root.$off('onsave-workflow-as');
             this.$root.$off('onsaveas-workflow');
             this.$root.$off('onalign-tasks');
             this.$root.$off('ontoggle-tasks');
