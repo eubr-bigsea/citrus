@@ -29,6 +29,8 @@ import WorkflowList from './views/WorkflowList.vue';
 import WorkflowEdit from './views/WorkflowEdit.vue';
 import WorkflowAdd from './views/WorkflowAdd.vue';
 
+import TrackList from './views/TrackList.vue';
+
 import NotebookEdit from './views/NotebookEdit.vue';
 
 import OperationList from './views/OperationList.vue';
@@ -289,6 +291,15 @@ let router = new Router({
             meta: {
                 requiresAuth: true,
                 title: ['titles.job', 1]
+            }
+        },
+        {
+            path: '/tracks',
+            name: 'tracks',
+            component: TrackList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
             }
         },
         {

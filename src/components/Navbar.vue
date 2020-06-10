@@ -18,7 +18,7 @@
                 <b-nav-item :to="{ name: 'dashboards' }">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }} 
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'dashboards' }">
+                <b-nav-item :to="{ name: 'tracks' }">
                     <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }} 
                 </b-nav-item>
                 <b-nav-item-dropdown v-if="hasRoles" right>
