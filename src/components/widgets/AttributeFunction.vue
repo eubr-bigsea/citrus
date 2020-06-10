@@ -155,7 +155,7 @@
             }
         },
         props: {
-            suggestionEvent: { required: true},
+            suggestionEvent: { },
             value: '',
             field: {},
             options: {},
