@@ -28,14 +28,18 @@
             this.values = this.field.values ? JSON.parse(this.field.values) : {};
             const sliderValue = 100*(this.field['default'] ? parseFloat(this.field['default']): 0.5)
             this.$root.$emit(this.message,
-                 this.field, this.value || sliderValue);
-            this.split = sliderValue.toString();
+                 this.field, parseInt(this.value || sliderValue));
+            if (this.value){
+                this.split = parseInt(this.value)
+            } else {
+                this.split = sliderValue;
+            }
         },
         methods: {
             updated:
                 _.debounce(function (e) {
                     this.split = parseInt(e.target.value);
-                    this.$root.$emit(this.message, this.field, e.target.value);
+                    this.$root.$emit(this.message, this.field, parseInt(e.target.value));
                 }, 500),
             mouseDown() {
                 this.isDragging = true;
