@@ -6,6 +6,15 @@
             </b-btn>
         </b-button-group>
         <b-button-group size="sm" class="mx-1">
+            <b-btn variant="secondary" @click.prevent="copy" :title="$t('actions.copy')" :disabled="!taskSelected">
+                <span class="fa fa-copy"></span>
+            </b-btn>
+            <b-btn variant="secondary" @click.prevent="paste" :title="$t('actions.paste')" :disabled="copiedTasks === null || copiedTasks.length === 0">
+                <span class="fa fa-paste"></span>
+            </b-btn>
+        </b-button-group>
+       
+        <b-button-group size="sm" class="mx-1">
             <b-btn variant="secondary" @click.prevent="align('left', 'min')" :title="$t('actions.alignLeft')" :disabled="!tasksSelected">
                 <span class="object-align-left"></span>
             </b-btn>
@@ -78,6 +87,7 @@
         },
         props: {
             selected: Array,
+            copiedTasks: Array,
         },
         computed: {
             taskSelected(){
@@ -88,6 +98,12 @@
             },
         },
         methods: {
+            copy(){
+                this.$root.$emit('oncopy-tasks');
+            },
+            paste(){
+                this.$root.$emit('onpaste-tasks');
+            },
             removeSelected(){
                 this.$root.$emit('onremove-tasks');
             },
