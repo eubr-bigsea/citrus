@@ -71,6 +71,7 @@
                                 draggable="true" :data-id="op.id" @dblclick="dbClickAddTask" @dragstart="startDrag"
                                 @dragend="stopDrag">
                                 {{ op.name }}
+                                <span class="fa fa-bars fa-1x float-right"></span>
                             </b-link>
                         </span>
                     </div>
