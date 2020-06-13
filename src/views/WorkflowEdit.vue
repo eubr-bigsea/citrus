@@ -384,6 +384,7 @@
             this.$root.$off('onexecute-workflow');
             this.$root.$off('onshow-properties');
             this.$root.$off('onshow-executions');
+            this.$root.$off('onshow-variables');
             window.removeEventListener('beforeunload', this.leaving)
         },
         watch: {
