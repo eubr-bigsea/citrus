@@ -1,6 +1,6 @@
 <template>
     <div :class="'platform-' + platform" class="border" oncontextmenu="return false;">
-        <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
+        <diagram-toolbar v-if="showToolbar" :selected="selectedElements"/>
         <div id="lemonade-container" :class="{ 'with-grid': showGrid }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
@@ -669,6 +669,7 @@
                     self.selectedFlow = null;
                 });
                 this.$root.$emit('onblur-selection');
+                this.selectedElements = [];
             },
             doChangeWorkflowName(ev) {
                 this.changeWorkflowName(ev.target.value);
