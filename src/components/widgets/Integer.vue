@@ -18,6 +18,11 @@
         methods: {
             updated: _.debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
         },
+        mounted() {
+            const value = (this.field['default'] ? parseInt(this.field['default']): null)
+            this.$root.$emit(this.message,
+                 this.field, this.value || value);
+        },
         props: {
             readOnly: false,
             value: '', field: {},

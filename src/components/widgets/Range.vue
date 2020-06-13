@@ -25,8 +25,11 @@
             }
         },
         mounted() {
-            this.split = this.value || 50;
-            this.values = this.field.values ? JSON.parse(this.field.values) : {}
+            this.values = this.field.values ? JSON.parse(this.field.values) : {};
+            const sliderValue = 100*(this.field['default'] ? parseFloat(this.field['default']): 0.5)
+            this.$root.$emit(this.message,
+                 this.field, this.value || sliderValue);
+            this.split = sliderValue.toString();
         },
         methods: {
             updated:
@@ -52,7 +55,7 @@
         props: {
             language: { default: 'en' },
             value: {
-                type: String, default: 50,
+                type: Number, default: 50,
             }, field: {},
             message: {
                 type: String,

@@ -20,6 +20,11 @@
                 return this.field.value || this.field.default;
             }
         },
+        mounted() {
+            const value = (this.field['default'] ? this.field['default']: null)
+            this.$root.$emit(this.message,
+                 this.field, this.value || value);
+        },
         props: {
             readOnly: false,
             value: '', field: {},
