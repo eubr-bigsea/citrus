@@ -1113,7 +1113,39 @@
     div.size-2 {
         height: 65px !important;
     }
-    
+    .cylinder {
+        border: 1px solid !important;
+        position: relative;
+        overflow: hidden;
+        margin: 0 auto;
+        width: 80px !important;
+        height: 60px !important;
+        border-radius: 100px/32px !important;
+        background-color: rgba(160, 160, 160, 0.5);
+}
+
+    .cylinder:before {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80px !important;
+        height: 20px;
+        border-radius: 100px/25px;
+        border: 1px solid;
+        content: '';
+    }
+
+    .cylinder:after {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 80px;
+        height: 20px;
+        border-radius: 148px/28px;
+        border: 1px solid;
+        content: '';
+    }
+  
     div.circle-layout {
         border: none !important;
         background: transparent !important;
