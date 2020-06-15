@@ -4,6 +4,9 @@
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
             <span class="fa fa-tasks"></span> {{$tc('titles.job', 2)}}
         </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="showVariables" :title="$t('actions.showVariables')">
+            <span class="fa fa-dollar-sign"></span> Variáveis
+        </button>
     </div>
     <div class="btn-group" role="group">
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
@@ -80,6 +83,9 @@
             },
             showExecutions(){
                 this.$root.$emit('onshow-executions')
+            },
+            showVariables(){
+                this.$root.$emit('onshow-variables')
             },
         }
     }
