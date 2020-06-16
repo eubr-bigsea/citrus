@@ -183,10 +183,11 @@ export default {
             'FLOAT': 'Ponto flutante com menor precisão',
             'INTEGER': 'Inteiro',
             'LONG': 'Inteiro longo',
+            'TABLE': 'Tabela de pesquisa',
             'TEXT': 'Texto longo',
             'TIME': 'Hora',
             'TIMESTAMP': 'Timestamp',
-            'VECTOR': 'Vetor'
+            'VECTOR': 'Vetor',
         },
         dashboard: {
             public: 'Público',
@@ -219,6 +220,7 @@ export default {
                 'Lemonade suporta inferir atributos para o formato {what}.',
             isFirstLineHeader: 'Usar a primeira linha como cabeçalho',
             isMultiline: 'Multilinhas (atributo com quebra de linha)',
+            lookup: 'Usar como tabela de referência',
             message: 'Mensagem',
             missingRepresentation: 'Representação para dados ausentes',
             noPermissions: 'Nenhuma permissão definida',
@@ -279,7 +281,9 @@ export default {
             receivingData: 'Erro recebendo dados do servidor.',
             resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest:
                 'Este link expirou, por favor redefina sua senha novamente.',
-            sendingData: 'Erro enviando dados do servidor.'
+            sendingData: 'Erro enviando dados do servidor.',
+            validation: 'Erro(s) de validação',
+            validationExplanation: 'Por favor, corrija o(s) erro(s) e tente novamente.',
         },
         warnings: {
             dirtyCheck:
@@ -423,6 +427,7 @@ export default {
         titles: {
             about: 'Sobre',
             action: 'Ação | Ações',
+            actualValue: 'Valor atual',
             administration: 'Administração',
             changePassword: 'Nova senha',
             cluster: 'Cluster | Clusters',
@@ -529,6 +534,15 @@ export default {
             validationExplanation:
                 'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.',
             variables: 'Variável | Variáveis',
+        },
+        variables: {
+            defaultValue: 'Valor-padrão',
+            description: 'Descrição',
+            label: 'Rótulo',
+            multiplicity: 'Multiplicidade',
+            name: 'Nome',
+            parameter: 'Parâmetro | Parâmetros',
+            type: 'Tipo',
         },
         permissions: {
             MANAGE: 'Gerenciar',
@@ -727,10 +741,11 @@ export default {
             'FLOAT': 'Float',
             'INTEGER': 'Integer',
             'LONG': 'Long integer',
+            'TABLE': 'Lookup table',
             'TEXT': 'Long text',
             'TIME': 'Time',
             'TIMESTAMP': 'Timestamp',
-            'VECTOR': 'Vector'
+            'VECTOR': 'Vector',
         },
         dashboard: {
             public: 'Public',
@@ -763,6 +778,7 @@ export default {
                 'Lemonade supports infering attributes for the format {what}.',
             isFirstLineHeader: 'Use first line as header',
             isMultiline: 'Is multiline',
+            lookup: 'Only use as reference table',
             message: 'Message',
             missingRepresentation: 'Missing representation',
             noPermissions: 'No permissions defined',
@@ -819,7 +835,9 @@ export default {
             receivingData: 'Error receiving data from the server',
             resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest:
                 'This requet has expired. Please make another request.',
-            sendingData: 'Error sending data to the server.'
+            sendingData: 'Error sending data to the server.',
+            validation: 'Validation error(s)',
+            validationExplanation: 'Please, fix the error(s) and try again.',
         },
         warnings: {
             dirtyCheck:
@@ -885,6 +903,7 @@ export default {
         titles: {
             about: 'About',
             action: 'Action | Actions',
+            actualValue: 'Current value',
             administration: 'Administration',
             changePassword: 'New password',
             cluster: 'Cluster | Clusters',
@@ -1050,6 +1069,15 @@ export default {
             validationExplanation:
                 'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.',
             variables: 'Variable | Variables',
+        },
+        variables: {
+            defaultValue: 'Default value',
+            description: 'Description',
+            label: 'Label',
+            multiplicity: 'Multiplicity',
+            name: 'Name',
+            parameter: 'Parameter | Parameters',
+            type: 'Type',
         },
         permissions: {
             MANAGE: 'Manage',

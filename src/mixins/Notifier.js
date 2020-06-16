@@ -36,6 +36,15 @@ export default {
                         this.$t('errors.disconnected'), this.$t('titles.error'),
                         { timeout: timeout || 20000, bodyMaxLength: bodyMaxLength || 150 }
                     );
+                } else if (e.response && e.response.data){
+                        let responseData = e.response.data;
+                        if (responseData.message === 'Invalid data') {
+                            let errorMessage = `<strong>${this.$t('errors.validation')}</strong><br/>`
+                                    + JSON.stringify(responseData.errors);
+                                this.$snotify.html( errorMessage,
+                                { timeout: timeout || 15000, bodyMaxLength: bodyMaxLength || 150 }
+                            );
+                        }
                 } else if (e.response && e.response.data) {
                     if (e.response.status === 404) {
                         this.$snotify.error(
