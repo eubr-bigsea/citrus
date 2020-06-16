@@ -74,7 +74,7 @@
                     </b-tab>
                 </b-tabs>
                 -->
-                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow"/>
+                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"/>
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
                     :validationErrors="validationErrors" :workflow="workflow" />
                 <ModalWorkflowHistory ref="historyModal" :history="history" />

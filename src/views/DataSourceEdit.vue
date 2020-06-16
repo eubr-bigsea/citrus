@@ -69,6 +69,10 @@
                                                 <b-form-checkbox v-model="dataSource.is_public">
                                                     {{ $t('dataSource.public') }}</b-form-checkbox>
                                             </div>
+                                            <div class="col-md-4 col-lg-2 mt-3">
+                                                <b-form-checkbox v-model="dataSource.is_lookup">
+                                                    {{ $t('dataSource.lookup') }}</b-form-checkbox>
+                                            </div>
                                             <div v-if="atmosphereExtension" class="col-md-2 col-lg-2 mt-3">
                                                 <b-form-checkbox v-if="atmosphereExtension"
                                                     v-model="dataSource.privacy_aware">

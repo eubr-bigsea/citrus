@@ -49,35 +49,7 @@
                                     <div class="alert alert-info p-2 mt-1 mb-1">
                                         {{$t('workflow.publishingSelect')}}
                                     </div>
-                                    <table class="table table-sm table-striped table-bordered">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th></th>
-                                                <th>{{$tc('titles.property')}}</th>
-                                                <th>{{$tc('titles.value')}}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <template v-for="(form, index) in forms">
-                                                <tr v-for="field in form.fields" :key="field.name"
-                                                    v-if="form.category === 'execution' && field.enabled">
-                                                    <td>
-                                                        <b-checkbox v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
-                                                        </b-checkbox>
-                                                    </td>
-                                                    <td>{{field.label}}</td>
-                                                    <td>
-                                                        <component :is="field.suggested_widget + '-component'"
-                                                            :field="field" :value="getValue(field.name)"
-                                                            :type="field.suggested_widget" context="context"
-                                                            :read-only="true">
-                                                        </component>
-                                                        {{task.forms[field.name]}}
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
+                                    <button class="btn btn-success btn-sm" @click.prevent="showPublishingModal()">{{$t('actions.editValue')}}</button>
                                 </b-tab>
                             </b-tabs>
                         </b-card>
@@ -86,12 +58,38 @@
                         {{task.id}}
                     </div>
                 </div>
-                <div v-for="form in task.operation.forms" v-bind:key="form.id">
-                    {{form.ca}}
-                    <fieldset>
-                        <caption>{{form.label}}</caption>
-                    </fieldset>
-                </div>
+                <b-modal size="lg" ref="publishingModal" :title="$t('titles.publication')">
+                    <div class="mt-2 p-2 border">
+                        <table class="table table-sm table-striped table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="w-5"></th>
+                                    <th class="w-45">{{$tc('titles.property')}}</th>
+                                    <th class="w-50">{{$tc('titles.actualValue')}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(form, index) in forms">
+                                    <tr v-for="field in form.fields" :key="field.name"
+                                        v-if="form.category === 'execution' && field.enabled">
+                                        <td>
+                                            <b-checkbox v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
+                                            </b-checkbox>
+                                        </td>
+                                        <td>{{field.label}}</td>
+                                        <td>
+                                            <component :is="field.suggested_widget + '-component'"
+                                                :field="field" :value="getValue(field.name)"
+                                                :type="field.suggested_widget" context="context"
+                                                :read-only="true">
+                                            </component>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </b-modal>
             </div>
         </VuePerfectScrollbar>
     </div>
@@ -128,6 +126,9 @@
             }
         },
         methods: {
+            showPublishingModal(){
+                this.$refs.publishingModal.show();
+            },
             getValue(name) {
                 return this.task
                     && this.task.forms
