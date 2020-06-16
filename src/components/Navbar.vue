@@ -52,8 +52,17 @@
 
                </b-nav-item-dropdown>
             </b-navbar-nav>
-
             <b-navbar-nav class="ml-auto">
+                <b-nav-item-dropdown right ref="dropdown">
+                    <template slot="button-content">
+                      <span class="fa fa-bell"></span>
+                      <span class="badge badge-pill badge-success">0</span>
+                    </template>
+                    <b-dropdown-form style="width: 300px" class="text-center">
+                    </b-dropdown-form>
+                </b-nav-item-dropdown>
+            </b-navbar-nav>
+            <b-navbar-nav>
                 <b-nav-item-dropdown right ref="dropdown">
                     <template slot="button-content">
                         <v-gravatar :email="user.email" class="avatar" />
