@@ -136,7 +136,7 @@
                 self.selectedPermissions = self.role.permissions.map(p=>p.id);
 
             });
-            const permissionsUrl = `${thornUrl}/permissions`;
+            const permissionsUrl = `${thornUrl}/permissions?size=1000`;
             axios.get(permissionsUrl)
                 .then(resp => {
                     self.permissions = resp.data.data.sort((a, b) => a.description.localeCompare(b.description));
