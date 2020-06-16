@@ -1,8 +1,11 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
-        <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
-        <b-link @click.prevent="openModal" variant="sm">
+        <span v-if="!readOnly">
+            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
+        </span>
+        <span v-else>{{displayValue}}</span>
+        <b-link v-if="!readOnly" @click.prevent="openModal" variant="sm">
             {{$t('property.editValue')}}
         </b-link>
         <b-modal id="expressionModal" size="xl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
@@ -71,7 +74,9 @@
 <script>
     import LabelComponent from './Label.vue';
     import jsep from 'jsep';
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         computed: {
             displayValue() {
                 if (this.value) {
@@ -96,7 +101,8 @@
         data() {
             return {
                 expressionValue: '',
-                expressionList: this.value,
+                expressionList: this.value ? this.value.map(a => ({...a})): [], // copy values
+                originalExpressionList: this.value,
                 lastEdited: {},
                 suggestions: [],
             }
@@ -107,6 +113,7 @@
                 if (this.suggestionEvent) {
                     this.suggestions = this.suggestionEvent();
                 }
+                this.expressionList = this.originalExpressionList ? this.originalExpressionList.map(a => ({... a})) : [];
             },
             elementBlur(row, event) {
                 this.lastEdited = { row, el: event.target }
@@ -129,9 +136,11 @@
             okClicked(e) {
                 this.$root.$emit(this.message, this.field,
                     this.expressionList);
+                this.originalExpressionList = this.expressionList ? this.expressionList.map(a => ({... a})) : [];
                 this.$refs.modal.hide();
             },
             cancelClicked(e) {
+                this.expressionList = this.originalExpressionList ? this.originalExpressionList.map(a => ({... a})) : [];
                 this.$refs.modal.hide();
             },
             changed: _.debounce(function (e, row, attr) {
@@ -180,14 +189,7 @@
         },
         props: {
             addOperators: {},
-            value: {},
             removeOperators: {},
-            field: {},
-            suggestionEvent: null,
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            }
         },
     }
 </script>

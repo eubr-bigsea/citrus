@@ -10,7 +10,9 @@
 </template>
 <script>
     import LabelComponent from './Label.vue'
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: { LabelComponent },
         methods: {
             updated: _.debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
@@ -25,14 +27,5 @@
             this.$root.$emit(this.message,
                  this.field, this.value || value);
         },
-        props: {
-            readOnly: false,
-            value: '', field: {},
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            }
-        },
-
     }
 </script>

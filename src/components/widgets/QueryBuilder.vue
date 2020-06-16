@@ -22,7 +22,9 @@
 <script>
     import LabelComponent from './Label.vue';
     import jsep from 'jsep';
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: {
             LabelComponent
         },
@@ -43,14 +45,6 @@
             cancelClicked(e) {
                 this.$refs.modal.hide();
             },
-        },
-        props: {
-            value: {},
-            field: {},
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            }
         },
     }
 </script>
