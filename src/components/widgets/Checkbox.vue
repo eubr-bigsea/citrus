@@ -17,7 +17,9 @@
 <script>
     import LabelComponent from './Label.vue'
     import SwitchComponent from './Switch.vue'
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         name: 'checkbox-component',
         components: { LabelComponent, SwitchComponent },
         methods: {
@@ -43,14 +45,6 @@
                 this.changed(this.field.default);
             }
             this.id = `check_${this._uid}`;
-        },
-        props: {
-            readOnly: false,
-            value: 0,
-            field: {},
-            message: {
-                default: 'update-form-field-value'
-            }
         },
         watch: {
             value: function () {

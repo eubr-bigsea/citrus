@@ -13,7 +13,9 @@
     // Deprecated
     import vSelect from "vue-select";
     import LabelComponent from './Label.vue'
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
@@ -30,13 +32,6 @@
         methods: {
             updated(val) {
                 this.$root.$emit(this.message, this.field, val);
-            }
-        },
-        props: {
-            value: "", field: null, suggestions: { required: true },
-            message: {
-                type: String,
-                default: 'update-form-field-value'
             }
         },
     }

@@ -1,11 +1,14 @@
 <template>
     <div class="function-editor">
-        <LabelComponent :field="field" :value="value"></LabelComponent>
-        <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
+        <span v-if="!readOnly">
+            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
+            <b-link variant="sm" @click.prevent="openModal">
+                {{$t('actions.chooseOption')}} 
+            </b-link>
+        </span>
+        <span v-else>{{displayValue}}</span>
 
-        <b-link variant="sm" @click.prevent="openModal">
-            {{$t('actions.chooseOption')}}
-        </b-link>
 
         <b-modal id="lookupModal" size="lg" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
             no-fade ref="modal">
@@ -70,8 +73,10 @@
 </template>
 <script>
     import vSelect from "vue-select";
-    import LabelComponent from './Label.vue'
+    import LabelComponent from './Label.vue';
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         computed: {
             parameters() {
                 return JSON.parse(this.field.values);
@@ -155,13 +160,6 @@
             }
         },
         props: {
-            suggestionEvent: { },
-            value: '',
-            field: {},
-            options: {},
-            message: {
-                default: 'update-form-field-value'
-            }
         },
     }
 </script>

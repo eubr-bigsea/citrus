@@ -14,7 +14,7 @@
         <b-modal :id="'lookupModal_' + field.name" size="lg" :title="field.label" ok-disabled
             :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             {{field.help}}
-            <v-client-table :data="options" :columns="['key', 'value','tags']" class="lookupTable"
+            <v-client-table :data="lookupOptions" :columns="['key', 'value','tags']" class="lookupTable"
                 :options="tableOptions">
                 <template slot="value" slot-scope="props">
                     <a href="#" @click.prevent="select($event, props.row)">{{props.row.value}}</a>
@@ -38,14 +38,15 @@
 <script>
     import LabelComponent from './Label.vue'
     import axios from 'axios'
-
+    import Widget from '../../mixins/Widget.js';
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     export default {
+        mixins: [Widget],
         components: { LabelComponent },
         data() {
             return {
                 label: '',
-                options: [],
+                lookupOptions: [],
                 tableOptions: {
                     perPage: 5,
                     perPageValues: [],
@@ -85,14 +86,14 @@
                     (resp) => {
                         self.selected = self.value;
                         let data = resp.data.data || resp.data
-                        this.options = data.map((v) => {
+                        this.lookupOptions = data.map((v) => {
                             return {
                                 "key": v.id, "value": v.name,
                                 "tags": (v.tags || '').split(',')
                             };
                         });
                         if (self.value) {
-                            const sel = this.options.find((item) => {
+                            const sel = this.lookupOptions.find((item) => {
                                 return Number(item.key) === Number(self.value)
                             });
                             this.label = sel ? sel.value : '';
@@ -105,7 +106,7 @@
                 }.bind(this));
             } else {
                 JSON.parse(this.field.values).forEach((opt) => {
-                    this.options.push(opt);
+                    this.lookupOptions.push(opt);
                 });
             }
         },
@@ -149,14 +150,6 @@
                     this.label);
                 this.closeModal()
             }
-        },
-        props: {
-            value: 0, field: null, language: { default: 'en' },
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            },
-            readOnly: false,
         },
         ready: function () {
             //console.debug(this.field, this.field['default'], this.value)

@@ -10,7 +10,9 @@
 </template>
 
 <script>
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         name: "property-label",
         props: {
             field: { required: true, type: Object },

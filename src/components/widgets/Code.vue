@@ -30,7 +30,8 @@
 
     import prismjs from "prismjs";
     import "prismjs/themes/prism.css";
-    import LabelComponent from './Label.vue'
+    import LabelComponent from './Label.vue';
+    import Widget from '../../mixins/Widget.js';
     import PrismEditor from 'vue-prism-editor'
 
     Prism.languages.python = {
@@ -87,8 +88,9 @@
         'operator': /[-+*\/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?|\b(?:AND|BETWEEN|IN|LIKE|NOT|OR|IS|DIV|REGEXP|RLIKE|SOUNDS LIKE|XOR)\b/i,
         'punctuation': /[;[\]()`,.]/
     };
-
+    
     export default {
+        mixins: [Widget],
         computed: {
             computedProgrammingLanguage(){
                 if (this.field && this.field.values){
@@ -118,12 +120,7 @@
             }, 500)
         },
         props: {
-            value: 0, field: null,
             programmingLanguage: null,
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            }
         },
         methods: {
             okModal(){
