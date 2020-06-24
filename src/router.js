@@ -71,6 +71,9 @@ const PlatformList = () => import('./views/Administration/PlatformList.vue');
 const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
 const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
 
+const TrackPanel = () => import('./views/TrackPanel.vue');
+const Track = () => import('./views/TrackParameter.vue');
+
 Vue.use(Router);
 
 let router = new Router({
@@ -294,9 +297,27 @@ let router = new Router({
             }
         },
         {
-            path: '/tracks',
+            path: '/apps',
             name: 'tracks',
             component: TrackList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/params/:id',
+            name: 'trackParameter',
+            component: Track,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/panel',
+            name: 'tracksPanel',
+            component: TrackPanel,
             meta: {
                 requiresAuth: true,
                 title: ['titles.track', 2]

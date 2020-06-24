@@ -475,6 +475,13 @@ export default {
             whatIfModel: 'What if model?',
             workflow: 'Fluxo de trabalho | Fluxos de trabalho'
         },
+        track: {
+            status: 'Status',
+            whichTrack: 'Qual trilha você está procurando?',
+            EDITING: 'Em edição',
+            PUBLISHED: 'Publicado',
+            DISABLED: 'Desabilitado',
+        },
 
         home: {
             aPlatformForDataScience: 'Uma plataforma para ciência dos dados',
@@ -536,6 +543,8 @@ export default {
             variables: 'Variável | Variáveis',
         },
         variables: {
+            associateTo: 'Associar a variável',
+            associateToLookup: 'Associar a tabela de referência',
             defaultValue: 'Valor-padrão',
             description: 'Descrição',
             label: 'Rótulo',
@@ -950,6 +959,13 @@ export default {
             whatIfModel: 'What if model?',
             workflow: 'Workflow | Workflows'
         },
+        track: {
+            status: 'Status',
+            whichTrack: 'Which track are you looking for?',
+            EDITING: 'Editing',
+            PUBLISHED: 'Published',
+            DISABLED: 'Disabled',
+        },
         model: {
             storage: 'Storage| Storage',
             type_KERAS: 'Keras',
@@ -1071,6 +1087,8 @@ export default {
             variables: 'Variable | Variables',
         },
         variables: {
+            associateTo: 'Associate to variable',
+            associateToLookup: 'Associate to lookup table',
             defaultValue: 'Default value',
             description: 'Description',
             label: 'Label',

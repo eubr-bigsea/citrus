@@ -19,7 +19,10 @@
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }} 
                 </b-nav-item>
                 <b-nav-item :to="{ name: 'tracks' }">
-                    <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }} 
+                    <span class="fa fa-microscope"></span> {{$t('actions.edit')}} {{ $tc('titles.track', 2) }} 
+                </b-nav-item>
+                <b-nav-item :to="{ name: 'tracksPanel' }">
+                    <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}  
                 </b-nav-item>
                 <b-nav-item-dropdown v-if="hasRoles" right>
                     <template v-slot:button-content>

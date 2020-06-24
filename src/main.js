@@ -17,6 +17,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import Gravatar from 'vue-gravatar';
 
 import {
+    faBolt,
     faBell,
     faBars,
     faMicroscope,
@@ -91,6 +92,7 @@ import ColorComponent from './components/widgets/Color.vue'
 import DecimalComponent from './components/widgets/Decimal.vue'
 import DropDownComponent from './components/widgets/DropDown.vue'
 import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
+import FilterComponent from './components/widgets/FilterEditor.vue'
 import IntegerComponent from './components/widgets/Integer.vue'
 import LookupComponent from './components/widgets/Lookup.vue'
 import RangeComponent from './components/widgets/Range.vue'
@@ -98,6 +100,10 @@ import Select2Component from './components/widgets/Select2.vue'
 import TagComponent from './components/widgets/Select2.vue'
 import TextComponent from './components/widgets/Text.vue'
 import TextAreaComponent from './components/widgets/TextArea.vue'
+
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
+Vue.component('v-select', vSelect)
 
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
@@ -108,6 +114,7 @@ const widgets = new Map([
     ['decimal-component', DecimalComponent],
     ['dropdown-component', DropDownComponent],
     ['expression-component', ExpressionComponent],
+    ['filter-component', FilterComponent],
     ['integer-component', IntegerComponent],
     ['lookup-component', LookupComponent],
     ['percentage-component', RangeComponent],
@@ -146,6 +153,7 @@ import { dom } from '@fortawesome/fontawesome-svg-core';
 dom.watch();
 
 library.add(
+    faBolt,
     faBell,
     faBars,
     faMicroscope,
