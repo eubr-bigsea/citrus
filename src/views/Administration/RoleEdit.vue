@@ -32,9 +32,9 @@
                             {{ $tc('common.permission', 2) }}:
                         </label>
 					    <div class="row">
-                            <div v-for="p in permissions" :key="p.id" class="col-md-6">
+                            <div v-for="p in permissions" :key="p.id" class="col-md-6" :title="p.name">
                                 <b-form-checkbox v-model="selectedPermissions" :value="p.id">{{p.description}} 
-								<small>({{p.name}})</small></b-form-checkbox>
+								</b-form-checkbox>
                             </div>
 						</div>
 					</div>
