@@ -1145,7 +1145,9 @@
         border: 1px solid;
         content: '';
     }
-  
+    div.double-layout {
+        border: #29335c 3px double !important;
+    }
     div.circle-layout {
         border: none !important;
         background: transparent !important;
