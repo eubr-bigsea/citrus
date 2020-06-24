@@ -67,7 +67,6 @@
                     'CHARACTER',
                     'TEXT',
                 ],
-                fields: [{ Name: "name", Description: 'description' }],
             };
         },
 		props: {
@@ -136,13 +135,18 @@
         height: 22px !important;
         margin: 1px 0;
     }
-
     .sheet select {
         border: 0;
         width: 100%;
         background-color: #fff;
     }
-
+.sheet .vs__search::placeholder,
+  .sheet .vs__dropdown-toggle,
+  .sheet .vs__dropdown-menu {
+       max-height: 25px;
+       margin: 0;
+       padding: 0
+  }
     .table-wrapper {
         height: 300px;
         overflow-y: scroll;
