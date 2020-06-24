@@ -55,7 +55,7 @@
                                                 <label for="inputPassword3" class="col-form-label">
                                                     {{ $t('common.password') }}:
                                                 </label>
-                                                <input v-model="user.password" type="text" class="form-control" maxlength="50"/>
+                                                <input v-model="user.password" type="password" class="form-control" maxlength="50"/>
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="col-form-label">
