@@ -23,6 +23,7 @@
                         </diagram>
                         <slideout-panel :opened="showProperties">
                             <property-window :task="selectedTask.task" v-if="selectedTask.task"
+                                :variables="workflow.variables || []"
                                 :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
                                 :publishingEnabled="workflow && workflow.publishing_enabled" />
                         </slideout-panel>
@@ -258,7 +259,6 @@
                 }
                 fieldInSelectedTask.label = field.label;
                 if (labelValue) {
-                    console.debug('Label', labelValue)
                     fieldInSelectedTask.labelValue = labelValue
                 } else if (fieldInSelectedTask.labelValue) {
                     delete fieldInSelectedTask.labelValue
@@ -899,22 +899,5 @@
     .atmosphere h3 {
         text-align: center;
         color: #aaa;
-    }
-    .full_modal-dialog .modal-dialog {
-      width: 98% !important;
-      height: 92% !important;
-      min-width: 98% !important;
-      min-height: 92% !important;
-      max-width: 98% !important;
-      max-height: 92% !important;
-      padding: 0 !important;
-    }
-    
-    .full_modal-dialog .modal-content{
-      height: 99% !important;
-      min-height: 99% !important;
-      max-height: 99% !important;
-      border-radius: 0;
-      overflow-y: auto;
     }
 </style>
