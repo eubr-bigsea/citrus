@@ -5,7 +5,7 @@
         </div>
         <div v-else>
             <LabelComponent :field="field" :value="value"></LabelComponent>
-            <input type="number" maxlenght="10" class="form-control input-sm"
+            <input type="number" maxlength="10" class="form-control input-sm"
                 :value="value === null ? field['default']: value" pattern="\\d*" @input="updated"
                 :required="field.required" />
         </div>
