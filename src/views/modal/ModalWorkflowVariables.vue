@@ -7,6 +7,7 @@
                 <th style="width:10%">{{$t('variables.label')}}</th>
                 <th style="width:20%">{{$t('variables.description')}}</th>
                 <th style="width:8%">{{$t('variables.defaultValue')}}</th>
+                <th style="width:8%">{{$t('variables.suggestedWidget')}}</th>
                 <th style="width:8%">{{$t('variables.multiplicity')}}</th>
                 <th style="width:14%">{{$t('variables.type')}}</th>
                 <!--th>{{$tc('variables.parameter', 2)}}</th-->
@@ -29,6 +30,10 @@
                     </td>
                     <td>
                         <input v-model="row.default_value" maxlength="50"/>
+                    </td>
+                    <td>
+                        <input v-model="row.suggested_widget" maxlength="50"/>
+                    </td>
                     <td>
                         <select class="form-input" v-model="row.multiplicity" tabindex="0">
                             <option value="0">Opcional</option>
