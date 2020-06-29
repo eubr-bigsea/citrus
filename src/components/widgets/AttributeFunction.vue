@@ -27,13 +27,10 @@
                 <tbody>
                     <tr v-for="(row, index) in valueList">
                         <td style="width:50%">
-                            <v-select :options="suggestions" :multiple="false" :value="row.attribute" :on-change="attrUpdated.bind(this, row, 'attribute')"
+                            <v-select :options="suggestions" :multiple="false" :value="row.attribute" @input="(v) => attrUpdated(row, 'attribute', v)"
                                 :taggable="true" :closeOnSelect="true">
                                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
                             </v-select>
-                            <!--
-                            <input class="form-control" :value="row.attribute" @change="updated($event, row, 'attribute')">
-                            -->
                         </td>
                         <td style="width:20%">
                             <select class="form-control" :value="row.f" @change="updated($event, row, 'f')">
@@ -123,6 +120,8 @@
                 row[attr] = e.target.value;
             },
             attrUpdated(row, attr, val) {
+                debugger
+                console.debug(row, attr)
                 row[attr] = val;
             },
             add(e) {
