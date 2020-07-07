@@ -72,7 +72,7 @@ const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
 const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
 
 const TrackPanel = () => import('./views/TrackPanel.vue');
-const Track = () => import('./views/TrackParameter.vue');
+const Track = () => import('./views/Track.vue');
 
 Vue.use(Router);
 

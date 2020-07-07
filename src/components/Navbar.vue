@@ -50,7 +50,7 @@
                     </b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item :to="{ name: 'models' }">
-                        {{ $tc('titlesi.apiToken', 2) }}
+                        {{ $tc('titles.apiToken', 2) }}
                     </b-dropdown-item>
 
                </b-nav-item-dropdown>

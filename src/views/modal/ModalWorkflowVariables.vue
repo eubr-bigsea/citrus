@@ -5,11 +5,12 @@
                 <th style="width:2%"></th>
                 <th style="width:8%">{{$t('variables.name')}}</th>
                 <th style="width:10%">{{$t('variables.label')}}</th>
-                <th style="width:20%">{{$t('variables.description')}}</th>
+                <th style="width:10%">{{$t('variables.description')}}</th>
                 <th style="width:8%">{{$t('variables.defaultValue')}}</th>
-                <th style="width:8%">{{$t('variables.suggestedWidget')}}</th>
                 <th style="width:8%">{{$t('variables.multiplicity')}}</th>
-                <th style="width:14%">{{$t('variables.type')}}</th>
+                <th style="width:18%">{{$t('variables.suggestedWidget')}}</th>
+                <th style="width:8%">{{$t('variables.type')}}</th>
+                <th style="width:15%">{{$tc('variables.values', 2)}}</th>
                 <!--th>{{$tc('variables.parameter', 2)}}</th-->
             </thead>
             <tbody>
@@ -31,15 +32,23 @@
                     <td>
                         <input v-model="row.default_value" maxlength="50"/>
                     </td>
-                    <td>
-                        <input v-model="row.suggested_widget" maxlength="50"/>
-                    </td>
-                    <td>
+                   <td>
                         <select class="form-input" v-model="row.multiplicity" tabindex="0">
                             <option value="0">Opcional</option>
                             <option value="3">0 ou mais</option>
                             <option value="1">Exatamente 1</option>
                             <option value="2">Mais de 1</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-input" v-model="row.suggested_widget">
+                            <option value="date">{{$t('widgets.date')}}</option>
+                            <option value="decimal">{{$t('widgets.decimal')}}</option>
+                            <option value="dropdown">{{$t('widgets.dropdown')}}</option>
+                            <option value="integer">{{$t('widgets.integer')}}</option>
+                            <option value="lookup">{{$t('widgets.lookup')}}</option>
+                            <option value="text">{{$t('widgets.text')}}</option>
+                            <option value="textarea">{{$t('widgets.textarea')}}</option>
                         </select>
                     </td>
                     <td>
@@ -49,6 +58,9 @@
                                 {{$t('dataTypes.' + dt)}}
                             </option>
                         </select>
+                    </td>
+                    <td>
+                        <textarea class="form-control" rows="3" v-model="row.parameters"></textarea>
                     </td>
                 </tr>
             </tbody>
@@ -126,12 +138,13 @@
         font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
         font-size: 13px;
     }
-
     .sheet td input {
+        height: 100%;
+    }
+    .sheet td input, .sheet td textarea {
         border: 0 !important;
         padding: 0 !important;
         font-size: .8em;
-        height: 24px;
         width: 100%;
         padding: 0 5px !important;
     }

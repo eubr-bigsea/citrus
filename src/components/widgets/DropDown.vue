@@ -42,7 +42,6 @@
             }
         },
         ready: function () {
-            //console.debug(this.field, this.field['default'], this.value)
             if (this.field['default'] && (this.value === null || this.value === '')) {
                 this.value = this.field['default'];
             }

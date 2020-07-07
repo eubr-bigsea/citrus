@@ -1,9 +1,9 @@
 <template>
-    <div ref="fieldElement">
+    <div ref="fieldElement" class="mt-3 mb-2" style="width: 100%">
         <div v-if="readOnly">
             {{value === null ? field.default: (value === '0' ? $t('common.false') : $t('common.true')) }}
         </div>
-        <div v-else>
+        <div v-else class="clearfix">
             <div class="float-left" :data-name="field.name">
                 <SwitchComponent class="float-left" :onchange="changed" :checked="checked">{{field.label}}
                 </SwitchComponent>

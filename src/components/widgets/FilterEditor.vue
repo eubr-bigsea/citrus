@@ -8,15 +8,17 @@
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal ref="modal" size="xl" :title="$tc('workflow.variables', 2)" centered :ok-only="true" modal-class="full_modal_width-dialog">
+        <b-modal ref="modal" size="xl" :title="$tc('common.filter', 2)" centered :ok-only="true" modal-class="full_modal_width-dialog">
            <table class="table table-bordered table-sm sheet text-center" v-if="valueList && valueList.length">
                <thead>
                    <th style="width:2%"></th>
                    <th style="width:10%">{{$t('variables.name')}}</th>
                    <th style="width:10%">{{$t('variables.label')}}</th>
-                   <th style="width:16%">{{$t('variables.description')}}</th>
+                   <th style="width:12%">{{$t('variables.help')}}</th>
+                   <th style="width:12%">{{$tc('variables.operator', 1)}}</th>
                    <th style="width:8%">{{$t('variables.defaultValue')}}</th>
                    <th style="width:8%">{{$t('variables.multiplicity')}}</th>
+                   <th style="width:18%">{{$t('variables.suggestedWidget')}}</th>
                    <th style="width:10%">{{$t('variables.type')}}</th>
                    <th style="width: 15%">{{$tc('variables.associateToLookup')}}</th>
                    <!--th>{{$tc('variables.parameter', 2)}}</th-->
@@ -35,21 +37,47 @@
                            </select>
                        </td>
                        <td>
-                           <input v-model="row.label" maxlength="40" name="label"/>
+                           <input v-model="row.label" maxlength="40" name="label" autocomplete="off"/>
                        </td>
                        <td>
-                           <input v-model="row.description" maxlength="100" name="description"/>
+                           <input v-model="row.help" maxlength="100" name="help" autocomplete="off"/>
                        </td>
                        <td>
-                           <input v-model="row.default_value" maxlength="50" name="default_value"/>
-                       <td>
-                           <select class="form-input" v-model="row.multiplicity" tabindex="0">
-                               <option value="0">Opcional</option>
-                               <option value="3">0 ou mais</option>
-                               <option value="1">Exatamente 1</option>
-                               <option value="2">Mais de 1</option>
+                           <select class="form-input" v-model="row.operator" tabindex="0">
+                                <option value="eq">{{$t('variables.operators.eq')}}</option>
+                                <option value="ne">{{$t('variables.operators.ne')}}</option>
+                                <option value="gt">{{$t('variables.operators.gt')}}</option>
+                                <option value="lt">{{$t('variables.operators.lt')}}</option>
+                                <option value="ge">{{$t('variables.operators.ge')}}</option>
+                                <option value="le">{{$t('variables.operators.le')}}</option>
+                                <option value="in">{{$t('variables.operators.in')}}</option>
+                                <option value="ni">{{$t('variables.operators.ni')}}</option>
+                                <option value="user">{{$t('variables.operators.user')}}</option>
                            </select>
                        </td>
+                       <td>
+                           <input v-model="row.default_value" maxlength="50" name="default_value" autocomplete="off"/>
+                       <td>
+                           <select class="form-input" v-model="row.multiplicity" tabindex="0">
+                               <option value="OPTIONAL">Opcional</option>
+                               <option value="ZERO_OR_MORE">0 ou mais</option>
+                               <option value="ONE">Exatamente 1</option>
+                               <option value="ONE_OR_MORE">Mais de 1</option>
+                           </select>
+                       </td>
+                       <td>
+                           <select class="form-input" v-model="row.suggested_widget">
+                               <option value="checkbox">{{$t('widgets.checkbox')}}</option>
+                               <option value="date">{{$t('widgets.date')}}</option>
+                               <option value="decimal">{{$t('widgets.decimal')}}</option>
+                               <option value="dropdown">{{$t('widgets.dropdown')}}</option>
+                               <option value="integer">{{$t('widgets.integer')}}</option>
+                               <option value="lookup">{{$t('widgets.lookup')}}</option>
+                               <option value="text">{{$t('widgets.text')}}</option>
+                               <option value="textarea">{{$t('widgets.textarea')}}</option>
+                           </select>
+                       </td>
+    
                        <td>
                            <select class="form-input" v-model="row.type">
 	       					<option></option>
@@ -72,7 +100,6 @@
                    </tr>
                </tbody>
                </table>
-               ||{{valueList}}||
                <div class="mt-2 border-top pt-2">
                   <button class="btn btn-success btn-sm" @click.prevent="add">
                        <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
@@ -145,7 +172,8 @@
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
-                this.valueList.push({ alias: '', attribute: '', f: '' })
+                const id = [...Array(10)].map(i=>(~~(Math.random()*36)).toString(36)).join('');
+                this.valueList.push({id, alias: '', attribute: '', f: '' })
             },
             remove(e, index) {
                 this.valueList.splice(index, 1);

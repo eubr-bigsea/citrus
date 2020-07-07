@@ -7,11 +7,11 @@
 
         <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
 
-        <b-link v-b-modal="'lookupModal_' + field.name" variant="sm">
+        <b-link @click.prevent="$refs.modal.show()" variant="sm">
             <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
             <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
         </b-link>
-        <b-modal :id="'lookupModal_' + field.name" size="lg" :title="field.label" ok-disabled
+        <b-modal size="lg" :title="`${field.label} - ${(label ? (selected + ' - ' + label): '')}`" ok-disabled
             :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             {{field.help}}
             <v-client-table :data="lookupOptions" :columns="['key', 'value','tags']" class="lookupTable"
@@ -47,6 +47,7 @@
             return {
                 label: '',
                 lookupOptions: [],
+                selectedValue: null,
                 tableOptions: {
                     perPage: 5,
                     perPageValues: [],
@@ -104,7 +105,7 @@
                 ).catch(function (e) {
                     this.$root.$emit('on-error', e);
                 }.bind(this));
-            } else {
+            } else if(this.field.values) {
                 JSON.parse(this.field.values).forEach((opt) => {
                     this.lookupOptions.push(opt);
                 });
@@ -116,10 +117,10 @@
             },
             selected: {
                 get() {
-                    return this.value || this.field.default;
+                    return this.selectedValue || this.field.default;
                 },
                 set(newValue) {
-                    this.value = newValue
+                    this.selectedValue = newValue;
                 }
             }
         },

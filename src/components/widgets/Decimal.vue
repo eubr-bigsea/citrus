@@ -5,8 +5,8 @@
         </div>
         <div v-else>
             <LabelComponent :field="field" <LabelComponent :field="field" :value="value"></LabelComponent>
-            <input type="number" maxlength="10" step="0.01" class="form-control input-sm"
-                :value="value === null ? field['default']: value" @input="updated" pattern="\\d*\\.\\d{2}" />
+            <input type="number" max="999999999999" min="-999999999" step="0.01" class="form-control input-sm"
+                :value="value === null ? field['default']: value" @input="updated" pattern="\\d{1,10}\\.\\d{2}" />
         </div>
     </div>
 </template>
