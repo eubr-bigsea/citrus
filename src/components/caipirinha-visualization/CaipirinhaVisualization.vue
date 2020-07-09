@@ -16,7 +16,7 @@
 
 <style>
     .myview {
-        height: 100%;
+        height: 95%;
     }
 </style>
 

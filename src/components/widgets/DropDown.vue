@@ -20,11 +20,15 @@
         components: { LabelComponent },
         mounted() {
             this.$root.$emit(this.message,
-                 this.field, this.value || this.field['default']);
+                this.field, this.value || this.field['default']);
         },
         computed: {
             pairOptionValueList() {
-                return JSON.parse(this.field.values);
+                try {
+                    return JSON.parse(this.field.values);
+                } catch (Exception) {
+                    return [];
+                }
             },
             selected: {
                 get() {

@@ -4,46 +4,51 @@
             <LabelComponent :field="field" :value="value"></LabelComponent>
             <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
             <b-link variant="sm" @click.prevent="openModal">
-                {{$t('actions.chooseOption')}} 
+                {{$t('actions.chooseOption')}}
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal ref="modal" size="xl" :title="$tc('common.filter', 2)" centered :ok-only="true" modal-class="full_modal_width-dialog">
-           <table class="table table-bordered table-sm sheet text-center" v-if="valueList && valueList.length">
-               <thead>
-                   <th style="width:2%"></th>
-                   <th style="width:10%">{{$t('variables.name')}}</th>
-                   <th style="width:10%">{{$t('variables.label')}}</th>
-                   <th style="width:12%">{{$t('variables.help')}}</th>
-                   <th style="width:12%">{{$tc('variables.operator', 1)}}</th>
-                   <th style="width:8%">{{$t('variables.defaultValue')}}</th>
-                   <th style="width:8%">{{$t('variables.multiplicity')}}</th>
-                   <th style="width:18%">{{$t('variables.suggestedWidget')}}</th>
-                   <th style="width:10%">{{$t('variables.type')}}</th>
-                   <th style="width: 15%">{{$tc('variables.associateToLookup')}}</th>
-                   <!--th>{{$tc('variables.parameter', 2)}}</th-->
-               </thead>
-               <tbody>
-                   <tr v-for="(row, index) in valueList">
-                       <td>
-                           <a href="#" @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')" >
-                               <span class="fa fa-minus-circle"></span>
-                           </a>
-                       </td>
-                       <td>
-                           <select v-model="row.name">
+        <b-modal ref="modal" size="xl" :title="$tc('common.filter', 2)" centered :ok-only="true"
+            modal-class="full_modal_width-dialog">
+            <table class="table table-bordered table-sm sheet text-center" v-if="valueList && valueList.length">
+                <thead>
+                    <th style="width:2%"></th>
+                    <th style="width:10%">{{$t('variables.attribute')}}</th>
+                    <th style="width:10%">{{$t('variables.id')}}</th>
+                    <th style="width:10%">{{$t('variables.label')}}</th>
+                    <th style="width:12%">{{$t('variables.help')}}</th>
+                    <th style="width:12%">{{$tc('variables.operator', 1)}}</th>
+                    <th style="width:8%">{{$t('variables.defaultValue')}}</th>
+                    <th style="width:8%">{{$t('variables.multiplicity')}}</th>
+                    <!-- <th style="width:18%">{{$t('variables.suggestedWidget')}}</th> -->
+                    <th style="width:10%">{{$t('variables.type')}}</th>
+                    <th style="width: 15%">{{$tc('variables.associateToLookup')}}</th>
+                    <!--th>{{$tc('variables.parameter', 2)}}</th-->
+                </thead>
+                <tbody>
+                    <tr v-for="(row, index) in valueList">
+                        <td>
+                            <a href="#" @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')">
+                                <span class="fa fa-minus-circle"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <select v-model="row.name" @change="selectAttribute(row)">
                                 <option></option>
                                 <option v-for="suggestion in suggestions" :key="suggestion">{{suggestion}}</option>
-                           </select>
-                       </td>
-                       <td>
-                           <input v-model="row.label" maxlength="40" name="label" autocomplete="off"/>
-                       </td>
-                       <td>
-                           <input v-model="row.help" maxlength="100" name="help" autocomplete="off"/>
-                       </td>
-                       <td>
-                           <select class="form-input" v-model="row.operator" tabindex="0">
+                            </select>
+                        </td>
+                        <td>
+                            <input v-model="row.id" maxlength="40" name="id" autocomplete="off" />
+                        </td>
+                        <td>
+                            <input v-model="row.label" maxlength="40" name="label" autocomplete="off" />
+                        </td>
+                        <td>
+                            <input v-model="row.help" maxlength="100" name="help" autocomplete="off" />
+                        </td>
+                        <td>
+                            <select class="form-input" v-model="row.operator" tabindex="0">
                                 <option value="eq">{{$t('variables.operators.eq')}}</option>
                                 <option value="ne">{{$t('variables.operators.ne')}}</option>
                                 <option value="gt">{{$t('variables.operators.gt')}}</option>
@@ -53,18 +58,19 @@
                                 <option value="in">{{$t('variables.operators.in')}}</option>
                                 <option value="ni">{{$t('variables.operators.ni')}}</option>
                                 <option value="user">{{$t('variables.operators.user')}}</option>
-                           </select>
-                       </td>
-                       <td>
-                           <input v-model="row.default_value" maxlength="50" name="default_value" autocomplete="off"/>
-                       <td>
-                           <select class="form-input" v-model="row.multiplicity" tabindex="0">
-                               <option value="OPTIONAL">Opcional</option>
-                               <option value="ZERO_OR_MORE">0 ou mais</option>
-                               <option value="ONE">Exatamente 1</option>
-                               <option value="ONE_OR_MORE">Mais de 1</option>
-                           </select>
-                       </td>
+                            </select>
+                        </td>
+                        <td>
+                            <input v-model="row.default_value" maxlength="50" name="default_value" autocomplete="off" />
+                        <td>
+                            <select class="form-input" v-model="row.multiplicity" tabindex="0">
+                                <option value="OPTIONAL">Opcional</option>
+                                <option value="ZERO_OR_MORE">0 ou mais</option>
+                                <option value="ONE">Exatamente 1</option>
+                                <option value="ONE_OR_MORE">Mais de 1</option>
+                            </select>
+                        </td>
+                        <!--
                        <td>
                            <select class="form-input" v-model="row.suggested_widget">
                                <option value="checkbox">{{$t('widgets.checkbox')}}</option>
@@ -77,38 +83,35 @@
                                <option value="textarea">{{$t('widgets.textarea')}}</option>
                            </select>
                        </td>
-    
-                       <td>
-                           <select class="form-input" v-model="row.type">
-	       					<option></option>
-                               <option v-for="dt in dataTypes" :key="dt" :value="dt">
-                                   {{$t('dataTypes.' + dt)}}
-                               </option>
-                           </select>
-                       </td>
-                       <td>
-                           <v-select :options="lookups" :multiple="false" 
-                                   v-model="row.lookup" 
-                                   height="25px"
-                                   :create-option="ds => ({ ds, id: null })"
-                                         :reduce="option => option.id"
-                                   label="name" :taggable="true" :close-on-select="true">
-                               <div slot="no-options"></div>
-                           </v-select>
- 
-                       </td>
-                   </tr>
-               </tbody>
-               </table>
-               <div class="mt-2 border-top pt-2">
-                  <button class="btn btn-success btn-sm" @click.prevent="add">
-                       <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
-              </div>
+                        -->
+                        <td>
+                            <select class="form-input" v-model="row.type">
+                                <option></option>
+                                <option v-for="dt in dataTypes" :key="dt" :value="dt">
+                                    {{$t('dataTypes.' + dt)}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <v-select :options="lookups" :multiple="false" v-model="row.lookup" height="25px"
+                                :create-option="ds => ({ ds, id: null })" :reduce="option => option.id" label="name"
+                                :taggable="true" :close-on-select="true">
+                                <div slot="no-options"></div>
+                            </v-select>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="mt-2 border-top pt-2">
+                <button class="btn btn-success btn-sm" @click.prevent="add">
+                    <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
+            </div>
             <div slot="modal-footer" class="w-100 text-right">
                 <b-btn @click="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
                 <b-btn @click="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
             </div>
-       </b-modal>
+        </b-modal>
     </div>
 </template>
 <script>
@@ -146,34 +149,54 @@
             this.updateDisplayValue(this.value);
         },
         methods: {
+            selectAttribute(row){
+                let name = row.name;
+                let counter = 1;
+                while (this.valueList.find(v => v.id === name)){
+                    name += counter;
+                    counter ++;
+                }
+                row.id = name;
+            },
             openModal() {
                 this.$refs.modal.show();
                 if (this.suggestionEvent) {
                     this.suggestions = this.suggestionEvent();
                 }
-                if (this.lookupsMethod){
+                if (this.lookupsMethod) {
                     this.lookupsMethod();
                 }
             },
             updateDisplayValue(v) {
+                const ops = new Map([
+                    ['eq', ' = '],
+                    ['ne', ' != '],
+                    ['gt', ' > '],
+                    ['lt', ' < '],
+                    ['ge', ' >= '],
+                    ['le', ' <= '],
+                    ['in', ' in '],
+                    ['ni', ' not in '],
+                    ['user', ' ? '],
+                ]);
                 if (v) {
-                    this.displayValue = v.map((v) => v.name).join('\n')
+                    this.displayValue = v.map((v) => v.name + ops.get(v.operator) + "?").join('\n')
                 } else {
                     this.displayValue = '';
                 }
             },
-            updated(e, row, attr) {
-                row[attr] = e.target.value;
-            },
-            attrUpdated(row, attr, val) {
-                row[attr] = val;
-            },
+            // updated(e, row, attr) {
+            //     row[attr] = e.target.value;
+            // },
+            // attrUpdated(row, attr, val) {
+            //     row[attr] = val;
+            // },
             add(e) {
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
-                const id = [...Array(10)].map(i=>(~~(Math.random()*36)).toString(36)).join('');
-                this.valueList.push({id, alias: '', attribute: '', f: '' })
+                const id = [...Array(10)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
+                this.valueList.push({ id, attribute: '' })
             },
             remove(e, index) {
                 this.valueList.splice(index, 1);
@@ -192,7 +215,7 @@
             }
         },
         props: {
-            lookups: {type: Array, default: () => []},
+            lookups: { type: Array, default: () => [] },
             lookupsMethod: null
         },
     }

@@ -497,6 +497,7 @@
                                     })).catch(() => { });
                             }
                         ).catch(function (e) {
+                            console.debug(e);
                             this.error(e);
                         }.bind(this)).finally(() => {
                             Vue.nextTick(() => {

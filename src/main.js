@@ -93,9 +93,11 @@ import DecimalComponent from './components/widgets/Decimal.vue'
 import DropDownComponent from './components/widgets/DropDown.vue'
 import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
 import FilterComponent from './components/widgets/FilterEditor.vue'
+import GridCoordinatesComponent from './components/widgets/GridCoordinates.vue'
 import IntegerComponent from './components/widgets/Integer.vue'
 import LookupComponent from './components/widgets/Lookup.vue'
 import RangeComponent from './components/widgets/Range.vue'
+import SampleLookupComponent from './components/widgets/SampleLookup.vue'
 import Select2Component from './components/widgets/Select2.vue'
 import TagComponent from './components/widgets/Select2.vue'
 import TextComponent from './components/widgets/Text.vue'
@@ -115,10 +117,12 @@ const widgets = new Map([
     ['dropdown-component', DropDownComponent],
     ['expression-component', ExpressionComponent],
     ['filter-component', FilterComponent],
+    ['grid-coordinates-component', GridCoordinatesComponent],
     ['integer-component', IntegerComponent],
     ['lookup-component', LookupComponent],
     ['percentage-component', RangeComponent],
     ['range-component', RangeComponent],
+    ['sample-lookup-component', SampleLookupComponent],
     ['select2-component', Select2Component],
     ['tag-component', TagComponent],
     ['text-component', TextComponent],
