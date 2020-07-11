@@ -1,5 +1,5 @@
 <template>
-    <footer class="footer-page fixed-bottom bg-secondary hidden-print">
+    <footer class="footer-page fixed-bottom bg-secondary d-print-none">
         <ul class="footer-list">
             <li>
                 <span>© 2020 Lemonade Project</span>

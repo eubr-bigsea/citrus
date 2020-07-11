@@ -5,7 +5,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h1> <span v-if="executeOnStart" class="fa fa-bolt text-warning"></span> {{workflow.name}} </h1>
                     <div>
-                        <router-link :to="{name: 'tracks'}" class="btn btn-sm btn-outline-primary float-left mr-1">
+                        <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-left mr-1">
                             {{$t('actions.back')}}</router-link>
 
                         <button @click="testar">Testar</button>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="buttons mt-2 pt-2 border-top text-center">
                         <button class="btn btn-sm btn-primary" type="submit" :disabled="running">
-                            <span class="fa fa-search"></span> {{$t('actions.execute')}}
+                            <span class="fa fa-search"></span> {{$t('actions.search')}}
                         </button>
                     </div>
                 </form>
