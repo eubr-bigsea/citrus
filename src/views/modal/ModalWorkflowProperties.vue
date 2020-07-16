@@ -32,6 +32,13 @@
                 <small><strong>{{$t('workflow.publishingEnabled')}}</strong></small>
               </b-form-checkbox>
               <small><em>{{$t('workflow.publishingEnabledExplanation')}}</em></small>
+              <div v-if="workflow.publishing_enabled" class="mt-3">
+                <label>{{$t('workflow.publishingStatus')}}</label>
+                <select class="form-control" v-model="workflow.publishing_status">
+                    <option value="EDITING">{{$t('workflow.publisingStatusEditing')}}</option>
+                    <option value="PUBLISHED">{{$t('workflow.publisingStatusPublished')}}</option>
+                </select>
+              </div>
             </div>
             </div>
         </b-form>
