@@ -4,6 +4,11 @@
             <div>
                 <div class="d-flex justify-content-between align-items-center">
                     <h1>{{$tc('titles.track', 2)}}</h1>
+                    <div>
+                        <router-link :to="{name: 'addTrack'}"
+                            class="btn btn-sm btn-outline-primary float-left mr-1">
+                            {{$t('actions.addItem')}}</router-link>
+                    </div>
                 </div>
                 <hr>
                 <div class="row">
