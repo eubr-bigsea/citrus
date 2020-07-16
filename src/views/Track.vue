@@ -342,7 +342,7 @@
                                 });
                             }
                         }
-                        if (task.operation.type === 'VISUALIZATION') {
+                        if (task.operation.type === 'VISUALIZATION' && task.enabled) {
                             task.data = null;
                             let taskCoords = (task.forms.grid_coordinates || {}).value || {};
                             console.debug("===", taskCoords)
