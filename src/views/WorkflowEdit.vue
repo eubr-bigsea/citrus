@@ -82,6 +82,7 @@
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
+                <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" />
                 <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
         </div>
@@ -95,6 +96,7 @@
     import InputHeader from '../components/InputHeader.vue';
     import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
     import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
+    import ModalWorkflowImage from './modal/ModalWorkflowImage.vue'
     import ModalWorkflowVariables from './modal/ModalWorkflowVariables.vue'
     import ModalTaskResults from './modal/ModalTaskResults.vue'
     import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue'
@@ -130,6 +132,7 @@
             ModalTaskResults,
             ModalWorkflowHistory,
             ModalWorkflowProperties,
+            ModalWorkflowImage,
             ModalWorkflowVariables,
 
             WorkflowProperty,
@@ -225,6 +228,7 @@
             this.$root.$on('onclick-export', () => this.exportWorkflow());
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showWorkflowProperties);
+            this.$root.$on('onselect-image', this.selectImage);
             this.$root.$on('onset-isDirty', this.setIsDirty);
             this.$root.$on('onclick-setup', (options) => {
                 this.performanceModel.cores = options.cores;
@@ -723,6 +727,10 @@
             showWorkflowProperties() {
                 if (this.$refs.workflowPropertiesModal)
                     this.$refs.workflowPropertiesModal.show();
+            },
+            selectImage() {
+                if (this.$refs.workflowImageModal)
+                    this.$refs.workflowImageModal.show();
             },
             showSaveAs() {
                 if (this.$refs.saveAsModal) {

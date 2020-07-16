@@ -12,6 +12,9 @@
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
             <span class="fa fa-cogs"></span>
         </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="selectImage" :title="$t('actions.selectImage')">
+            <span class="fa fa-image"></span>
+        </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
             <span class="far fa-save"></span>
         </button>
@@ -87,6 +90,9 @@
             showVariables(){
                 this.$root.$emit('onshow-variables')
             },
+            selectImage() {
+                this.$root.$emit('onselect-image');
+            }
         }
     }
 </script>
