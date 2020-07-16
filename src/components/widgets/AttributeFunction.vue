@@ -120,8 +120,6 @@
                 row[attr] = e.target.value;
             },
             attrUpdated(row, attr, val) {
-                debugger
-                console.debug(row, attr)
                 row[attr] = val;
             },
             add(e) {
