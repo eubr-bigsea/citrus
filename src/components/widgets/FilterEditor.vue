@@ -8,101 +8,102 @@
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal ref="modal" size="xl" :title="$tc('common.filter', 2)" centered :ok-only="true"
-            modal-class="full_modal_width-dialog">
-            <table class="table table-bordered table-sm sheet text-center" v-if="valueList && valueList.length">
-                <thead>
-                    <th style="width:2%"></th>
-                    <th style="width:10%">{{$t('variables.attribute')}}</th>
-                    <th style="width:10%">{{$t('variables.id')}}</th>
-                    <th style="width:10%">{{$t('variables.label')}}</th>
-                    <th style="width:12%">{{$t('variables.help')}}</th>
-                    <th style="width:12%">{{$tc('variables.operator', 1)}}</th>
-                    <th style="width:8%">{{$t('variables.defaultValue')}}</th>
-                    <th style="width:8%">{{$t('variables.multiplicity')}}</th>
-                    <!-- <th style="width:18%">{{$t('variables.suggestedWidget')}}</th> -->
-                    <th style="width:10%">{{$t('variables.type')}}</th>
-                    <th style="width: 15%">{{$tc('variables.associateToLookup')}}</th>
-                    <!--th>{{$tc('variables.parameter', 2)}}</th-->
-                </thead>
-                <tbody>
-                    <tr v-for="(row, index) in valueList">
-                        <td>
+        <b-modal ref="modal" size="xl" :title="$tc('common.filter', 2)" centered :ok-only="true" modal-class="">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="values border p-2">
+                        <div v-for="(row, index) in valueList" class="border-bottom">
                             <a href="#" @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')">
                                 <span class="fa fa-minus-circle"></span>
-                            </a>
-                        </td>
-                        <td>
-                            <select v-model="row.name" @change="selectAttribute(row)">
-                                <option></option>
-                                <option v-for="suggestion in suggestions" :key="suggestion">{{suggestion}}</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input v-model="row.id" maxlength="40" name="id" autocomplete="off" />
-                        </td>
-                        <td>
-                            <input v-model="row.label" maxlength="40" name="label" autocomplete="off" />
-                        </td>
-                        <td>
-                            <input v-model="row.help" maxlength="100" name="help" autocomplete="off" />
-                        </td>
-                        <td>
-                            <select class="form-input" v-model="row.operator" tabindex="0">
-                                <option value="eq">{{$t('variables.operators.eq')}}</option>
-                                <option value="ne">{{$t('variables.operators.ne')}}</option>
-                                <option value="gt">{{$t('variables.operators.gt')}}</option>
-                                <option value="lt">{{$t('variables.operators.lt')}}</option>
-                                <option value="ge">{{$t('variables.operators.ge')}}</option>
-                                <option value="le">{{$t('variables.operators.le')}}</option>
-                                <option value="in">{{$t('variables.operators.in')}}</option>
-                                <option value="ni">{{$t('variables.operators.ni')}}</option>
-                                <option value="user">{{$t('variables.operators.user')}}</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input v-model="row.default_value" maxlength="50" name="default_value" autocomplete="off" />
-                        <td>
-                            <select class="form-input" v-model="row.multiplicity" tabindex="0">
-                                <option value="OPTIONAL">Opcional</option>
-                                <option value="ZERO_OR_MORE">0 ou mais</option>
-                                <option value="ONE">Exatamente 1</option>
-                                <option value="ONE_OR_MORE">Mais de 1</option>
-                            </select>
-                        </td>
-                        <!--
-                       <td>
-                           <select class="form-input" v-model="row.suggested_widget">
-                               <option value="checkbox">{{$t('widgets.checkbox')}}</option>
-                               <option value="date">{{$t('widgets.date')}}</option>
-                               <option value="decimal">{{$t('widgets.decimal')}}</option>
-                               <option value="dropdown">{{$t('widgets.dropdown')}}</option>
-                               <option value="integer">{{$t('widgets.integer')}}</option>
-                               <option value="lookup">{{$t('widgets.lookup')}}</option>
-                               <option value="text">{{$t('widgets.text')}}</option>
-                               <option value="textarea">{{$t('widgets.textarea')}}</option>
-                           </select>
-                       </td>
-                        -->
-                        <td>
-                            <select class="form-input" v-model="row.type">
-                                <option></option>
-                                <option v-for="dt in dataTypes" :key="dt" :value="dt">
-                                    {{$t('dataTypes.' + dt)}}
-                                </option>
-                            </select>
-                        </td>
-                        <td>
-                            <v-select :options="lookups" :multiple="false" v-model="row.lookup" height="25px"
-                                :create-option="ds => ({ ds, id: null })" :reduce="option => option.id" label="name"
-                                :taggable="true" :close-on-select="true">
-                                <div slot="no-options"></div>
-                            </v-select>
-
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            </a>&nbsp;
+                            <a href="#" @click.prevent="select(row)"><span class="fa fa-edit"></span></a>
+                            <small>{{row.name}}
+                                <span v-if="row.label">({{row.label}})</span></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div v-if="selected" class="form-filter ">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>{{$t('variables.attribute')}}</label>
+                                <select v-model="selected.name" @change="selectAttribute" class="form-control"
+                                    ref="name">
+                                    <option></option>
+                                    <option v-for="suggestion in suggestions" :key="suggestion">{{suggestion}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>{{$t('variables.id')}}</label>
+                                <input v-model="selected.id" maxlength="40" autocomplete="off" disabled
+                                    class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>{{$t('variables.label')}}</label>
+                                <input v-model="selected.label" maxlength="40" autocomplete="off"
+                                    class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>{{$t('variables.type')}}</label>
+                                <select class="form-control" v-model="selected.type">
+                                    <option></option>
+                                    <option v-for="dt in dataTypes" :key="dt" :value="dt">
+                                        {{$t('dataTypes.' + dt)}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>{{$tc('variables.operator', 1)}}</label>
+                                <select class="form-control" v-model="selected.operator" tabindex="0">
+                                    <option value="eq">{{$t('variables.operators.eq')}}</option>
+                                    <option value="ne">{{$t('variables.operators.ne')}}</option>
+                                    <option value="gt">{{$t('variables.operators.gt')}}</option>
+                                    <option value="lt">{{$t('variables.operators.lt')}}</option>
+                                    <option value="ge">{{$t('variables.operators.ge')}}</option>
+                                    <option value="le">{{$t('variables.operators.le')}}</option>
+                                    <option value="in">{{$t('variables.operators.in')}}</option>
+                                    <option value="ni">{{$t('variables.operators.ni')}}</option>
+                                    <option value="user">{{$t('variables.operators.user')}}</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>{{$t('variables.defaultValue')}}</label>
+                                <input v-model="selected.default_value" maxlength="40" autocomplete="off"
+                                    class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label>{{$t('variables.multiplicity')}}</label>
+                                <select class="form-control" v-model="selected.multiplicity" tabindex="0">
+                                    <option value="OPTIONAL">Opcional</option>
+                                    <option value="ZERO_OR_MORE">0 ou mais</option>
+                                    <option value="ONE">Exatamente 1</option>
+                                    <option value="ONE_OR_MORE">Mais de 1</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label>{{$t('variables.associateToLookup')}}</label>
+                                <v-select :options="lookups" :multiple="false" v-model="selected.lookup" height="25px"
+                                    :create-option="ds => ({ ds, id: null })" :reduce="option => option.id" label="name"
+                                    :taggable="true" :close-on-select="true">
+                                    <div slot="no-options"></div>
+                                </v-select>
+                            </div>
+                            <div class="col-md-12">
+                                <label>{{$t('variables.help')}}</label>
+                                <textarea v-model="selected.help" maxlength="300" autocomplete="off"
+                                    class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <h5 class="text-secondary text-center mt-5">
+                            <span class="fa fa-exclamation-triangle"></span>
+                            <br />
+                            <span v-html="$t('variables.addOrEdit')"></span>
+                        </h5>
+                    </div>
+                </div>
+            </div>
             <div class="mt-2 border-top pt-2">
                 <button class="btn btn-success btn-sm" @click.prevent="add">
                     <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
@@ -137,6 +138,7 @@
                 ok: this.okClicked,
                 cancel: this.cancelClicked,
                 suggestions: [],
+                selected: null,
                 dataTypes: [
                     'DATE',
                     'DECIMAL',
@@ -149,14 +151,14 @@
             this.updateDisplayValue(this.value);
         },
         methods: {
-            selectAttribute(row){
-                let name = row.name;
-                let counter = 1;
-                while (this.valueList.find(v => v.id === name)){
-                    name += counter;
-                    counter ++;
+            selectAttribute() {
+                let name = this.selected.name;
+                let counter = 0;
+                while (this.valueList.find(v => v.id === name)) {
+                    name = row.name + '_' + counter;
+                    counter++;
                 }
-                row.id = name;
+                this.selected.id = name;
             },
             openModal() {
                 this.$refs.modal.show();
@@ -185,23 +187,22 @@
                     this.displayValue = '';
                 }
             },
-            // updated(e, row, attr) {
-            //     row[attr] = e.target.value;
-            // },
-            // attrUpdated(row, attr, val) {
-            //     row[attr] = val;
-            // },
+            select(row) {
+                this.selected = row;
+            },
             add(e) {
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
-                const id = [...Array(10)].map(i => (~~(Math.random() * 36)).toString(36)).join('');
-                this.valueList.push({ id, attribute: '' })
+                const value = { id: '', attribute: '' };
+                this.selected = value;
+                this.valueList.push(value);
             },
             remove(e, index) {
                 this.valueList.splice(index, 1);
                 e.stopPropagation();
                 e.preventDefault();
+                this.selected = null;
                 return false;
             },
             okClicked(ev) {
@@ -220,3 +221,16 @@
         },
     }
 </script>
+<style>
+    div.values {
+        height: 300px;
+        min-height: 300px;;
+        overflow: auto;
+    }
+
+    .form-filter,
+    .form-filter select,
+    .form-filter input {
+        font-size: .9em
+    }
+</style>
