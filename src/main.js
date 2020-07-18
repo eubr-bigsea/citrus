@@ -39,6 +39,7 @@ import {
     faArrowsAltH,
     faHome,
     faLink,
+    faExternalLinkAlt,
     faUser,
     faUserEdit,
     faPaste,
@@ -80,6 +81,7 @@ import {
     faShareAlt,
     faProjectDiagram,
     faUserLock,
+    
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -189,6 +191,7 @@ library.add(
     faArrowsAltV,
     faHome,
     faLink,
+    faExternalLinkAlt,
     faUser,
     faPlus,
     faSortAmountUp,

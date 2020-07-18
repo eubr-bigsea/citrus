@@ -67,6 +67,8 @@ const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
 const WebSocketPing = () => import('./views/WebSocketPing.vue');
 const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
 
+const NotificationList = () => import('./views/NotificationList.vue');
+
 const PlatformList = () => import('./views/Administration/PlatformList.vue');
 const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
 const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
@@ -277,6 +279,15 @@ let router = new Router({
             meta: {
                 requiresAuth: true,
                 title: ['titles.model', 1]
+            }
+        },
+        {
+            path: '/notifications',
+            name: 'notifications',
+            component: NotificationList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.notification', 2]
             }
         },
         {
