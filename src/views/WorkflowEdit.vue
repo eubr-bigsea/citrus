@@ -23,6 +23,7 @@
                         </diagram>
                         <slideout-panel :opened="showProperties">
                             <property-window :task="selectedTask.task" v-if="selectedTask.task"
+                                :variables="workflow.variables || []"
                                 :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
                                 :publishingEnabled="workflow && workflow.publishing_enabled" />
                         </slideout-panel>
@@ -74,13 +75,14 @@
                     </b-tab>
                 </b-tabs>
                 -->
-                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow"/>
+                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"/>
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
                     :validationErrors="validationErrors" :workflow="workflow" />
                 <ModalWorkflowHistory ref="historyModal" :history="history" />
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
+                <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" />
                 <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
         </div>
@@ -94,6 +96,7 @@
     import InputHeader from '../components/InputHeader.vue';
     import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
     import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
+    import ModalWorkflowImage from './modal/ModalWorkflowImage.vue'
     import ModalWorkflowVariables from './modal/ModalWorkflowVariables.vue'
     import ModalTaskResults from './modal/ModalTaskResults.vue'
     import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue'
@@ -129,6 +132,7 @@
             ModalTaskResults,
             ModalWorkflowHistory,
             ModalWorkflowProperties,
+            ModalWorkflowImage,
             ModalWorkflowVariables,
 
             WorkflowProperty,
@@ -224,6 +228,7 @@
             this.$root.$on('onclick-export', () => this.exportWorkflow());
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showWorkflowProperties);
+            this.$root.$on('onselect-image', this.selectImage);
             this.$root.$on('onset-isDirty', this.setIsDirty);
             this.$root.$on('onclick-setup', (options) => {
                 this.performanceModel.cores = options.cores;
@@ -258,7 +263,6 @@
                 }
                 fieldInSelectedTask.label = field.label;
                 if (labelValue) {
-                    console.debug('Label', labelValue)
                     fieldInSelectedTask.labelValue = labelValue
                 } else if (fieldInSelectedTask.labelValue) {
                     delete fieldInSelectedTask.labelValue
@@ -384,6 +388,7 @@
             this.$root.$off('onexecute-workflow');
             this.$root.$off('onshow-properties');
             this.$root.$off('onshow-executions');
+            this.$root.$off('onshow-variables');
             window.removeEventListener('beforeunload', this.leaving)
         },
         watch: {
@@ -427,7 +432,8 @@
                         let workflow = resp.data;
                         this.$Progress.start()
                         const params = {
-                            platform: this.$route.params.platform,
+                            platform: workflow.platform.id, //this.$route.params.platform,
+                            subset: workflow.subset ? workflow.subset.id : null,
                             lang: this.$root.$i18n.locale,
                             disabled: true // even disabled operations must be returned to keep compatibility
                         }
@@ -495,6 +501,7 @@
                                     })).catch(() => { });
                             }
                         ).catch(function (e) {
+                            console.debug(e);
                             this.error(e);
                         }.bind(this)).finally(() => {
                             Vue.nextTick(() => {
@@ -721,6 +728,10 @@
                 if (this.$refs.workflowPropertiesModal)
                     this.$refs.workflowPropertiesModal.show();
             },
+            selectImage() {
+                if (this.$refs.workflowImageModal)
+                    this.$refs.workflowImageModal.show();
+            },
             showSaveAs() {
                 if (this.$refs.saveAsModal) {
                     this.$refs.saveAsModal.show(`${this.$t('workflow.copyOf')} ${this.workflow.name}`);
@@ -897,22 +908,5 @@
     .atmosphere h3 {
         text-align: center;
         color: #aaa;
-    }
-    .full_modal-dialog .modal-dialog {
-      width: 98% !important;
-      height: 92% !important;
-      min-width: 98% !important;
-      min-height: 92% !important;
-      max-width: 98% !important;
-      max-height: 92% !important;
-      padding: 0 !important;
-    }
-    
-    .full_modal-dialog .modal-content{
-      height: 99% !important;
-      min-height: 99% !important;
-      max-height: 99% !important;
-      border-radius: 0;
-      overflow-y: auto;
     }
 </style>

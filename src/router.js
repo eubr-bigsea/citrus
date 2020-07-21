@@ -29,6 +29,8 @@ import WorkflowList from './views/WorkflowList.vue';
 import WorkflowEdit from './views/WorkflowEdit.vue';
 import WorkflowAdd from './views/WorkflowAdd.vue';
 
+import TrackList from './views/TrackList.vue';
+
 import NotebookEdit from './views/NotebookEdit.vue';
 
 import OperationList from './views/OperationList.vue';
@@ -65,9 +67,15 @@ const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
 const WebSocketPing = () => import('./views/WebSocketPing.vue');
 const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
 
+const NotificationList = () => import('./views/NotificationList.vue');
+
 const PlatformList = () => import('./views/Administration/PlatformList.vue');
 const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
 const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
+
+const TrackPanel = () => import('./views/TrackPanel.vue');
+const Track = () => import('./views/Track.vue');
+const TrackAdd = () => import('./views/TrackAdd.vue');
 
 Vue.use(Router);
 
@@ -274,6 +282,15 @@ let router = new Router({
             }
         },
         {
+            path: '/notifications',
+            name: 'notifications',
+            component: NotificationList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.notification', 2]
+            }
+        },
+        {
             path: '/jobs',
             name: 'jobs',
             component: JobList,
@@ -289,6 +306,42 @@ let router = new Router({
             meta: {
                 requiresAuth: true,
                 title: ['titles.job', 1]
+            }
+        },
+        {
+            path: '/apps',
+            name: 'tracks',
+            component: TrackList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/add',
+            name: 'addTrack',
+            component: TrackAdd,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/params/:id',
+            name: 'trackParameter',
+            component: Track,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/panel',
+            name: 'tracksPanel',
+            component: TrackPanel,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
             }
         },
         {

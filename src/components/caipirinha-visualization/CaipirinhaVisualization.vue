@@ -16,7 +16,7 @@
 
 <style>
     .myview {
-        height: 100%;
+        height: 95%;
     }
 </style>
 
@@ -36,6 +36,11 @@
     import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
     import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap"
     import CaipirinhaVisualizationDonut from "./CaipirinhaVisualizationDonut"
+    import IndicatorVisualization from "../visualization/IndicatorVisualization";
+
+    import BarChart from "../visualization/BarChart";
+    import LineChart from "../visualization/LineChart";
+    import PieChart from "../visualization/PieChart";
 
     let highchartsDefaultLang = undefined;
 
@@ -80,19 +85,23 @@
     export default {
         name: "caipirinha-visualization",
         props: {
-            url: {},
-            publicRoute: { default: true },
             dataSourceType: { default: 'caipirinha' },
+            publicRoute: { default: true },
+            task: null,
+            url: {},
         },
         components: {
             CaipirinhaVisualizationHtml,
             CaipirinhaVisualizationMarkdown,
             CaipirinhaVisualizationTable,
-            CaipirinhaVisualizationLine,
-            CaipirinhaVisualizationBar,
+            // CaipirinhaVisualizationLine,
+            CaipirinhaVisualizationLine: LineChart,
+            //CaipirinhaVisualizationBar,
+            "CaipirinhaVisualizationBar": BarChart,
             "caipirinha-visualization-boxplot": CaipirinhaVisualizationBoxPlot,
             "caipirinha-visualization-histogram": CaipirinhaVisualizationHistogram,
-            CaipirinhaVisualizationPie,
+            // CaipirinhaVisualizationPie,
+            CaipirinhaVisualizationPie: PieChart,
             CaipirinhaVisualizationArea,
             CaipirinhaVisualizationScatter,
             CaipirinhaVisualizationMap,

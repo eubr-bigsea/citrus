@@ -16,7 +16,13 @@
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
                 <b-nav-item :to="{ name: 'dashboards' }">
-                    <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }} 
+                    <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
+                </b-nav-item>
+                <b-nav-item :to="{ name: 'tracks' }">
+                    <span class="fa fa-microscope"></span> {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
+                </b-nav-item>
+                <b-nav-item :to="{ name: 'tracksPanel' }">
+                    <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}
                 </b-nav-item>
                 <b-nav-item-dropdown v-if="hasRoles" right>
                     <template v-slot:button-content>
@@ -42,10 +48,45 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
-               </b-nav-item-dropdown>
-            </b-navbar-nav>
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item :to="{ name: 'models' }">
+                        {{ $tc('titles.apiToken', 2) }}
+                    </b-dropdown-item>
 
+                </b-nav-item-dropdown>
+            </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
+                <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
+                    <template slot="button-content">
+                        <span class="badge badge-pill pt-1 pb-1 pl-3 pr-3"
+                            :class="unreadNotifications > 0 ? 'badge-danger': 'badge-success'">
+                            <span class="fa fa-bell"></span>
+                            {{unreadNotifications > 99 ? '99+': unreadNotifications}}
+                        </span>
+                    </template>
+                    <div class="notification-container">
+                        <b-dropdown-item v-for="notification in notifications" style="width: 300px">
+                            <div class="notification border-bottom pb-2">
+                                <span class="badge"
+                                    :class="{'badge-success': notification.type === 'INFO', 'badge-warning': notification.type === 'WARNING', 'badge-danger': notification.type === 'ERROR'}">
+                                    &nbsp;{{$t('titles.' + notification.type.toLowerCase()).toUpperCase()}}
+                                </span>
+                                <span class="notification" :class="{'unread': notification.status === 'UNREAD'}">
+                                    {{notification.created|formatJsonDate}}
+                                </span>
+                                <div class="notification" :class="{'unread': notification.status === 'UNREAD'}"
+                                    v-html="notification.text.substring(0, Math.min(notification.text.length, 500))">
+                                </div>
+                            </div>
+                        </b-dropdown-item>
+                    </div>
+                    <b-dropdown-item :to="{ name: 'notifications' }" class="border-top pt-2">
+                        {{ $t('titles.allNotifications') }}
+                        <span class="fa fa-angle-right"></span>
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+            </b-navbar-nav>
+            <b-navbar-nav>
                 <b-nav-item-dropdown right ref="dropdown">
                     <template slot="button-content">
                         <v-gravatar :email="user.email" class="avatar" />
@@ -60,7 +101,7 @@
                             <small>{{user.email}}</small>
                         </p>
                         <p class="text-center">
-                            <strong>{{$tc('titles.role', 2)}}</strong><br/>
+                            <strong>{{$tc('titles.role', 2)}}</strong><br />
                             <span class="badge badge-info mr-1 p-1" v-for="role in user.roles" :key="role.id">
                                 {{role.label}}
                             </span>
@@ -80,6 +121,12 @@
 <script>
     import { mapGetters } from 'vuex';
 
+    import io from 'socket.io-client';
+    import axios from 'axios';
+    const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
+    const standUrl = process.env.VUE_APP_STAND_URL;
+    const thornUrl = process.env.VUE_APP_THORN_URL;
+
     export default {
         name: 'LNavbar',
         components: {},
@@ -87,17 +134,71 @@
             ...mapGetters(['hasRoles', 'isAdmin', 'isManager', 'isMonitor', 'user'])
         },
         data() {
-            return { xuser: {} }
+            return {
+                namespace: standNamespace,
+                unreadNotifications: 0,
+                notifications: [],
+                socket: null,
+                room: null,
+            }
         },
         mounted() {
-            //this.user = this.$store.getters.user;
+            this.room = `user:${this.user.id}`;
+            this.room = "user:1"
+            const socket = io(this.namespace, {
+                upgrade: true,
+            });
+            self.socket = socket;
+            socket.on('connect', () => {
+                console.debug("Notification connected to room " + this.room);
+                console.debug(socket.emit('join', { room: this.room }));
+                self.socket = socket;
+            });
+            socket.on('notifications', (msg) => {
+                console.debug(msg)
+                this.unreadNotifications = msg.unread;
+            });
+            socket.on('connect_error', () => {
+                console.debug('Web socket server offline');
+            });
+
+            socket.on('disconnect', () => {
+                console.debug('You are not connected');
+            });
+
+            socket.on('response', (msg) => {
+                console.debug(msg)
+            });
+            axios.get(`${thornUrl}/notifications/summary`)
+                .then(resp => {
+                    this.unreadNotifications = resp.data.unread;
+                });
         },
         methods: {
             profile(evt) {
                 this.$refs.dropdown.hide(true);
                 this.$router.push({ name: 'profile' });
+            },
+            loadNotifications() {
+                const params = {
+                    page: 1,
+                    size: 10,
+                    sort: 'created',
+                    asc: 'false',
+                };
+                axios.get(`${thornUrl}/notifications`, { params })
+                    .then(resp => {
+                        this.notifications = resp.data.data;
+                    });
             }
-        }
+        },
+        beforeDestroy() {
+            if (this.socket) {
+                this.socket.emit('leave', { room: this.room });
+                this.socket.close();
+            }
+        },
+
     };
 </script>
 
@@ -149,5 +250,26 @@
 
     .dropdown-menu>li>a:active {
         color: white;
+    }
+
+    .unread {
+        font-weight: bold;
+    }
+
+    .notification-container {
+        height: 300px;
+        overflow: auto;
+    }
+
+    .notification {
+        white-space: break-spaces !important;
+        font-size: .9em;
+    }
+
+    .notification p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 75ch;
     }
 </style>

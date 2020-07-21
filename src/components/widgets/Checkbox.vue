@@ -1,11 +1,11 @@
 <template>
-    <div ref="fieldElement">
+    <div ref="fieldElement" class="mt-3 mb-2" style="width: 100%">
         <div v-if="readOnly">
             {{value === null ? field.default: (value === '0' ? $t('common.false') : $t('common.true')) }}
         </div>
-        <div v-else>
+        <div v-else class="clearfix">
             <div class="float-left" :data-name="field.name">
-                <SwitchComponent class="float-left" :onchange="changed" :checked="checked">{{field.label}}
+                <SwitchComponent class="float-left" :onchange="changed" :checked="checked">{{field.label || field.name}}
                 </SwitchComponent>
             </div>
             <div class="float-right">
@@ -17,7 +17,9 @@
 <script>
     import LabelComponent from './Label.vue'
     import SwitchComponent from './Switch.vue'
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         name: 'checkbox-component',
         components: { LabelComponent, SwitchComponent },
         methods: {
@@ -43,14 +45,6 @@
                 this.changed(this.field.default);
             }
             this.id = `check_${this._uid}`;
-        },
-        props: {
-            readOnly: false,
-            value: 0,
-            field: {},
-            message: {
-                default: 'update-form-field-value'
-            }
         },
         watch: {
             value: function () {
