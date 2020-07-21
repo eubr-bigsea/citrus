@@ -1,8 +1,9 @@
 <template>
-    <div style="border: 1px solid red">
+    <div>
         <Plotly :data="data" :layout="layout" :display-mode-bar="true"></Plotly>
+        <!--
         <CaipirinhaVisualizationLine :visualization-data="visualizationData" />
-
+        -->
     </div>
 </template>
 <script>
