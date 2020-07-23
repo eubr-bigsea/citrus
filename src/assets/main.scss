@@ -1,5 +1,18 @@
 $snotify-width: 600px !default;
 @import '~vue-snotify/styles/dark.scss'; //dark or material.css or simple.css
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  --background-color: #F8F9FA;
+  --card-backgroud-color: #ECEEEF;
+  --primary-color: #568F32;
+  --secondary-color: #A8CA57;
+  --font-color: #4B4E51;
+}
+
+body {
+  background-color: var(--background-color);
+}
 
 .snotify {
   z-index: 1000005 !important;
@@ -43,7 +56,8 @@ $snotify-width: 600px !default;
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  /* font-family: 'Avenir', Helvetica, Arial, sans-serif; */
+  font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -52,7 +66,11 @@ $snotify-width: 600px !default;
   width: calc(100% - 0px);
 }
 
-.navbar-brand > span {
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* .navbar-brand > span {
   margin: 3px 0 0 5px;
   display: block;
   float: right;
@@ -67,7 +85,7 @@ $snotify-width: 600px !default;
         border-radius: 50px;
         
     }
-}
+} */
 
 /* The side navigation menu */
 
@@ -363,6 +381,21 @@ h1 {
     padding-top: 15px;
     height: calc(100% - 60px);
 }
+
 .card-body {
-    padding: 5px 15px;
+    padding: 1rem;
+}
+
+.card {
+
+  .card-header {
+
+    background-color: var(--card-backgroud-color);
+
+    .card-title {
+      margin: 0;
+      font-size: 18px;
+    }
+
+  }
 }

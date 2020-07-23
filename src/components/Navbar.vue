@@ -1,8 +1,8 @@
 <template>
-    <b-navbar id="l-navbar" toggleable="md" type="dark" variant="dark" sticky>
+    <b-navbar id="l-navbar" toggleable="md" sticky>
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand :to="{ name: 'home' }">
-            <div class="logo" title="Lemonade">Lemonade</div>
+            <img src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav>
@@ -102,14 +102,27 @@
 </script>
 
 <style>
+
+    #l-navbar {
+        background-color: #fff;
+        box-shadow: 0 0 8px rgba(0, 0, 0, .16);
+    }
+
     #l-navbar .dropdown-divider {
         margin: 0;
     }
 
+    .navbar-brand {
+        margin-right: 3rem!important;
+    }
+
     #l-navbar a.nav-link {
-        color: white;
         font-weight: 500;
         font-size: 14px;
+    }
+
+    #l-navbar a.nav-link span {
+        color: var(--primary-color);
     }
 
     #l-navbar .bg-dark {
@@ -118,6 +131,31 @@
 
     #l-navbar .dropdown-menu {
         font-size: 14px;
+    }
+
+    .navbar .nav-item {
+        margin: 0 .5rem;
+    }
+
+    .navbar .nav-item .nav-link{
+        line-height: calc(60px - 4px);
+        padding: 0;
+        border-bottom: solid 4px #FFFFFF00;
+    }
+    
+    .navbar .nav-item .nav-link:hover {
+        border-bottom-color: var(--secondary-color);
+    }
+
+    @media (min-width: 768px) {
+        .navbar-collapse {
+            height: 60px;
+            margin: -0.5rem 0;
+        }
+
+        .navbar-nav {
+            height: 100%;
+        }
     }
 
     #l-navbar .avatar,
@@ -137,10 +175,6 @@
 
     #l-navbar .navbar-toggler {
         border-width: 0;
-    }
-
-    #l-navbar {
-        box-shadow: 0 12px 24px rgba(18, 38, 63, 0.1);
     }
 
     .dropdown-menu>li>a:hover {
