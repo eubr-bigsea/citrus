@@ -36,7 +36,7 @@
 <script>
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
-    import plotly from 'plotly.js';
+    import Plotly from 'plotly.js-basic-dist-min'
 
     // Colors from plotly in Python. Is there a method to retrieve them in JS?
     const palettes = [

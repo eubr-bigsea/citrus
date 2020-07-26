@@ -96,8 +96,6 @@
 </template>
 <script>
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
-    import _ from 'lodash';
-
     const groupBy = function (xs, keySelector) {
         return xs.reduce(function (rv, x) {
             var key = keySelector(x);

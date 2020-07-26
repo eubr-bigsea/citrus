@@ -65,7 +65,7 @@
                         </span>
                     </template>
                     <div class="notification-container">
-                        <b-dropdown-item v-for="notification in notifications" style="width: 300px">
+                        <b-dropdown-item v-for="notification in notifications" style="width: 300px" :key="notification.id">
                             <div class="notification border-bottom pb-2">
                                 <span class="badge"
                                     :class="{'badge-success': notification.type === 'INFO', 'badge-warning': notification.type === 'WARNING', 'badge-danger': notification.type === 'ERROR'}">

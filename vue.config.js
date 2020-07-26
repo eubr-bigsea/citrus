@@ -5,8 +5,11 @@ module.exports = {
     configureWebpack: {
         devtool: 'source-map',
         plugins: [
-            //new BundleAnalyzerPlugin(),
-        ]
+            new BundleAnalyzerPlugin(),
+        ],
+        optimization: {
+            minimize: true
+        }
     },
     publicPath: './',
     pluginOptions: {

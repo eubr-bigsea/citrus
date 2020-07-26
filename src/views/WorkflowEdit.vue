@@ -425,6 +425,46 @@
                 //this.selectedTab = index;
                 this.$refs.diagram.repaint();
             },
+            _load_operations(self, workflow, resp){
+                self.operations = resp.data
+                self.operations.forEach((op) => {
+                    self.operationsLookup[op.id] = op
+                })
+                let usingDisabledOp = false;
+                workflow.tasks.forEach((task) => {
+                    let op = self.operationsLookup[task.operation.id];
+                    task.operation = op
+                    task.step = null;
+                    usingDisabledOp |= op.enabled === false;
+                    if (!op.enabled) {
+                        task.warning = self.$t('workflow.usingDisabledOperation');
+                    } else {
+                        task.warning = null;
+                    }
+                });
+                if (usingDisabledOp) {
+                    self.warning(self.$t('messages.usingDisabledOperation',
+                        { what: self.$tc('titles.workflow') }), 60000, 300);
+                }
+                if (!workflow.forms) {
+                    workflow.forms = {};
+                }
+                (workflow.platform.forms || []).forEach((form) => {
+                    if (form.order < self.minFormOrder) {
+                        self.minFormOrder = form.order;
+                    }
+                    // form.fields.forEach((field) => {
+                    //     // console.debug("Aqui", workflow.forms[field.name])
+                    //     // workflow.forms[field.name] = workflow.forms[field.name].value ||
+                    //     //     field['default'] || ''
+                    // });
+                });
+                self.workflow = workflow;
+                self._validateTasks(self.workflow.tasks);
+                self.updateAttributeSuggestion();
+                self.loaded = true;
+                const params = { workflow_id: this.$route.params.id }
+            },
             load() {
                 let self = this;
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
@@ -435,83 +475,50 @@
                             platform: workflow.platform.id, //this.$route.params.platform,
                             subset: workflow.subset ? workflow.subset.id : null,
                             lang: this.$root.$i18n.locale,
-                            disabled: true // even disabled operations must be returned to keep compatibility
+                            disabled: true, // even disabled operations must be returned to keep compatibility,
+                            workflow: workflow.id
                         }
-                        axios.get(`${tahitiUrl}/operations`, { params }).then(
-                            (resp) => {
-                                self.operations = resp.data
-                                self.operations.forEach((op) => {
-                                    self.operationsLookup[op.id] = op
-                                })
-                                let usingDisabledOp = false;
-                                workflow.tasks.forEach((task) => {
-                                    let op = self.operationsLookup[task.operation.id];
-                                    task.operation = op
-                                    task.step = null;
-                                    usingDisabledOp |= op.enabled === false;
-                                    if (!op.enabled) {
-                                        task.warning = self.$t('workflow.usingDisabledOperation');
-                                    } else {
-                                        task.warning = null;
-                                    }
-                                });
-                                if (usingDisabledOp) {
-                                    self.warning(self.$t('messages.usingDisabledOperation',
-                                        { what: self.$tc('titles.workflow') }), 60000, 300);
-                                }
-                                if (!workflow.forms) {
-                                    workflow.forms = {};
-                                }
-                                (workflow.platform.forms || []).forEach((form) => {
-                                    if (form.order < self.minFormOrder) {
-                                        self.minFormOrder = form.order;
-                                    }
-                                    // form.fields.forEach((field) => {
-                                    //     // console.debug("Aqui", workflow.forms[field.name])
-                                    //     // workflow.forms[field.name] = workflow.forms[field.name].value ||
-                                    //     //     field['default'] || ''
-                                    // });
-                                });
-                                self.workflow = workflow;
-                                self._validateTasks(self.workflow.tasks);
-                                this.updateAttributeSuggestion();
-                                self.loaded = true;
-                                const params = { workflow_id: this.$route.params.id }
-                                axios.get(`${standUrl}/jobs/latest`, { params })
-                                    .then((resp2 => {
-                                        const job = resp2.data;
-										self.job = job;
-                                        const tasks = self.workflow.tasks;
-                                        job.steps.forEach((step) => {
-                                            const foundTask = tasks.find((t) => {
-                                                return t.id === step.task.id;
-                                            });
-                                            if (foundTask) {
-                                                foundTask.step = step;
-                                            }
-                                        });
-                                        job.results.forEach((result) => {
-                                            const foundTask = tasks.find((t) => {
-                                                return t.id === result.task.id;
-                                            });
-                                            if (foundTask) {
-                                                foundTask.result = result;
-                                            }
-                                        });
-                                    })).catch(() => { });
-                            }
+                        axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._load_operations(self, workflow, resp)
                         ).catch(function (e) {
-                            console.debug(e);
                             this.error(e);
                         }.bind(this)).finally(() => {
                             Vue.nextTick(() => {
-                                this.$Progress.finish()
-                            })
+                                this.$Progress.finish();
+                                delete params['workflow'];
+                                axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._load_operations(self, workflow, resp)
+                                ).catch(function (e) {
+                                        this.error(e);
+                                });
+                                });
                         });
+                axios.get(`${standUrl}/jobs/latest`, { params })
+                    .then((resp2 => {
+                        const job = resp2.data;
+						self.job = job;
+                        const tasks = self.workflow.tasks;
+                        job.steps.forEach((step) => {
+                            const foundTask = tasks.find((t) => {
+                                return t.id === step.task.id;
+                            });
+                            if (foundTask) {
+                                foundTask.step = step;
+                            }
+                        });
+                        job.results.forEach((result) => {
+                            const foundTask = tasks.find((t) => {
+                                return t.id === result.task.id;
+                            });
+                            if (foundTask) {
+                                foundTask.result = result;
+                            }
+                        });
+                    })).catch(() => { });
+
                     }
                 ).catch(function (e) {
                     this.error(e);
                 }.bind(this));
+
             },
             saveAsImage() {
                 let self = this

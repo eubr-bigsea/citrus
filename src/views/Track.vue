@@ -68,12 +68,12 @@
                                 <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h"
                                     :i="item.i" :key="item.i" class="grid-item">
                                     <caipirinha-visualization v-if="!running" class="pl-2 pr-2"
-                                        :url="getCaipirinhaLink(job.id, item.task.id, 0)" />
+                                        :url="getCaipirinhaLink(job.id, item.task.id, 0)" :height="100*item.h"/>
                                     <div v-else class="p-5 text-center mt-5">
                                         <b-spinner variant="success" type="grow"></b-spinner>
                                         <p>{{$t('common.wait')}}</p>
                                     </div>
-                                    <div style="position: absolute; top:0; left:0">{{item.x}}/{{item.y}} {{item.w}}/{{item.h}}</div>
+                                    <div style="position: absolute; top:0; left:0">{{item.x}}/{{item.y}} {{item.w}}/{{item.h}} {{100*item.h}}</div>
                                 </grid-item>
                             </grid-layout>
                         </div>
@@ -139,12 +139,18 @@
             }
         },
         mounted() {
-            this.load();
+            const self = this;
+            self.load();
             this.$root.$on('update-form-field-value', (field, value, labelValue) => {
                 if (field.parameterType === 'field') {
                     field.value = value;
+                } else if (field.parameterType === 'variable') {
+                    const variable = self.workflow.variables.find((v) => v.name === field.name);
+                    if (variable){
+                        variable.value = value;
+                    }
                 } else {
-                    console.debug(field)
+                    field.field.value = value;
                 }
             });
         },
@@ -320,6 +326,7 @@
 
                     workflow.variables.forEach((variable) => {
                         variable.help = variable.description;
+                        variable.parameterType = 'variable';
                         if (variable.suggested_widget === 'dropdown') {
                             variable.values = JSON.stringify(
                                 variable.parameters.split('\n').map((v) => { return { key: v, value: v } }));
@@ -337,8 +344,11 @@
                         task.operation = op;
                         for (var [name, value] of Object.entries(task.forms)) {
                             if (value.publishing_enabled === true) {
+                                const field = opFields.get(name);
+                                // Copy field from the task
+                                field.field = task.forms[field.name];
                                 self.properties.push({
-                                    name, filled: value, field: opFields.get(name), task: task.id
+                                    name, filled: value, field
                                 });
                             }
                         }
