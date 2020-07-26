@@ -283,6 +283,7 @@
                     const params = {
                         platform: this.$route.params.platform,
                         lang: this.$root.$i18n.locale,
+                        workflow: workflow.id,
                         disabled: true // even disabled operations must be returned to keep compatibility
                     };
                     axios

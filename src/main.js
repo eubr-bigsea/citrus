@@ -16,6 +16,7 @@ import { ClientTable, ServerTable } from 'vue-tables-2';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import Gravatar from 'vue-gravatar';
 
+
 import {
     faBolt,
     faBell,

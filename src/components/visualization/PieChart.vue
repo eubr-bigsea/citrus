@@ -1,6 +1,6 @@
 <template>
-        <div>
-        <Plotly :data="data" :layout="layout" :display-mode-bar="true"></Plotly>
+    <div>
+        <Plotly ref="plotly" :data="data" :layout="layout" :display-mode-bar="true" :auto-resize="true"></Plotly>
     </div>
 </template>
 <script>
@@ -12,8 +12,24 @@
                 data: this.getData(),
                 layout: {
                     title: { text: this.visualizationData.title },
+                    autosize:true,
+                    height: this.height,
                 },
             };
+        },
+        mounted(){
+            const self = this;
+            this.__resizeListener = _.debounce(() => {
+                self.$refs.plotly.relayout({
+                    width: self.$el.clientWidth,
+                    height: self.$el.parentElement.parentElement.clientHeight - 20,
+                });
+            }, 100);
+            window.addEventListener('resize', this.__resizeListener);
+            this.__resizeListener();
+        },
+        beforeDestroy() {
+            window.removeEventListener('resize', this.__resizeListener)
         },
         methods: {
             getData() {

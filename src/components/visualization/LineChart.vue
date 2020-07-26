@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Plotly :data="data" :layout="layout" :display-mode-bar="true"></Plotly>
+        <Plotly ref="plotly" :data="data" :layout="layout" :display-mode-bar="true" :options="options"></Plotly>
         <!--
         <CaipirinhaVisualizationLine :visualization-data="visualizationData" />
         -->
@@ -29,9 +29,27 @@
                         ticksuffix: this.visualizationData.y.suffix,
                         tickprefix: this.visualizationData.y.prefix,
                     },
-                    legend: { "orientation": "h", "x": 0, "y": 4 }
+                    legend: { "orientation": "h", "x": 0, "y": 4 },
+                    autosize: true,
+                    automargin: true,
+                    height: this.height
                 },
+                options: {responsive: true},
             };
+        },
+        mounted(){
+            const self = this;
+            this.__resizeListener = _.debounce(() => {
+                self.$refs.plotly.relayout({
+                    width: self.$el.clientWidth,
+                    height: self.$el.parentElement.parentElement.clientHeight - 20,
+                });
+            }, 100);
+            window.addEventListener('resize', this.__resizeListener);
+            this.__resizeListener();
+        },
+        beforeDestroy() {
+            window.removeEventListener('resize', this.__resizeListener)
         },
         methods: {
             getData() {
