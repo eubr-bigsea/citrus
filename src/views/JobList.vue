@@ -1,66 +1,55 @@
 <template>
-  <main role="main">
-    <div class="row">
-      <div class="col">
-        <div>
-          <div class="d-flex justify-content-between align-items-center">
-            <h1>{{$tc('titles.jobs', 2)}}</h1>
-          </div>
-          <hr>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="card">
-                <div class="card-body">
-                  <v-server-table
-                    ref="jobList"
-                    :data="tableData"
-                    :columns="columns"
-                    :options="options"
-                    name="jobList"
-                  >
-                    <template slot="id" slot-scope="props">
-                      <router-link
-                        :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
-                      >{{props.row.id}}</router-link>
-                    </template>
-                    <template slot="name" slot-scope="props">
-                      <router-link
-                        :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
-                      >{{props.row.name}}</router-link>
-                    </template>
-                    <template slot="actions" slot-scope="props">
-                      <button
-                        class="btn btn-sm btn-light"
-                        :title="$t('actions.delete')"
-                        @click="remove(props.row)"
-                      >
-                        <font-awesome-icon icon="trash"></font-awesome-icon>
-                      </button>
-                    </template>
-                    <template slot="status" slot-scope="props">
-                      <div
-                        class="lemonade-job"
-                        :class="props.row.status.toLowerCase()"
-                      >{{props.row.status}}</div>
-                    </template>
-                    <template
-                      slot="created"
-                      slot-scope="props"
-                    >{{props.row.created | formatJsonDate}}</template>
-                    <template slot="workflow" slot-scope="props">
-                      <router-link
-                        :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}"
-                      >{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
-                    </template>
-                  </v-server-table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
+	<main role="main">
+		<div class="row">
+			<div class="col">
+				<div class="title">
+					<h1>{{$tc('titles.jobs', 2)}}</h1>
+				</div>
+				<v-server-table
+				ref="jobList"
+				:data="tableData"
+				:columns="columns"
+				:options="options"
+				name="jobList"
+				>
+				<template slot="id" slot-scope="props">
+					<router-link
+					:to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
+					>{{props.row.id}}</router-link>
+				</template>
+				<template slot="name" slot-scope="props">
+					<router-link
+					:to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
+					>{{props.row.name}}</router-link>
+				</template>
+				<template slot="actions" slot-scope="props">
+					<button
+					class="btn btn-sm btn-danger"
+					:title="$t('actions.delete')"
+					@click="remove(props.row)"
+					>
+					<font-awesome-icon icon="trash"></font-awesome-icon>
+					</button>
+				</template>
+				<template slot="status" slot-scope="props">
+					<div
+					class="lemonade-job"
+					:class="props.row.status.toLowerCase()"
+					>{{props.row.status}}</div>
+				</template>
+				<template
+					slot="created"
+					slot-scope="props"
+				>{{props.row.created | formatJsonDate}}</template>
+				<template slot="workflow" slot-scope="props">
+					<router-link
+					:to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}"
+					>{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
+				</template>
+				</v-server-table>
+			</div>
+		</div>
+	</main>
 </template>
 
 <script>

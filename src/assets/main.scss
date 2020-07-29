@@ -300,16 +300,21 @@ h2.title {
   z-index: 100001 !important;
 }
 .lemonade-job {
-  &.completed,
-  &.running,
-  &.canceled,
-  &.interrupted,
-  &.waiting,
-  &.error {
-    color: white;
-    font-size: 0.7em;
-    padding: 4px;
-  }
+
+    border-radius: 25px;
+    max-width: 75px;
+    margin: 0 auto;
+
+    &.completed,
+    &.running,
+    &.canceled,
+    &.interrupted,
+    &.waiting,
+    &.error {
+        color: white;
+        font-size: 0.7em;
+        padding: 4px;
+    }
 
   &.completed {
     background-color: #2ecc40;
