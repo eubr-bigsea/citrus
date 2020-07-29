@@ -1,10 +1,8 @@
 <template>
   <main role="main">
-    <div class="row">
-      <div class="col-12">
+      
+    <div class="title">
         <h1>{{$t('home.recentlyUpdated')}}</h1>
-      </div>
-      <hr>
     </div>
 
     <div class="row">

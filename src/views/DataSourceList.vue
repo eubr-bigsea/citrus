@@ -3,62 +3,59 @@
         <div class="row">
             <div class="col">
                 <div class>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ $tc('titles.dataSource', 2) }}</h1>
-                        <router-link :to="{ name: 'addDataSource' }" class="btn btn-sm btn-outline-primary">
-                            {{ $t('actions.addItem') }}
-                        </router-link>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <v-server-table ref="dataSourceList" :data="tableData" :columns="columns"
-                                        :options="options" name="dataSourceList">
-                                        <template slot="id" slot-scope="props">
-                                            <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
-                                                {{ props.row.id }}
-                                            </router-link>
-                                        </template>
-                                        <template slot="name" slot-scope="props">
-                                            <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
-                                                {{ props.row.name }}
-                                            </router-link>
-                                        </template>
-                                        <template slot="actions" slot-scope="props">
-                                            <div class="text-nowrap">
-                                                <button v-if="loggedUserIsOwnerOrAdmin(props.row)"
-                                                    class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                                                    <font-awesome-icon icon="trash" />
-                                                </button>
-                                                <button class="btn btn-sm btn-light" :title="$t('actions.download')"
-                                                    @click="download(props.row)">
-                                                    <span class="fa fa-download" />
-                                                </button>
-                                                <button v-if="visualizable(props.row)" :title="$t('common.preview')"
-                                                    class="btn btn-spinner btn-light btn-sm"
-                                                    @click.stop="preview(props.row.id)">
-                                                    <font-awesome-icon icon="spinner" pulse class="icon" />
-                                                    <span class="fa fa-eye"></span>
-                                                </button>
-                                            </div>
-                                        </template>
-                                        <template slot="created" slot-scope="props">
-                                            {{ props.row.created | formatJsonDate }}
-                                        </template>
-                                        <template slot="tags" slot-scope="props">
-                                            <div v-if="props.row.tags">
-                                                <div v-for="tag in (props.row.tags || '').split(',')" :key="tag"
-                                                    class="badge badge-info mr-1">
-                                                    {{ tag }}
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </v-server-table>
-                                </div>
-                            </div>
+                    
+                    <div class="title">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h1>{{ $tc('titles.dataSource', 2) }}</h1>
+                            <router-link :to="{ name: 'addDataSource' }" class="btn btn-primary btn-lemonade-primary">
+                                <span class="fa fa-plus" /> {{ $t('actions.addItem') }}
+                            </router-link>
                         </div>
+                    </div>
+
+                        <v-server-table ref="dataSourceList" :data="tableData" :columns="columns"
+                            :options="options" name="dataSourceList">
+                            <template slot="id" slot-scope="props">
+                                <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                                    {{ props.row.id }}
+                                </router-link>
+                            </template>
+                            <template slot="name" slot-scope="props">
+                                <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                                    {{ props.row.name }}
+                                </router-link>
+                            </template>
+                            <template slot="actions" slot-scope="props">
+                                <div class="btn-group" role="group">
+                                    <button v-if="visualizable(props.row)" :title="$t('common.preview')"
+                                        class="btn btn-spinner btn-primary btn-sm"
+                                        @click.stop="preview(props.row.id)">
+                                        <font-awesome-icon icon="spinner" pulse class="icon" />
+                                        <span class="fa fa-eye"></span>
+                                    </button>
+                                    <button class="btn btn-sm btn-info" :title="$t('actions.download')"
+                                        @click="download(props.row)">
+                                        <span class="fa fa-download" />
+                                    </button>
+                                    <button v-if="loggedUserIsOwnerOrAdmin(props.row)"
+                                        class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                                        <font-awesome-icon icon="trash" />
+                                    </button>
+                                </div>
+                            </template>
+                            <template slot="created" slot-scope="props">
+                                {{ props.row.created | formatJsonDate }}
+                            </template>
+                            <template slot="tags" slot-scope="props">
+                                <div v-if="props.row.tags">
+                                    <div v-for="tag in (props.row.tags || '').split(',')" :key="tag"
+                                        class="badge badge-info mr-1">
+                                        {{ tag }}
+                                    </div>
+                                </div>
+                            </template>
+                        </v-server-table>
+                               
                     </div>
                 </div>
             </div>

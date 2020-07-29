@@ -8,6 +8,7 @@ $snotify-width: 600px !default;
   --primary-color: #568F32;
   --secondary-color: #A8CA57;
   --font-color: #4B4E51;
+  --font-color-rgb: 75, 78, 81;
 }
 
 body {
@@ -55,6 +56,28 @@ body {
   }
 }
 
+.btn-lemonade-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+
+    &:hover, &:not(:disabled):not(.disabled):active, &:focus  {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        filter: brightness(90%);
+    }
+}
+
+.btn-lemonade-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+
+    &:hover, &:not(:disabled):not(.disabled):active, &:focus  {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        filter: brightness(90%);
+    }
+}
+
 #app {
   /* font-family: 'Avenir', Helvetica, Arial, sans-serif; */
   font-family: 'Roboto', sans-serif;
@@ -68,6 +91,26 @@ body {
 
 * {
   font-family: 'Roboto', sans-serif;
+}
+
+main {
+    margin-bottom: 50px;
+}
+
+.title {
+    margin: 2rem 0 1rem 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.VueTables {
+    .row:first-child {
+        margin: 0;
+        background-color: rgba(var(--font-color-rgb), .04);
+        padding-top: 1rem;
+    }
 }
 
 /* .navbar-brand > span {
@@ -185,7 +228,7 @@ body {
 
 ul.nav-tabs {
   display: flex;
-  background: #fafafa;
+  //background: #fafafa;
   li.default {
     order: -1;
     /* the default is 0 */
@@ -382,20 +425,23 @@ h1 {
     height: calc(100% - 60px);
 }
 
-.card-body {
-    padding: 1rem;
-}
-
 .card {
 
-  .card-header {
-
-    background-color: var(--card-backgroud-color);
-
-    .card-title {
-      margin: 0;
-      font-size: 18px;
+    .card-body {
+        padding: 1rem;
     }
 
-  }
+    .card-header {
+        background-color: var(--card-backgroud-color);
+        .card-title {
+            margin: 0;
+            font-size: 18px;
+        }
+    }
+
+    .card-footer {
+        button {
+            margin: 0 .25rem;
+        }
+    }
 }
