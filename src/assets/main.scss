@@ -25,17 +25,39 @@ body {
   }
 }
 
+.object-align-center,
+.object-align-center-v,
+.object-align-distribute,
+.object-align-distribute-v,
 .object-align-left,
 .object-align-right,
 .object-align-top,
 .object-align-bottom {
-  background-image: url('align.svg');
-  width: 16px;
-  height: 16px;
+  background: url('align.svg') center center no-repeat;
+  background-size: 16px 16px;
+  width: 19px;
+  height: 19px;
   display: block;
   margin: 2px 0;
-  filter: invert(100%);
 }
+
+.object-align-center,
+.object-align-center-v {
+  background-image: url('align-center.svg');
+}
+
+.object-align-distribute,
+.object-align-distribute-v {
+  background-image: url('distribute.svg');
+}
+
+.object-align-distribute-v {
+  transform: rotate(90deg);
+}
+
+.object-align-center-v {
+    transform: rotate(90deg);
+  }
 
 .object-align-top {
   transform: rotate(90deg);

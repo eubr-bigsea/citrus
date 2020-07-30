@@ -1,6 +1,8 @@
 <template>
-    <div :class="'platform-' + platform" class="border" oncontextmenu="return false;">
-        <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
+    <div :class="'platform-' + platform" class="border diagram" oncontextmenu="return false;">
+        <div class="diagram-toolbar">
+            <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
+        </div>
         <div id="lemonade-container" :class="{ 'with-grid': showGrid }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
@@ -1028,16 +1030,23 @@
                     return this.selectedElements.includes(task.id);
                 });
                 if (selectedTasks.length) {
-                    let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
-                        if (fn === 'min') {
-                            return prev[pos] < cur[pos] ? prev : cur;
-                        } else {
-                            return prev[pos] > cur[pos] ? prev : cur;
-                        }
-                    });
-                    selectedTasks.forEach((task, inx) => {
-                        task[pos] = minPosTask[pos];
-                    });
+                    if (fn === 'center') {
+                        let centerPos = selectedTasks.map((v)=>v[pos]).reduce((prev, cur)=>cur+prev)/selectedTasks.length;
+                        selectedTasks.forEach((task, inx) => {
+                            task[pos] = centerPos;
+                        });
+                    } else {
+                        let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
+                            if (fn === 'min') {
+                                return prev[pos] < cur[pos] ? prev : cur;
+                            } else {
+                                return prev[pos] > cur[pos] ? prev : cur;
+                            }
+                        });
+                        selectedTasks.forEach((task, inx) => {
+                            task[pos] = minPosTask[pos];
+                        });
+                    }
                     Vue.nextTick(function () {
                         self.instance.repaintEverything();
                     });
@@ -1274,6 +1283,16 @@
 </script>
 
 <style scoped lang="scss">
+
+    .diagram {
+        margin: 0 -15px;
+
+        .diagram-toolbar {
+            background: rgb(199,200,201);
+            background: linear-gradient(0deg, rgba(199,200,201,1) 0%, rgba(239,239,239,1) 100%);
+        }
+    }
+
     .scroll-area {
         width: 100%;
         height: 95vh;

@@ -4,15 +4,31 @@
             <div class="col">
                 <TahitiSuggester />
 
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
-                        <input-header v-model="workflow.name"></input-header>
-                    </div>
-                    <div>
+                <div class="title">
+
+                    <div class="float-right">
                         <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
                     </div>
+
+                    <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
+                    <input-header v-model="workflow.name"></input-header>
+                        
                 </div>
+
+                <div v-show="showTasksPanel" class="toolbox">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">{{ $tc('common.operation', 2) }}</h4>
+                        </div>
+                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
+                    </div>
+                </div>
+
+                <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
+                    :operations="operations" :loaded="loaded" :version="workflow.version" tabindex="0">
+                </diagram>
+
+                <!-- 
                 <div class="row border-top pt-1">
                     <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
                         <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
@@ -27,7 +43,8 @@
                                 :publishingEnabled="workflow && workflow.publishing_enabled" />
                         </slideout-panel>
                     </div>
-                </div>
+                </div> -->
+
                 <!--
                 <b-tabs ref="formTabs" v-model="selectedTab" nav-class="custom-tab" @input="updateSelectedTab">
                     <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
@@ -131,6 +148,8 @@
             ModalWorkflowProperties,
             ModalWorkflowVariables,
 
+            VuePerfectScrollbar,
+
             WorkflowProperty,
             WorkflowExecution,
             InputHeader,
@@ -162,6 +181,7 @@
                 operations: [],
                 operationsLookup: new Map(),
 
+                showTasksPanel: false,
                 resultTask: { step: {} },
                 saveOption: 'new',
                 selectedTab: 0,
@@ -182,6 +202,11 @@
         },
         mounted() {
             const self = this
+
+            this.$root.$on('addTask', () => {
+                this.showTasksPanel = false;
+            });
+
             this.$root.$on('onclear-selection', () => {
                 this.selectedTask = {};
                 this.selectedElements = [];
@@ -219,6 +244,7 @@
 
             this.$root.$on('onalign-tasks', this.align);
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
+            this.$root.$on('ontoggle-tasksPanel', this.toggleTasksPanel);
             this.$root.$on('onremove-tasks', this.removeTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-export', () => this.exportWorkflow());
@@ -356,6 +382,7 @@
             }
         },
         beforeDestroy() {
+            this.$root.$off('addTask');
             this.$root.$off('onclick-task');
             this.$root.$off('on-error');
             this.$root.$off('onsave-as-image');
@@ -363,6 +390,7 @@
             this.$root.$off('onsave-workflow-as');
             this.$root.$off('onsaveas-workflow');
             this.$root.$off('onalign-tasks');
+            this.$root.$off('ontoggle-tasksPanel');
             this.$root.$off('ontoggle-tasks');
             this.$root.$off('ondistribute-tasks');
             this.$root.$off('onclick-execute');
@@ -413,6 +441,7 @@
             align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
             },
+            toggleTasksPanel(){ this.showTasksPanel = !this.showTasksPanel; },
             toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
             removeTasks() { this.$refs.diagram.removeSelectedTasks(); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
@@ -884,7 +913,40 @@
         overflow-y: hidden
     }
 </style>
-<style>
+<style lang="scss">
+
+    .toolbox {
+        &:before {
+            content: "";
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #ECEEEF;
+            margin: -8px 0 0 12px;
+            transform: rotate(45deg);
+            z-index: 1;
+        }
+
+        position: absolute;
+        z-index: 10;
+        width: 250px;
+        margin-top: 50px;
+        //overflow: hidden;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
+        border-radius: 5px;
+
+        .card .card-header {
+
+            .card-title {
+                font-size: 12px;
+            }
+        }
+
+        .ps__scrollbar-y-rail {
+            z-index: 1;
+        }
+    }
+
     .blackout {
         background-color: rgba(0, 0, 0, 0) !important;
     }
