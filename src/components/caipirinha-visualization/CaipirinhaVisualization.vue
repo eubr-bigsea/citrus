@@ -17,6 +17,7 @@
 <style>
     .myview {
         height: 100%;
+	min-height: 450px;
     }
 </style>
 
