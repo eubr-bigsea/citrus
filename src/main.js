@@ -92,7 +92,8 @@ import AttributeSelector2Component from './components/widgets/AttributeSelector2
 import CheckboxComponent from './components/widgets/Checkbox.vue'
 import CodeComponent from './components/widgets/Code.vue'
 import ColorComponent from './components/widgets/Color.vue'
-import ColorPalleteComponent from './components/widgets/ColorPallete.vue'
+import ColorPaletteComponent from './components/widgets/ColorPalette.vue'
+import ColorScaleComponent from './components/widgets/ColorScale.vue'
 import DecimalComponent from './components/widgets/Decimal.vue'
 import DropDownComponent from './components/widgets/DropDown.vue'
 import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
@@ -119,7 +120,9 @@ const widgets = new Map([
     ['checkbox-component', CheckboxComponent],
     ['code-component', CodeComponent],
     ['color-component', ColorComponent],
-    ['color-pallete-component', ColorPalleteComponent],
+    ['color-palette-component', ColorPaletteComponent],
+    ['color-pallete-component', ColorPaletteComponent], // FIXME: Remove
+    ['color-scale-component', ColorScaleComponent],
     ['decimal-component', DecimalComponent],
     ['dropdown-component', DropDownComponent],
     ['expression-component', ExpressionComponent],

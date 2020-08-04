@@ -476,7 +476,8 @@
                             subset: workflow.subset ? workflow.subset.id : null,
                             lang: this.$root.$i18n.locale,
                             disabled: true, // even disabled operations must be returned to keep compatibility,
-                            workflow: workflow.id
+                            workflow: workflow.id,
+                            t: new Date().getTime(), // Force refresh
                         }
                         axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._load_operations(self, workflow, resp)
                         ).catch(function (e) {
