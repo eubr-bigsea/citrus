@@ -87,7 +87,8 @@
                 email: '',
                 password: '',
                 rememberPassword: false,
-                showingPassword: false
+                showingPassword: false,
+                submitted: false,
             };
         },
         computed: {
@@ -105,6 +106,7 @@
                     .then(() => this.$router.push('/'))
                     .catch(e => {
                        this.error(e.response.data);
+                       this.submit = false;
                     });
             }
         }

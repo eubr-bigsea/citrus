@@ -26,7 +26,7 @@
             </div>
             </div>
 
-            <div class="card mt-2">
+            <div v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" class="card mt-2">
               <div class="card-body">
               <b-form-checkbox v-model="workflow.publishing_enabled">
                 <small><strong>{{$t('workflow.publishingEnabled')}}</strong></small>
@@ -51,9 +51,14 @@
 </template>
 <script>
     import SwitchComponent from '../../components/widgets/Switch.vue';
+    import { mapGetters } from 'vuex';
+
     export default {
         components: {
             SwitchComponent
+        },
+        computed: {
+            ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
         },
         props: {
             loaded: false,

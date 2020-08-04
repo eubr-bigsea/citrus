@@ -18,13 +18,13 @@
                 <b-nav-item :to="{ name: 'dashboards' }">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'tracks' }">
+                <b-nav-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
                     <span class="fa fa-microscope"></span> {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'tracksPanel' }">
+                <b-nav-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'tracksPanel' }">
                     <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}
                 </b-nav-item>
-                <b-nav-item-dropdown v-if="hasRoles" right>
+                <b-nav-item-dropdown v-if="isAdmin" right>
                     <template v-slot:button-content>
                         <span class="fa fa-user-lock"></span>
                         {{$tc('titles.administration', 2)}}
@@ -39,10 +39,10 @@
                         {{ $tc('titles.configuration', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item v-if="isAdmin" :to="{ name: 'clusters' }">
+                    <b-dropdown-item :to="{ name: 'clusters' }">
                         {{ $tc('titles.cluster', 2) }}
                     </b-dropdown-item>
-                    <b-dropdown-item v-if="isAdmin" :to="{ name: 'platforms' }">
+                    <b-dropdown-item :to="{ name: 'platforms' }">
                         {{ $tc('titles.platform', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
@@ -131,7 +131,7 @@
         name: 'LNavbar',
         components: {},
         computed: {
-            ...mapGetters(['hasRoles', 'isAdmin', 'isManager', 'isMonitor', 'user'])
+            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
         },
         data() {
             return {

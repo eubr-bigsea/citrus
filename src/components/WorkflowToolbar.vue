@@ -4,7 +4,7 @@
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
             <span class="fa fa-tasks"></span> {{$tc('titles.job', 2)}}
         </button>
-        <button class="btn btn-sm btn-outline-dark" @click.prevent="showVariables" :title="$t('actions.showVariables')">
+        <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled" class="btn btn-sm btn-outline-dark" @click.prevent="showVariables" :title="$t('actions.showVariables')">
             <span class="fa fa-dollar-sign"></span> Variáveis
         </button>
     </div>
@@ -58,10 +58,14 @@
 
 <script>
     import Notifier from '../mixins/Notifier'
+    import { mapGetters } from 'vuex';
 
     export default {
         mixins: [Notifier],
         name: 'WorkflowToolbar',
+        computed: {
+            ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
+        },
         props: {
             workflow: {}
         },
