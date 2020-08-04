@@ -9,8 +9,8 @@
                         <div class="float-right navbar-brand logo" style="width:32px; margin:0"/>
                         <form @submit.prevent="login">
                             <div class="form-group">
-                                <label for="email">{{ $t('common.email') }}:</label>
-                                <input v-model="email" required type="email" class="form-control" placeholder="Name"
+                                <label for="email">{{ $t('common.email') }} / {{ $t('common.user.login') }}:</label>
+                                <input v-model="email" required type="text" class="form-control" placeholder="Name"
                                     autofocus autocomplete="username" />
                             </div>
 
