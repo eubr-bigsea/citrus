@@ -283,7 +283,7 @@
 
     .properties {
         background: #fff;
-        height: calc(100vh - 300px);
+        max-height: calc(100vh - 300px);
         zoom: 100%;
         font-size: .75rem
     }

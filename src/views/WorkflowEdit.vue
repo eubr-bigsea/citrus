@@ -28,6 +28,13 @@
                     :operations="operations" :loaded="loaded" :version="workflow.version" tabindex="0">
                 </diagram>
 
+                <div class="diagram-properties" v-if="showProperties">
+                    <property-window :task="selectedTask.task" v-if="selectedTask.task"
+                        :variables="workflow.variables || []"
+                        :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
+                        :publishingEnabled="workflow && workflow.publishing_enabled" />
+                </div>
+
                 <!-- 
                 <div class="row border-top pt-1">
                     <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
@@ -963,6 +970,16 @@
         .ps__scrollbar-y-rail {
             z-index: 1;
         }
+    }
+
+    .diagram-properties {
+        width: 350px;
+        max-height: calc(100vh - 300px);
+        position: fixed;
+        right: 1rem;
+        bottom: calc(1rem + 25px);
+        overflow: hidden;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
     }
 
     .blackout {
