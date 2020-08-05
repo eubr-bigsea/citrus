@@ -18,12 +18,20 @@
                 <b-nav-item :to="{ name: 'dashboards' }">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'tracks' }">
-                    <span class="fa fa-microscope"></span> {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
-                </b-nav-item>
-                <b-nav-item :to="{ name: 'tracksPanel' }">
-                    <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}
-                </b-nav-item>
+
+                <b-nav-item-dropdown right>
+                    <template v-slot:button-content>
+                        <span class="fa fa-route"></span>
+                        {{ $tc('titles.track', 2) }}
+                    </template>
+                    <b-dropdown-item :to="{ name: 'tracks' }">
+                        {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'tracksPanel' }">
+                        {{ $tc('titles.track', 2) }}
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+                
                 <b-nav-item-dropdown v-if="hasRoles" right>
                     <template v-slot:button-content>
                         <span class="fa fa-user-lock"></span>
