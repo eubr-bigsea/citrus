@@ -254,6 +254,7 @@ export default {
             storage: 'Armazenamento',
             suggestedOption:
                 'Se você não sabe qual opção escolher, esta é a opção recomendada.',
+            tablesReference: 'Tabelas (apenas referência)',
             textDelimiter: 'Delimitador de texto (apenas CSV)',
             treatAsNull: 'Tratar estes valores como valores nulos (opcional)',
             uploadingLog: 'Registro de envio',
@@ -868,6 +869,7 @@ export default {
             storage: 'Storage',
             suggestedOption:
                 'If you do not know what to choose, this is the suggested option.',
+            tablesReference: 'Tables (only for reference)',
             textDelimiter: 'Text delimiter (CSV only)',
             treatAsNull: 'Treat these values as null (optional)',
             uploadingLog: 'Uploading log',

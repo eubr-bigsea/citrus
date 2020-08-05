@@ -161,14 +161,25 @@
                         <div v-if="step === 3" class="card animated">
                             <div class="card-body">
                                 <h4 class="card-title">{{$t('dataSource.databaseStorage')}}</h4>
-                                <label>{{$tc('common.name', 1)}}:</label>
-                                <input v-model="dataSource.name" type="text" class="form-control">
-
-                                <label>{{$t('dataSource.selectCommand')}}:</label>
-                                <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label>{{$tc('common.name', 1)}}:</label>
+                                        <input v-model="dataSource.name" type="text" class="form-control">
+        
+                                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{$t('dataSource.tablesReference')}}</label>
+                                        <select class="form-control tables" size="10" v-model="selectedTable" @dblclick.stop="copyTableName">
+                                            <option v-for="tb in tables" :key="tb">
+                                                {{tb}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <div class="border-top mt-5 pt-4">
-                                    <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
                                     <button class="btn btn-success" @click="save">{{$t('actions.save')}}</button>
                                     <button class="btn ml-1 btn-outline-secondary"
                                         @click="step=1">{{$t('actions.back')}}</button>
@@ -178,14 +189,24 @@
                         <div v-if="step === 4" class="card animated">
                             <div class="card-body">
                                 <h4 class="card-title">Vallum {{$t('dataSource.databaseStorage')}}</h4>
-                                <label>{{$tc('common.name', 1)}}:</label>
-                                <input v-model="dataSource.name" type="text" class="form-control">
-
-                                <label>{{$t('dataSource.selectCommand')}}:</label>
-                                <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
-
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label>{{$tc('common.name', 1)}}:</label>
+                                        <input v-model="dataSource.name" type="text" class="form-control">
+        
+                                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{$t('dataSource.tablesReference')}}</label>
+                                        <select class="form-control tables" size="10" v-model="selectedTable" @dblclick.stop="copyTableName">
+                                            <option v-for="tb in tables" :key="tb">
+                                                {{tb}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="border-top mt-5 pt-4">
-                                    <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
                                     <button class="btn btn-success" @click="save">
                                         {{$t('actions.save')}}</button>
                                     <button class="btn ml-1 btn-outline-secondary"
@@ -227,11 +248,13 @@
                     url: '',
                     storage_id: null
                 },
+                selectedTable: null,
                 supported: true,
                 showProgress: false,
                 showPause: false,
                 showResume: false,
-                resumableList: []
+                resumableList: [],
+                tables: [],
             };
         },
         mounted() {
@@ -297,6 +320,7 @@
                     this.step = 3;
                     this.dataSource.format = 'HIVE';
                     this.dataSource.storage_id = this.hiveStorage;
+                    this.retrieveTables()
                 } else {
                     this.step = 2;
                     this.dataSource.format = 'UNKNOWN';
@@ -306,6 +330,22 @@
                         this.setupResumable();
                     });
                 }
+            },
+            copyTableName(){
+                this.dataSource.command = (this.dataSource.command ? this.dataSource.command  + ' ' : '') + this.selectedTable;
+            },
+            retrieveTables(){
+                const self = this;
+                const url = `${limoneroUrl}/storages/metadata/${self.dataSource.storage_id}`;
+
+                axios.get(url)
+                    .then((resp) => {
+                        self.tables = resp.data.data;
+                    }
+                    ).catch((e) => { 
+                        self.error(e);
+                    });
+ 
             },
             setupResumable() {
                 let self = this;
@@ -539,5 +579,8 @@
 
     .progress-pause {
         padding: 0 0 0 7px;
+    }
+    .tables {
+        font-size: .7em;
     }
 </style>

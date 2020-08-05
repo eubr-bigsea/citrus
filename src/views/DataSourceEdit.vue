@@ -79,12 +79,22 @@
                                                     {{ $t('dataSource.privacyAware') }}
                                                 </b-form-checkbox>
                                             </div>
+                                            <div class="col-md-4"></div>
 
                                             <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM' || dataSource.storage.type === 'HIVE'"
-                                                class="col-md-12 mt-3 pb-1">
+                                                class="col-md-8 mt-3 pb-1">
                                                 <label>{{$tc('common.command')}}:</label>
                                                 <textarea v-model="dataSource.command" class="form-control"></textarea>
                                             </div>
+                                            <div class="col-md-4">
+                                                <label>{{$t('dataSource.tablesReference')}}</label>
+                                                <select class="form-control" size="10" v-model="selectedTable" @dblclick.stop="copyTableName" style="font-size:.7em">
+                                                    <option v-for="tb in tables" :key="tb">
+                                                        {{tb}}
+                                                    </option>
+                                                </select>
+                                            </div>
+
                                             <div v-if="dataSource.storage.type === 'VALLUM'"
                                                 class="col-md-12 mt-3 pb-1">
                                                 <label>Initialization: </label>
@@ -442,7 +452,9 @@
                 textDelimiters: ['"', "'"],
                 encodings: ['ISO-8859-1', 'UTF-8', 'UTF-16'],
                 currentAttribute: { attribute_privacy: {} },
-                timeoutHandler: null
+                timeoutHandler: null, 
+                selectedTable: null,
+                tables: [],
             };
         },
         
@@ -498,6 +510,7 @@
             this.load().then(() => {
                 Vue.nextTick(() => {
                     self.isDirty = false;
+                    self.retrieveTables();
                 });
             });
         },
@@ -690,7 +703,24 @@
                 } else {
                     self._doInfer(event);
                 }
-            }
+            },
+            copyTableName(){
+                this.dataSource.command = (this.dataSource.command ? this.dataSource.command  + ' ' : '') + this.selectedTable;
+            },
+            retrieveTables(){
+                const self = this;
+                const url = `${limoneroUrl}/storages/metadata/${self.dataSource.storage.id}`;
+
+                axios.get(url)
+                    .then((resp) => {
+                        self.tables = resp.data.data;
+                    }
+                    ).catch((e) => { 
+                        self.error(e);
+                    });
+ 
+            },
+
         }
     };
 </script>
