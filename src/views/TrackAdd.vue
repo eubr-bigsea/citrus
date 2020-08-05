@@ -20,22 +20,20 @@
                       <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform" @change="selectOptions(false)">
                         <table class="table table-striped">
                           <template v-for="platform in platforms">
-                          <tr class="d-flex">
+                          <tr v-if="platform.subsets.length" class="d-flex">
                             <td class="col-3">
                               <b-form-radio v-if="platform.subsets.length == 0" :value="platform.id" name="platform" v-model="selectedPlatform" >
-                                {{platform.name}}
+                                {{platform.name}}<br/>
+                                <small>{{platform.description}}.</small>
                               </b-form-radio>
                               <div v-else>
-                                {{platform.name}}
+                                {{platform.name}}<br/>
+                                <small>{{platform.description}}.</small>
                               </div>
                             </td>
-                            <td class="col-9">
-                              <small>{{platform.description}}.</small>
-                            </td>
                           </tr>
-                          <tr v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
-                            <td class="col-1">{{selectedSubset}}</td>
-                            <td class="col-11">
+                          <tr v-if="platform.subsets.length" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
+                            <td class="col-12">
                               <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" @change="selectOptions(true, platform.id)">
                                   <b-form-radio :value="subset.id" name="subset" v-model="selectedSubset">
                                    {{subset.name}}
@@ -48,38 +46,10 @@
                       </b-form-radio-group>
                     </div>
                   </b-tab>
-                  <b-tab :title="$t('workflow.fromTemplate')">
-                    <div class="col-md-12 mt-2">
-                      <table class="table" v-if="templates && templates.length">
-                        <tr class="d-flex">
-                          <th class="col-3">{{$tc('common.name')}}</th>
-                          <th class="col-6">{{$tc('common.description')}}</th>
-                          <th class="col-3">{{$tc('titles.platform')}}</th>
-                        </tr>
-                        <tr v-for="template in templates" :key="template.id" class="d-flex">
-                          <td class="col-3">
-                            <b-form-radio
-                              :value="template.id"
-                              name="templateCheck"
-                              v-model="selectedTemplate"
-                              @change="selectOne"
-                            >{{template.name}}</b-form-radio>
-                          </td>
-                          <td class="col-6">
-                            <em>{{template.description}}.</em>
-                          </td>
-                          <td class="col-3">{{template.platform ? template.platform.name: ''}}</td>
-                        </tr>
-                      </table>
-                      <div v-else>
-                        <div class="alert alert-info">{{$t('common.noData')}}</div>
-                      </div>
-                    </div>
-                  </b-tab>
                 </b-tabs>
               </div>
               <div class="col-md-12 mt-3 border-top pt-1">
-                <button class="btn float-right" :class="{'btn-success': true }" @click="choose($event)" :disabled="!canCreate">
+                <button class="btn float-left" :class="{'btn-primary': true }" @click.once="choose($event)" :disabled="!canCreate">
                     {{$t('actions.confirm')}}
                 </button>
               </div>
@@ -168,6 +138,7 @@ export default {
           platform_id: this.selectedPlatform,
           template_id: this.selectedTemplate,
           subset_id: this.selectedSubset,
+          publishing_enabled: true
         };
         let url = `${tahitiUrl}/workflows`;
         if (this.selectedTab === 1) {

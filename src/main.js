@@ -16,8 +16,12 @@ import { ClientTable, ServerTable } from 'vue-tables-2';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import Gravatar from 'vue-gravatar';
 
+
 import {
+    faBolt,
+    faBell,
     faBars,
+    faMicroscope,
     faChartLine,
     faCheck,
     faCheckDouble,
@@ -36,8 +40,10 @@ import {
     faArrowsAltH,
     faHome,
     faLink,
+    faExternalLinkAlt,
     faUser,
     faUserEdit,
+    faPaste,
     faPlay,
     faPlus,
     faSortAmountUp,
@@ -76,6 +82,7 @@ import {
     faShareAlt,
     faProjectDiagram,
     faUserLock,
+    
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
@@ -85,16 +92,26 @@ import AttributeSelector2Component from './components/widgets/AttributeSelector2
 import CheckboxComponent from './components/widgets/Checkbox.vue'
 import CodeComponent from './components/widgets/Code.vue'
 import ColorComponent from './components/widgets/Color.vue'
+import ColorPalleteComponent from './components/widgets/ColorPallete.vue'
 import DecimalComponent from './components/widgets/Decimal.vue'
 import DropDownComponent from './components/widgets/DropDown.vue'
 import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
+import FilterComponent from './components/widgets/FilterEditor.vue'
+import GridCoordinatesComponent from './components/widgets/GridCoordinates.vue'
 import IntegerComponent from './components/widgets/Integer.vue'
 import LookupComponent from './components/widgets/Lookup.vue'
+import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue'
 import RangeComponent from './components/widgets/Range.vue'
+import SampleLookupComponent from './components/widgets/SampleLookup.vue'
 import Select2Component from './components/widgets/Select2.vue'
 import TagComponent from './components/widgets/Select2.vue'
 import TextComponent from './components/widgets/Text.vue'
 import TextAreaComponent from './components/widgets/TextArea.vue'
+import UrlComponent from './components/widgets/Url.vue'
+
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
+Vue.component('v-select', vSelect)
 
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
@@ -102,17 +119,24 @@ const widgets = new Map([
     ['checkbox-component', CheckboxComponent],
     ['code-component', CodeComponent],
     ['color-component', ColorComponent],
+    ['color-pallete-component', ColorPalleteComponent],
     ['decimal-component', DecimalComponent],
     ['dropdown-component', DropDownComponent],
     ['expression-component', ExpressionComponent],
+    ['filter-component', FilterComponent],
+    ['grid-coordinates-component', GridCoordinatesComponent],
     ['integer-component', IntegerComponent],
     ['lookup-component', LookupComponent],
     ['percentage-component', RangeComponent],
     ['range-component', RangeComponent],
+    ['rich-text-component', MarkdownEditorComponent],
+    ['sample-lookup-component', SampleLookupComponent],
     ['select2-component', Select2Component],
     ['tag-component', TagComponent],
     ['text-component', TextComponent],
-    ['textarea-component', TextAreaComponent]])
+    ['textarea-component', TextAreaComponent],
+    ['url-component', UrlComponent],
+])
 
 widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
@@ -127,7 +151,11 @@ Vue.use(Snotify, {
         xposition: 'centerTop'
     }
 });
-
+Vue.directive('focus', {
+  inserted: function (el) {
+    el.focus()
+  }
+})
 /**
  * Setting this config so that Vue-tables-2 will be able to replace sort icons with chevrons
  * https://fontawesome.com/how-to-use/with-the-api/setup/configuration
@@ -143,7 +171,10 @@ import { dom } from '@fortawesome/fontawesome-svg-core';
 dom.watch();
 
 library.add(
+    faBolt,
+    faBell,
     faBars,
+    faMicroscope,
     faChartLine,
     faCheck,
     faCheckDouble,
@@ -163,6 +194,7 @@ library.add(
     faArrowsAltV,
     faHome,
     faLink,
+    faExternalLinkAlt,
     faUser,
     faPlus,
     faSortAmountUp,
@@ -177,6 +209,7 @@ library.add(
     faObjectGroup,
     faQuestionCircle,
     faAsterisk,
+    faPaste,
     faSpinner,
     faDatabase,
     faSearch,

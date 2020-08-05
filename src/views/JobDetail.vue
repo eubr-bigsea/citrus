@@ -10,7 +10,7 @@
                         </h1>
                         <router-link
                             v-if="workflow.id"
-                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="btn btn-sm btn-outline-primary">
+                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="btn btn-sm btn-outline-primary d-print-none">
                             <i class="fa fa-chevron-left"></i>
                             &nbsp; {{$t('actions.back')}} -
                             {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
@@ -283,6 +283,7 @@
                     const params = {
                         platform: this.$route.params.platform,
                         lang: this.$root.$i18n.locale,
+                        workflow: workflow.id,
                         disabled: true // even disabled operations must be returned to keep compatibility
                     };
                     axios

@@ -68,6 +68,10 @@
                                                 <b-form-checkbox v-model="dataSource.is_public">
                                                     {{ $t('dataSource.public') }}</b-form-checkbox>
                                             </div>
+                                            <div class="col-md-4 col-lg-2 mt-3">
+                                                <b-form-checkbox v-model="dataSource.is_lookup">
+                                                    {{ $t('dataSource.lookup') }}</b-form-checkbox>
+                                            </div>
                                             <div v-if="atmosphereExtension" class="col-md-2 col-lg-2 mt-3">
                                                 <b-form-checkbox v-if="atmosphereExtension"
                                                     v-model="dataSource.privacy_aware">
@@ -420,48 +424,17 @@
                 privacy_types: ['SENSITIVE', 'IDENTIFIER', 'NON_SENSITIVE',
                     'QUASI_IDENTIFIER'],
                 dataTypes: [
-                    'BINARY',
-                    'CHARACTER',
-                    'DOUBLE',
-                    'DECIMAL',
-                    'DATE',
-                    'DATETIME',
-                    'FLOAT',
-                    'INTEGER',
-                    'LONG',
-                    'TEXT',
-                    'TIME',
-                    'TIMESTAMP',
-                    'VECTOR'
-                ].sort(),
+                    'BINARY', 'CHARACTER', 'DOUBLE', 'DECIMAL', 'DATE', 'DATETIME',
+                    'FLOAT', 'INTEGER', 'LONG', 'TEXT', 'TIME', 'TIMESTAMP',
+                    'VECTOR' ].sort(),
                 formats: [
-                    'CSV',
-                    'CUSTOM',
-                    'GEO_JSON',
-                    'HAR_IMAGE_FOLDER',
-                    'HDF5',
-                    'DATA_FOLDER',
-                    'IMAGE_FOLDER',
-                    'HIVE',
-                    'JDBC',
-                    'JSON',
-                    'NPY',
-                    'PARQUET',
-                    'PICKLE',
-                    'SAV',
-                    'SHAPEFILE',
-                    'TAR_IMAGE_FOLDER',
-                    'TEXT',
-                    'VIDEO_FOLDER',
-                    'UNKNOWN',
-                    'XML_FILE'
-                ].sort(),
+                    'CSV', 'CUSTOM', 'GEO_JSON', 'HAR_IMAGE_FOLDER', 'HDF5',
+                    'DATA_FOLDER', 'IMAGE_FOLDER', 'HIVE', 'JDBC', 'JSON',
+                    'NPY', 'PARQUET', 'PICKLE', 'SAV', 'SHAPEFILE',
+                    'TAR_IMAGE_FOLDER', 'TEXT', 'VIDEO_FOLDER', 'UNKNOWN',
+                    'XML_FILE' ].sort(),
                 delimiters: [
-                    ',',
-                    ';',
-                    '.',
-                    '{tab}',
-                    '{new_line \\n}',
+                    ',', ';', '.', '{tab}', '{new_line \\n}',
                     '{new_line \\r\\n}'
                 ],
                 textDelimiters: ['"', "'"],

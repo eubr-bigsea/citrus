@@ -15,7 +15,9 @@
 </template>
 <script>
     import LabelComponent from './Label.vue'
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: { LabelComponent },
         data() {
             return {
@@ -57,16 +59,10 @@
         },
 
         props: {
-            language: { default: 'en' },
             value: {
                 type: Number, default: 50,
-            }, field: {},
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            }
+            },
         },
-
     }
 </script>
 <style scoped>

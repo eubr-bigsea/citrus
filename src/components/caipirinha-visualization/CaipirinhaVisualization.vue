@@ -1,5 +1,5 @@
 <template>
-    <div class="myview" style="margin-top: 15px;">
+    <div class="xmyview" style="margin-top: 15px;">
         <p v-if="loading">
             <font-awesome-icon icon="spinner" pulse class="icon"></font-awesome-icon> {{$t('common.loading')}}
         </p>
@@ -10,13 +10,16 @@
         </div>
 
         <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData"
-            :public-route="publicRoute"></component>
+            :public-route="publicRoute" :height="height"></component>
     </div>
 </template>
 
 <style>
-    .myview {
-        height: 100%;
+    div.myview {
+        height: 95%;
+        border: 1px solid red;
+        margin: 0 1px;
+        width: 98% !important;
     }
 </style>
 
@@ -36,6 +39,11 @@
     import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
     import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap"
     import CaipirinhaVisualizationDonut from "./CaipirinhaVisualizationDonut"
+    import IndicatorVisualization from "../visualization/IndicatorVisualization";
+
+    import BarChart from "../visualization/BarChart";
+    import LineChart from "../visualization/LineChart";
+    import PieChart from "../visualization/PieChart";
 
     let highchartsDefaultLang = undefined;
 
@@ -80,19 +88,24 @@
     export default {
         name: "caipirinha-visualization",
         props: {
-            url: {},
-            publicRoute: { default: true },
             dataSourceType: { default: 'caipirinha' },
+            publicRoute: { default: true },
+            task: null,
+            url: {},
+            height: {default: 450}
         },
         components: {
             CaipirinhaVisualizationHtml,
             CaipirinhaVisualizationMarkdown,
             CaipirinhaVisualizationTable,
-            CaipirinhaVisualizationLine,
-            CaipirinhaVisualizationBar,
+            // CaipirinhaVisualizationLine,
+            CaipirinhaVisualizationLine: LineChart,
+            //CaipirinhaVisualizationBar,
+            "CaipirinhaVisualizationBar": BarChart,
             "caipirinha-visualization-boxplot": CaipirinhaVisualizationBoxPlot,
             "caipirinha-visualization-histogram": CaipirinhaVisualizationHistogram,
-            CaipirinhaVisualizationPie,
+            // CaipirinhaVisualizationPie,
+            CaipirinhaVisualizationPie: PieChart,
             CaipirinhaVisualizationArea,
             CaipirinhaVisualizationScatter,
             CaipirinhaVisualizationMap,

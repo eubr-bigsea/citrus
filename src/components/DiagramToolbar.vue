@@ -15,6 +15,15 @@
                 <span class="fa fa-trash"></span>
             </button>
         </div>
+
+        <div class="toolbar-group">
+            <button variant="secondary" @click.prevent="copy" :title="$t('actions.copy')" :disabled="!taskSelected">
+                <span class="fa fa-copy"></span>
+            </button>
+            <button variant="secondary" @click.prevent="paste" :title="$t('actions.paste')" :disabled="copiedTasks === null || copiedTasks.length === 0">
+                <span class="fa fa-paste"></span>
+            </button>
+        </div>
     
         <div class="toolbar-group">
             <button type="button" @click.prevent="align('left', 'min')" :title="$t('actions.alignLeft')">
@@ -46,11 +55,7 @@
                 :title="$t('actions.distributeVertically')">
                 <span class="object-align-distribute-v"></span>
             </button>
-            <!--
-            <button type="button" @click.prevent="addGroup" :title="$t('actions.addGroup')">
-                <span class="fa fa-object-group"></span>
-            </button>
-        -->
+    
         </div>
         
         <div class="toolbar-group">
@@ -131,11 +136,7 @@
 </style>
 
 <script>
-    import axios from 'axios'
-    import Notifier from '../mixins/Notifier'
-    let tahitiUrl = process.env.VUE_APP_TAHITI_URL
     export default {
-        mixins: [Notifier],
         name: 'DiagramToolbar',
         data() {
             return {
@@ -144,9 +145,24 @@
             }
         },
         props: {
-            workflow: {}
+            selected: Array,
+            copiedTasks: Array,
+        },
+        computed: {
+            taskSelected(){
+                return this.selected && this.selected.length > 0;
+            },
+            tasksSelected(){
+                return this.selected && this.selected.length > 1;
+            },
         },
         methods: {
+            copy(){
+                this.$root.$emit('oncopy-tasks');
+            },
+            paste(){
+                this.$root.$emit('onpaste-tasks');
+            },
             removeSelected(){
                 this.$root.$emit('onremove-tasks');
             },

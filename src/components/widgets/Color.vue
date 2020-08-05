@@ -10,8 +10,10 @@
     </div>
 </template>
 <script>
-    import LabelComponent from './Label.vue'
+    import LabelComponent from './Label.vue';
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: { LabelComponent },
         computed: {
             pairOptionValueList() {
