@@ -21,7 +21,7 @@
 
                 <b-nav-item-dropdown right>
                     <template v-slot:button-content>
-                        <span class="fa fa-route"></span>
+                        <span class="fa fa-bolt"></span>
                         {{ $tc('titles.track', 2) }}
                     </template>
                     <b-dropdown-item :to="{ name: 'tracks' }">

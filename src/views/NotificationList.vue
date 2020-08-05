@@ -1,51 +1,38 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.notification', 2)}}</h1>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <v-server-table ref="listTable" :columns="columns" :options="options"
-                                        name="notificationList">
-                                        <template slot="type" slot-scope="props">
-                                            <span class="badge"
-                                                :class="{'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'badge-danger': props.row.type === 'ERROR'}">
-                                                &nbsp;{{$t('titles.' + props.row.type.toLowerCase()).toUpperCase()}}
-                                            </span>
-                                        </template>
-                                        <template slot="text" slot-scope="props">
-                                            <span :class="{'font-weight-bold': props.row.status === 'UNREAD'}"
-                                                v-html="props.row.text"></span>
-                                        </template>
-                                        <template slot="created"
-                                            slot-scope="props">{{props.row.created | formatJsonDate}}</template>
-                                        <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light border" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                                            </button>
-                                            <button v-if="props.row.status === 'UNREAD'"
-                                                class="btn btn-sm btn-light ml-1 border"
-                                                @click="markAsRead(props.row.id)">
-                                                <font-awesome-icon icon="check"></font-awesome-icon>
-                                            </button>
-                                            <a v-if="props.row.link" :href="props.row.link"
-                                                class="btn btn-sm btn-light ml-1 border">
-                                                <span class="fa fa-external-link-alt"></span>
-                                            </a>
-                                        </template>
-                                    </v-server-table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div>
+            <div class="title">
+                <h1>{{$tc('titles.notification', 2)}}</h1>
             </div>
+            <v-server-table ref="listTable" :columns="columns" :options="options"
+                name="notificationList">
+                <template slot="type" slot-scope="props">
+                    <span class="badge"
+                        :class="{'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'badge-danger': props.row.type === 'ERROR'}">
+                        &nbsp;{{$t('titles.' + props.row.type.toLowerCase()).toUpperCase()}}
+                    </span>
+                </template>
+                <template slot="text" slot-scope="props">
+                    <span :class="{'font-weight-bold': props.row.status === 'UNREAD'}"
+                        v-html="props.row.text"></span>
+                </template>
+                <template slot="created"
+                    slot-scope="props">{{props.row.created | formatJsonDate}}</template>
+                <template slot="actions" slot-scope="props">
+                    <button class="btn btn-sm btn-light border" @click="remove(props.row.id)">
+                        <font-awesome-icon icon="trash"></font-awesome-icon>
+                    </button>
+                    <button v-if="props.row.status === 'UNREAD'"
+                        class="btn btn-sm btn-light ml-1 border"
+                        @click="markAsRead(props.row.id)">
+                        <font-awesome-icon icon="check"></font-awesome-icon>
+                    </button>
+                    <a v-if="props.row.link" :href="props.row.link"
+                        class="btn btn-sm btn-light ml-1 border">
+                        <span class="fa fa-external-link-alt"></span>
+                    </a>
+                </template>
+            </v-server-table>
         </div>
     </main>
 </template>
