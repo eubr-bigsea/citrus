@@ -58,9 +58,10 @@
             <b-navbar-nav class="ml-auto">
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
                     <template slot="button-content">
-                        <span class="badge badge-pill pt-1 pb-1 pl-3 pr-3"
+                        <span class="fa fa-bell"></span>
+
+                        <span class="badge badge-pill"
                             :class="unreadNotifications > 0 ? 'badge-danger': 'badge-success'">
-                            <span class="fa fa-bell"></span>
                             {{unreadNotifications > 99 ? '99+': unreadNotifications}}
                         </span>
                     </template>
@@ -246,6 +247,11 @@
     
     .navbar .nav-item .nav-link:hover {
         border-bottom-color: var(--secondary-color);
+    }
+
+    .badge {
+        color: #FFF !important;
+        transform: translate(-3px, -9px);
     }
 
     @media (min-width: 768px) {
