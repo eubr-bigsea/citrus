@@ -262,7 +262,7 @@
             axios
                 .get(`${limoneroUrl}/storages`)
                 .then(resp => {
-                    resp.data.forEach(storage => {
+                    resp.data.data.forEach(storage => {
                         if (storage.type === 'HDFS') {
                             self.fsStorages.push(storage);
                         } else if (storage.type === 'JDBC') {
