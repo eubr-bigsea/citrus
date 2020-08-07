@@ -610,7 +610,12 @@ export default {
                 READ: 'Permite ler o item',
                 WRITE: 'Permite alterar ou excluir o item',
             }
-        }
+        },
+        storage: {
+            address1: 'URL principal',
+            address2: 'URL secundária',
+            extraParameters: 'Parâmetros extras',
+        },
     },
 
     en: {
@@ -1202,7 +1207,13 @@ export default {
                 READ: 'Allows to read the item',
                 WRITE: 'Allows to change or remove the item',
             }
-        }
+        },
+        storage: {
+            address1: 'Main URL',
+            address2: 'Secondary URL',
+            extraParameters: 'Extra parameters',
+        },
+
 
     }
 };

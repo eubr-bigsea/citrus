@@ -42,6 +42,9 @@
                     <b-dropdown-item :to="{ name: 'clusters' }">
                         {{ $tc('titles.cluster', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'storages' }">
+                        {{ $tc('titles.storage', 2) }}
+                    </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'platforms' }">
                         {{ $tc('titles.platform', 2) }}
                     </b-dropdown-item>
