@@ -48,8 +48,9 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-md-12">
-                                    <b-link v-b-toggle.changePassword class="float-right">
-                                        {{ $t('profile.alsoChangePassword') }}</b-link>
+                                    <div v-b-toggle.changePassword class="float-right">
+                                        <a href="javascript:void">
+                                        {{ $t('profile.alsoChangePassword') }}</a></div>
                                 </div>
                                 <div class="col-md-12">
                                     <b-collapse id="changePassword">
