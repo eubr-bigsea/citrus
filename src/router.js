@@ -45,7 +45,6 @@ const Welcome = () => import('./views/Welcome.vue');
 const ConfigurationList = () => import('./views/ConfigurationList.vue');
 
 const RoleList = () => import('./views/Administration/RoleList.vue');
-//const RoleAdd = () => import('./views/Administration/RoleAdd.vue');
 const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
 
 const UserList = () => import('./views/Administration/UserList.vue');
@@ -57,7 +56,6 @@ const ClusterAdd = () => import('./views/Administration/ClusterAdd.vue');
 const ClusterEdit = () => import('./views/Administration/ClusterEdit.vue');
 
 const StorageList = () => import('./views/Administration/StorageList.vue');
-const StorageAdd = () => import('./views/Administration/StorageAdd.vue');
 const StorageEdit = () => import('./views/Administration/StorageEdit.vue');
 
 const ModelList = () => import('./views/ModelList.vue');
@@ -532,7 +530,8 @@ let router = new Router({
         {
             path: '/administration/storages/add',
             name: 'addStorage',
-            component: StorageAdd,
+            props: {add: true},
+            component: StorageEdit,
             meta: {
                 requiresAuth: true,
                 title: ['titles.storage', 1]
