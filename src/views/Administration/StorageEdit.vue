@@ -61,7 +61,7 @@
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 
     export default {
-        name: 'StorageAdd',
+        name: 'StorageEdit',
         mixins: [Notifier],
         data() {
             return {

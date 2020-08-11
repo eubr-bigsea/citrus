@@ -52,7 +52,6 @@ const UserAdd = () => import('./views/Administration/UserAdd.vue');
 const UserEdit = () => import('./views/Administration/UserEdit.vue');
 
 const ClusterList = () => import('./views/Administration/ClusterList.vue');
-const ClusterAdd = () => import('./views/Administration/ClusterAdd.vue');
 const ClusterEdit = () => import('./views/Administration/ClusterEdit.vue');
 
 const StorageList = () => import('./views/Administration/StorageList.vue');
@@ -503,7 +502,8 @@ let router = new Router({
         {
             path: '/administration/clusters/add',
             name: 'addCluster',
-            component: ClusterAdd,
+            props: {add: true},
+            component: ClusterEdit,
             meta: {
                 requiresAuth: true,
                 title: ['titles.cluster', 1]

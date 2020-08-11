@@ -4,7 +4,7 @@
       <div class="col">
         <div>
           <div class="d-flex justify-content-between align-items-center">
-            <h1>{{$tc('titles.role', 1)}}</h1>
+            <h1>{{ add ? $t('actions.add', {type: $tc('titles.role', 1).toLowerCase()}) : $t('actions.edit') + ' ' + $tc('titles.role', 1).toLowerCase()}}</h1>
           </div>
           <hr>
           <div class="row">
