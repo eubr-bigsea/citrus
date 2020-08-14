@@ -49,14 +49,13 @@
                                                 rows="5"></textarea>
                                         </div>
                                         <div class="col-md-6">
-                                            <label>{{$tc('common.parameters', 2)}}:</label>
-                                            <textarea v-model="cluster.general_parameters" class="form-control"
-                                                rows="5"></textarea>
-                                        </div>
-                                        <div class="col-md-12">
                                             <label>{{$tc('cluster.authToken')}}:</label>
                                             <input v-model="cluster.auth_token" type="password" class="form-control" />
-
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label>{{$tc('common.parameters', 2)}}:</label>
+                                            <textarea v-model="cluster.general_parameters" class="form-control"
+                                                rows="8"></textarea>
                                         </div>
                                     </div>
                                     <div class="row">
