@@ -66,7 +66,7 @@
         data() {
             return {
                 storage: {},
-                types: ['HDFS', 'HIVE', 'JDBC', 'LOCAL'].sort()
+                types: ['HDFS', 'HIVE', 'HIVE_WAREHOUSE', 'JDBC', 'LOCAL'].sort()
             };
         },
         computed: {},
