@@ -25,13 +25,13 @@
                             <div class="col-md-2 mt-3 mb-3 mt-3">
                                 <b-form-checkbox v-model="storage.enabled">{{ $t('common.enabled') }}</b-form-checkbox>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label class="font-weight-bold">{{$t('storage.address1')}}:</label>
-                                <input v-model="storage.url" class="form-control" required>
+                                <textarea v-model="storage.url" class="form-control" required></textarea>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label class="font-weight-bold">{{$t('storage.address2')}}:</label>
-                                <input v-model="storage.client_url" class="form-control">
+                                <textarea v-model="storage.client_url" class="form-control"></textarea>
                             </div>
                             <div class="col-md-12">
                                 <label>{{$tc('storage.extraParameters')}}:</label>
