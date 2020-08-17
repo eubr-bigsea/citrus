@@ -784,6 +784,7 @@
             },
             execute() {
                 const self = this;
+                this.$Progress.start()
                 this.saveWorkflow(false).then(() => {
                     self._execute();
                 });
@@ -815,6 +816,7 @@
                 };
                 axios.post(`${standUrl}/jobs`, body, { headers })
                     .then(function (response) {
+                        self.$Progress.finish()
                         self.$router.push({
                             name: 'jobDetail',
                             params: {
