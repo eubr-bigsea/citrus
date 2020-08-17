@@ -1,7 +1,7 @@
 <template>
     <div :class="'platform-' + platform" class="diagram" oncontextmenu="return false;">
         <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" :copied-tasks="copiedTasks"/>
-        <div id="lemonade-container" :class="{ 'with-grid': showGrid }" class="lemonade-container not-selectable"
+        <div id="lemonade-container" :class="{ 'with-grid': showGrid, 'dark-mode': darkMode }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
@@ -19,6 +19,7 @@
                 </div>
             </VuePerfectScrollbar>
         </div>
+        {{ darkMode }}
         <modal-component v-if="showExecutionModal" @close="showExecutionModal = false">
             <div slot="header">
                 <h4>Execution of workflow</h4>
@@ -117,7 +118,7 @@
             },
             showGrid: {
                 type: Boolean,
-                default: () => { return true },
+                default: () => { return false },
             },
             showTaskDecoration: {
                 type: Boolean,
@@ -170,7 +171,9 @@
 
                 zoomInEnabled: true,
                 zoomOutEnabled: true,
-                zoom: this.initialZoom
+                zoom: this.initialZoom,
+
+                darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode')=="true" : false
             };
         },
         computed: {
@@ -239,6 +242,9 @@
             });
             this.$root.$on('on-align-tasks', (pos, fn) => {
                 this.align(pos, fn);
+            });
+            this.$root.$on('ontoggle-darkMode', () => {
+                this.darkMode = localStorage.getItem('darkMode') ? localStorage.getItem('darkMode')=="true" : false;
             });
             this.$root.$on('oncopy-tasks', this._copy);
             this.$root.$on('onpaste-tasks', this._paste);
@@ -361,6 +367,7 @@
             this.$root.$off('onpaste-tasks');
             this.$root.$off('onstart-flow');
             this.$root.$off('onstop-flow');
+            this.$root.$off('ontoggle-darkMode');
             this.readyTasks = new Set();
         },
 
@@ -1305,10 +1312,17 @@
     .diagram {
         margin: 0 -15px;
 
+        background: rgba(#D1D5D9, .15);
+
         .diagram-toolbar {
             background: rgb(199,200,201);
             background: linear-gradient(0deg, rgba(199,200,201,1) 0%, rgba(239,239,239,1) 100%);
         }
+
+        .lemonade-container.dark-mode {
+            background: #4B4E51;
+        }
+        
     }
 
     .scroll-area {

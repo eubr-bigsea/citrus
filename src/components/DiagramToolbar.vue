@@ -55,7 +55,6 @@
                 :title="$t('actions.distributeVertically')">
                 <span class="object-align-distribute-v"></span>
             </button>
-    
         </div>
         
         <div class="toolbar-group">
@@ -84,6 +83,13 @@
             </button>
 
         </div>
+
+        <div class="toolbar-group toolbar-group-padding" @change="toggleDarkMode()">
+            <b-form-checkbox v-model="darkMode">
+                Dark Mode
+            </b-form-checkbox>
+        </div>
+
     </div>
 
 </template>
@@ -99,6 +105,10 @@
         display: inline-block;
         border-right: 1px solid rgba(var(--font-color-rgb), .16);
         padding: .25rem;
+
+        &.toolbar-group-padding {
+            padding: .25rem 1rem;
+        }
 
         button {
             outline: none;
@@ -141,7 +151,8 @@
         data() {
             return {
                 zoomPercent: '100%',
-                zoom: 1
+                zoom: 1,
+                darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') : false,
             }
         },
         props: {
@@ -171,6 +182,10 @@
             },
             toggleTasks() {
                 this.$root.$emit('ontoggle-tasks')
+            },
+            toggleDarkMode() {
+                localStorage.setItem('darkMode', this.darkMode);
+                this.$root.$emit('ontoggle-darkMode')
             },
             addGroup() {
 
