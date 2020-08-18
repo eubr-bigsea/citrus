@@ -11,13 +11,18 @@
                 <b-link variant="sm" @click.prevent="openModal">
                     {{$t('actions.chooseOption')}}
                 </b-link>
+                <br/>
+                <b-link variant="sm" @click.prevent="clear">
+                    {{$t('actions.clear')}}
+                </b-link>
+                
             </p>
         </span>
         <span v-else>{{displayValue}}</span>
         <b-modal id="lookupModal" size="lg" :title="field.label" :hide-header="true"
             :cancel-title="$t('actions.cancel')" no-fade ref="modal">
             <p>
-                <em>FIXME</em>
+                {{field.label || field.name}}
             </p>
             <div class="color-select">
                 <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix" @click="select(inx)">
@@ -83,6 +88,10 @@
         mixins: [Widget],
         components: { LabelComponent },
         methods: {
+            clear(){
+                this.$root.$emit(this.message, this.field, null);
+                this.displayValue = null;
+            },
             openModal() {
                 this.$refs.modal.show();
                 if (this.suggestionEvent) {
