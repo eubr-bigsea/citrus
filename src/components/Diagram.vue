@@ -1309,22 +1309,6 @@
 
 <style scoped lang="scss">
 
-    .diagram {
-        margin: 0 -15px;
-
-        background: rgba(#D1D5D9, .15);
-
-        .diagram-toolbar {
-            background: rgb(199,200,201);
-            background: linear-gradient(0deg, rgba(199,200,201,1) 0%, rgba(239,239,239,1) 100%);
-        }
-
-        .lemonade-container.dark-mode {
-            background: #4B4E51;
-        }
-        
-    }
-
     .scroll-area {
         width: 100%;
         height: 95vh;

@@ -327,6 +327,10 @@ h2.title {
     max-width: 75px;
     margin: 0 auto;
 
+    &.margin-right {
+        margin-right: 6px;
+    }
+
     &.completed,
     &.running,
     &.canceled,
@@ -404,6 +408,10 @@ h1 {
   margin-right: -15px;
   margin-left: -15px;
   padding-left: 15px;
+
+  &.mb-0 {
+    margin-bottom: 0px !important;
+  }
 }
 
 .custom-tab a {
@@ -504,4 +512,84 @@ h1 {
 .vfc-calendars{
     font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
     font-size: .9em;
+}
+
+.diagram {
+    margin: 0 -15px;
+
+    background: rgba(#D1D5D9, .15);
+
+    .diagram-toolbar {
+        background: rgb(199,200,201);
+        background: linear-gradient(0deg, rgba(199,200,201,1) 0%, rgba(239,239,239,1) 100%);
+    }
+
+    .has-1-ports,
+    .has-2-ports,
+    .has-3-ports,
+    .has-4-ports {
+        color: #1E88E5;
+        /* color: #A8A8A8; */
+        font-size: .5em;
+        /* background: #fff !important; */
+        display: block;
+        line-height: 6px;
+        z-index: 10000;
+        text-align: center;
+        width: 55px;
+    }
+
+    .endpoint-label.output {
+        z-index: 1;
+        /* background: green */
+    }
+
+    .output {
+        
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports,
+        .has-4-ports {
+            position: relative;
+            z-index: 5;
+            left: -2px;
+        }
+        .has-1-ports {
+            top: 10px;
+        }
+        .has-2-ports {
+            top: 15px;
+        }
+        .has-3-ports {
+            margin-top: 40px !important;
+        }
+        .has-4-ports {
+            margin-top: 40px !important;
+        }
+
+    }
+
+    .input {
+
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports {
+            top: -6px;
+            left: 0px;
+            position: relative;
+
+        }
+    }
+
+    .lemonade-container.dark-mode {
+        background: #4B4E51;
+
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports,
+        .has-4-ports {
+            color: #c3c3c3;
+        }
+    }
+    
 }

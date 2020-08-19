@@ -464,64 +464,7 @@
     });
     export default TaskComponent;
 </script>
-<style lang="scss">
-    .has-1-ports,
-    .has-2-ports,
-    .has-3-ports,
-    .has-4-ports {
-        color: #1E88E5;
-        /* color: #A8A8A8; */
-        font-size: .5em;
-        /* background: #fff !important; */
-        display: block;
-        line-height: 6px;
-        z-index: 10000;
-        text-align: center;
-        width: 55px;
-    }
 
-    .endpoint-label.output {
-        z-index: 1;
-        /* background: green */
-    }
-
-    .output {
-        
-        .has-1-ports,
-        .has-2-ports,
-        .has-3-ports,
-        .has-4-ports {
-            position: relative;
-            z-index: 5;
-            left: -2px;
-        }
-        .has-1-ports {
-            top: 10px;
-        }
-        .has-2-ports {
-            top: 15px;
-        }
-        .has-3-ports {
-            margin-top: 40px !important;
-        }
-        .has-4-ports {
-            margin-top: 40px !important;
-        }
-
-    }
-
-    .input {
-
-        .has-1-ports,
-        .has-2-ports,
-        .has-3-ports {
-            top: -6px;
-            left: 0px;
-            position: relative;
-
-        }
-    }
-</style>
 <style scoped lang="scss">
     /* Colors */
 
