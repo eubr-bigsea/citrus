@@ -43,7 +43,7 @@
                                                 </v-select>
                                             </div>
                                             <div class="col-md-3">
-                                                <div v-if="dataSource.storage.type !== 'VALLUM'">
+                                                <div>
                                                     <label>{{$tc('dataSource.treatAsNull')}}:</label>
                                                     <v-select v-model="customTreatAsMissing" multiple :close-on-select="false"
                                                         style="width: 100%" :taggable="true" class="custom">
@@ -55,7 +55,7 @@
                                                 <b-form-checkbox v-model="dataSource.is_first_line_header">
                                                     {{ $t('dataSource.isFirstLineHeader') }}</b-form-checkbox>
                                             </div>
-                                            <div v-if="dataSource.storage.type !== 'VALLUM' && dataSource.storage.type !== 'HIVE' "
+                                            <div v-if="dataSource.storage.type !== 'HIVE' && dataSource.storage.type !== 'HIVE_WAREHOUSE'"
                                                 class="col-md-2 col-lg-2 mt-3">
                                                 <b-form-checkbox v-model="dataSource.is_multiline">
                                                     {{ $t('dataSource.isMultiline') }}</b-form-checkbox>
@@ -81,7 +81,7 @@
                                             </div>
                                             <div class="col-md-4"></div>
 
-                                            <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'VALLUM' || dataSource.storage.type === 'HIVE'"
+                                            <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'HIVE' || dataSource.storage.type === 'HIVE_WAREHOUSE'"
                                                 class="col-md-8 mt-3 pb-1">
                                                 <label>{{$tc('common.command')}}:</label>
                                                 <textarea v-model="dataSource.command" class="form-control"></textarea>
@@ -95,19 +95,6 @@
                                                 </select>
                                             </div>
 
-                                            <div v-if="dataSource.storage.type === 'VALLUM'"
-                                                class="col-md-12 mt-3 pb-1">
-                                                <label>Initialization: </label>
-                                                <div v-if="dataSource.initialization === 'NO_INITIALIZED'">
-                                                    Vallum data source is not initialized (cached).
-                                                    You have to copy data to another (Local) storage.
-                                                    <p>
-                                                        <button class="btn btn-sm btn-outline-secondary"
-                                                            @click="showInitializationModal">Initialize data
-                                                            source</button>
-                                                    </p>
-                                                </div>
-                                            </div>
                                             <div v-if="dataSource.format === 'CSV'" class="col-md-12 mt-3 mt-3 pb-1">
                                                 <div class="row">
                                                     <div class="col-md-3">
@@ -284,7 +271,7 @@
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{$tc('dataSource.inferSchema')}}
                                     </button>
-                                    <button v-if="dataSource.storage.type !== 'VALLUM'" class="btn btn-spinner ml-1 btn-outline-info"
+                                    <button class="btn btn-spinner ml-1 btn-outline-info"
                                         :disabled="isDirty" @click.stop="preview">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <span class="fa fa-eye"></span>
@@ -362,40 +349,6 @@
                                 </b-btn>
                             </div>
                         </b-modal>
-                        <b-modal ref="modalInitialization" size="lg" title="Initialize Vallum">
-                            <div class="row">
-                                <div class="col-md-6 mb-2">
-                                    Destination (local storage):
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    Destination path (relative to storage's base path):
-                                </div>
-                                <div class="col-md-6">
-                                    <select v-model="vallumSelectedStorage" class="form-control">
-                                        <option></option>
-                                        <option v-for="storage in localStorages" :key="storage.id"
-                                            :value="storage.id">
-                                            {{storage.name}}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <input v-model="vallumPath" type="text" class="form-control"/>
-                                </div>
-                            </div>
-
-                            <div slot="modal-footer" class="w-100">
-                                <b-btn variant="outline-secondary" class="float-right mr-2" @click="hideInitialization">
-                                    {{$t('actions.close')}}
-                                </b-btn>
-                                <b-btn v-if="vallumSelectedStorage !== ''" variant="primary" class="float-right mr-2"
-                                    @click.prevent="initializeVallum">
-                                    <b-spinner v-if="copyingStep === 1" small></b-spinner>
-                                    <span v-if="copyingStep !== 1">Copy data</span>
-                                    <span v-else> Copying data, please wait</span>
-                                </b-btn>
-                            </div>
-                        </b-modal>
                     </div>
                 </div>
             </div>
@@ -425,8 +378,6 @@
                 copyingStep: 0,
                 atmosphereExtension: process.env.VUE_APP_ATMOSPHERE,
                 isDirty: false,
-                vallumSelectedStorage: '',
-                vallumPath: '',
                 samples: [],
                 localStorages: [],
                 dataSource: {},
@@ -481,8 +432,7 @@
                 }
             },
             canInfer() {
-                return this.dataSource.attributeDelimiter !== ''
-                    && this.dataSource.storage.type !== 'VALLUM';
+                return this.dataSource.attributeDelimiter !== '';
             },
             loggedUserIsOwnerOrAdmin() {
                 const user = this.$store.getters.user;
@@ -534,29 +484,7 @@
                         self.error(e);
                     });
             },
-            initializeVallum() {
-                if (this.vallumSelectedStorage !== '') {
-                    const self = this;
-                    const payload = {data_source_id: this.dataSource.id,
-                        storage_id: this.vallumSelectedStorage,
-                        path: this.vallumPath
-                    };
-                    self.copyingStep = 1;
-                    axios
-                        .post(`${standUrl}/datasource/init`, payload)
-                        .then(resp => {
-                            this.schedule_id = resp.data;
-                            self.success('Vallum data copy scheduled with success');
-                            //self.hideInitialization();
-                            self.timeoutHandler = window.setTimeout(self.checkSchedule, 500);
-                        })
-                        .catch(function (e) {
-                            self.error(e);
-                        });
-                } else {
-                    this.$warn('You must select a storage');
-                }
-            },
+            
             checkSchedule(){
                 const params = {key: this.schedule_id};
                 const self = this;
@@ -633,9 +561,7 @@
                 const self = this;
                 let inconsistentFormat =
                     (self.dataSource.format === 'JDBC' &&
-                        self.dataSource.storage.type !== 'JDBC') ||
-                    (self.dataSource.format === 'VALLUM' &&
-                        self.dataSource.storage.type !== 'VALLUM');
+                        self.dataSource.storage.type !== 'JDBC');
                 self.dataSource.attributes.forEach(attr => {
                     if (attr.attribute_privacy &&
                         (!attr.attribute_privacy.anonymization_technique
