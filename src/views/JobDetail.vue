@@ -49,7 +49,7 @@
                                                             {{job.status_text}}
                                                         </div>
 
-                                                        <div class="job-step" v-for="step in job.steps" v-if="step.status!='PENDING'">
+                                                        <div class="job-step" v-for="step in job.steps" v-if="step.status!='PENDING'" :class="{'disabled': selectedTask.id && selectedTask.id !== step.task.id}">
                                                             <div class="label" :class="step.logs[step.logs.length-1].level.toLowerCase()">
                                                             {{$t(`juicer.log.${step.logs[step.logs.length-1].level.toLowerCase()}`)}}
                                                             </div>
@@ -57,7 +57,6 @@
 
                                                             <template v-for="log in step.logs">
                                                                 <p v-if="log.type === 'TEXT' || log.type === 'STATUS'">
-                                                                    
                                                                     <span class="icon fa fa-fw" :class="{
                                                                         'running fa-sync': log.status=='RUNNING',
                                                                         'fa-spin': log.status=='RUNNING' && step.logs.length==1,
@@ -147,42 +146,38 @@
 
                             </b-tab>
                             <b-tab :title="$tc('job.results', 2)">
-                                <b-card>
-                                    <div v-for="(step, inx) in job.steps" :key="inx" class="row">
-                                        <div class="col-md-12 lemonade">
-                                            <div v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
-                                                class="mt-2 border-bottom pb-2">
-                                                <TaskDisplay :task="getTask(step.task.id)" />
-                                                &nbsp;
-                                                {{step.status}}
-                                                <div v-for="log in step.logs" :key="log.id"
-                                                    style="font-size:.9em; margin-top: 20px">
-                                                    <span v-if="log.type === 'HTML'">
-                                                        <div class="html-div" v-html="log.message"></div>
-                                                    </span>
-                                                    <div v-else-if="log.type === 'IMAGE'" class="image-result">
-                                                        <img :src="'data:image/png;base64,' + log.message">
-                                                    </div>
+                                <div v-for="(step, inx) in job.steps" :key="inx" class="row">
+                                    <div class="col-md-12 lemonade">
+                                        <div v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
+                                            class="mt-2 border-bottom pb-2">
+                                            <TaskDisplay :task="getTask(step.task.id)" />
+                                            &nbsp;
+                                            {{step.status}}
+                                            <div v-for="log in step.logs" :key="log.id"
+                                                style="font-size:.9em; margin-top: 20px">
+                                                <span v-if="log.type === 'HTML'">
+                                                    <div class="html-div" v-html="log.message"></div>
+                                                </span>
+                                                <div v-else-if="log.type === 'IMAGE'" class="image-result">
+                                                    <img :src="'data:image/png;base64,' + log.message">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </b-card>
+                                </div>
                             </b-tab>
                             <b-tab v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
                                 @click="showVisualizations = true">
-                                <b-card>
-                                    <div v-for="result in job.results" :key="result.id" class="row">
-                                        <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
-                                            style="margin-top: 14px; display:table">
-                                            <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id, 0)">
-                                            </caipirinha-visualization>
-                                        </div>
+                                <div v-for="result in job.results" :key="result.id" class="row">
+                                    <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
+                                        style="margin-top: 14px; display:table">
+                                        <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id, 0)">
+                                        </caipirinha-visualization>
                                     </div>
-                                </b-card>
+                                </div>
                             </b-tab>
                             <b-tab :title="$tc('job.sourceCode')" @click="showSourceCode = 1">
-                                <b-card>
+                                <b-card class="mt-3">
                                     <SourceCode v-if="showSourceCode" :job="job.id" />
                                 </b-card>
                             </b-tab>
@@ -545,6 +540,10 @@
     .job-step {
         padding: 1rem 0;
         border-bottom: 1px solid rgba(var(--font-color-rgb), .16);
+
+        &.disabled {
+            opacity: .25;
+        }
 
         .label {
             font-size: 10px;
