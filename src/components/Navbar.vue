@@ -24,10 +24,10 @@
                         <span class="fa fa-bolt"></span>
                         {{ $tc('titles.track', 2) }}
                     </template>
-                    <b-dropdown-item :to="{ name: 'tracks' }">
+                    <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
                         {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
                     </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'tracksPanel' }">
+                    <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'tracksPanel' }">
                         {{ $tc('titles.track', 2) }}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
@@ -47,10 +47,13 @@
                         {{ $tc('titles.configuration', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item v-if="isAdmin" :to="{ name: 'clusters' }">
+                    <b-dropdown-item :to="{ name: 'clusters' }">
                         {{ $tc('titles.cluster', 2) }}
                     </b-dropdown-item>
-                    <b-dropdown-item v-if="isAdmin" :to="{ name: 'platforms' }">
+                    <b-dropdown-item :to="{ name: 'storages' }">
+                        {{ $tc('titles.storage', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'platforms' }">
                         {{ $tc('titles.platform', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
@@ -140,7 +143,7 @@
         name: 'LNavbar',
         components: {},
         computed: {
-            ...mapGetters(['hasRoles', 'isAdmin', 'isManager', 'isMonitor', 'user'])
+            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
         },
         data() {
             return {

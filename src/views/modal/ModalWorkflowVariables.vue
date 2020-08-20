@@ -17,7 +17,7 @@
                         <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
                 </div>
                 <div>
-                    Variáveis de sistema <br/>
+                    Variáveis de sistema FIXME<br/>
                     <code>
                     ${idUsuario} <br />
                     ${emailUsuario} <br />

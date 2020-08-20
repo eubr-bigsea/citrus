@@ -50,7 +50,7 @@
         </div>
         -->
         <div slot="modal-footer" class="w-100 text-right">
-            <button class="btn btn-sm btn-outline-success" @click="execute" id="mdl-execute-wf">
+            <button class="btn btn-sm btn-outline-success" @click="execute($event)" id="mdl-execute-wf" ref="executeBtn">
                 <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
             <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">{{$t('actions.cancel')}}</button>
         </div>
@@ -72,7 +72,8 @@
             close() {
                 this.$refs.modal.hide();
             },
-            execute() {
+            execute(event) {
+                event.target.disabled = true;
                 this.$root.$emit("onexecute-workflow");
             },
             show() {

@@ -38,8 +38,7 @@
                                                 :value="getValue(field.name)" :suggestionEvent="suggestionEvent"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
-                                                :lookups-method="getLookups" :lookups="lookups"
-                                                context="context">
+                                                :lookups-method="getLookups" :lookups="lookups" context="context">
                                             </component>
                                         </keep-alive>
 
@@ -50,7 +49,8 @@
                                     <div class="alert alert-info p-2 mt-1 mb-1">
                                         {{$t('workflow.publishingSelect')}}
                                     </div>
-                                    <button class="btn btn-success btn-sm" @click.prevent="showPublishingModal()">{{$t('actions.editValue')}}</button>
+                                    <button class="btn btn-success btn-sm"
+                                        @click.prevent="showPublishingModal()">{{$t('actions.editValue')}}</button>
                                 </b-tab>
                             </b-tabs>
                         </b-card>
@@ -59,48 +59,52 @@
                         {{task.id}}
                     </div>
                 </div>
-                <b-modal size="lg" ref="publishingModal" :title="$tc('titles.publication')" :ok-only="true">
+                <b-modal size="xl" ref="publishingModal" :title="$tc('titles.publication')" :ok-only="true">
                     <div class="mt-2 p-2 border">
-                        <table class="table table-sm table-striped table-bordered">
+                        <table class="table table-sm table-bordered">
                             <thead class="thead-light">
                                 <tr>
                                     <th class="text-center" style="width: 5%"></th>
-                                    <th class="text-center" style="width: 25%">{{$tc('titles.property')}}</th>
+                                    <th class="text-center" style="width: 15%">{{$tc('titles.property')}}</th>
+                                    <th class="text-center" style="width: 25%">{{$tc('variables.label')}}</th>
                                     <th class="text-center" style="width: 15%">{{$tc('titles.actualValue')}}</th>
-                                    <th class="text-center" style="width: 25%">{{$tc('variables.associateTo')}}</th>
-                                    <th class="text-center" style="width: 30%">{{$tc('variables.associateToLookup')}}</th>
+                                    <th class="text-center" style="width: 15%">{{$tc('variables.associateTo')}}</th>
+                                    <th class="text-center" style="width: 30%">{{$tc('variables.associateToLookup')}}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template v-for="(form, index) in forms">
                                     <tr v-for="field in form.fields" :key="field.name"
-                                        v-if="form.category === 'execution' && field.enabled">
+                                        v-if="form.category === 'execution' && field.enabled && task.forms[field.name]">
                                         <td>
-                                            <b-checkbox v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
+                                            <b-checkbox
+                                                v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
                                             </b-checkbox>
                                         </td>
                                         <td>{{field.label}}</td>
                                         <td>
-                                            <component :is="field.suggested_widget + '-component'"
-                                                :field="field" :value="getValue(field.name)"
-                                                :type="field.suggested_widget" context="context"
-                                                :read-only="true">
+                                            <input type="text" class="form-control"
+                                                maxlength="100" v-model="task.forms[field.name].new_label"/>
+                                        </td>
+                                        <td> 
+                                            <component :is="field.suggested_widget + '-component'" :field="field"
+                                                :value="getValue(field.name)" :type="field.suggested_widget"
+                                                context="context" :read-only="true">
                                             </component>
                                         </td>
                                         <td>
-                                            <v-select v-if="task.forms[field.name]" :options="variableNames" :multiple="false" 
-                                                    v-model="task.forms[field.name].variable" 
-                                                    value="name"
-                                                    label="name" :taggable="true" :close-on-select="true">
+                                            <v-select :options="variableNames"
+                                                :multiple="false" v-model="task.forms[field.name].variable" value="name"
+                                                label="name" :taggable="true" :close-on-select="true">
                                                 <div slot="no-options"></div>
                                             </v-select>
                                         </td>
                                         <td>
-                                            <v-select v-if="task.forms[field.name]" :options="lookups" :multiple="false" 
-                                                    v-model="task.forms[field.name].lookup" 
-                                                    :create-option="ds => ({ ds, id: null })"
-                                                          :reduce="option => option.id"
-                                                    label="name" :taggable="true" :close-on-select="true">
+                                            <v-select :options="lookups" :multiple="false"
+                                                v-model="task.forms[field.name].lookup"
+                                                :create-option="ds => ({ ds, id: null })" :reduce="option => option.id"
+                                                label="name" :taggable="true" :close-on-select="true">
                                                 <div slot="no-options"></div>
                                             </v-select>
                                         </td>
@@ -134,7 +138,7 @@
             propertiesForPublishing() {
                 return Object.keys(this.task.forms).sort((a, b) => a.localeCompare(b));
             },
-            variableNames(){
+            variableNames() {
                 return this.variables.map((v) => v.name);
             }
         },
@@ -153,19 +157,19 @@
             }
         },
         methods: {
-            showPublishingModal(){
+            showPublishingModal() {
                 this.getLookups();
                 this.$refs.publishingModal.show();
             },
-            getLookups(){
-                if (this.lookups === undefined || this.lookups.length === 0){
+            getLookups() {
+                if (this.lookups === undefined || this.lookups.length === 0) {
                     const self = this;
                     const params = {
                         lookup: true,
                         fields: 'id,name,attributes.id,attributes.name',
                     };
                     axios
-                        .get(`${limoneroUrl}/datasources`, {params})
+                        .get(`${limoneroUrl}/datasources`, { params })
                         .then(resp => {
                             self.lookups = resp.data.data;
                         })
@@ -195,8 +199,13 @@
                     const conditional = /\bthis\..+?\b/g;
                     self.forms.forEach((f, i) => {
                         f.fields.forEach((field) => {
-                            if (self.task && self.task.forms[field.name])
+                            if (self.task && self.task.forms[field.name]){
                                 Vue.set(field, "internalValue", self.task.forms[field.name].value);
+                                if (! self.task.forms[field.name]['new_label']){
+                                    Vue.set(self.task.forms[field.name], "new_label", 
+                                        self.task.forms[field.name].label);
+                                }
+                            }
                         });
                     });
                     self.forms.forEach((f, i) => {
@@ -251,7 +260,7 @@
             task: { type: Object, default: {} },
             suggestionEvent: null,
             publishingEnabled: false,
-            variables: {type: Array, default: () => []}
+            variables: { type: Array, default: () => [] }
         },
         watch: {
             task() {

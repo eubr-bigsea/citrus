@@ -17,7 +17,7 @@
 <style>
     div.myview {
         height: 95%;
-        border: 1px solid red;
+        xborder: 1px solid red;
         margin: 0 1px;
         width: 98% !important;
     }
@@ -39,11 +39,17 @@
     import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
     import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap"
     import CaipirinhaVisualizationDonut from "./CaipirinhaVisualizationDonut"
-    import IndicatorVisualization from "../visualization/IndicatorVisualization";
 
     import BarChart from "../visualization/BarChart";
+    import BubbleChart from "../visualization/BubbleChart";
+    import ForceDirectGraph from "../visualization/ForceDirectGraph";
+    import Heatmap from "../visualization/Heatmap";
+    import IFrame from "../visualization/IFrame";
+    import Indicator from "../visualization/Indicator";
     import LineChart from "../visualization/LineChart";
+    import Markdown from "../visualization/Markdown";
     import PieChart from "../visualization/PieChart";
+    import Treemap from "../visualization/Treemap";
 
     let highchartsDefaultLang = undefined;
 
@@ -92,7 +98,7 @@
             publicRoute: { default: true },
             task: null,
             url: {},
-            height: {default: 450}
+            height: { default: 450 }
         },
         components: {
             CaipirinhaVisualizationHtml,
@@ -109,7 +115,14 @@
             CaipirinhaVisualizationArea,
             CaipirinhaVisualizationScatter,
             CaipirinhaVisualizationMap,
-            CaipirinhaVisualizationDonut
+            CaipirinhaVisualizationDonut,
+            'bubble-chart': BubbleChart,
+            'force-direct': ForceDirectGraph,
+            'heatmap': Heatmap,
+            'indicator': Indicator,
+            'iframe-panel': IFrame,
+            'markdown': Markdown,
+            'treemap': Treemap,
         },
         data() {
             return {
@@ -147,6 +160,20 @@
                         return "caipirinha-visualization-boxplot";
                     case 124:
                         return "caipirinha-visualization-histogram";
+                    case 130:
+                        return "indicator";
+                    case 131:
+                        return "markdown";
+                    case 133:
+                        return "heatmap";
+                    case 134:
+                        return "bubble-chart";
+                    case 1350:
+                        return "force-direct";
+                    case 136:
+                        return "iframe-panel";
+                    case 137:
+                        return "force-direct" //"treemap";
                     default:
                         throw new TypeError(this.$t("errors.invalidVisualizationId"));
                 }

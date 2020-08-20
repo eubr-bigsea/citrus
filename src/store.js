@@ -178,5 +178,13 @@ export default new Vuex.Store({
         hasRoles: state => state.user.roles.length > 0,
         userPermissions: state => state.user.roles.flatMap(r => r.permissions.map(p => p.name)) || {},
         token: state => state.token,
+        hasAnyPermission: state => permissionList => {
+            const permissions = state.user.roles.flatMap(r => r.permissions.map(p => p.name));
+            return permissionList.some(r => permissions.includes(r));
+        },
+        hasAnyRole: state => roleList => {
+            const roles = state.user.roles.map(r => r.name);
+            return roleList.some(r => roles.includes(r));
+        }
     }
 });

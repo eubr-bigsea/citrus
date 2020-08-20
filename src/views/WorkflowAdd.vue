@@ -22,7 +22,7 @@
                           <template v-for="platform in platforms">
                           <tr class="d-flex">
                             <td class="col-3">
-                              <b-form-radio v-if="platform.subsets.length == 0" :value="platform.id" name="platform" v-model="selectedPlatform" >
+                              <b-form-radio v-if="platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)" :value="platform.id" name="platform" v-model="selectedPlatform" >
                                 {{platform.name}}
                               </b-form-radio>
                               <div v-else>
@@ -33,7 +33,7 @@
                               <small>{{platform.description}}.</small>
                             </td>
                           </tr>
-                          <tr v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
+                          <tr v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
                             <td class="col-1">{{selectedSubset}}</td>
                             <td class="col-11">
                               <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" @change="selectOptions(true, platform.id)">
@@ -93,6 +93,7 @@
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier';
+import { mapGetters } from 'vuex';
 
 let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
@@ -136,6 +137,7 @@ export default {
       );
   },
   computed: {
+    ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
     canCreate() {
       return (
         this.name !== null &&

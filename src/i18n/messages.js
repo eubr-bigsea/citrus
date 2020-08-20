@@ -24,6 +24,7 @@ export default {
             confirm: 'Confirmar',
             choose: 'Escolha',
             chooseOption: 'Escolha uma opção ...',
+            clear: 'Limpar',
             clearFilters: 'Limpar filtros',
             create: 'Criar um novo {type}',
             delete: 'Excluir',
@@ -174,9 +175,11 @@ export default {
                 authenticationLdap: 'LDAP',
                 authenticationAd: 'AD',
                 full_name: 'Nome',
+                globalRoles: 'Grupos globais (todo usuário faz parte)',
                 name: 'Nome do usuário',
                 login: 'Login do usuário',
                 notes: 'Nota | Notas',
+                
             },
             version: 'Versão',
             wait: 'Por favor, aguarde...',
@@ -256,6 +259,7 @@ export default {
             storage: 'Armazenamento',
             suggestedOption:
                 'Se você não sabe qual opção escolher, esta é a opção recomendada.',
+            tablesReference: 'Tabelas (apenas referência)',
             textDelimiter: 'Delimitador de texto (apenas CSV)',
             treatAsNull: 'Tratar estes valores como valores nulos (opcional)',
             uploadingLog: 'Registro de envio',
@@ -444,6 +448,7 @@ export default {
             apiToken: 'Tokens para API',
             allNotifications: 'Ver todas as notificações',
             changePassword: 'Nova senha',
+            color: 'Color',
             cluster: 'Cluster | Clusters',
             configuration: 'Configuração | Configurações',
             dataSource: 'Base de dados | Bases de dados',
@@ -518,6 +523,8 @@ export default {
             maximum: 'Máximo',
             median: 'Mediana',
             minimum: 'Mínimo',
+            ofEntry: 'do total visível',
+            ofParent: 'do total do pai',
             outlier: 'Discrepante | Discrepantes',
             tryRefresh:
                 'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada',
@@ -611,7 +618,12 @@ export default {
                 READ: 'Permite ler o item',
                 WRITE: 'Permite alterar ou excluir o item',
             }
-        }
+        },
+        storage: {
+            address1: 'URL principal',
+            address2: 'URL secundária',
+            extraParameters: 'Parâmetros extras',
+        },
     },
 
     en: {
@@ -788,6 +800,7 @@ export default {
                 authenticationLdap: 'LDAP',
                 authenticationAd: 'AD',
                 full_name: 'Name',
+                globalRoles: 'Global groups (all users are members of)',
                 name: 'User name',
                 login: 'User login',
                 notes: 'Note | Notes',
@@ -870,6 +883,7 @@ export default {
             storage: 'Storage',
             suggestedOption:
                 'If you do not know what to choose, this is the suggested option.',
+            tablesReference: 'Tables (only for reference)',
             textDelimiter: 'Text delimiter (CSV only)',
             treatAsNull: 'Treat these values as null (optional)',
             uploadingLog: 'Uploading log',
@@ -977,6 +991,7 @@ export default {
             allNotifications: 'See all notifications',
             changePassword: 'New password',
             cluster: 'Cluster | Clusters',
+            color: 'Color',
             configuration: 'Configuration | Configurations',
             dataSource: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
@@ -1111,6 +1126,8 @@ export default {
             maximum: 'Maximum',
             median: 'Median',
             minimum: 'Minimum',
+            ofEntry: 'of visible area',
+            ofParent: 'of parent area',
             outlier: 'Outlier | Outliers',
             tryRefresh:
                 'Try refresh the page, visualization may still be generating.',
@@ -1202,7 +1219,13 @@ export default {
                 READ: 'Allows to read the item',
                 WRITE: 'Allows to change or remove the item',
             }
-        }
+        },
+        storage: {
+            address1: 'Main URL',
+            address2: 'Secondary URL',
+            extraParameters: 'Extra parameters',
+        },
+
 
     }
 };

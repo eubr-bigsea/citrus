@@ -3,7 +3,7 @@
 </template>
 <script>
 /* (c) https://github.com/statnett/vue-plotly/blob/master/src/Plotly.vue */
-import Plotly from 'plotly.js-basic-dist-min'
+import Plotly from 'plotly.js-dist-min'
 import debounce from 'lodash/debounce'
 import defaults from 'lodash/defaults'
 const events = [

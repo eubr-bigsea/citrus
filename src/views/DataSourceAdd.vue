@@ -82,44 +82,59 @@
                                 </div>
                             </div>
                         </div>
-                        <div :class="'col-md-' + colSize">
-                            <div class="card">
-                                <div class="card-header"><h5 class="card-title">Hive (Experimental)</h5></div>
-                                <div class="card-body">
-                                    {{$t('dataSource.characteristics')}}:
-                                    <ul>
-                                        <li>{{$t('dataSource.youCanUseSQL')}};</li>
-                                        <li>Desempenho;</li>
-                                    </ul>
-                                </div>
-                                <div class="card-footer text-center">
-                                    <p>
-                                        <!-- <label>{{$t('dataSource.storage')}}:</label> -->
-                                        <select v-model="hiveStorage" class="form-control">
-                                            <option v-for="s in hiveStorages" :key="s.id" :value="s.id">
-                                                {{s.name}}</option>
+                        <div v-if="step === 3" class="card animated">
+                            <div class="card-body">
+                                <h4 class="card-title">{{$t('dataSource.databaseStorage')}}</h4>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label>{{$tc('common.name', 1)}}:</label>
+                                        <input v-model="dataSource.name" type="text" class="form-control">
+        
+                                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{$t('dataSource.tablesReference')}}</label>
+                                        <select class="form-control tables" size="10" v-model="selectedTable" @dblclick.stop="copyTableName">
+                                            <option v-for="tb in tables" :key="tb">
+                                                {{tb}}
+                                            </option>
                                         </select>
-                                    </p>
-                                    <button class="btn btn-success" :disabled="!sqlStorage" @click="choose('hive')">{{$t('actions.choose')}}</button>
+                                    </div>
+                                </div>
+
+                                <div class="border-top mt-5 pt-4">
+                                    <button class="btn btn-success" @click="save">{{$t('actions.save')}}</button>
+                                    <button class="btn ml-1 btn-outline-secondary"
+                                        @click="step=1">{{$t('actions.back')}}</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div v-if="step === 2" class="card animated">
-                    <div class="card-body">
-                        <h4 class="card-title">{{$t('dataSource.distributedFileSystem')}}</h4>
-
-                        <div class="col-md-12">
-                            <div ref="drop" class="jumbotron">
-                                <div class="resumable-drop"
-                                    :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
-                                    {{$t('dataSource.dropFilesHere')}}
-                                    <a ref="browse" class="resumable-browse">
-                                        <u>{{$t('dataSource.selectFromComputer')}}</u>
-                                    </a>.
-                                    <br>
-                                    <small>{{$t('dataSource.uploadExplanation')}}</small>
+                        <div v-if="step === 4" class="card animated">
+                            <div class="card-body">
+                                <h4 class="card-title">Vallum {{$t('dataSource.databaseStorage')}}</h4>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label>{{$tc('common.name', 1)}}:</label>
+                                        <input v-model="dataSource.name" type="text" class="form-control">
+        
+                                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{$t('dataSource.tablesReference')}}</label>
+                                        <select class="form-control tables" size="10" v-model="selectedTable" @dblclick.stop="copyTableName">
+                                            <option v-for="tb in tables" :key="tb">
+                                                {{tb}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="border-top mt-5 pt-4">
+                                    <button class="btn btn-success" @click="save">
+                                        {{$t('actions.save')}}</button>
+                                    <button class="btn ml-1 btn-outline-secondary"
+                                        @click="step=1">{{$t('actions.back')}}</button>
                                 </div>
                             </div>
                         </div>
@@ -241,11 +256,13 @@
                     url: '',
                     storage_id: null
                 },
+                selectedTable: null,
                 supported: true,
                 showProgress: false,
                 showPause: false,
                 showResume: false,
-                resumableList: []
+                resumableList: [],
+                tables: [],
             };
         },
         mounted() {
@@ -253,7 +270,7 @@
             axios
                 .get(`${limoneroUrl}/storages`)
                 .then(resp => {
-                    resp.data.forEach(storage => {
+                    resp.data.data.forEach(storage => {
                         if (storage.type === 'HDFS') {
                             self.fsStorages.push(storage);
                         } else if (storage.type === 'JDBC') {
@@ -311,6 +328,7 @@
                     this.step = 3;
                     this.dataSource.format = 'HIVE';
                     this.dataSource.storage_id = this.hiveStorage;
+                    this.retrieveTables()
                 } else {
                     this.step = 2;
                     this.dataSource.format = 'UNKNOWN';
@@ -320,6 +338,22 @@
                         this.setupResumable();
                     });
                 }
+            },
+            copyTableName(){
+                this.dataSource.command = (this.dataSource.command ? this.dataSource.command  + ' ' : '') + this.selectedTable;
+            },
+            retrieveTables(){
+                const self = this;
+                const url = `${limoneroUrl}/storages/metadata/${self.dataSource.storage_id}`;
+
+                axios.get(url)
+                    .then((resp) => {
+                        self.tables = resp.data.data;
+                    }
+                    ).catch((e) => { 
+                        self.error(e);
+                    });
+ 
             },
             setupResumable() {
                 let self = this;
@@ -553,5 +587,8 @@
 
     .progress-pause {
         padding: 0 0 0 7px;
+    }
+    .tables {
+        font-size: .7em;
     }
 </style>

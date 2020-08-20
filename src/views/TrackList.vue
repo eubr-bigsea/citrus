@@ -1,43 +1,52 @@
 <template>
-    <div>
-        <div class="title">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>{{$tc('titles.track', 2)}}</h1>
-                <div>
-                    <router-link :to="{name: 'addTrack'}"
-                        class="btn btn-primary btn-lemonade-primary">
-                        <span class="fa fa-plus" /> {{$t('actions.addItem')}}</router-link>
+    <div class="row">
+        <div class="col">
+            <div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>{{$tc('titles.track', 2)}}</h1>
+                    <div>
+                        <router-link :to="{name: 'addTrack'}"
+                            class="btn btn-sm btn-outline-primary float-left mr-1">
+                            {{$t('actions.addItem')}}</router-link>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <v-server-table :columns="columns" :options="options" ref="workflowList"
+                                    name="workflowList">
+                                    <template slot="id" slot-scope="props">
+                                        <router-link
+                                            :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                            {{props.row.id}}</router-link>
+                                        </template>
+                                    <template slot="name" slot-scope="props">
+                                        <router-link
+                                            :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                            {{props.row.name}}</router-link>
+                                            <small v-if="props.row.description" class="break-word"><br/>{{props.row.description}}</small>
+                                    </template>
+                                    <template slot="publishing_status" slot-scope="props">
+                                        <span v-if="props.row.publishing_status">
+                                           {{$t('track.' + props.row.publishing_status)}} 
+                                        </span>
+                                    </template>
+                                    <template slot="updated"
+                                        slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
+                                    <div slot="afterFilter" class="ml-2 mt-4">
+                                        <button type="button"
+                                            class="btn btn-sm btn-light btn-outline-secondary ml-2"
+                                            @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
+                                    </div>
+                                </v-server-table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <v-server-table :columns="columns" :options="options" ref="workflowList"
-            name="workflowList">
-            <template slot="id" slot-scope="props">
-                <router-link
-                    :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                    {{props.row.id}}</router-link>
-                </template>
-            <template slot="name" slot-scope="props">
-                <router-link
-                    :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                    {{props.row.name}}</router-link>
-                    <small v-if="props.row.description" class="break-word"><br/>{{props.row.description}}</small>
-            </template>
-            <template slot="publishing_status" slot-scope="props">
-                <span v-if="props.row.publishing_status">
-                    {{$t('track.' + props.row.publishing_status)}} 
-                </span>
-            </template>
-            <template slot="updated"
-                slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
-            <div slot="afterFilter" class="ml-2 mt-4">
-                <button type="button"
-                    class="btn btn-sm btn-light btn-outline-secondary ml-2"
-                    @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
-            </div>
-        </v-server-table>
-
     </div>
 </template>
 

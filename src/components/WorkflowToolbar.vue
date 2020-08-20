@@ -1,49 +1,43 @@
 <template>
     <div>
-        
-        <div class="btn-group mr-2" role="group">
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
-                <span class="fa fa-cogs"></span>
-            </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="selectImage" :title="$t('actions.selectImage')">
-                <span class="fa fa-image"></span>
-            </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
-                <span class="far fa-save"></span>
-            </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
-                <span class="far fa-copy"></span>
-            </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="exportWorkflow" :title="$t('actions.export')">
-                <span class="fa fa-download"></span>
-            </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="showHistory" :title="$t('actions.showHistory')">
-                <span class="fa fa-history"></span>
-            </button>
-            <!--
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
-                variant="danger" id="tlb-restart-wf">
-                <span class="fa fa-stop red"></span>
-            </button>
-            -->
-        </div>
-
-        <div class="btn-group mr-2" role="group">
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
-                <span class="fa fa-tasks"></span> {{$tc('titles.job', 2)}}
-            </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="showVariables" :title="$t('actions.showVariables')">
-                <span class="fa fa-dollar-sign"></span> Variáveis
-            </button>
-        </div>
-
-        <div class="btn-group" role="group">
-            <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')"
-                variant="success" id="tlb-execute-wf">
-                <span class="fa fa-play"></span> {{ $t('actions.execute') }}
-            </button>
-        </div>
-
+    <div class="btn-group mr-2" role="group">
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
+            <span class="fa fa-tasks"></span> {{$tc('titles.job', 2)}}
+        </button>
+        <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled" class="btn btn-sm btn-outline-dark" @click.prevent="showVariables" :title="$t('actions.showVariables')">
+            <span class="fa fa-dollar-sign"></span> Variáveis
+        </button>
+    </div>
+    <div class="btn-group" role="group">
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
+            <span class="fa fa-cogs"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="selectImage" :title="$t('actions.selectImage')">
+            <span class="fa fa-image"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
+            <span class="far fa-save"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
+            <span class="far fa-copy"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="exportWorkflow" :title="$t('actions.export')">
+            <span class="fa fa-download"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="showHistory" :title="$t('actions.showHistory')">
+            <span class="fa fa-history"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')"
+            variant="success" id="tlb-execute-wf">
+            <span class="fa fa-play"></span>
+        </button>
+        <!--
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
+            variant="danger" id="tlb-restart-wf">
+            <span class="fa fa-stop red"></span>
+        </button>
+        -->
+    </div>
     </div>
 </template>
 
@@ -64,10 +58,14 @@
 
 <script>
     import Notifier from '../mixins/Notifier'
+    import { mapGetters } from 'vuex';
 
     export default {
         mixins: [Notifier],
         name: 'WorkflowToolbar',
+        computed: {
+            ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
+        },
         props: {
             workflow: {}
         },

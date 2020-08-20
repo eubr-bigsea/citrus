@@ -45,7 +45,6 @@ const Welcome = () => import('./views/Welcome.vue');
 const ConfigurationList = () => import('./views/ConfigurationList.vue');
 
 const RoleList = () => import('./views/Administration/RoleList.vue');
-//const RoleAdd = () => import('./views/Administration/RoleAdd.vue');
 const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
 
 const UserList = () => import('./views/Administration/UserList.vue');
@@ -53,8 +52,10 @@ const UserAdd = () => import('./views/Administration/UserAdd.vue');
 const UserEdit = () => import('./views/Administration/UserEdit.vue');
 
 const ClusterList = () => import('./views/Administration/ClusterList.vue');
-const ClusterAdd = () => import('./views/Administration/ClusterAdd.vue');
 const ClusterEdit = () => import('./views/Administration/ClusterEdit.vue');
+
+const StorageList = () => import('./views/Administration/StorageList.vue');
+const StorageEdit = () => import('./views/Administration/StorageEdit.vue');
 
 const ModelList = () => import('./views/ModelList.vue');
 const ModelAdd = () => import('./views/ModelAdd.vue');
@@ -501,7 +502,8 @@ let router = new Router({
         {
             path: '/administration/clusters/add',
             name: 'addCluster',
-            component: ClusterAdd,
+            props: {add: true},
+            component: ClusterEdit,
             meta: {
                 requiresAuth: true,
                 title: ['titles.cluster', 1]
@@ -516,6 +518,35 @@ let router = new Router({
                 title: ['titles.cluster', 1]
             }
         },
+        {
+            path: '/administration/storages',
+            name: 'storages',
+            component: StorageList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.storage', 2]
+            }
+        },
+        {
+            path: '/administration/storages/add',
+            name: 'addStorage',
+            props: {add: true},
+            component: StorageEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.storage', 1]
+            }
+        },
+        {
+            path: '/administration/storages/:id',
+            name: 'editStorage',
+            component: StorageEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.storage', 1]
+            }
+        },
+
         {
             path: '/administration/platforms',
             name: 'platforms',

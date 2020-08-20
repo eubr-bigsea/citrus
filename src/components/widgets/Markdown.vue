@@ -19,6 +19,8 @@
 </script>
 <style lang="scss" scoped>
     .markdown-area {
+        width: 100%;
+
         h1 {
             font-size: 2.5em;
         }
