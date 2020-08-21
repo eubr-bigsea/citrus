@@ -73,6 +73,7 @@ export default {
                         e.message, this.$t('titles.error'),
                         { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                     );
+                    console.debug(e);
                 }
             } else {
                 this.$snotify.error(msg, this.$t('titles.error'),
