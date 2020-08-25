@@ -78,6 +78,21 @@
                                                 </b-form-checkbox>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <label>{{ $tc('common.user.apiToken') }}</label>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control" disabled
+                                                        :value="user.api_token ? user.api_token : $t('titles.undefined')" />
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-danger" type="button"
+                                                            @click="update">
+                                                            {{$t('actions.update')}}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="form-group row">
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
@@ -94,7 +109,8 @@
                                                 </v-select>
                                                 <label class="mt-3">{{$t('common.user.globalRoles')}}:</label>
                                                 <div>
-                                                    <div v-for="gr in globalRoles" :key="gr.id" class="badge badge-info mr-1">{{gr.label}}</div>
+                                                    <div v-for="gr in globalRoles" :key="gr.id"
+                                                        class="badge badge-info mr-1">{{gr.label}}</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -150,8 +166,8 @@
             const self = this;
             this.load().then(() => {
                 const rolesUrl = `${thornUrl}/roles`;
-                const params = {'fields': 'id,label,all_user'};
-                axios.get(rolesUrl, {params})
+                const params = { 'fields': 'id,label,all_user' };
+                axios.get(rolesUrl, { params })
                     .then(resp => {
                         self.roles = resp.data.data.filter(r => !r.all_user);
                         self.globalRoles = resp.data.data.filter(r => r.all_user);
@@ -211,6 +227,27 @@
                         event.target.classList.add('btn-spinner');
                         this.$Progress.finish();
                     });
+            },
+            update(event) {
+                const self = this;
+                event.target.setAttribute('disabled', 'disabled');
+                event.target.classList.remove('btn-spinner');
+                if (confirm(this.$t('common.user.apiTokenWarning'))) {
+                    const url = `${thornUrl}/token/${this.user.id}`;
+                    axios.post(url)
+                        .then(resp => {
+                            this.user.api_token = resp.data.token;
+                        })
+                        .catch(
+                            function (e) {
+                                self.error(e);
+                            }.bind(this)
+                        ).finally(() => {
+                            event.target.removeAttribute('disabled');
+                            event.target.classList.add('btn-spinner');
+                            this.$Progress.finish();
+                        });
+                }
             }
         }
     };

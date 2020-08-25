@@ -59,7 +59,8 @@ export default {
             simpleAdd: 'Adicionar',
             stop: 'Parar',
             test: 'Testar',
-            toggleTasks: 'Habilitar/desabilitar tarefas'
+            toggleTasks: 'Habilitar/desabilitar tarefas',
+            update: 'Atualizar',
         },
         atmosphere: {
             transparency: 'Explicação de modelos'
@@ -73,6 +74,7 @@ export default {
         },
         common: {
             action: 'Ação | Ações',
+            address: 'Endereço',
             adminRole: 'Administrador',
             author: 'Autor',
             attention: 'Atenção',
@@ -170,6 +172,8 @@ export default {
             userName: 'Nome do usuário',
             userRole: 'Usuário',
             user: {
+                apiToken: 'Token de API',
+                apiTokenWarning: 'Esta ação poderá interromper o funcionando de aplicações. Continuar?',
                 authenticationType: 'Tipo de autenticação',
                 authenticationInternal: 'Interna',
                 authenticationLdap: 'LDAP',
@@ -487,6 +491,7 @@ export default {
             toolboxCategory: 'Organização das operações',
             tool: 'Ferramenta | Ferramentas',
             track: 'Trilha | Trilhas',
+            undefined: 'Não definido',
             user: 'Usuário | Usuários',
             validationErrors: 'Erro de validação | Erros de validação',
             value: 'Valor',
@@ -537,6 +542,7 @@ export default {
             copyOf: 'Cópia de',
             copySavedWithSuccess: 'Cópia salva com sucesso!',
             execute: 'Executar fluxo de trabalho',
+            errorNoCluster: 'Não há recursos computacionais (clusters) configurados para executar o fluxo de trabalho.',
             forPlatform: 'Para uma plataforma de processamento',
             fromTemplate: 'A partir de um modelo',
             fromUserTemplate: 'A partir de um modelo criado por usuários',
@@ -684,7 +690,8 @@ export default {
             simpleAdd: 'Add',
             stop: 'Stop',
             test: 'Test',
-            toggleTasks: 'Enable/disable tasks'
+            toggleTasks: 'Enable/disable tasks',
+            update: 'Update',
         },
         atmosphere: {
             transparency: 'Explain models'
@@ -699,6 +706,7 @@ export default {
         common: {
             makeAdmin: 'Make Administrator',
             action: 'Action | Actions',
+            address: 'Address',
             adminRole: 'Administrator',
             author: 'Author',
             attention: 'Attention',
@@ -795,6 +803,8 @@ export default {
             userName: 'User name',
             userRole: 'User',
             user: {
+                apiToken: 'API token',
+                apiTokenWarning: 'This action may break existing applications. Continue?',
                 authenticationType: 'Authentication type',
                 authenticationInternal: 'Internal',
                 authenticationLdap: 'LDAP',
@@ -1028,6 +1038,7 @@ export default {
             toolboxCategory: 'Toolbox disposition',
             tool: 'Tool | Tools',
             track: 'Track | Tracks', 
+            undefined: 'Not set',
             user: 'User | Users',
             validationErrors: 'Validation error | Validation errors',
             value: 'Value',
@@ -1139,6 +1150,7 @@ export default {
             copyOf: 'Copy of',
             copySavedWithSuccess: 'Copy saved with success!',
             execute: 'Execute workflow',
+            errorNoCluster: 'Unable to execute workflow: There is not cluster available.',
             forPlatform: 'For processing platform',
             fromTemplate: 'From template',
             fromUserTemplate: 'From template created by users',

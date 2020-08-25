@@ -60,10 +60,6 @@
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item :to="{ name: 'models' }">
-                        {{ $tc('titles.apiToken', 2) }}
-                    </b-dropdown-item>
-
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
