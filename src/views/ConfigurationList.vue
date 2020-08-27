@@ -17,6 +17,7 @@
 				{{props.row.name}}
 			</template>
 			<template slot="type" slot-scope="props">{{props.row.description}}</template>
+			<template slot="type" slot-scope="props">{{props.row.category}}</template>
 			<template slot="enabled" slot-scope="props">{{props.row.enabled ? $t('common.yes') : $t('common.no')}}</template>
 			<template slot="actions" slot-scope="props">
 				<button class="btn btn-sm btn-light" @click="edit(props.row)">
@@ -81,6 +82,7 @@ export default {
 			headings: {
 			  id: 'ID',
 			  name: this.$tc('common.name'),
+			  category: this.$tc('common.category'),
 			  type: this.$tc('common.description'),
 			  enabled: this.$tc('common.enabled'),
 			  actions: this.$tc('common.action', 2)
@@ -102,7 +104,7 @@ export default {
 			  data.size = data.limit;
 			  data.name = data.query;
 	
-			  data.fields = 'id,name,description,enabled,value,editor';
+			  data.fields = 'id,name,category,description,enabled,value,editor';
 	
 			  let url = `${thornUrl}/configurations`;
 			  let headers = {};

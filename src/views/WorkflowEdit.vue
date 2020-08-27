@@ -105,7 +105,7 @@
                 <ModalWorkflowHistory ref="historyModal" :history="history" />
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
-                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
+                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" :clusters="clusters" />
                 <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" />
                 <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
@@ -769,8 +769,10 @@
             saveWorkflowProperties() {
             },
             showWorkflowProperties() {
-                if (this.$refs.workflowPropertiesModal)
-                    this.$refs.workflowPropertiesModal.show();
+                if (this.$refs.workflowPropertiesModal){
+                    this._retrieveClusters().then(() => 
+                        this.$refs.workflowPropertiesModal.show());
+                }
             },
             selectImage() {
                 if (this.$refs.workflowImageModal)
@@ -796,18 +798,28 @@
                 }
             },
             showExecuteWindow() {
-                const self = this;
                 const d = new Date().toISOString().slice(0, -5);
                 this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
-                axios.get(`${standUrl}/clusters?enabled=true`, {})
+                this._retrieveClusters().then(() => {
+                    this.$refs.executeModal.show();
+                });
+            },
+            execute() {
+                const self = this;
+                this.$Progress.start()
+                this.saveWorkflow(false).then(() => {
+                    self._execute();
+                });
+            },
+            _retrieveClusters(){
+                const self = this;
+                return axios.get(`${standUrl}/clusters?enabled=true`, {})
                     .then((response) => {
-                        self.clusters.length = 0;
-                        Array.prototype.push.apply(self.clusters, response.data.data);
+                        self.clusters = response.data.data;
                         if (self.clusters.length) {
                             self.clusterInfo.id = self.clusters[0].id;
                             self.clusterInfo.name = self.clusters[0].name;
                             self.clusterInfo.description = self.clusters[0].description;
-                            self.$refs.executeModal.show();
                             if (self.name === '') {
                                 self.clusterInfo.workflowName = self.workflow.name;
                             }
@@ -817,13 +829,6 @@
                     }).catch((ex) => {
                         self.error(ex);
                     });
-            },
-            execute() {
-                const self = this;
-                this.$Progress.start()
-                this.saveWorkflow(false).then(() => {
-                    self._execute();
-                });
             },
             _execute() {
                 const self = this;

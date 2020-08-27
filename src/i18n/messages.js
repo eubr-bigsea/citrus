@@ -80,6 +80,7 @@ export default {
             attention: 'Atenção',
             alreadyHaveAccount: 'Já possui uma conta?',
             attribute: 'Atributo | Atributos',
+            category: 'Categoria | Categorias',
             changePassword: 'Criar nova Senha',
             column: 'Coluna | Colunas',
             command: 'Comando SQL',
@@ -550,6 +551,7 @@ export default {
             jobName: 'Nome para a execução',
             newName:
                 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
+            preferredCluster: 'Cluster preferencial para execução',
             publishingEnabled: 'Habilitar publicação do fluxo de trabalho',
             publishingEnabledExplanation: 'Permite que o fluxo de trabalho seja publicado para os usuários.',
             publishingSelect: 'Selecione as propriedades que podem ser alteradas pelos usuários para fluxos de trabalho publicados.',
@@ -712,6 +714,7 @@ export default {
             attention: 'Attention',
             alreadyHaveAccount: 'Already have an account?',
             attribute: 'Attribute | Attributes',
+            category: 'Category | Categories',
             changePassword: 'Create new password',
             column: 'Column | Columns',
             command: 'SQL Command',
@@ -1158,6 +1161,7 @@ export default {
             jobName: 'Job name',
             newName:
                 'New name (a copy of the workflow will be created, but not loaded)',
+            preferredCluster: 'Preferred cluster for execution',
             publishingEnabled: 'Enable workflow to be published',
             publishingEnabledExplanation: 'Allows workflow to be published to users.',
             publishingSelect: 'Select properties that may be changed by users for published workflows.',
