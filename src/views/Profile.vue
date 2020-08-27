@@ -38,7 +38,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group row">
+                            <div v-if="user.authentication_type !== 'LDAP' " class="form-group row">
                                 <label for="inputPassword3"
                                     class="col-sm-3 col-form-label">{{ $t('common.current_password') }}:</label>
                                 <div class="col-sm-9">
@@ -47,10 +47,9 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div class="col-md-12">
-                                    <div v-b-toggle.changePassword class="float-right">
-                                        <a href="javascript:void">
-                                        {{ $t('profile.alsoChangePassword') }}</a></div>
+                                <div v-if="user.authentication_type !== 'LDAP'" class="col-md-12">
+                                    <b-link v-b-toggle.changePassword class="float-right">
+                                        {{ $t('profile.alsoChangePassword') }}</b-link>
                                 </div>
                                 <div class="col-md-12">
                                     <b-collapse id="changePassword">

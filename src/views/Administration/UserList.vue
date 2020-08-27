@@ -38,7 +38,7 @@
                                         <template slot="roles" slot-scope="props">
                                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                                 <span v-for="role in props.row.roles" :key="role.id">
-                                                <div class="badge badge-secondary p-1 mr-1">{{role.description}}</div>
+                                                <div class="badge badge-secondary p-1 mr-1">{{role.label}}</div>
                                                 </span>
                                             </router-link>
                                         </template>

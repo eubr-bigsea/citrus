@@ -1,5 +1,5 @@
 <template>
-    <div class="myview" style="margin-top: 15px;">
+    <div class="xmyview" style="margin-top: 15px;">
         <p v-if="loading">
             <font-awesome-icon icon="spinner" pulse class="icon"></font-awesome-icon> {{$t('common.loading')}}
         </p>
@@ -10,14 +10,15 @@
         </div>
 
         <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData"
-            :public-route="publicRoute"></component>
+            :public-route="publicRoute" :height="height"></component>
     </div>
 </template>
 
 <style>
-    .myview {
-        height: 100%;
-	min-height: 450px;
+    div.myview {
+        height: 95%;
+        margin: 0 1px;
+        width: 98% !important;
     }
 </style>
 
@@ -37,6 +38,17 @@
     import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
     import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap"
     import CaipirinhaVisualizationDonut from "./CaipirinhaVisualizationDonut"
+
+    import BarChart from "../visualization/BarChart";
+    import BubbleChart from "../visualization/BubbleChart";
+    import ForceDirectGraph from "../visualization/ForceDirectGraph";
+    import Heatmap from "../visualization/Heatmap";
+    import IFrame from "../visualization/IFrame";
+    import Indicator from "../visualization/Indicator";
+    import LineChart from "../visualization/LineChart";
+    import Markdown from "../visualization/Markdown";
+    import PieChart from "../visualization/PieChart";
+    import Treemap from "../visualization/Treemap";
 
     let highchartsDefaultLang = undefined;
 
@@ -81,23 +93,35 @@
     export default {
         name: "caipirinha-visualization",
         props: {
-            url: {},
-            publicRoute: { default: true },
             dataSourceType: { default: 'caipirinha' },
+            publicRoute: { default: true },
+            task: null,
+            url: {},
+            height: { default: 450 }
         },
         components: {
             CaipirinhaVisualizationHtml,
             CaipirinhaVisualizationMarkdown,
             CaipirinhaVisualizationTable,
-            CaipirinhaVisualizationLine,
-            CaipirinhaVisualizationBar,
+            // CaipirinhaVisualizationLine,
+            CaipirinhaVisualizationLine: LineChart,
+            //CaipirinhaVisualizationBar,
+            "CaipirinhaVisualizationBar": BarChart,
             "caipirinha-visualization-boxplot": CaipirinhaVisualizationBoxPlot,
             "caipirinha-visualization-histogram": CaipirinhaVisualizationHistogram,
-            CaipirinhaVisualizationPie,
+            // CaipirinhaVisualizationPie,
+            CaipirinhaVisualizationPie: PieChart,
             CaipirinhaVisualizationArea,
             CaipirinhaVisualizationScatter,
             CaipirinhaVisualizationMap,
-            CaipirinhaVisualizationDonut
+            CaipirinhaVisualizationDonut,
+            'bubble-chart': BubbleChart,
+            'force-direct': ForceDirectGraph,
+            'heatmap': Heatmap,
+            'indicator': Indicator,
+            'iframe-panel': IFrame,
+            'markdown': Markdown,
+            'treemap': Treemap,
         },
         data() {
             return {
@@ -135,6 +159,20 @@
                         return "caipirinha-visualization-boxplot";
                     case 124:
                         return "caipirinha-visualization-histogram";
+                    case 130:
+                        return "indicator";
+                    case 131:
+                        return "markdown";
+                    case 133:
+                        return "heatmap";
+                    case 134:
+                        return "bubble-chart";
+                    case 1350:
+                        return "force-direct";
+                    case 136:
+                        return "iframe-panel";
+                    case 137:
+                        return "treemap";
                     default:
                         throw new TypeError(this.$t("errors.invalidVisualizationId"));
                 }

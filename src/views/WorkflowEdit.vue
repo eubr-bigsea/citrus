@@ -23,6 +23,7 @@
                         </diagram>
                         <slideout-panel :opened="showProperties">
                             <property-window :task="selectedTask.task" v-if="selectedTask.task"
+                                :variables="workflow.variables || []"
                                 :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
                                 :publishingEnabled="workflow && workflow.publishing_enabled" />
                         </slideout-panel>
@@ -74,13 +75,14 @@
                     </b-tab>
                 </b-tabs>
                 -->
-                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow"/>
+                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"/>
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
                     :validationErrors="validationErrors" :workflow="workflow" />
                 <ModalWorkflowHistory ref="historyModal" :history="history" />
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
-                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" />
+                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" :clusters="clusters" />
+                <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" />
                 <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
         </div>
@@ -94,6 +96,7 @@
     import InputHeader from '../components/InputHeader.vue';
     import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
     import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
+    import ModalWorkflowImage from './modal/ModalWorkflowImage.vue'
     import ModalWorkflowVariables from './modal/ModalWorkflowVariables.vue'
     import ModalTaskResults from './modal/ModalTaskResults.vue'
     import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue'
@@ -129,6 +132,7 @@
             ModalTaskResults,
             ModalWorkflowHistory,
             ModalWorkflowProperties,
+            ModalWorkflowImage,
             ModalWorkflowVariables,
 
             WorkflowProperty,
@@ -224,6 +228,7 @@
             this.$root.$on('onclick-export', () => this.exportWorkflow());
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showWorkflowProperties);
+            this.$root.$on('onselect-image', this.selectImage);
             this.$root.$on('onset-isDirty', this.setIsDirty);
             this.$root.$on('onclick-setup', (options) => {
                 this.performanceModel.cores = options.cores;
@@ -258,7 +263,6 @@
                 }
                 fieldInSelectedTask.label = field.label;
                 if (labelValue) {
-                    console.debug('Label', labelValue)
                     fieldInSelectedTask.labelValue = labelValue
                 } else if (fieldInSelectedTask.labelValue) {
                     delete fieldInSelectedTask.labelValue
@@ -384,6 +388,7 @@
             this.$root.$off('onexecute-workflow');
             this.$root.$off('onshow-properties');
             this.$root.$off('onshow-executions');
+            this.$root.$off('onshow-variables');
             window.removeEventListener('beforeunload', this.leaving)
         },
         watch: {
@@ -420,6 +425,46 @@
                 //this.selectedTab = index;
                 this.$refs.diagram.repaint();
             },
+            _load_operations(self, workflow, resp){
+                self.operations = resp.data
+                self.operations.forEach((op) => {
+                    self.operationsLookup[op.id] = op
+                })
+                let usingDisabledOp = false;
+                workflow.tasks.forEach((task) => {
+                    let op = self.operationsLookup[task.operation.id];
+                    task.operation = op
+                    task.step = null;
+                    usingDisabledOp |= op.enabled === false;
+                    if (!op.enabled) {
+                        task.warning = self.$t('workflow.usingDisabledOperation');
+                    } else {
+                        task.warning = null;
+                    }
+                });
+                if (usingDisabledOp) {
+                    self.warning(self.$t('messages.usingDisabledOperation',
+                        { what: self.$tc('titles.workflow') }), 60000, 300);
+                }
+                if (!workflow.forms) {
+                    workflow.forms = {};
+                }
+                (workflow.platform.forms || []).forEach((form) => {
+                    if (form.order < self.minFormOrder) {
+                        self.minFormOrder = form.order;
+                    }
+                    // form.fields.forEach((field) => {
+                    //     // console.debug("Aqui", workflow.forms[field.name])
+                    //     // workflow.forms[field.name] = workflow.forms[field.name].value ||
+                    //     //     field['default'] || ''
+                    // });
+                });
+                self.workflow = workflow;
+                self._validateTasks(self.workflow.tasks);
+                self.updateAttributeSuggestion();
+                self.loaded = true;
+                const params = { workflow_id: this.$route.params.id }
+            },
             load() {
                 let self = this;
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
@@ -427,84 +472,54 @@
                         let workflow = resp.data;
                         this.$Progress.start()
                         const params = {
-                            platform: this.$route.params.platform,
+                            platform: workflow.platform.id, //this.$route.params.platform,
+                            subset: workflow.subset ? workflow.subset.id : null,
                             lang: this.$root.$i18n.locale,
-                            disabled: true // even disabled operations must be returned to keep compatibility
+                            disabled: true, // even disabled operations must be returned to keep compatibility,
+                            workflow: workflow.id,
+                            t: new Date().getTime(), // Force refresh
                         }
-                        axios.get(`${tahitiUrl}/operations`, { params }).then(
-                            (resp) => {
-                                self.operations = resp.data
-                                self.operations.forEach((op) => {
-                                    self.operationsLookup[op.id] = op
-                                })
-                                let usingDisabledOp = false;
-                                workflow.tasks.forEach((task) => {
-                                    let op = self.operationsLookup[task.operation.id];
-                                    task.operation = op
-                                    task.step = null;
-                                    usingDisabledOp |= op.enabled === false;
-                                    if (!op.enabled) {
-                                        task.warning = self.$t('workflow.usingDisabledOperation');
-                                    } else {
-                                        task.warning = null;
-                                    }
-                                });
-                                if (usingDisabledOp) {
-                                    self.warning(self.$t('messages.usingDisabledOperation',
-                                        { what: self.$tc('titles.workflow') }), 60000, 300);
-                                }
-                                if (!workflow.forms) {
-                                    workflow.forms = {};
-                                }
-                                (workflow.platform.forms || []).forEach((form) => {
-                                    if (form.order < self.minFormOrder) {
-                                        self.minFormOrder = form.order;
-                                    }
-                                    // form.fields.forEach((field) => {
-                                    //     // console.debug("Aqui", workflow.forms[field.name])
-                                    //     // workflow.forms[field.name] = workflow.forms[field.name].value ||
-                                    //     //     field['default'] || ''
-                                    // });
-                                });
-                                self.workflow = workflow;
-                                self._validateTasks(self.workflow.tasks);
-                                this.updateAttributeSuggestion();
-                                self.loaded = true;
-                                const params = { workflow_id: this.$route.params.id }
-                                axios.get(`${standUrl}/jobs/latest`, { params })
-                                    .then((resp2 => {
-                                        const job = resp2.data;
-										self.job = job;
-                                        const tasks = self.workflow.tasks;
-                                        job.steps.forEach((step) => {
-                                            const foundTask = tasks.find((t) => {
-                                                return t.id === step.task.id;
-                                            });
-                                            if (foundTask) {
-                                                foundTask.step = step;
-                                            }
-                                        });
-                                        job.results.forEach((result) => {
-                                            const foundTask = tasks.find((t) => {
-                                                return t.id === result.task.id;
-                                            });
-                                            if (foundTask) {
-                                                foundTask.result = result;
-                                            }
-                                        });
-                                    })).catch(() => { });
-                            }
+                        axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._load_operations(self, workflow, resp)
                         ).catch(function (e) {
                             this.error(e);
                         }.bind(this)).finally(() => {
                             Vue.nextTick(() => {
-                                this.$Progress.finish()
-                            })
+                                this.$Progress.finish();
+                                delete params['workflow'];
+                                axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._load_operations(self, workflow, resp)
+                                ).catch(function (e) {
+                                        this.error(e);
+                                });
+                                });
                         });
+                axios.get(`${standUrl}/jobs/latest`, { params })
+                    .then((resp2 => {
+                        const job = resp2.data;
+						self.job = job;
+                        const tasks = self.workflow.tasks;
+                        job.steps.forEach((step) => {
+                            const foundTask = tasks.find((t) => {
+                                return t.id === step.task.id;
+                            });
+                            if (foundTask) {
+                                foundTask.step = step;
+                            }
+                        });
+                        job.results.forEach((result) => {
+                            const foundTask = tasks.find((t) => {
+                                return t.id === result.task.id;
+                            });
+                            if (foundTask) {
+                                foundTask.result = result;
+                            }
+                        });
+                    })).catch(() => { });
+
                     }
                 ).catch(function (e) {
                     this.error(e);
                 }.bind(this));
+
             },
             saveAsImage() {
                 let self = this
@@ -718,8 +733,14 @@
             saveWorkflowProperties() {
             },
             showWorkflowProperties() {
-                if (this.$refs.workflowPropertiesModal)
-                    this.$refs.workflowPropertiesModal.show();
+                if (this.$refs.workflowPropertiesModal){
+                    this._retrieveClusters().then(() => 
+                        this.$refs.workflowPropertiesModal.show());
+                }
+            },
+            selectImage() {
+                if (this.$refs.workflowImageModal)
+                    this.$refs.workflowImageModal.show();
             },
             showSaveAs() {
                 if (this.$refs.saveAsModal) {
@@ -741,33 +762,37 @@
                 }
             },
             showExecuteWindow() {
-                const self = this;
                 const d = new Date().toISOString().slice(0, -5);
                 this.clusterInfo.jobName = `${d} - ${this.workflow.name}`;
-                axios.get(`${standUrl}/clusters?enabled=true`, {})
+                this._retrieveClusters().then(() => {
+                    this.$refs.executeModal.show();
+                });
+            },
+            execute() {
+                const self = this;
+                this.$Progress.start()
+                this.saveWorkflow(false).then(() => {
+                    self._execute();
+                });
+            },
+            _retrieveClusters(){
+                const self = this;
+                return axios.get(`${standUrl}/clusters?enabled=true`, {})
                     .then((response) => {
-                        self.clusters.length = 0;
-                        Array.prototype.push.apply(self.clusters, response.data);
+                        self.clusters = response.data.data;
                         if (self.clusters.length) {
                             self.clusterInfo.id = self.clusters[0].id;
                             self.clusterInfo.name = self.clusters[0].name;
                             self.clusterInfo.description = self.clusters[0].description;
-                            self.$refs.executeModal.show();
                             if (self.name === '') {
                                 self.clusterInfo.workflowName = self.workflow.name;
                             }
                         } else {
-                            self.error("Unable to execute workflow: There is not cluster available.");
+                            self.error(null, self.$t("workflow.errorNoCluster"));
                         }
                     }).catch((ex) => {
                         self.error(ex);
                     });
-            },
-            execute() {
-                const self = this;
-                this.saveWorkflow(false).then(() => {
-                    self._execute();
-                });
             },
             _execute() {
                 const self = this;
@@ -796,6 +821,7 @@
                 };
                 axios.post(`${standUrl}/jobs`, body, { headers })
                     .then(function (response) {
+                        self.$Progress.finish()
                         self.$router.push({
                             name: 'jobDetail',
                             params: {
@@ -897,22 +923,5 @@
     .atmosphere h3 {
         text-align: center;
         color: #aaa;
-    }
-    .full_modal-dialog .modal-dialog {
-      width: 98% !important;
-      height: 92% !important;
-      min-width: 98% !important;
-      min-height: 92% !important;
-      max-width: 98% !important;
-      max-height: 92% !important;
-      padding: 0 !important;
-    }
-    
-    .full_modal-dialog .modal-content{
-      height: 99% !important;
-      min-height: 99% !important;
-      max-height: 99% !important;
-      border-radius: 0;
-      overflow-y: auto;
     }
 </style>

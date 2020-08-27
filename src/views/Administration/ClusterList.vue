@@ -98,8 +98,8 @@
                             .then(resp => {
                                 this.$Progress.finish();
                                 return {
-                                    data: resp.data
-                                    //count: resp.data.pagination.total
+                                    data: resp.data.data,
+                                    count: resp.data.pagination.total
                                 };
                             })
                             .catch(

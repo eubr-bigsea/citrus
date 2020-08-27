@@ -1,20 +1,27 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage" readonly
-            ref="prism" disabled class="code2"/>
+        <prism-editor :code="value === null ? field.default: value" v-model="code"
+            :language="computedProgrammingLanguage" readonly ref="prism" disabled
+            class="prism-editor-wrapper-disabled code2" />
 
-        <b-link v-b-modal="'lookupModal' + field.order" variant="sm">
+        <b-link variant="sm" @click.prevent="showModal">
             <span>{{$t('actions.edit')}}...</span>
         </b-link>
-        <b-modal :id="'lookupModal' + field.order" size="lg" :title="field.label" ok-disabled
-            :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+        <b-modal size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             <div slot="default">
-                <div class="row" >
-					<div class="col-md-12">
-                        <prism-editor :code="value === null ? field.default: value" v-model="code" :language="computedProgrammingLanguage"
-                            ref="prism" disabled class="code"/>
-					</div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <prism-editor :code="value === null ? field.default: value" v-model="code"
+                            :language="computedProgrammingLanguage" ref="prism" disabled class="code" />
+                    </div>
+
+                    <div class="col-md-4">
+                        {{$tc('common.attribute', 2)}}:
+                        <select class="form-control mt-2" size="10">
+                            <option v-for="suggestion in suggestions" :key="suggestion">{{suggestion}}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div slot="modal-footer">
@@ -30,7 +37,8 @@
 
     import prismjs from "prismjs";
     import "prismjs/themes/prism.css";
-    import LabelComponent from './Label.vue'
+    import LabelComponent from './Label.vue';
+    import Widget from '../../mixins/Widget.js';
     import PrismEditor from 'vue-prism-editor'
 
     Prism.languages.python = {
@@ -89,9 +97,10 @@
     };
 
     export default {
+        mixins: [Widget],
         computed: {
-            computedProgrammingLanguage(){
-                if (this.field && this.field.values){
+            computedProgrammingLanguage() {
+                if (this.field && this.field.values) {
                     return JSON.parse(this.field.values).language;
                 } else {
                     return this.programmingLanguage;
@@ -101,7 +110,8 @@
         data() {
             return {
                 code: '',
-                originalCode: ''
+                originalCode: '',
+                suggestions: []
             }
         },
         components: {
@@ -110,6 +120,7 @@
         mounted() {
             this.code = this.value || this.field.default || '';
             this.originalCode = this.code;
+            this.suggestions = this.suggestionEvent();
         },
         watch: {
             code: _.debounce(function (e) {
@@ -118,18 +129,16 @@
             }, 500)
         },
         props: {
-            value: 0, field: null,
             programmingLanguage: null,
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            }
         },
         methods: {
-            okModal(){
+            okModal() {
                 this.$refs.modal.hide();
             },
-            cancelModal(){
+            showModal() {
+                this.$refs.modal.show();
+            },
+            cancelModal() {
                 this.code = this.originalCode;
                 this.$root.$emit(this.message, this.field, this.code);
                 this.$refs.modal.hide();
@@ -138,11 +147,17 @@
 
     }
 </script>
+<style>
+    .prism-editor-wrapper-disabled pre {
+        background-color: #eee !important;
+    }
+</style>
 <style scoped>
     .code2 {
         height: 100px;
         border: 1px solid #ccc;
     }
+
     .code {
         height: 60vh;
         border: 1px solid #ccc;

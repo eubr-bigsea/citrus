@@ -29,6 +29,8 @@ import WorkflowList from './views/WorkflowList.vue';
 import WorkflowEdit from './views/WorkflowEdit.vue';
 import WorkflowAdd from './views/WorkflowAdd.vue';
 
+import TrackList from './views/TrackList.vue';
+
 import NotebookEdit from './views/NotebookEdit.vue';
 
 import OperationList from './views/OperationList.vue';
@@ -43,7 +45,6 @@ const Welcome = () => import('./views/Welcome.vue');
 const ConfigurationList = () => import('./views/ConfigurationList.vue');
 
 const RoleList = () => import('./views/Administration/RoleList.vue');
-//const RoleAdd = () => import('./views/Administration/RoleAdd.vue');
 const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
 
 const UserList = () => import('./views/Administration/UserList.vue');
@@ -51,8 +52,10 @@ const UserAdd = () => import('./views/Administration/UserAdd.vue');
 const UserEdit = () => import('./views/Administration/UserEdit.vue');
 
 const ClusterList = () => import('./views/Administration/ClusterList.vue');
-const ClusterAdd = () => import('./views/Administration/ClusterAdd.vue');
 const ClusterEdit = () => import('./views/Administration/ClusterEdit.vue');
+
+const StorageList = () => import('./views/Administration/StorageList.vue');
+const StorageEdit = () => import('./views/Administration/StorageEdit.vue');
 
 const ModelList = () => import('./views/ModelList.vue');
 const ModelAdd = () => import('./views/ModelAdd.vue');
@@ -65,9 +68,15 @@ const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
 const WebSocketPing = () => import('./views/WebSocketPing.vue');
 const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
 
+const NotificationList = () => import('./views/NotificationList.vue');
+
 const PlatformList = () => import('./views/Administration/PlatformList.vue');
 const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
 const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
+
+const TrackPanel = () => import('./views/TrackPanel.vue');
+const Track = () => import('./views/Track.vue');
+const TrackAdd = () => import('./views/TrackAdd.vue');
 
 Vue.use(Router);
 
@@ -274,6 +283,15 @@ let router = new Router({
             }
         },
         {
+            path: '/notifications',
+            name: 'notifications',
+            component: NotificationList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.notification', 2]
+            }
+        },
+        {
             path: '/jobs',
             name: 'jobs',
             component: JobList,
@@ -289,6 +307,42 @@ let router = new Router({
             meta: {
                 requiresAuth: true,
                 title: ['titles.job', 1]
+            }
+        },
+        {
+            path: '/apps',
+            name: 'tracks',
+            component: TrackList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/add',
+            name: 'addTrack',
+            component: TrackAdd,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/params/:id',
+            name: 'trackParameter',
+            component: Track,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
+            }
+        },
+        {
+            path: '/apps/panel',
+            name: 'tracksPanel',
+            component: TrackPanel,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.track', 2]
             }
         },
         {
@@ -448,7 +502,8 @@ let router = new Router({
         {
             path: '/administration/clusters/add',
             name: 'addCluster',
-            component: ClusterAdd,
+            props: {add: true},
+            component: ClusterEdit,
             meta: {
                 requiresAuth: true,
                 title: ['titles.cluster', 1]
@@ -463,6 +518,35 @@ let router = new Router({
                 title: ['titles.cluster', 1]
             }
         },
+        {
+            path: '/administration/storages',
+            name: 'storages',
+            component: StorageList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.storage', 2]
+            }
+        },
+        {
+            path: '/administration/storages/add',
+            name: 'addStorage',
+            props: {add: true},
+            component: StorageEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.storage', 1]
+            }
+        },
+        {
+            path: '/administration/storages/:id',
+            name: 'editStorage',
+            component: StorageEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.storage', 1]
+            }
+        },
+
         {
             path: '/administration/platforms',
             name: 'platforms',

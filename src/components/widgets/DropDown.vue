@@ -14,15 +14,21 @@
 </template>
 <script>
     import LabelComponent from './Label.vue'
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: { LabelComponent },
         mounted() {
             this.$root.$emit(this.message,
-                 this.field, this.value || this.field['default']);
+                this.field, this.value || this.field['default']);
         },
         computed: {
             pairOptionValueList() {
-                return JSON.parse(this.field.values);
+                try {
+                    return JSON.parse(this.field.values);
+                } catch (Exception) {
+                    return [];
+                }
             },
             selected: {
                 get() {
@@ -39,18 +45,7 @@
                     e.target.options[e.target.selectedIndex].text);
             }
         },
-        props: {
-            value: {
-                default: '0'
-            }, 
-            field: null, language: { default: 'en' }, message: {
-                type: String,
-                default: 'update-form-field-value'
-            },
-            readOnly: false
-        },
         ready: function () {
-            //console.debug(this.field, this.field['default'], this.value)
             if (this.field['default'] && (this.value === null || this.value === '')) {
                 this.value = this.field['default'];
             }

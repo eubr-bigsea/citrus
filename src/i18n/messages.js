@@ -18,9 +18,11 @@ export default {
             cancel: 'Cancelar',
             changeOption: 'Alterar opção...',
             close: 'Fechar',
+            copy: 'Copiar',
             confirm: 'Confirmar',
             choose: 'Escolha',
             chooseOption: 'Escolha uma opção ...',
+            clear: 'Limpar',
             clearFilters: 'Limpar filtros',
             create: 'Criar um novo {type}',
             delete: 'Excluir',
@@ -35,6 +37,7 @@ export default {
             moveDown: 'Mover para baixo',
             moveUp: 'Mover para cima',
             new: 'Novo',
+            paste: 'Colar',
             removeSelected: 'Remover',
             removeValue: 'Remover valor',
             rename: 'Renomear',
@@ -44,15 +47,18 @@ export default {
             saveAs: 'Salvar como',
             saveAsImage: 'Salvar como imagem',
             search: 'Pesquisar',
+            selectImage: 'Selecionar imagem',
             share: 'Compartilhar',
             show: 'Exibir',
             showHistory: 'Exibir histórico',
             showProperties: 'Exibir propriedades',
             showResults: 'Exibir resultados',
+			showVariables: 'Exibir variáveis',
             simpleAdd: 'Adicionar',
             stop: 'Parar',
             test: 'Testar',
-            toggleTasks: 'Habilitar/desabilitar tarefas'
+            toggleTasks: 'Habilitar/desabilitar tarefas',
+            update: 'Atualizar',
         },
         atmosphere: {
             transparency: 'Explicação de modelos'
@@ -66,12 +72,15 @@ export default {
         },
         common: {
             action: 'Ação | Ações',
+            address: 'Endereço',
             adminRole: 'Administrador',
             author: 'Autor',
             attention: 'Atenção',
             alreadyHaveAccount: 'Já possui uma conta?',
             attribute: 'Atributo | Atributos',
+            category: 'Categoria | Categorias',
             changePassword: 'Criar nova Senha',
+            column: 'Coluna | Colunas',
             command: 'Comando SQL',
             confirmed_at: 'Confirmado em',
             confirm: 'Confirmar',
@@ -90,6 +99,7 @@ export default {
             firstName: 'Nome',
             forgotPassword: 'Esqueceu a senha?',
             format: 'Formato',
+            height: 'Altura | Alturas',
             hide: 'Ocultar',
             history: 'Histórico',
             id: 'Id',
@@ -139,15 +149,18 @@ export default {
             rememberMe: 'Lembrar minha senha',
             resetPassword: 'Redefinir',
             roles: 'Perfil | Perfis',
+            row: 'Linha | Linhas',
             saveBeforeToEnableThis: 'Salve os dados para habilitar a ação {what}',
             scale: 'Escala',
             sharing: 'Compartilhamento',
             show: 'Exibir',
             size: 'Tamanho',
             slug: 'Slug',
+            status: 'Status',
             system: 'Sistema',
             tag: 'Tag | Tags',
             tags: 'Tags',
+            text: 'Texto',
             title: 'Título',
             true: 'Verdadeiro',
             type: 'Tipo | Tipos',
@@ -158,16 +171,22 @@ export default {
             userName: 'Nome do usuário',
             userRole: 'Usuário',
             user: {
+                apiToken: 'Token de API',
+                apiTokenWarning: 'Esta ação poderá interromper o funcionando de aplicações. Continuar?',
                 authenticationType: 'Tipo de autenticação',
                 authenticationInternal: 'Interna',
                 authenticationLdap: 'LDAP',
                 authenticationAd: 'AD',
                 full_name: 'Nome',
+                globalRoles: 'Grupos globais (todo usuário faz parte)',
                 name: 'Nome do usuário',
                 login: 'Login do usuário',
                 notes: 'Nota | Notas',
+                
             },
             version: 'Versão',
+            wait: 'Por favor, aguarde...',
+            width: 'Largura | Larguras',
             yes: 'Sim'
         },
         dataTypes: {
@@ -181,10 +200,11 @@ export default {
             'FLOAT': 'Ponto flutante com menor precisão',
             'INTEGER': 'Inteiro',
             'LONG': 'Inteiro longo',
+            'TABLE': 'Tabela de pesquisa',
             'TEXT': 'Texto longo',
             'TIME': 'Hora',
             'TIMESTAMP': 'Timestamp',
-            'VECTOR': 'Vetor'
+            'VECTOR': 'Vetor',
         },
         dashboard: {
             public: 'Público',
@@ -217,6 +237,7 @@ export default {
                 'Lemonade suporta inferir atributos para o formato {what}.',
             isFirstLineHeader: 'Usar a primeira linha como cabeçalho',
             isMultiline: 'Multilinhas (atributo com quebra de linha)',
+            lookup: 'Usar como tabela de referência',
             message: 'Mensagem',
             missingRepresentation: 'Representação para dados ausentes',
             noPermissions: 'Nenhuma permissão definida',
@@ -241,6 +262,7 @@ export default {
             storage: 'Armazenamento',
             suggestedOption:
                 'Se você não sabe qual opção escolher, esta é a opção recomendada.',
+            tablesReference: 'Tabelas (apenas referência)',
             textDelimiter: 'Delimitador de texto (apenas CSV)',
             treatAsNull: 'Tratar estes valores como valores nulos (opcional)',
             uploadingLog: 'Registro de envio',
@@ -259,6 +281,7 @@ export default {
         errors: {
             acceptTerms: 'Você deve concordar com os termos de uso',
             accessDenied: 'Acesso negado.',
+            badGateway: 'Há um problema na comunicação com o servidor. Por favor, tente mais tarde.',
             disconnected:
                 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
             emailNotFound: 'Email não cadastrado.',
@@ -277,7 +300,9 @@ export default {
             receivingData: 'Erro recebendo dados do servidor.',
             resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest:
                 'Este link expirou, por favor redefina sua senha novamente.',
-            sendingData: 'Erro enviando dados do servidor.'
+            sendingData: 'Erro enviando dados do servidor.',
+            validation: 'Erro(s) de validação',
+            validationExplanation: 'Por favor, corrija o(s) erro(s) e tente novamente.',
         },
         warnings: {
             dirtyCheck:
@@ -421,8 +446,12 @@ export default {
         titles: {
             about: 'Sobre',
             action: 'Ação | Ações',
+            actualValue: 'Valor atual',
             administration: 'Administração',
+            apiToken: 'Tokens para API',
+            allNotifications: 'Ver todas as notificações',
             changePassword: 'Nova senha',
+            color: 'Color',
             cluster: 'Cluster | Clusters',
             configuration: 'Configuração | Configurações',
             dataSource: 'Base de dados | Bases de dados',
@@ -434,6 +463,7 @@ export default {
             globalPrivacyPolicy:
                 'Política global de privacidade|Políticas globais de privacidade',
             home: 'Bem-vindo ao Lemonade',
+            info: 'Info',
             job: 'Execução | Execuções',
             jobs: 'Execuções',
             lemonade: 'Lemonade',
@@ -442,6 +472,7 @@ export default {
             model: 'Modelo | Modelos',
             news: 'Novidades e Dicas',
             notebook: 'Notebook | Notebooks',
+            notification: 'Notificação | Notificações',
             pageNotFound: 'Página não encontrada',
             platform: 'Platforma | Platformas',
             profile: 'Perfil',
@@ -458,6 +489,8 @@ export default {
             template: 'Modelo | Modelos',
             toolboxCategory: 'Organização das operações',
             tool: 'Ferramenta | Ferramentas',
+            track: 'Trilha | Trilhas',
+            undefined: 'Não definido',
             user: 'Usuário | Usuários',
             validationErrors: 'Erro de validação | Erros de validação',
             value: 'Valor',
@@ -466,6 +499,13 @@ export default {
             welcome: 'Bem-vindo(a) ao Lemonade!',
             whatIfModel: 'What if model?',
             workflow: 'Fluxo de trabalho | Fluxos de trabalho'
+        },
+        track: {
+            status: 'Status',
+            whichTrack: 'Qual trilha você está procurando?',
+            EDITING: 'Em edição',
+            PUBLISHED: 'Publicado',
+            DISABLED: 'Desabilitado',
         },
 
         home: {
@@ -487,6 +527,8 @@ export default {
             maximum: 'Máximo',
             median: 'Mediana',
             minimum: 'Mínimo',
+            ofEntry: 'do total visível',
+            ofParent: 'do total do pai',
             outlier: 'Discrepante | Discrepantes',
             tryRefresh:
                 'Tente atualizar a página, pode ser que a visualização ainda esteja sendo carregada',
@@ -499,6 +541,7 @@ export default {
             copyOf: 'Cópia de',
             copySavedWithSuccess: 'Cópia salva com sucesso!',
             execute: 'Executar fluxo de trabalho',
+            errorNoCluster: 'Não há recursos computacionais (clusters) configurados para executar o fluxo de trabalho.',
             forPlatform: 'Para uma plataforma de processamento',
             fromTemplate: 'A partir de um modelo',
             fromUserTemplate: 'A partir de um modelo criado por usuários',
@@ -506,15 +549,20 @@ export default {
             jobName: 'Nome para a execução',
             newName:
                 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
+            preferredCluster: 'Cluster preferencial para execução',
             publishingEnabled: 'Habilitar publicação do fluxo de trabalho',
             publishingEnabledExplanation: 'Permite que o fluxo de trabalho seja publicado para os usuários.',
             publishingSelect: 'Selecione as propriedades que podem ser alteradas pelos usuários para fluxos de trabalho publicados.',
+            publishingStatus: 'Status da publicação',
+            publisingStatusEditing: 'Em edição - Não está disponível para os usuários',
+            publisingStatusPublished: 'Publicado - Disponível para os usuários',
             required:
                 'Por favor, complete as informações necessárias para a execução do fluxo de trabalho',
             restoreHistory:
                 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored:
                 'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
+			setImage: 'Definir imagem para o workflow',
             useAsTemplate: 'Disponibilizar este fluxo de trabalho como modelo',
             useAsTemplateExplanation:
                 'Você poderá criar outros fluxos de trabalho a partir deste. Na tela de novo fluxo de trabalho, escolha a opção "A partir de um modelo".',
@@ -527,6 +575,46 @@ export default {
                 'Há um erro no fluxo de trabalho. A execução poderá não ter sucesso. | Existem erros no fluxo de trabalho. A execução poderá não ter sucesso.',
             variables: 'Variável | Variáveis',
         },
+        variables: {
+            addOrEdit: 'Adicione um ou mais itens <br /> ou clique um dos filtros à direita para editá-lo.',
+            attribute: 'Atributo',
+            associateTo: 'Associar a variável',
+            associateToLookup: 'Associar a tabela de referência',
+            defaultValue: 'Valor-padrão',
+            description: 'Descrição',
+            help: 'Ajuda',
+            id: 'Identificador',
+            label: 'Rótulo',
+            multiplicity: 'Multiplicidade',
+            name: 'Nome',
+            operator: 'Operador | Operadores',
+            parameter: 'Parâmetro | Parâmetros',
+            suggestedWidget: 'Campo sugerido',
+            type: 'Tipo',
+            values: 'Valor | Valores',
+            operators: {
+                eq: 'Igual (=)',
+                lt: 'Menor que (<)',
+                gt: 'Maior que (>)',
+                le: 'Menor ou igual (<=)',
+                ge: 'Maior ou igual (>=)',
+                ne: 'Diferente (/=)',
+                'in': 'Está na lista',
+                ni: 'Não está na lista',
+                user: 'Escolhido pelo usuário',
+            }
+        },
+        widgets: {
+            checkbox: 'Caixa de seleção/check',
+            date: 'Seleção de data',
+            decimal: 'Número com decimais',
+            dropdown: 'Caixa de seleção',
+            integer: 'Número',
+            lookup: 'Valores pesquisáveis',
+            text: 'Texto curto',
+            textarea: 'Texto longo',
+        },
+
         permissions: {
             MANAGE: 'Gerenciar',
             READ: 'Ler',
@@ -536,7 +624,12 @@ export default {
                 READ: 'Permite ler o item',
                 WRITE: 'Permite alterar ou excluir o item',
             }
-        }
+        },
+        storage: {
+            address1: 'URL principal',
+            address2: 'URL secundária',
+            extraParameters: 'Parâmetros extras',
+        },
     },
 
     en: {
@@ -561,6 +654,7 @@ export default {
             chooseOption: 'Choose option...',
             close: 'Close',
             confirm: 'Confirm',
+            copy: 'Copy',
             clear: 'Clear',
             clearFilters: 'Clear filters',
             create: 'Create new {type}',
@@ -576,6 +670,7 @@ export default {
             moveDown: 'Move down',
             moveUp: 'Move up',
             new: 'New',
+            paste: 'Paste',
             removeSelected: 'Remove',
             removeValue: 'Remove value',
             rename: 'Rename',
@@ -585,15 +680,18 @@ export default {
             saveAs: 'Save as',
             saveAsImage: 'Save as image',
             search: 'Search',
+            selectImage: 'Select image',
             share: 'Share',
             show: 'Show',
             showHistory: 'Show history',
             showProperties: 'Show properties',
             showResults: 'Show results',
+			showVariables: 'Show variables',
             simpleAdd: 'Add',
             stop: 'Stop',
             test: 'Test',
-            toggleTasks: 'Enable/disable tasks'
+            toggleTasks: 'Enable/disable tasks',
+            update: 'Update',
         },
         atmosphere: {
             transparency: 'Explain models'
@@ -608,12 +706,15 @@ export default {
         common: {
             makeAdmin: 'Make Administrator',
             action: 'Action | Actions',
+            address: 'Address',
             adminRole: 'Administrator',
             author: 'Author',
             attention: 'Attention',
             alreadyHaveAccount: 'Already have an account?',
             attribute: 'Attribute | Attributes',
+            category: 'Category | Categories',
             changePassword: 'Create new password',
+            column: 'Column | Columns',
             command: 'SQL Command',
             confirm: 'Confirm',
             confirmed_at: 'Confirmed at',
@@ -631,6 +732,7 @@ export default {
             firstName: 'First name',
             forgotPassword: 'Forgot password?',
             format: 'Format',
+            heigh: 'Height | Heights',
             hide: 'Hide',
             history: 'History',
             id: 'Id',
@@ -680,15 +782,18 @@ export default {
             rememberMe: 'Remember me',
             resetPassword: 'Reset',
             roles: 'Role | Roles',
+            row: 'Row | Rows',
             saveBeforeToEnableThis: 'Save data to enabled the {what} action',
             scale: 'Scale',
             sharing: 'Sharing',
             show: 'Show',
             size: 'Size',
             slug: 'Slug',
+            status: 'Status',
             system: 'System',
             tag: 'Tag | Tags',
             tags: 'Tags',
+            text: 'Text',
             title: 'Title',
             true: 'True',
             type: 'Type | Types',
@@ -699,16 +804,21 @@ export default {
             userName: 'User name',
             userRole: 'User',
             user: {
+                apiToken: 'API token',
+                apiTokenWarning: 'This action may break existing applications. Continue?',
                 authenticationType: 'Authentication type',
                 authenticationInternal: 'Internal',
                 authenticationLdap: 'LDAP',
                 authenticationAd: 'AD',
                 full_name: 'Name',
+                globalRoles: 'Global groups (all users are members of)',
                 name: 'User name',
                 login: 'User login',
                 notes: 'Note | Notes',
             },
             version: 'Version',
+            wait: 'Please, wait...',
+            width: 'Width | Widths',
             yes: 'Yes'
         },
         dataTypes: {
@@ -722,10 +832,11 @@ export default {
             'FLOAT': 'Float',
             'INTEGER': 'Integer',
             'LONG': 'Long integer',
+            'TABLE': 'Lookup table',
             'TEXT': 'Long text',
             'TIME': 'Time',
             'TIMESTAMP': 'Timestamp',
-            'VECTOR': 'Vector'
+            'VECTOR': 'Vector',
         },
         dashboard: {
             public: 'Public',
@@ -758,6 +869,7 @@ export default {
                 'Lemonade supports infering attributes for the format {what}.',
             isFirstLineHeader: 'Use first line as header',
             isMultiline: 'Is multiline',
+            lookup: 'Only use as reference table',
             message: 'Message',
             missingRepresentation: 'Missing representation',
             noPermissions: 'No permissions defined',
@@ -782,6 +894,7 @@ export default {
             storage: 'Storage',
             suggestedOption:
                 'If you do not know what to choose, this is the suggested option.',
+            tablesReference: 'Tables (only for reference)',
             textDelimiter: 'Text delimiter (CSV only)',
             treatAsNull: 'Treat these values as null (optional)',
             uploadingLog: 'Uploading log',
@@ -797,6 +910,7 @@ export default {
         errors: {
             acceptTerms: 'You must accept the terms of service',
             accessDenied: 'Access denied.',
+            badGateway: 'There is a problem connecting to the server. Please, try again later.',
             disconnected:
                 'You are disconnected. Please check if you have access to the Internet.',
             emailNotFound: 'Email not found.',
@@ -814,7 +928,9 @@ export default {
             receivingData: 'Error receiving data from the server',
             resetPasswordTokenThisRequetHasExpiredPleaseMakeAnotherRequest:
                 'This requet has expired. Please make another request.',
-            sendingData: 'Error sending data to the server.'
+            sendingData: 'Error sending data to the server.',
+            validation: 'Validation error(s)',
+            validationExplanation: 'Please, fix the error(s) and try again.',
         },
         warnings: {
             dirtyCheck:
@@ -880,9 +996,13 @@ export default {
         titles: {
             about: 'About',
             action: 'Action | Actions',
+            actualValue: 'Current value',
             administration: 'Administration',
+            apiToken: 'API Tokens',
+            allNotifications: 'See all notifications',
             changePassword: 'New password',
             cluster: 'Cluster | Clusters',
+            color: 'Color',
             configuration: 'Configuration | Configurations',
             dataSource: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
@@ -892,6 +1012,7 @@ export default {
             errorDetail: 'Error detail (advanced)',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
             home: 'Welcome to Lemonade',
+            info: 'Info',
             job: 'Job | Jobs',
             jobs: 'Jobs',
             lemonade: 'Lemonade',
@@ -899,6 +1020,7 @@ export default {
             model: 'Model | Models',
             news: 'News & Tips',
             notebook: 'Notebook | Notebooks',
+            notification: 'Notification | Notifications',
             login: 'Login',
             pageNotFound: 'Page not found',
             platform: 'Platform | Platforms',
@@ -916,6 +1038,8 @@ export default {
             template: 'Template | Templates',
             toolboxCategory: 'Toolbox disposition',
             tool: 'Tool | Tools',
+            track: 'Track | Tracks', 
+            undefined: 'Not set',
             user: 'User | Users',
             validationErrors: 'Validation error | Validation errors',
             value: 'Value',
@@ -924,6 +1048,13 @@ export default {
             welcome: 'Welcome to Lemonade!',
             whatIfModel: 'What if model?',
             workflow: 'Workflow | Workflows'
+        },
+        track: {
+            status: 'Status',
+            whichTrack: 'Which track are you looking for?',
+            EDITING: 'Editing',
+            PUBLISHED: 'Published',
+            DISABLED: 'Disabled',
         },
         model: {
             storage: 'Storage| Storage',
@@ -1007,6 +1138,8 @@ export default {
             maximum: 'Maximum',
             median: 'Median',
             minimum: 'Minimum',
+            ofEntry: 'of visible area',
+            ofParent: 'of parent area',
             outlier: 'Outlier | Outliers',
             tryRefresh:
                 'Try refresh the page, visualization may still be generating.',
@@ -1018,6 +1151,7 @@ export default {
             copyOf: 'Copy of',
             copySavedWithSuccess: 'Copy saved with success!',
             execute: 'Execute workflow',
+            errorNoCluster: 'Unable to execute workflow: There is not cluster available.',
             forPlatform: 'For processing platform',
             fromTemplate: 'From template',
             fromUserTemplate: 'From template created by users',
@@ -1025,14 +1159,19 @@ export default {
             jobName: 'Job name',
             newName:
                 'New name (a copy of the workflow will be created, but not loaded)',
+            preferredCluster: 'Preferred cluster for execution',
             publishingEnabled: 'Enable workflow to be published',
             publishingEnabledExplanation: 'Allows workflow to be published to users.',
             publishingSelect: 'Select properties that may be changed by users for published workflows.',
+            publishingStatus: 'Publishing status',
+            publisingStatusEditing: 'Editing - Not available to users',
+            publisingStatusPublished: 'Published - Available to users',
             required:
                 'Please, complete the required information for the execution of the workflow',
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored:
                 'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
+			setImage: 'Set workflow\'s image',
             useAsTemplate: 'This workflow is a template',
             useAsTemplateExplanation:
                 'You will be able to create a new workflow from it. When adding a new workflow, choose the option  "From template".',
@@ -1045,6 +1184,46 @@ export default {
                 'There is an error in the workflow. The execution may not succeed. | There are errors in the workflow. The execution may not succeed.',
             variables: 'Variable | Variables',
         },
+        variables: {
+            addOrEdit: 'Add one or more items <br /> or click one of them at the right side to edit it.',
+            attribute: 'Attribute',
+            associateTo: 'Associate to variable',
+            associateToLookup: 'Associate to lookup table',
+            defaultValue: 'Default value',
+            description: 'Description',
+            help: 'Help',
+            id: 'Identifier',
+            label: 'Label',
+            multiplicity: 'Multiplicity',
+            name: 'Name',
+            parameter: 'Parameter | Parameters',
+            operator: 'Operator | Operators',
+            suggestedWidget: 'Suggested widget',
+            type: 'Type',
+            values: 'Value | Values',
+            operators: {
+                eq: 'Equal (=)',
+                lt: 'Less than (<)',
+                gt: 'Greater than  (>)',
+                le: 'Less or equal (<=)',
+                ge: 'Greater or equal (>=)',
+                ne: 'Different (/=)',
+                'in': 'In list',
+                ni: 'Not in list',
+                user: 'Chosen by user',
+            }
+
+        },
+        widgets: {
+            checkbox: 'Check box',
+            date: 'Date picker',
+            decimal: 'Decimal number',
+            dropdown: 'Drop down',
+            integer: 'Number',
+            lookup: 'Search from list of values',
+            text: 'Text input',
+            textarea: 'Long text input',
+        },
         permissions: {
             MANAGE: 'Manage',
             READ: 'Read',
@@ -1054,7 +1233,13 @@ export default {
                 READ: 'Allows to read the item',
                 WRITE: 'Allows to change or remove the item',
             }
-        }
+        },
+        storage: {
+            address1: 'Main URL',
+            address2: 'Secondary URL',
+            extraParameters: 'Extra parameters',
+        },
+
 
     }
 };
