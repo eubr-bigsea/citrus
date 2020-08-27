@@ -32,7 +32,7 @@
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
                 
-                <b-nav-item-dropdown v-if="hasRoles" right>
+                <b-nav-item-dropdown v-if="isAdmin" right>
                     <template v-slot:button-content>
                         <span class="fa fa-user-lock"></span>
                         {{$tc('titles.administration', 2)}}
