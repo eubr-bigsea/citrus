@@ -1,12 +1,8 @@
 <template>
-    <div id="sidebar-container" class="sidebar-expanded d-none d-md-block">
+    <div id="sidebar-container">
         <VuePerfectScrollbar class="scroll-area" :settings="settings">
-            <div class="mr-2">
+            <div >
                 <ul class="list-group">
-                    <li
-                        class="list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed bg-dark text-white">
-                        {{ $tc('common.operation', 2).toUpperCase() }}
-                    </li>
                     <li
                         class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
                         <input v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')"
@@ -77,7 +73,7 @@
                     </div>
                 </ul>
             </div>
-            <div class="mr-2 mt-4">
+            <!-- <div class="mr-2 mt-4">
                 <ul class="list-group">
                     <li
                         class="list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed bg-dark text-white">
@@ -89,7 +85,7 @@
                             {{ $t('diagram.showProperties') }}</span>
                     </li>
                 </ul>
-            </div>
+            </div> -->
         </VuePerfectScrollbar>
         <div ref="opDrag"></div>
     </div>
@@ -295,12 +291,16 @@
 <style scoped lang="scss">
     .scroll-area {
         width: 100%;
-        height: 80vh;
         max-height: calc(100vh - 300px);
     }
 
     .list-group {
         font-size: 0.75rem;
+    }
+
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid rgba(0,0,0,.125);
     }
 
     .list-group-item.truncate {
@@ -343,6 +343,10 @@
     /* MENU BORDERS */
     .menu>div .list-group-item {
         border-radius: 0 !important;
+
+        .btn-secondary:hover {
+            border: none;
+        }
     }
 
     .menu>div:last-child span:last-child .list-group-item {

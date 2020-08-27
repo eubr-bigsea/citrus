@@ -1,7 +1,7 @@
 <template>
-    <div :class="'platform-' + platform" class="border" oncontextmenu="return false;">
-        <diagram-toolbar v-if="showToolbar" :selected="selectedElements" :copied-tasks="copiedTasks"/>
-        <div id="lemonade-container" :class="{ 'with-grid': showGrid }" class="lemonade-container not-selectable"
+    <div :class="'platform-' + platform" class="diagram" oncontextmenu="return false;">
+        <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" :copied-tasks="copiedTasks"/>
+        <div id="lemonade-container" :class="{ 'with-grid': showGrid, 'dark-mode': darkMode }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
@@ -19,6 +19,7 @@
                 </div>
             </VuePerfectScrollbar>
         </div>
+        {{ darkMode }}
         <modal-component v-if="showExecutionModal" @close="showExecutionModal = false">
             <div slot="header">
                 <h4>Execution of workflow</h4>
@@ -117,7 +118,7 @@
             },
             showGrid: {
                 type: Boolean,
-                default: () => { return true },
+                default: () => { return false },
             },
             showTaskDecoration: {
                 type: Boolean,
@@ -170,7 +171,9 @@
 
                 zoomInEnabled: true,
                 zoomOutEnabled: true,
-                zoom: this.initialZoom
+                zoom: this.initialZoom,
+
+                darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode')=="true" : false
             };
         },
         computed: {
@@ -239,6 +242,9 @@
             });
             this.$root.$on('on-align-tasks', (pos, fn) => {
                 this.align(pos, fn);
+            });
+            this.$root.$on('ontoggle-darkMode', () => {
+                this.darkMode = localStorage.getItem('darkMode') ? localStorage.getItem('darkMode')=="true" : false;
             });
             this.$root.$on('oncopy-tasks', this._copy);
             this.$root.$on('onpaste-tasks', this._paste);
@@ -361,6 +367,7 @@
             this.$root.$off('onpaste-tasks');
             this.$root.$off('onstart-flow');
             this.$root.$off('onstop-flow');
+            this.$root.$off('ontoggle-darkMode');
             this.readyTasks = new Set();
         },
 
@@ -1048,16 +1055,23 @@
                     return this.selectedElements.includes(task.id);
                 });
                 if (selectedTasks.length) {
-                    let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
-                        if (fn === 'min') {
-                            return prev[pos] < cur[pos] ? prev : cur;
-                        } else {
-                            return prev[pos] > cur[pos] ? prev : cur;
-                        }
-                    });
-                    selectedTasks.forEach((task, inx) => {
-                        task[pos] = minPosTask[pos];
-                    });
+                    if (fn === 'center') {
+                        let centerPos = selectedTasks.map((v)=>v[pos]).reduce((prev, cur)=>cur+prev)/selectedTasks.length;
+                        selectedTasks.forEach((task, inx) => {
+                            task[pos] = centerPos;
+                        });
+                    } else {
+                        let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
+                            if (fn === 'min') {
+                                return prev[pos] < cur[pos] ? prev : cur;
+                            } else {
+                                return prev[pos] > cur[pos] ? prev : cur;
+                            }
+                        });
+                        selectedTasks.forEach((task, inx) => {
+                            task[pos] = minPosTask[pos];
+                        });
+                    }
                     Vue.nextTick(function () {
                         self.instance.repaintEverything();
                     });
@@ -1294,6 +1308,7 @@
 </script>
 
 <style scoped lang="scss">
+
     .scroll-area {
         width: 100%;
         height: 95vh;

@@ -1,47 +1,38 @@
 <template>
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.platform', 2)}}</h1>
-                        <router-link :to="{name: 'addPlatform'}" class="btn btn-sm btn-outline-primary">
-                            {{$t('actions.addItem')}}</router-link>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <v-server-table ref="platformList" :columns="columns" :options="options"
-                                        name="platformList">
-                                        <template slot="id" slot-scope="props">
-                                            <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
-                                                {{props.row.id}}</router-link>
-                                        </template>
-                                        <template slot="name" slot-scope="props">
-                                            <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
-                                                {{props.row.name}}</router-link>
-                                        </template>
-                                        <template slot="enabled" slot-scope="props">
-                                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
-                                        </template>
-                                        <template slot="plugin" slot-scope="props">
-                                            {{$tc(props.row.plugin ? 'common.yes': 'common.no')}}
-                                        </template>
-                                        <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                                            </button>
-                                        </template>
-                                        <template slot="version" slot-scope="props">{{props.row.version}}</template>
-                                    </v-server-table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+    <div>
+        <div class="title">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>{{$tc('titles.platform', 2)}}</h1>
+                <router-link :to="{name: 'addPlatform'}" class="btn btn-primary btn-lemonade-primary">
+                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}</router-link>
             </div>
         </div>
+        
+        <v-server-table ref="platformList" :columns="columns" :options="options"
+            name="platformList">
+            <template slot="id" slot-scope="props">
+                <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
+                    {{props.row.id}}</router-link>
+            </template>
+            <template slot="name" slot-scope="props">
+                <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
+                    {{props.row.name}}</router-link>
+            </template>
+            <template slot="enabled" slot-scope="props">
+                {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+            </template>
+            <template slot="plugin" slot-scope="props">
+                {{$tc(props.row.plugin ? 'common.yes': 'common.no')}}
+            </template>
+            <template slot="actions" slot-scope="props">
+                <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                    <font-awesome-icon icon="trash"></font-awesome-icon>
+                </button>
+            </template>
+            <template slot="version" slot-scope="props">{{props.row.version}}</template>
+        </v-server-table>
+    </div>
     
 </template>
 

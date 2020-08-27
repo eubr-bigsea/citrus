@@ -273,7 +273,6 @@
     .table-sm {
         font-size: .8em;
     }
-
     .property-help {
         font-size: 1.2em;
     }
@@ -293,7 +292,7 @@
 
     .properties {
         background: #fff;
-        height: calc(100vh - 300px);
+        max-height: calc(100vh - 300px);
         zoom: 100%;
         font-size: .75rem
     }

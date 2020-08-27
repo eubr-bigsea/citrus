@@ -11,15 +11,14 @@
 
 <style scoped>
 span.home-card-counter {
-  background-image: linear-gradient(-56.47deg, #ff4b95, #ffca26);
-  color: white;
-  padding: 5px 3px;
-  font-family: monospace;
-  border-radius: 5px;
-  height: 30px;
+
+  font-size: 12px;
+  color: #FFF;
+  background-color: var(--primary-color);
+  border-radius: 4px;
+  padding: .1rem .25rem;
   min-width: 30px;
   text-align: center;
-  margin-left: 5px;
   margin-left: auto;
 }
 </style>

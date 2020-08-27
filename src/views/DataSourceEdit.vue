@@ -3,10 +3,9 @@
         <div class="row">
             <div class="col">
                 <div>
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="title">
                         <h1>{{$tc('titles.dataSource', 1)}}</h1>
                     </div>
-                    <hr>
                     <div class="row">
                         <div v-if="dataSource.id" class="col-md-12 col-xg-12 mx-auto">
                             <b-card no-body>
@@ -136,10 +135,8 @@
                                             </div>
                                         </div>
                                     </b-tab>
-                                    <b-tab>
-                                        <template slot="title">
-                                            {{$tc('dataSource.attribute', 2)}}
-                                        </template>
+                                    <b-tab :title="$tc('dataSource.attribute', 2)">
+                                        
                                         <h5 class="card-title">{{$tc('common.attribute', 2)}}</h5>
 
                                         <table v-if="dataSource.attributes && dataSource.attributes.length > 0"
@@ -257,16 +254,14 @@
                                         <div v-else>{{ $t("dataSource.noPermissions") }}</div>
                                     </b-tab>
                                 </b-tabs>
-                                <div class="col-md-12 mb-4 border-top pt-2">
-                                    <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-primary mr-1 btn-spinner"
+                                <div class="card-footer text-center">
+                                    <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-success btn-spinner"
                                         @click.stop="save">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <span class="fa fa-save"></span>
                                         {{$tc('actions.save')}}
                                     </button>
-                                    <router-link :to="{name: 'dataSources'}" class="btn btn-secondary mr-1">
-                                        {{$tc('actions.cancel')}}</router-link>
-                                    <button v-if="canInfer && loggedUserIsOwnerOrAdmin" class="btn btn-success ml-1 btn-spinner"
+                                    <button v-if="canInfer && loggedUserIsOwnerOrAdmin" class="btn btn-primary btn-spinner"
                                         @click.stop="infer">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{$tc('dataSource.inferSchema')}}
@@ -279,6 +274,9 @@
                                         <span
                                             v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')"></span>
                                     </button>
+                                    <router-link :to="{name: 'dataSources'}" class="btn btn-outline">
+                                        {{$tc('actions.cancel')}}</router-link>
+
                                 </div>
                             </b-card>
                         </div>

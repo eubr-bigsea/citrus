@@ -464,63 +464,7 @@
     });
     export default TaskComponent;
 </script>
-<style lang="scss">
-    .has-1-ports,
-    .has-2-ports,
-    .has-3-ports,
-    .has-4-ports {
-        color: #1E88E5;
-        font-size: .5em;
-        /* background: #fff !important; */
-        display: block;
-        line-height: 6px;
-        z-index: 10000;
-        text-align: center;
-        width: 55px;
-    }
 
-    .endpoint-label.output {
-        z-index: 1;
-        /* background: green */
-    }
-
-    .output {
-        
-        .has-1-ports,
-        .has-2-ports,
-        .has-3-ports,
-        .has-4-ports {
-            position: relative;
-            z-index: 5;
-            left: -2px;
-        }
-        .has-1-ports {
-            top: 10px;
-        }
-        .has-2-ports {
-            top: 15px;
-        }
-        .has-3-ports {
-            margin-top: 40px !important;
-        }
-        .has-4-ports {
-            margin-top: 40px !important;
-        }
-
-    }
-
-    .input {
-
-        .has-1-ports,
-        .has-2-ports,
-        .has-3-ports {
-            top: -6px;
-            left: 0px;
-            position: relative;
-
-        }
-    }
-</style>
 <style scoped lang="scss">
     /* Colors */
 
@@ -721,9 +665,8 @@
         }
 
         .task {
-            border-width: 1px;
-            font-family: Verdana, Tahoma, Geneva, sans-serif;
-            font-size: 10px;
+            border-width: 0px;
+            font-size: 12px;
             background: white;
             opacity: 1;
 
@@ -891,38 +834,10 @@
                 -webkit-box-shadow: 0px 4px 6px #333;
             }
 
-            &.data-source {
-                background-color: lighten($color1, 30%);
-            }
-
-            &.algorithm {
-                background-color: lighten($color4, 30%);
-            }
-
-            &.model {
-                background-color: lighten($color3, 30%);
-            }
-
-            &.selected {
-                box-shadow: -2px 1px 6px 0px $color3;
-            }
-
-            &:focus{
-                outline: none;
-            }
-
-            em {
-                top: 48%;
-                padding: 0 5px;
-                position: absolute;
-                font-style: normal;
-                font-family: Verdana, Tahoma, Geneva, sans-serif;
-                font-size: 6pt !important;
-            }
-
             &.operation {
-                border: $color2 1px solid;
-                border-radius: 2px;
+                background-color: #DDD;
+                border-radius: 5px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, .16);
                 color: $color2;
                 cursor: move;
                 /* fallback if grab cursor is unsupported */
@@ -940,25 +855,62 @@
 
                 &.jsplumb-drag-selected,
                 &.jtk-drag-selected {
+                    /*
                     box-shadow: -2px 1px 6px 0px #f28d00;
                     font-style: italic;
                     color: green;
+                    */
+                    box-shadow: 0px 4px 8px rgba(dodgerblue, .5);
                 }
 
                 .title {
                     align-self: center;
                     text-align: center;
-                    height: 100%;
-                    width: 90%;
-                    margin: 0 5%;
+                    height: calc(100% - 5px);
+                    width: 100%;
+                    margin: 5px 0 0 0;
+                    padding: .25rem;
                     background: #fff;
                     overflow: hidden;
+                    line-height: 1;
+                    border-radius: 0 0 5px 5px;
+
                 }
             }
 
             &.operation:after {
                 mix-blend-mode: difference;
             }
+
+            &.data-source {
+                background-color: lighten($color1, 30%);
+            }
+
+            &.algorithm {
+                background-color: lighten($color4, 30%);
+            }
+
+            &.model {
+                background-color: lighten($color3, 30%);
+            }
+
+            &.selected {
+                box-shadow: 0px 4px 8px rgba(dodgerblue, .5);
+            }
+
+            &:focus{
+                outline: none;
+            }
+
+            em {
+                top: 48%;
+                padding: 0 5px;
+                position: absolute;
+                font-style: normal;
+                font-family: Verdana, Tahoma, Geneva, sans-serif;
+                font-size: 6pt !important;
+            }
+
             span {
                 xfont-size: 12pt;
             }

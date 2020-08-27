@@ -41,18 +41,18 @@
     </div>
 </template>
 
-<style>
+<style lang="scss">
     .red {
         color: #FF4136;
     }
 
     .runBtn {
-        color: #28a745 !important;
-    }
-
-    .runBtn:hover {
-        color: white !important;
-        background-color: #28a745 !important;
+        span { color: #28a745 }
+        
+        &:hover {
+            color: var(--font-color);
+            background-color: rgba(#28a745, .16);
+        }
     }
 </style>
 

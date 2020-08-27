@@ -1,8 +1,8 @@
 <template>
-    <b-navbar id="l-navbar" toggleable="md" type="dark" variant="dark" sticky>
+    <b-navbar id="l-navbar" toggleable="md" sticky>
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand :to="{ name: 'home' }">
-            <div class="logo" title="Lemonade">Lemonade</div>
+            <img src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav>
@@ -18,13 +18,21 @@
                 <b-nav-item :to="{ name: 'dashboards' }">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
-                    <span class="fa fa-microscope"></span> {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
-                </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'tracksPanel' }">
-                    <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}
-                </b-nav-item>
-                <b-nav-item-dropdown v-if="isAdmin" right>
+
+                <b-nav-item-dropdown right>
+                    <template v-slot:button-content>
+                        <span class="fa fa-bolt"></span>
+                        {{ $tc('titles.track', 2) }}
+                    </template>
+                    <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
+                        {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'tracksPanel' }">
+                        {{ $tc('titles.track', 2) }}
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+                
+                <b-nav-item-dropdown v-if="hasRoles" right>
                     <template v-slot:button-content>
                         <span class="fa fa-user-lock"></span>
                         {{$tc('titles.administration', 2)}}
@@ -57,9 +65,10 @@
             <b-navbar-nav class="ml-auto">
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
                     <template slot="button-content">
-                        <span class="badge badge-pill pt-1 pb-1 pl-3 pr-3"
+                        <span class="fa fa-bell"></span>
+
+                        <span class="badge badge-pill"
                             :class="unreadNotifications > 0 ? 'badge-danger': 'badge-success'">
-                            <span class="fa fa-bell"></span>
                             {{unreadNotifications > 99 ? '99+': unreadNotifications}}
                         </span>
                     </template>
@@ -202,14 +211,27 @@
 </script>
 
 <style>
+
+    #l-navbar {
+        background-color: #fff;
+        box-shadow: 0 0 8px rgba(0, 0, 0, .16);
+    }
+
     #l-navbar .dropdown-divider {
         margin: 0;
     }
 
+    .navbar-brand {
+        margin-right: 3rem!important;
+    }
+
     #l-navbar a.nav-link {
-        color: white;
         font-weight: 500;
         font-size: 14px;
+    }
+
+    #l-navbar a.nav-link span {
+        color: var(--primary-color);
     }
 
     #l-navbar .bg-dark {
@@ -218,6 +240,36 @@
 
     #l-navbar .dropdown-menu {
         font-size: 14px;
+    }
+
+    .navbar .nav-item {
+        margin: 0 .5rem;
+    }
+
+    .navbar .nav-item .nav-link{
+        line-height: calc(60px - 4px);
+        padding: 0;
+        border-bottom: solid 4px #FFFFFF00;
+    }
+    
+    .navbar .nav-item .nav-link:hover {
+        border-bottom-color: var(--secondary-color);
+    }
+
+    .badge {
+        color: #FFF !important;
+        transform: translate(-3px, -9px);
+    }
+
+    @media (min-width: 768px) {
+        .navbar-collapse {
+            height: 60px;
+            margin: -0.5rem 0;
+        }
+
+        .navbar-nav {
+            height: 100%;
+        }
     }
 
     #l-navbar .avatar,
@@ -237,10 +289,6 @@
 
     #l-navbar .navbar-toggler {
         border-width: 0;
-    }
-
-    #l-navbar {
-        box-shadow: 0 12px 24px rgba(18, 38, 63, 0.1);
     }
 
     .dropdown-menu>li>a:hover {

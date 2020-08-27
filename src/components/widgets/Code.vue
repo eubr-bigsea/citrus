@@ -95,7 +95,7 @@
         'operator': /[-+*\/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?|\b(?:AND|BETWEEN|IN|LIKE|NOT|OR|IS|DIV|REGEXP|RLIKE|SOUNDS LIKE|XOR)\b/i,
         'punctuation': /[;[\]()`,.]/
     };
-
+    
     export default {
         mixins: [Widget],
         computed: {
