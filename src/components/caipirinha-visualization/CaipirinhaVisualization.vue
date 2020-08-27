@@ -17,7 +17,6 @@
 <style>
     div.myview {
         height: 95%;
-        xborder: 1px solid red;
         margin: 0 1px;
         width: 98% !important;
     }
@@ -173,7 +172,7 @@
                     case 136:
                         return "iframe-panel";
                     case 137:
-                        return "force-direct" //"treemap";
+                        return "treemap";
                     default:
                         throw new TypeError(this.$t("errors.invalidVisualizationId"));
                 }

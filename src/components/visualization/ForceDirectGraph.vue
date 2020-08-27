@@ -1,11 +1,20 @@
 <template>
-    <div class="text-center main-div">
-        <div class="border" style="width: 100%; height: 500px;" ref="mainDiv" id="mainDiv">
+    <div class="text-center">
+        <div class="border main-div" ref="mainDiv">
             <h1>Teste</h1>
             <b-link v-if="!inFullScreen" @click="fullScreen">
                 Full screen
             </b-link>
-            <div ref="graphDiv"></div>
+            <div style="width: 100%;">
+                <div style="margin: 0px auto; width: 100%; border: 1px solid; height: 100vh;overflow:hidden">
+                    <div ref="graphDiv"></div>
+                </div>
+            </div>
+            <!--
+            <div style="float: left;width: 25vh;border: solid 1px red;">
+                OK
+            </div>
+            -->
         </div>
     </div>
 </template>
@@ -31,14 +40,15 @@
                         target: Math.round(Math.random() * (id - 1))
                     }))
             };
-
             const Graph = ForceGraph()
                 (this.$refs.graphDiv)
-                .linkDirectionalParticles(2)
+                .linkDirectionalParticles(0)
                 .nodeAutoColorBy('group')
                 .linkAutoColorBy(d => gData.nodes[d.source].group)
                 // .nodeRelSize(1)
+                .centerAt(400, 120)
                 .graphData(gData);
+
         },
         methods: {
             fullScreen() {
@@ -60,8 +70,9 @@
     }
 </script>
 <style>
-    div#mainDiv {
+    .main-div {
         background-color: white;
-        overflow: auto;
+        user-select: none;
+        width: 100%;
     }
 </style>
