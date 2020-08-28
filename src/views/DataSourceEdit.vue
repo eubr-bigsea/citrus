@@ -221,39 +221,68 @@
                                             <span class="fa fa-link"></span> {{$tc('dataSource.relationship', 2)}}
                                         </template>
                                         <p class="pb-1 border-bottom text-right">
-                                            <button class="btn btn-sm btn-primary" @click="addShare"><span class="fa fa-link"></span> {{$t('actions.add', {type: $tc('common.sharing', 1)})}}</button>
+                                            <button :disabled="userPermission === null || permission === null" class="btn btn-sm btn-primary" @click="addPermission"><span class="fa fa-link"></span> 
+                                                {{$t('actions.add', {type: $tc('common.sharing', 1)})}}</button>
                                         </p>
                                     </b-tab> 
                                     <b-tab v-if="loggedUserIsOwnerOrAdmin">
                                         <template slot="title">
                                             <span class="fa fa-share-alt"></span> {{$tc('common.sharing', 2)}}
                                         </template>
-                                        <p class="pb-1 border-bottom text-right">
-                                            <button class="btn btn-sm btn-primary" @click="addShare"><span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('common.sharing', 1)})}}</button>
-                                        </p>
-                                        <template v-if="dataSource.permissions && dataSource.permissions.length > 0">
-                                            <table class="table table-sm">
-                                                <tbody>
-                                                    <tr v-for="p in dataSource.permissions" :key="p.id">
-                                                        <td style="width:80px" class="text-center">
-                                                            <div class="badge badge-secondary pt-1 pb-1 pr-2 pl-2" 
-                                                                :title="$t('permissions.descriptions.' +p.permission)">{{$t('permissions.' +p.permission).toUpperCase()}}</div>
-                                                        </td>
-                                                        <td>
-                                                            <strong><router-link :to="{name: 'userInfo', params: {id: p.user_id}}">{{p.user_name}}</router-link></strong> ({{p.user_login}})
-                                                        </td>
-                                                        <td class="text-right">
-                                                            <button v-if="loggedUserIsOwnerOrAdmin"
-                                                                class="btn btn-sm btn-light">
-                                                                <font-awesome-icon icon="trash" />
-                                                            </button>
-                                                            <button class="btn btn-sm btn-light" :title="$t('actions.edit')"><font-awesome-icon icon="edit" /></button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </template>
-                                        <div v-else>{{ $t("dataSource.noPermissions") }}</div>
+                                        <div class="row mb-3 mt-3">
+                                            <div v-if="loggedUserIsOwnerOrAdmin" class="col-md-4 border-right">
+                                                <div>
+                                                    <label>{{$tc('titles.user', 1)}}:</label>
+                                                    <v-select style="font-size: .9em" v-model="userPermission" :options="users" @search="onSearchUsers" :taggable="false" 
+                                                        :get-option-label="getUserLabel" :close-on-select="true" label="id">
+                                                        <template #no-options="{ search, searching, loading }">
+                                                            {{$t('common.noResults')}}
+                                                        </template>
+                                                        <template slot="selected-option" slot-scope="option">
+                                                            {{ option.first_name}} {{option.last_name}} ({{option.login}})
+                                                        </template>
+                                                        <template slot="option" slot-scope="option">
+                                                            {{ option.first_name}} {{option.last_name}} ({{option.login}})
+                                                        </template>
+                                                    </v-select>
+                                                </div>
+                                                <div>
+                                                    <label>{{$tc('common.permission', 1)}}:</label>
+                                                    <select class="form-control" v-model="permission">
+                                                        <option value="MANAGE">{{$t('permissions.MANAGE')}}</option>
+                                                        <option value="READ">{{$t('permissions.READ')}}</option>
+                                                        <option value="WRITE">{{$t('permissions.WRITE')}}</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <button :disabled="userPermission === null || permission === null" class="btn btn-sm btn-outline-secondary mt-2" @click="addPermission"></span> {{$t('actions.share')}}</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <template v-if="dataSource.permissions && dataSource.permissions.length > 0">
+                                                    <table class="table table-sm table-stripped table-bordered">
+                                                        <tbody>
+                                                            <tr v-for="p in dataSource.permissions" :key="p.id">
+                                                                <td style="width:80px" class="text-center">
+                                                                    <div class="badge badge-secondary pt-1 pb-1 pr-2 pl-2" 
+                                                                        :title="$t('permissions.' + p.permission)">{{$t('permissions.' +p.permission).toUpperCase()}}</div>
+                                                                </td>
+                                                                <td>
+                                                                    {{p.user_name}} ({{p.user_login}})
+                                                                </td>
+                                                                <td v-if="loggedUserIsOwnerOrAdmin" class="text-right">
+                                                                    <button class="btn btn-sm btn-light" @click="removePermission(p)">
+                                                                        <font-awesome-icon icon="trash" />
+                                                                    </button>
+                                                                    <button class="btn btn-sm btn-light" :title="$t('actions.edit')" @click="editPermission(p)"><font-awesome-icon icon="edit" /></button>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </template>
+                                                <div v-else class="alert alert-warning">{{$t("dataSource.noPermissions") }}</div>
+                                            </div>
+                                        </div>
                                     </b-tab>
                                 </b-tabs>
                                 <div class="col-md-12 mb-4 border-top pt-2">
@@ -282,22 +311,6 @@
                             </b-card>
                         </div>
                         <div v-else class="col-md-12 mx-auto border-top mt-3 pt-3">{{$t('common.noData')}}</div>
-                        <b-modal ref="shareModal" size="lg" :title="$t('actions.share')">
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <label>{{$tc('titles.user', 1)}}:</label>
-                                    <v-select></v-select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label>{{$tc('common.permission', 1)}}:</label>
-                                    <select class="form-control">
-                                        <option>{{$t('permissions.MANAGE')}}</option>
-                                        <option>{{$t('permissions.READ')}}</option>
-                                        <option>{{$t('permissions.WRITE')}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </b-modal>
  
                         <b-modal ref="privacy" size="lg" :title="$t('dataSource.privacy')">
                             <div class="row">
@@ -399,6 +412,7 @@
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const standUrl = process.env.VUE_APP_STAND_URL;
+    const thornUrl = process.env.VUE_APP_THORN_URL;
 
     export default {
         mixins: [Notifier],
@@ -469,7 +483,10 @@
                 textDelimiters: ['"', "'"],
                 encodings: ['ISO-8859-1', 'UTF-8', 'UTF-16'],
                 currentAttribute: { attribute_privacy: {} },
-                timeoutHandler: null
+                timeoutHandler: null,
+                permission: null,
+                userPermission: null,
+                users: [],
             };
         },
         
@@ -505,7 +522,7 @@
                     || user.roles.indexOf('admin') >= 0;
             }
         },
-      watch: {
+        watch: {
             '$route.params.id': function (id) {
                 this.load().then(() => {
                     Vue.nextTick(() => {
@@ -520,7 +537,22 @@
                 deep: true
             }
         },
-         mounted() {
+        created(){
+            window.addEventListener('beforeunload', this.leaving);
+        },
+        beforeRouteLeave(to, from, next) {
+            if (this.isDirty) {
+                if (confirm(this.$tc('warnings.dirtyCheck'))) {
+                    next()
+                }
+            } else {
+                next();
+            }
+        },
+        beforeDestroy(){
+            window.removeEventListener('beforeunload', this.leaving)
+        },
+        mounted() {
             let self = this;
             this.load().then(() => {
                 Vue.nextTick(() => {
@@ -530,8 +562,52 @@
         },
         /* Methods */
         methods: {
-            addShare(){
-                this.$refs.shareModal.show();
+            leaving(){
+                if (this.isDirty) {
+                    event.preventDefault();
+                    event.returnValue = false;
+                }
+            },
+            removePermission(removed){
+                const removeIndex = this.dataSource.permissions.map(p =>p.user_id)
+                       .indexOf(removed.user_id);
+                ~removeIndex && this.dataSource.permissions.splice(removeIndex, 1);
+            },
+            editPermission(p){
+                const user = p.user_name.split(' ')
+                this.permission = p.permission;
+                this.userPermission = {
+                    login: p.user_login,
+                    first_name: user[0].trim(),
+                    last_name: (user.length > 1) ? user[1].trim(): ''
+                };
+                this.userPermission.id= p.user_id;
+            },
+            addPermission(){
+                if (this.userPermission === null || this.permission === null){
+                    this.warning(this.$t("errors.missingRequiredValue"));
+                    return;
+                }
+                const p = {
+                    permission: this.permission,
+                    data_source_id: this.dataSource.id,
+                    user_login: this.userPermission.login,
+                    user_name: (this.userPermission.first_name + ' ' + this.userPermission.last_name).trim(),
+                    user_id: this.userPermission.id
+                };
+                const removeIndex = this.dataSource.permissions.map(p =>p.user_id)
+                       .indexOf(this.userPermission.id);
+
+                ~removeIndex && this.dataSource.permissions.splice(removeIndex, 1);
+
+                if (this.dataSource.permissions === undefined){
+                    this.dataSource.permissions = [p];
+                } else {
+                    this.dataSource.permissions.push(p);
+                }
+                this.userPermission = null;
+                this.permission = null;
+                this.users = [];
             },
             hideInitialization() {
                 this.$refs.modalInitialization.hide();
@@ -685,6 +761,25 @@
                         event.target.classList.add('btn-spinner');
                     });
             },
+            onSearchUsers(search, loading){
+				loading(true);
+				this.searchUsers(loading, search, this);
+			},
+            searchUsers: _.debounce((loading, search, vm) => {
+				const url = `${thornUrl}/users`;
+				const params = {enabled: 1, query: search, size: 10, fields: 'id,first_name,last_name,email,login'};
+				axios.get(url, {params})
+					.then(resp => {
+						vm.users = resp.data.data.filter((u) => !vm.dataSource.permissions.find(u2 => u2.user_id === u.id));
+						loading(false);
+					})
+					.catch(resp => {
+						vm.error(vm.data);
+					})
+            }, 350),
+            getUserLabel(opt){
+				return `${opt.first_name}|${opt.last_name}|${opt.email}`; 
+			},
             preview(){
                 this.$refs.preview.show(this.dataSource.id);
             },
