@@ -1,45 +1,36 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.cluster', 2)}}</h1>
-                        <router-link :to="{name: 'addCluster'}" class="btn btn-sm btn-outline-primary">
-                            {{$t('actions.addItem')}}</router-link>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <v-server-table ref="clusterList" :columns="columns" :options="options"
-                                        name="clusterList">
-                                        <template slot="id" slot-scope="props">
-                                            <router-link :to="{name: 'editCluster', params: {id: props.row.id}}">
-                                                {{props.row.id}}</router-link>
-                                        </template>
-                                        <template slot="name" slot-scope="props">
-                                            <router-link :to="{name: 'editCluster', params: {id: props.row.id}}">
-                                                {{props.row.name}}</router-link>
-                                        </template>
-                                        <template slot="type" slot-scope="props">{{props.row.type}}</template>
-                                        <template slot="address" slot-scope="props">{{props.row.address}}</template>
-                                        <template slot="enabled" slot-scope="props">
-                                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
-                                        </template>
-                                        <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                                            </button>
-                                        </template>
-                                    </v-server-table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div>
+            <div class="title">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>{{$tc('titles.cluster', 2)}}</h1>
+                    <router-link :to="{name: 'addCluster'}" class="btn btn-primary btn-lemonade-primary">
+                        <span class="fa fa-plus" /> {{$t('actions.addItem')}}</router-link>
                 </div>
             </div>
+            
+            <v-server-table ref="clusterList" :columns="columns" :options="options"
+                name="clusterList">
+                <template slot="id" slot-scope="props">
+                    <router-link :to="{name: 'editCluster', params: {id: props.row.id}}">
+                        {{props.row.id}}</router-link>
+                </template>
+                <template slot="name" slot-scope="props">
+                    <router-link :to="{name: 'editCluster', params: {id: props.row.id}}">
+                        {{props.row.name}}</router-link>
+                </template>
+                <template slot="type" slot-scope="props">{{props.row.type}}</template>
+                <template slot="address" slot-scope="props">{{props.row.address}}</template>
+                <template slot="enabled" slot-scope="props">
+                    {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                </template>
+                <template slot="actions" slot-scope="props">
+                    <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                        <font-awesome-icon icon="trash"></font-awesome-icon>
+                    </button>
+                </template>
+            </v-server-table>
+                        
         </div>
     </main>
 </template>
@@ -98,8 +89,8 @@
                             .then(resp => {
                                 this.$Progress.finish();
                                 return {
-                                    data: resp.data
-                                    //count: resp.data.pagination.total
+                                    data: resp.data.data,
+                                    count: resp.data.pagination.total
                                 };
                             })
                             .catch(

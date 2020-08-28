@@ -4,11 +4,11 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.cluster', 1)}}</h1>
+                        <h1>{{ add ? $t('actions.add', {type: $tc('titles.cluster', 1).toLowerCase()}) : $t('actions.edit') + ' ' + $tc('titles.cluster', 1).toLowerCase()}}</h1>
                     </div>
                     <hr>
                     <div class="row">
-                        <div v-if="cluster.id" class="col-md-12 col-xg-12 mx-auto">
+                        <div class="col-md-12 col-xg-12 mx-auto">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
@@ -49,14 +49,13 @@
                                                 rows="5"></textarea>
                                         </div>
                                         <div class="col-md-6">
-                                            <label>{{$tc('common.parameters', 2)}}:</label>
-                                            <textarea v-model="cluster.general_parameters" class="form-control"
-                                                rows="5"></textarea>
+                                            <label>{{$tc('cluster.authToken')}}:</label>
+                                            <input v-model="cluster.auth_token" type="password" class="form-control" />
                                         </div>
                                         <div class="col-md-12">
-                                            <label>{{$tc('cluster.authToken')}}:</label>
-                                            <input v-model="cluster.auth_token" type="password" class="form-control"/>
-                                                
+                                            <label>{{$tc('common.parameters', 2)}}:</label>
+                                            <textarea v-model="cluster.general_parameters" class="form-control"
+                                                rows="8"></textarea>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -100,6 +99,12 @@
                 types: ['KUBERNETES', 'SPARK_LOCAL', 'MESOS', 'YARN'].sort()
             };
         },
+        props: {
+            add: {
+                type: Boolean,
+                default: false
+            }
+        },
         computed: {},
         watch: {
             '$route.params.id': function (id) {
@@ -117,29 +122,28 @@
             }
         },
         mounted() {
-            let self = this;
-            this.load().then(() => {
-                Vue.nextTick(() => {
-                    self.isDirty = false;
-                });
-            });
+            this.load();
         },
         /* Methods */
         methods: {
             load() {
-                let self = this;
-                return new Promise((resolve, reject) => {
+                const self = this;
+                if (!self.add) {
+                    const url = `${standUrl}/clusters/${this.$route.params.id}`;
                     axios
-                        .get(`${standUrl}/clusters/${this.$route.params.id}`)
+                        .get(url)
                         .then(resp => {
-                            self.cluster = resp.data;
-                            resolve();
+                            debugger
+                            this.cluster = resp.data.data;
                         })
-                        .catch(function (e) {
-                            self.error(e);
-                            reject();
-                        });
-                });
+                        .catch(
+                            function (e) {
+                                this.error(e);
+                            }.bind(this)
+                        );
+                } else {
+                    self.cluster = { id: null, enabled: false };
+                }
             },
             success(msg) {
                 this.$snotify.success(msg, this.$t('titles.success'));
@@ -157,14 +161,19 @@
                 }
             },
             save(event) {
-                let self = this;
-                const url = `${standUrl}/clusters/${this.cluster.id}`;
+                const self = this;
+                const data = this.storage;
+                let url = `${standUrl}/clusters/${this.cluster.id}`;
+                let axiosCall = axios.patch;
 
+                if (self.add) {
+                    url = `${standUrl}/clusters`;
+                    axiosCall = axios.post
+                }
                 event.target.setAttribute('disabled', 'disabled');
                 event.target.classList.remove('btn-spinner');
 
-                return axios
-                    .patch(url, this.cluster)
+                return axiosCall(url, this.cluster)
                     .then(resp => {
                         event.target.removeAttribute('disabled');
                         event.target.classList.add('btn-spinner');
@@ -181,6 +190,9 @@
                     })
                     .catch(e => {
                         self.error(e);
+                    }).finally(() => {
+                        event.target.removeAttribute('disabled');
+                        event.target.classList.add('btn-spinner');
                     });
             }
         }

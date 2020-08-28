@@ -1,6 +1,6 @@
 <template>
     <div v-if="readOnly">
-        <span>{{value ? value.join(', '): ''}}</span>
+        <span>{{value ? value.join(', '): ''}}</span> 
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
@@ -75,8 +75,10 @@
 </template>
 <script>
     import vSelect from "vue-select";
-    import LabelComponent from './Label.vue'
+    import LabelComponent from './Label.vue';
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
@@ -175,14 +177,7 @@
         },
         props: {
             single: { default: false },
-            value: "", field: null,
             parentId: null,
-            readOnly: false,
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            },
-            suggestionEvent: null,
         },
     }
 </script>

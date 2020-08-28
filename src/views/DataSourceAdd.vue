@@ -1,174 +1,109 @@
 <template>
     <main role="main">
         <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col-lg-8 mx-auto overflow-hidden">
-                        <div v-show="step === 1" class="card animated">
-                            <div class="card-body">
-                                <h4 class="card-title">{{$t('dataSource.whatTypeOfDataSourceToAdd')}}</h4>
-                                <div class="row">
-                                    <div :class="'col-md-' + colSize">
-                                        <b-card bg-variant :title="$t('dataSource.distributedFileSystem')"
-                                            class="card-option">
-                                            {{$t('dataSource.characteristics')}}:
-                                            <ul>
-                                                <li>{{$t('dataSource.scalability')}};</li>
-                                                <li>{{$t('dataSource.youCanUploadYourFiles')}};</li>
-                                                <li>{{$t('dataSource.differentFormatsSupported')}}</li>
-                                            </ul>
-                                            {{$t('dataSource.suggestedOption')}}
-                                            <p class="mt-3">
-                                                <label>{{$t('dataSource.storage')}}:</label>
-                                                <select v-model="fsStorage" class="form-control">
-                                                    <option v-for="s in fsStorages" :key="s.id" :value="s.id">{{s.name}}
-                                                    </option>
-                                                </select>
-                                            </p>
-                                            <button class="btn btn-success" :disabled="fsStorage === null"
-                                                @click="choose('fs')">{{$t('actions.choose')}}</button>
-                                        </b-card>
-                                    </div>
-                                    <div :class="'col-md-' + colSize">
-                                        <b-card :title="$t('dataSource.databaseStorage')" class="card-option">
-                                            {{$t('dataSource.characteristics')}}:
-                                            <ul>
-                                                <li>{{$t('dataSource.youCanUseSQL')}};</li>
-                                                <li>{{$t('dataSource.databaseConnectionPreviouslyConfigured')}};</li>
-                                            </ul>
-                                            {{$t('dataSource.alternativeUseDatabase')}}
-                                            <p class="mt-3">
-                                                <label>{{$t('dataSource.storage')}}:</label>
-                                                <select v-model="sqlStorage" class="form-control">
-                                                    <option v-for="s in sqlStorages" :key="s.id" :value="s.id">
-                                                        {{s.name}}</option>
-                                                </select>
-                                            </p>
-                                            <button class="btn btn-success" :disabled="sqlStorage === null"
-                                                @click="choose('sql')">{{$t('actions.choose')}}</button>
-                                        </b-card>
-                                    </div>
-                                    <div v-if="atmosphereExtension" :class="atmosphereExtension? 'col-md-4': 'col-md-6'">
-                                        <b-card title="Vallum (Experimental)" class="card-option">
-                                            {{$t('dataSource.characteristics')}}:
-                                            <ul>
-                                                <li>{{$t('dataSource.youCanUseSQL')}};</li>
-                                                <li>Secure computation in enclave (SGX);</li>
-                                            </ul>
-                                            We recommend this option only if you are testing advanced options
-                                            related to ATMOSPHERE project.
-                                            <p class="mt-4">
-                                                <label>{{$t('dataSource.storage')}}:</label>
-                                                <select v-model="vallumStorage" class="form-control">
-                                                    <option v-for="s in vallumStorages" :key="s.id" :value="s.id">
-                                                        {{s.name}}</option>
-                                                </select>
-                                            </p>
-                                            <button class="btn btn-success" :disabled="sqlStorage === null"
-                                                @click="choose('vallum')">{{$t('actions.choose')}}</button>
-                                        </b-card>
-                                    </div>
-                                    <div :class="'col-md-' + colSize">
-                                         <b-card title="Hive (Experimental)" class="card-option">
-                                            {{$t('dataSource.characteristics')}}:
-                                            <ul>
-                                                <li>{{$t('dataSource.youCanUseSQL')}};</li>
-                                                <li>Desempenho;</li>
-                                            </ul>
-                                            <p class="mt-4">
-                                                <label>{{$t('dataSource.storage')}}:</label>
-                                                <select v-model="hiveStorage" class="form-control">
-                                                    <option v-for="s in hiveStorages" :key="s.id" :value="s.id">
-                                                        {{s.name}}</option>
-                                                </select>
-                                            </p>
-                                            <button class="btn btn-success" :disabled="sqlStorage === null"
-                                                @click="choose('hive')">{{$t('actions.choose')}}</button>
-                                        </b-card>
-                                       
-                                    </div>
+            <div class="col-lg-8 mx-auto overflow-hidden">
+                <div v-show="step === 1">
+                    <div class="title">
+                        <h4>{{$t('dataSource.whatTypeOfDataSourceToAdd')}}</h4>
+                    </div>
+                    <div class="row">
+                        <div :class="'col-md-' + colSize">
+                            <div class="card">
+                                <div class="card-header"><h5 class="card-title">{{ $t('dataSource.distributedFileSystem') }}</h5></div>
+                                <div class="card-body">
+                                    {{$t('dataSource.characteristics')}}:
+                                    <ul>
+                                        <li>{{$t('dataSource.scalability')}};</li>
+                                        <li>{{$t('dataSource.youCanUploadYourFiles')}};</li>
+                                        <li>{{$t('dataSource.differentFormatsSupported')}}</li>
+                                    </ul>
+                                    {{$t('dataSource.suggestedOption')}}
+                                    
+                                </div>
+
+                                <div class="card-footer text-center">
+                                    <p>
+                                        <!-- <label>{{$t('dataSource.storage')}}:</label> -->
+                                        <select v-model="fsStorage" class="form-control">
+                                            <option v-for="s in fsStorages" :key="s.id" :value="s.id">{{s.name}}
+                                            </option>
+                                        </select>
+                                    </p>
+                                    <button class="btn btn-success" :disabled="fsStorage === null" @click="choose('fs')">{{$t('actions.choose')}}</button>
                                 </div>
                             </div>
                         </div>
-                        <div v-if="step === 2" class="card animated">
-                            <div class="card-body">
-                                <h4 class="card-title">{{$t('dataSource.distributedFileSystem')}}</h4>
-
-                                <div class="col-md-12">
-                                    <div ref="drop" class="jumbotron">
-                                        <div class="resumable-drop"
-                                            :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
-                                            {{$t('dataSource.dropFilesHere')}}
-                                            <a ref="browse" class="resumable-browse">
-                                                <u>{{$t('dataSource.selectFromComputer')}}</u>
-                                            </a>.
-                                            <br>
-                                            <small>{{$t('dataSource.uploadExplanation')}}</small>
-                                        </div>
-                                    </div>
+                        <div :class="'col-md-' + colSize">
+                            <div class="card">
+                                <div class="card-header"><h5 class="card-title">{{ $t('dataSource.databaseStorage') }}</h5></div>
+                                <div class="card-body">
+                                {{$t('dataSource.characteristics')}}:
+                                <ul>
+                                    <li>{{$t('dataSource.youCanUseSQL')}};</li>
+                                    <li>{{$t('dataSource.databaseConnectionPreviouslyConfigured')}};</li>
+                                </ul>
+                                {{$t('dataSource.alternativeUseDatabase')}}
                                 </div>
-                                <div v-if="storageType === 'HDFS' " class="resumable-progress col-md-12">
-                                    <table v-if="showProgress">
-                                        <tr>
-                                            <td width="100%">
-                                                <div class="progress-container">
-                                                    <div ref="progress" class="progress-bar"></div>
-                                                </div>
-                                            </td>
-                                            <td class="progress-text" nowrap="nowrap"></td>
-                                            <td class="progress-pause" nowrap="nowrap">
-                                                <a v-if="showResume" href="#" class="progress-resume-link"
-                                                    @click.prevent="resume">
-                                                    <span class="fa fa-2x fa-play"></span>
-                                                </a>
-                                                <a v-if="showPause" href="#" class="progress-pause-link"
-                                                    @click.prevent="pause">
-                                                    <span class="fa fa-2x fa-pause"></span>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </table>
+                                <div class="card-footer text-center">
+                                    <p>
+                                        <!-- <label>{{$t('dataSource.storage')}}:</label> -->
+                                    <select v-model="sqlStorage" class="form-control">
+                                        <option v-for="s in sqlStorages" :key="s.id" :value="s.id">
+                                            {{s.name}}</option>
+                                    </select>
+                                    </p>
+                                    <button class="btn btn-success" :disabled="sqlStorage === null"
+                                    @click="choose('sql')">{{$t('actions.choose')}}</button>
                                 </div>
-                                <div v-if="resumableList.length">
-                                    <h3>{{$t('dataSource.uploadingLog')}}</h3>
-                                    <table v-if="resumableList.length > 0" class="table table-bordered table-stripped">
-                                        <thead>
-                                            <tr>
-                                                <th>{{$t('dataSource.file')}}</th>
-                                                <th>{{$t('dataSource.message')}}</th>
-                                                <th>{{$t('dataSource.progress')}}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="fileInfo in resumableList" :class="fileStatus(fileInfo)">
-                                                <td :ref="fileInfo.file.uniqueIdentifier">{{fileInfo.file.fileName}}
-                                                </td>
-                                                <td>{{fileInfo.message.message}}</td>
-                                                <td>
-                                                    <span
-                                                        class="resumable-file-progress">{{Math.floor(100*fileInfo.file.progress()) }}%</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            </div>
+                        </div>
+                        <div v-if="atmosphereExtension" :class="atmosphereExtension? 'col-md-4': 'col-md-6'">
+                            <div class="card">
+                                <div class="card-header"><h5 class="card-title">Vallum (Experimental)</h5></div>
+                                <div class="card-body">
+                                    {{$t('dataSource.characteristics')}}:
+                                    <ul>
+                                        <li>{{$t('dataSource.youCanUseSQL')}};</li>
+                                        <li>Secure computation in enclave (SGX);</li>
+                                    </ul>
+                                    We recommend this option only if you are testing advanced options
+                                    related to ATMOSPHERE project.
                                 </div>
-                                <div class="border-top mt-5 pt-4">
-                                    <button class="btn btn-outline-secondary ml-1"
-                                        @click="step=1">{{$t('actions.back')}}</button>
+                                <div class="card-footer text-center">
+                                    <p>
+                                        <!-- <label>{{$t('dataSource.storage')}}:</label> -->
+                                        <select v-model="vallumStorage" class="form-control">
+                                            <option v-for="s in vallumStorages" :key="s.id" :value="s.id">
+                                                {{s.name}}</option>
+                                        </select>
+                                    </p>
+                                    <button class="btn btn-success" :disabled="sqlStorage === null"
+                                    @click="choose('vallum')">{{$t('actions.choose')}}</button>
                                 </div>
                             </div>
                         </div>
                         <div v-if="step === 3" class="card animated">
                             <div class="card-body">
                                 <h4 class="card-title">{{$t('dataSource.databaseStorage')}}</h4>
-                                <label>{{$tc('common.name', 1)}}:</label>
-                                <input v-model="dataSource.name" type="text" class="form-control">
-
-                                <label>{{$t('dataSource.selectCommand')}}:</label>
-                                <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label>{{$tc('common.name', 1)}}:</label>
+                                        <input v-model="dataSource.name" type="text" class="form-control">
+        
+                                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{$t('dataSource.tablesReference')}}</label>
+                                        <select class="form-control tables" size="10" v-model="selectedTable" @dblclick.stop="copyTableName">
+                                            <option v-for="tb in tables" :key="tb">
+                                                {{tb}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <div class="border-top mt-5 pt-4">
-                                    <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
                                     <button class="btn btn-success" @click="save">{{$t('actions.save')}}</button>
                                     <button class="btn ml-1 btn-outline-secondary"
                                         @click="step=1">{{$t('actions.back')}}</button>
@@ -178,20 +113,114 @@
                         <div v-if="step === 4" class="card animated">
                             <div class="card-body">
                                 <h4 class="card-title">Vallum {{$t('dataSource.databaseStorage')}}</h4>
-                                <label>{{$tc('common.name', 1)}}:</label>
-                                <input v-model="dataSource.name" type="text" class="form-control">
-
-                                <label>{{$t('dataSource.selectCommand')}}:</label>
-                                <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
-
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <label>{{$tc('common.name', 1)}}:</label>
+                                        <input v-model="dataSource.name" type="text" class="form-control">
+        
+                                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{$t('dataSource.tablesReference')}}</label>
+                                        <select class="form-control tables" size="10" v-model="selectedTable" @dblclick.stop="copyTableName">
+                                            <option v-for="tb in tables" :key="tb">
+                                                {{tb}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="border-top mt-5 pt-4">
-                                    <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
                                     <button class="btn btn-success" @click="save">
                                         {{$t('actions.save')}}</button>
                                     <button class="btn ml-1 btn-outline-secondary"
                                         @click="step=1">{{$t('actions.back')}}</button>
                                 </div>
                             </div>
+                        </div>
+                        <div v-if="storageType === 'HDFS' " class="resumable-progress col-md-12">
+                            <table v-if="showProgress">
+                                <tr>
+                                    <td width="100%">
+                                        <div class="progress-container">
+                                            <div ref="progress" class="progress-bar"></div>
+                                        </div>
+                                    </td>
+                                    <td class="progress-text" nowrap="nowrap"></td>
+                                    <td class="progress-pause" nowrap="nowrap">
+                                        <a v-if="showResume" href="#" class="progress-resume-link"
+                                            @click.prevent="resume">
+                                            <span class="fa fa-2x fa-play"></span>
+                                        </a>
+                                        <a v-if="showPause" href="#" class="progress-pause-link"
+                                            @click.prevent="pause">
+                                            <span class="fa fa-2x fa-pause"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div v-if="resumableList.length">
+                            <h3>{{$t('dataSource.uploadingLog')}}</h3>
+                            <table v-if="resumableList.length > 0" class="table table-bordered table-stripped">
+                                <thead>
+                                    <tr>
+                                        <th>{{$t('dataSource.file')}}</th>
+                                        <th>{{$t('dataSource.message')}}</th>
+                                        <th>{{$t('dataSource.progress')}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="fileInfo in resumableList" :class="fileStatus(fileInfo)">
+                                        <td :ref="fileInfo.file.uniqueIdentifier">{{fileInfo.file.fileName}}
+                                        </td>
+                                        <td>{{fileInfo.message.message}}</td>
+                                        <td>
+                                            <span
+                                                class="resumable-file-progress">{{Math.floor(100*fileInfo.file.progress()) }}%</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="border-top mt-5 pt-4">
+                            <button class="btn btn-outline-secondary ml-1"
+                                @click="step=1">{{$t('actions.back')}}</button>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="step === 3" class="card animated">
+                    <div class="card-body">
+                        <h4 class="card-title">{{$t('dataSource.databaseStorage')}}</h4>
+                        <label>{{$tc('common.name', 1)}}:</label>
+                        <input v-model="dataSource.name" type="text" class="form-control">
+
+                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+
+                        <div class="border-top mt-5 pt-4">
+                            <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
+                            <button class="btn btn-success" @click="save">{{$t('actions.save')}}</button>
+                            <button class="btn ml-1 btn-outline-secondary"
+                                @click="step=1">{{$t('actions.back')}}</button>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="step === 4" class="card animated">
+                    <div class="card-body">
+                        <h4 class="card-title">Vallum {{$t('dataSource.databaseStorage')}}</h4>
+                        <label>{{$tc('common.name', 1)}}:</label>
+                        <input v-model="dataSource.name" type="text" class="form-control">
+
+                        <label>{{$t('dataSource.selectCommand')}}:</label>
+                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+
+                        <div class="border-top mt-5 pt-4">
+                            <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
+                            <button class="btn btn-success" @click="save">
+                                {{$t('actions.save')}}</button>
+                            <button class="btn ml-1 btn-outline-secondary"
+                                @click="step=1">{{$t('actions.back')}}</button>
                         </div>
                     </div>
                 </div>
@@ -227,11 +256,13 @@
                     url: '',
                     storage_id: null
                 },
+                selectedTable: null,
                 supported: true,
                 showProgress: false,
                 showPause: false,
                 showResume: false,
-                resumableList: []
+                resumableList: [],
+                tables: [],
             };
         },
         mounted() {
@@ -239,7 +270,7 @@
             axios
                 .get(`${limoneroUrl}/storages`)
                 .then(resp => {
-                    resp.data.forEach(storage => {
+                    resp.data.data.forEach(storage => {
                         if (storage.type === 'HDFS') {
                             self.fsStorages.push(storage);
                         } else if (storage.type === 'JDBC') {
@@ -297,6 +328,7 @@
                     this.step = 3;
                     this.dataSource.format = 'HIVE';
                     this.dataSource.storage_id = this.hiveStorage;
+                    this.retrieveTables()
                 } else {
                     this.step = 2;
                     this.dataSource.format = 'UNKNOWN';
@@ -306,6 +338,22 @@
                         this.setupResumable();
                     });
                 }
+            },
+            copyTableName(){
+                this.dataSource.command = (this.dataSource.command ? this.dataSource.command  + ' ' : '') + this.selectedTable;
+            },
+            retrieveTables(){
+                const self = this;
+                const url = `${limoneroUrl}/storages/metadata/${self.dataSource.storage_id}`;
+
+                axios.get(url)
+                    .then((resp) => {
+                        self.tables = resp.data.data;
+                    }
+                    ).catch((e) => { 
+                        self.error(e);
+                    });
+ 
             },
             setupResumable() {
                 let self = this;
@@ -539,5 +587,8 @@
 
     .progress-pause {
         padding: 0 0 0 7px;
+    }
+    .tables {
+        font-size: .7em;
     }
 </style>

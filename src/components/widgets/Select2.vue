@@ -16,7 +16,9 @@
 <script>
     import vSelect from "vue-select";
     import LabelComponent from './Label.vue'
+    import Widget from '../../mixins/Widget.js';
     export default {
+        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
@@ -47,11 +49,6 @@
         props: {
             type: "",
             value: { default: [] },
-            field: null,
-            message: {
-                type: String,
-                default: 'update-form-field-value'
-            }
         },
     }
 </script>

@@ -2,46 +2,76 @@
     <main role="main">
         <div class="row">
             <div class="col">
-                <div>
+                <div class="title">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1 v-if="loaded" class="header-title">
-                            <span :title="$tc('titles.job', 1)">{{job.id}}</span>
-                            {{workflow.name}}
-                        </h1>
+                        <div>
+                            <h1 v-if="loaded" class="header-title">
+                                <h6 class="header-pretitle">{{$tc('titles.job', 1)}} #{{job.id}}</h6>
+                                {{workflow.name}}
+                            </h1>
+                        </div>
                         <router-link
                             v-if="workflow.id"
-                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="btn btn-sm btn-outline-primary">
+                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="btn btn-outline-primary d-print-none">
                             <i class="fa fa-chevron-left"></i>
                             &nbsp; {{$t('actions.back')}} -
                             {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
                         </router-link>
                     </div>
                     <div>
-                        <b-tabs nav-class="custom-tab">
+                        <b-tabs nav-class="custom-tab mb-0">
                             <b-tab active :title="$tc('titles.job')">
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <b-card>
-                                            <div style="position: relative;  height: 75vh;">
-                                                <div>
-                                                    <diagram v-if="loaded" id="main-diagram" ref="diagram"
-                                                        :workflow="workflow" :operations="operations" :version="job.id"
-                                                        :show-toolbar="false" :editable="false"
-                                                        :shink="true" :loaded="loaded" :show-task-decoration="true"
-                                                        :initial-zoom=".7" />
-                                                </div>
-                                            </div>
-                                        </b-card>
+                                    <div>
+                                        <diagram v-if="loaded" id="main-diagram" ref="diagram"
+                                            :workflow="workflow" :operations="operations" :version="job.id"
+                                            :show-toolbar="false" :editable="false"
+                                            :shink="true" :loaded="loaded" :show-task-decoration="true"
+                                            :initial-zoom=".85" />
                                     </div>
-                                    <div class="col-md-4">
+
+                                    
+                                    <div class="job-details">
                                         <b-card no-body>
                                             <b-tabs card>
                                                 <b-tab active>
                                                     <template slot="title">
-                                                        <div id="dtl-job-status" class="job-status-circle lemonade-job"
+                                                        <div id="dtl-job-status" class="job-status-circle lemonade-job margin-right"
                                                             :class="jobStatus" :title="job.status"></div>
                                                         {{$tc('job.logs', 2)}}
                                                     </template>
+                                                    <div>
+
+                                                        <div class="alert" :class="{
+                                                            'alert-success': job.status=='COMPLETED',
+                                                            'alert-danger': job.status=='ERROR',
+                                                            'alert-warning': job.status=='WAITING',
+                                                        }">
+                                                            {{job.status_text}}
+                                                        </div>
+
+                                                        <div class="job-step" v-for="step in job.steps" v-if="step.status!='PENDING'" :class="{'disabled': selectedTask.id && selectedTask.id !== step.task.id}">
+                                                            <div class="label" :class="step.logs[step.logs.length-1].level.toLowerCase()">
+                                                            {{$t(`juicer.log.${step.logs[step.logs.length-1].level.toLowerCase()}`)}}
+                                                            </div>
+                                                            <h2>{{ getTask(step.task.id).name }}</h2>
+
+                                                            <template v-for="log in step.logs">
+                                                                <p v-if="log.type === 'TEXT' || log.type === 'STATUS'">
+                                                                    <span class="icon fa fa-fw" :class="{
+                                                                        'running fa-sync': log.status=='RUNNING',
+                                                                        'fa-spin': log.status=='RUNNING' && step.logs.length==1,
+                                                                        'completed fa-check-circle': log.status=='COMPLETED',
+                                                                        'error fa-times-circle': log.level=='ERROR',
+                                                                        'warning fa-exclamation-triangle': log.status=='ERROR' && log.level=='WARN',
+                                                                    }"></span>
+
+                                                                    <span class="date">{{log.date | formatJsonHourMinute}}</span>
+                                                                    <span class="info">{{log.message}}</span>
+                                                                </p>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                    <!-- 
                                                     <div class="job-log-list">
                                                         <div id="dtl-job-status-text" class="alert alert-secondary">
                                                             {{job.status_text}}</div>
@@ -67,6 +97,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    -->
                                                 </b-tab>
                                                 <b-tab v-if="job.exception_stack" :title="$t('titles.errorDetail')">
                                                     <div style="font-size:.8em">
@@ -86,7 +117,7 @@
                                                     </dl>
                                                 </b-tab>
                                                 <b-tab v-if="job.workflow"
-                                                    :title="$tc('job.parameters', 2)" style="max-height: 70vh; overflow: auto">
+                                                    :title="$tc('job.parameters', 2)">
                                                     <div v-for="ttask in job.workflow.tasks" class="card" :key="ttask.id">
                                                         <div class="card-body" style="overflow: auto">
                                                             {{ttask.name}} ({{ttask.operation.name}})
@@ -112,45 +143,41 @@
                                             </b-tabs>
                                         </b-card>
                                     </div>
-                                </div>
+
                             </b-tab>
                             <b-tab :title="$tc('job.results', 2)">
-                                <b-card>
-                                    <div v-for="(step, inx) in job.steps" :key="inx" class="row">
-                                        <div class="col-md-12 lemonade">
-                                            <div v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
-                                                class="mt-2 border-bottom pb-2">
-                                                <TaskDisplay :task="getTask(step.task.id)" />
-                                                &nbsp;
-                                                {{step.status}}
-                                                <div v-for="log in step.logs" :key="log.id"
-                                                    style="font-size:.9em; margin-top: 20px">
-                                                    <span v-if="log.type === 'HTML'">
-                                                        <div class="html-div" v-html="log.message"></div>
-                                                    </span>
-                                                    <div v-else-if="log.type === 'IMAGE'" class="image-result">
-                                                        <img :src="'data:image/png;base64,' + log.message">
-                                                    </div>
+                                <div v-for="(step, inx) in job.steps" :key="inx" class="row">
+                                    <div class="col-md-12 lemonade">
+                                        <div v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
+                                            class="mt-2 border-bottom pb-2">
+                                            <TaskDisplay :task="getTask(step.task.id)" />
+                                            &nbsp;
+                                            {{step.status}}
+                                            <div v-for="log in step.logs" :key="log.id"
+                                                style="font-size:.9em; margin-top: 20px">
+                                                <span v-if="log.type === 'HTML'">
+                                                    <div class="html-div" v-html="log.message"></div>
+                                                </span>
+                                                <div v-else-if="log.type === 'IMAGE'" class="image-result">
+                                                    <img :src="'data:image/png;base64,' + log.message">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </b-card>
+                                </div>
                             </b-tab>
                             <b-tab v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
                                 @click="showVisualizations = true">
-                                <b-card>
-                                    <div v-for="result in job.results" :key="result.id" class="row">
-                                        <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
-                                            style="margin-top: 14px; display:table">
-                                            <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id, 0)">
-                                            </caipirinha-visualization>
-                                        </div>
+                                <div v-for="result in job.results" :key="result.id" class="row">
+                                    <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
+                                        style="margin-top: 14px; display:table">
+                                        <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.task.id, 0)">
+                                        </caipirinha-visualization>
                                     </div>
-                                </b-card>
+                                </div>
                             </b-tab>
                             <b-tab :title="$tc('job.sourceCode')" @click="showSourceCode = 1">
-                                <b-card>
+                                <b-card class="mt-3">
                                     <SourceCode v-if="showSourceCode" :job="job.id" />
                                 </b-card>
                             </b-tab>
@@ -283,7 +310,9 @@
                     const params = {
                         platform: this.$route.params.platform,
                         lang: this.$root.$i18n.locale,
-                        disabled: true // even disabled operations must be returned to keep compatibility
+                        workflow: workflow.id,
+                        disabled: true, // even disabled operations must be returned to keep compatibility
+                        ts: new Date().getDate() // in order to avoid cache
                     };
                     axios
                         .get(`${tahitiUrl}/operations`, { params })
@@ -442,7 +471,27 @@
         }
     };
 </script>
-<style>
+<style lang="scss">
+
+    .alert {
+        margin-bottom: 0 !important;
+    }
+
+    .job-details {
+        width: 470px;
+        max-height: calc(100vh - 300px);
+        position: fixed;
+        right: 1rem;
+        bottom: calc(1rem + 25px);
+        overflow: hidden;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
+
+        .tab-pane {
+            max-height: calc(100vh - 356px);
+            overflow: auto;
+        }
+    }
+
     .image-result {
         border: 1px dashed #ccc;
         width: 100%;
@@ -487,6 +536,83 @@
 
     .badge-warn {
         background-color: #ffdc00;
+    }
+
+    .job-step {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(var(--font-color-rgb), .16);
+
+        &.disabled {
+            opacity: .25;
+        }
+
+        .label {
+            font-size: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: rgba(#4B4E51, .5);
+
+            &.info {
+                color: #56C0E0;
+            }
+            
+            &.warning {
+                color: #F0AD4E;
+            }
+
+            &.error {
+                color: #D9534F;
+            }
+        }
+
+        .date {
+            color: #97999B;
+            font-size: 12px;
+            font-weight: normal;
+
+            span {
+                //display: inline-block;
+                margin-right: .25rem;
+
+                &::after {
+                    content: " / ";
+                }
+
+                &:last-child {
+                    &::after {
+                        content: "";
+                    }
+                }
+            }
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        p {
+            margin: .25rem 0;
+            font-size: 12px;
+
+            span {
+                display: inline-block;
+            }
+
+            .icon {
+                margin-right: .25rem;
+                &.running { color: #A5A6A8; }
+                &.completed { color: #A8CA57; }
+                &.warning { color: #F0AD4E; }
+                &.error { color: #D9534F; }
+            }
+            
+            .date {
+                color: #97999B;
+                margin-right: .5rem;
+            }
+        }
     }
 
     .job-log-list {

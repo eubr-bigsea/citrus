@@ -1,43 +1,33 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.model', 2)}}</h1>
-                        <router-link :to="{name: 'addModel'}" class="btn btn-sm btn-outline-primary">
-                            {{$t('actions.addItem')}}
-                        </router-link>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <v-server-table ref="listTable" :columns="columns" :options="options"
-                                        name="modelList">
-                                        <template slot="id" slot-scope="props">
-                                            <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
-                                                {{props.row.id}}</router-link>
-                                        </template>
-                                        <template slot="name" slot-scope="props">
-                                            <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
-                                                {{props.row.name}}</router-link>
-                                        </template>
-                                        <template slot="created"
-                                            slot-scope="props">{{props.row.created | formatJsonDate}}</template>
-                                        <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                                            </button>
-                                        </template>
-                                    </v-server-table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div>
+            <div class="title">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>{{$tc('titles.model', 2)}}</h1>
+                    <router-link :to="{name: 'addModel'}" class="btn btn-primary btn-lemonade-primary">
+                        <span class="fa fa-plus" /> {{$t('actions.addItem')}}
+                    </router-link>
                 </div>
             </div>
+            
+            <v-server-table ref="listTable" :columns="columns" :options="options"
+                name="modelList">
+                <template slot="id" slot-scope="props">
+                    <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
+                        {{props.row.id}}</router-link>
+                </template>
+                <template slot="name" slot-scope="props">
+                    <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
+                        {{props.row.name}}</router-link>
+                </template>
+                <template slot="created"
+                    slot-scope="props">{{props.row.created | formatJsonDate}}</template>
+                <template slot="actions" slot-scope="props">
+                    <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                        <font-awesome-icon icon="trash"></font-awesome-icon>
+                    </button>
+                </template>
+            </v-server-table>
         </div>
     </main>
 </template>

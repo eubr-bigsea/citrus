@@ -1,5 +1,19 @@
 $snotify-width: 600px !default;
 @import '~vue-snotify/styles/dark.scss'; //dark or material.css or simple.css
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  --background-color: #F8F9FA;
+  --card-backgroud-color: #ECEEEF;
+  --primary-color: #568F32;
+  --secondary-color: #A8CA57;
+  --font-color: #4B4E51;
+  --font-color-rgb: 75, 78, 81;
+}
+
+body {
+  background-color: var(--background-color);
+}
 
 .snotify {
   z-index: 1000005 !important;
@@ -11,17 +25,39 @@ $snotify-width: 600px !default;
   }
 }
 
+.object-align-center,
+.object-align-center-v,
+.object-align-distribute,
+.object-align-distribute-v,
 .object-align-left,
 .object-align-right,
 .object-align-top,
 .object-align-bottom {
-  background-image: url('align.svg');
-  width: 16px;
-  height: 16px;
+  background: url('align.svg') center center no-repeat;
+  background-size: 16px 16px;
+  width: 19px;
+  height: 19px;
   display: block;
   margin: 2px 0;
-  filter: invert(100%);
 }
+
+.object-align-center,
+.object-align-center-v {
+  background-image: url('align-center.svg');
+}
+
+.object-align-distribute,
+.object-align-distribute-v {
+  background-image: url('distribute.svg');
+}
+
+.object-align-distribute-v {
+  transform: rotate(90deg);
+}
+
+.object-align-center-v {
+    transform: rotate(90deg);
+  }
 
 .object-align-top {
   transform: rotate(90deg);
@@ -42,8 +78,31 @@ $snotify-width: 600px !default;
   }
 }
 
+.btn-lemonade-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+
+    &:hover, &:not(:disabled):not(.disabled):active, &:focus  {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        filter: brightness(90%);
+    }
+}
+
+.btn-lemonade-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+
+    &:hover, &:not(:disabled):not(.disabled):active, &:focus  {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        filter: brightness(90%);
+    }
+}
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  /* font-family: 'Avenir', Helvetica, Arial, sans-serif; */
+  font-family: 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -52,7 +111,31 @@ $snotify-width: 600px !default;
   width: calc(100% - 0px);
 }
 
-.navbar-brand > span {
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
+main {
+    margin-bottom: 50px;
+}
+
+.title {
+    margin: 2rem 0 1rem 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.VueTables {
+    .row:first-child {
+        margin: 0;
+        background-color: rgba(var(--font-color-rgb), .04);
+        padding-top: 1rem;
+    }
+}
+
+/* .navbar-brand > span {
   margin: 3px 0 0 5px;
   display: block;
   float: right;
@@ -67,7 +150,7 @@ $snotify-width: 600px !default;
         border-radius: 50px;
         
     }
-}
+} */
 
 /* The side navigation menu */
 
@@ -167,7 +250,7 @@ $snotify-width: 600px !default;
 
 ul.nav-tabs {
   display: flex;
-  background: #fafafa;
+  //background: #fafafa;
   li.default {
     order: -1;
     /* the default is 0 */
@@ -239,16 +322,25 @@ h2.title {
   z-index: 100001 !important;
 }
 .lemonade-job {
-  &.completed,
-  &.running,
-  &.canceled,
-  &.interrupted,
-  &.waiting,
-  &.error {
-    color: white;
-    font-size: 0.7em;
-    padding: 4px;
-  }
+
+    border-radius: 25px;
+    max-width: 75px;
+    margin: 0 auto;
+
+    &.margin-right {
+        margin-right: 6px;
+    }
+
+    &.completed,
+    &.running,
+    &.canceled,
+    &.interrupted,
+    &.waiting,
+    &.error {
+        color: white;
+        font-size: 0.7em;
+        padding: 4px;
+    }
 
   &.completed {
     background-color: #2ecc40;
@@ -316,6 +408,10 @@ h1 {
   margin-right: -15px;
   margin-left: -15px;
   padding-left: 15px;
+
+  &.mb-0 {
+    margin-bottom: 0px !important;
+  }
 }
 
 .custom-tab a {
@@ -363,6 +459,137 @@ h1 {
     padding-top: 15px;
     height: calc(100% - 60px);
 }
-.card-body {
-    padding: 5px 15px;
+
+.card {
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .card-header {
+        background-color: var(--card-backgroud-color);
+        .card-title {
+            margin: 0;
+            font-size: 18px;
+        }
+    }
+
+    .card-footer {
+        button {
+            margin: 0 .25rem;
+        }
+    }
+}
+
+.full_modal-dialog .modal-dialog {
+      width: 98% !important;
+      height: 92% !important;
+      min-width: 98% !important;
+      min-height: 92% !important;
+      max-width: 98% !important;
+      max-height: 92% !important;
+      padding: 0 !important;
+    }
+    
+    .full_modal-dialog .modal-content{
+      height: 99% !important;
+      min-height: 99% !important;
+      max-height: 99% !important;
+      border-radius: 0;
+      overflow-y: auto;
+    }
+.full_modal_width-dialog .modal-dialog {
+      width: 98% !important;
+      min-width: 98% !important;
+      max-width: 98% !important;
+      padding: 0 !important;
+    }
+    
+    .full_modal_width-dialog .modal-content{
+      border-radius: 0;
+      overflow-y: auto;
+    }
+.vfc-calendars{
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: .9em;
+}
+
+.diagram {
+    margin: 0 -15px;
+
+    background: rgba(#D1D5D9, .15);
+
+    .diagram-toolbar {
+        background: rgb(199,200,201);
+        background: linear-gradient(0deg, rgba(199,200,201,1) 0%, rgba(239,239,239,1) 100%);
+    }
+
+    .has-1-ports,
+    .has-2-ports,
+    .has-3-ports,
+    .has-4-ports {
+        color: #1E88E5;
+        /* color: #A8A8A8; */
+        font-size: .5em;
+        /* background: #fff !important; */
+        display: block;
+        line-height: 6px;
+        z-index: 10000;
+        text-align: center;
+        width: 55px;
+    }
+
+    .endpoint-label.output {
+        z-index: 1;
+        /* background: green */
+    }
+
+    .output {
+        
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports,
+        .has-4-ports {
+            position: relative;
+            z-index: 5;
+            left: -2px;
+        }
+        .has-1-ports {
+            top: 10px;
+        }
+        .has-2-ports {
+            top: 15px;
+        }
+        .has-3-ports {
+            margin-top: 40px !important;
+        }
+        .has-4-ports {
+            margin-top: 40px !important;
+        }
+
+    }
+
+    .input {
+
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports {
+            top: -6px;
+            left: 0px;
+            position: relative;
+
+        }
+    }
+
+    .lemonade-container.dark-mode {
+        background: #4B4E51;
+
+        .has-1-ports,
+        .has-2-ports,
+        .has-3-ports,
+        .has-4-ports {
+            color: #c3c3c3;
+        }
+    }
+    
 }

@@ -6,11 +6,16 @@
         <home-card-counter :value="total"></home-card-counter>
       </div>
       <div class="card-body">
+
         <dl>
           <home-card-item v-for="item in items" :type="type" :item="item" :key="item.id"></home-card-item>
           <div v-if="items.length == 0">{{ $t('common.noData')}}</div>
         </dl>
-        <router-link :to="{name: `${type}s`}" class="card-link">{{$t('common.more')}}</router-link>
+
+        <div class="text-right">
+          <b-button :to="{name: `${type}s`}" variant="outline-primary">Mais registros</b-button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -18,10 +23,9 @@
 
 <style>
 .home-card {
-  padding: 15px;
+  /* padding: 15px; */
 }
 .home-card .card-header {
-  background: none;
   display: flex;
 }
 .home-card .card-title {

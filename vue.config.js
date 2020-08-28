@@ -6,12 +6,16 @@ module.exports = {
         devtool: 'source-map',
         plugins: [
             //new BundleAnalyzerPlugin(),
-        ]
+        ],
+        optimization: {
+            minimize: false
+        }
     },
     publicPath: './',
     pluginOptions: {
         webpackBundleAnalyzer: {
-            openAnalyzer: false
+            openAnalyzer: false,
+            analyzerPort: 8081
         }
     },
     chainWebpack: config => {

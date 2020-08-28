@@ -1,32 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   enable-background="new 0 0 1000 1000"
-   version="1.1"
-   viewBox="0 0 1000 1000"
-   xml:space="preserve"
-   id="svg2"><defs
-     id="defs14" /><metadata
-     id="metadata4"> Svg Vector Icons : http://www.onlinewebfonts.com/icon <rdf:RDF><cc:Work
-     rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-       rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><path
-     d="m 59.76,506.35595 0,490 39.100508,0 39.100512,0 0,-490 0,-490.000002 -39.100512,0 -39.100508,0 0,490.000002 z"
-     id="path6" /><g
-     transform="translate(0,23.820948)"
-     id="g4137"><path
-       style="fill:none;stroke:#000000;stroke-width:60;stroke-miterlimit:4;stroke-dasharray:none"
-       id="path8"
-       d="m 266.65,302.03 0,161.79 187.22,0 187.22,0 0,-161.79 0,-161.79 -187.22,0 -187.22,0 0,161.79 z" /><path
-       id="path10"
-       d="m 236.65,691.88 0,162.95 359.4,0 359.42,0 0,-162.95 0,-162.95 -359.42,0 -359.4,0 0,162.95 z" /></g><rect
-     style="fill:none;fill-opacity:1;stroke:none;stroke-width:21.73738098;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:1;stroke-opacity:1"
-     id="rect4135"
-     width="985.55078"
-     height="985.55078"
-     x="13.580541"
-     y="13.580558"
-     ry="22.8887" /></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1"
+	 id="svg2" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg"
+	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000"
+	 style="enable-background:new 0 0 1000 1000;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#4B4E51;}
+</style>
+<g id="path6">
+	<path class="st0" d="M59.8,506.4v490h39.1H138v-490v-490H98.9H59.8C59.8,16.4,59.8,506.4,59.8,506.4z"/>
+</g>
+<g id="path8">
+	<path class="st0" d="M671.1,517.6H236.6V134.1H671L671.1,517.6L671.1,517.6z M296.6,457.6H611V194.1H296.6V457.6z"/>
+</g>
+<g id="path10">
+	<path class="st0" d="M236.6,715.7v163H596h359.4v-163v-163H596H236.6V715.7L236.6,715.7z"/>
+</g>
+</svg>

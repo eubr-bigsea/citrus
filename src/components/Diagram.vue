@@ -1,7 +1,7 @@
 <template>
-    <div :class="'platform-' + platform" class="border" oncontextmenu="return false;">
-        <diagram-toolbar v-if="showToolbar" :workflow="workflow" />
-        <div id="lemonade-container" :class="{ 'with-grid': showGrid }" class="lemonade-container not-selectable"
+    <div :class="'platform-' + platform" class="diagram" oncontextmenu="return false;">
+        <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" :copied-tasks="copiedTasks"/>
+        <div id="lemonade-container" :class="{ 'with-grid': showGrid, 'dark-mode': darkMode }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
@@ -19,6 +19,7 @@
                 </div>
             </VuePerfectScrollbar>
         </div>
+        {{ darkMode }}
         <modal-component v-if="showExecutionModal" @close="showExecutionModal = false">
             <div slot="header">
                 <h4>Execution of workflow</h4>
@@ -117,7 +118,7 @@
             },
             showGrid: {
                 type: Boolean,
-                default: () => { return true },
+                default: () => { return false },
             },
             showTaskDecoration: {
                 type: Boolean,
@@ -155,7 +156,6 @@
                 readyTasks: new Set(),
                 selectedTask: null,
                 tryConnections: false,
-                copiedTask: null,
                 selectedElements: [],
                 copiedTasks: [],
 
@@ -171,7 +171,9 @@
 
                 zoomInEnabled: true,
                 zoomOutEnabled: true,
-                zoom: this.initialZoom
+                zoom: this.initialZoom,
+
+                darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode')=="true" : false
             };
         },
         computed: {
@@ -241,6 +243,11 @@
             this.$root.$on('on-align-tasks', (pos, fn) => {
                 this.align(pos, fn);
             });
+            this.$root.$on('ontoggle-darkMode', () => {
+                this.darkMode = localStorage.getItem('darkMode') ? localStorage.getItem('darkMode')=="true" : false;
+            });
+            this.$root.$on('oncopy-tasks', this._copy);
+            this.$root.$on('onpaste-tasks', this._paste);
             // this.$on('xupdate-form-field-value', (field, value) => {
             //   this.$emit('update-form-field-value-in-diagram', field, value);
             //   this.updateAttributeSuggestion();
@@ -351,6 +358,16 @@
         beforeDestroy() {
             this.$root.$off('ontask-ready');
             this.$root.$off('onkeyboard-keyup');
+            this.$root.$off('onstop-flow');
+            this.$root.$off('ontask-ready');
+            this.$root.$off('onclick-task');
+            this.$root.$off('onremove-task');
+            this.$root.$off('on-align-tasks');
+            this.$root.$off('oncopy-tasks');
+            this.$root.$off('onpaste-tasks');
+            this.$root.$off('onstart-flow');
+            this.$root.$off('onstop-flow');
+            this.$root.$off('ontoggle-darkMode');
             this.readyTasks = new Set();
         },
 
@@ -669,6 +686,7 @@
                     self.selectedFlow = null;
                 });
                 this.$root.$emit('onblur-selection');
+                this.selectedElements = [];
             },
             doChangeWorkflowName(ev) {
                 this.changeWorkflowName(ev.target.value);
@@ -783,29 +801,39 @@
                         break;
                     case 'KeyC':
                         if (ev.ctrlKey) {
-                            if (task) {
-                                this.copyTask(task)
-                            } else if (tasks.length) {
-                                this.copyTasks(tasks)
-                            }
-                        }
+                            this._copy();
+                       }
                         break;
                     case 'KeyV':
                         if (ev.ctrlKey) {
-                            let offsetLeft = Math.floor(Math.random() * 50) + 30;
-                            let offsetTop = Math.floor(Math.random() * 20) + 10;
-
-                            if (self.copiedTask) {
-                                this.pasteTask({ task: self.copiedTask, offsetLeft, offsetTop })
-                            } else if (self.copiedTasks.length) {
-                                this.pasteTasks({ tasks: self.copiedTasks, offsetLeft, offsetTop })
-                            }
-                        }
+                            this._paste();
+                       }
                         break;
                 }
 
                 self.instance.repaintEverything();
                 ev.stopPropagation();
+            },
+            _copy(){
+                const self = this;
+                let task = self.selectedTask
+                let tasks = self.workflow.tasks
+                    .filter(task => {
+                        return self.selectedElements.includes(task.id);
+                    })
+                if (task) {
+                    this.copyTask(task)
+                } else if (tasks.length) {
+                    this.copyTasks(tasks)
+                } 
+            },
+            _paste(){
+                 const self = this;
+                 const offsetLeft = Math.floor(Math.random() * 50) + 30;
+                 const offsetTop = Math.floor(Math.random() * 20) + 10;
+                 if (self.copiedTasks.length) {
+                    this.pasteTasks({ tasks: self.copiedTasks, offsetLeft, offsetTop })
+                 }
             },
             deleteTask(task) {
                 let self = this;
@@ -861,11 +889,9 @@
                 })
             },
             copyTask(task) {
-                this.copiedTasks = []
-                this.copiedTask = task;
+                this.copiedTasks = [task];
             },
             copyTasks(tasks) {
-                this.copiedTask = null;
                 this.copiedTasks = tasks;
             },
             pasteTask({ task, offsetLeft, offsetTop }) {
@@ -882,6 +908,7 @@
                 this.$root.$emit('addTask', copiedTask);
                 return copiedTask;
             },
+ 
             pasteTasks({ tasks, offsetLeft, offsetTop }) {
                 const self = this;
                 const dic = {};
@@ -1028,16 +1055,23 @@
                     return this.selectedElements.includes(task.id);
                 });
                 if (selectedTasks.length) {
-                    let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
-                        if (fn === 'min') {
-                            return prev[pos] < cur[pos] ? prev : cur;
-                        } else {
-                            return prev[pos] > cur[pos] ? prev : cur;
-                        }
-                    });
-                    selectedTasks.forEach((task, inx) => {
-                        task[pos] = minPosTask[pos];
-                    });
+                    if (fn === 'center') {
+                        let centerPos = selectedTasks.map((v)=>v[pos]).reduce((prev, cur)=>cur+prev)/selectedTasks.length;
+                        selectedTasks.forEach((task, inx) => {
+                            task[pos] = centerPos;
+                        });
+                    } else {
+                        let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
+                            if (fn === 'min') {
+                                return prev[pos] < cur[pos] ? prev : cur;
+                            } else {
+                                return prev[pos] > cur[pos] ? prev : cur;
+                            }
+                        });
+                        selectedTasks.forEach((task, inx) => {
+                            task[pos] = minPosTask[pos];
+                        });
+                    }
                     Vue.nextTick(function () {
                         self.instance.repaintEverything();
                     });
@@ -1274,6 +1308,7 @@
 </script>
 
 <style scoped lang="scss">
+
     .scroll-area {
         width: 100%;
         height: 95vh;

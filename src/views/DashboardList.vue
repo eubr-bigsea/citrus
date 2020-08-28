@@ -2,35 +2,24 @@
     <main role="main">
         <div class="row">
             <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.dashboard', 2)}}</h1>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <v-server-table ref="listTable" :columns="columns" :options="options"
-                                        name="dashboardList">
-                                        <template slot="id" slot-scope="props">
-                                            <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">
-                                                {{props.row.id}}</router-link>
-                                        </template>
-                                        <template slot="is_public"
-                                            slot-scope="props">{{$tc(props.row.is_public ? 'common.yes': 'common.no')}}</template>
-                                        <template slot="title" slot-scope="props">
-                                            <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">
-                                                {{props.row.title}}</router-link>
-                                        </template>
-                                        <template slot="updated"
-                                            slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
-                                    </v-server-table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="title">
+                    <h1>{{$tc('titles.dashboard', 2)}}</h1>
                 </div>
+                <v-server-table ref="listTable" :columns="columns" :options="options"
+                    name="dashboardList">
+                    <template slot="id" slot-scope="props">
+                        <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">
+                            {{props.row.id}}</router-link>
+                    </template>
+                    <template slot="is_public"
+                        slot-scope="props">{{$tc(props.row.is_public ? 'common.yes': 'common.no')}}</template>
+                    <template slot="title" slot-scope="props">
+                        <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">
+                            {{props.row.title}}</router-link>
+                    </template>
+                    <template slot="updated"
+                        slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
+                </v-server-table>
             </div>
         </div>
     </main>

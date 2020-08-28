@@ -38,7 +38,7 @@
                                                 :value="getValue(field.name)" :suggestionEvent="suggestionEvent"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
-                                                context="context">
+                                                :lookups-method="getLookups" :lookups="lookups" context="context">
                                             </component>
                                         </keep-alive>
 
@@ -49,35 +49,8 @@
                                     <div class="alert alert-info p-2 mt-1 mb-1">
                                         {{$t('workflow.publishingSelect')}}
                                     </div>
-                                    <table class="table table-sm table-striped table-bordered">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th></th>
-                                                <th>{{$tc('titles.property')}}</th>
-                                                <th>{{$tc('titles.value')}}</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <template v-for="(form, index) in forms">
-                                                <tr v-for="field in form.fields" :key="field.name"
-                                                    v-if="form.category === 'execution' && field.enabled">
-                                                    <td>
-                                                        <b-checkbox v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
-                                                        </b-checkbox>
-                                                    </td>
-                                                    <td>{{field.label}}</td>
-                                                    <td>
-                                                        <component :is="field.suggested_widget + '-component'"
-                                                            :field="field" :value="getValue(field.name)"
-                                                            :type="field.suggested_widget" context="context"
-                                                            :read-only="true">
-                                                        </component>
-                                                        {{task.forms[field.name]}}
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
+                                    <button class="btn btn-success btn-sm"
+                                        @click.prevent="showPublishingModal()">{{$t('actions.editValue')}}</button>
                                 </b-tab>
                             </b-tabs>
                         </b-card>
@@ -86,24 +59,77 @@
                         {{task.id}}
                     </div>
                 </div>
-                <div v-for="form in task.operation.forms" v-bind:key="form.id">
-                    {{form.ca}}
-                    <fieldset>
-                        <caption>{{form.label}}</caption>
-                    </fieldset>
-                </div>
+                <b-modal size="xl" ref="publishingModal" :title="$tc('titles.publication')" :ok-only="true">
+                    <div class="mt-2 p-2 border">
+                        <table class="table table-sm table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-center" style="width: 5%"></th>
+                                    <th class="text-center" style="width: 15%">{{$tc('titles.property')}}</th>
+                                    <th class="text-center" style="width: 25%">{{$tc('variables.label')}}</th>
+                                    <th class="text-center" style="width: 15%">{{$tc('titles.actualValue')}}</th>
+                                    <th class="text-center" style="width: 15%">{{$tc('variables.associateTo')}}</th>
+                                    <th class="text-center" style="width: 30%">{{$tc('variables.associateToLookup')}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(form, index) in forms">
+                                    <tr v-for="field in form.fields" :key="field.name"
+                                        v-if="form.category === 'execution' && field.enabled && task.forms[field.name]">
+                                        <td>
+                                            <b-checkbox
+                                                v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
+                                            </b-checkbox>
+                                        </td>
+                                        <td>{{field.label}}</td>
+                                        <td>
+                                            <input type="text" class="form-control"
+                                                maxlength="100" v-model="task.forms[field.name].new_label"/>
+                                        </td>
+                                        <td> 
+                                            <component :is="field.suggested_widget + '-component'" :field="field"
+                                                :value="getValue(field.name)" :type="field.suggested_widget"
+                                                context="context" :read-only="true">
+                                            </component>
+                                        </td>
+                                        <td>
+                                            <v-select :options="variableNames"
+                                                :multiple="false" v-model="task.forms[field.name].variable" value="name"
+                                                label="name" :taggable="true" :close-on-select="true">
+                                                <div slot="no-options"></div>
+                                            </v-select>
+                                        </td>
+                                        <td>
+                                            <v-select :options="lookups" :multiple="false"
+                                                v-model="task.forms[field.name].lookup"
+                                                :create-option="ds => ({ ds, id: null })" :reduce="option => option.id"
+                                                label="name" :taggable="true" :close-on-select="true">
+                                                <div slot="no-options"></div>
+                                            </v-select>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </b-modal>
             </div>
         </VuePerfectScrollbar>
     </div>
 </template>
 <script>
     import Vue from 'vue';
+    import axios from 'axios';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import SwitchComponent from './widgets/Switch.vue'
+    import Notifier from '../mixins/Notifier';
 
     const referenceUrl = process.env.VUE_APP_REFERENCE_BASE_URL;
 
+    const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     export default {
+        mixins: [Notifier],
         name: 'PropertyWindow',
         computed: {
             docReferenceUrl() {
@@ -111,23 +137,47 @@
             },
             propertiesForPublishing() {
                 return Object.keys(this.task.forms).sort((a, b) => a.localeCompare(b));
+            },
+            variableNames() {
+                return this.variables.map((v) => v.name);
             }
         },
         components: {
             SwitchComponent,
             VuePerfectScrollbar,
-
         },
         data() {
             return {
+                allFields: new Map(),
+                conditionalFields: new Map(),
                 forms: [],
                 filledForm: [],
+                lookups: [],
                 tabIndex: 0,
-                allFields: new Map(),
-                conditionalFields: new Map()
             }
         },
         methods: {
+            showPublishingModal() {
+                this.getLookups();
+                this.$refs.publishingModal.show();
+            },
+            getLookups() {
+                if (this.lookups === undefined || this.lookups.length === 0) {
+                    const self = this;
+                    const params = {
+                        lookup: true,
+                        fields: 'id,name,attributes.id,attributes.name',
+                    };
+                    axios
+                        .get(`${limoneroUrl}/datasources`, { params })
+                        .then(resp => {
+                            self.lookups = resp.data.data;
+                        })
+                        .catch(function (e) {
+                            self.error(e);
+                        });
+                }
+            },
             getValue(name) {
                 return this.task
                     && this.task.forms
@@ -149,8 +199,13 @@
                     const conditional = /\bthis\..+?\b/g;
                     self.forms.forEach((f, i) => {
                         f.fields.forEach((field) => {
-                            if (self.task && self.task.forms[field.name])
+                            if (self.task && self.task.forms[field.name]){
                                 Vue.set(field, "internalValue", self.task.forms[field.name].value);
+                                if (! self.task.forms[field.name]['new_label']){
+                                    Vue.set(self.task.forms[field.name], "new_label", 
+                                        self.task.forms[field.name].label);
+                                }
+                            }
                         });
                     });
                     self.forms.forEach((f, i) => {
@@ -204,7 +259,8 @@
         props: {
             task: { type: Object, default: {} },
             suggestionEvent: null,
-            publishingEnabled: false
+            publishingEnabled: false,
+            variables: { type: Array, default: () => [] }
         },
         watch: {
             task() {
@@ -214,6 +270,9 @@
     }
 </script>
 <style scoped>
+    .table-sm {
+        font-size: .8em;
+    }
     .property-help {
         font-size: 1.2em;
     }
@@ -233,7 +292,7 @@
 
     .properties {
         background: #fff;
-        height: calc(100vh - 300px);
+        max-height: calc(100vh - 300px);
         zoom: 100%;
         font-size: .75rem
     }

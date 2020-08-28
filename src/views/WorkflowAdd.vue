@@ -17,20 +17,33 @@
                 <b-tabs @input="changeTab" class="mt-2" nav-class="custom-tab">
                   <b-tab :title="$t('workflow.forPlatform')" active>
                     <div class="col-md-12 mt-2">
-                      <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform">
+                      <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform" @change="selectOptions(false)">
                         <table class="table table-striped">
-                          <tr v-for="platform in platforms" :key="platform.id" class="d-flex">
-                            <td class="col-1">
-                              <b-form-radio
-                                :value="platform.id"
-                                name="platform"
-                                v-model="selectedPlatform"
-                              >{{platform.name}}</b-form-radio>
+                          <template v-for="platform in platforms">
+                          <tr class="d-flex">
+                            <td class="col-3">
+                              <b-form-radio v-if="platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)" :value="platform.id" name="platform" v-model="selectedPlatform" >
+                                {{platform.name}}
+                              </b-form-radio>
+                              <div v-else>
+                                {{platform.name}}
+                              </div>
                             </td>
-                            <td class="col-11">
-                              <em>{{platform.description}}.</em>
+                            <td class="col-9">
+                              <small>{{platform.description}}.</small>
                             </td>
                           </tr>
+                          <tr v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
+                            <td class="col-1">{{selectedSubset}}</td>
+                            <td class="col-11">
+                              <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" @change="selectOptions(true, platform.id)">
+                                  <b-form-radio :value="subset.id" name="subset" v-model="selectedSubset">
+                                   {{subset.name}}
+                                  </b-form-radio>
+                              </b-form-radio-group>
+                            </td>
+                          </tr>
+                          </template>
                         </table>
                       </b-form-radio-group>
                     </div>
@@ -66,12 +79,9 @@
                 </b-tabs>
               </div>
               <div class="col-md-12 mt-3 border-top pt-1">
-                <button
-                  class="btn float-right"
-                  :class="{'btn-primary': true }"
-                  @click="choose($event)"
-                  :disabled="!canCreate"
-                >{{$t('common.ok')}}</button>
+                <button class="btn float-right" :class="{'btn-success': true }" @click="choose($event)" :disabled="!canCreate">
+                    {{$t('actions.confirm')}}
+                </button>
               </div>
             </div>
           </b-card>
@@ -83,6 +93,7 @@
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier';
+import { mapGetters } from 'vuex';
 
 let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
@@ -94,6 +105,7 @@ export default {
       name: '',
       selectedTab: 0,
       selectedPlatform: null,
+      selectedSubset: null,
       selectedTemplate: null,
       platforms: [],
       templates: []
@@ -125,6 +137,7 @@ export default {
       );
   },
   computed: {
+    ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
     canCreate() {
       return (
         this.name !== null &&
@@ -136,6 +149,13 @@ export default {
     }
   },
   methods: {
+    selectOptions(subsetSelected, platformId){
+        if (subsetSelected) {
+            this.selectedPlatform = platformId;
+        } else {
+            this.selectedSubset = null;
+        }
+    },    
     selectOne(v) {
       // v-model is not working ! This is a workaround
       this.selectedTemplate = v;
@@ -148,7 +168,8 @@ export default {
         const data = {
           name: this.name,
           platform_id: this.selectedPlatform,
-          template_id: this.selectedTemplate
+          template_id: this.selectedTemplate,
+          subset_id: this.selectedSubset,
         };
         let url = `${tahitiUrl}/workflows`;
         if (this.selectedTab === 1) {

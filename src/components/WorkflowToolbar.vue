@@ -4,10 +4,16 @@
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
             <span class="fa fa-tasks"></span> {{$tc('titles.job', 2)}}
         </button>
+        <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled" class="btn btn-sm btn-outline-dark" @click.prevent="showVariables" :title="$t('actions.showVariables')">
+            <span class="fa fa-dollar-sign"></span> Variáveis
+        </button>
     </div>
     <div class="btn-group" role="group">
         <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties" :title="$t('actions.showProperties')">
             <span class="fa fa-cogs"></span>
+        </button>
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="selectImage" :title="$t('actions.selectImage')">
+            <span class="fa fa-image"></span>
         </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
             <span class="far fa-save"></span>
@@ -35,27 +41,31 @@
     </div>
 </template>
 
-<style>
+<style lang="scss">
     .red {
         color: #FF4136;
     }
 
     .runBtn {
-        color: #28a745 !important;
-    }
-
-    .runBtn:hover {
-        color: white !important;
-        background-color: #28a745 !important;
+        span { color: #28a745 }
+        
+        &:hover {
+            color: var(--font-color);
+            background-color: rgba(#28a745, .16);
+        }
     }
 </style>
 
 <script>
     import Notifier from '../mixins/Notifier'
+    import { mapGetters } from 'vuex';
 
     export default {
         mixins: [Notifier],
         name: 'WorkflowToolbar',
+        computed: {
+            ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
+        },
         props: {
             workflow: {}
         },
@@ -81,6 +91,12 @@
             showExecutions(){
                 this.$root.$emit('onshow-executions')
             },
+            showVariables(){
+                this.$root.$emit('onshow-variables')
+            },
+            selectImage() {
+                this.$root.$emit('onselect-image');
+            }
         }
     }
 </script>
