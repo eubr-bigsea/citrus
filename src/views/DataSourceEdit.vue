@@ -262,7 +262,7 @@
                                                         <tbody>
                                                             <tr v-for="p in dataSource.permissions" :key="p.id">
                                                                 <td style="width:80px" class="text-center">
-                                                                    <div class="badge badge-secondary pt-1 pb-1 pr-2 pl-2" 
+                                                                    <div class="badge badge-secondary mt-2 pt-1 pb-1 pr-2 pl-2" 
                                                                         :title="$t('permissions.' + p.permission)">{{$t('permissions.' +p.permission).toUpperCase()}}</div>
                                                                 </td>
                                                                 <td>
@@ -283,7 +283,7 @@
                                         </div>
                                     </b-tab>
                                 </b-tabs>
-                                <div class="card-footer text-center">
+                                <div class="card-footer">
                                     <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-success btn-spinner"
                                         @click.stop="save">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
@@ -303,7 +303,7 @@
                                         <span
                                             v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')"></span>
                                     </button>
-                                    <router-link :to="{name: 'dataSources'}" class="btn btn-outline">
+                                    <router-link :to="{name: 'dataSources'}" class="btn btn-secondary">
                                         {{$tc('actions.cancel')}}</router-link>
 
                                 </div>
