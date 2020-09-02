@@ -747,7 +747,7 @@
                 axios.get(`${standUrl}/clusters?enabled=true`, {})
                     .then((response) => {
                         self.clusters.length = 0;
-                        Array.prototype.push.apply(self.clusters, response.data);
+                        Array.prototype.push.apply(self.clusters, response.data.data);
                         if (self.clusters.length) {
                             self.clusterInfo.id = self.clusters[0].id;
                             self.clusterInfo.name = self.clusters[0].name;
