@@ -141,7 +141,7 @@
             },
             groupedOperations() {
                 const ops = this.operations
-                    .filter(op => op.enabled)
+                    .filter(op => op.enabled && op.type !== 'DATA_SOURCE_SHORTCUT')
                     .map(op => {
                         const group = op.categories.find(cat => {
                             return cat.type === 'group';

@@ -1,10 +1,6 @@
 <template>
-    <div v-if="readOnly">
-        {{label ? (selected + ' - ' + label): ''}}
-    </div>
-    <div v-else class="mb-1">
+    <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-
         <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
 
         <b-link @click.prevent="$refs.modal.show()" variant="sm">
@@ -105,7 +101,7 @@
                 ).catch(function (e) {
                     this.$root.$emit('on-error', e);
                 }.bind(this));
-            } else if(this.field.values) {
+            } else if (this.field.values) {
                 JSON.parse(this.field.values).forEach((opt) => {
                     this.lookupOptions.push(opt);
                 });

@@ -7,15 +7,23 @@
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                     :style="{'pointer-events':showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
                     @drop="drop" @dragover="allowDrop">
-                    <task-component v-for="task of workflow.tasks" :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task"
-                        :instance="instance" :enable-context-menu="editable" :draggable="editable"
-                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
-                    <div ref="ghostSelect" class="ghost-select">
-                        <span />
+                    <template v-if="workflow.tasks.length > 0">
+                        <task-component v-for="task of workflow.tasks" :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task"
+                            :instance="instance" :enable-context-menu="editable" :draggable="editable"
+                            :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+                        <div ref="ghostSelect" class="ghost-select">
+                            <span />
+                        </div>
+                        <div v-for="group in groups" :key="group.id">
+                            <group-component :key="group.id" :group="group" :instance="instance" />
+                        </div>
+                    </template>
+                    <div v-else class="no-task">
+                        {{$t('workflow.noTasks')}}
                     </div>
-                    <div v-for="group in groups" :key="group.id">
-                        <group-component :key="group.id" :group="group" :instance="instance" />
-                    </div>
+                </div>
+                <div v-else>
+                    <font-awesome-icon icon="spinner" pulse class="icon"></font-awesome-icon> {{$t('common.loading')}}
                 </div>
             </VuePerfectScrollbar>
         </div>
@@ -1308,7 +1316,12 @@
 </script>
 
 <style scoped lang="scss">
-
+    .no-task {
+        color: slategray;
+        font-size: 1.5em;
+        text-align: center;
+        width: 500px;
+    }
     .scroll-area {
         width: 100%;
         height: 95vh;

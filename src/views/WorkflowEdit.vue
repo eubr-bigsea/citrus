@@ -23,6 +23,14 @@
                         <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
                     </div>
                 </div>
+                <div v-show="showDataSourcesPanel" class="toolbox datasource-toolbox">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">{{ $tc('titles.dataSource2', 2) }}</h4>
+                        </div>
+                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
+                    </div>
+                </div>
 
                 <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
                     :operations="operations" :loaded="loaded" :version="workflow.version" tabindex="0">
@@ -193,6 +201,7 @@
                 operationsLookup: new Map(),
 
                 showTasksPanel: false,
+                showDataSourcesPanel: false,
                 resultTask: { step: {} },
                 saveOption: 'new',
                 selectedTab: 0,
@@ -221,6 +230,8 @@
             this.$root.$on('onclear-selection', () => {
                 this.selectedTask = {};
                 this.selectedElements = [];
+                this.showDataSourcesPanel = false;
+                this.showTasksPanel = false;
             });
             this.$root.$on('onclick-task', (taskComponent, showProperties) => {
                 // If there is a selected task, keep properties opened
@@ -256,6 +267,7 @@
             this.$root.$on('onalign-tasks', this.align);
             this.$root.$on('ontoggle-tasks', this.toggleTasks);
             this.$root.$on('ontoggle-tasksPanel', this.toggleTasksPanel);
+            this.$root.$on('ontoggle-dataSourcesPanel', this.toggleDataSourcesPanel);
             this.$root.$on('onremove-tasks', this.removeTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
             this.$root.$on('onclick-export', () => this.exportWorkflow());
@@ -453,7 +465,8 @@
             align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
             },
-            toggleTasksPanel(){ this.showTasksPanel = !this.showTasksPanel; },
+            toggleTasksPanel(){ this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false;},
+            toggleDataSourcesPanel(){ this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false;},
             toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
             removeTasks() { this.$refs.diagram.removeSelectedTasks(); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
@@ -977,6 +990,9 @@
 
         .ps__scrollbar-y-rail {
             z-index: 1;
+        }
+        &.datasource-toolbox {
+            left: 200px;
         }
     }
 

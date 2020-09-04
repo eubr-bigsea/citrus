@@ -3,10 +3,14 @@
     <div class="toolbar">
         <div class="toolbar-group">
             <button type="button" @click.prevent="toggleTasksPanel" :title="$t('actions.toggleTasks')">
-                <span class="fa fa-plus"></span> Adicionar operação
+                <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.operation').toLowerCase()})}}
             </button>
         </div>
-
+        <div class="toolbar-group">
+            <button type="button" @click.prevent="toggleDataSourcesPanel" :title="$t('actions.toggleTasks')">
+                <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.dataSource2').toLowerCase()})}}
+            </button>
+        </div>
         <div class="toolbar-group">
             <button type="button" @click.prevent="toggleTasks" :title="$t('actions.toggleTasks')">
                 <span class="fa fa-toggle-on"></span>
@@ -86,7 +90,7 @@
 
         <div class="toolbar-group toolbar-group-padding" @change="toggleDarkMode()">
             <b-form-checkbox v-model="darkMode">
-                Dark Mode
+                {{$t('titles.darkMode')}}
             </b-form-checkbox>
         </div>
 
@@ -105,7 +109,6 @@
         display: inline-block;
         border-right: 1px solid rgba(var(--font-color-rgb), .16);
         padding: .25rem;
-
         &.toolbar-group-padding {
             padding: .25rem 1rem;
         }
@@ -179,6 +182,9 @@
             },
             toggleTasksPanel() {
                 this.$root.$emit('ontoggle-tasksPanel')
+            },
+            toggleDataSourcesPanel() {
+                this.$root.$emit('ontoggle-dataSourcesPanel')
             },
             toggleTasks() {
                 this.$root.$emit('ontoggle-tasks')

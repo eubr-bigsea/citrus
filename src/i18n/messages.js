@@ -80,6 +80,7 @@ export default {
             attention: 'Atenção',
             alreadyHaveAccount: 'Já possui uma conta?',
             attribute: 'Atributo | Atributos',
+            basicInformation: 'Informação básica',
             category: 'Categoria | Categorias',
             changePassword: 'Criar nova Senha',
             column: 'Coluna | Colunas',
@@ -259,6 +260,7 @@ export default {
                 title: 'Compartilhando Base de Dados',
                 success: 'Permissão alterada'
             },
+            shortcut: 'Criar atalho na edição de fluxo de trabalho',
             someAttributesMayHaveProblem:
                 'Um atributo pode estar com problema, por favor, revise-o | Alguns atributos podem estar com problema, por favor, revise-os',
             storage: 'Armazenamento',
@@ -270,6 +272,7 @@ export default {
             uploadingLog: 'Registro de envio',
             uploadExplanation:
                 'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
+            
             whatTypeOfDataSourceToAdd:
                 'Que tipo de base de dados você quer adicionar?',
             youCanUploadYourFiles:
@@ -380,6 +383,7 @@ export default {
 
         },
         platform: {
+            allOperations: 'Todas as operações',
             gitUrl: 'URL para clonar o repositório Git',
             pluginDetailExplanation: 'Esta plataforma é um plugin. Ela foi instalada a partir de um código fonte de fora do Lemonade ' +
                 'e é usada como uma extensão.',
@@ -393,7 +397,8 @@ export default {
                 <p>
                 Para mais detalhes sobre a estrutura de código necessária e os passos para definir um plugin, visite: 
                 <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
-            `
+            `,
+            subset: 'Subconjunto de operações | Subconjuntos de operações',
         },
         notebook: {
             executeUntil: 'Executar até esta célula',
@@ -456,7 +461,9 @@ export default {
             color: 'Color',
             cluster: 'Cluster | Clusters',
             configuration: 'Configuração | Configurações',
+            darkMode: 'Modo escuro',
             dataSource: 'Base de dados | Bases de dados',
+            dataSource2: 'Fonte de dados | Fontes de dados',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Implantação | Implantações',
             documentation: 'Documentação',
@@ -476,6 +483,7 @@ export default {
             notebook: 'Notebook | Notebooks',
             notification: 'Notificação | Notificações',
             pageNotFound: 'Página não encontrada',
+            operation: 'Operação | Operações',
             platform: 'Platforma | Platformas',
             profile: 'Perfil',
             project: 'Projeto | Projetos',
@@ -551,6 +559,7 @@ export default {
             jobName: 'Nome para a execução',
             newName:
                 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
+            noTasks: 'Nenhuma tarefa adicionada ao fluxo. Use a opção "Adicionar Operação" acima para iniciar a construção do fluxo.',
             preferredCluster: 'Cluster preferencial para execução',
             publishingEnabled: 'Habilitar publicação do fluxo de trabalho',
             publishingEnabledExplanation: 'Permite que o fluxo de trabalho seja publicado para os usuários.',
@@ -714,6 +723,7 @@ export default {
             attention: 'Attention',
             alreadyHaveAccount: 'Already have an account?',
             attribute: 'Attribute | Attributes',
+            basicInformation: 'Basic Information',
             category: 'Category | Categories',
             changePassword: 'Create new password',
             column: 'Column | Columns',
@@ -891,6 +901,7 @@ export default {
                 title: 'Sharing Data Source',
                 success: 'Permissions changed'
             },
+            shortcut: 'Create a shortcut in workflow editing',
             someAttributesMayHaveProblem:
                 'An attribute may be incorrectly configured, please, check it | Some attributes may be incorrectly configured, please, check them',
             storage: 'Storage',
@@ -1006,7 +1017,9 @@ export default {
             cluster: 'Cluster | Clusters',
             color: 'Color',
             configuration: 'Configuration | Configurations',
+            darkMode: 'Dark mode',
             dataSource: 'Data source | Data sources',
+            dataSource2: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Deployment | Deployments',
             documentation: 'Documentation',
@@ -1023,6 +1036,7 @@ export default {
             news: 'News & Tips',
             notebook: 'Notebook | Notebooks',
             notification: 'Notification | Notifications',
+            operation: 'Operation | Operations',
             login: 'Login',
             pageNotFound: 'Page not found',
             platform: 'Platform | Platforms',
@@ -1069,6 +1083,7 @@ export default {
             type_UNSPECIFIED: 'Unspecified'
         },
         platform: {
+            allOperations: 'All operations',
             gitUrl: 'Git repository URL used to clone the plugin',
             pluginDetailExplanation: 'This platform is a plugin. It was installed from code provided by others ' +
                 'and it is used as an extension.',
@@ -1081,7 +1096,8 @@ export default {
                 </p>
                 <p>For more details about the required code and steps to define a plugin, please visit: 
                 <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
-            `
+            `,
+            subset: 'Operations subset | Operations subsets',
         },
         privacy: {
             anonymizationTechnique: 'Anonymization technique',
@@ -1161,6 +1177,7 @@ export default {
             jobName: 'Job name',
             newName:
                 'New name (a copy of the workflow will be created, but not loaded)',
+            noTasks: 'No task was added to the workflow. Use above option "Add operation" to start building the workflow.',
             preferredCluster: 'Preferred cluster for execution',
             publishingEnabled: 'Enable workflow to be published',
             publishingEnabledExplanation: 'Allows workflow to be published to users.',

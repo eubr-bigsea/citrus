@@ -34,10 +34,11 @@
                                     <div v-for="field in form.fields" class="mb-2 property clearfix"
                                         v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
-                                            <component :is="field.suggested_widget + '-component'" :field="field"
+                                            <component :is="getSuggestedWidget(field)" :field="field"
                                                 :value="getValue(field.name)" :suggestionEvent="suggestionEvent"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
+                                                :read-only="!field.editable"
                                                 :lookups-method="getLookups" :lookups="lookups" context="context">
                                             </component>
                                         </keep-alive>
@@ -157,6 +158,14 @@
             }
         },
         methods: {
+            getSuggestedWidget(field){
+                if (field.suggested_widget.endsWith(':read-only')){
+                    const s = field.suggested_widget;
+                    return s.substring(0, s.length - 10) + '-component';
+                } else {
+                    return field.suggested_widget + '-component';
+                }
+            },
             showPublishingModal() {
                 this.getLookups();
                 this.$refs.publishingModal.show();
