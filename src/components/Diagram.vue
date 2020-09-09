@@ -27,7 +27,6 @@
                 </div>
             </VuePerfectScrollbar>
         </div>
-        {{ darkMode }}
         <modal-component v-if="showExecutionModal" @close="showExecutionModal = false">
             <div slot="header">
                 <h4>Execution of workflow</h4>
