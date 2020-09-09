@@ -57,6 +57,7 @@
 
                                                             <template v-for="log in step.logs">
                                                                 <p v-if="log.type === 'TEXT' || log.type === 'STATUS'">
+                                                                    <!--
                                                                     <span class="icon fa fa-fw" :class="{
                                                                         'running fa-sync': log.status=='RUNNING',
                                                                         'fa-spin': log.status=='RUNNING' && step.logs.length==1,
@@ -64,6 +65,7 @@
                                                                         'error fa-times-circle': log.level=='ERROR',
                                                                         'warning fa-exclamation-triangle': log.status=='ERROR' && log.level=='WARN',
                                                                     }"></span>
+                                                                    -->
 
                                                                     <span class="date">{{log.date | formatJsonHourMinute}}</span>
                                                                     <span class="info">{{log.message}}</span>

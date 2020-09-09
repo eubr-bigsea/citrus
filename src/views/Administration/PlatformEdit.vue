@@ -66,8 +66,8 @@
                                     </div>
                                     <p>{{$t('common.loading')}}</p>
                                 </div>
-                                <table class="table table-bordered table-sm table-smallest">
-                                    <thead>
+                                <table class="table table-sm table-smallest">
+                                    <thead class="thead-light">
                                         <tr>
                                             <th class="text-center">{{$tc('common.enabled', 1)}}</th>
                                             <th class="text-center">{{$tc('common.id', 1)}}</th>
