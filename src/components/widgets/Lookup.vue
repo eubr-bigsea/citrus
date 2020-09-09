@@ -1,34 +1,40 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
-
-        <b-link @click.prevent="$refs.modal.show()" variant="sm">
-            <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
-            <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
-        </b-link>
-        <b-modal size="lg" :title="`${field.label} - ${(label ? (selected + ' - ' + label): '')}`" ok-disabled
-            :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
-            {{field.help}}
-            <v-client-table :data="lookupOptions" :columns="['key', 'value','tags']" class="lookupTable"
-                :options="tableOptions">
-                <template slot="value" slot-scope="props">
-                    <a href="#" @click.prevent="select($event, props.row)">{{props.row.value}}</a>
-                </template>
-                <template slot="tags" slot-scope="props">
-                    <div v-show="props.row.tags.length && props.row.tags[0]">
-                        <span class="badge badge-pill badge-primary" v-for="t in props.row.tags" :key="t">
-                            {{t}}
-                        </span>
-                    </div>
-                </template>
-            </v-client-table>
-            <div slot="modal-footer" class="w-100">
-                <b-btn @click="closeModal" variant="secondary" class="ml-1 float-right">{{$t('actions.cancel')}}</b-btn>
-                <b-btn @click="removeValue" variant="outline-primary" class="float-right">{{$t('actions.removeValue')}}
-                </b-btn>
-            </div>
-        </b-modal>
+        <div v-if="readOnly">
+            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
+        </div>
+        <div v-else class="mb-1">
+            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
+            <b-link @click.prevent="$refs.modal.show()" variant="sm">
+                <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
+                <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
+            </b-link>
+            <b-modal size="lg" :title="`${field.label} - ${(label ? (selected + ' - ' + label): '')}`" ok-disabled
+                :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+                {{field.help}}
+                <v-client-table :data="lookupOptions" :columns="['key', 'value','tags']" class="lookupTable"
+                    :options="tableOptions">
+                    <template slot="value" slot-scope="props">
+                        <a href="#" @click.prevent="select($event, props.row)">{{props.row.value}}</a>
+                    </template>
+                    <template slot="tags" slot-scope="props">
+                        <div v-show="props.row.tags.length && props.row.tags[0]">
+                            <span class="badge badge-pill badge-primary" v-for="t in props.row.tags" :key="t">
+                                {{t}}
+                            </span>
+                        </div>
+                    </template>
+                </v-client-table>
+                <div slot="modal-footer" class="w-100">
+                    <b-btn @click="closeModal" variant="secondary" class="ml-1 float-right">{{$t('actions.cancel')}}
+                    </b-btn>
+                    <b-btn @click="removeValue" variant="outline-primary" class="float-right">
+                        {{$t('actions.removeValue')}}
+                    </b-btn>
+                </div>
+            </b-modal>
+        </div>
     </div>
 </template>
 <script>
