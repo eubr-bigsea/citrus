@@ -1,7 +1,7 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')" class="operation task"
-        :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle" v-on:dblclick.stop="dblClick"
-        v-on:click.stop="click" @contextmenu="openMenu" tabindex="0"
+    <div :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')"
+        class="operation task" :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle"
+        v-on:dblclick.stop="dblClick" v-on:click.stop="click" @contextmenu="openMenu" tabindex="0"
         :title="task.forms.comment ? task.forms.comment.value: ''">
 
         <div class="hide circle" v-bind:style="getStyle"></div>
@@ -11,12 +11,12 @@
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
         </div>
-        <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor" :class="task.step? task.step.status.toLowerCase(): ''">
+        <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor"
+            :class="task.step? task.step.status.toLowerCase(): ''">
             <span class="fa fa-2x" :class="getDecorationClass"></span>
         </div>
         <div v-if="!isComment && task.warning " class="right-decor">
-            <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" 
-                :title="task.warning"></span>
+            <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" :title="task.warning"></span>
         </div>
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
@@ -177,16 +177,20 @@
                     }
                 }
                 result['background'] = task.forms && task.forms.color && task.forms.color.value
-                                ? task.forms.color.value.background : '#fff';
+                    ? task.forms.color.value.background : '#fff';
                 return result
             },
             'classes': function () {
-                const cssClass = this.task.operation.css_class || 
-                    this.task.operation.cssClass;
-                return [
-                    (cssClass ? cssClass : ''),
-                    (this.task.status ? this.task.status.toLowerCase() : ''),
-                    (this.isComment ? ' comment ' : '') + 'test'].join(' ');
+                if (this.task.operation) {
+                    const cssClass = this.task.operation.css_class ||
+                        this.task.operation.cssClass;
+                    return [
+                        (cssClass ? cssClass : ''),
+                        (this.task.status ? this.task.status.toLowerCase() : ''),
+                        (this.isComment ? ' comment ' : '') + 'test'].join(' ');
+                } else {
+                    return '';
+                }
 
             },
             getDecorationClass() {
@@ -306,8 +310,8 @@
                 this.contextMenuOpened = false;
                 this.$root.$emit('onremove-task', this.task);
             },
-            endpointClick(endpoint, e){
-                if (e.ctrlKey){
+            endpointClick(endpoint, e) {
+                if (e.ctrlKey) {
                     console.debug('Port id: ', endpoint._portId);
                 }
             }
@@ -323,7 +327,7 @@
                 default: false
             },
             task: {
-                'default': function () { return { name: '', icon: '', status: '', forms:{color: {value: '#fff'} } }; }
+                'default': function () { return { name: '', icon: '', status: '', forms: { color: { value: '#fff' } } }; }
             },
         },
         data() {
@@ -373,8 +377,8 @@
                 // note the cssClass and id parameters here
                 ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
             ];
-            const cssClass = this.task.operation.css_class || 
-                    this.task.operation.cssClass;
+            const cssClass = this.task.operation.css_class ||
+                this.task.operation.cssClass;
 
             let elem = this.$refs.task;
             if (this.task.operation.slug === 'comment') {
@@ -385,13 +389,13 @@
                 { ports: inputs, type: 'input', options: endPointOptionsInput },
                 { ports: outputs, type: 'output', options: endPointOptionsOutput }
             ].forEach((item) => {
-                
+
                 let ports = item.ports;
                 let portType = item.type;
                 lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
-                
+
                 // FIXME: hard coded layout
-                if (cssClass && cssClass.includes('circle-layout') && ports.length === 2){
+                if (cssClass && cssClass.includes('circle-layout') && ports.length === 2) {
                     anchors[portType][1][0][1] = 0.35;
                     anchors[portType][1][1][1] = 0.65;
                 }
@@ -421,7 +425,7 @@
                             options['maxConnections'] = 100;
                             // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
                         }
-                        
+
                         options['cssClass'] += `  ${cssClass}`;
                         options['dragOptions'] = {
                             start: (event, ui) => {
@@ -898,7 +902,7 @@
                 box-shadow: 0px 4px 8px rgba(dodgerblue, .5);
             }
 
-            &:focus{
+            &:focus {
                 outline: none;
             }
 
@@ -1053,18 +1057,22 @@
     .contextMenuOpened {
         cursor: default !important;
     }
+
     .multiple-input {
-       border: 1px solid white;
+        border: 1px solid white;
         border-radius: 0 8px 8px 0;
         width: 16px !important;
         overflow: hidden;
     }
+
     .hide {
         display: none;
     }
+
     div.size-2 {
         height: 65px !important;
     }
+
     .cylinder {
         border: 1px solid !important;
         position: relative;
@@ -1074,7 +1082,7 @@
         height: 60px !important;
         border-radius: 100px/32px !important;
         background-color: rgba(160, 160, 160, 0.5);
-}
+    }
 
     .cylinder:before {
         position: absolute;
@@ -1097,34 +1105,42 @@
         border: 1px solid;
         content: '';
     }
+
     div.double-layout {
         border: #29335c 3px double !important;
     }
+
     div.circle-layout {
         border: none !important;
         background: transparent !important;
-        width: 80px !important; 
+        width: 80px !important;
         height: 80px !important;
-        &.selected, &.jtk-drag-selected{
+
+        &.selected,
+        &.jtk-drag-selected {
             webkit-box-shadow: none !important;
             box-shadow: none !important;
+
             .circle {
                 webkit-box-shadow: 6px 4px 6px 0px #020f57;
-                box-shadow: 6px 4px 6px 0px #020f57; 
+                box-shadow: 6px 4px 6px 0px #020f57;
                 border: 1px dashed #222;
             }
         }
+
         .circle {
-            border: 1px solid #888; 
-            margin: 10px auto 0px auto; 
+            border: 1px solid #888;
+            margin: 10px auto 0px auto;
             background: white;
-            border-radius: 60px; 
-            height: 60px; 
-            width: 60px; 
+            border-radius: 60px;
+            height: 60px;
+            width: 60px;
+
             &.hide {
                 display: block;
             }
         }
+
         .title {
             background: transparent !important;
             font-size: .95em;
@@ -1132,9 +1148,11 @@
             line-height: normal;
             width: 100% !important;
         }
+
         .right-decor {
             bottom: 11px !important;
         }
+
         &.endpoint {
             padding-top: 100px;
         }

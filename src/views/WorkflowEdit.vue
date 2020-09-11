@@ -28,7 +28,7 @@
                         <div class="card-header">
                             <h4 class="card-title">{{ $tc('titles.dataSource2', 2) }}</h4>
                         </div>
-                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
+                        <custom-toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
                     </div>
                 </div>
 
@@ -137,6 +137,7 @@
     import Notifier from '../mixins/Notifier';
     import SlideOutPanel from '../components/SlideOutPanel.vue';
     import ToolboxComponent from '../components/Toolbox.vue';
+    import CustomToolboxComponent from '../components/CustomToolbox.vue';
     import Vue from 'vue';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import WorkflowExecution from '../components/WorkflowExecution.vue';
@@ -155,6 +156,7 @@
             'caipirinha-visualization': CapirinhaVisualization,
             'diagram': DiagramComponent,
             'toolbox': ToolboxComponent,
+            'custom-toolbox': CustomToolboxComponent,
             'workflow-toolbar': WorkflowToolbar,
             'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
@@ -474,7 +476,7 @@
                 //this.selectedTab = index;
                 this.$refs.diagram.repaint();
             },
-            _load_operations(self, workflow, resp){
+            _loadOperations(self, workflow, resp, showDisabledOpsAlert){
                 self.operations = resp.data
                 self.operations.forEach((op) => {
                     self.operationsLookup[op.id] = op
@@ -482,16 +484,16 @@
                 let usingDisabledOp = false;
                 workflow.tasks.forEach((task) => {
                     let op = self.operationsLookup[task.operation.id];
-                    task.operation = op
+                    task.operation = op || {forms: []};
                     task.step = null;
-                    usingDisabledOp |= op.enabled === false;
-                    if (!op.enabled) {
+                    usingDisabledOp |= op === undefined || op.enabled === false;
+                    if (op=== undefined || !op.enabled) {
                         task.warning = self.$t('workflow.usingDisabledOperation');
                     } else {
                         task.warning = null;
                     }
                 });
-                if (usingDisabledOp) {
+                if (usingDisabledOp && showDisabledOpsAlert) {
                     self.warning(self.$t('messages.usingDisabledOperation',
                         { what: self.$tc('titles.workflow') }), 60000, 300);
                 }
@@ -528,14 +530,14 @@
                             workflow: workflow.id,
                             t: new Date().getTime(), // Force refresh
                         }
-                        axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._load_operations(self, workflow, resp)
+                        axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._loadOperations(self, workflow, resp, true)
                         ).catch(function (e) {
                             this.error(e);
                         }.bind(this)).finally(() => {
                             Vue.nextTick(() => {
                                 this.$Progress.finish();
                                 delete params['workflow'];
-                                axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._load_operations(self, workflow, resp)
+                                axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._loadOperations(self, workflow, resp, false)
                                 ).catch(function (e) {
                                         this.error(e);
                                 });
@@ -894,7 +896,7 @@
                 let counter = 1;
                 let result = true;
                 tasks.forEach(t => {
-                    if (t.enabled) {
+                    if (t.enabled && t.operation) {
                         let warning = null;
                         t.operation.forms.forEach(form => {
                             if (form.category === 'execution') {

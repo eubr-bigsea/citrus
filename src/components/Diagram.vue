@@ -495,13 +495,20 @@
                 return false;
             },
             addTask(task) {
-                task.forms = {comment: {value: ''}, color: {value: {background: '#fff'} }};
+                task.forms = task.forms || {};
+                Object.assign(task.forms,
+                    {comment: {value: ''}, color: {value: {background: '#fff'} }});
+
                 task.operation.forms.forEach(f => {
                     f.fields.forEach(field => {
-                        task[field.name] = field['default'] || '';
+                        task['forms'][field.name] = {
+                            value: task['forms'][field.name]['value'] || field['default'] || null
+                        };
                     });
                 });
-                task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
+                if (task.name === undefined){
+                    task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
+                }
                 task.enabled = true;
                 this.$root.$emit('addTask', task);
             },
@@ -721,20 +728,22 @@
             drop(ev) {
                 const self = this;
                 ev.preventDefault();
-                let operation = this.getOperationFromId(ev.dataTransfer.getData('id'));
+                const operation = this.getOperationFromId(ev.dataTransfer.getData('id'));
                 //console.log(operation)
 
                 if (!operation) {
                     return;
                 }
-                let classes = operation.categories
-                    .map(c => {
-                        return c.type.replace(' ', '-');
-                    })
-                    .join(' ');
-                let tryConnections = ev.dataTransfer.getData('tryConnections')
-                let newTask = {
+                
+                const classes = operation.categories
+                .map(c => {
+                    return c.type.replace(' ', '-');
+                })
+                .join(' ');
+                const tryConnections = ev.dataTransfer.getData('tryConnections')
+                const newTask = {
                     id: self.generateId(),
+                    forms: {},
                     operation,
                     operation_id: operation.id,
                     left: ev.offsetX,
@@ -745,6 +754,13 @@
                     height: 0,
                     width: 0,
                     tryConnections
+                }
+                let defaults = ev.dataTransfer.getData('defaults');
+                if (defaults){
+                    defaults = JSON.parse(defaults);
+                    newTask.name = defaults.name;
+                    newTask.forms[defaults.lookupName] = {value: defaults.lookupId};
+
                 }
                 self.addTask(newTask);
             },

@@ -1,7 +1,7 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <div v-if="readOnly">
+        <div v-if="readOnly || !field.editable">
             <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
         </div>
         <div v-else class="mb-1">
