@@ -1,12 +1,15 @@
 <template>
     <div class="lemonade-toolbox">
         <VuePerfectScrollbar class="scroll-area" :settings="settings">
-            <div >
+            <div>
                 <ul class="list-group">
                     <li
                         class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
                         <input v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')"
                             @input="searchOperation" />
+                    </li>
+                    <li v-if="loading" class="text-center m-2">
+                        <font-awesome-icon icon="spinner" pulse class="fa-2x icon"></font-awesome-icon> 
                     </li>
                     <div v-if="search === ''" class="menu">
                         <div v-for="(group, index) in groupedOperations" :key="group.group" :title="group.order"
@@ -27,7 +30,8 @@
                                         :title="op.operation.name">
                                         <a class="list-group-item truncate list-group-item-action text-dark OLE"
                                             draggable="true" :data-id="op.operation.id" href="javascript:void(0)"
-                                            @dblclick.prevent="dbClickAddTask" @dragstart="startDrag" @dragend="stopDrag">
+                                            @dblclick.prevent="dbClickAddTask" @dragstart="startDrag"
+                                            @dragend="stopDrag">
                                             <span :data-id="op.operation.id" :title="op.operation.name"
                                                 v-text="op.operation.name"></span>
                                             <span class="fa fa-bars fa-1x float-right"></span>
@@ -101,7 +105,7 @@
             return rv;
         }, new Map());
     };
-    
+
     export default {
         mixins: [ToolboxMixin],
         name: 'Toolbox',
@@ -109,6 +113,10 @@
             VuePerfectScrollbar
         },
         props: {
+            loading: {
+                type: Boolean,
+                default: () => true
+            },
             operations: {
                 type: Array,
                 default: () => {
@@ -165,7 +173,7 @@
                     if (a.default_order > b.default_order) return 1;
                     const groupCompare = a.group.localeCompare(b.group);
                     if (groupCompare != 0) return groupCompare;
-                    return a.subGroup? a.subGroup.localeCompare(b.subGroup) : -1;
+                    return a.subGroup ? a.subGroup.localeCompare(b.subGroup) : -1;
                 });
                 let grouped = [...groupBy(ops, x => x.group)].map(item => {
                     if (item[1][0].subGroup === '') {
@@ -195,7 +203,7 @@
                                     if (a.subGroupOrder > b.subGroupOrder) return 1;
                                     if (a.subGroupDefaultOrder < b.subGroupDefaultOrder) return -1;
                                     if (a.subGroupDefaultOrder > b.subGroupDefaultOrder) return 1;
-                                    return a.subGroup? a.subGroup.localeCompare(b.subGroup): -1;
+                                    return a.subGroup ? a.subGroup.localeCompare(b.subGroup) : -1;
                                 })
                         };
                     }

@@ -6,7 +6,7 @@
                 <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.operation').toLowerCase()})}}
             </button>
         </div>
-        <div class="toolbar-group">
+        <div class="toolbar-group" v-if="useDataSource">
             <button type="button" @click.prevent="toggleDataSourcesPanel" :title="$t('actions.toggleTasks')">
                 <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.dataSource2').toLowerCase()})}}
             </button>
@@ -161,6 +161,10 @@
         props: {
             selected: Array,
             copiedTasks: Array,
+            useDataSource: {
+                type: Boolean,
+                default: false
+            }
         },
         computed: {
             taskSelected(){

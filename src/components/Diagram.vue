@@ -1,6 +1,8 @@
 <template>
     <div :class="'platform-' + platform" class="diagram" oncontextmenu="return false;">
-        <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" :copied-tasks="copiedTasks"/>
+        <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" 
+            :copied-tasks="copiedTasks"  
+            :useDataSource="useDataSource"/>
         <div id="lemonade-container" :class="{ 'with-grid': showGrid, 'dark-mode': darkMode }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
@@ -151,6 +153,9 @@
                 type: Object,
                 default: () => { return {} },
                 name: ''
+            },
+            useDataSource: {
+                type: Boolean,
             }
         },
         data() {

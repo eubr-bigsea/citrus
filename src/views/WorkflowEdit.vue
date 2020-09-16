@@ -7,7 +7,7 @@
                 <div class="title">
 
                     <div class="float-right">
-                        <workflow-toolbar v-if="loaded" :workflow="workflow"></workflow-toolbar>
+                        <workflow-toolbar v-if="loaded" :workflow="workflow"/>
                     </div>
 
                     <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
@@ -20,7 +20,7 @@
                         <div class="card-header">
                             <h4 class="card-title">{{ $tc('common.operation', 2) }}</h4>
                         </div>
-                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
+                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' :loading="loadingToolbox"/>
                     </div>
                 </div>
                 <div v-show="showDataSourcesPanel" class="toolbox datasource-toolbox">
@@ -28,12 +28,13 @@
                         <div class="card-header">
                             <h4 class="card-title">{{ $tc('titles.dataSource2', 2) }}</h4>
                         </div>
-                        <custom-toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
+                        <custom-toolbox :operations="expandableOperations" :workflow="workflow" :selected-task='selectedTask.task' />
                     </div>
                 </div>
 
                 <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
-                    :operations="operations" :loaded="loaded" :version="workflow.version" tabindex="0">
+                    :operations="operations" :loaded="loaded" :version="workflow.version" tabindex="0"
+                    :useDataSource="expandableOperations.length > 0">
                 </diagram>
 
                 <div class="diagram-properties" v-if="showProperties">
@@ -197,6 +198,7 @@
                 history: [],
                 isDirty: false,
                 loaded: false,
+                loadingToolbox: true,
                 minFormOrder: 5,
                 newName: '',
                 operations: [],
@@ -215,7 +217,8 @@
                 performanceModel: {
                     cores: null,
                     setup: null
-                }
+                },
+                expandableOperations: [],
             }
         },
         created() {
@@ -514,10 +517,12 @@
                 self._validateTasks(self.workflow.tasks);
                 self.updateAttributeSuggestion();
                 self.loaded = true;
-                const params = { workflow_id: this.$route.params.id }
+                self.loadingToolbox = false;
+                self.expandableOperations = this.operations.filter(op => op.type === 'SHORTCUT');
             },
             load() {
                 let self = this;
+                self.loadingToolbox = true;
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                     (resp) => {
                         let workflow = resp.data;
@@ -536,7 +541,9 @@
                         }.bind(this)).finally(() => {
                             Vue.nextTick(() => {
                                 this.$Progress.finish();
+                                self.loadingToolbox = true;
                                 delete params['workflow'];
+                                delete params['t'];
                                 axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._loadOperations(self, workflow, resp, false)
                                 ).catch(function (e) {
                                         this.error(e);
