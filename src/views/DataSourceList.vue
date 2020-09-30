@@ -7,7 +7,7 @@
                     <div class="title">
                         <div class="d-flex justify-content-between align-items-center">
                             <h1>{{ $tc('titles.dataSource', 2) }}</h1>
-                            <router-link :to="{ name: 'addDataSource' }" class="btn btn-primary btn-lemonade-primary">
+                            <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT'])" :to="{ name: 'addDataSource' }" class="btn btn-primary btn-lemonade-primary">
                                 <span class="fa fa-plus" /> {{ $t('actions.addItem') }}
                             </router-link>
                         </div>
@@ -65,6 +65,7 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
     import axios from 'axios';
     import Notifier from '../mixins/Notifier';
     import { deserialize } from 'jsonapi-deserializer';
@@ -76,6 +77,9 @@
 
     export default {
         components: {
+        },
+        computed: {
+            ...mapGetters(['hasAnyPermission', 'isAdmin'])
         },
         mixins: [Notifier],
         components: {

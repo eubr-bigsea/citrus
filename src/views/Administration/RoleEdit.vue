@@ -38,20 +38,25 @@
                                             </div>
                                         </fieldset>
                                         <div class="row">
-                                            <div class="col-md-12 pb-3">
+                                            <div class="col-md-12 pb-3 pt-4">
                                                 <fieldset :disabled="role.system">
-                                                    <label class="col-form-label">
+                                                    <h6>
                                                         {{ $tc('common.permission', 2) }}:
-                                                    </label>
-                                                    <div class="row">
-                                                        <div v-for="p in permissions" :key="p.id" class="col-md-4"
-                                                            :title="p.name">
-                                                            <b-form-checkbox v-model="selectedPermissions"
-                                                                :value="p.id">
-                                                                {{p.description}}
-                                                            </b-form-checkbox>
+                                                    </h6>
+                                                    <template v-for="gp in groupedPermissions">
+                                                        <div class="row p-2  border-bottom">
+                                                            <div class="col-md-12">
+                                                                <em>{{$tc('assets.' + gp[0], 2)}}</em>
+                                                            </div>
+                                                            <div class="col-md-3" v-for="p in gp[1]" :key="p.id"
+                                                                :title="p.name">
+                                                                <b-form-checkbox v-model="selectedPermissions"
+                                                                    :value="p.id">
+                                                                    {{p.description}}
+                                                                </b-form-checkbox>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    </template>
                                                 </fieldset>
                                             </div>
                                             <div v-if="!role.all_user" class="col-md-12 border-top ">
@@ -116,6 +121,7 @@
                 isDirty: false,
                 role: {},
                 idsPermissions: [],
+                groupedPermissions: [],
                 permissions: [],
                 users: [],
                 selectedPermissions: [],
@@ -159,7 +165,20 @@
             const permissionsUrl = `${thornUrl}/permissions?size=1000`;
             axios.get(permissionsUrl)
                 .then(resp => {
-                    self.permissions = resp.data.data.sort((a, b) => a.description.localeCompare(b.description));
+                    let data = resp.data.data.sort((a, b) => {
+                        if (a.applicable_to === b.applicable_to) {
+                            return a.description.localeCompare(b.description);
+                        } else {
+                            return a.applicable_to.localeCompare(b.applicable_to);
+                        }
+                    }
+                    );
+                    self.permissions = data;
+                    self.groupedPermissions = data.reduce(
+                        (entryMap, e) => entryMap.set(e.applicable_to,
+                            [...entryMap.get(e.applicable_to) || [], e]),
+                        new Map());
+
                 }).catch(function (e) {
                     self.error(e);
                 });

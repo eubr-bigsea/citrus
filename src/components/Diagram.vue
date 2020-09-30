@@ -507,7 +507,7 @@
                 task.operation.forms.forEach(f => {
                     f.fields.forEach(field => {
                         task['forms'][field.name] = {
-                            value: task['forms'][field.name]['value'] || field['default'] || null
+                            value: (task['forms'][field.name] || {})['value'] || field['default'] || null
                         };
                     });
                 });

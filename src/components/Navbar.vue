@@ -6,32 +6,42 @@
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav>
-                <b-nav-item :to="{ name: 'dataSources' }">
+                <b-nav-item :to="{ name: 'dataSources' }" v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin">
                     <span class="fa fa-database"></span> {{ $tc('titles.dataSource', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'workflows' }">
+                <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'jobs' }">
+                <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'dashboards' }">
+                <b-nav-item :to="{ name: 'dashboards' }" v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
 
-                <b-nav-item-dropdown right>
-                    <template v-slot:button-content>
-                        <span class="fa fa-bolt"></span>
-                        {{ $tc('titles.track', 2) }}
+                <template v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
+                    <template v-if="hasAnyPermission(['APP_EDIT']) || isAdmin">
+                        <b-nav-item-dropdown right>
+                            <template v-slot:button-content>
+                                <span class="fa fa-bolt"></span>
+                                {{ $tc('titles.track', 2) }}
+                            </template>
+                            <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
+                                {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
+                            </b-dropdown-item>
+                            <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'apps' }">
+                                {{ $tc('titles.track', 2) }}
+                            </b-dropdown-item>
+                        </b-nav-item-dropdown>
                     </template>
-                    <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
-                        {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
-                    </b-dropdown-item>
-                    <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'tracksPanel' }">
-                        {{ $tc('titles.track', 2) }}
-                    </b-dropdown-item>
-                </b-nav-item-dropdown>
-                
+                    <template v-else>
+                        <b-nav-item :to="{ name: 'apps' }">
+                            <span class="fa fa-bolt"></span>
+                                {{ $tc('titles.track', 2) }}
+                        </b-nav-item>
+                    </template>
+                </template>
+
                 <b-nav-item-dropdown v-if="isAdmin" right>
                     <template v-slot:button-content>
                         <span class="fa fa-user-lock"></span>
@@ -73,7 +83,8 @@
                         </span>
                     </template>
                     <div class="notification-container">
-                        <b-dropdown-item v-for="notification in notifications" style="width: 300px" :key="notification.id">
+                        <b-dropdown-item v-for="notification in notifications" style="width: 300px"
+                            :key="notification.id">
                             <div class="notification border-bottom pb-2">
                                 <span class="badge"
                                     :class="{'badge-success': notification.type === 'INFO', 'badge-warning': notification.type === 'WARNING', 'badge-danger': notification.type === 'ERROR'}">
@@ -148,6 +159,20 @@
                 notifications: [],
                 socket: null,
                 room: null,
+                APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
+                DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
+                    'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
+                DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
+                    'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
+                    'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
+                DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
+                JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
+                SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
+                USER_PERMISSIONS: ['USER_MANAGE'],
+                WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
+                    'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
+                    'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
+
             }
         },
         mounted() {
@@ -211,7 +236,6 @@
 </script>
 
 <style>
-
     #l-navbar {
         background-color: #fff;
         box-shadow: 0 0 8px rgba(0, 0, 0, .16);
@@ -222,7 +246,7 @@
     }
 
     .navbar-brand {
-        margin-right: 3rem!important;
+        margin-right: 3rem !important;
     }
 
     #l-navbar a.nav-link {
@@ -246,12 +270,12 @@
         margin: 0 .5rem;
     }
 
-    .navbar .nav-item .nav-link{
+    .navbar .nav-item .nav-link {
         line-height: calc(60px - 4px);
         padding: 0;
         border-bottom: solid 4px #FFFFFF00;
     }
-    
+
     .navbar .nav-item .nav-link:hover {
         border-bottom-color: var(--secondary-color);
     }

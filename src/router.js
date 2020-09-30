@@ -350,7 +350,7 @@ let router = new Router({
         },
         {
             path: '/apps/panel',
-            name: 'tracksPanel',
+            name: 'apps',
             component: TrackPanel,
             meta: {
                 requiresAuth: true,

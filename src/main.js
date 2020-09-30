@@ -18,6 +18,8 @@ import Gravatar from 'vue-gravatar';
 
 
 import {
+    faTh,
+    faList,
     faBolt,
     faBell,
     faBars,
@@ -174,6 +176,8 @@ import { dom } from '@fortawesome/fontawesome-svg-core';
 dom.watch();
 
 library.add(
+    faTh,
+    faList,
     faBolt,
     faBell,
     faBars,

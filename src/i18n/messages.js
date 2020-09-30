@@ -62,6 +62,16 @@ export default {
             toggleTasks: 'Habilitar/desabilitar tarefas',
             update: 'Atualizar',
         },
+        assets: {
+            APP: 'Aplicação (trilha) | Aplicações (trilhas)',
+            DATA_SOURCE: 'Fonte de dados | Fontes de dados',
+            DASHBOARD: 'Dashboard | Dashboards',
+            DEPLOYMENT: 'Implantação | Implantações',
+            JOB: 'Execução | Execuções',
+            SYSTEM: 'Sistema | Sistema',
+            USER: 'Usuário | Usuários',
+            WORKFLOW: 'Fluxo de trabalho | Fluxos de trabalho'
+        },
         atmosphere: {
             transparency: 'Explicação de modelos'
         },
@@ -106,6 +116,7 @@ export default {
             hide: 'Ocultar',
             history: 'Histórico',
             id: 'Id',
+            image: 'Imagem | Imagens',
             label: 'Título',
             language: 'Idioma',
             lastName: 'Sobrenome',
@@ -117,6 +128,7 @@ export default {
             managerRole: 'Gestor',
             monitorRole: 'Monitor',
             more: 'Mais',
+            moreRecords: 'Mais registros',
             no: 'Não',
             noData: 'Nenhum registro encontrado.',
             name: 'Nome | Nomes',
@@ -257,7 +269,7 @@ export default {
             selectCommand: 'Comando SQL SELECT',
             selectFromComputer: 'selecionar arquivos em seu computador',
             shareModal: {
-                title: 'Compartilhando Base de Dados',
+                title: 'Compartilhando fonte de dados',
                 success: 'Permissão alterada'
             },
             shortcut: 'Criar atalho na edição de fluxo de trabalho',
@@ -456,13 +468,14 @@ export default {
             actualValue: 'Valor atual',
             administration: 'Administração',
             apiToken: 'Tokens para API',
+            app: 'Aplicação (trilha) | Aplicações (trilhas)',
             allNotifications: 'Ver todas as notificações',
             changePassword: 'Nova senha',
             color: 'Color',
             cluster: 'Cluster | Clusters',
             configuration: 'Configuração | Configurações',
             darkMode: 'Modo escuro',
-            dataSource: 'Base de dados | Bases de dados',
+            dataSource: 'Fonte de dados | Fontes de dados',
             dataSource2: 'Fonte de dados | Fontes de dados',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Implantação | Implantações',
@@ -704,6 +717,16 @@ export default {
             toggleTasks: 'Enable/disable tasks',
             update: 'Update',
         },
+        assets: {
+            APP: 'Application | Applications',
+            DATA_SOURCE: 'Data source | Data Sources',
+            DASHBOARD: 'Dashboard | Dashboards',
+            DEPLOYMENT: 'Deployment | Deployments',
+            JOB: 'Execution | Executions',
+            SYSTEM: 'System | System',
+            USER: 'User | Users',
+            WORKFLOW: 'Workflow | Workflows'
+        },
         atmosphere: {
             transparency: 'Explain models'
         },
@@ -748,6 +771,7 @@ export default {
             hide: 'Hide',
             history: 'History',
             id: 'Id',
+            image: 'Image | Images',
             label: 'Label',
             language: 'Language',
             lastName: 'Last name',
@@ -758,6 +782,7 @@ export default {
             managerRole: 'Manager',
             monitorRole: 'Assistant',
             more: 'More',
+            moreRecors: 'More records',
             no: 'No',
             name: 'Name | Names',
             noData: 'No results found.',
@@ -1012,6 +1037,7 @@ export default {
             actualValue: 'Current value',
             administration: 'Administration',
             apiToken: 'API Tokens',
+            app: 'App | Apps',
             allNotifications: 'See all notifications',
             changePassword: 'New password',
             cluster: 'Cluster | Clusters',
