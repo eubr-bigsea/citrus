@@ -38,31 +38,36 @@
                                             </div>
                                         </fieldset>
                                         <div class="row">
-                                            <div class="col-md-12 pb-3 pt-4">
+                                            <div class="col-md-6 pb-3 pt-4">
                                                 <fieldset :disabled="role.system">
                                                     <h6>
                                                         {{ $tc('common.permission', 2) }}:
                                                     </h6>
-                                                    <template v-for="gp in groupedPermissions">
-                                                        <div class="row p-2  border-bottom">
-                                                            <div class="col-md-12">
-                                                                <em>{{$tc('assets.' + gp[0], 2)}}</em>
-                                                            </div>
-                                                            <div class="col-md-3" v-for="p in gp[1]" :key="p.id"
-                                                                :title="p.name">
-                                                                <b-form-checkbox v-model="selectedPermissions"
-                                                                    :value="p.id">
-                                                                    {{p.description}}
-                                                                </b-form-checkbox>
-                                                            </div>
-                                                        </div>
-                                                    </template>
+                                                    <div>
+                                                        <b-card no-body>
+                                                            <b-tabs pills card vertical>
+                                                                <b-tab :title="$tc('assets.' + gp[0], 2)"
+                                                                    v-for="gp in groupedPermissions">
+                                                                    <b-card-text>
+                                                                        <div class="col-md-12" v-for="p in gp[1]"
+                                                                            :key="p.id" :title="p.name">
+                                                                            <b-form-checkbox
+                                                                                v-model="selectedPermissions"
+                                                                                :value="p.id">
+                                                                                {{p.description}}
+                                                                            </b-form-checkbox>
+                                                                        </div>
+                                                                    </b-card-text>
+                                                                </b-tab>
+                                                            </b-tabs>
+                                                        </b-card>
+                                                    </div>
                                                 </fieldset>
                                             </div>
-                                            <div v-if="!role.all_user" class="col-md-12 border-top ">
-                                                <label class="col-form-label">
+                                            <div v-if="!role.all_user" class="col-md-6 pb-3 pt-4 border-top ">
+                                                <h6>
                                                     {{ $tc('titles.user', 2) }}:
-                                                </label>
+                                                </h6>
                                                 <v-select style="font-size: .9em" v-model="role.users" :multiple="true"
                                                     :options="users" @search="onSearchUsers" :taggable="false"
                                                     :get-option-label="getUserLabel" :close-on-select="true" label="id">
