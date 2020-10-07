@@ -244,6 +244,7 @@ export default {
             features: 'Atributos',
             file: 'Arquivo',
             format: 'Formato',
+            hive: 'Hive',
             inconsistentFormat:
                 'O formato escolhido é incompatível com o armazenamento escolhido.',
             inferSchema: 'Inferir o esquema',
@@ -898,6 +899,7 @@ export default {
             features: 'Features',
             file: 'File',
             format: 'Format',
+            hive: 'Hive',
             inconsistentFormat:
                 'The chosen format is incompatible with the chosen storage.',
             inferSchema: 'Infer schema',
