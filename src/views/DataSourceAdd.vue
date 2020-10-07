@@ -196,7 +196,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-md-8 offset-md-2 mt-2" v-if="step === 1 || step === 2 ">
+            <div class="col-md-8 offset-md-2 mt-2" v-if="step === 2 ">
                 <button class="btn btn-outline-secondary ml-1" @click="step=1">{{$t('actions.back')}}</button>
             </div>
         </div>
@@ -252,7 +252,7 @@
                             self.sqlStorages.push(storage);
                         } else if (storage.type === 'VALLUM') {
                             self.vallumStorages.push(storage);
-                        } else if (storage.type === 'HIVE') {
+                        } else if (storage.type === 'HIVE' || storage.type === 'HIVE_WAREHOUSE') {
                             self.hiveStorages.push(storage);
                         }
                     });
