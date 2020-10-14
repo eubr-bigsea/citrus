@@ -14,7 +14,7 @@
                                 </label>
                                 <div class="col-sm-9">
                                     <input v-model="user.first_name" type="text" class="form-control" required
-                                        autofocus />
+                                        autofocus maxlength="50"/>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -22,7 +22,7 @@
                                     {{ $t('common.lastName') }}
                                 </label>
                                 <div class="col-sm-9">
-                                    <input v-model="user.last_name" type="text" class="form-control" required />
+                                    <input v-model="user.last_name" type="text" class="form-control" required  maxlength="50"/>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -30,20 +30,7 @@
                                     {{ $t('common.email') }}
                                 </label>
                                 <div class="col-sm-9">
-                                    <input v-model="user.email" type="email" class="form-control" required />
-                                </div>
-                            </div>
-                            <div v-if="isAdmin" class="form-group row">
-                                <label for="inputEmail3" class="col-sm-3 col-form-label">
-                                    {{ $t('common.roles') }}
-                                </label>
-                                <div class="col-sm-9">
-                                    <select v-model="user.role" class="form-control">
-                                        <option value="">{{ $t('roles.noRole') }}</option>
-                                        <option value="admin">{{ $t('roles.admin') }}</option>
-                                        <!-- <option value="manager">{{ $t('roles.manager') }}</option> -->
-                                        <option value="monitor">{{ $t('roles.monitor') }}</option>
-                                    </select>
+                                    <input v-model="user.email" type="email" class="form-control" required  maxlength="50"/>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -58,11 +45,11 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="inputPassword3" class="col-sm-3 col-form-label">
+                                <label for="password" class="col-sm-3 col-form-label">
                                     {{ $t('common.password') }}
                                 </label>
                                 <div class="col-sm-9">
-                                    <input v-model="user.password" type="text" class="form-control" required />
+                                    <input v-model="user.password" type="password" class="form-control" required  maxlength="50" />
                                 </div>
                             </div>
                             <div class="form-group row border-top clearfix pt-3">
@@ -96,7 +83,7 @@
         mixins: [Notifier],
         data() {
             return {
-                user: { locale: 'en', role: '' }
+                user: { locale: 'en' }
             };
         },
         computed: {
@@ -105,29 +92,33 @@
         methods: {
             save() {
                 const self = this;
-                let url = `${thornUrl}/administration/users`;
+                let url = `${thornUrl}/users`;
                 let user = self.user;
 
                 this.$Progress.start();
                 return axios
-                    .post(url, { user })
+                    .post(url, user)
                     .then(resp => {
                         this.$Progress.finish();
-                        this.$router.push({ name: 'AdministrationUserList' });
+                        self.success(
+                            this.$t('messages.savedWithSuccess', {
+                                what: this.$tc('titles.user', 1)
+                            })
+                        );
+                        this.$router.push({
+                            name: 'AdministrationEditUser',
+                            params: { 'id': resp.data.data.id }
+                        });
                     })
                     .catch(
                         function (e) {
                             var err = e;
                             this.$Progress.finish();
-                            if (e.response.data.errors[0]) {
-                                let pointer = e.response.data.errors[0].source.pointer;
-                                let detail = e.response.data.errors[0].detail;
-
+                            if (e.response.data.message) {
                                 err = {
-                                    message: `${pointer} ${detail}`
+                                    message: e.response.data.message
                                 };
                             }
-
                             this.error(err);
                         }.bind(this)
                     );

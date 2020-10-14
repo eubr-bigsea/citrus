@@ -25,6 +25,7 @@
                                         <textarea type="text" class="form-control" @keyup="changed($event, row, 'expression')" ref="expr"
                                             @blur="elementBlur(row, $event)" style="height: 40px" @paste="changed($event, row, 'expression')">{{row.expression}}</textarea>
                                         <div class="label label-danger" v-if="row.error">{{row.error}}</div>
+                                        >>>>>>>>>>{{row}}
                                     </td>
                                     <td v-if="values.alias !== false" style="width: 35%">
                                         <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />

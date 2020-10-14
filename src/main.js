@@ -12,81 +12,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+
 import { ClientTable, ServerTable } from 'vue-tables-2';
-import { library } from '@fortawesome/fontawesome-svg-core';
 import Gravatar from 'vue-gravatar';
 
-
-import {
-    faTh,
-    faList,
-    faBolt,
-    faBell,
-    faBars,
-    faMicroscope,
-    faChartLine,
-    faCheck,
-    faCheckDouble,
-    faCoffee,
-    faCopy,
-    faCogs,
-    faDollarSign,
-    faDownload,
-    faFlask,
-    faTasks,
-    faUpload,
-    faHistory,
-    faImage,
-    faLayerGroup,
-    faArrowsAltV,
-    faArrowsAltH,
-    faHome,
-    faLink,
-    faExternalLinkAlt,
-    faUser,
-    faUserEdit,
-    faPaste,
-    faPlay,
-    faPlus,
-    faSortAmountUp,
-    faSort,
-    faSortAmountDown,
-    faSave,
-    faEdit,
-    faTrash,
-    faToggleOn,
-    faToggleOff,
-    faObjectGroup,
-    faQuestionCircle,
-    faAsterisk,
-    faSpinner,
-    faDatabase,
-    faSearch,
-    faEye,
-    faMinusCircle,
-    faChevronCircleDown,
-    faChevronCircleUp,
-    faCheckCircle,
-    faTimesCircle,
-    faHandPaper,
-    faStopCircle,
-    faPauseCircle,
-    faSync,
-    faCheckSquare,
-    faSquare,
-    faLightbulb,
-    faAngleDown,
-    faAngleRight,
-    faExclamationTriangle,
-    faExclamationCircle,
-    faChevronLeft,
-    faStop,
-    faShareAlt,
-    faProjectDiagram,
-    faUserLock,
-    
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
+import './fa-icons';
 
 /* Widgets */
 import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
@@ -168,96 +99,13 @@ Vue.directive('focus', {
 import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoReplaceSvg = 'nest';
 
-/**
- * Allows DOM to change <i> tags to SVG for more features like layering
- * https://fontawesome.com/how-to-use/on-the-web/styling/layering
- */
-import { dom } from '@fortawesome/fontawesome-svg-core';
-dom.watch();
-
-library.add(
-    faTh,
-    faList,
-    faBolt,
-    faBell,
-    faBars,
-    faMicroscope,
-    faChartLine,
-    faCheck,
-    faCheckDouble,
-    faCoffee,
-    faCopy,
-    faCogs,
-    faDollarSign,
-    faDownload,
-    faFlask,
-    faTasks,
-    faUpload,
-    faHistory,
-    faPlay,
-    faImage,
-    faLayerGroup,
-    faArrowsAltH,
-    faArrowsAltV,
-    faHome,
-    faLink,
-    faExternalLinkAlt,
-    faUser,
-    faPlus,
-    faSortAmountUp,
-    faSort,
-    faSortAmountDown,
-    faSave,
-    faEdit,
-    faUserEdit,
-    faTrash,
-    faToggleOn,
-    faToggleOff,
-    faObjectGroup,
-    faQuestionCircle,
-    faAsterisk,
-    faPaste,
-    faSpinner,
-    faDatabase,
-    faSearch,
-    faEye,
-    faDownload,
-    faMinusCircle,
-    faChevronCircleDown,
-    faChevronCircleUp,
-    faTimesCircle,
-    faHandPaper,
-    faStopCircle,
-    faCheckCircle,
-    faPauseCircle,
-    faSync,
-    faCheckSquare,
-    faSquare,
-    faLightbulb,
-    faAngleDown,
-    faAngleRight,
-    faExclamationTriangle,
-    faExclamationCircle,
-    faChevronLeft,
-    faStop,
-    faShareAlt,
-    faProjectDiagram,
-    faUserLock,
-);
-
-import {
-    faSave as farSave,
-    faCopy as farCopy
-} from '@fortawesome/free-regular-svg-icons';
-
-library.add(farSave, farCopy);
-
 Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('v-gravatar', Gravatar);
 
 Vue.config.productionTip = false;
