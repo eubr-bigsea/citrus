@@ -639,6 +639,11 @@ export default {
             lookup: 'Valores pesquisáveis',
             text: 'Texto curto',
             textarea: 'Texto longo',
+            join: {
+                conditions: 'Condição(ões) para a junção',
+                noCondition: 'Nenhuma condição informada. Pressione o botão abaixo para adicionar uma nova.',
+                type: 'Tipo de Junção',
+            }
         },
 
         permissions: {
@@ -1272,6 +1277,11 @@ export default {
             lookup: 'Search from list of values',
             text: 'Text input',
             textarea: 'Long text input',
+            join: {
+                conditions: 'Join condition(s)',
+                noCondition: 'No condition specified. Press button below to add a new one.',
+                type: 'Join type',
+            }
         },
         permissions: {
             MANAGE: 'Manage',

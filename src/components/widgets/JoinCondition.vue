@@ -38,7 +38,7 @@
             </tbody>
         </table>
         <div v-else>
-            <em>Nenhuma condição informada. Pressione o botão abaixo para adicionar uma nova.</em>
+            <em>{{$t('widgets.join.noCondition')}}</em>
         </div>
     </div>
 </template>

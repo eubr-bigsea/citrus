@@ -13,14 +13,14 @@
             <form @submit.stop.prevent="submit" onsubmit="return false" ref="form" action="">
                 <div class="row">
                     <div class="col-md-6 border-right">
-                        <h5>Tipo de Junção:</h5>
+                        <h5>{{$t('widgets.join.type')}}:</h5>
                         <select class="form-control mb-2" v-model="joinType">
                             <option value="inner">Inner</option>
                             <option value="left outer">Left outer</option>
                             <option value="right outer">Right outer</option>
                             <option value="full outer">Full outer</option>
                         </select>
-                        <h5>Condição para a junção</h5>
+                        <h5>{{$t('widgets.join.conditions')}}</h5>
                         <div class="side">
                             <JoinCondition :suggestions1="suggestions1" :suggestions2="suggestions2" :conditions="valueObject.conditions" ref="condition" />
                         </div>
