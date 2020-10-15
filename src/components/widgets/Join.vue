@@ -8,7 +8,6 @@
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-
         <b-modal size="xl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade
             ref="modal">
             <form @submit.stop.prevent="submit" onsubmit="return false" ref="form" action="">
@@ -23,7 +22,7 @@
                         </select>
                         <h5>Condição para a junção</h5>
                         <div class="side">
-                            <JoinCondition :suggestions1="suggestions1" :suggestions2="suggestions2" ref="condition" />
+                            <JoinCondition :suggestions1="suggestions1" :suggestions2="suggestions2" :conditions="valueObject.conditions" ref="condition" />
                         </div>
                         <div class="mt-2 border-top pt-2">
                             <button class="btn btn-success btn-sm" @click.prevent="add">
@@ -34,9 +33,9 @@
                         <h5>Seleção de atributos</h5>
                         <div ref="selection">
                             <div class="row side">
-                                <JoinSelect class="col-md-6" :suggestions="suggestions1" :label="'Input 1'"
+                                <JoinSelect class="col-md-6" :selected="valueObject.leftSelect" :suggestions="suggestions1" :label="$tc('common.input') + ' 1'"
                                     ref="leftSelect" />
-                                <JoinSelect class="col-md-6" :suggestions="suggestions2" :label="'Input 2'"
+                                <JoinSelect class="col-md-6" :selected="valueObject.rightSelect" :suggestions="suggestions2" :label="$tc('common.input') +' 2'"
                                     ref="rightSelect" />
                             </div>
                         </div>
@@ -119,14 +118,16 @@
                 }
             },
             updateDisplayValue(v) {
+                const leftName = this.$tc('common.input') + ' 1';
+                const rightName = this.$tc('common.input') + ' 2';
                 const leftSelect = v.leftSelect.filter(item => item.select)
-                    .map(item => `[left].${item.attribute} AS ${item.alias}`).join(', ');
+                    .map(item => `[${leftName}].${item.attribute} AS ${item.alias}`).join(', ');
                 const rightSelect = v.rightSelect.filter(item => item.select)
-                    .map(item => `[right].${item.attribute} AS ${item.alias}`).join(', ');
+                    .map(item => `[${rightName}].${item.attribute} AS ${item.alias}`).join(', ');
 
                 const condition = v.conditions.map(item => `[left].${item.left} = [right].${item.right}`).join(' AND ');
 
-                let result = `SELECT ${leftSelect}, ${rightSelect} \nFROM [left] \n${this.joinType.toUpperCase()} JOIN [right] ON ${condition}`;
+                let result = `SELECT ${leftSelect}, \n\t${rightSelect} \nFROM [${leftName}] \n${this.joinType.toUpperCase()} JOIN [${rightName}] ON ${condition}`;
                 this.displayValue = result;
             },
             okClicked(ev) {
@@ -139,10 +140,10 @@
             submit(ev) {
                 //const invalid = (item) => item === null || item.trim() === '';
 
-                this.valueObject.leftSelect = [... this.$refs.leftSelect.selectList];
-                this.valueObject.rightSelect = [... this.$refs.rightSelect.selectList];
+                this.valueObject.leftSelect = this.$refs.leftSelect.getSelectList();
+                this.valueObject.rightSelect = this.$refs.rightSelect.getSelectList();
 
-                this.valueObject.conditions = [... this.$refs.condition.conditions];
+                this.valueObject.conditions = this.$refs.condition.getConditions();
                 this.updateDisplayValue(this.valueObject);
                 // this.$root.$emit(this.message, this.field,
                 //     this.valueObject);

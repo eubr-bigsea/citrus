@@ -1,6 +1,5 @@
 <template>
     <div>
-        
         <table class="table table-sm">
             <thead>
                 <th class="text-center" style="width:5%"></th>
@@ -16,7 +15,7 @@
                             :disabled="checked.length === 0" @keyup="changePrefix($event)" ref="prefix" />
                     </th>
                     <th style="max-width: 20px">
-                        
+
                     </th>
                 </tr>
                 <tr v-for="(s, index) in selectList" class="inputs">
@@ -41,8 +40,9 @@
     import { debounce } from '../../util.js';
     export default {
         props: {
-            suggestions: { type: Array, default: () => [1] },
+            suggestions: { type: Array, default: () => [] },
             label: { type: String },
+            selected: { type: Array, default: () => [] }
         },
         data() {
             return {
@@ -52,10 +52,30 @@
             }
         },
         mounted() {
-            this.selectList = this.suggestions.map(item => {
-                return { attribute: item, alias: item, select: true };
-            });
-            this.checked = [...Array(this.suggestions.length).keys()];
+            if (this.selected.length > 0) {
+                let counter = 0;
+                const attributesFound = new Set();
+                this.selected.forEach(item => {
+                    if (this.suggestions.includes(item.attribute)) {
+                        attributesFound.add(item.attribute);
+                        this.selectList.push(Object.assign({}, item));
+                        if (item.select) {
+                            this.checked.push(counter);
+                        }
+                        counter++;
+                    }
+                });
+                this.suggestions.forEach(item => {
+                    if (!attributesFound.has(item)) {
+                        this.selectList.push({ attribute: item, alias: item, select: false });
+                    }
+                });
+            } else {
+                this.selectList = this.suggestions.map(item => {
+                    return { attribute: item, alias: item, select: true };
+                });
+                this.checked = [...Array(this.suggestions.length).keys()];
+            }
         },
         methods: {
             changePrefix: debounce(function (ev) {
@@ -83,6 +103,9 @@
             },
             uncheck(value) {
                 this.checked = this.checked.filter(item => item !== value);
+            },
+            getSelectList() {
+                return this.selectList;
             }
         },
     }

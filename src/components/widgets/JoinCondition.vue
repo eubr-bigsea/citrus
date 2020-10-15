@@ -1,16 +1,17 @@
 <template>
     <div ref="condition">
-        <table class="table table-sm" v-if="conditions && conditions.length">
+        <table class="table table-sm" v-if="conditionList && conditionList.length">
             <thead>
-                <th class="text-center" style="width:45%">Input 1</th>
+                <th class="text-center" style="width:45%">{{this.$tc('common.input')}} 1</th>
                 <th style="width: 20px;"></th>
-                <th class="text-center" style="width:45%">Input 2</th>
+                <th class="text-center" style="width:45%">{{this.$tc('common.input')}} 2</th>
                 <th class="text-center" style="width:5%"></th>
             </thead>
             <tbody>
-                <tr v-for="(row, index) in conditions" class="inputs">
+                <tr v-for="(row, index) in conditionList" class="inputs">
                     <td>
-                        <select class="form-control" @change="(v) => attrUpdated(row, 'left', v)" v-model="row.left" required>
+                        <select class="form-control" @change="(v) => attrUpdated(row, 'left', v)" v-model="row.left"
+                            required>
                             <option></option>
                             <option v-for="s in suggestions1">{{s}}</option>
                         </select>
@@ -22,7 +23,8 @@
                         </font-awesome-layers>
                     </td>
                     <td>
-                        <select class="form-control" @change="(v) => attrUpdated(row, 'right', v)" v-model="row.right" required>
+                        <select class="form-control" @change="(v) => attrUpdated(row, 'right', v)" v-model="row.right"
+                            required>
                             <option></option>
                             <option v-for="s in suggestions2">{{s}}</option>
                         </select>
@@ -42,8 +44,6 @@
 </template>
 <script>
     export default {
-        components: {
-        },
         props: {
             suggestions1: { type: Array, default: () => [] },
             suggestions2: { type: Array, default: () => [] },
@@ -51,17 +51,20 @@
         },
         data() {
             return {
+                conditionList: []
             }
         },
         mounted() {
-
+            if (this.conditions && this.conditions.length){
+                this.conditionList = [... this.conditions];
+            }
         },
         methods: {
             add(e) {
-                if (this.conditions === null) {
-                    this.conditions = [];
+                if (this.conditionList === null) {
+                    this.conditionList = [];
                 }
-                this.conditions.push({ left: '', right: '' });
+                this.conditionList.push({ left: '', right: '' });
                 // this.$nextTick(() => {
                 //     this.$refs.condition.parent.scrollTop = this.$refs.condition.lastElementChild.offsetHeight;
                 // });
@@ -70,23 +73,26 @@
                 row[attr] = evt.target.value;
             },
             remove(e, index) {
-                this.conditions.splice(index, 1);
+                this.conditionList.splice(index, 1);
                 e.stopPropagation();
                 e.preventDefault();
                 return false;
             },
             moveUp(e, index) {
-                let tmp = this.conditions.splice(index, 1)[0];
-                this.conditions.splice(index - 1, 0, tmp)
+                let tmp = this.conditionList.splice(index, 1)[0];
+                this.conditionList.splice(index - 1, 0, tmp)
                 e.stopPropagation();
                 return false;
             },
             moveDown(e, index) {
-                let tmp = this.conditions.splice(index, 1)[0]
-                this.conditions.splice(index + 1, 0, tmp)
+                let tmp = this.conditionList.splice(index, 1)[0]
+                this.conditionList.splice(index + 1, 0, tmp)
                 e.stopPropagation();
                 return false;
             },
+            getConditions(){
+                return [... this.conditionList];
+            }
         },
     }
 </script>
