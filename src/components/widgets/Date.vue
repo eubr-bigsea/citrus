@@ -1,44 +1,47 @@
 <template>
-    <div v-if="readOnly">
-        {{value === null ? field.default: value}}
-    </div>
-    <div v-else>
+    <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <input type="date" class="form-control" v-model="dateValue" @change="updated"/>
+        <div v-if="readOnly">
+            {{value === null ? field.default: value}}
+        </div>
+        <div v-else>
+            <input type="date" class="form-control" v-model="dateValue" @change="updated" max="2199-12-31" />
+        </div>
     </div>
 </template>
 <script>
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
-    import { distanceInWordsStrict, format, parse } from 'date-fns';
+    import { format, parse } from 'date-fns';
+    import { debounce } from '../../util.js';
 
     export default {
         mixins: [Widget],
         components: { LabelComponent },
         methods: {
-            updated: _.debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
+            updated: debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
         },
         computed: {
             normalizedValue: () => {
                 return this.field.value || this.field.default;
             }
         },
-        data(){
+        data() {
             return {
                 dateValue: null,
             };
         },
         mounted() {
-            const value = (this.field['default'] ? this.field['default']: null)
+            const value = (this.field['default'] ? this.field['default'] : null)
             this.$root.$emit(this.message,
-                 this.field, this.value || value);
+                this.field, this.value || value);
             let d = null;
-            if (this.value !== null){
+            if (this.value !== null) {
                 d = parse(this.value);
-            } else if (this.field.default_value !== null){
+            } else if (this.field.default_value !== null) {
                 d = parse(this.field.default_value);
             }
-            if (d){
+            if (d) {
                 this.dateValue = format(d, 'YYYY-MM-DD');
             }
         },

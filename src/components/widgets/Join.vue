@@ -1,13 +1,12 @@
 <template>
     <div class="join-editor">
-        <span v-if="!readOnly">
+        <span>
             <LabelComponent :field="field" :value="value"></LabelComponent>
             <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
-            <b-link variant="sm" @click.prevent="openModal">
+            <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
                 {{$t('actions.chooseOption')}}
             </b-link>
         </span>
-        <span v-else>{{displayValue}}</span>
         <b-modal size="xl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade
             ref="modal">
             <form @submit.stop.prevent="submit" onsubmit="return false" ref="form" action="">
@@ -22,7 +21,8 @@
                         </select>
                         <h5>{{$t('widgets.join.conditions')}}</h5>
                         <div class="side">
-                            <JoinCondition :suggestions1="suggestions1" :suggestions2="suggestions2" :conditions="valueObject.conditions" ref="condition" />
+                            <JoinCondition :suggestions1="suggestions1" :suggestions2="suggestions2"
+                                :conditions="valueObject.conditions" ref="condition" />
                         </div>
                         <div class="mt-2 border-top pt-2">
                             <button class="btn btn-success btn-sm" @click.prevent="add">
@@ -33,10 +33,10 @@
                         <h5>Seleção de atributos</h5>
                         <div ref="selection">
                             <div class="row side">
-                                <JoinSelect class="col-md-6" :selected="valueObject.leftSelect" :suggestions="suggestions1" :label="$tc('common.input') + ' 1'"
-                                    ref="leftSelect" />
-                                <JoinSelect class="col-md-6" :selected="valueObject.rightSelect" :suggestions="suggestions2" :label="$tc('common.input') +' 2'"
-                                    ref="rightSelect" />
+                                <JoinSelect class="col-md-6" :selected="valueObject.leftSelect"
+                                    :suggestions="suggestions1" :label="$tc('common.input') + ' 1'" ref="leftSelect" />
+                                <JoinSelect class="col-md-6" :selected="valueObject.rightSelect"
+                                    :suggestions="suggestions2" :label="$tc('common.input') +' 2'" ref="rightSelect" />
                             </div>
                         </div>
                     </div>
@@ -62,9 +62,9 @@
             LabelComponent, JoinSelect, JoinCondition
         },
         props: {
-            suggestions1: { type: Array, default: () => [1] },
-            suggestions2: { type: Array },
-            modalOpened: false,
+            suggestions1: { type: Array, required: true },
+            suggestions2: { type: Array, required: true },
+            modalOpened: { type: Boolean, default: false },
         },
         data() {
             return {
@@ -73,8 +73,10 @@
                 suggestions: [],
                 leftSelectList: [],
                 rightSelectList: [],
-                valueObject: JSON.parse(this.value
-                    || { conditions: [] }),
+                valueObject: this.value !== null && this.value.trim() !== '' ?
+                    JSON.parse(this.value) : {
+                        conditions: [], leftSelect: [], rightSelect: []
+                    }
 
             }
         },
@@ -85,6 +87,7 @@
             }
             this.leftSelectList = [... this.suggestions1];
             this.rightSelectList = [... this.suggestions2];
+            this.updateDisplayValue(this.valueObject);
         },
         methods: {
             add() {
@@ -125,9 +128,16 @@
                 const rightSelect = v.rightSelect.filter(item => item.select)
                     .map(item => `[${rightName}].${item.attribute} AS ${item.alias}`).join(', ');
 
-                const condition = v.conditions.map(item => `[left].${item.left} = [right].${item.right}`).join(' AND ');
+                let condition = v.conditions.map(item => `[left].${item.left} = [right].${item.right}`).join(' AND ');
 
-                let result = `SELECT ${leftSelect}, \n\t${rightSelect} \nFROM [${leftName}] \n${this.joinType.toUpperCase()} JOIN [${rightName}] ON ${condition}`;
+                let select = [leftSelect, rightSelect].join(', ');
+                if (select === ', '){
+                    select = '?'
+                }
+                if (condition === ''){
+                    condition = '?';
+                }
+                let result = `SELECT ${select} \nFROM [${leftName}] \n${this.joinType.toUpperCase()} JOIN [${rightName}] ON ${condition}`;
                 this.displayValue = result;
             },
             okClicked(ev) {

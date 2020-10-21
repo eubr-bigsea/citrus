@@ -1,6 +1,6 @@
 <template>
-    <div class="text-center"i style="width:100%;overflow:auto; display:flex">
-        <markdown :text="visualizationData.data.text"/>
+    <div class="text-center" i style="width:100%;overflow:auto; display:flex">
+        <markdown :text="visualizationData.data.text" />
     </div>
 </template>
 <script>
@@ -8,7 +8,7 @@
     import VisualizationMixin from "./VisualizationMixin";
     export default {
         mixins: [VisualizationMixin],
-        components:{
+        components: {
             "markdown": MarkdownWidget,
         }
     }

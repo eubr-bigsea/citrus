@@ -1,6 +1,6 @@
 <template>
-    <div v-html="markdown" class="markdown-area" v-bind:style="cssStyle"></div>
-</div>
+    <div v-html="markdown" class="markdown-area" v-bind:style="cssStyle">
+    </div>
 </template>
 
 <script>
@@ -12,6 +12,7 @@
         },
         computed: {
             markdown() {
+                console.debug(snarkdown(this.text || ''))
                 return snarkdown(this.text || '');
             },
         }

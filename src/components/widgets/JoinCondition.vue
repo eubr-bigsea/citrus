@@ -45,9 +45,9 @@
 <script>
     export default {
         props: {
-            suggestions1: { type: Array, default: () => [] },
-            suggestions2: { type: Array, default: () => [] },
-            conditions: { type: Array, default: () => [] },
+            suggestions1: { type: Array, function(){ return [];} },
+            suggestions2: { type: Array, function(){ return [];} },
+            conditions: { type: Array, function(){ return [];} },
         },
         data() {
             return {

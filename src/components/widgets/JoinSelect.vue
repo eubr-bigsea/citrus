@@ -40,9 +40,9 @@
     import { debounce } from '../../util.js';
     export default {
         props: {
-            suggestions: { type: Array, default: () => [] },
+            suggestions: { type: Array, default: function(){return []}},
             label: { type: String },
-            selected: { type: Array, default: () => [] }
+            selected: { type: Array, default: function(){return []}}
         },
         data() {
             return {
