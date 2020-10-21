@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import VueTheMask from 'vue-the-mask'
 
 import { ClientTable, ServerTable } from 'vue-tables-2';
 import Gravatar from 'vue-gravatar';
@@ -101,6 +102,7 @@ config.autoReplaceSvg = 'nest';
 
 Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
+Vue.use(VueTheMask)
 
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
