@@ -7,12 +7,12 @@
                 <div class="title">
 
                     <div class="float-right">
-                        <workflow-toolbar v-if="loaded" :workflow="workflow"/>
+                        <workflow-toolbar v-if="loaded" :workflow="workflow" />
                     </div>
 
                     <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
                     <input-header v-model="workflow.name"></input-header>
-                        
+
                 </div>
 
                 <div v-show="showTasksPanel" class="toolbox">
@@ -20,7 +20,8 @@
                         <div class="card-header">
                             <h4 class="card-title">{{ $tc('common.operation', 2) }}</h4>
                         </div>
-                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' :loading="loadingToolbox"/>
+                        <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task'
+                            :loading="loadingToolbox" />
                     </div>
                 </div>
                 <div v-show="showDataSourcesPanel" class="toolbox datasource-toolbox">
@@ -28,12 +29,13 @@
                         <div class="card-header">
                             <h4 class="card-title">{{ $tc('titles.dataSource2', 2) }}</h4>
                         </div>
-                        <custom-toolbox :operations="expandableOperations" :workflow="workflow" :selected-task='selectedTask.task' />
+                        <custom-toolbox :operations="expandableOperations" :workflow="workflow"
+                            :selected-task='selectedTask.task' />
                     </div>
                 </div>
 
-                <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded"
-                    :operations="operations" :loaded="loaded" :version="workflow.version" tabindex="0"
+                <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded" :operations="operations"
+                    :loaded="loaded" :version="workflow.version" tabindex="0"
                     :useDataSource="expandableOperations.length > 0">
                 </diagram>
 
@@ -41,6 +43,7 @@
                     <property-window :task="selectedTask.task" v-if="selectedTask.task"
                         :variables="workflow.variables || []"
                         :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
+                        :extendedSuggestionEvent="() => getExtendedSuggestions(selectedTask.task.id)"
                         :publishingEnabled="workflow && workflow.publishing_enabled" />
                 </div>
 
@@ -108,13 +111,14 @@
                     </b-tab>
                 </b-tabs>
                 -->
-                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"/>
+                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables" />
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
                     :validationErrors="validationErrors" :workflow="workflow" />
                 <ModalWorkflowHistory ref="historyModal" :history="history" />
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
-                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow" :clusters="clusters" />
+                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow"
+                    :clusters="clusters" />
                 <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" />
                 <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
@@ -187,7 +191,7 @@
         data() {
             return {
                 atmosphereExtension: false,
-        		job: {},        
+                job: {},
                 attributeSuggesterLoaded: false,
                 attributeSuggestion: {},
                 clusters: [],
@@ -450,7 +454,7 @@
             }
         },
         methods: {
-			getCaipirinhaLink(jobId, taskId, visId) {
+            getCaipirinhaLink(jobId, taskId, visId) {
                 return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;
             },
 
@@ -470,8 +474,8 @@
             align(prop, fn) {
                 this.$refs.diagram.align(prop, fn);
             },
-            toggleTasksPanel(){ this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false;},
-            toggleDataSourcesPanel(){ this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false;},
+            toggleTasksPanel() { this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false; },
+            toggleDataSourcesPanel() { this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false; },
             toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
             removeTasks() { this.$refs.diagram.removeSelectedTasks(); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
@@ -479,7 +483,7 @@
                 //this.selectedTab = index;
                 this.$refs.diagram.repaint();
             },
-            _loadOperations(self, workflow, resp, showDisabledOpsAlert){
+            _loadOperations(self, workflow, resp, showDisabledOpsAlert) {
                 self.operations = resp.data
                 self.operations.forEach((op) => {
                     self.operationsLookup[op.id] = op
@@ -487,10 +491,10 @@
                 let usingDisabledOp = false;
                 workflow.tasks.forEach((task) => {
                     let op = self.operationsLookup[task.operation.id];
-                    task.operation = op || {forms: []};
+                    task.operation = op || { forms: [] };
                     task.step = null;
                     usingDisabledOp |= op === undefined || op.enabled === false;
-                    if (op=== undefined || !op.enabled) {
+                    if (op === undefined || !op.enabled) {
                         task.warning = self.$t('workflow.usingDisabledOperation');
                     } else {
                         task.warning = null;
@@ -535,7 +539,7 @@
                             workflow: workflow.id,
                             t: new Date().getTime(), // Force refresh
                         }
-                        axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._loadOperations(self, workflow, resp, true)
+                        axios.get(`${tahitiUrl}/operations`, { params }).then(resp => self._loadOperations(self, workflow, resp, true)
                         ).catch(function (e) {
                             this.error(e);
                         }.bind(this)).finally(() => {
@@ -544,34 +548,34 @@
                                 self.loadingToolbox = true;
                                 delete params['workflow'];
                                 delete params['t'];
-                                axios.get(`${tahitiUrl}/operations`, { params }).then(resp=>self._loadOperations(self, workflow, resp, false)
+                                axios.get(`${tahitiUrl}/operations`, { params }).then(resp => self._loadOperations(self, workflow, resp, false)
                                 ).catch(function (e) {
-                                        this.error(e);
+                                    this.error(e);
                                 });
+                            });
+                        });
+                        axios.get(`${standUrl}/jobs/latest`, { params })
+                            .then((resp2 => {
+                                const job = resp2.data;
+                                self.job = job;
+                                const tasks = self.workflow.tasks;
+                                job.steps.forEach((step) => {
+                                    const foundTask = tasks.find((t) => {
+                                        return t.id === step.task.id;
+                                    });
+                                    if (foundTask) {
+                                        foundTask.step = step;
+                                    }
                                 });
-                        });
-                axios.get(`${standUrl}/jobs/latest`, { params })
-                    .then((resp2 => {
-                        const job = resp2.data;
-						self.job = job;
-                        const tasks = self.workflow.tasks;
-                        job.steps.forEach((step) => {
-                            const foundTask = tasks.find((t) => {
-                                return t.id === step.task.id;
-                            });
-                            if (foundTask) {
-                                foundTask.step = step;
-                            }
-                        });
-                        job.results.forEach((result) => {
-                            const foundTask = tasks.find((t) => {
-                                return t.id === result.task.id;
-                            });
-                            if (foundTask) {
-                                foundTask.result = result;
-                            }
-                        });
-                    })).catch(() => { });
+                                job.results.forEach((result) => {
+                                    const foundTask = tasks.find((t) => {
+                                        return t.id === result.task.id;
+                                    });
+                                    if (foundTask) {
+                                        foundTask.result = result;
+                                    }
+                                });
+                            })).catch(() => { });
 
                     }
                 ).catch(function (e) {
@@ -739,20 +743,30 @@
                     });
             },
             getSuggestions(taskId) {
+                const extendedSuggestions = this.getExtendedSuggestions(taskId);
+                if (extendedSuggestions) {
+                    return this._unique(Array.prototype.concat.apply([],
+                        extendedSuggestions.inputs.map(
+                            (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
+                } else {
+                    return [];
+                }
+            },
+            getExtendedSuggestions(taskId) {
                 if (window.hasOwnProperty('TahitiAttributeSuggester')) {
-                    if (window.TahitiAttributeSuggester.processed === undefined) {
+                    if (window.TahitiAttributeSuggester.processed === undefined
+                        || this.attributeSuggestion[taskId] === undefined
+                        || this.attributeSuggestion[taskId].length === 0) {
                         this.updateAttributeSuggestion();
                     }
                     if (this.attributeSuggestion[taskId]) {
-                        return this._unique(Array.prototype.concat.apply([],
-                            this.attributeSuggestion[taskId].inputs.map(
-                                (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
+                        return this.attributeSuggestion[taskId];
                     } else {
-                        return [];
+                        return {};
                     }
                 }
             },
-            updateAttributeSuggestion(callback) {
+            updateAttributeSuggestion() {
                 let self = this;
                 let attributeSuggestion = {};
                 try {
@@ -763,9 +777,6 @@
                             });
                             Object.assign(self.attributeSuggestion, attributeSuggestion);
                             window.TahitiAttributeSuggester.processed = true;
-                            if (callback) {
-                                callback();
-                            }
                         });
                 } catch (e) {
                     console.log(e);
@@ -791,8 +802,8 @@
             saveWorkflowProperties() {
             },
             showWorkflowProperties() {
-                if (this.$refs.workflowPropertiesModal){
-                    this._retrieveClusters().then(() => 
+                if (this.$refs.workflowPropertiesModal) {
+                    this._retrieveClusters().then(() =>
                         this.$refs.workflowPropertiesModal.show());
                 }
             },
@@ -833,7 +844,7 @@
                     self._execute();
                 });
             },
-            _retrieveClusters(){
+            _retrieveClusters() {
                 const self = this;
                 return axios.get(`${standUrl}/clusters?enabled=true`, {})
                     .then((response) => {
@@ -969,7 +980,6 @@
     }
 </style>
 <style lang="scss">
-
     .toolbox {
         &:before {
             content: "";
@@ -1000,6 +1010,7 @@
         .ps__scrollbar-y-rail {
             z-index: 1;
         }
+
         &.datasource-toolbox {
             left: 200px;
         }

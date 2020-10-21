@@ -16,10 +16,10 @@
             <span class="fa fa-image"></span>
         </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
-            <span class="far fa-save"></span>
+            <span class="fa fa-save"></span>
         </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
-            <span class="far fa-copy"></span>
+            <span class="fa fa-copy"></span>
         </button>
         <button class="btn btn-sm btn-outline-dark" @click.prevent="exportWorkflow" :title="$t('actions.export')">
             <span class="fa fa-download"></span>
