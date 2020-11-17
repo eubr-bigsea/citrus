@@ -1,21 +1,22 @@
 <template>
     <div>
-        <table class="table table-sm">
-            <thead>
-                <th class="text-center" style="width:5%"></th>
-                <th class="text-center" style="width:45%">{{label}}</th>
-            </thead>
+        <div class="text-center font-weight-bold">{{label}}</div>
+        <b-radio value="1" v-model.number="innerSelectionType"> Todos os atributos prefixados</b-radio>
+        <input type="text" class="form-control" v-if="innerSelectionType === 1" v-model.number="selectionPrefix">
+        <b-radio class="mb-2 mt-3" value="3" v-model="innerSelectionType"> Nenhum atributo</b-radio>
+        <b-radio class="mb-2 mt-3" value="2" v-model.number="innerSelectionType"> Selecionar atributos</b-radio>
+        {{innerSelectionType}}
+        <table class="table table-sm table-borderless" v-if="innerSelectionType === 2">
             <tbody>
                 <tr class="table-secondary">
                     <th style="width: 10px">
                         <input type="checkbox" class="checkbox" @change="toggleChecks" :checked="allSelected" />
                     </th>
                     <th style="width: 100%">
-                        <input type="text" maxlength="20" class="form-control" placeholder="Inform the prefix"
+                        <input type="text" maxlength="20" class="form-control" placeholder="Rename selected"
                             :disabled="checked.length === 0" @keyup="changePrefix($event)" ref="prefix" />
                     </th>
                     <th style="max-width: 20px">
-
                     </th>
                 </tr>
                 <tr v-for="(s, index) in selectList" class="inputs">
@@ -40,19 +41,23 @@
     import { debounce } from '../../util.js';
     export default {
         props: {
-            suggestions: { type: Array, default: function(){return []}},
+            suggestions: { type: Array, default: function () { return [] } },
             label: { type: String },
-            selected: { type: Array, default: function(){return []}}
+            prefix: { type: String },
+            selected: { type: Array, default: function () { return [] } },
+            selectionType: { type: Number, default: 1 },
         },
         data() {
             return {
                 allSelected: true,
                 checked: [],
                 selectList: [],
+                selectionPrefix: null,
+                innerSelectionType: 1,
             }
         },
         mounted() {
-            if (this.selected.length > 0) {
+            if (this.selected && this.selected.length > 0) {
                 let counter = 0;
                 const attributesFound = new Set();
                 this.selected.forEach(item => {
@@ -76,6 +81,8 @@
                 });
                 this.checked = [...Array(this.suggestions.length).keys()];
             }
+            this.selectionPrefix = this.prefix;
+            this.innerSelectionType = this.selectionType;
         },
         methods: {
             changePrefix: debounce(function (ev) {
@@ -106,6 +113,12 @@
             },
             getSelectList() {
                 return this.selectList;
+            },
+            getPrefix(){
+                return this.selectionPrefix;
+            },
+            getSelectionType(){
+                return this.innerSelectionType;
             }
         },
     }

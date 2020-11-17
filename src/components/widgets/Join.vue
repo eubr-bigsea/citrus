@@ -12,14 +12,15 @@
             <form @submit.stop.prevent="submit" onsubmit="return false" ref="form" action="">
                 <div class="row">
                     <div class="col-md-6 border-right">
-                        <h5>{{$t('widgets.join.type')}}:</h5>
+                        <h6>{{$t('widgets.join.type')}}:</h6>
+                        
                         <select class="form-control mb-2" v-model="joinType">
                             <option value="inner">Inner</option>
-                            <option value="left outer">Left outer</option>
-                            <option value="right outer">Right outer</option>
-                            <option value="full outer">Full outer</option>
+                            <option value="left_outer">Left outer</option>
+                            <option value="right_outer">Right outer</option>
+                            <!-- <option value="full_outer">Full outer</option> -->
                         </select>
-                        <h5>{{$t('widgets.join.conditions')}}</h5>
+                        <h6>{{$t('widgets.join.conditions')}}</h6>
                         <div class="side">
                             <JoinCondition :suggestions1="suggestions1" :suggestions2="suggestions2"
                                 :conditions="valueObject.conditions" ref="condition" />
@@ -30,13 +31,17 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <h5>Seleção de atributos</h5>
+                        <h6>Seleção de atributos</h6>
                         <div ref="selection">
                             <div class="row side">
-                                <JoinSelect class="col-md-6" :selected="valueObject.leftSelect"
-                                    :suggestions="suggestions1" :label="$tc('common.input') + ' 1'" ref="leftSelect" />
-                                <JoinSelect class="col-md-6" :selected="valueObject.rightSelect"
-                                    :suggestions="suggestions2" :label="$tc('common.input') +' 2'" ref="rightSelect" />
+                                <JoinSelect class="col-md-6" :selected="valueObject.firstSelect"
+                                    :suggestions="suggestions1" :label="$tc('common.input') + ' 1'" ref="firstSelect"
+                                    :selectionType="valueObject.firstSelectionType || 1"
+                                    :prefix="valueObject.firstPrefix || 'ds1_'" />
+                                <JoinSelect class="col-md-6" :selected="valueObject.secondSelect"
+                                    :suggestions="suggestions2" :label="$tc('common.input') +' 2'" ref="secondSelect"
+                                    :selectionType="valueObject.secondSelectionType || 1"
+                                    :prefix="valueObject.secondPrefix || 'ds2_'" />
                             </div>
                         </div>
                     </div>
@@ -62,8 +67,6 @@
             LabelComponent, JoinSelect, JoinCondition
         },
         props: {
-            suggestions1: { type: Array, required: true },
-            suggestions2: { type: Array, required: true },
             modalOpened: { type: Boolean, default: false },
         },
         data() {
@@ -71,11 +74,11 @@
                 displayValue: '',
                 joinType: 'inner',
                 suggestions: [],
-                leftSelectList: [],
-                rightSelectList: [],
-                valueObject: this.value !== null && this.value.trim() !== '' ?
-                    JSON.parse(this.value) : {
-                        conditions: [], leftSelect: [], rightSelect: []
+                suggestions1: [],
+                suggestions2: [],
+                valueObject: this.value !== null ?
+                    this.value : {
+                        conditions: [], firstSelect: [], secondSelect: []
                     }
 
             }
@@ -85,9 +88,18 @@
             if (this.modalOpened) {
                 this.openModal();
             }
-            this.leftSelectList = [... this.suggestions1];
-            this.rightSelectList = [... this.suggestions2];
+            if (this.extendedSuggestionEvent) {
+                const suggestions = this.extendedSuggestionEvent();
+                this.suggestions1 = suggestions.inputs[0].attributes;
+                this.suggestions2 = suggestions.inputs[1].attributes;
+            }
+            if (this.valueObject === '') {
+                this.valueObject = {
+                    conditions: [], firstSelect: [], secondSelect: []
+                };
+            }
             this.updateDisplayValue(this.valueObject);
+            this.joinType = this.valueObject.joinType || 'inner';
         },
         methods: {
             add() {
@@ -110,7 +122,7 @@
                         b = tmp;
                     }
                     this.valueObject.conditions = a.filter((x) => b.includes(x)).map((x) => {
-                        return { left: x, right: x }
+                        return { first: x, second: x }
                     });
                 }
             },
@@ -121,23 +133,35 @@
                 }
             },
             updateDisplayValue(v) {
-                const leftName = this.$tc('common.input') + ' 1';
-                const rightName = this.$tc('common.input') + ' 2';
-                const leftSelect = v.leftSelect.filter(item => item.select)
-                    .map(item => `[${leftName}].${item.attribute} AS ${item.alias}`).join(', ');
-                const rightSelect = v.rightSelect.filter(item => item.select)
-                    .map(item => `[${rightName}].${item.attribute} AS ${item.alias}`).join(', ');
+                const firstName = this.$tc('common.input') + ' 1';
+                const secondName = this.$tc('common.input') + ' 2';
 
-                let condition = v.conditions.map(item => `[left].${item.left} = [right].${item.right}`).join(' AND ');
+                let firstSelect;
+                let secondSelect;
 
-                let select = [leftSelect, rightSelect].join(', ');
-                if (select === ', '){
+                if (this.valueObject.firstSelectionType === 2) {
+                    firstSelect = v.firstSelect.filter(item => item.select)
+                        .map(item => `[${firstName}].${item.attribute} AS ${item.alias}`).join(', \n\t');
+                } else {
+                    firstSelect = `[${firstName}].*  \t /* prefix ${this.valueObject.firstPrefix} */`;
+                }
+                if (this.valueObject.secondSelectionType === 2) {
+                    secondSelect = v.secondSelect.filter(item => item.select)
+                        .map(item => `[${secondName}].${item.attribute} AS ${item.alias}`).join(', ');
+                } else {
+                    secondSelect = `[${secondName}].*  \t/* prefix ${this.valueObject.secondPrefix} */`;
+                }
+
+                let condition = v.conditions.map(item => `[${firstName}].${item.first} = [${secondName}].${item.second}`).join('\n AND ');
+
+                let select = [firstSelect, secondSelect].join(', \n\t');
+                if (select === ', ') {
                     select = '?'
                 }
-                if (condition === ''){
+                if (condition === '') {
                     condition = '?';
                 }
-                let result = `SELECT ${select} \nFROM [${leftName}] \n${this.joinType.toUpperCase()} JOIN [${rightName}] ON ${condition}`;
+                let result = `SELECT \n\t${select} \nFROM [${firstName}] \n${this.joinType.toUpperCase()} JOIN [${secondName}] ON \n\t${condition}`;
                 this.displayValue = result;
             },
             okClicked(ev) {
@@ -150,13 +174,27 @@
             submit(ev) {
                 //const invalid = (item) => item === null || item.trim() === '';
 
-                this.valueObject.leftSelect = this.$refs.leftSelect.getSelectList();
-                this.valueObject.rightSelect = this.$refs.rightSelect.getSelectList();
+                this.valueObject.firstSelectionType = this.$refs.firstSelect.getSelectionType();
+                this.valueObject.secondSelectionType = this.$refs.secondSelect.getSelectionType();
 
+                if (this.valueObject.firstSelectionType === 2) {
+                    this.valueObject.firstSelect = this.$refs.firstSelect.getSelectList();
+                    this.valueObject.firstPrefix = null;
+                } else {
+                    this.valueObject.firstSelect = null;
+                    this.valueObject.firstPrefix = this.$refs.firstSelect.getPrefix();
+                }
+                if (this.valueObject.secondSelectionType === 2) {
+                    this.valueObject.secondSelect = this.$refs.secondSelect.getSelectList();
+                    this.valueObject.secondPrefix = null;
+                } else {
+                    this.valueObject.secondSelect = null
+                    this.valueObject.secondPrefix = this.$refs.secondSelect.getPrefix();
+                }
                 this.valueObject.conditions = this.$refs.condition.getConditions();
                 this.updateDisplayValue(this.valueObject);
-                // this.$root.$emit(this.message, this.field,
-                //     this.valueObject);
+                this.$root.$emit(this.message, this.field,
+                    this.valueObject);
                 this.$refs.modal.hide();
             },
             cancelClicked(ev) {
@@ -170,5 +208,6 @@
         height: 60vh;
         overflow-y: scroll;
         padding-bottom: 30px;
+        border-bottom: 1px solid #aaa;
     }
 </style>
