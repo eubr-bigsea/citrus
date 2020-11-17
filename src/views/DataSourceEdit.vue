@@ -40,26 +40,13 @@
                                                         <textarea v-model="dataSource.description"
                                                             class="form-control"></textarea>
                                                     </div>
-                                                    <div class="col-md-3">
+                                                    <div class="col-md-6">
                                                         <label>{{$t('common.tags')}}:</label>
                                                         <v-select v-model="customTags" multiple :close-on-select="false"
                                                             style="width: 100%" :taggable="true" class="custom">
                                                             <span slot="no-options"></span>
                                                         </v-select>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <div>
-                                                            <label>{{$tc('dataSource.treatAsNull')}}:</label>
-                                                            <v-select v-model="customTreatAsMissing" multiple
-                                                                :close-on-select="false" style="width: 100%"
-                                                                :taggable="true" class="custom">
-                                                                <span
-                                                                    slot="no-options">{{$t('messages.noMatching')}}.</span>
-                                                            </v-select>
-                                                        </div>
-                                                    </div>
-
-
                                                     <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'HIVE' || dataSource.storage.type === 'HIVE_WAREHOUSE'"
                                                         class="col-md-8 mt-3 pb-1">
                                                         <label>{{$tc('common.command')}}:</label>
@@ -124,7 +111,8 @@
                                                     <b-form-checkbox v-model="dataSource.is_first_line_header">
                                                         {{ $t('dataSource.isFirstLineHeader') }}</b-form-checkbox>
                                                 </div>
-                                                <div v-if="dataSource.storage.type !== 'HIVE' && dataSource.storage.type !== 'HIVE_WAREHOUSE'">
+                                                <div
+                                                    v-if="dataSource.storage.type !== 'HIVE' && dataSource.storage.type !== 'HIVE_WAREHOUSE'">
                                                     <b-form-checkbox v-model="dataSource.is_multiline">
                                                         {{ $t('dataSource.isMultiline') }}</b-form-checkbox>
                                                 </div>
@@ -150,6 +138,14 @@
                                                         v-model="dataSource.privacy_aware">
                                                         {{ $t('dataSource.privacyAware') }}
                                                     </b-form-checkbox>
+                                                </div>
+                                                <div>
+                                                    <label>{{$tc('dataSource.treatAsNull')}}:</label>
+                                                    <v-select v-model="customTreatAsMissing" multiple
+                                                        :close-on-select="false" style="width: 100%" :taggable="true"
+                                                        class="custom">
+                                                        <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                    </v-select>
                                                 </div>
                                             </div>
                                         </div>
@@ -731,8 +727,7 @@
             },
             _doInfer(event) {
                 const self = this;
-                const url = `${limoneroUrl}/datasources/infer-schema/${
-                    self.dataSource.id
+                const url = `${limoneroUrl}/datasources/infer-schema/${self.dataSource.id
                     }`;
                 axios
                     .post(url, {})

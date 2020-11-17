@@ -1018,10 +1018,11 @@
 
     .diagram-properties {
         width: 350px;
-        max-height: calc(100vh - 300px);
+        height: calc(100vh - 250px);
         position: fixed;
         right: 1rem;
-        bottom: calc(1rem + 25px);
+        /* bottom: calc(1rem + 25px); */
+        top: 190px;
         overflow: hidden;
         box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
     }

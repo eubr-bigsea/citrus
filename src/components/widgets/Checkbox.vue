@@ -5,7 +5,7 @@
         </div>
         <div v-else class="clearfix">
             <div class="float-left" :data-name="field.name">
-                <SwitchComponent class="float-left" :checked="checked">{{field.label || field.name}}
+                <SwitchComponent class="float-left" :checked="checked" :onchange="changed">{{field.label || field.name}}
                 </SwitchComponent>
             </div>
             <div class="float-right">

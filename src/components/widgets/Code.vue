@@ -1,13 +1,17 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
-        <prism-editor :code="value === null ? field.default: value" v-model="code"
-            :language="computedProgrammingLanguage" readonly ref="prism" disabled
-            class="prism-editor-wrapper-disabled code2" />
-
-        <b-link variant="sm" @click.prevent="showModal">
-            <span>{{$t('actions.edit')}}...</span>
-        </b-link>
+        <template v-if="readOnly">
+            {{code}}
+        </template>
+        <template v-else>
+            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <prism-editor :code="value === null ? field.default: value" v-model="code"
+                :language="computedProgrammingLanguage" readonly ref="prism" disabled
+                class="prism-editor-wrapper-disabled code2" />
+            <b-link variant="sm" @click.prevent="showModal">
+                <span>{{$t('actions.edit')}}...</span>
+            </b-link>
+        </template>
         <b-modal size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
             <div slot="default">
                 <div class="row">
@@ -95,7 +99,7 @@
         'operator': /[-+*\/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?|\b(?:AND|BETWEEN|IN|LIKE|NOT|OR|IS|DIV|REGEXP|RLIKE|SOUNDS LIKE|XOR)\b/i,
         'punctuation': /[;[\]()`,.]/
     };
-    
+
     export default {
         mixins: [Widget],
         computed: {
@@ -120,7 +124,11 @@
         mounted() {
             this.code = this.value || this.field.default || '';
             this.originalCode = this.code;
-            this.suggestions = this.suggestionEvent();
+            if (this.suggestionEvent) {
+                this.suggestions = this.suggestionEvent();
+            } else {
+                this.suggestions = [];
+            }
         },
         watch: {
             code: _.debounce(function (e) {

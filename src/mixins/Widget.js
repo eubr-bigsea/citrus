@@ -19,6 +19,9 @@ export default {
         suggestionEvent: {
             type: Function,
         },
+        extendedSuggestionEvent: {
+            type: Function,
+        },
         value: { 
             default: '',
         },

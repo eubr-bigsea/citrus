@@ -10,9 +10,9 @@
                                 {{workflow.name}}
                             </h1>
                         </div>
-                        <router-link
-                            v-if="workflow.id"
-                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}" class="btn btn-outline-primary d-print-none">
+                        <router-link v-if="workflow.id"
+                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
+                            class="btn btn-outline-primary d-print-none">
                             <i class="fa fa-chevron-left"></i>
                             &nbsp; {{$t('actions.back')}} -
                             {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
@@ -21,43 +21,46 @@
                     <div>
                         <b-tabs nav-class="custom-tab mb-0">
                             <b-tab active :title="$tc('titles.job')">
-                                    <div>
-                                        <diagram v-if="loaded" id="main-diagram" ref="diagram"
-                                            :workflow="workflow" :operations="operations" :version="job.id"
-                                            :show-toolbar="false" :editable="false"
-                                            :shink="true" :loaded="loaded" :show-task-decoration="true"
-                                            :initial-zoom=".85" />
-                                    </div>
+                                <div>
+                                    <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
+                                        :operations="operations" :version="job.id" :show-toolbar="false"
+                                        :editable="false" :shink="true" :loaded="loaded" :show-task-decoration="true"
+                                        :initial-zoom=".85" />
+                                </div>
 
-                                    
-                                    <div class="job-details">
-                                        <b-card no-body>
-                                            <b-tabs card>
-                                                <b-tab active>
-                                                    <template slot="title">
-                                                        <div id="dtl-job-status" class="job-status-circle lemonade-job margin-right"
-                                                            :class="jobStatus" :title="job.status"></div>
-                                                        {{$tc('job.logs', 2)}}
-                                                    </template>
-                                                    <div>
 
-                                                        <div class="alert" :class="{
+                                <div class="job-details">
+                                    <b-card no-body>
+                                        <b-tabs card>
+                                            <b-tab active>
+                                                <template slot="title">
+                                                    <div id="dtl-job-status"
+                                                        class="job-status-circle lemonade-job margin-right"
+                                                        :class="jobStatus" :title="job.status"></div>
+                                                    {{$tc('job.logs', 2)}}
+                                                </template>
+                                                <div>
+
+                                                    <div class="alert" :class="{
                                                             'alert-success': job.status=='COMPLETED',
                                                             'alert-danger': job.status=='ERROR',
                                                             'alert-warning': job.status=='WAITING',
                                                         }">
-                                                            {{job.status_text}}
-                                                        </div>
+                                                        {{job.status_text}}
+                                                    </div>
 
-                                                        <div class="job-step" v-for="step in job.steps" v-if="step.status!='PENDING'" :class="{'disabled': selectedTask.id && selectedTask.id !== step.task.id}">
-                                                            <div class="label" :class="step.logs[step.logs.length-1].level.toLowerCase()">
+                                                    <div class="job-step" v-for="step in job.steps"
+                                                        v-if="step.status!='PENDING'"
+                                                        :class="{'disabled': selectedTask.id && selectedTask.id !== step.task.id}">
+                                                        <div class="label"
+                                                            :class="step.logs[step.logs.length-1].level.toLowerCase()">
                                                             {{$t(`juicer.log.${step.logs[step.logs.length-1].level.toLowerCase()}`)}}
-                                                            </div>
-                                                            <h2>{{ getTask(step.task.id).name }}</h2>
+                                                        </div>
+                                                        <h2>{{ getTask(step.task.id).name }}</h2>
 
-                                                            <template v-for="log in step.logs">
-                                                                <p v-if="log.type === 'TEXT' || log.type === 'STATUS'">
-                                                                    <!--
+                                                        <template v-for="log in step.logs">
+                                                            <p v-if="log.type === 'TEXT' || log.type === 'STATUS'">
+                                                                <!--
                                                                     <span class="icon fa fa-fw" :class="{
                                                                         'running fa-sync': log.status=='RUNNING',
                                                                         'fa-spin': log.status=='RUNNING' && step.logs.length==1,
@@ -67,13 +70,14 @@
                                                                     }"></span>
                                                                     -->
 
-                                                                    <span class="date">{{log.date | formatJsonHourMinute}}</span>
-                                                                    <span class="info">{{log.message}}</span>
-                                                                </p>
-                                                            </template>
-                                                        </div>
+                                                                <span
+                                                                    class="date">{{log.date | formatJsonHourMinute}}</span>
+                                                                <span class="info">{{log.message}}</span>
+                                                            </p>
+                                                        </template>
                                                     </div>
-                                                    <!-- 
+                                                </div>
+                                                <!-- 
                                                     <div class="job-log-list">
                                                         <div id="dtl-job-status-text" class="alert alert-secondary">
                                                             {{job.status_text}}</div>
@@ -100,51 +104,50 @@
                                                         </div>
                                                     </div>
                                                     -->
-                                                </b-tab>
-                                                <b-tab v-if="job.exception_stack" :title="$t('titles.errorDetail')">
-                                                    <div style="font-size:.8em">
-                                                        <code>
+                                            </b-tab>
+                                            <b-tab v-if="job.exception_stack" :title="$t('titles.errorDetail')">
+                                                <div style="font-size:.8em">
+                                                    <code>
                               <pre>{{job.exception_stack}}</pre>
                             </code>
+                                                </div>
+                                            </b-tab>
+                                            <b-tab :title="$tc('job.details', 2)">
+                                                <dl>
+                                                    <dt>{{$t('common.date')}}</dt>
+                                                    <dd>{{job.created | formatJsonDate}}</dd>
+                                                    <dt>{{$t('common.user.name')}}</dt>
+                                                    <dd>{{job.user.name}} ({{job.user.login}})</dd>
+                                                    <dt>{{$tc('titles.cluster')}}</dt>
+                                                    <dd>{{job.cluster.name}}</dd>
+                                                </dl>
+                                            </b-tab>
+                                            <b-tab v-if="job.workflow" :title="$tc('job.parameters', 2)">
+                                                <div v-for="ttask in job.workflow.tasks" class="card" :key="ttask.id">
+                                                    <div class="card-body" style="overflow: auto">
+                                                        {{ttask.name}} ({{ttask.operation.name}})
+                                                        <table class="table table-sm table-parameters">
+                                                            <thead>
+                                                                <tr></tr>
+                                                                <tr>
+                                                                    <th>{{$tc('job.parameters', 1)}}</th>
+                                                                    <th>{{$tc('job.values', 1)}}</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr v-for="(v, k, i) in ttask.forms">
+                                                                    <td>{{v.label ? v.label : k}}</td>
+                                                                    <td>{{v.labelValue ? v.labelValue: v.value}}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
-                                                </b-tab>
-                                                <b-tab :title="$tc('job.details', 2)">
-                                                    <dl>
-                                                        <dt>{{$t('common.date')}}</dt>
-                                                        <dd>{{job.created | formatJsonDate}}</dd>
-                                                        <dt>{{$t('common.user.name')}}</dt>
-                                                        <dd>{{job.user.name}} ({{job.user.login}})</dd>
-                                                        <dt>{{$tc('titles.cluster')}}</dt>
-                                                        <dd>{{job.cluster.name}}</dd>
-                                                    </dl>
-                                                </b-tab>
-                                                <b-tab v-if="job.workflow"
-                                                    :title="$tc('job.parameters', 2)">
-                                                    <div v-for="ttask in job.workflow.tasks" class="card" :key="ttask.id">
-                                                        <div class="card-body" style="overflow: auto">
-                                                            {{ttask.name}} ({{ttask.operation.name}})
-                                                            <table class="table table-sm table-parameters">
-                                                                <thead>
-                                                                    <tr></tr>
-                                                                    <tr>
-                                                                        <th>{{$tc('job.parameters', 1)}}</th>
-                                                                        <th>{{$tc('job.values', 1)}}</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr v-for="(v, k, i) in ttask.forms">
-                                                                        <td>{{v.label ? v.label : k}}</td>
-                                                                        <td>{{v.labelValue ? v.labelValue: v.value}}
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </b-tab>
-                                            </b-tabs>
-                                        </b-card>
-                                    </div>
+                                                </div>
+                                            </b-tab>
+                                        </b-tabs>
+                                    </b-card>
+                                </div>
 
                             </b-tab>
                             <b-tab :title="$tc('job.results', 2)">
@@ -210,7 +213,7 @@
     const TaskDisplay = Vue.extend({
         props: {
             task: {},
-            simple: {default: false}
+            simple: { default: false }
         },
         render(createElement) {
             const color =
@@ -452,7 +455,14 @@
                             self.job.status_text = finalMsg;
                             if (msg.status === 'COMPLETED') {
                                 // hack
-                                window.setTimeout(() => (self.jobStatus = 'COMPLETED'), 10);
+                                window.setTimeout(() => {
+                                    self.jobStatus = 'COMPLETED';
+                                    self.job.steps.forEach(step => {
+                                        if (step.status !== 'COMPLETED'){
+                                            step.status = 'COMPLETED';
+                                        }
+                                    });
+                                }, 10);
                                 self.success(finalMsg);
                             } else if (msg.status === 'ERROR') {
                                 if (msg.exception_stack) {
@@ -474,7 +484,6 @@
     };
 </script>
 <style lang="scss">
-
     .alert {
         margin-bottom: 0 !important;
     }
@@ -557,7 +566,7 @@
             &.info {
                 color: #56C0E0;
             }
-            
+
             &.warning {
                 color: #F0AD4E;
             }
@@ -604,12 +613,24 @@
 
             .icon {
                 margin-right: .25rem;
-                &.running { color: #A5A6A8; }
-                &.completed { color: #A8CA57; }
-                &.warning { color: #F0AD4E; }
-                &.error { color: #D9534F; }
+
+                &.running {
+                    color: #A5A6A8;
+                }
+
+                &.completed {
+                    color: #A8CA57;
+                }
+
+                &.warning {
+                    color: #F0AD4E;
+                }
+
+                &.error {
+                    color: #D9534F;
+                }
             }
-            
+
             .date {
                 color: #97999B;
                 margin-right: .5rem;

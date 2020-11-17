@@ -34,6 +34,7 @@ import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
 import FilterComponent from './components/widgets/FilterEditor.vue'
 import GridCoordinatesComponent from './components/widgets/GridCoordinates.vue'
 import IntegerComponent from './components/widgets/Integer.vue'
+import JoinComponent from './components/widgets/Join.vue'
 import LookupComponent from './components/widgets/Lookup.vue'
 import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue'
 import RangeComponent from './components/widgets/Range.vue'
@@ -63,6 +64,7 @@ const widgets = new Map([
     ['filter-component', FilterComponent],
     ['grid-coordinates-component', GridCoordinatesComponent],
     ['integer-component', IntegerComponent],
+    ['join-component', JoinComponent],
     ['lookup-component', LookupComponent],
     ['percentage-component', RangeComponent],
     ['range-component', RangeComponent],
@@ -113,11 +115,11 @@ Vue.component('v-gravatar', Gravatar);
 Vue.config.productionTip = false;
 
 const options = {
-    color: '#ed8',
+    color: '#568f32',
     failedColor: '#874b4b',
     thickness: '5px',
     transition: {
-        speed: '0.2s',
+        speed: '0.5s',
         opacity: '0.2s',
         termination: 300
     },
@@ -242,28 +244,28 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
-new Vue({
+let newVue = new Vue({
     el: '#app',
     i18n,
     router,
     store,
     render: h => h(App)
 });
-// let requestCounter = 0;
-// axios.interceptors.request.use(config => {
-//     if (requestCounter === 0){
-//         newVue.$Progress.start()
-//     }
-//     requestCounter += 1
-//     return config
-// })
-// axios.interceptors.response.use(response => {
-//     requestCounter -= 1
-//     if (requestCounter === 0){
-//         newVue.$Progress.finish()
-//     }
-//     return response
-// }, (error) => {
-//     newVue.$Progress.finish()
-//     throw error
-// })
+let requestCounter = 0;
+axios.interceptors.request.use(config => {
+    if (requestCounter === 0){
+        newVue.$Progress.start()
+    }
+    requestCounter += 1
+    return config
+})
+axios.interceptors.response.use(response => {
+    requestCounter -= 1
+    if (requestCounter === 0){
+        newVue.$Progress.finish()
+    }
+    return response
+}, (error) => {
+    newVue.$Progress.finish()
+    throw error
+})

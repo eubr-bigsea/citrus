@@ -1,6 +1,6 @@
 <template>
-    <div class="properties">
-        <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true">
+    <div>
+        <div class="properties">
             <div class="props text-dark bg-light p0 mb-1">
                 <div class="border-bottom card-header special">
                     <strong>{{task.operation.name}}</strong>
@@ -19,7 +19,8 @@
                         </div>
                         <div class="col-md-3">
                             <label type="checkbox">
-                                <SwitchComponent v-model="task.enabled" :checked="task.enabled">{{$t('common.enabled')}}
+                                <SwitchComponent v-model="task.enabled" :checked="task.enabled">
+                                    {{$t('common.enabled')}}
                                 </SwitchComponent>
                             </label>
                         </div>
@@ -27,19 +28,21 @@
                 </div>
                 <div>
                     <form>
-                        <b-card no-body>
+                        <b-card no-body class="scrollable">
+                            <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true">
                             <b-tabs card v-model="tabIndex">
                                 <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0"
                                     :title="form.name" :title-link-class="'small-nav-link'">
                                     <div v-for="field in form.fields" class="mb-2 property clearfix"
                                         v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
                                         <keep-alive>
-                                            <component :is="getSuggestedWidget(field)" :field="field"
+                                            <component :is="getWidget(field)" :field="field"
                                                 :value="getValue(field.name)" :suggestionEvent="suggestionEvent"
+                                                :extendedSuggestionEvent="extendedSuggestionEvent"
                                                 :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
-                                                :read-only="!field.editable"
-                                                :lookups-method="getLookups" :lookups="lookups" context="context">
+                                                :read-only="!field.editable" :lookups-method="getLookups"
+                                                :lookups="lookups" context="context">
                                             </component>
                                         </keep-alive>
 
@@ -54,6 +57,7 @@
                                         @click.prevent="showPublishingModal()">{{$t('actions.editValue')}}</button>
                                 </b-tab>
                             </b-tabs>
+                        </VuePerfectScrollbar>
                         </b-card>
                     </form>
                     <div class="card-body">
@@ -70,7 +74,8 @@
                                     <th class="text-center" style="width: 25%">{{$tc('variables.label')}}</th>
                                     <th class="text-center" style="width: 15%">{{$tc('titles.actualValue')}}</th>
                                     <th class="text-center" style="width: 15%">{{$tc('variables.associateTo')}}</th>
-                                    <th class="text-center" style="width: 30%">{{$tc('variables.associateToLookup')}}
+                                    <th class="text-center" style="width: 30%">
+                                        {{$tc('variables.associateToLookup')}}
                                     </th>
                                 </tr>
                             </thead>
@@ -85,19 +90,19 @@
                                         </td>
                                         <td>{{field.label}}</td>
                                         <td>
-                                            <input type="text" class="form-control"
-                                                maxlength="100" v-model="task.forms[field.name].new_label"/>
+                                            <input type="text" class="form-control" maxlength="100"
+                                                v-model="task.forms[field.name].new_label" />
                                         </td>
-                                        <td> 
+                                        <td>
                                             <component :is="field.suggested_widget + '-component'" :field="field"
                                                 :value="getValue(field.name)" :type="field.suggested_widget"
                                                 context="context" :read-only="true">
                                             </component>
                                         </td>
                                         <td>
-                                            <v-select :options="variableNames"
-                                                :multiple="false" v-model="task.forms[field.name].variable" value="name"
-                                                label="name" :taggable="true" :close-on-select="true">
+                                            <v-select :options="variableNames" :multiple="false"
+                                                v-model="task.forms[field.name].variable" value="name" label="name"
+                                                :taggable="true" :close-on-select="true">
                                                 <div slot="no-options"></div>
                                             </v-select>
                                         </td>
@@ -116,7 +121,7 @@
                     </div>
                 </b-modal>
             </div>
-        </VuePerfectScrollbar>
+        </div>
     </div>
 </template>
 <script>
@@ -158,8 +163,8 @@
             }
         },
         methods: {
-            getSuggestedWidget(field){
-                if (field.suggested_widget.endsWith(':read-only')){
+            getWidget(field) {
+                if (field.suggested_widget.endsWith(':read-only')) {
                     const s = field.suggested_widget;
                     return s.substring(0, s.length - 10) + '-component';
                 } else {
@@ -208,10 +213,10 @@
                     const conditional = /\bthis\..+?\b/g;
                     self.forms.forEach((f, i) => {
                         f.fields.forEach((field) => {
-                            if (self.task && self.task.forms[field.name]){
+                            if (self.task && self.task.forms[field.name]) {
                                 Vue.set(field, "internalValue", self.task.forms[field.name].value);
-                                if (! self.task.forms[field.name]['new_label']){
-                                    Vue.set(self.task.forms[field.name], "new_label", 
+                                if (!self.task.forms[field.name]['new_label']) {
+                                    Vue.set(self.task.forms[field.name], "new_label",
                                         self.task.forms[field.name].label);
                                 }
                             }
@@ -268,6 +273,7 @@
         props: {
             task: { type: Object, default: {} },
             suggestionEvent: null,
+            extendedSuggestionEvent: { type: Function },
             publishingEnabled: false,
             variables: { type: Array, default: () => [] }
         },
@@ -282,6 +288,7 @@
     .table-sm {
         font-size: .8em;
     }
+
     .property-help {
         font-size: 1.2em;
     }
@@ -296,7 +303,7 @@
 
     .props {
         width: 350px;
-        height: calc(100vh - 200px);
+        height: calc(100vh - 100px);
     }
 
     .properties {
@@ -304,6 +311,9 @@
         max-height: calc(100vh - 300px);
         zoom: 100%;
         font-size: .75rem
+    }
+    .scrollable {
+        max-height: calc(100vh - 420px);
     }
 </style>
 <style>

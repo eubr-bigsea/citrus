@@ -51,6 +51,7 @@
     export default {
         mixins: [Notifier],
         data() {
+            const self = this;
             return {
                 columns: [
                     'id',
@@ -90,13 +91,13 @@
                         data.fields = 'id,name,platform,updated,user,version,description,publishing_status';
 
                         let url = `${tahitiUrl}/workflows?enabled=1&track=1`;
-                        this.$Progress.start();
+                        //this.$Progress.start();
                         return axios
                             .get(url, {
                                 params: data
                             })
                             .then(resp => {
-                                this.$Progress.finish();
+                                //this.$Progress.finish();
                                 return {
                                     data: resp.data.data,
                                     count: resp.data.pagination.total
@@ -104,8 +105,8 @@
                             })
                             .catch(
                                 function (e) {
-                                    this.$Progress.finish();
-                                    this.error(e);
+                                    //this.$Progress.finish();
+                                    self.error(e);
                                 }.bind(this)
                             );
                     },
@@ -120,9 +121,6 @@
                 }
             };
         },
-        mounted() {
-        },
-        /* Methods */
         methods: {
             clearFilters() {
                 this.$refs.workflowList.setFilter('');
