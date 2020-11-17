@@ -317,7 +317,7 @@
                         lang: this.$root.$i18n.locale,
                         workflow: workflow.id,
                         disabled: true, // even disabled operations must be returned to keep compatibility
-                        ts: new Date().getDate() // in order to avoid cache
+                        ts: new Date().getTime() // in order to avoid cache
                     };
                     axios
                         .get(`${tahitiUrl}/operations`, { params })
