@@ -33,7 +33,7 @@ const Template = (args, { argTypes }) => ({
       onUpdateFieldAction(field, value);
     }
   },
-  template: `<div><expression-editor-component :value="currentValue" :field="field"
+  template: `<div><vue-snotify /><expression-editor-component :value="currentValue" :field="field"
         :read-only="readOnly" v-on:update-form-field-value="onUpdateField"/></div>`
 });
 export const WithValue = Template.bind({});

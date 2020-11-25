@@ -11,7 +11,7 @@
             <div class="context-help" :class="{'d-none': !help}" v-html="help"
                 :style="{top: positionTop + 'px', left: positionLeft + 'px'}">
             </div>
-            <div class="row">
+            <div class="row" @click="closeTooltip">
                 <div class="col-md-4 reference">
                     <h6>Referência</h6>
                     <b-tabs card>
@@ -25,56 +25,78 @@
                             </select>
                             <div class="function-help" v-html="currentFunctionHelp"> </div>
                         </b-tab>
-                        <b-tab title="Atributos"></b-tab>
+                        <b-tab title="Atributos">
+                            <select class="form-control shadow-none" size="18">
+                                <option v-for="sg in suggestions">{{sg}}</option>
+                            </select>
+                        </b-tab>
+                        <b-tab title="Operadores" class="p-0">
+                            <table class="table operators-table table-sm table-borderless" v-if="operators">
+                                <template v-for="(group, groupName) in operators">
+                                    <tr>
+                                        <th colspan="2">{{groupName}}</th>
+                                    </tr>
+                                    <tr v-for="(description, op) in group">
+                                        <td style="width:20px" class="text-center">{{op}}</td>
+                                        <td>{{description}}</td>
+                                    </tr>
+                                </template>
+                            </table>
+                        </b-tab>
                     </b-tabs>
                 </div>
                 <div class="col-md-8">
-                    <table class="table table-sm expression-table" v-if="expressionList && expressionList.length">
-                        <thead>
-                            <th> {{$t('property.expression.title')}}</th>
-                            <th v-if="values.alias !== false"> {{$t('property.expression.alias')}}</th>
-                            <th style="width:12%"></th>
-                        </thead>
-                        <tbody>
-                            <template v-for="(row, index) in expressionList">
-                                <tr>
-                                    <td class="expression-editor-area autocomplete">
-                                        <input type="text" class="form-control" :class="{'text-danger': row.error}"
-                                            @keyup="onKeyUp($event, row, 'expression')" ref="expr"
-                                            @blur="elementBlur(row, $event)" @paste="changed($event, row, 'expression')"
-                                            :value="row.expression" />
-                                        <ul v-show="isOpen" class="autocomplete-results">
-                                            <li v-for="(result, i) in suggestionResults" :key="i"
-                                                @click="setResult(result)" class="autocomplete-result"
-                                                :class="{ 'is-active': i === arrowCounter }">
-                                                {{ result }}
-                                            </li>
-                                        </ul>
-                                        <small class="label text-danger">{{row.error}}&nbsp;</small>
-                                        <!-- <small>{{row}}</small> -->
-                                    </td>
-                                    <td v-if="values.alias !== false" style="width: 35%">
-                                        <input class="form-control" :value="row.alias"
-                                            @change="updated($event, row, 'alias')" />
-                                    </td>
-                                    <td style="width:2%" class="text-center">
-                                        <a href="#" @click.prevent="remove($event, index)">
-                                            <span class="fa fa-minus-circle text-danger"></span>
-                                        </a>
-                                    </td>
-                                </tr>
+                    <form v-if="expressionList && expressionList.length" onsubmit="return false" ref="form" action="">
+                        <table class="table table-sm expression-table">
+                            <thead>
+                                <th> {{$t('property.expression.title')}}</th>
+                                <th v-if="values.alias !== false"> {{$t('property.expression.alias')}}</th>
+                                <th style="width:12%"></th>
+                            </thead>
+                            <tbody>
+                                <template v-for="(row, index) in expressionList">
+                                    <tr>
+                                        <td class="expression-editor-area autocomplete">
+                                            <input type="text" class="form-control" :class="{'text-danger': row.error}"
+                                                @keyup="onKeyUp($event, row, 'expression')" ref="expr"
+                                                @blur="elementBlur(row, $event)"
+                                                @paste="changed($event, row, 'expression')" :value="row.expression"
+                                                required @dblclick="debugExpression(row)" />
+                                            <ul v-show="isOpen" class="autocomplete-results">
+                                                <li v-for="(result, i) in suggestionResults" :key="i"
+                                                    @click="setResult(result)" class="autocomplete-result"
+                                                    :class="{ 'is-active': i === arrowCounter }">
+                                                    {{ result }}
+                                                </li>
+                                            </ul>
+                                            <small class="label text-danger" v-html="row.error"></small>
+                                            <!-- <small>{{row}}</small> -->
+                                        </td>
+                                        <td v-if="values.alias !== false" style="width: 20%">
+                                            <input class="form-control" :value="row.alias" required
+                                                @change="updated($event, row, 'alias')" />
+                                        </td>
+                                        <td style="width:2%" class="text-center">
+                                            <a href="#" @click.prevent="remove($event, index)"
+                                                class="btn btn-danger btn-sm">
+                                                <!-- <span class="fa fa-minus-circle text-danger"></span> -->
+                                                <font-awesome-icon icon="trash"></font-awesome-icon>
+                                            </a>
+                                        </td>
+                                    </tr>
 
-                            </template>
-                        </tbody>
-                    </table>
+                                </template>
+                            </tbody>
+                        </table>
+                    </form>
                     <div v-else class="border pt-5 pb-5 pl-3">
                         <div class="label label-info">{{$t('property.noExpressions')}}</div>
                     </div>
 
                 </div>
                 <div class="col-md-12">
-                        <button class="btn btn-success btn-sm float-right" @click.prevent="add">
-                            <span class="fa fa-plus"></span> {{$t('actions.simpleAdd')}}</button>
+                    <button class="btn btn-success btn-sm float-right" @click.prevent="add">
+                        <span class="fa fa-plus"></span> {{$t('actions.simpleAdd')}}</button>
                 </div>
                 <!-- <div class="col-md-4 border-left">
                     <strong>{{$tc('property.expression.availableAttribute', 2)}}:</strong>
@@ -109,9 +131,10 @@
     import { debounce } from '../../util.js';
     import functionsHelp from '../../i18n/functions.js';
     import TreeItemComponent from '../TreeItem.vue';
+    import Notifier from '../../mixins/Notifier';
 
     export default {
-        mixins: [Widget],
+        mixins: [Widget, Notifier],
         computed: {
             displayValue() {
                 if (this.value && this.value.map) {
@@ -144,6 +167,7 @@
                 isOpen: false,
                 arrowCounter: 0,
                 treeData: [],
+                operators: [],
                 displayFunctions: [],
                 currentFunctionHelp: null,
             }
@@ -179,13 +203,20 @@
                         }
                     } catch (e) {
                         const error = e.toString();
-                        let position = error.substring(error.lastIndexOf("at "), error.length);
+                        const pos = error.lastIndexOf("at ");
+                        let position = error.substring(pos, error.length);
                         position = position.replace('at character', this.$t('widgets.expressionEditor.atPosition'))
                         if (error.includes("Unclosed quote")) {
                             row['error'] = this.$t('widgets.expressionEditor.unclosedQuoteAfter') +
                                 ' ' + position;
+                        } else if (error.includes("Expected expression")) {
+                            row['error'] = this.$t('widgets.expressionEditor.expectedExpression') +
+                                ' ' + position;
                         } else if (error.includes("Expected")) {
                             row['error'] = this.$t('widgets.expressionEditor.expected') +
+                                ' <b>' + error.substring(16, pos) + '</b> ' + position;
+                        } else if (error.includes("Unexpected")) {
+                            row['error'] = this.$t('widgets.expressionEditor.unexpected') +
                                 ' ' + position;
                         } else {
                             row['error'] = error;
@@ -193,13 +224,24 @@
                     }
                 }
             },
+            validate() {
+                return this.expressionList.filter(expr => {
+                    return !(expr.expression && (!this.values.alias || expr.alias) && !expr.error);
+                }).length == 0;
+            },
             okClicked(e) {
-                this.$root.$emit(this.message, this.field,
-                    this.expressionList);
+                const result = this.$refs.form.reportValidity() & this.validate();
+                if (result) {
+                    this.$root.$emit(this.message, this.field,
+                        this.expressionList);
 
-                this.$emit(this.message, this.field, this.expressionList);
+                    this.$emit(this.message, this.field, this.expressionList);
 
-                this.$refs.modal.hide();
+                    this.$refs.modal.hide();
+                } else {
+                    this.error(null, this.$t('errors.missingRequiredValueOrInvalid'));
+                }
+                return result;
             },
             cancelClicked(e) {
                 this.expressionList = this.expressionList = this.value && this.value.map
@@ -223,6 +265,9 @@
                     return this.changed(e, row, attr);
                 }
             },
+            closeTooltip() {
+                this.help = '';
+            },
             changed: debounce(function (e, row, attr) {
                 const pos = e.target.selectionStart;
                 const value = e.target.value;
@@ -244,9 +289,9 @@
                 return true;
             }, 100),
             add(e) {
-                // if (this.expressionList === null || this.expressionList === '') {
-                //     this.expressionList = [];
-                // }
+                if (this.expressionList === null || this.expressionList === '') {
+                    this.expressionList = [];
+                }
                 this.expressionList.push({
                     alias: '', expression: '', error: '', tree: ''
                 });
@@ -302,6 +347,10 @@
                     current = event.target.value;
                 }
                 this.currentFunctionHelp = functionsHelp[this.$i18n.locale].functions[current];
+            },
+            debugExpression(row) {
+                console.debug(row);
+                console.debug(JSON.stringify(row));
             }
         },
         props: {
@@ -311,6 +360,7 @@
         mounted() {
             const resources = functionsHelp[this.$i18n.locale];
             this.treeData = resources.tree.functions.sort((a, b) => a.name.localeCompare(b.name));
+            this.operators = resources.operators;
             this.updateDisplayedFunctions('all');
         }
     }
@@ -321,8 +371,12 @@
         position: relative;
     }
 
-    .expression-editor-area textarea {
+    .expression-editor-area textarea{
         font-size: 9pt;
+    }
+    table.operators-table td, table.operators-table th {
+        font-size: 9pt;
+        padding: 1px 4px;
     }
 
     .context-help {

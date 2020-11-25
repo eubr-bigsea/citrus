@@ -384,6 +384,14 @@
 
                                 if (f.lookup) {
                                     f.suggested_widget = 'sample-lookup';
+                                } else {
+                                    switch(f.type){
+                                        case 'INTEGER':
+                                            f.suggested_widget = 'integer';
+                                            break;
+                                        case 'DECIMAL':
+                                            break;
+                                    }
                                 }
                             });
                         }

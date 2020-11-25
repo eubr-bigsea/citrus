@@ -2,7 +2,7 @@
     <div class="join-editor">
         <span>
             <LabelComponent :field="field" :value="value"></LabelComponent>
-            <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
+            <textarea disabled :value="displayValue" class="form-control" rows="8"></textarea>
             <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
                 {{$t('actions.chooseOption')}}
             </b-link>
@@ -90,8 +90,10 @@
             }
             if (this.extendedSuggestionEvent) {
                 const suggestions = this.extendedSuggestionEvent();
-                this.suggestions1 = suggestions.inputs[0].attributes;
-                this.suggestions2 = suggestions.inputs[1].attributes;
+                if (suggestions.inputs[0])
+                    this.suggestions1 = suggestions.inputs[0].attributes;
+                if (suggestions.inputs[1])
+                    this.suggestions2 = suggestions.inputs[1].attributes;
             }
             if (this.valueObject === '') {
                 this.valueObject = {
@@ -142,19 +144,19 @@
                 if (this.valueObject.firstSelectionType === 2) {
                     firstSelect = v.firstSelect.filter(item => item.select)
                         .map(item => `[${firstName}].${item.attribute} AS ${item.alias}`).join(', \n\t');
-                } else {
+                } else if (this.valueObject.firstSelectionType === 1) {
                     firstSelect = `[${firstName}].*  \t /* prefix ${this.valueObject.firstPrefix} */`;
                 }
                 if (this.valueObject.secondSelectionType === 2) {
                     secondSelect = v.secondSelect.filter(item => item.select)
                         .map(item => `[${secondName}].${item.attribute} AS ${item.alias}`).join(', ');
-                } else {
+                } else if (this.valueObject.secondSelectionType === 1) {
                     secondSelect = `[${secondName}].*  \t/* prefix ${this.valueObject.secondPrefix} */`;
                 }
 
                 let condition = v.conditions.map(item => `[${firstName}].${item.first} = [${secondName}].${item.second}`).join('\n AND ');
 
-                let select = [firstSelect, secondSelect].join(', \n\t');
+                let select = [firstSelect, secondSelect].filter(v => v).join(', \n\t');
                 if (select === ', ') {
                     select = '?'
                 }

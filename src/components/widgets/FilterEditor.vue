@@ -11,14 +11,18 @@
         <b-modal ref="modal" size="xl" :title="$tc('common.filter', 2)" centered :ok-only="true" modal-class="">
             <div class="row">
                 <div class="col-md-4">
-                    <div class="values border p-2">
-                        <div v-for="(row, index) in valueList" class="border-bottom">
-                            <a href="#" @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')">
-                                <span class="fa fa-minus-circle"></span>
-                            </a>&nbsp;
-                            <a href="#" @click.prevent="select(row)"><span class="fa fa-edit"></span></a>
-                            <small>{{row.name}}
-                                <span v-if="row.label">({{row.label}})</span></small>
+                    <div class="values p-2 border">
+                        <div v-for="(row, index) in valueList" class="mb-1 clear-fix">
+                            <small>{{row.name || 'Selecione o atributo'}}
+                                <span v-if="row.label">({{row.label}})</span>
+                            </small>
+                            <a href="#" @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')"
+                                class="ml-1 float-right btn btn-sm py-0 btn-danger">
+                                <span class="fa fa-trash"></span>
+                            </a>
+                            <a href="#" @click.prevent="select(row)"
+                                class="ml-1 float-right btn btn-sm btn-success py-0"><span
+                                    class="fa fa-edit"></span></a>
                         </div>
                     </div>
                 </div>
@@ -27,8 +31,8 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <label>{{$t('variables.attribute')}}</label>
-                                <select v-model="selected.name" @change="selectAttribute" class="form-control"
-                                    ref="name">
+                                <select v-model="selected.name" class="form-control" ref="name"
+                                    @change="selectAttribute">
                                     <option></option>
                                     <option v-for="suggestion in suggestions" :key="suggestion">{{suggestion}}</option>
                                 </select>
@@ -82,11 +86,15 @@
                             </div>
                             <div class="col-md-8">
                                 <label>{{$t('variables.associateToLookup')}}</label>
-                                <v-select :options="lookups" :multiple="false" v-model="selected.lookup" height="25px"
+                                <!-- <v-select :options="lookups" :multiple="false" v-model="selected.lookup" height="25px"
                                     :create-option="ds => ({ ds, id: null })" :reduce="option => option.id" label="name"
                                     :taggable="true" :close-on-select="true">
                                     <div slot="no-options"></div>
-                                </v-select>
+                                </v-select> -->
+                                <select class="form-control" v-model="selected.lookup">
+                                    <option></option>
+                                    <option v-for="opt in lookups" :key="opt.id" :value="opt.id">{{opt.name}}</option>
+                                </select>
                             </div>
                             <div class="col-md-12">
                                 <label>{{$t('variables.help')}}</label>
@@ -119,8 +127,10 @@
     import vSelect from "vue-select";
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
+    import Notifier from '../../mixins/Notifier';
+
     export default {
-        mixins: [Widget],
+        mixins: [Widget, Notifier],
         computed: {
             parameters() {
                 return JSON.parse(this.field.values);
@@ -136,6 +146,7 @@
                 showModal: false,
                 valueList: JSON.parse(JSON.stringify(this.value || [])),
                 ok: this.okClicked,
+                lookups: [],
                 cancel: this.cancelClicked,
                 suggestions: [],
                 selected: null,
@@ -151,12 +162,16 @@
             this.updateDisplayValue(this.value);
         },
         methods: {
-            selectAttribute() {
-                let name = this.selected.name;
+            selectAttribute(row) {
+                let name;
                 let counter = 0;
-                while (this.valueList.find(v => v.id === name)) {
-                    name = row.name + '_' + counter;
+                do {
+                    name = this.selected.name + '_' + counter;
                     counter++;
+                } while (this.valueList.find(v => v.id === name));
+                if (!this.selected.label) {
+                    this.selected.label = this.selected.name.charAt(0).toUpperCase() 
+                        + this.selected.name.slice(1).replace('-', ' ');
                 }
                 this.selected.id = name;
             },
@@ -166,7 +181,7 @@
                     this.suggestions = this.suggestionEvent();
                 }
                 if (this.lookupsMethod) {
-                    this.lookupsMethod();
+                    this.lookups = this.lookupsMethod();
                 }
             },
             updateDisplayValue(v) {
@@ -182,7 +197,7 @@
                     ['user', ' ? '],
                 ]);
                 if (v) {
-                    this.displayValue = v.map((v) => v.name + ops.get(v.operator) + "?").join('\n')
+                    this.displayValue = v.map((v) => (v.name || '') + (ops.get(v.operator) || '') + "?").join('\n')
                 } else {
                     this.displayValue = '';
                 }
@@ -194,7 +209,7 @@
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
-                const value = { id: '', attribute: '' };
+                const value = { id: '', name: '', operator: 'eq', multiplicity: 'OPTIONAL' };
                 this.selected = value;
                 this.valueList.push(value);
             },
@@ -206,17 +221,28 @@
                 return false;
             },
             okClicked(ev) {
-                this.$root.$emit(this.message, this.field,
-                    this.valueList);
-                this.$refs.modal.hide();
-                this.updateDisplayValue(this.valueList);
+                if (this.validate()) {
+                    this.$root.$emit(this.message, this.field,
+                        this.valueList);
+                    this.$refs.modal.hide();
+                    this.updateDisplayValue(this.valueList);
+                } else {
+                    this.error(null, this.$t('errors.missingRequiredValue'));
+                }
             },
             cancelClicked(ev) {
                 this.$refs.modal.hide();
+            },
+            validate() {
+                const r = this.valueList.filter(v => {
+                    return !(v.name && v.label &&
+                        v.operator && v.type);
+                }).length == 0;
+                return r;
             }
         },
         props: {
-            lookups: { type: Array, default: () => [] },
+            // lookups: { type: Array, default: () => [] },
             lookupsMethod: null
         },
     }
@@ -224,7 +250,8 @@
 <style>
     div.values {
         height: 300px;
-        min-height: 300px;;
+        min-height: 300px;
+        ;
         overflow: auto;
     }
 
