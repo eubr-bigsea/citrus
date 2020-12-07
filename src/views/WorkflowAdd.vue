@@ -22,7 +22,7 @@
                           <template v-for="platform in platforms">
                           <tr class="d-flex">
                             <td class="col-3">
-                              <b-form-radio v-if="platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)" :value="platform.id" name="platform" v-model="selectedPlatform" >
+                              <b-form-radio v-if="platform.subsets && platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)" :value="platform.id" name="platform" v-model="selectedPlatform" >
                                 {{platform.name}}
                               </b-form-radio>
                               <div v-else>
@@ -33,7 +33,7 @@
                               <small>{{platform.description}}.</small>
                             </td>
                           </tr>
-                          <tr v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
+                          <tr v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && platform.subset" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
                             <td class="col-1">{{selectedSubset}}</td>
                             <td class="col-11">
                               <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" @change="selectOptions(true, platform.id)">
