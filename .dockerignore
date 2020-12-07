@@ -3,5 +3,7 @@ node_modules
 tmp
 tests
 dist
-\.*
 .git
+venv*
+*.swp
+.vscode
