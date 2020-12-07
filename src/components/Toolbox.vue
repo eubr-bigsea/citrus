@@ -1,12 +1,15 @@
 <template>
-    <div id="sidebar-container">
+    <div class="lemonade-toolbox">
         <VuePerfectScrollbar class="scroll-area" :settings="settings">
-            <div >
+            <div>
                 <ul class="list-group">
                     <li
                         class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
                         <input v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')"
                             @input="searchOperation" />
+                    </li>
+                    <li v-if="loading" class="text-center m-2">
+                        <font-awesome-icon icon="spinner" pulse class="fa-2x icon"></font-awesome-icon> 
                     </li>
                     <div v-if="search === ''" class="menu">
                         <div v-for="(group, index) in groupedOperations" :key="group.group" :title="group.order"
@@ -27,7 +30,8 @@
                                         :title="op.operation.name">
                                         <a class="list-group-item truncate list-group-item-action text-dark OLE"
                                             draggable="true" :data-id="op.operation.id" href="javascript:void(0)"
-                                            @dblclick.prevent="dbClickAddTask" @dragstart="startDrag" @dragend="stopDrag">
+                                            @dblclick.prevent="dbClickAddTask" @dragstart="startDrag"
+                                            @dragend="stopDrag">
                                             <span :data-id="op.operation.id" :title="op.operation.name"
                                                 v-text="op.operation.name"></span>
                                             <span class="fa fa-bars fa-1x float-right"></span>
@@ -87,11 +91,12 @@
                 </ul>
             </div> -->
         </VuePerfectScrollbar>
-        <div ref="opDrag"></div>
+        <div class="drag-template" ref="opDrag"></div>
     </div>
 </template>
 <script>
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+    import ToolboxMixin from '../mixins/Toolbox';
     const groupBy = function (xs, keySelector) {
         return xs.reduce(function (rv, x) {
             var key = keySelector(x);
@@ -102,11 +107,16 @@
     };
 
     export default {
+        mixins: [ToolboxMixin],
         name: 'Toolbox',
         components: {
             VuePerfectScrollbar
         },
         props: {
+            loading: {
+                type: Boolean,
+                default: () => true
+            },
             operations: {
                 type: Array,
                 default: () => {
@@ -136,12 +146,9 @@
             };
         },
         computed: {
-            tasks() {
-                return this.workflow.tasks;
-            },
             groupedOperations() {
                 const ops = this.operations
-                    .filter(op => op.enabled)
+                    .filter(op => op.enabled && op.type !== 'SHORTCUT')
                     .map(op => {
                         const group = op.categories.find(cat => {
                             return cat.type === 'group';
@@ -166,7 +173,7 @@
                     if (a.default_order > b.default_order) return 1;
                     const groupCompare = a.group.localeCompare(b.group);
                     if (groupCompare != 0) return groupCompare;
-                    return a.subGroup? a.subGroup.localeCompare(b.subGroup) : -1;
+                    return a.subGroup ? a.subGroup.localeCompare(b.subGroup) : -1;
                 });
                 let grouped = [...groupBy(ops, x => x.group)].map(item => {
                     if (item[1][0].subGroup === '') {
@@ -196,7 +203,7 @@
                                     if (a.subGroupOrder > b.subGroupOrder) return 1;
                                     if (a.subGroupDefaultOrder < b.subGroupDefaultOrder) return -1;
                                     if (a.subGroupDefaultOrder > b.subGroupDefaultOrder) return 1;
-                                    return a.subGroup? a.subGroup.localeCompare(b.subGroup): -1;
+                                    return a.subGroup ? a.subGroup.localeCompare(b.subGroup) : -1;
                                 })
                         };
                     }
@@ -217,22 +224,6 @@
             }
         },
         methods: {
-            startDrag(event) {
-                const target = event.target;
-                let crt = this.$refs.opDrag;
-                crt.innerHTML = target.innerHTML;
-
-                crt.classList.add('dragging');
-                crt.classList.add('operation');
-                crt.style.position = 'absolute';
-                crt.style.left = '-1000px';
-                event.dataTransfer.setData('id', target.dataset.id);
-
-                event.dataTransfer.setDragImage(crt, 0, 0);
-            },
-            stopDrag(event) {
-                event.target.classList.remove('draggable');
-            },
             toggle(e) { },
             searchOperation: _.debounce(function () {
                 let search = this.search
@@ -255,142 +246,6 @@
                 });
                 return result;
             },
-            dbClickAddTask(ev) {
-                const target = ev.target;
-                const dataTransfer = new DataTransfer();
-                const diagram = document.getElementById('lemonade-diagram');
-                let self = this;
-                let elem = diagram;
-
-                if (self.selectedTask.id) {
-                    elem = document.getElementById(self.selectedTask.id);
-                    dataTransfer.setData('tryConnections', self.selectedTask.id);
-                } else if (self.tasks.length) {
-                    const index = self.tasks.length - 1;
-                    const lastTaskId = self.tasks[index].id;
-                    elem = document.getElementById(lastTaskId);
-                }
-                let rect = elem.getBoundingClientRect();
-
-                let offsetLeft = rect.left + 250 //Math.floor(Math.random() * 300);
-                let offsetTop = rect.top //Math.floor(Math.random() * 50);
-
-                dataTransfer.setData('id', target.dataset.id);
-                diagram.dispatchEvent(
-                    new DragEvent('drop', {
-                        dataTransfer: dataTransfer,
-                        clientX: offsetLeft,
-                        clientY: offsetTop
-                    })
-                );
-                return false;
-            }
         }
     };
 </script>
-<style scoped lang="scss">
-    .scroll-area {
-        width: 100%;
-        max-height: calc(100vh - 300px);
-    }
-
-    .list-group {
-        font-size: 0.75rem;
-    }
-
-    .list-group-item {
-        border: none;
-        border-bottom: 1px solid rgba(0,0,0,.125);
-    }
-
-    .list-group-item.truncate {
-        width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    [draggable='true'] {
-        user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        cursor: move; /* fallback if grab cursor is unsupported */
-        cursor: grab;
-        cursor: -moz-grab;
-        cursor: -webkit-grab;
-    }
-
-    .dragging {
-        display: block;
-        width: 120px;
-        height: 50px;
-        font-size: 8pt;
-        background-color: #fff;
-        border: 1px solid #222;
-        font-family: Verdana, Tahoma, Geneva, sans-serif;
-        text-align: center;
-        transform: rotate(90deg);
-    }
-
-    .collapsed>.when-opened,
-    :not(.collapsed)>.when-closed {
-        display: none;
-    }
-    .menu button {
-        font-size: 9pt;
-    }
-    /* MENU BORDERS */
-    .menu>div .list-group-item {
-        border-radius: 0 !important;
-
-        .btn-secondary:hover {
-            border: none;
-        }
-    }
-
-    .menu>div:last-child span:last-child .list-group-item {
-        border-bottom-left-radius: 0.25rem !important;
-        border-bottom-right-radius: 0.25rem !important;
-    }
-
-    /* MENU COLORS & ALIGNMENT
-     group */
-    .menu a[data-parent='submenus'] {
-        padding-left: 14px;
-    }
-
-    /* group > subgroup */
-    .menu a[data-parent='submenus']>strong {
-        padding-left: 8px !important;
-    }
-
-    /* group > subgroup */
-    .menu div[data-parent='submenus']>div>div>button {
-        padding-left: 32px;
-        background-color: #f5f6f8;
-    }
-
-    /* group > subgroup > operation */
-    .menu div[data-parent='submenus']>div>div>div>button {
-        padding-left: 34px;
-        background-color: #f5f6f8 !important;
-        border-bottom: 0;
-    }
-
-    /* group > operation */
-    .menu div[data-parent='submenus']>div>span>button {
-        padding-left: 32px;
-        background-color: #f5f6f8;
-        border-bottom: 0;
-    }
-
-    /* -- MENU LAST ITEMS */
-    .menu>div:last-child>div[data-parent='submenus']>div>span:last-child>button {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-    }
-
-    .menu>div:last-child>div[data-parent='submenus']>div>div:last-child>div:last-child>button {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-    }
-</style>

@@ -1,18 +1,12 @@
 <template>
     <div v-if="readOnly">
-        <span>{{value ? value.join(', '): ''}}</span> 
+        <span>{{value ? value.join(', '): ''}}</span>
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="multiple">
             <textarea readonly :value="value ? value.join(', '): ''" class="form-control pointer"
                 @click.prevent="openModal"></textarea>
-            <!--
-            <a href="#" @click.prevent="openModal">
-                <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
-                <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
-            </a>
-            -->
             <b-modal size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal"
                 no-fade>
                 <div slot="default">
@@ -65,9 +59,8 @@
             </b-modal>
         </div>
         <div v-else>
-            <v-select :options="suggestions" :multiple="multiple" :value.sync="value" :on-change="updated"
-                :taggable="true" :closeOnSelect="true">
-                <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
+            <v-select :options="suggestions" :multiple="false" v-model="select2Value" @input="updated" :taggable="true"
+                :closeOnSelect="true">
             </v-select>
         </div>
     </div>
@@ -85,21 +78,10 @@
         },
         computed: {
             multiple() {
-                return true;
-                /*
-                if (this.field && this.field.values){
-                    return JSON.parse(this.field.values).multiple !== false;
-                } else {
-                    return {};
-                }
-                */
+                return this.fieldParameters.multiple !== false
             },
             params() {
-                let result = null;
-                if (this.field.values) {
-                    result = JSON.parse(this.field.values);
-                }
-                return result;
+                return this.fieldParameters;
             },
             available() {
                 return this.suggestions.filter(x => this.value === null || !this.value.includes(x));
@@ -116,12 +98,20 @@
         data() {
             return {
                 extra: '',
+                select2Value: '',
                 originalValue: { default: [] },
                 suggestions: [],
+                fieldParameters: {}
             }
         },
         mounted() {
             this.originalValue = [... (this.value || [])];
+            if (this.field && this.field.values) {
+                this.fieldParameters = JSON.parse(this.field.values);
+            }
+            if (this.fieldParameters.multiple === false && this.suggestionEvent) {
+                this.suggestions = this.suggestionEvent();
+            }
         },
         methods: {
             add() {
@@ -177,7 +167,6 @@
         },
         props: {
             single: { default: false },
-            parentId: null,
         },
     }
 </script>
@@ -197,31 +186,6 @@
 
     div.options.left {
         height: 250px;
-    }
-
-
-    /* width */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    /* Track */
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-        background: #888;
-    }
-
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
-
-    .bold {
-        font-weight: bold;
     }
 
     div.actions>button {

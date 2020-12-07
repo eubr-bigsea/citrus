@@ -3,7 +3,21 @@ import Vuex from 'vuex';
 import axios from 'axios';
 
 Vue.use(Vuex);
-
+const FEATURES_PERMISSIONS = {
+    APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
+    DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
+        'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
+    DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
+        'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
+        'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
+    DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
+    JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
+    SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
+    USER_PERMISSIONS: ['USER_MANAGE'],
+    WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
+        'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
+        'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
+}
 export default new Vuex.Store({
     state: {
         status: '',
@@ -11,37 +25,37 @@ export default new Vuex.Store({
         user: JSON.parse(localStorage.getItem('user') || '{}')
     },
     mutations: {
-        auth_request (state) {
+        auth_request(state) {
             state.status = 'loading';
         },
-        auth_success (state, { token, user }) {
+        auth_success(state, { token, user }) {
             state.status = 'success';
             state.token = token;
             state.user = user;
         },
-        auth_error (state) {
+        auth_error(state) {
             state.status = 'error';
         },
-        reset_password_request (state) {
+        reset_password_request(state) {
             state.status = 'loading';
         },
-        reset_password_success (state) {
+        reset_password_success(state) {
             state.status = 'success';
         },
-        reset_password_error (state) {
+        reset_password_error(state) {
             state.status = 'error';
         },
-        logout (state) {
+        logout(state) {
             state.status = '';
             state.token = '';
         },
-        register_error (err) {
+        register_error(err) {
             console.error(err);
         },
-        register_request (user) {
+        register_request(user) {
             console.info('User', user);
         },
-        change_profile_success (state, { user }) {
+        change_profile_success(state, { user }) {
             state.user.email = user.email;
             state.user.login = user.login;
             state.user.locale = user.locale;
@@ -51,7 +65,7 @@ export default new Vuex.Store({
         }
     },
     actions: {
-        changeProfile ({ commit }, params) {
+        changeProfile({ commit }, params) {
             return new Promise((resolve, reject) => {
                 const url = `${params.thornUrl}/users/me`;
                 const headers = { Accept: 'application/json; charset=utf-8' };
@@ -66,7 +80,7 @@ export default new Vuex.Store({
                             name: `${userData.first_name} ${userData.last_name}`.trim(),
                             roles: userData.roles
                         };
-                        commit('change_profile_success', { user});
+                        commit('change_profile_success', { user });
                         localStorage.setItem('user', JSON.stringify(user));
                         resolve(resp);
                     })
@@ -75,7 +89,7 @@ export default new Vuex.Store({
                     });
             });
         },
-        changePassword ({ commit }, params) {
+        changePassword({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('reset_password_request');
                 let url = `${params.thornUrl}/password/reset`;
@@ -91,7 +105,7 @@ export default new Vuex.Store({
                     });
             });
         },
-        resetPassword ({ commit }, params) {
+        resetPassword({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('reset_password_request');
                 let url = `${params.thornUrl}/password/reset`;
@@ -107,7 +121,7 @@ export default new Vuex.Store({
                     });
             });
         },
-        login ({ commit }, params) {
+        login({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('auth_request');
                 let url = `${params.thornUrl}/auth/login`;
@@ -120,7 +134,7 @@ export default new Vuex.Store({
                             reject(err);
                         }
 
-                        let user= resp.data.user;
+                        let user = resp.data.user;
 
                         axios.defaults.headers.common['Authorization'] = token;
                         axios.defaults.headers.common['X-Authentication'] = token;
@@ -139,7 +153,7 @@ export default new Vuex.Store({
                     });
             });
         },
-        register ({ commit }, params) {
+        register({ commit }, params) {
             return new Promise((resolve, reject) => {
                 commit('register_request');
                 axios({
@@ -158,7 +172,7 @@ export default new Vuex.Store({
                     });
             });
         },
-        logout ({ commit }) {
+        logout({ commit }) {
             return new Promise(resolve => {
                 commit('logout');
                 localStorage.removeItem('token');
@@ -181,6 +195,11 @@ export default new Vuex.Store({
         hasAnyPermission: state => permissionList => {
             const permissions = state.user.roles.flatMap(r => r.permissions.map(p => p.name));
             return permissionList.some(r => permissions.includes(r));
+        },
+        hasFeaturePermission: state => feature => {
+            const permissions = state.user.roles.flatMap(r => r.permissions.map(p => p.name));
+            const testPermissions = FEATURES_PERMISSIONS[feature] || [];
+            return testPermissions.some(r => permissions.includes(r));
         },
         hasAnyRole: state => roleList => {
             const roles = state.user.roles.map(r => r.name);

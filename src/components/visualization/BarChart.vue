@@ -39,17 +39,32 @@
                     item.values.forEach(value => {
                         const found = series.find((s) => s.name === value.x);
                         if (!found) {
-                            series.push({
-                                y: [value.y], type: 'bar', name: value.x, 
-                                x: xValues,
-                            });
+                            let serie = null;
+                            if (this.visualizationData.orientation === 'h') {
+                                serie = {
+                                    x: [value.y],
+                                    y: xValues,
+                                    orientation: 'h',
+                                    type: 'bar',
+                                    name: value.x,
+                                };
+                            } else {
+                                serie = {
+                                    y: [value.y],
+                                    x: xValues,
+                                    orientation: 'v',
+                                    type: 'bar',
+                                    name: value.x,
+                                };
+                            }
+                            series.push(serie);
                         } else {
                             found.y.push(value.y);
                         }
                     });
                     colors.push(item.color);
                 });
-                series.forEach((serie, inx) => { serie.marker = {color: colors[inx] }});
+                series.forEach((serie, inx) => { serie.marker = { color: colors[inx] } });
                 return series;
             }
         },

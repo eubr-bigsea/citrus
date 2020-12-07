@@ -1,25 +1,34 @@
 <template>
     <div :class="'platform-' + platform" class="diagram" oncontextmenu="return false;">
-        <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" :copied-tasks="copiedTasks"/>
+        <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" 
+            :copied-tasks="copiedTasks"  
+            :useDataSource="useDataSource"/>
         <div id="lemonade-container" :class="{ 'with-grid': showGrid, 'dark-mode': darkMode }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                     :style="{'pointer-events':showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
                     @drop="drop" @dragover="allowDrop">
-                    <task-component v-for="task of workflow.tasks" :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task"
-                        :instance="instance" :enable-context-menu="editable" :draggable="editable"
-                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
-                    <div ref="ghostSelect" class="ghost-select">
-                        <span />
+                    <template v-if="workflow.tasks.length > 0">
+                        <task-component v-for="task of workflow.tasks" :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task"
+                            :instance="instance" :enable-context-menu="editable" :draggable="editable"
+                            :show-decoration="showTaskDecoration || showTaskDecorationInternal" />
+                        <div ref="ghostSelect" class="ghost-select">
+                            <span />
+                        </div>
+                        <div v-for="group in groups" :key="group.id">
+                            <group-component :key="group.id" :group="group" :instance="instance" />
+                        </div>
+                    </template>
+                    <div v-else class="no-task">
+                        {{$t('workflow.noTasks')}}
                     </div>
-                    <div v-for="group in groups" :key="group.id">
-                        <group-component :key="group.id" :group="group" :instance="instance" />
-                    </div>
+                </div>
+                <div v-else>
+                    <font-awesome-icon icon="spinner" pulse class="icon"></font-awesome-icon> {{$t('common.loading')}}
                 </div>
             </VuePerfectScrollbar>
         </div>
-        {{ darkMode }}
         <modal-component v-if="showExecutionModal" @close="showExecutionModal = false">
             <div slot="header">
                 <h4>Execution of workflow</h4>
@@ -144,6 +153,9 @@
                 type: Object,
                 default: () => { return {} },
                 name: ''
+            },
+            useDataSource: {
+                type: Boolean,
             }
         },
         data() {
@@ -488,13 +500,20 @@
                 return false;
             },
             addTask(task) {
-                task.forms = {comment: {value: ''}, color: {value: {background: '#fff'} }};
+                task.forms = task.forms || {};
+                Object.assign(task.forms,
+                    {comment: {value: ''}, color: {value: {background: '#fff'} }});
+
                 task.operation.forms.forEach(f => {
                     f.fields.forEach(field => {
-                        task[field.name] = field['default'] || '';
+                        task['forms'][field.name] = {
+                            value: (task['forms'][field.name] || {})['value'] || field['default'] || null
+                        };
                     });
                 });
-                task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
+                if (task.name === undefined){
+                    task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
+                }
                 task.enabled = true;
                 this.$root.$emit('addTask', task);
             },
@@ -714,20 +733,22 @@
             drop(ev) {
                 const self = this;
                 ev.preventDefault();
-                let operation = this.getOperationFromId(ev.dataTransfer.getData('id'));
+                const operation = this.getOperationFromId(ev.dataTransfer.getData('id'));
                 //console.log(operation)
 
                 if (!operation) {
                     return;
                 }
-                let classes = operation.categories
-                    .map(c => {
-                        return c.type.replace(' ', '-');
-                    })
-                    .join(' ');
-                let tryConnections = ev.dataTransfer.getData('tryConnections')
-                let newTask = {
+                
+                const classes = operation.categories
+                .map(c => {
+                    return c.type.replace(' ', '-');
+                })
+                .join(' ');
+                const tryConnections = ev.dataTransfer.getData('tryConnections')
+                const newTask = {
                     id: self.generateId(),
+                    forms: {},
                     operation,
                     operation_id: operation.id,
                     left: ev.offsetX,
@@ -738,6 +759,13 @@
                     height: 0,
                     width: 0,
                     tryConnections
+                }
+                let defaults = ev.dataTransfer.getData('defaults');
+                if (defaults){
+                    defaults = JSON.parse(defaults);
+                    newTask.name = defaults.name;
+                    newTask.forms[defaults.lookupName] = {value: defaults.lookupId};
+
                 }
                 self.addTask(newTask);
             },
@@ -1308,11 +1336,16 @@
 </script>
 
 <style scoped lang="scss">
-
+    .no-task {
+        color: slategray;
+        font-size: 1.5em;
+        text-align: center;
+        width: 500px;
+    }
     .scroll-area {
         width: 100%;
         height: 95vh;
-        max-height: calc(100vh - 180px);
+        max-height: calc(100vh - 265px);
     }
 
     .ghost-active {

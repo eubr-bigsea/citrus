@@ -12,8 +12,8 @@
           <div v-if="items.length == 0">{{ $t('common.noData')}}</div>
         </dl>
 
-        <div class="text-right">
-          <b-button :to="{name: `${type}s`}" variant="outline-primary">Mais registros</b-button>
+        <div v-if="items.length > 0" class="text-right">
+          <b-button :to="{name: `${type}s`}" variant="outline-primary" class="bottom-right">{{$t('common.moreRecords')}}</b-button>
         </div>
 
       </div>
@@ -23,13 +23,21 @@
 
 <style>
 .home-card {
-  /* padding: 15px; */
+    margin-bottom: 5px;
+}
+.home-card .card{
+  min-height: 690px;
 }
 .home-card .card-header {
   display: flex;
 }
 .home-card .card-title {
   display: inline;
+}
+.bottom-right {
+    position: absolute;
+    right: 20px;
+    bottom: 18px;
 }
 </style>
 

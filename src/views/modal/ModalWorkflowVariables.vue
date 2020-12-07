@@ -2,7 +2,7 @@
     <b-modal ref="modal" size="xl" :title="$tc('workflow.variables', 2)" :ok-only="true">
         <div class="row">
             <div class="col-md-4">
-                <div class="values border p-2">
+                <div class="variables border p-2">
                     <div v-for="(row, index) in items" class="border-bottom">
                         <a href="#" @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')">
                             <span class="fa fa-minus-circle"></span>
@@ -15,15 +15,6 @@
                 <div class="mt-2 border-top pt-2">
                     <button class="btn btn-success btn-sm" @click.prevent="add">
                         <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
-                </div>
-                <div>
-                    Variáveis de sistema FIXME<br/>
-                    <code>
-                    ${idUsuario} <br />
-                    ${emailUsuario} <br />
-                    ${loginUsuario}<br />
-                    ${hoje}<br />
-                    </code>
                 </div>
             </div>
             <div class="col-md-8">
@@ -80,6 +71,19 @@
                     </h5>
                 </div>
             </div>
+            <div class="col-md-12">
+                {{$tc('titles.systemVariables', 2)}}<br />
+                <table class="table table-sm table-bordered" style="font-size:.8em">
+                    <tr v-for="v in variables">
+                        <td style="width:20%">
+                            <code v-html="'${' + v +  '}'"></code>
+                        </td>
+                        <td>
+                            {{$tc('variables.names.' + v)}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </b-modal>
 </template>
@@ -87,6 +91,10 @@
     export default {
         data() {
             return {
+                variables: [
+                    'date', 'date_at_min', 'date_at_ax', 'now', 'user_id',
+                    'user_login', 'user_name', 'workflow_id', 'workflow_name'
+                ],
                 dataTypes: [
                     'DATE',
                     'DECIMAL',
@@ -134,5 +142,11 @@
         }
     }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+    div.variables {
+        height: 200px;
+        min-height: 200px;
+        ;
+        overflow: auto;
+    }
 </style>

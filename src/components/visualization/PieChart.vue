@@ -5,6 +5,7 @@
 </template>
 <script>
     import VisualizationMixin from "./VisualizationMixin";
+    import {debounce} from "../../util.js";
     export default {
         mixins: [VisualizationMixin],
         data() {
@@ -12,14 +13,14 @@
                 data: this.getData(),
                 layout: {
                     title: { text: this.visualizationData.title },
-                    autosize:true,
+                    autosize: true,
                     height: this.height,
                 },
             };
         },
-        mounted(){
+        mounted() {
             const self = this;
-            this.__resizeListener = _.debounce(() => {
+            this.__resizeListener = debounce(() => {
                 self.$refs.plotly.relayout({
                     width: self.$el.clientWidth,
                     height: self.$el.parentElement.parentElement.clientHeight - 20,
@@ -34,13 +35,16 @@
         methods: {
             getData() {
                 const values = [];
-                const labels = []
+                const labels = [];
+                const colors = [];
+
                 this.visualizationData.data.map((item) => {
                     values.push(item.value);
                     labels.push(item.label);
+                    colors.push(item.color);
                 });
                 return [{
-                    values, labels, type: 'pie',
+                    values, labels, marker: {colors}, type: 'pie',
                     hole: this.visualizationData.pie_type === 'donut' ? .60 : null
                 }];
             }

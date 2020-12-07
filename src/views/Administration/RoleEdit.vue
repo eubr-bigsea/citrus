@@ -38,26 +38,36 @@
                                             </div>
                                         </fieldset>
                                         <div class="row">
-                                            <div class="col-md-12 pb-3">
+                                            <div class="col-md-6 pb-3 pt-4">
                                                 <fieldset :disabled="role.system">
-                                                    <label class="col-form-label">
+                                                    <h6>
                                                         {{ $tc('common.permission', 2) }}:
-                                                    </label>
-                                                    <div class="row">
-                                                        <div v-for="p in permissions" :key="p.id" class="col-md-4"
-                                                            :title="p.name">
-                                                            <b-form-checkbox v-model="selectedPermissions"
-                                                                :value="p.id">
-                                                                {{p.description}}
-                                                            </b-form-checkbox>
-                                                        </div>
+                                                    </h6>
+                                                    <div>
+                                                        <b-card no-body>
+                                                            <b-tabs pills card vertical>
+                                                                <b-tab :title="$tc('assets.' + gp[0], 2)"
+                                                                    v-for="gp in groupedPermissions">
+                                                                    <b-card-text>
+                                                                        <div class="col-md-12" v-for="p in gp[1]"
+                                                                            :key="p.id" :title="p.name">
+                                                                            <b-form-checkbox
+                                                                                v-model="selectedPermissions"
+                                                                                :value="p.id">
+                                                                                {{p.description}}
+                                                                            </b-form-checkbox>
+                                                                        </div>
+                                                                    </b-card-text>
+                                                                </b-tab>
+                                                            </b-tabs>
+                                                        </b-card>
                                                     </div>
                                                 </fieldset>
                                             </div>
-                                            <div v-if="!role.all_user" class="col-md-12 border-top ">
-                                                <label class="col-form-label">
+                                            <div v-if="!role.all_user" class="col-md-6 pb-3 pt-4 border-top ">
+                                                <h6>
                                                     {{ $tc('titles.user', 2) }}:
-                                                </label>
+                                                </h6>
                                                 <v-select style="font-size: .9em" v-model="role.users" :multiple="true"
                                                     :options="users" @search="onSearchUsers" :taggable="false"
                                                     :get-option-label="getUserLabel" :close-on-select="true" label="id">
@@ -116,6 +126,7 @@
                 isDirty: false,
                 role: {},
                 idsPermissions: [],
+                groupedPermissions: [],
                 permissions: [],
                 users: [],
                 selectedPermissions: [],
@@ -159,7 +170,20 @@
             const permissionsUrl = `${thornUrl}/permissions?size=1000`;
             axios.get(permissionsUrl)
                 .then(resp => {
-                    self.permissions = resp.data.data.sort((a, b) => a.description.localeCompare(b.description));
+                    let data = resp.data.data.sort((a, b) => {
+                        if (a.applicable_to === b.applicable_to) {
+                            return a.description.localeCompare(b.description);
+                        } else {
+                            return a.applicable_to.localeCompare(b.applicable_to);
+                        }
+                    }
+                    );
+                    self.permissions = data;
+                    self.groupedPermissions = data.reduce(
+                        (entryMap, e) => entryMap.set(e.applicable_to,
+                            [...entryMap.get(e.applicable_to) || [], e]),
+                        new Map());
+
                 }).catch(function (e) {
                     self.error(e);
                 });

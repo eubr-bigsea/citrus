@@ -62,6 +62,16 @@ export default {
             toggleTasks: 'Habilitar/desabilitar tarefas',
             update: 'Atualizar',
         },
+        assets: {
+            APP: 'Aplicação (trilha) | Aplicações (trilhas)',
+            DATA_SOURCE: 'Fonte de dados | Fontes de dados',
+            DASHBOARD: 'Dashboard | Dashboards',
+            DEPLOYMENT: 'Implantação | Implantações',
+            JOB: 'Execução | Execuções',
+            SYSTEM: 'Sistema | Sistema',
+            USER: 'Usuário | Usuários',
+            WORKFLOW: 'Fluxo de trabalho | Fluxos de trabalho'
+        },
         atmosphere: {
             transparency: 'Explicação de modelos'
         },
@@ -80,6 +90,7 @@ export default {
             attention: 'Atenção',
             alreadyHaveAccount: 'Já possui uma conta?',
             attribute: 'Atributo | Atributos',
+            basicInformation: 'Informação básica',
             category: 'Categoria | Categorias',
             changePassword: 'Criar nova Senha',
             column: 'Coluna | Colunas',
@@ -105,6 +116,8 @@ export default {
             hide: 'Ocultar',
             history: 'Histórico',
             id: 'Id',
+            image: 'Imagem | Imagens',
+            input: 'Entrada | Entradas',
             label: 'Título',
             language: 'Idioma',
             lastName: 'Sobrenome',
@@ -116,6 +129,7 @@ export default {
             managerRole: 'Gestor',
             monitorRole: 'Monitor',
             more: 'Mais',
+            moreRecords: 'Mais registros',
             no: 'Não',
             noData: 'Nenhum registro encontrado.',
             name: 'Nome | Nomes',
@@ -231,6 +245,7 @@ export default {
             features: 'Atributos',
             file: 'Arquivo',
             format: 'Formato',
+            hive: 'Hive',
             inconsistentFormat:
                 'O formato escolhido é incompatível com o armazenamento escolhido.',
             inferSchema: 'Inferir o esquema',
@@ -256,9 +271,10 @@ export default {
             selectCommand: 'Comando SQL SELECT',
             selectFromComputer: 'selecionar arquivos em seu computador',
             shareModal: {
-                title: 'Compartilhando Base de Dados',
+                title: 'Compartilhando fonte de dados',
                 success: 'Permissão alterada'
             },
+            shortcut: 'Criar atalho na edição de fluxo de trabalho',
             someAttributesMayHaveProblem:
                 'Um atributo pode estar com problema, por favor, revise-o | Alguns atributos podem estar com problema, por favor, revise-os',
             storage: 'Armazenamento',
@@ -270,6 +286,7 @@ export default {
             uploadingLog: 'Registro de envio',
             uploadExplanation:
                 'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
+            
             whatTypeOfDataSourceToAdd:
                 'Que tipo de base de dados você quer adicionar?',
             youCanUploadYourFiles:
@@ -294,6 +311,7 @@ export default {
             invalidVisualizationId:
                 'Visualização não registrada. Contacte o suporte.',
             missingRequiredValue: 'Valor obrigatório ausente',
+            missingRequiredValueOrInvalid: 'Valor obrigatório ausente ou dados inválidos',
             notFound: 'Registro não encontrado',
             pageNotFound: 'Página não encontrada',
             passwordDontMatch: 'Senhas são diferentes',
@@ -380,6 +398,7 @@ export default {
 
         },
         platform: {
+            allOperations: 'Todas as operações',
             gitUrl: 'URL para clonar o repositório Git',
             pluginDetailExplanation: 'Esta plataforma é um plugin. Ela foi instalada a partir de um código fonte de fora do Lemonade ' +
                 'e é usada como uma extensão.',
@@ -393,7 +412,8 @@ export default {
                 <p>
                 Para mais detalhes sobre a estrutura de código necessária e os passos para definir um plugin, visite: 
                 <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
-            `
+            `,
+            subset: 'Subconjunto de operações | Subconjuntos de operações',
         },
         notebook: {
             executeUntil: 'Executar até esta célula',
@@ -422,7 +442,7 @@ export default {
             editValue: 'Editar valor ...',
             expression: {
                 availableAttribute: 'Atributo disponível | Atributos disponíveis',
-                alias: 'Nome do novo atributo (alias)',
+                alias: 'Nome (alias)',
                 explanation:
                     'Adicione uma ou mais expressões. Novos atributos serão criados para as expressões informadas aqui, portanto, é necessário informar um nome (alias) para eles.',
                 tip: `Para usar um atributo existente, basta informar seu nome. Para constantes do tipo texto (string), delimite-as com aspas ou apóstrofos (' ou ").
@@ -451,12 +471,15 @@ export default {
             actualValue: 'Valor atual',
             administration: 'Administração',
             apiToken: 'Tokens para API',
+            app: 'Aplicação (trilha) | Aplicações (trilhas)',
             allNotifications: 'Ver todas as notificações',
             changePassword: 'Nova senha',
             color: 'Color',
             cluster: 'Cluster | Clusters',
             configuration: 'Configuração | Configurações',
-            dataSource: 'Base de dados | Bases de dados',
+            darkMode: 'Modo escuro',
+            dataSource: 'Fonte de dados | Fontes de dados',
+            dataSource2: 'Fonte de dados | Fontes de dados',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Implantação | Implantações',
             documentation: 'Documentação',
@@ -476,6 +499,7 @@ export default {
             notebook: 'Notebook | Notebooks',
             notification: 'Notificação | Notificações',
             pageNotFound: 'Página não encontrada',
+            operation: 'Operação | Operações',
             platform: 'Platforma | Platformas',
             profile: 'Perfil',
             project: 'Projeto | Projetos',
@@ -487,6 +511,7 @@ export default {
             role: 'Grupo | Grupos',
             storage: 'Armazenamento | Armazenamentos',
             success: 'Sucesso',
+            systemVariables: 'Variável de sistema | Variáveis de sistema',
             tasks: 'Tarefa | Tarefas',
             template: 'Modelo | Modelos',
             toolboxCategory: 'Organização das operações',
@@ -551,6 +576,7 @@ export default {
             jobName: 'Nome para a execução',
             newName:
                 'Novo nome (uma cópia do fluxo de trabalho será criado, mas não será carregado)',
+            noTasks: 'Nenhuma tarefa adicionada ao fluxo. Use a opção "Adicionar Operação" acima para iniciar a construção do fluxo.',
             preferredCluster: 'Cluster preferencial para execução',
             publishingEnabled: 'Habilitar publicação do fluxo de trabalho',
             publishingEnabledExplanation: 'Permite que o fluxo de trabalho seja publicado para os usuários.',
@@ -589,6 +615,17 @@ export default {
             label: 'Rótulo',
             multiplicity: 'Multiplicidade',
             name: 'Nome',
+            names: {
+                date: 'Data atual',
+                date_at_min: 'Data atual com hora 00:00:00',
+                date_at_ax: 'Data atual com hora 23:59:59',
+                now: 'Data e hora atuais',
+                user_id: 'Identificador do usuário',
+                user_login: 'Login de usuário',
+                user_name: 'Nome completo do usuário',
+                workflow_id: 'Identificador do fluxo de trabalho',
+                workflow_name: 'Nome do fluxo de trabalho',
+            },
             operator: 'Operador | Operadores',
             parameter: 'Parâmetro | Parâmetros',
             suggestedWidget: 'Campo sugerido',
@@ -615,6 +652,30 @@ export default {
             lookup: 'Valores pesquisáveis',
             text: 'Texto curto',
             textarea: 'Texto longo',
+            join: {
+                conditions: 'Condição(ões) para a junção',
+                noCondition: 'Nenhuma condição informada. Pressione o botão abaixo para adicionar uma nova.',
+                type: 'Tipo de Junção',
+            },
+            expressionEditor:{
+                atPosition: 'na posição',
+                expected: 'Esperado',
+                expectedColon: 'Esperado :',
+                expectedExpression: 'Esperada expressão',
+                expectedExpressionAfter: 'Esperada expressão após',
+                expectedExponent: 'Expoente esperado',
+                variableNamesWithNumber: 'Nomes de variáveis não podem começar com um dígito',
+                unexpected: 'Caracter(es) inesperado(s)',
+                unexpectedComma: 'Vírgula não era esperada',
+                unexpectedPeriod: 'Ponto-final não era esperado',
+                unexpectedToken: 'Token não era esperado',
+                unexpectedQuote: 'Aspas não eram esperadas',
+                unclosedQuoteAfter: 'Aspas não foram fechadas',
+                unclosedBrace: '[ não foi fechado',
+                unclosedParenthesis: '( não foi fechado',
+                unsupportedCompounded: 'Expressão não-suportada',
+            },
+            
         },
 
         permissions: {
@@ -695,6 +756,16 @@ export default {
             toggleTasks: 'Enable/disable tasks',
             update: 'Update',
         },
+        assets: {
+            APP: 'Application | Applications',
+            DATA_SOURCE: 'Data source | Data Sources',
+            DASHBOARD: 'Dashboard | Dashboards',
+            DEPLOYMENT: 'Deployment | Deployments',
+            JOB: 'Execution | Executions',
+            SYSTEM: 'System | System',
+            USER: 'User | Users',
+            WORKFLOW: 'Workflow | Workflows'
+        },
         atmosphere: {
             transparency: 'Explain models'
         },
@@ -714,6 +785,7 @@ export default {
             attention: 'Attention',
             alreadyHaveAccount: 'Already have an account?',
             attribute: 'Attribute | Attributes',
+            basicInformation: 'Basic Information',
             category: 'Category | Categories',
             changePassword: 'Create new password',
             column: 'Column | Columns',
@@ -738,6 +810,8 @@ export default {
             hide: 'Hide',
             history: 'History',
             id: 'Id',
+            image: 'Image | Images',
+            input: 'Input | Inputs',
             label: 'Label',
             language: 'Language',
             lastName: 'Last name',
@@ -748,6 +822,7 @@ export default {
             managerRole: 'Manager',
             monitorRole: 'Assistant',
             more: 'More',
+            moreRecors: 'More records',
             no: 'No',
             name: 'Name | Names',
             noData: 'No results found.',
@@ -863,6 +938,7 @@ export default {
             features: 'Features',
             file: 'File',
             format: 'Format',
+            hive: 'Hive',
             inconsistentFormat:
                 'The chosen format is incompatible with the chosen storage.',
             inferSchema: 'Infer schema',
@@ -891,6 +967,7 @@ export default {
                 title: 'Sharing Data Source',
                 success: 'Permissions changed'
             },
+            shortcut: 'Create a shortcut in workflow editing',
             someAttributesMayHaveProblem:
                 'An attribute may be incorrectly configured, please, check it | Some attributes may be incorrectly configured, please, check them',
             storage: 'Storage',
@@ -922,6 +999,7 @@ export default {
             invalidVisualizationId:
                 'Invalid visualization. Please, contact the support.',
             missingRequiredValue: 'Missing required value',
+            missingRequiredValueOrInvalid: 'Missing required value or invalid data',
             notFound: 'Record not found',
             pageNotFound: 'Page not found',
             passwordDontMatch: 'Passwords do not match',
@@ -1001,12 +1079,15 @@ export default {
             actualValue: 'Current value',
             administration: 'Administration',
             apiToken: 'API Tokens',
+            app: 'App | Apps',
             allNotifications: 'See all notifications',
             changePassword: 'New password',
             cluster: 'Cluster | Clusters',
             color: 'Color',
             configuration: 'Configuration | Configurations',
+            darkMode: 'Dark mode',
             dataSource: 'Data source | Data sources',
+            dataSource2: 'Data source | Data sources',
             dashboard: 'Dashboard | Dashboards',
             deployment: 'Deployment | Deployments',
             documentation: 'Documentation',
@@ -1023,6 +1104,7 @@ export default {
             news: 'News & Tips',
             notebook: 'Notebook | Notebooks',
             notification: 'Notification | Notifications',
+            operation: 'Operation | Operations',
             login: 'Login',
             pageNotFound: 'Page not found',
             platform: 'Platform | Platforms',
@@ -1036,6 +1118,7 @@ export default {
             role: 'Role | Roles',
             storage: 'Storage | Storages',
             success: 'Success',
+            systemVariables: 'System variable | System variables',
             tasks: 'Task | Tasks',
             template: 'Template | Templates',
             toolboxCategory: 'Toolbox disposition',
@@ -1069,6 +1152,7 @@ export default {
             type_UNSPECIFIED: 'Unspecified'
         },
         platform: {
+            allOperations: 'All operations',
             gitUrl: 'Git repository URL used to clone the plugin',
             pluginDetailExplanation: 'This platform is a plugin. It was installed from code provided by others ' +
                 'and it is used as an extension.',
@@ -1081,7 +1165,8 @@ export default {
                 </p>
                 <p>For more details about the required code and steps to define a plugin, please visit: 
                 <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
-            `
+            `,
+            subset: 'Operations subset | Operations subsets',
         },
         privacy: {
             anonymizationTechnique: 'Anonymization technique',
@@ -1161,6 +1246,7 @@ export default {
             jobName: 'Job name',
             newName:
                 'New name (a copy of the workflow will be created, but not loaded)',
+            noTasks: 'No task was added to the workflow. Use above option "Add operation" to start building the workflow.',
             preferredCluster: 'Preferred cluster for execution',
             publishingEnabled: 'Enable workflow to be published',
             publishingEnabledExplanation: 'Allows workflow to be published to users.',
@@ -1198,6 +1284,17 @@ export default {
             label: 'Label',
             multiplicity: 'Multiplicity',
             name: 'Name',
+            names: {
+                date: 'Current date',
+                date_at_min: 'Current date at 00:00:00',
+                date_at_ax: 'Current date at 23:59:59',
+                now: 'Current date and time',
+                user_id: 'User id',
+                user_login: 'User login',
+                user_name: 'User full name',
+                workflow_id: 'Wokflow id',
+                workflow_name: 'Workflow name',
+            },
             parameter: 'Parameter | Parameters',
             operator: 'Operator | Operators',
             suggestedWidget: 'Suggested widget',
@@ -1225,6 +1322,29 @@ export default {
             lookup: 'Search from list of values',
             text: 'Text input',
             textarea: 'Long text input',
+            join: {
+                conditions: 'Join condition(s)',
+                noCondition: 'No condition specified. Press button below to add a new one.',
+                type: 'Join type',
+            },
+            expressionEditor:{
+                atPosition: 'at position',
+                expected: 'Expected',
+                expectedColon: 'Expected :',
+                expectedExpression: 'Expected expression',
+                expectedExpressionAfter: 'Expected expression after',
+                expectedExponent: 'Expected exponent',
+                variableNamesWithNumber: 'Variable names cannot start with a number',
+                unexpected: 'Unexpected',
+                unexpectedComma: 'Unexpected comma',
+                unexpectedPeriod: 'Unexpected period',
+                unexpectedToken: 'Unexpected token',
+                unexpectedQuote: 'Unexpected "',
+                unclosedQuoteAfter: 'Unclosed quote after',
+                unclosedBrace: 'Unclosed [',
+                unclosedParenthesis: 'Unclosed (',
+                unsupportedCompounded: 'Expressão não-suportada',
+            }
         },
         permissions: {
             MANAGE: 'Manage',

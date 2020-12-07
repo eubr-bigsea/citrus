@@ -2,7 +2,7 @@
 node_modules
 /dist
 /tmp
-/venv3
+/venv3*
 # local env files
 .env.local
 .env.*.local

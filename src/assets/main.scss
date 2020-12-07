@@ -480,7 +480,6 @@ h1 {
         }
     }
 }
-
 .full_modal-dialog .modal-dialog {
       width: 98% !important;
       height: 92% !important;
@@ -592,4 +591,123 @@ h1 {
         }
     }
     
+}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+.lemonade-toolbox {
+    .scroll-area {
+        width: 100%;
+        max-height: calc(100vh - 200px);
+    }
+
+    .list-group {
+        font-size: 0.75rem;
+    }
+
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, .125);
+    }
+
+    .list-group-item.truncate {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    [draggable='true'] {
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        cursor: move;
+        /* fallback if grab cursor is unsupported */
+        cursor: grab;
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
+    }
+
+    .dragging {
+        border-radius: 5px;
+        background: white !important;
+        display: block;
+        width: 120px;
+        height: 50px;
+        font-size: 8pt;
+        background-color: #fff;
+        border: 1px solid #222;
+        font-family: Verdana, Tahoma, Geneva, sans-serif;
+        text-align: center;
+    }
+
+    .collapsed>.when-opened,
+    :not(.collapsed)>.when-closed {
+        display: none;
+    }
+
+    .menu button {
+        font-size: 9pt;
+    }
+
+    /* MENU BORDERS */
+    .menu>div .list-group-item {
+        border-radius: 0 !important;
+
+        .btn-secondary:hover {
+            border: none;
+        }
+    }
+
+    .menu>div:last-child span:last-child .list-group-item {
+        border-bottom-left-radius: 0.25rem !important;
+        border-bottom-right-radius: 0.25rem !important;
+    }
+
+    /* MENU COLORS & ALIGNMENT
+     group */
+    .menu a[data-parent='submenus'] {
+        padding-left: 14px;
+    }
+
+    /* group > subgroup */
+    .menu a[data-parent='submenus']>strong {
+        padding-left: 8px !important;
+    }
+
+    /* group > subgroup */
+    .menu div[data-parent='submenus']>div>div>button {
+        padding-left: 32px;
+        background-color: #f5f6f8;
+    }
+
+    /* group > subgroup > operation */
+    .menu div[data-parent='submenus']>div>div>div>button {
+        padding-left: 34px;
+        background-color: #f5f6f8 !important;
+        border-bottom: 0;
+    }
+
+    /* group > operation */
+    .menu div[data-parent='submenus']>div>span>button {
+        padding-left: 32px;
+        background-color: #f5f6f8;
+        border-bottom: 0;
+    }
+
+    /* -- MENU LAST ITEMS */
+    .menu>div:last-child>div[data-parent='submenus']>div>span:last-child>button {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+
+    .menu>div:last-child>div[data-parent='submenus']>div>div:last-child>div:last-child>button {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }    
 }

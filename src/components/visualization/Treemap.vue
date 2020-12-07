@@ -7,6 +7,7 @@
     </div>
 </template>
 <script>
+    import { debounce } from "../../util.js";
     import VisualizationMixin from "./VisualizationMixin";
     export default {
         mixins: [VisualizationMixin],
@@ -15,14 +16,14 @@
                 data: this.getData(),
                 layout: {
                     autosize: true,
-                    margin: {l: 10, r: 10, t: 50, b: 10},
+                    margin: { l: 10, r: 10, t: 50, b: 10 },
                     title: this.visualizationData.title,
                 }
             };
         },
         mounted() {
             const self = this;
-            this.__resizeListener = _.debounce(() => {
+            this.__resizeListener = debounce(() => {
                 self.$refs.plotly.relayout({
                     width: self.$el.clientWidth,
                     height: self.$el.parentElement.parentElement.clientHeight - 50,
@@ -35,7 +36,6 @@
             window.removeEventListener('resize', this.__resizeListener)
         },
         methods: {
-
             getData() {
                 const result = this.visualizationData.data;
                 result['marker'] = { colors: result['colors'] }

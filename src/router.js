@@ -78,6 +78,8 @@ const TrackPanel = () => import('./views/TrackPanel.vue');
 const Track = () => import('./views/Track.vue');
 const TrackAdd = () => import('./views/TrackAdd.vue');
 
+const QueryEdit = () => import('./views/query/QueryEdit.vue');
+
 Vue.use(Router);
 
 let router = new Router({
@@ -92,6 +94,16 @@ let router = new Router({
                 title: ['titles.home', 1]
             }
         },
+        {
+            path: '/query',
+            name: 'queryEdit',
+            component: QueryEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.query', 1]
+            }
+        },
+        
         {
             path: '/administration',
             name: 'administration',
@@ -338,7 +350,7 @@ let router = new Router({
         },
         {
             path: '/apps/panel',
-            name: 'tracksPanel',
+            name: 'apps',
             component: TrackPanel,
             meta: {
                 requiresAuth: true,

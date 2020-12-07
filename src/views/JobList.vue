@@ -143,7 +143,7 @@ export default {
             .then(resp => {
               this.success(
                 this.$t('messages.successDeletion', {
-                  what: this.$t('titles.job')
+                  what: this.$tc('titles.job', 1)
                 })
               );
               this.$refs.jobList.refresh();

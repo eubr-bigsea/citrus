@@ -3,70 +3,65 @@
         <div class="row">
             <div class="col">
                 <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ $tc('titles.user', 2) }}</h1>
-                        <router-link :to="{ name: 'AdministrationAddUser' }" class="btn btn-sm btn-outline-primary">
-                            {{ $t('actions.addItem') }}
-                        </router-link>
-                    </div>
-                    <hr />
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <v-server-table ref="userList" :columns="columns" :options="options"
-                                        name="userList">
-                                        <template slot="id" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                {{ props.row.id }}
-                                            </router-link>
-                                        </template>
-                                        <template slot="full_name" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                {{ props.row.full_name }}
-                                            </router-link>
-                                        </template>
-
-                                        <template slot="enabled" slot-scope="props">
-                                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
-                                        </template>
-                                        <template slot="email" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                {{ props.row.email }}
-                                            </router-link>
-                                        </template>
-                                        <template slot="roles" slot-scope="props">
-                                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                                <span v-for="role in props.row.roles" :key="role.id">
-                                                <div class="badge badge-secondary p-1 mr-1">{{role.label}}</div>
-                                                </span>
-                                            </router-link>
-                                        </template>
-                                        <template slot="notes" slot-scope="props">
-                                                {{props.row.notes}}
-                                        </template>
-
-                                        <template slot="confirmed_at" slot-scope="props">
-                                            <div v-if="isConfirmedUser(props.row.confirmed_at)">
-                                                {{ props.row.confirmed_at | formatJsonDate }}
-                                                <font-awesome-icon icon="check" />
-                                            </div>
-                                            <button v-else class="btn btn-sm btn-success"
-                                                @click="confirmUser(props.row.id)">
-                                                {{ $t('common.confirm') }}
-                                            </button>
-                                        </template>
-
-                                        <template slot="actions" slot-scope="props">
-                                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash" />
-                                            </button>
-                                        </template>
-                                    </v-server-table>
-                                </div>
+                    <div class="title">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h1>{{ $tc('titles.user', 2) }}</h1>
+                            <div>
+                                <router-link :to="{ name: 'AdministrationAddUser' }"
+                                    class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                                    <span class="fa fa-plus" /> {{ $t('actions.addItem') }}
+                                </router-link>
                             </div>
                         </div>
                     </div>
+
+                    <v-server-table ref="userList" :columns="columns" :options="options" name="userList">
+                        <template slot="id" slot-scope="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                {{ props.row.id }}
+                            </router-link>
+                        </template>
+                        <template slot="full_name" slot-scope="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                {{ props.row.full_name }}
+                            </router-link>
+                        </template>
+
+                        <template slot="enabled" slot-scope="props">
+                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                        </template>
+                        <template slot="email" slot-scope="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                {{ props.row.email }}
+                            </router-link>
+                        </template>
+                        <template slot="roles" slot-scope="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                <span v-for="role in props.row.roles" :key="role.id">
+                                    <div class="badge badge-secondary p-1 mr-1">{{role.label}}</div>
+                                </span>
+                            </router-link>
+                        </template>
+                        <template slot="notes" slot-scope="props">
+                            {{props.row.notes}}
+                        </template>
+
+                        <template slot="confirmed_at" slot-scope="props">
+                            <div v-if="isConfirmedUser(props.row.confirmed_at)">
+                                {{ props.row.confirmed_at | formatJsonDate }}
+                                <font-awesome-icon icon="check" />
+                            </div>
+                            <button v-else class="btn btn-sm btn-success" @click="confirmUser(props.row.id)">
+                                {{ $t('common.confirm') }}
+                            </button>
+                        </template>
+
+                        <template slot="actions" slot-scope="props">
+                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                                <font-awesome-icon icon="trash" />
+                            </button>
+                        </template>
+                    </v-server-table>
                 </div>
             </div>
         </div>

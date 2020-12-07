@@ -1,7 +1,5 @@
 <template>
-    <div>
-        
-    </div>
+    <div> </div>
 </template>
 <script>
     import Plotly from './Plotly.vue';
@@ -10,11 +8,11 @@
             Plotly
         },
         props: {
-            visualizationData: {}, 
-            task: {},
-            height: {default: 1450}
+            height: { type: Number, default: 450 },
+            visualizationData: { type: Object },
+            task: { type: Object },
         },
-        data(){
+        data() {
             return {
                 resizeListener: null,
             }

@@ -1,20 +1,18 @@
 <template>
     <div>
         <Plotly ref="plotly" :data="data" :layout="layout" :display-mode-bar="true" :options="options"></Plotly>
-        <!--
-        <CaipirinhaVisualizationLine :visualization-data="visualizationData" />
-        -->
     </div>
 </template>
 <script>
     import VisualizationMixin from "./VisualizationMixin";
-    import CaipirinhaVisualizationLine from "../caipirinha-visualization/CaipirinhaVisualizationLine"
+    import { debounce } from "../../util.js";
+
     export default {
         mixins: [VisualizationMixin],
-        components: {
-            CaipirinhaVisualizationLine
-        },
         data() {
+            const showlegend = !this.visualizationData.legend
+                || this.visualizationData.legend.isVisible !== false;
+
             return {
                 data: this.getData(),
                 layout: {
@@ -29,17 +27,20 @@
                         ticksuffix: this.visualizationData.y.suffix,
                         tickprefix: this.visualizationData.y.prefix,
                     },
-                    legend: { "orientation": "h", "x": 0, "y": 4 },
+                    legend: {
+                        "orientation": "h", "x": 0, "y": 4
+                    },
+                    showlegend,
                     autosize: true,
                     automargin: true,
                     height: this.height
                 },
-                options: {responsive: true},
+                options: { responsive: true },
             };
         },
-        mounted(){
+        mounted() {
             const self = this;
-            this.__resizeListener = _.debounce(() => {
+            this.__resizeListener = debounce(() => {
                 self.$refs.plotly.relayout({
                     width: self.$el.clientWidth,
                     height: self.$el.parentElement.parentElement.clientHeight - 20,
@@ -58,13 +59,22 @@
                     const xValues = [];
                     const yValues = [];
                     series.push({
-                        y: yValues, mxode: 'lines', name: serie.name,
-                        x: xValues, marker: { color: serie.color },
+                        y: yValues, mode: this.visualizationData.mode || 'lines', 
+                        x: xValues, 
+                        name: serie.name,
+                        marker: { 
+                            color: serie.color,
+                            // symbol: "diamond-open"
+                        },
                         type: 'scatter'
                     });
-                    const xTransform = this.visualizationData.using_date ?
-                        (d) => new Date(d) : (d) => d;
-                    serie.values.sort((a, b) => a.x - b.x)
+                    let xTransform;
+                    if (this.visualizationData.using_date) {
+                        xTransform = (d) => new Date(d);
+                    } else {
+                        xTransform = (d) => d;
+                    }
+                    serie.values.sort((a, b) => xTransform(a.x) - xTransform(b.x))
                         .forEach(value => {
                             xValues.push(xTransform(value.x));
                             yValues.push(value.y);

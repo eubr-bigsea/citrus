@@ -30,7 +30,6 @@
                 return this.$store.getters.user;
             }
         },
-
         mounted() {
             //this.checkAuth();
         },

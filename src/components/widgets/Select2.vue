@@ -6,7 +6,7 @@
                 :value.sync="values" :on-change="updated" label="value" :taggable="false" :closeOnSelect="false">
                 <div slot="no-options"></div>
             </v-select>
-            <v-select v-else :multiple="true" :value.sync="values" :on-change="updated" label="value" :taggable="true"
+            <v-select v-else :multiple="true" v-model="values" @input="updated" :on-change="updated" label="value" :taggable="true"
                 :closeOnSelect="true">
                 <div slot="no-options"></div>
             </v-select>
