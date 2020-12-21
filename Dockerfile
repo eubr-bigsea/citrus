@@ -1,4 +1,4 @@
-FROM node:8 as citrus_build
+FROM node:12 as citrus_build
 LABEL maintainer="Walter dos Santos Filho <walter AT dcc.ufmg.br> Guilherme Maluf Balzana <guimaluf AT dcc.ufmg.br"
 
 ENV CITRUS_HOME=/usr/local/citrus
