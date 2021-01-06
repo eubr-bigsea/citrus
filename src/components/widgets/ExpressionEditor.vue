@@ -2,8 +2,7 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
-        {{readOnly}}
-        <b-link v-if="readOnly" @click.prevent="openModal" variant="sm">
+        <b-link v-if="!readOnly" @click.prevent="openModal" variant="sm">
             {{$t('property.editValue')}}
         </b-link>
         <b-modal id="expressionModal" size="xl" :title="field.label" :hide-header="true"
