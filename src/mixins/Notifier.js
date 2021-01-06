@@ -22,6 +22,13 @@ export default {
                 { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
             );
         },
+        info(msg, timeout, bodyMaxLength) {
+            this.$snotify.info(
+                msg,
+                this.$tc('titles.info', 2),
+                { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+            );
+        },
         warning(msg, timeout, bodyMaxLength) {
             this.$snotify.warning(
                 msg,

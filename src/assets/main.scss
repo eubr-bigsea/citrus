@@ -14,7 +14,9 @@ $snotify-width: 600px !default;
 body {
   background-color: var(--background-color);
 }
-
+.btn:focus {
+    box-shadow: none;
+}
 .snotify {
   z-index: 1000005 !important;
   .snotifyToast__title {

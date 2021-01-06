@@ -11,11 +11,20 @@
         </div>
         <div class="btn-group mr-2" role="group">
             <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
-                <span class="fa fa-save"></span> {{$t('actions.save')}}
+                <span class="fa fa-save text-success"></span> {{$t('actions.save')}}
             </button>
             <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
-                <span class="fa fa-copy"></span>
+                <span class="fa fa-copy"></span> {{$t('actions.saveAs')}}...
             </button>
+        </div>
+        <div class="btn-group mr-2">
+            <b-dropdown right split variant="sm btn-outline-dark" @click.prevent.stop="exportWorkflow()" >
+                <template #button-content><span class="fa fa-download"></span> {{$t('actions.export')}}</template>
+                <b-dropdown-item @click.prevent="exportWorkflow()">{{$t('common.json')}}</b-dropdown-item>
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item @click.prevent="exportWorkflow('python')">{{$t('common.python')}}</b-dropdown-item>
+                <b-dropdown-item @click.prevent="exportWorkflow('notebook')">{{$t('common.jupyter')}}</b-dropdown-item>
+              </b-dropdown>
         </div>
         <div class="btn-group mr-2" role="group">
             <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties"
@@ -25,9 +34,6 @@
             <button class="btn btn-sm btn-outline-dark" @click.prevent="selectImage" :title="$t('actions.selectImage')">
                 <span class="fa fa-image"></span>
             </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="exportWorkflow" :title="$t('actions.export')">
-                <span class="fa fa-download"></span>
-            </button>
             <button class="btn btn-sm btn-outline-dark" @click.prevent="showHistory" :title="$t('actions.showHistory')">
                 <span class="fa fa-history"></span>
             </button>
@@ -35,7 +41,7 @@
         <div class="btn-group" role="group">
             <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')"
                 variant="success" id="tlb-execute-wf">
-                <span class="fa fa-play"></span> {{$t('actions.execute')}}
+                <span class="fa fa-play text-primary"></span> {{$t('actions.execute')}}
             </button>
             <!--
         <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
@@ -47,29 +53,10 @@
     </div>
 </template>
 
-<style lang="scss">
-    .red {
-        color: #FF4136;
-    }
-
-    .runBtn {
-        span {
-            color: #28a745
-        }
-
-        &:hover {
-            color: var(--font-color);
-            background-color: rgba(#28a745, .16);
-        }
-    }
-</style>
-
 <script>
-    import Notifier from '../mixins/Notifier'
     import { mapGetters } from 'vuex';
 
     export default {
-        mixins: [Notifier],
         name: 'WorkflowToolbar',
         computed: {
             ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
@@ -90,8 +77,8 @@
             execute() {
                 this.$root.$emit('onclick-execute');
             },
-            exportWorkflow() {
-                this.$root.$emit('onclick-export');
+            exportWorkflow(format) {
+                this.$root.$emit('onclick-export', format);
             },
             showProperties() {
                 this.$root.$emit('onshow-properties')

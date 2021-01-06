@@ -118,6 +118,8 @@ export default {
             id: 'Id',
             image: 'Imagem | Imagens',
             input: 'Entrada | Entradas',
+            json: 'JSON (pode ser importado)',
+            jupyter: 'Jupyter Notebook',
             label: 'Título',
             language: 'Idioma',
             lastName: 'Sobrenome',
@@ -151,6 +153,7 @@ export default {
                 name: 'Nome',
                 subcategory: 'Categoria Secundária',
             },
+            python: 'Código Python',
             team: {
                 description: 'Descrição',
                 leaders: 'Líders',
@@ -488,7 +491,7 @@ export default {
             globalPrivacyPolicy:
                 'Política global de privacidade|Políticas globais de privacidade',
             home: 'Bem-vindo ao Lemonade',
-            info: 'Info',
+            info: 'Info | Informação',
             job: 'Execução | Execuções',
             jobs: 'Execuções',
             lemonade: 'Lemonade',
@@ -812,6 +815,8 @@ export default {
             id: 'Id',
             image: 'Image | Images',
             input: 'Input | Inputs',
+            json: 'JSON (can be imported)',
+            jupyter: 'Jupyter Notebook',
             label: 'Label',
             language: 'Language',
             lastName: 'Last name',
@@ -844,6 +849,7 @@ export default {
                 subcategory: 'Sub Category',
                 managers: 'Managers'
             },
+            python: 'Python code',
             team: {
                 name: 'Name',
                 description: 'Description',
@@ -1095,7 +1101,7 @@ export default {
             errorDetail: 'Error detail (advanced)',
             globalPrivacyPolicy: 'Global privacy policy|Global privacy policies',
             home: 'Welcome to Lemonade',
-            info: 'Info',
+            info: 'Info | Information',
             job: 'Job | Jobs',
             jobs: 'Jobs',
             lemonade: 'Lemonade',

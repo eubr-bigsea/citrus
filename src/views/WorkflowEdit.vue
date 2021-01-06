@@ -223,6 +223,7 @@
                     setup: null
                 },
                 expandableOperations: [],
+                exportTimeoutHandler: null,
             }
         },
         created() {
@@ -279,7 +280,7 @@
             this.$root.$on('ontoggle-dataSourcesPanel', this.toggleDataSourcesPanel);
             this.$root.$on('onremove-tasks', this.removeTasks);
             this.$root.$on('ondistribute-tasks', this.distribute);
-            this.$root.$on('onclick-export', () => this.exportWorkflow());
+            this.$root.$on('onclick-export', (format) => this.exportWorkflow(format));
             this.$root.$on('onclick-execute', this.showExecuteWindow);
             this.$root.$on('onshow-properties', this.showWorkflowProperties);
             this.$root.$on('onselect-image', this.selectImage);
@@ -414,6 +415,7 @@
             }
         },
         beforeDestroy() {
+            this.$root.$off('onclick-export');
             this.$root.$off('addTask');
             this.$root.$off('onclick-task');
             this.$root.$off('on-error');
@@ -650,17 +652,47 @@
                     return v.toString(16);
                 });
             },
-            exportWorkflow() {
-                const self = this
-                const json = JSON.stringify(self.workflow);
+            _downloadAsType(data, contentType, extension){
+                const self = this;
                 const element = document.createElement('a');
-                element.setAttribute('href', 'data:application/json;charset=utf-8,' +
-                    encodeURIComponent(json));
-                element.setAttribute('download', self.workflow.name + '.json');
+                element.setAttribute('href', `data:${contentType};charset=utf-8,` +
+                    encodeURIComponent(data));
+                element.setAttribute('download', `workflow_${self.workflow.id}.${extension}`);
                 element.style.display = 'none';
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
+            },
+            exportWorkflow(format) {
+                const self = this
+                if (format === undefined){
+                    self._downloadAsType(JSON.stringify(self.workflow), 
+                        'application/json', 'json');
+                } else if (format === 'python' || format === 'notebook') {
+                    const body = {
+                        workflow_id: self.$route.params.id,
+                        template: format
+                    };
+                    const contentType = format === 'python'? 'application/x-python-code': 
+                        'application/x-ipynb+json';
+                    const extension = format === 'python'? 'py' : 'ipynb';
+                    axios.post(`${standUrl}/workflow/source-code`, body).then(resp => {
+                        self.info(self.$t('common.wait'), 5000);
+                        self.exportTimeoutHandler = setTimeout(() => {
+                            axios.get(`${standUrl}/workflow/source-code/${resp.data}`).then(
+                                resp => {
+                                    self._downloadAsType(resp.data, contentType, extension);
+                                }).catch(function (e) {
+                                    self.error(e);
+                                });
+                        }, 5000)
+                    }).catch(function (e) {
+                        self.error(e);
+                    });
+                } else {
+                    self.warning(self.$t('errors.invalidOperation'))
+                }
+                
                 // self.success(self.$t('messages.exportWorkflow'));
             },
             saveWorkflow(savingCopy, newName) {
