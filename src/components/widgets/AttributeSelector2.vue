@@ -1,6 +1,6 @@
 <template>
     <div v-if="readOnly">
-        <span>{{value ? value.join(', '): ''}}</span>
+        <span>{{value ? (multiple ? value.join(', '): value): ''}}</span>
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
@@ -111,6 +111,7 @@
             }
             if (this.fieldParameters.multiple === false && this.suggestionEvent) {
                 this.suggestions = this.suggestionEvent();
+                this.select2Value = this.originalValue;
             }
         },
         methods: {
