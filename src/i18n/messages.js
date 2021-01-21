@@ -361,9 +361,11 @@ export default {
             acceptTerms: 'Concordo com os <a href="{link}">termos de uso</a>.',
             doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
             doYouWantToConfirm: 'Tem certeza que você quer confirmar esse usuário?',
+            doYouWantToStop: 'Tem certeza que quer parar esta execução?',
             confirmRemove: 'Tem certeza que você quer excluir esse registro?',
             exportWorkflow: 'Fluxo de trabalho exportado usando a versão atual.',
             successDeletion: '{what} foi removido com sucesso',
+            successStop: 'Execução parada com sucesso',
             successImport: 'Fluxo de trabalho foi importado com o id={what}.',
             resetPasswordInstructions: '<p>Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.</p>' +
                 '<p>Se você não receber esse e-mail, ' +
@@ -1026,9 +1028,11 @@ export default {
             acceptTerms: 'I agree to the <a href="{link}">terms of service</a>.',
             doYouWantToDelete: 'Do you want to delete this record?',
             doYouWantToConfirm: 'Do you want to confirm this user?',
+            doYouWantToStop: 'Do you want to stop the execution?',
             exportWorkflow: 'Workflow exported using current version.',
             confirmRemove: 'Are you sure you want to remove this record?',
             successDeletion: '{what} was successfuly removed',
+            successStop: 'Execution successfully stopped',
             successImport: 'Workflow was imported as id={what}.',
             registeredWithSuccess:
                 'You were registered with success. Please, sign in again.',
