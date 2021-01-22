@@ -23,7 +23,7 @@
 					>{{props.row.name}}</router-link>
 				</template>
 				<template slot="actions" slot-scope="props">
-					<button v-if="props.row.status === 'RUNNING'" class="btn btn-sm btn-outline-danger mr-1"
+					<button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING'  " class="btn btn-sm btn-outline-danger mr-1"
     					:title="$t('actions.stop')"
 	    				@click="stop(props.row)">
     					<font-awesome-icon icon="stop"></font-awesome-icon>
