@@ -1,112 +1,107 @@
 <template>
-    <main role="main">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ add ? $t('actions.add', {type: $tc('titles.role', 1).toLowerCase()}) : $t('actions.edit') + ' ' + $tc('titles.role', 1).toLowerCase()}}
-                        </h1>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-12 col-xg-12 mx-auto">
-                            <div class="card">
-                                <div class="card-body">
-                                    <form @submit.prevent="save" :disabled="role.system">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>{{ add ? $t('actions.add', {type: $tc('titles.role', 1).toLowerCase()}) : $t('actions.edit')
+                    + ' ' + $tc('titles.role', 1).toLowerCase()}}
+                </h1>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-12 col-xg-12 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <form @submit.prevent="save" :disabled="role.system">
+                                <fieldset :disabled="role.system">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                            <input v-model="role.name" type="text" maxlength="50" required
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="font-weight-bold">{{$tc('common.title')}}:</label>
+                                            <input v-model="role.label" type="text" maxlength="50" required
+                                                class="form-control">
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="font-weight-bold">{{$tc('common.description')}}:</label>
+                                            <input v-model="role.description" type="text" maxlength="100"
+                                                class="form-control" required>
+                                        </div>
+                                        <div class="col-md-2 mt-3 mb-3 mt-3">
+                                            <b-form-checkbox v-model="role.enabled">{{ $t('common.enabled') }}
+                                            </b-form-checkbox>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <div class="row">
+                                    <div class="col-md-6 pb-3 pt-4">
                                         <fieldset :disabled="role.system">
-                                            <div class="row">
-                                                <div class="col-md-2">
-                                                    <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                                    <input v-model="role.name" type="text" maxlength="50" required
-                                                        class="form-control">
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <label class="font-weight-bold">{{$tc('common.title')}}:</label>
-                                                    <input v-model="role.label" type="text" maxlength="50" required
-                                                        class="form-control">
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <label
-                                                        class="font-weight-bold">{{$tc('common.description')}}:</label>
-                                                    <input v-model="role.description" type="text" maxlength="100"
-                                                        class="form-control" required>
-                                                </div>
-                                                <div class="col-md-2 mt-3 mb-3 mt-3">
-                                                    <b-form-checkbox v-model="role.enabled">{{ $t('common.enabled') }}
-                                                    </b-form-checkbox>
-                                                </div>
+                                            <h6>
+                                                {{ $tc('common.permission', 2) }}:
+                                            </h6>
+                                            <div>
+                                                <b-card no-body>
+                                                    <b-tabs pills card vertical>
+                                                        <b-tab :title="$tc('assets.' + gp[0], 2)"
+                                                            v-for="gp in groupedPermissions">
+                                                            <b-card-text>
+                                                                <div class="col-md-12" v-for="p in gp[1]" :key="p.id"
+                                                                    :title="p.name">
+                                                                    <b-form-checkbox v-model="selectedPermissions"
+                                                                        :value="p.id">
+                                                                        {{p.description}}
+                                                                    </b-form-checkbox>
+                                                                </div>
+                                                            </b-card-text>
+                                                        </b-tab>
+                                                    </b-tabs>
+                                                </b-card>
                                             </div>
                                         </fieldset>
-                                        <div class="row">
-                                            <div class="col-md-6 pb-3 pt-4">
-                                                <fieldset :disabled="role.system">
-                                                    <h6>
-                                                        {{ $tc('common.permission', 2) }}:
-                                                    </h6>
-                                                    <div>
-                                                        <b-card no-body>
-                                                            <b-tabs pills card vertical>
-                                                                <b-tab :title="$tc('assets.' + gp[0], 2)"
-                                                                    v-for="gp in groupedPermissions">
-                                                                    <b-card-text>
-                                                                        <div class="col-md-12" v-for="p in gp[1]"
-                                                                            :key="p.id" :title="p.name">
-                                                                            <b-form-checkbox
-                                                                                v-model="selectedPermissions"
-                                                                                :value="p.id">
-                                                                                {{p.description}}
-                                                                            </b-form-checkbox>
-                                                                        </div>
-                                                                    </b-card-text>
-                                                                </b-tab>
-                                                            </b-tabs>
-                                                        </b-card>
-                                                    </div>
-                                                </fieldset>
-                                            </div>
-                                            <div v-if="!role.all_user" class="col-md-6 pb-3 pt-4 border-top ">
-                                                <h6>
-                                                    {{ $tc('titles.user', 2) }}:
-                                                </h6>
-                                                <v-select style="font-size: .9em" v-model="role.users" :multiple="true"
-                                                    :options="users" @search="onSearchUsers" :taggable="false"
-                                                    :get-option-label="getUserLabel" :close-on-select="true" label="id">
-                                                    <template #no-options="{ search, searching, loading }">
-                                                        {{$t('common.noResults')}}
-                                                    </template>
-                                                    <template slot="selected-option" slot-scope="option">
-                                                        {{ option.first_name}} {{option.last_name}}
-                                                        &nbsp;<small>({{option.email}})</small>
-                                                    </template>
-                                                    <template slot="option" slot-scope="option">
-                                                        <span class="fa fa-user"></span>
-                                                        {{ option.first_name}} {{option.last_name}}
-                                                        &nbsp;<small>({{option.email}})</small>
-                                                    </template>
-                                                </v-select>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12 mt-4 border-top pt-2">
-                                                <button class="btn btn-primary mr-1 btn-spinner" type="submit">
-                                                    <font-awesome-icon icon="spinner" pulse class="icon" />
-                                                    <span class="fa fa-save"></span>
-                                                    {{$tc('actions.save')}}
-                                                </button>
-                                                <router-link :to="{name: 'AdministrationRoleList'}"
-                                                    class="btn btn-secondary mr-1">
-                                                    {{$tc('actions.cancel')}}</router-link>
-                                            </div>
-                                        </div>
-                                    </form>
+                                    </div>
+                                    <div v-if="!role.all_user" class="col-md-6 pb-3 pt-4 border-top ">
+                                        <h6>
+                                            {{ $tc('titles.user', 2) }}:
+                                        </h6>
+                                        <v-select style="font-size: .9em" v-model="role.users" :multiple="true"
+                                            :options="users" @search="onSearchUsers" :taggable="false"
+                                            :get-option-label="getUserLabel" :close-on-select="true" label="id">
+                                            <template #no-options="{ search, searching, loading }">
+                                                {{$t('common.noResults')}}
+                                            </template>
+                                            <template slot="selected-option" slot-scope="option">
+                                                {{ option.first_name}} {{option.last_name}}
+                                                &nbsp;<small>({{option.email}})</small>
+                                            </template>
+                                            <template slot="option" slot-scope="option">
+                                                <span class="fa fa-user"></span>
+                                                {{ option.first_name}} {{option.last_name}}
+                                                &nbsp;<small>({{option.email}})</small>
+                                            </template>
+                                        </v-select>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="row">
+                                    <div class="col-md-12 mt-4 border-top pt-2">
+                                        <button class="btn btn-primary mr-1 btn-spinner" type="submit">
+                                            <font-awesome-icon icon="spinner" pulse class="icon" />
+                                            <span class="fa fa-save"></span>
+                                            {{$tc('actions.save')}}
+                                        </button>
+                                        <router-link :to="{name: 'AdministrationRoleList'}"
+                                            class="btn btn-secondary mr-1">
+                                            {{$tc('actions.cancel')}}</router-link>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 </template>
 <script>
     import Vue from 'vue';
