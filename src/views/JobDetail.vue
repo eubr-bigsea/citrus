@@ -70,8 +70,8 @@
                                                                     }"></span>
                                                                     -->
 
-                                                                <span
-                                                                    class="date">{{log.date | formatJsonHourMinute}}</span>
+                                                                <span class="date">{{log.date |
+                                                                    formatJsonHourMinute}}</span>
                                                                 <span class="info">{{log.message}}</span>
                                                             </p>
                                                         </template>
@@ -166,6 +166,27 @@
                                                 <div v-else-if="log.type === 'IMAGE'" class="image-result">
                                                     <img :src="'data:image/png;base64,' + log.message">
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div v-if="step.logs.find(s => s.type === 'OBJECT')"
+                                            class="mt-2 border-bottom pb-2">
+                                            <TaskDisplay :task="getTask(step.task.id)" />
+                                            &nbsp;
+                                            {{step.status}}
+                                            <div v-for="log in step.logs" :key="log.id"
+                                                style="font-size:.9em; margin-top: 20px">
+                                                <span v-if="log.type === 'OBJECT'">
+                                                    <!--
+                                                    <b-table :no-border-collapse="false" :items="log.message.rows"
+                                                        :per-page="50" :fields="log.message.attributes"
+                                                        tbody-class="body" sticky-header="500px" class="table border"
+                                                        outlined small hover striped bordered responsive>
+                                                    </b-table>
+                                                    -->
+                                                    <v-client-table ref="jobList" :data="log.message.rows"
+                                                        :columns="log.message.attributes.map(a=>a.label)"
+                                                        :options="sampleOptions"></v-client-table>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -277,6 +298,23 @@
                 showProperties: false,
                 showVisualizations: false,
                 progressIndicators: [],
+                sampleOptions: {
+                    filterable: false, perPageValues: [],
+                    sortIcon: {
+                        base: 'fa fas',
+                        is: 'fa-sort ml-10',
+                        up: 'fa-sort-amount-up',
+                        down: 'fa-sort-amount-down'
+                    },
+                    texts: {
+                        filter: this.$tc('common.filter'),
+                        count: this.$t('common.pagerShowing'),
+                        limit: this.$t('common.limit'),
+                        noResults: this.$t('common.noData'),
+                        loading: this.$t('common.loading'),
+                        filterPlaceholder: this.$t('common.filterPlaceholder')
+                    }
+                }
             };
         },
         computed: {
@@ -363,6 +401,17 @@
                     });
                     self.job.steps.forEach(step => {
                         self.tasks[step.task.id].status = step.status;
+                        step.logs.forEach(log => {
+                            if (log.type === 'OBJECT' && typeof (log.message) === 'string') {
+                                log.message = JSON.parse(log.message);
+                                if (log.message.rows) { // Sample table
+                                    const attributeNames = log.message.attributes.map(attr => attr.key);
+                                    log.message.rows = log.message.rows.map(
+                                        row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                                }
+                            }
+
+                        });
                     });
                     resp.data.results.forEach(result => {
                         self.results[result.task.id] = result;
@@ -428,13 +477,19 @@
                         if (step) {
                             step.status = msg.status;
                             const found = step.logs.filter(v => v.id === msg.id);
+                            let message = msg.message;
+                            if (msg.type === 'OBJECT'){
+                                const attributeNames = message.attributes.map(attr => attr.key);
+                                message.rows = message.rows.map(
+                                        row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                            }
                             if (found.length === 0) {
                                 step.logs.push({
                                     id: msg.step_id,
                                     level: msg.level,
                                     date: msg.date,
                                     type: msg.type,
-                                    message: msg.message
+                                    message
                                 });
                             }
                         }
@@ -458,7 +513,7 @@
                                 window.setTimeout(() => {
                                     self.jobStatus = 'COMPLETED';
                                     self.job.steps.forEach(step => {
-                                        if (step.status !== 'COMPLETED'){
+                                        if (step.status !== 'COMPLETED') {
                                             step.status = 'COMPLETED';
                                         }
                                     });

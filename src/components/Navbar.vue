@@ -9,15 +9,42 @@
                 <b-nav-item :to="{ name: 'dataSources' }" v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin">
                     <span class="fa fa-database"></span> {{ $tc('titles.dataSource', 2) }}
                 </b-nav-item>
+
+                <b-nav-item-dropdown left
+                    v-if="hasAnyPermission(WORKFLOW_PERMISSIONS.concat(APP_PERMISSIONS)) || isAdmin">
+                    <template v-slot:button-content>
+                        <span class="fa fa-lightbulb"></span>
+                        Experimentos
+                    </template>
+                    <b-dropdown-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
+                        <span class="fa fa-flask text-primary"></span> {{ $tc('titles.workflow', 2) }}
+                    </b-dropdown-item>
+                    
+                    <b-dropdown-item :to="{ name: 'explorer' }" v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
+                        <span class="fa fa-table text-success"></span> {{ $tc('titles.dataExplorer', 2) }}
+                    </b-dropdown-item>
+
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
+                        <span class="fa fa-search-dollar"></span> {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'apps' }">
+                        {{ $tc('titles.track', 2) }}
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+                <!--
                 <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
+                -->
                 <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
+                <!--
                 <b-nav-item :to="{ name: 'dashboards' }" v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
+                -->
 
                 <template v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
                     <template v-if="hasAnyPermission(['APP_EDIT']) || isAdmin">
@@ -37,7 +64,7 @@
                     <template v-else>
                         <b-nav-item :to="{ name: 'apps' }">
                             <span class="fa fa-bolt"></span>
-                                {{ $tc('titles.track', 2) }}
+                            {{ $tc('titles.track', 2) }}
                         </b-nav-item>
                     </template>
                 </template>
@@ -176,6 +203,7 @@
             }
         },
         mounted() {
+            return
             this.room = `user:${this.user.id}`;
             this.room = "user:1"
             const socket = io(this.namespace, {

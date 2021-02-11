@@ -203,6 +203,7 @@
                 isDirty: false,
                 loaded: false,
                 loadingToolbox: true,
+                maxDisplayOrder: 0,
                 minFormOrder: 5,
                 newName: '',
                 operations: [],
@@ -352,7 +353,10 @@
             })
             /* Task related */
             this.$root.$on('addTask', (task) => {
+                this.maxDisplayOrder ++;
                 task.step = null;
+                task.display_order = this.maxDisplayOrder;
+
                 this.workflow.tasks.push(task);
                 this.isDirty = true;
             });
@@ -493,6 +497,7 @@
                 let usingDisabledOp = false;
                 workflow.tasks.forEach((task) => {
                     let op = self.operationsLookup[task.operation.id];
+                    self.maxDisplayOrder = self.maxDisplayOrder < task.display_order ? task.display_order : self.maxDisplayOrder;
                     task.operation = op || { forms: [] };
                     task.step = null;
                     usingDisabledOp |= op === undefined || op.enabled === false;
@@ -647,12 +652,19 @@
                     });
             },
             _generateId() {
+                return this.$refs.diagram.generateId();
+                /*
+                const now = (new Date).getTime().toString(16).split('');
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
+                    if (now.length) {
+                        return now.pop();
+                    } else {
+                        let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    }
+                });*/
             },
-            _downloadAsType(data, contentType, extension){
+            _downloadAsType(data, contentType, extension) {
                 const self = this;
                 const element = document.createElement('a');
                 element.setAttribute('href', `data:${contentType};charset=utf-8,` +
@@ -665,17 +677,17 @@
             },
             exportWorkflow(format) {
                 const self = this
-                if (format === undefined){
-                    self._downloadAsType(JSON.stringify(self.workflow), 
+                if (format === undefined) {
+                    self._downloadAsType(JSON.stringify(self.workflow),
                         'application/json', 'json');
                 } else if (format === 'python' || format === 'notebook') {
                     const body = {
                         workflow_id: self.$route.params.id,
                         template: format
                     };
-                    const contentType = format === 'python'? 'application/x-python-code': 
+                    const contentType = format === 'python' ? 'application/x-python-code' :
                         'application/x-ipynb+json';
-                    const extension = format === 'python'? 'py' : 'ipynb';
+                    const extension = format === 'python' ? 'py' : 'ipynb';
                     axios.post(`${standUrl}/workflow/source-code`, body).then(resp => {
                         self.info(self.$t('common.wait'), 5000);
                         self.exportTimeoutHandler = setTimeout(() => {
@@ -692,7 +704,7 @@
                 } else {
                     self.warning(self.$t('errors.invalidOperation'))
                 }
-                
+
                 // self.success(self.$t('messages.exportWorkflow'));
             },
             saveWorkflow(savingCopy, newName) {

@@ -91,9 +91,9 @@ Vue.use(Snotify, {
     }
 });
 Vue.directive('focus', {
-  inserted: function (el) {
-    el.focus()
-  }
+    inserted: function (el) {
+        el.focus()
+    }
 })
 /**
  * Setting this config so that Vue-tables-2 will be able to replace sort icons with chevrons
@@ -140,15 +140,30 @@ const locales = {
 
 Vue.filter('formatJsonDate', v => {
     if (v) {
-        return format(parse(v), 'DD/MM/YYYY HH:MM');
+        const [d, tz] = v.split('+');
+        let parsedDate = parse(d);
+        parsedDate = new Date(parsedDate.valueOf()
+            - parsedDate.getTimezoneOffset() * 60 * 1000);
+        return format(parsedDate, 'DD/MM/YYYY HH:mm');
     }
 });
+Vue.filter('localePercent', (v) =>
+    Number(v).toLocaleString(
+        undefined, { style: 'percent', minimumFractionDigits: 2 })
+);
+
 Vue.filter('timeFromNow', (v, l) =>
     distanceInWordsStrict(new Date(), v, { addSuffix: true, locale: locales[l] })
 );
 Vue.filter('formatJsonHourMinute', v => {
     if (v) {
         return format(parse(v), 'HH:MM:ss');
+    }
+});
+
+Vue.component('v-style', {
+    render: function (createElement) {
+        return createElement('style', this.$slots.default)
     }
 });
 
@@ -253,7 +268,7 @@ let newVue = new Vue({
 });
 let requestCounter = 0;
 axios.interceptors.request.use(config => {
-    if (requestCounter === 0){
+    if (requestCounter === 0) {
         newVue.$Progress.start()
     }
     requestCounter += 1
@@ -261,7 +276,7 @@ axios.interceptors.request.use(config => {
 })
 axios.interceptors.response.use(response => {
     requestCounter -= 1
-    if (requestCounter === 0){
+    if (requestCounter === 0) {
         newVue.$Progress.finish()
     }
     return response

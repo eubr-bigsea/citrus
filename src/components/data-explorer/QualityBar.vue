@@ -1,34 +1,71 @@
 <template>
     <div class="clearfix border">
-        <div class="bar ok" :style="{width: percentOk + '%'}" :title="`OK: ${percentOk}`"></div>
-        <div class="bar bg-warning" :style="{width: percentMissing + '%'}" :title="`Missing: ${percentMissing}`"></div>
-        <div class="bar bg-danger" :style="{width: percentNOk + '%'}" :title="`NOK: ${percentNOk}`"></div>
+        <div class="bar quality-ok" :style="{width: 100 * percentOk + '%'}" :title="`${$t('dataExplorer.ok')}: ${$options.filters.localePercent(percentOk)}`"></div>
+        <div class="bar quality-missing" :style="{width: 100 * percentMissing + '%'}" :title="`${$t('dataExplorer.missing')}: ${$options.filters.localePercent(percentMissing)}`">
+        </div>
+        <div class="bar quality-nok" :style="{width: 100 * percentInvalid + '%'}" :title="`${$t('dataExplorer.invalid')}: ${$options.filters.localePercent(percentInvalid)}`">
+        </div>
     </div>
 </template>
 <script>
-export default {
-    data() {
-        return {
-            percentOk: 80,
-            percentMissing: 15,
-            percentNOk: 5
-        }
-    },
-}
+    export default {
+        props: {
+            attribute: {
+                type: Object,
+                default: () => {
+                    return { count: 1, missing_count: 0, invalid_count: 0 }
+                }
+            }
+        },
+        computed: {
+            percentOk() {
+                return this.attribute
+                    ? (this.attribute.count - this.attribute.missing_count - this.attribute.invalid_count)
+                    / this.attribute.count : 0;
+            },
+            percentMissing() {
+                return this.attribute
+                    ? this.attribute.missing_count / this.attribute.count : 0;
+            },
+            percentInvalid() {
+                return this.attribute
+                    ? this.attribute.invalid_count / this.attribute.count : 0;
+            }
+        },
+    }
 </script>
-<style scoped>
-    .bar { 
+<style>
+    .bar {
         cursor: pointer;
         float: left;
         height: 8px;
-    }  
-    .bar.ok {
+    }
+
+    .quality-ok {
         background: #3D9970;
     }
-    .bar.nok {
+
+    .quality-ok-text {
+        color: #3D9970;
+    }
+
+    .quality-nok {
         background: #FF4136;
     }
-    .bar.missing {
+
+    .quality-nok-text {
+        color: #FF4136;
+    }
+
+    .quality-missing {
         background: #FFDC00;
+    }
+
+    .quality-missing-text {
+        color: #FFDC00;
+    }
+
+    .quality-other {
+        background: #0074D9
     }
 </style>

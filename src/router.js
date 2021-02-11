@@ -80,6 +80,8 @@ const TrackAdd = () => import('./views/TrackAdd.vue');
 
 const QueryEdit = () => import('./views/query/QueryEdit.vue');
 
+const Explorer = () => import ('./components/data-explorer/Explorer.vue');
+
 Vue.use(Router);
 
 let router = new Router({
@@ -610,6 +612,15 @@ let router = new Router({
             meta: {
                 requiresAuth: true,
                 title: ['titles.admin', 1]
+            }
+        },
+        {
+            path: '/explorer/:id',
+            name: 'explorer',
+            component: Explorer,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
             }
         },
 
