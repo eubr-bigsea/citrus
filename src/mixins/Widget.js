@@ -11,6 +11,7 @@ export default {
             required: true,
             type: Object,
         },
+        asWidget: { default: true, type: Boolean },
         language: {
             default: 'en',
             type: String

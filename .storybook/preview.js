@@ -7,6 +7,7 @@ import VueTheMask from 'vue-the-mask'
 import VueI18n from 'vue-i18n'
 import messages from '../src/i18n/messages';
 import '../src/assets/main.scss'
+import VueProgressBar from 'vue-progressbar';
 
 
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
@@ -28,6 +29,20 @@ Vue.directive('focus', {
         });
     }
 })
+
+Vue.use(VueProgressBar, {
+    color: '#568f32',
+    failedColor: '#874b4b',
+    thickness: '5px',
+    transition: {
+        speed: '0.5s',
+        opacity: '0.2s',
+        termination: 300
+    },
+    autoRevert: true,
+    location: 'top',
+    inverse: false
+});
 
 Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-icon', FontAwesomeIcon);

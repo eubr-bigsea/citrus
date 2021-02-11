@@ -606,10 +606,10 @@
                             step.status = msg.status;
                             const found = step.logs.filter(v => v.id === msg.id);
                             let message = msg.message;
-                            if (msg.type === 'OBJECT') {
+                            if (msg.type === 'OBJECT'){
                                 const attributeNames = message.attributes.map(attr => attr.key);
                                 message.rows = message.rows.map(
-                                    row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                                        row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
                             }
                             if (found.length === 0) {
                                 step.logs.push({

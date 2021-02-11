@@ -1,7 +1,7 @@
 <template lang="">
     <context-menu ref="ctxMenu" @ctx-open="onCtxOpen" @ctx-cancel="resetCtxLocals" class="menu" @ctx-close="onCtxClose">
         <!--<li class="ctx-header">{{menuData && menuData.label}}</li>-->
-        <template v-if="menuData && menuData.field && !menuData.field.locked">
+        <template v-if="menuData && menuData.attribute && !menuData.attribute.locked">
             <li class="ctx-item" @click="$refs.dataTypeCtxMenu.open($event, {close: false})">
                 <b>Change</b> data type...
             </li>
@@ -79,7 +79,7 @@
                 <span class="fa fa-lock"></span> <b>Lock</b> column
             </li>
         </template>
-        <template v-if="menuData && menuData.field && menuData.field.locked">
+        <template v-if="menuData && menuData.attribute && menuData.attribute.locked">
             <li class="ctx-item">
                 <span class="fa fa-lock-open"></span> <b>Unlock</b> column
             </li>

@@ -27,14 +27,14 @@ const Template = (args, { argTypes }) => ({
     },
     template: `<div>
                     <vue-snotify/>
-                    <preview-component :service="service" :fields="fields" :items="items"/>
+                    <preview-component :service="service" :attributes="attributes" :items="items"/>
                 </div>`
 });
 
 export const Default = Template.bind({});
 Default.args = {
     service,
-    fields: [
+    attributes: [
         { label: 'id', key: 'id', type: 'Integer', locked: false, tdClass: 'getTdClass' },
         { label: 'name', key: 'name', type: 'Text', locked: false, tdClass: 'getTdClass' },
         { label: 'birthday', key: 'birthday', type: 'Date', locked: false, tdClass: 'getTdClass' },

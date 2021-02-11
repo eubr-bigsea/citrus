@@ -14,12 +14,13 @@ const Template = (args, { argTypes }) => ({
     },
     template: `<div>
                     <vue-snotify/>
-                    <explorer :fields="fields" :items="items"/>
+                    <explorer :fields="fields" :items="items" :workflow-id="workflowId"/>
                 </div>`
 });
 
 export const Default = Template.bind({});
 Default.args = {
+    workflowId: 294,
     fields: [
         { label: 'id', key: 'id', type: 'Integer', locked: false, tdClass: 'getTdClass' },
         { label: 'name', key: 'name', type: 'Text', locked: false, tdClass: 'getTdClass' },
