@@ -181,9 +181,10 @@
             InputHeader,
             TahitiSuggester: () => {
                 return new Promise((resolve, reject) => {
-                    let script = document.createElement('script')
-                    script.async = true
-                    script.src = `${tahitiUrl}/public/js/tahiti.js`
+                    const script = document.createElement('script');
+                    script.setAttribute('id', 'tahiti-script');
+                    script.async = true;
+                    //script.src = `${tahitiUrl}/public/js/tahiti.js`
                     document.head.appendChild(script)
                 })
             }
@@ -232,6 +233,8 @@
         },
         mounted() {
             const self = this
+            document.getElementById('tahiti-script').setAttribute(
+                'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.$route.params.platform}`);
 
             this.$root.$on('addTask', () => {
                 this.showTasksPanel = false;
