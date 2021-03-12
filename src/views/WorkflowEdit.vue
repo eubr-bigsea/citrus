@@ -386,6 +386,14 @@
                 this.isDirty = true;
             });
             this.$root.$on('addFlow', (flow, jsPlumbConn) => {
+                const sourceTask = self.workflow.tasks.find((t) => t.id === flow.source_id);
+                const targetTask = self.workflow.tasks.find((t) => t.id === flow.target_id);
+                if (targetTask.$meta === undefined){
+                    targetTask.$meta = {}
+                }
+                const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
+                targetTask.$meta[inputPort.slug] = {sourceOperationSlug: sourceTask.operation.slug};
+
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
                 this.isDirty = true;
@@ -396,9 +404,17 @@
                     return id === flowId;
                 });
                 if (inx > -1) {
+                    const flow = this.workflow.flows[inx];
                     this.workflow.flows.splice(inx, 1);
+                    
+                    this.isDirty = true;
+
+                    const targetTask = self.workflow.tasks.find((t) => t.id === flow.target_id);
+                    const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
+                    if (targetTask.$meta && targetTask.$meta[inputPort.slug]){
+                        delete targetTask.$meta[inputPort.slug];
+                    }
                 }
-                this.isDirty = true;
             });
             this.$root.$on('onshow-history', this.showHistory);
             this.$root.$on('onzoom', (zoom) => {

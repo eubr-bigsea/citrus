@@ -1,12 +1,14 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
-        <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
-        <b-link v-if="!readOnly" @click.prevent="openModal" variant="sm">
-            {{$t('property.editValue')}}
-        </b-link>
+        <span v-if="asWidget">
+            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
+            <b-link v-if="!readOnly" @click.prevent="openModal" variant="sm">
+                {{$t('property.editValue')}}
+            </b-link>
+        </span>
         <b-modal id="expressionModal" size="xl" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" ref="modal">
+            :cancel-title="$t('actions.cancel')" ref="modal" @shown="focusElement">
             <div class="context-help" :class="{'d-none': !help}" v-html="help"
                 :style="{top: positionTop + 'px', left: positionLeft + 'px'}">
             </div>
@@ -45,55 +47,86 @@
                     </b-tabs>
                 </div>
                 <div class="col-md-8">
-                    <form v-if="expressionList && expressionList.length" onsubmit="return false" ref="form" action="">
-                        <table class="table table-sm expression-table">
-                            <thead>
-                                <th> {{$t('property.expression.title')}}</th>
-                                <th v-if="values.alias !== false"> {{$t('property.expression.alias')}}</th>
-                                <th style="width:12%"></th>
-                            </thead>
-                            <tbody>
-                                <template v-for="(row, index) in expressionList">
-                                    <tr>
-                                        <td class="expression-editor-area autocomplete">
-                                            <input type="text" class="form-control" :class="{'text-danger': row.error}"
-                                                @keyup="onKeyUp($event, row, 'expression')" ref="expr"
-                                                @blur="elementBlur(row, $event)"
-                                                @paste="changed($event, row, 'expression')" :value="row.expression"
-                                                required @dblclick="debugExpression(row)" />
-                                            <ul v-show="isOpen" class="autocomplete-results">
-                                                <li v-for="(result, i) in suggestionResults" :key="i"
-                                                    @click="setResult(result)" class="autocomplete-result"
-                                                    :class="{ 'is-active': i === arrowCounter }">
-                                                    {{ result }}
-                                                </li>
-                                            </ul>
-                                            <small class="label text-danger" v-html="row.error"></small>
-                                            <!-- <small>{{row}}</small> -->
-                                        </td>
-                                        <td v-if="values.alias !== false" style="width: 20%">
-                                            <input class="form-control" :value="row.alias" required
-                                                @change="updated($event, row, 'alias')" />
-                                        </td>
-                                        <td style="width:2%" class="text-center">
-                                            <a href="#" @click.prevent="remove($event, index)"
-                                                class="btn btn-danger btn-sm">
-                                                <!-- <span class="fa fa-minus-circle text-danger"></span> -->
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                                            </a>
-                                        </td>
-                                    </tr>
+                    <template v-if="multiple">
 
-                                </template>
-                            </tbody>
-                        </table>
-                    </form>
-                    <div v-else class="border pt-5 pb-5 pl-3">
-                        <div class="label label-info">{{$t('property.noExpressions')}}</div>
+
+                        <form v-if="expressionList && expressionList.length" onsubmit="return false" ref="form"
+                            action="">
+                            <table class="table table-sm expression-table">
+                                <thead>
+                                    <th> {{$t('property.expression.title')}}</th>
+                                    <th v-if="values.alias !== false"> {{$t('property.expression.alias')}}</th>
+                                    <th style="width:12%"></th>
+                                </thead>
+                                <tbody>
+                                    <template v-for="(row, index) in expressionList">
+                                        <tr>
+                                            <td class="expression-editor-area autocomplete">
+                                                <input type="text" class="form-control"
+                                                    :class="{'text-danger': row.error}"
+                                                    @keyup="onKeyUp($event, row, 'expression')" ref="expr"
+                                                    @blur="elementBlur(row, $event)"
+                                                    @paste="changed($event, row, 'expression')" :value="row.expression"
+                                                    required @dblclick="debugExpression(row)" />
+                                                <ul v-show="isOpen" class="autocomplete-results">
+                                                    <li v-for="(result, i) in suggestionResults" :key="i"
+                                                        @click="setResult(result)" class="autocomplete-result"
+                                                        :class="{ 'is-active': i === arrowCounter }">
+                                                        {{ result }}
+                                                    </li>
+                                                </ul>
+                                                <small class="label text-danger" v-html="row.error"></small>
+                                                <!-- <small>{{row}}</small> -->
+                                            </td>
+                                            <td v-if="values.alias !== false" style="width: 20%">
+                                                <input class="form-control" :value="row.alias" required
+                                                    @change="updated($event, row, 'alias')" />
+                                            </td>
+                                            <td style="width:2%" class="text-center">
+                                                <a href="#" @click.prevent="remove($event, index)"
+                                                    class="btn btn-danger btn-sm">
+                                                    <!-- <span class="fa fa-minus-circle text-danger"></span> -->
+                                                    <font-awesome-icon icon="trash"></font-awesome-icon>
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                    </template>
+                                </tbody>
+                            </table>
+
+                        </form>
+                        <div v-else class="border pt-5 pb-5 pl-3">
+                            <div class="label label-info">{{$t('property.noExpressions')}}</div>
+                        </div>
+                    </template>
+                    <div v-else v-for="(row, index) in expressionList" :key="index">
+                        <form v-if="expressionList && expressionList.length" onsubmit="return false" ref="form"
+                            action="">
+                            <div> {{$t('property.expression.alias')}}: </div>
+                            <input type="text" class="form-control" v-focus ref="alias" :value="row.alias" required
+                                @change="updated($event, row, 'alias')">
+                            <div> {{$t('property.expression.title')}}: </div>
+                            <textarea name="" id="" rows="5" class="form-control" :class="{'text-danger': row.error}"
+                                @keyup="onKeyUp($event, row, 'expression')" ref="expr" @blur="elementBlur(row, $event)"
+                                @paste="changed($event, row, 'expression')" :value="row.expression" required
+                                @dblclick="debugExpression(row)"></textarea>
+                            <ul v-show="isOpen" class="autocomplete-results">
+                                <li v-for="(result, i) in suggestionResults" :key="i" @click="setResult(result)"
+                                    class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }">
+                                    {{ result }}
+                                </li>
+                            </ul>
+                        </form>
+                        <div class="mt-4">
+                            <small>
+                                <span v-html="$t('property.expression.tip')"></span> &nbsp;
+                                <span v-html="$t('property.expression.validExpressions')"></span>
+                            </small>
+                        </div>
                     </div>
-
                 </div>
-                <div class="col-md-12">
+                <div v-if="multiple" class="col-md-12">
                     <button class="btn btn-success btn-sm float-right" @click.prevent="add">
                         <span class="fa fa-plus"></span> {{$t('actions.simpleAdd')}}</button>
                 </div>
@@ -110,15 +143,16 @@
             </div>
 
 
-            <small class="mt-2">
-                {{$t('property.expression.explanation')}}
+            <small class="mt-2" v-if="multiple">
+                <span>{{$t('property.expression.explanation')}}</span>
                 <span v-html="$t('property.expression.tip')"></span> &nbsp;
                 <span v-html="$t('property.expression.validExpressions')"></span>
 
             </small>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click.prevent="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
-                <b-btn @click.prevent="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
+                <b-btn v-if="expressionList && expressionList.length" @click.prevent="okClicked" size="sm"
+                    variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
+                <b-btn @click.prevent="cancelClicked" size="sm" variant="secondary">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -229,7 +263,7 @@
                 }).length == 0;
             },
             okClicked(e) {
-                const result = this.$refs.form.reportValidity() & this.validate();
+                const result = this.$refs.form[0].reportValidity() & this.validate();
                 if (result) {
                     this.$root.$emit(this.message, this.field,
                         this.expressionList);
@@ -350,11 +384,19 @@
             debugExpression(row) {
                 console.debug(row);
                 console.debug(JSON.stringify(row));
+            },
+            focusElement() {
+                if (this.multiple) {
+
+                } else {
+                    this.$refs.alias && this.$refs.alias[0].focus();
+                }
             }
         },
         props: {
-            addOperators: {},
-            removeOperators: {},
+            //addOperators: {},
+            //removeOperators: {},
+            multiple: { type: Boolean, default: true },
         },
         mounted() {
             const resources = functionsHelp[this.$i18n.locale];
@@ -370,10 +412,12 @@
         position: relative;
     }
 
-    .expression-editor-area textarea{
+    .expression-editor-area textarea {
         font-size: 9pt;
     }
-    table.operators-table td, table.operators-table th {
+
+    table.operators-table td,
+    table.operators-table th {
         font-size: 9pt;
         padding: 1px 4px;
     }

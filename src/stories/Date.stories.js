@@ -28,7 +28,7 @@ const Template = (args, { argTypes }) => ({
 export const WithValue = Template.bind({});
 WithValue.args = {
     field: field1,
-    value: '2010-12-12',
+    value: '2015-12-12',
 };
 
 export const ReadOnly = Template.bind({});

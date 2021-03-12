@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-3 noselect">
             <div class="title">
-                <h1>{{$t('dataExplorer.title')}}</h1>
+                <h5>{{$t('dataExplorer.title')}}</h5>
             </div>
             <div class="mb-2">
 
@@ -10,27 +10,14 @@
                 <b-input-group>
                     <b-input size="sm" v-model="dataSource.labelValue" disabled />
                     <b-input-group-append>
-                        <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary"
-                            size="sm"><span class="fa fa-database"></span></b-button>
+                        <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary" size="sm">
+                            <span class="fa fa-database"></span>
+                        </b-button>
                         <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm"><span
                                 class="fa fa-vial"></span></b-button>
                     </b-input-group-append>
                 </b-input-group>
             </div>
-            <b-dropdown class="more-actions mt-1" block size="sm" variant="warning" dropright>
-                <template #button-content>
-                    <span class="fa fa-plus"></span> {{$t('dataExplorer.newStep')}}
-                </template>
-                <b-dropdown-item @click="selectAttributes">Select attributes ...</b-dropdown-item>
-                <b-dropdown-item>Sort rows by...</b-dropdown-item>
-                <b-dropdown-item>Group data by</b-dropdown-item>
-                <b-dropdown-item>Join</b-dropdown-item>
-                <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item>Sample</b-dropdown-item>
-                <b-dropdown-item>Top N</b-dropdown-item>
-                <b-dropdown-item>Window</b-dropdown-item>
-                <b-dropdown-item>Stacking (união)</b-dropdown-item>
-            </b-dropdown>
             <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split
                 @click="toggleSteps($event, true)" :disabled="! (steps && steps.length > 0)">
                 <template #button-content>
@@ -43,78 +30,29 @@
                 <b-dropdown-item @click="removeSelected">{{$t('dataExplorer.removeSelected')}}</b-dropdown-item>
             </b-dropdown>
 
-            <b-button variant="primary" size="sm" class="float-right mt-2"
-                @click="saveWorkflow"><span class="fa fa-save"></span> {{$t('actions.save')}}
+            <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"><span
+                    class="fa fa-save"></span> {{$t('actions.save')}}
             </b-button>
             <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1" @click="loadData">
                 <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
             </b-button>
-            <!--
-            <b-button-toolbar class="mb-1">
-                <b-button class="btn-sm mr-1" variant="outline-secondary">
-                    <span class="fa fa-sort"></span> Sort rows by...
-                </b-button>
-                <b-button class="btn-sm mr-1" variant="outline-secondary">Group data by</b-button>
-                <b-button class="btn-sm mr-1" variant="outline-secondary">Distinct</b-button>
-                <b-button class="btn-sm mr-1" variant="outline-secondary">Join</b-button>
-                <b-button class="btn-sm mr-1" variant="outline-secondary">Sample</b-button>
-                <b-button class="btn-sm mr-1" variant="outline-secondary">Top N</b-button>
-                <b-button class="btn-sm mr-1" variant="outline-secondary">Window</b-button>
-                <b-button class="btn-sm mr-1" variant="outline-secondary">Stacking (união)</b-button>
-            </b-button-toolbar>
-        -->
+
             <div class="mt-3">
-                <h5>Steps</h5>
-                <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true">
-                    <draggable v-model="steps" @start="drag=true" @end="drag=false" class="list-group"
-                        ghost-class="ghost">
-                        <transition-group>
-                            <div v-for="step in steps" :key="step.id" class="list-group-item steps clearfix"
-                                :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
-                                <div :style="{'background-color': step.background }" style="height: 60px; width:3px"
-                                    class="mr-1 float-left text-secondary"></div>
-                                <div style="width:15px" class="pt-1 float-left text-secondary">
-                                    <span class="fa fa-grip-vertical"></span>
-
-                                    <div class="mt-2">
-                                        <span v-if="step.status === 'COMPLETED'"
-                                            class="fa text-success fa-check-circle"></span>
-                                        <span v-if="step.status === 'ERROR'"
-                                            class="fa text-danger fa-times-circle"></span>
-                                        <span v-if="step.status === 'CANCELED'"
-                                            class="fa text-secondary fa-hand-paper"></span>
-                                    </div>
+                <strong>{{$tc('dataExplorer.step', 2)}}</strong>
+                <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true" id="step-scroll">
+                    <div id="step-container">
+                        <draggable v-model="steps" @start="drag=true" @end="drag=false" class="list-group"
+                            ghost-class="ghost" handle=".step-drag-handle">
+                            <transition-group>
+                                <div v-for="step, inx in steps" :key="step.id" class="list-group-item steps clearfix"
+                                    :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
+                                    <step :step="step" @toggle-step="toggleStep" @delete="deleteStep"
+                                        :service-bus="serviceBus" @update="updateStep"
+                                        @custom-open="customOpen" :attributes="tableData.attributes" :index="inx"/>
                                 </div>
-                                <div class="float-left" style="width: calc(100% - 25px)">
-                                    <div class="mb-2">
-                                        <b-form-checkbox v-model="step.selected">
-                                            <del v-if="!step.enabled"><span v-html="step.description"></span></del>
-                                            <span v-else v-html="step.description"></span>.
-                                        </b-form-checkbox>
-                                    </div>
-                                    <div class="float-left ml-4">
-                                        <b-button-group>
-                                            <b-button variant="light" size="sm" @click="toggleStep(step)">
-                                                <span v-if="step.enabled" class="fa fa-toggle-on text-success"></span>
-                                                <span v-else class="fa fa-toggle-off text-secondary"></span>
-                                            </b-button>
-
-                                            <b-button variant="light" size="sm" class="text-secondary"><span
-                                                    class="fa fa-eye"></span></b-button>
-
-                                            <b-button variant="light" size="sm" class="text-secondary"
-                                                @click="deleteStep(step.id)"><span class="fa fa-trash"></span>
-                                            </b-button>
-                                            <b-button variant="light" size="sm" class="text-secondary"
-                                                @click.prevent="customOpen($event, step)"><span
-                                                    class="fa fa-ellipsis-h"></span>
-                                            </b-button>
-                                        </b-button-group>
-                                    </div>
-                                </div>
-                            </div>
-                        </transition-group>
-                    </draggable>
+                            </transition-group>
+                        </draggable>
+                    </div>
                 </VuePerfectScrollbar>
             </div>
 
@@ -126,14 +64,6 @@
                 :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
                 :total="tableData.total" :service-bus="serviceBus" />
         </div>
-
-        <!--
-        <context-menu ref="stepCtxMenu" @ctx-open="onCtxOpen" @ctx-cancel="resetCtxLocals" class="menu">
-            <li class="ctx-item">
-                <span class="fa fa-edit text-secondary"></span> {{$t('actions.rename')}}
-            </li>
-        </context-menu>
-        -->
         <b-modal ref="modalSelectAttributes" button-size="sm" :title="$t('actions.selectAttributes')"
             @ok="okSelectAttributes">
             <div style="height: 300px; overflow:auto">
@@ -164,6 +94,7 @@
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import draggable from 'vuedraggable';
     import Preview from './Preview';
+    import Step from './Step';
     import Notifier from '../../mixins/Notifier.js';
     import Commands from './Commands.js';
 
@@ -175,16 +106,19 @@
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
 
-    const SUPPORTED_OPERATIONS = ['data-reader', 'projection', 'filter-selection', 'sort'];
+    const SUPPORTED_OPERATIONS = ['cast', 'data-reader',
+        'filter-selection', 'projection', 'sort', 'transformation'];
     // FIXME: Must be loaded
     const OPERATIONS = new Map();
     OPERATIONS.set('projection', { id: 6, input_id: 3, output_id: 4 });
     OPERATIONS.set('data-reader', { id: 18, output_id: 35 });
     OPERATIONS.set('filter-selection', { id: 5, input_id: 1, output_id: 2 });
+    OPERATIONS.set('sort', { id: 32, input_id: 61, output_id: 62 });
+    OPERATIONS.set('transformation', { id: 7, input_id: 29, output_id: 30 });
 
     export default {
         mixins: [Notifier],
-        components: { Preview, draggable, VuePerfectScrollbar, contextMenu, },
+        components: { Preview, draggable, VuePerfectScrollbar, contextMenu, Step },
         props: {
             attributes: { type: Array, default: () => [] },
             items: { type: Array },
@@ -202,7 +136,7 @@
                 serviceBus: new Vue(), // service bus used to communicate
                 socket: null, // used by socketio (web sockets)
                 steps: [], // list of steps
-                tableData: {}, // data used to render preview table
+                tableData: {attributes: []}, // data used to render preview table
                 workflow: null, //workflow JSON data
             }
         },
@@ -211,13 +145,32 @@
             this.internalWorkflowId = (this.$route) ? this.$route.params.id : this.workflowId;
             this.loadWorkflow();
             this.serviceBus.$on('newStep', this.addTask);
+            this.serviceBus.$on('toggleScroll', this.toggleScroll);
         },
         beforeDestroy() {
             this.disconnectWebSocket();
             this.serviceBus.$off('newStep');
+            this.serviceBus.$off('toggleScroll');
         },
         methods: {
-
+            updateStep(editableStep){
+                const step = this.steps.find((s) => s.id === editableStep.id);
+                if (step){
+                    Object.assign(step, editableStep);
+                    step.description = this.service.formatI18n(
+                        step.parameters.functionName, step.parameters.i18nArgs(step)
+                    );
+                    editableStep.description = step.description;
+                    const task = this.workflow.tasks.find((t) => t.id === editableStep.id);
+                    if (task){
+                        Object.assign(task.forms, editableStep.forms);
+                        task.forms.comment = { value: step.description };
+                    }
+                }
+            },
+            toggleScroll(){
+                console.debug(this.$refs.scrollBar);
+            },
             // Step maintenance
             toggleStep(step) {
                 step.enabled = !step.enabled;
@@ -231,11 +184,17 @@
                     this.setupSampleProperties(lastEnabled);
                 }
             },
-            setupSampleProperties(task){
+            setupSampleProperties(task) {
                 task.forms.display_sample.value = '1';
-                task.forms.infer_sample = {value: true};
-                task.forms.describe_sample = {value: true};
-                task.forms.sample_size = {value: 300};
+                task.forms.infer_sample = { value: true };
+                task.forms.describe_sample = { value: true };
+                task.forms.sample_size = { value: 300 };
+            },
+            cleanSampleProperties(task) {
+                task.forms.display_sample.value = '0';
+                delete task.forms.infer_sample;
+                delete task.forms.describe_sample;
+                delete task.forms.sample_size;
             },
             deleteStep(id) {
                 const pos = this.workflow.tasks.findIndex(task => task.id === id);
@@ -344,9 +303,6 @@
                     this.error(e);
                 }.bind(this));
             },
-            customOpen(event, data) {
-                this.$refs.stepCtxMenu.open(event, data);
-            },
             /* Step selecion actions */
             toggleSteps(ev, fromButtom) {
                 if (fromButtom) {
@@ -365,6 +321,9 @@
             removeSelected() {
                 this.steps = this.steps.filter(step => !step.selected);
             },
+            customOpen(event, data) {
+                //this.$refs.stepCtxMenu.open(event, data);
+            },
             /* Data loading */
             async loadWorkflow() {
                 const self = this;
@@ -376,14 +335,19 @@
                             (a, b) => { return a.display_order - b.display_order; });
 
                         const readerTask = workflow.tasks[0];
-                        const lastTask = workflow.tasks[workflow.tasks.length - 1];
+                        const totalOfTasks = workflow.tasks.length;
+                        /*
+                        workflow.tasks.forEach((task, inx) => {
+                            task.forms['display_sample'].value = (inx + 1) === totalOfTasks ? '1' : '0';
+                        });
+                        */
                         //To be compatible: 
                         // 1 - First task must be data reader
                         // 2 - Last task must emit samples
                         // 3 - No output can be used more than once (?)
                         // 4 - Only some operations are supported
                         const hasUnsupported = workflow.tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
-                        if (hasUnsupported || readerTask.operation.slug !== 'data-reader' || lastTask.forms['display_sample'].value !== '1') {
+                        if (hasUnsupported || readerTask.operation.slug !== 'data-reader') {
                             self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format' });
                             return;
                         }
@@ -391,9 +355,6 @@
 
                         self.loadingData = true;
                         self.dataSource = { ...readerTask.forms['data_source'] };
-
-                        //console.debug(readerTask);
-
                         self.workflow = workflow;
                     }).catch(function (e) {
                         self.error(e);
@@ -407,7 +368,7 @@
             },
             async loadData() {
                 const self = this;
-                this.loadingData = true;
+                self.loadingData = true;
                 const cloned = JSON.parse(JSON.stringify(this.workflow));
                 cloned.platform_id = cloned.platform.id; //FIXME: review
 
@@ -416,26 +377,26 @@
                     task.operation = { id: task.operation.id };
                     delete task.version;
                 });
-                const user = this.$store.getters.user;
                 const body = {
                     workflow: cloned,
                     cluster: { id: 1 }, //FIXME: How to determine the cluster?
                     name: `## explorer ${self.workflow.id} ##`,
-                    user: {
-                        id: user.id,
-                        login: user.login,
-                        name: user.name
-                    },
+                    user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                     persist: false, // do not save the job in db.
                     app_configs: { sample_size: 200, },
                 }
                 self.disconnectWebSocket();
+                self.workflow.tasks.forEach((task, idx, tasks) => {
+                    if (idx !== tasks.length - 1) {
+                        self.cleanSampleProperties(task);
+                    } else {
+                        self.setupSampleProperties(task);
+                    }
+                });
 
                 axios.post(`${standUrl}/jobs`, body, {
-                    headers: {
-                        'Locale': self.$root.$i18n.locale,
-                    }
-                }).then(function (response) {
+                    headers: { 'Locale': self.$root.$i18n.locale, }
+                }).then((response) => {
                     self.job = response.data.data;
                     self.connectWebSocket();
                 }).catch((ex) => {
@@ -459,21 +420,17 @@
                 const self = this;
                 const socket = io(standNamespace, { upgrade: true, });
                 self.socket = socket;
-                /*
-                socket.on('disconnect', () => { console.debug('You are not connected'); });
-                socket.on('response', msg => { console.debug('response', msg); });
 
-                socket.on('connect_error', () => { console.debug('Web socket server offline'); });
-                */
                 socket.on('connect', () => { socket.emit('join', { room: self.job.id }); });
 
                 socket.on('update task', (msg, callback) => {
                     if (msg.type === 'OBJECT') {
                         // Update must be done before assigning to observable self.tableData!
                         const truncated = msg.message.truncated || [];
-                        msg.message.attributes.forEach(attr => {
+                        msg.message.attributes.forEach((attr, index) => {
                             attr['selected'] = true;
-                            attr['truncated'] = truncated.indexOf(attr.key) > -1
+                            attr['truncated'] = truncated.indexOf(attr.key) > -1;
+                            attr['position'] = index;
                         });
 
                         self.tableData = msg.message;
@@ -483,7 +440,6 @@
 
                         self.tableData.rows = self.tableData.rows.map(
                             row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
-                        //console.debug(self.tableData)
                     }
                     const step = self.steps.find(step => step.id === msg.id);
                     if (step) {
@@ -497,11 +453,7 @@
                     if (msg.status === 'COMPLETED')
                         self.loadingData = false;
                 });
-                /*
-                socket.on('task result', msg => {
-                    console.debug(msg);
-                });
-                */
+
             }
         }
     }
@@ -535,17 +487,18 @@
         padding: 8px 5px;
     }
 
-    .list-group-item.steps b {
-        background-color: #17a2b8;
-        border: 2px solid #17a2b8;
-        border-radius: 5px;
-        color: #fff;
-        font-size: .8em;
-        font-weight: normal;
-        padding: 1px 5px;
-    }
-
     .more-actions li {
         font-size: .8em !important;
+    }
+
+    #step-container {
+        position: relative;
+        margin-right: 10px;
+    }
+
+    #step-scroll {
+        position: relative;
+        margin: auto;
+        height: 60vh;
     }
 </style>

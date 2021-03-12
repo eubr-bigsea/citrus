@@ -1,17 +1,18 @@
 <template>
     <div class="function-editor">
-        <span v-if="!readOnly">
-            <LabelComponent :field="field" :value="value"></LabelComponent>
-            <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
-            <b-link variant="sm" @click.prevent="openModal">
-                {{$t('actions.chooseOption')}} 
-            </b-link>
+        <span v-if="asWidget">
+            <span v-if="!readOnly">
+                <LabelComponent :field="field" :value="value"></LabelComponent>
+                <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
+                <b-link variant="sm" @click.prevent="openModal">
+                    {{$t('actions.chooseOption')}}
+                </b-link>
+            </span>
+            <span v-else>{{displayValue}}</span>
         </span>
-        <span v-else>{{displayValue}}</span>
 
-
-        <b-modal id="lookupModal" size="lg" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
-            no-fade ref="modal">
+        <b-modal id="lookupModal" size="lg" :title="field.label" :hide-header="true"
+            :cancel-title="$t('actions.cancel')" no-fade ref="modal">
             <p>
                 <em>{{parameters.options.description}}</em>
             </p>
@@ -27,8 +28,8 @@
                 <tbody>
                     <tr v-for="(row, index) in valueList">
                         <td style="width:50%">
-                            <v-select :options="suggestions" :multiple="false" :value="row.attribute" @input="(v) => attrUpdated(row, 'attribute', v)"
-                                :taggable="true" :closeOnSelect="true">
+                            <v-select :options="suggestions" :multiple="false" :value="row.attribute"
+                                @input="(v) => attrUpdated(row, 'attribute', v)" :taggable="true" :closeOnSelect="true">
                                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
                             </v-select>
                         </td>
@@ -37,20 +38,21 @@
                                 <option v-for="opt in parameters.functions" :value="opt.key">{{opt.value}}</option>
                             </select>
                         </td>
-                        <td v-if="parameters.options.show_alias"  style="width:20%">
+                        <td v-if="parameters.options.show_alias" style="width:20%">
                             <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
                         </td>
-                        <td v-if="parameters.options.show_value"  style="width:20%">
+                        <td v-if="parameters.options.show_value" style="width:20%">
                             <input class="form-control" :value="row.alias" @change="updated($event, row, 'alias')" />
                         </td>
                         <td style="width:10%" class="text-center">
                             <a href="#" @click="remove($event, index)" :title="$t('actions.delete')">
                                 <span class="fa fa-minus-circle"></span>
                             </a>
-                            <a href="#" @click="moveUp($event, index)" v-if="index !== 0"  :title="$t('actions.moveUp')">
+                            <a href="#" @click="moveUp($event, index)" v-if="index !== 0" :title="$t('actions.moveUp')">
                                 <span class="fa fa-chevron-circle-up"></span>
                             </a>
-                            <a href="#" @click="moveDown($event, index)" v-if="index !== (valueList.length-1)"  :title="$t('actions.moveDown')">
+                            <a href="#" @click="moveDown($event, index)" v-if="index !== (valueList.length-1)"
+                                :title="$t('actions.moveDown')">
                                 <span class="fa fa-chevron-circle-down"></span>
                             </a>
                         </td>
@@ -157,6 +159,7 @@
             }
         },
         props: {
+            asWidget: {type: Boolean, default: true}
         },
     }
 </script>

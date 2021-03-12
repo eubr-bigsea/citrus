@@ -6,6 +6,7 @@ export default {
             required: true,
             type: Object,
         },
+        asWidget: { default: true, type: Boolean },
         language: {
             default: 'en',
             type: String
@@ -22,7 +23,7 @@ export default {
         extendedSuggestionEvent: {
             type: Function,
         },
-        value: { 
+        value: {
             default: '',
         },
     }

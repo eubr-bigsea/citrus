@@ -6,7 +6,8 @@
 
         <div class="hide circle" v-bind:style="getStyle"></div>
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
-            {{task.name}}
+            <span style="font-size:7pt">{{task.$meta}}</span>
+            {{task.name}} 
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
@@ -488,7 +489,6 @@
         border: 1px solid #BDBDBD;
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .2), 0 1px 5px 0 rgba(0, 0, 0, .12);
         list-style: none;
-        xmargin: 3px 0 0 20px;
         padding: 0;
         position: absolute;
         width: 150px;
@@ -580,29 +580,6 @@
         position: relative;
         width: 100%;
     }
-
-    /* #lemonade-diagram {
-        width: 2000px;
-        height: 4000px;
-        .ghost-active {
-            display: block !important;
-        }
-        .ghost-select>span {
-            border: 1px dashed #000;
-            width: 100%;
-            height: 100%;
-            float: left;
-        }
-        .ghost-select {
-            display: none;
-            width: 100px;
-            height: 100px;
-            z-index: 100000;
-            position: absolute !important;
-            cursor: default !important;
-        }
-    } */
-
     #lemonade,
     .lemonade {
         position: relative;
@@ -826,13 +803,6 @@
                 min-height: 80px;
 
                 ;
-                /*
-            -moz-transform: rotate(2deg);
-            -webkit-transform: rotate(2deg);
-            -o-transform: rotate(2deg);
-            -ms-transform: rotate(2deg);
-            transform: rotate(2deg);
-            */
                 box-shadow: 0px 4px 6px #333;
                 -moz-box-shadow: 0px 4px 6px #333;
                 -webkit-box-shadow: 0px 4px 6px #333;
@@ -858,11 +828,6 @@
 
                 &.jsplumb-drag-selected,
                 &.jtk-drag-selected {
-                    /*
-                    box-shadow: -2px 1px 6px 0px #f28d00;
-                    font-style: italic;
-                    color: green;
-                    */
                     box-shadow: 0px 4px 8px rgba(dodgerblue, .5);
                 }
 
@@ -879,10 +844,6 @@
                     border-radius: 0 0 5px 5px;
 
                 }
-            }
-
-            &.operation:after {
-                /* mix-blend-mode: difference; */
             }
 
             &.data-source {
@@ -912,10 +873,6 @@
                 font-style: normal;
                 font-family: Verdana, Tahoma, Geneva, sans-serif;
                 font-size: 6pt !important;
-            }
-
-            span {
-                xfont-size: 12pt;
             }
 
             p {
@@ -950,34 +907,6 @@
 
         z-index: 100;
     }
-
-    /* 
-    .endpoint:hover {
-        opacity: 1;
-        background-color: $color3;
-    }
-
-    li .list-group-item {
-        list-style-type: none;
-        font-size: 9pt;
-        padding: 5px 5px;
-        font-weight: bold;
-
-    } */
-
-    /**/
-
-    /* .icon-union:before {
-        content: "\222A";
-    }
-
-    .icon-intersection:before {
-        content: "\2229";
-    }
-
-    .icon-projection:before {
-        content: '\03C3';
-    } */
 
     .jsplumb-drag-selected,
     .jtk-drag-selected {

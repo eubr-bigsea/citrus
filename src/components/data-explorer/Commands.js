@@ -3,13 +3,19 @@ import jsep from 'jsep';
 const translations = {
     pt: {
         changeColumnType: '<b>Alterar tipo</b> Tipo da coluna <em>%s</em> alterado de <em>%s</em> para <em>%s</em>.',
-        deleteColumn: '<b>Excluir coluna</b> Coluna <em>%s</em> excluída.',
-        duplicateColumn: '<b>Duplicar coluna</b> Coluna <em>%s</em> duplicada para <em>%s</em>.',
+        deleteColumn: '<b>Excluir coluna</b> <code>%s</code>.',
+        duplicateColumn: '<b>Duplicar coluna</b> <code>%s</code> para <code>%s</code>.',
+        filterRows: '<b>Filtrar registros</b> com a condição <code>%s</code>.',
+        lower: '<b>Converter para minúsculas</b> <code>%s</code>',
         moveColumn: 'Coluna %s movida para a posição %s.',
-        renameColumn: '<b>Renomear coluna</b> Coluna <em>%s</em> renomeada para <em>%s</em>.',
+        round: '<b>Arredondar</b> <code>%s</code>',
+        renameColumn: '<b>Renomear coluna</b> <code>%s</code> para <code>%s</code>.',
         selectAttributes: '<b>Selecionar atributos</b> Lista de atributos selecionados e/ou ordenados.',
-
-        filterRows: '<b>Filtrar registros</b> Filtrar registros com a condição <code>%s</code>.'
+        sortAttributes: '<b>Ordenar registros</b> por <code>%s</code>',
+        strip_accents: '<b>Remover acentos</b> em <code>%s</code>',
+        transformAttributes: '<b>Aplicar transformação</b> <code>%s</code>',
+        title: '<b>Converter iniciais para maiúsculas em</b> <code>%s</code>',
+        upper: '<b>Converter para maiúsculas</b> <code>%s</code>'
     },
     en: {
 
@@ -33,7 +39,7 @@ class Step {
         });
     }
 }
-export default class DataExplorerCommand {
+export default class Store {
     constructor(serviceBus, steps, attributes, language) {
         this.serviceBus = serviceBus;
         this.steps = steps;
@@ -47,7 +53,11 @@ export default class DataExplorerCommand {
     }
     formatI18n(key, args) {
         const value = translations[this.language][key];
-        return [...args].reduce((p, c) => p.replace(/%s/, c), value);
+        if (value) {
+            return [...args].reduce((p, c) => p.replace(/%s/, c), value);
+        } else {
+            return `Key ${key} not found in language`;
+        }
     }
     getAttributeNames() {
         return this.attributes.map((attribute) => attribute.label);
@@ -60,14 +70,16 @@ export default class DataExplorerCommand {
         this.steps.push(step);
         return step;
     }
+    getTreeFromExpression(expression) {
+        jsep.addBinaryOp(">=", 1);
+        jsep.removeBinaryOp('^');
+        return jsep(expression || '');
+    }
     // Row operations
     filterRows(attributeName, operator, attributeValue) {
         const expression = `${attributeName} ${operator} ${attributeValue}`;
 
-        const tree = jsep(expression || '');
-        jsep.addBinaryOp(">=", 1);
-        jsep.removeBinaryOp('^');
-
+        const tree = this.getTreeFromExpression(expression);
         const description = this.formatI18n('filterRows', [expression]);
         const step = this.addStep('filter-selection', { expression },
             description
@@ -102,10 +114,11 @@ export default class DataExplorerCommand {
 
             const description = this.formatI18n('renameColumn', [attributeName, newName]);
 
+
             const step = this.addStep('projection',
                 {
                     attributes: names,
-                    aliases: aliases
+                    aliases: aliases,
                 },
                 description
             );
@@ -239,6 +252,82 @@ export default class DataExplorerCommand {
     }
     removeRowsWithInvalidCell() {
 
+    }
+    sort(attributeName, direction) {
+        const description = this.formatI18n('sortAttributes',
+            [`${attributeName} (${direction})`]);
+        const attributes = [{ attribute: attributeName, f: direction }];
+
+        const step = this.addStep('sort',
+            { attributes }, description
+        );
+        this.serviceBus.$emit('newStep',
+            {
+                'id': step.id,
+                'operation': { 'slug': 'sort' },
+                'forms': {
+                    'attributes': {
+                        'value': attributes
+                    },
+                }
+            }, description
+        );
+    }
+
+    transformWithFunction(attributeName, alias, position, functionName, ...params) {
+        const description = this.formatI18n(functionName, [attributeName]);
+
+        const i18nArgs = (step) => [step.parameters.attributeName];
+        const getForms = (newAlias, parameters) => {
+            const allParams = parameters.map(
+                //p => (typeof p === 'number') ? p.toString() : `'${p}'`)
+                p => p.toString())
+                .join(", ");
+            const expression = `${functionName}(${allParams})`;
+            return {
+                $function: { value: functionName },
+                expression: {
+                    value: [{
+                        alias: newAlias, expression,
+                        tree: this.getTreeFromExpression(expression),
+                    }],
+                },
+                //where new attribute will be inserted
+                position: { value: [position === null ? -1 : position + 1] },
+            }
+        }
+
+
+        const step = this.addStep('transform',
+            { /*expression,*/ functionName, attributeName, alias, i18nArgs, getForms }, description
+        );
+        this.serviceBus.$emit('newStep',
+            {
+                id: step.id,
+                operation: { 'slug': 'transformation' },
+                forms: getForms(alias, params),
+            }, description
+        );
+    }
+    transform(attributeName, position, expressionList) {
+        const description = this.formatI18n('transformAttributes',
+            [`${expressionList[0].alias} = ${expressionList[0].expression}`]);
+
+        const step = this.addStep('transform',
+            { expression: expressionList }, description
+        );
+        this.serviceBus.$emit('newStep',
+            {
+                id: step.id,
+                operation: { 'slug': 'transformation' },
+                forms: {
+                    expression: {
+                        value: expressionList
+                    },
+                    position: { value: [position === null ? -1 : position + 1] }
+                }
+            }, description
+        );
     }
     // Boolean operations
     negate() {
@@ -395,6 +484,27 @@ export default class DataExplorerCommand {
                         }, task.forms.comment.value, task.id,
                         task.forms.color.value.background,
                     );
+                    break;
+                case 'cast':
+                    this.addStep(task.operation.slug,
+                        {
+                            attributes: task.forms.attributes.value,
+                        }, task.forms.comment.value, task.id,
+                        task.forms.color.value.background);
+                    break;
+                case 'sort':
+                    this.addStep(task.operation.slug,
+                        {
+                            attributes: task.forms.attributes.value,
+                        }, task.forms.comment.value, task.id,
+                        task.forms.color.value.background);
+                    break;
+                case 'transformation':
+                    this.addStep(task.operation.slug,
+                        {
+                            expression: task.forms.expression.value,
+                        }, task.forms.comment.value, task.id,
+                        task.forms.color.value.background);
                     break;
                 default:
                     alert('Invalid operation ' + task.operation.slug);

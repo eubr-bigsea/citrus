@@ -23,6 +23,7 @@ import './fa-icons';
 /* Widgets */
 import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
 import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue'
+import CastComponent from './components/widgets/Cast.vue'
 import CheckboxComponent from './components/widgets/Checkbox.vue'
 import CodeComponent from './components/widgets/Code.vue'
 import ColorComponent from './components/widgets/Color.vue'
@@ -52,6 +53,7 @@ Vue.component('v-select', vSelect)
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
     ['attribute-selector-component', AttributeSelector2Component],
+    ['cast-component', CastComponent],
     ['checkbox-component', CheckboxComponent],
     ['code-component', CodeComponent],
     ['color-component', ColorComponent],
@@ -92,7 +94,7 @@ Vue.use(Snotify, {
 });
 Vue.directive('focus', {
     inserted: function (el) {
-        el.focus()
+        Vue.nextTick(() => el.focus());
     }
 })
 /**
