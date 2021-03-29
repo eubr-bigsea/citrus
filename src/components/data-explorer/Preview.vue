@@ -1,9 +1,10 @@
 <template>
     <div>
-        <v-style v-if="rightAlignedColumns">
-            {{rightAlignedColumns}} {
+        <v-style v-if="rightAlignedAttributes">
+            {{rightAlignedAttributes}} {
             text-align: right;
             }
+
         </v-style>
         <div v-show="loading" class="preview-loading">
             <h1 class="text-secondary  border-radius p-4">
@@ -13,38 +14,45 @@
         </div>
         <template v-if="items">
             <PreviewMenu :selected="menuData.field" @select="menuAction" />
-            <b-table :no-border-collapse="false" :items="items" :fields="attributes" tbody-class="body"
-                sticky-header="80vh" table-class="table-preview" class="table border"
-                @row-contextmenu="tableContextMenu" outlined small hover striped bordered responsive ref="table"
-                @row-clicked="tableClick" style>
-                <template #head()="scope">
-                    <div @click.prevent="customOpen($event, scope)">
-                        <div style="cursor: default;" class="clearfix no-wrap">
-                            <div class="column-name mr-2">{{scope.label}} </div>
-                            <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
-                            <!--<font-awesome-icon v-else class="right" icon="chevron-down" />-->
-                        </div>
-                        <div class="data-type">
-                            <!--<select>
+            <div style="position: relative">
+                <div ref="colOverlay" class="col-overlay" @click="resetMenuData">
+                    <div></div>
+                </div>
+                <b-table :no-border-collapse="false" :items="items" :fields="attributes" tbody-class="body"
+                    sticky-header="80vh" table-class="table-preview" class="table border"
+                    @row-contextmenu="tableContextMenu" outlined small hover bordered responsive ref="table"
+                    @row-clicked="tableClick" style>
+                    <template #head()="scope">
+                        <div @click.prevent="customOpen($event, scope)">
+                            <div style="cursor: default;" class="clearfix no-wrap">
+                                <div class="attribute-name mr-2">{{scope.label}} </div>
+                                <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
+                                <!--<font-awesome-icon v-else class="right" icon="chevron-down" />-->
+                            </div>
+                            <div class="data-type">
+                                <!--<select>
                         <option v-for="dt in dataTypes" :value="dt" :key="dt">{{dt}}</option>
                     </select>-->
-                            {{scope.field.type}} <span v-if="scope.field.truncated">(trunc.)</span>
+                                {{scope.field.type}} <span v-if="scope.field.truncated">(trunc.)</span>
+                            </div>
+                            <div>
+                                <quality-bar :attribute="scope.field" />
+                            </div>
                         </div>
-                        <div>
-                            <quality-bar :attribute="scope.field" />
-                        </div>
-                    </div>
-                </template>
-                <template #table-colgroup="scope">
-                    <col v-for="field, inx in scope.fields" :key="field.key" :style="{border: '1px solid red'}">
-                </template>
-            </b-table>
+                    </template>
+                    <!--
+                    <template #table-colgroup="scope">
+                        <col v-for="field, inx in scope.fields" :key="field.key" :style="{border: '1px solid red'}">
+                    </template>
+                    -->
+                </b-table>
+            </div>
             <div><small>{{$tc('common.pagerShowing', 0, {from: 1, to: 500, count: total})}}</small></div>
         </template>
 
 
         <context-menu ref="dataTypeCtxMenu" @ctx-cancel="resetCtxLocals" class="menu">
-            <li v-for="dt in dataTypes" :key="dt" class="ctx-item" @click.prevent="changeColumnType(dt)">{{dt}}</li>
+            <li v-for="dt in dataTypes" :key="dt" class="ctx-item" @click.prevent="changeAttributeType(dt)">{{dt}}</li>
             <!--<li class="ctx-item"> Email </li>
             <li class="ctx-item"> Geospatial </li>
             <li class="ctx-item"> Object </li>-->
@@ -79,30 +87,30 @@
             <!--<li class="ctx-header">{{menuData && menuData.label}}</li>-->
             <template v-if="menuData && menuData.field && !menuData.field.locked">
 
-                <li class="ctx-item" @click="renameColumn">
+                <li class="ctx-item" @click="renameAttribute">
                     <span class="fa fa-edit text-secondary"></span> {{$t('actions.rename')}}
                 </li>
-                <li class="ctx-item" @click="changeColumnType">
+                <li class="ctx-item" @click="changeAttributeType">
                     {{$t('actions.changeDataType')}}
                 </li>
                 <li class="ctx-divider"></li>
                 <!--
-                <li class="ctx-item" @click="deleteColumn" key="actionSelect">
-                    <span class="fa fa-columns"></span> Select columns to <b>keep</b> or to <b>delete</b>...
+                <li class="ctx-item" @click="deleteAttribute" key="actionSelect">
+                    <span class="fa fa-columns"></span> Select attributes to <b>keep</b> or to <b>delete</b>...
                 </li>
                 -->
-                <li class="ctx-item" @click="deleteColumn" key="actionDelete">
+                <li class="ctx-item" @click="deleteAttribute" key="actionDelete">
                     <span class="fa fa-times text-danger"></span> {{$t('actions.delete')}}...
                 </li>
                 <!--
-            <li class="ctx-item" @click="deleteColumn">
+            <li class="ctx-item" @click="deleteAttribute">
                 <span class="fa fa-check text-success"></span> {{$t('actions.keep')}}...
             </li>
             -->
-                <li class="ctx-item" @click="duplicateColumn">
+                <li class="ctx-item" @click="duplicateAttribute">
                     <span class="fa fa-copy text-secondary"></span> {{$t('actions.duplicate')}}
                 </li>
-                <li class="ctx-item" @click="deleteColumn" key="actionMove">
+                <li class="ctx-item" @click="deleteAttribute" key="actionMove">
                     <span class="fa fa-arrows-alt-h "></span> {{$t('actions.move')}}...
                 </li>
                 <!--<li class="ctx-item disabled">option two (disabled)</li>-->
@@ -209,7 +217,7 @@
                     -->
                     <!--
                     <li class="ctx-item">
-                        <span class="fa fa-flag"></span> <b>New flag column </b> based on ...
+                        <span class="fa fa-flag"></span> <b>New flag attribute </b> based on ...
                     </li>
                     -->
 
@@ -220,7 +228,7 @@
                     </li>
                     <!--
                     <li class="ctx-item">
-                        <span class="fa fa-palette text-warning"></span> <b>Color</b> column by value ...
+                        <span class="fa fa-palette text-warning"></span> <b>Color</b> attribute by value ...
                     </li>
                     -->
                 </template>
@@ -232,19 +240,19 @@
                 <!--
                 <li class="ctx-divider"></li>
                 <li class="ctx-item" @click="toggleLock(true)">
-                    <span class="fa fa-lock"></span> <b>Lock</b> column
+                    <span class="fa fa-lock"></span> <b>Lock</b> attribute
                 </li>
                 -->
             </template>
             <template v-if="menuData && menuData.field && menuData.field.locked">
                 <li class="ctx-item" @click="toggleLock(false)" key="unlock">
-                    <span class="fa fa-lock-open"></span> <b>Unlock</b> column
+                    <span class="fa fa-lock-open"></span> <b>Unlock</b> attribute
                 </li>
             </template>
         </context-menu>
 
-        <b-modal ref="modalRenameColumn" :centered="true" button-size="sm" :title="$t('actions.rename')"
-            :cancel-title="$t('actions.cancel')" @ok="renameColumn">
+        <b-modal ref="modalRenameAttribute" :centered="true" button-size="sm" :title="$t('actions.rename')"
+            :cancel-title="$t('actions.cancel')" @ok="renameAttribute">
             <b-form-input class="form-control" v-model="menuData.field.label" autofocus></b-form-input>
         </b-modal>
 
@@ -252,7 +260,7 @@
             :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
             :initial="simpleInput.initial" />
 
-        <b-modal ref="modalDeleteColumn" :centered="true" button-size="sm" :title="$t('actions.rename')"
+        <b-modal ref="modaldeleteAttribute" :centered="true" button-size="sm" :title="$t('actions.rename')"
             :cancel-title="$t('common.no')" :ok-title="$t('common.yes')">
             <b-form-input class="form-control" autofocus></b-form-input>
         </b-modal>
@@ -293,8 +301,8 @@
                 dataTypes: [
                     'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'JSON', 'Text', 'Time',],
                 menuData: { field: { label: '', position: -1 } },
-                cellMenuData: { row: 0, column: 0, value: null, name: null },
-                currentColumnLabel: null,
+                cellMenuData: { row: 0, attribute: 0, value: null, name: null },
+                currentAttributeLabel: null,
                 handleTableScroll: null,
                 lastHeader: null,
                 propertyField: { label: '' },
@@ -307,35 +315,35 @@
                     message: null,
                 },
                 scrollEventSet: false,
-                rightAlignedColumns: { type: String }
+                rightAlignedAttributes: { type: String }
             }
         },
         props: {
             attributes: { type: Array, default: () => ['a'] },
+            invalid: { type: Object },
             items: { type: Array },
             loading: { type: Boolean },
-            service: { type: Object },
-            total: { type: Number },
-            serviceBus: { type: Object },
             missing: { type: Object },
-            invalid: { type: Object },
+            store: { type: Object },
+            serviceBus: { type: Object },
+            total: { type: Number },
         },
         watch: {
             attributes() {
                 const rightAlinedTypes = new Set(['integer', 'date', 'decimal', 'boolean', 'time']);
-                const rightAlignedColumns = [];
+                const rightAlignedAttributes = [];
 
                 const attributeIndexes = new Map();
                 this.attributes.forEach((attr, inx) => {
                     if (rightAlinedTypes.has(attr.type.toLowerCase())) {
-                        rightAlignedColumns.push(inx)
+                        rightAlignedAttributes.push(inx)
                     }
                     attributeIndexes.set(attr.key, inx);
                 });
-                if (rightAlignedColumns.length) {
-                    this.rightAlignedColumns = rightAlignedColumns.map(v => `.table-preview td:nth-child(${v + 1})`).join(', ');
+                if (rightAlignedAttributes.length) {
+                    this.rightAlignedAttributes = rightAlignedAttributes.map(v => `.table-preview td:nth-child(${v + 1})`).join(', ');
                 } else {
-                    this.rightAlignedColumns = null;
+                    this.rightAlignedAttributes = null;
                 }
                 const self = this;
                 Vue.nextTick(() => {
@@ -376,41 +384,70 @@
             }
         },
         mounted: function () {
+            window.addEventListener("resize", this.resize);
             this.handleTableScroll = debounce(this.handleScroll, 100);
         },
         created() {
         },
 
         beforeDestroy() {
+            window.removeEventListener("resize", this.resize);
             this.$refs.table &&
                 this.$refs.table.$el.removeEventListener(
                     'scroll', this.handleTableScrollEvent);
         },
         methods: {
+            resize(ev) {
+                const th = this.lastHeader;
+                if (th) {
+                    const clipRec = th.getBoundingClientRect();
+                    this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
+                    this.$refs.colOverlay.style.width = `${clipRec.width}px`;
+                    this.$refs.colOverlay.style.display = '';
+                }
+            },
             tableClick(item, rowIndex, event) {
+
+                this.$refs.colOverlay.style.left = -10;
+                this.$refs.colOverlay.style.width = 0;
+                this.$refs.colOverlay.style.display = 'none';
+                this.resetMenuData();
+                return;
                 const cell = event.target.closest('td');
                 const index = parseInt(cell.getAttribute('aria-colindex')) - 1;
+
                 //this.customOpen(event, this.attributes[index], index);
-                
+
                 this.lastHeader && this.lastHeader.classList.remove('bg-info', 'text-white');
-                const data = {column: index, field: this.attributes[index], 
-                    label: this.attributes[index].key};
+                const data = {
+                    attribute: index, field: this.attributes[index],
+                    label: this.attributes[index].key
+                };
                 const th = this.$refs.table.$el.querySelectorAll('th')[index];
-                if (this.menuData.column !== data.column) {
+                if (this.menuData.field !== data.field) {
                     this.lastHeader = th;
                     this.lastHeader.classList.add('bg-info', 'text-white')
                     this.menuData = data;
+                    const clipRec = th.getBoundingClientRect();
+                    this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
+                    this.$refs.colOverlay.style.width = `${clipRec.width}px`;
+                    this.$refs.colOverlay.style.display = '';
                 } else {
+                    this.$refs.colOverlay.style.left = -10;
+                    this.$refs.colOverlay.style.width = 0;
+                    this.$refs.colOverlay.style.display = 'none';
                     this.resetMenuData();
                 }
             },
             resetMenuData() {
                 this.menuData = { field: { label: '', position: -1 } };
+                this.$refs.colOverlay.style.left = '-100px';
+                this.$refs.colOverlay.style.display = 'none';
+                document.querySelector('th.bg-info').classList.remove('bg-info', 'text-white');
             },
             menuAction(options) {
                 if (typeof this[options.action] === 'function') {
-                    options.params.action = options.action;
-                    this[options.action](...options.params);
+                    this[options.action](options.params);
                 } else {
                     console.log(`Unknown action: ${options.action}`);
                 }
@@ -431,9 +468,14 @@
                 } else {
                     th = event.target.closest('th');
                 }
+
                 this.lastHeader && this.lastHeader.classList.remove('bg-info', 'text-white');
-                if (this.menuData.column !== data.column) {
+                if (this.menuData.field !== data.field) {
                     this.lastHeader = th;
+                    const clipRec = th.getBoundingClientRect();
+                    this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
+                    this.$refs.colOverlay.style.width = `${clipRec.width}px`;
+                    this.$refs.colOverlay.style.display = '';
                     this.lastHeader.classList.add('bg-info', 'text-white')
                     this.menuData = data;
                 } else {
@@ -465,7 +507,7 @@
                 this.lastHeader.classList.remove('bg-info', 'text-white')
             },
             resetCellCtxLocals(data) {
-                this.cellMenuData = { row: 0, column: 0, value: null, name: null };
+                this.cellMenuData = { row: 0, attribute: 0, value: null, name: null };
             },
             _eventModifier(evt, obj) {
                 const proxy = new Proxy(evt, {
@@ -473,20 +515,20 @@
                 })
                 return new evt.constructor(evt.type, proxy)
             },
-            /* Column actions */
-            transform(functionName, ...params) {
-                const alias = `${this.menuData.field.label}_${functionName}`;
-                this.service.transformWithFunction(this.menuData.field.label,
-                    alias, this.menuData.field.position, functionName, params);
+            /* Attribute actions */
+            transform(params) {
+                this.store.transformWithFunction(
+                    this.menuData.field.label,
+                    this.menuData.field.position, params);
                 //this.$refs.expressionEditor.openModal();
             },
             saveExpression(expressionList) {
-                this.service.transform(this.menuData.field.label,
+                this.store.transform(this.menuData.field.label,
                     this.menuData.field.position, expressionList);
             },
-            deleteColumn() {
+            deleteAttribute() {
                 //OK
-                //this.$refs.modalDeleteColumn.show();
+                /*
                 const msg = this.$t('messages.confirmRemoveIt', '',
                     { what: `a coluna "${this.menuData.field.key}"` });
                 const self = this;
@@ -499,13 +541,16 @@
                     centered: true
                 }).then(value => {
                     if (value) {
-                        self.service.deleteColumn(this.menuData.field.label);
+                        self.store.deleteAttribute(this.menuData.field.label);
                         this.resetMenuData();
                     }
                 }).catch(err => {
                 });
+                */
+                this.store.deleteAttribute(this.menuData.field.label);
+                this.resetMenuData();
             },
-            duplicateColumn() {
+            duplicateAttribute() {
                 //OK
                 const modalConfig =
                 {
@@ -516,37 +561,38 @@
                     value: this.menuData.field.label,
                     options: null,
                     ok: () => {
-                        this.service.duplicateColumn(
+                        this.store.duplicateAttribute(
                             this.menuData.field.label,
                             this.$refs.simpleInput.value);
                     }
                 };
                 this.$refs.simpleInput.show(modalConfig);
             },
-            renameColumn() {
+            renameAttribute() {
                 //OK
+                const attributeName = this.menuData.field.label;
                 const modalConfig =
                 {
                     okTitle: this.$t('common.ok'),
                     cancelTitle: this.$t('actions.cancel'),
                     message: this.$t('dataExplorer.informNewName'),
                     title: this.$t('actions.rename'),
-                    value: this.menuData.field.label,
+                    value: attributeName,
                     ok: () => {
-                        this.service.renameColumn(
-                            this.menuData.field.label,
+                        this.store.renameAttribute(
+                            attributeName,
                             this.$refs.simpleInput.value);
                     }
                 };
                 this.$refs.simpleInput.show(modalConfig);
                 this.resetMenuData();
                 /*
-                this.$refs.modalRenameColumn.show();
+                this.$refs.modalRenameAttribute.show();
                 const col = this.attributes.find((f) => f.key === this.menuData.field.key);
                 col.label = this.menuData.field.label;
-                this.service.renameColumn();*/
+                this.store.renameAttribute();*/
             },
-            changeColumnType() {
+            changeAttributeType() {
                 const modalConfig =
                 {
                     okTitle: this.$t('common.ok'),
@@ -556,7 +602,7 @@
                     title: this.$t('actions.changeDataType'),
                     value: this.menuData.field.type,
                     ok: () => {
-                        this.service.changeColumnType(
+                        this.store.changeAttributeType(
                             this.menuData.field.label,
                             this.$refs.simpleInput.value);
                     }
@@ -565,7 +611,7 @@
                 /*if (this.dataTypes.includes(newType)) {
                     const col = this.attributes.find((f) => f.key === this.menuData.field.key);
                     if (col) {
-                        this.service.changeColumnType(
+                        this.store.changeAttributeType(
                             this.menuData.field.label,
                             newType);
                         ///col.type = newType;
@@ -573,7 +619,7 @@
                 }*/
             },
             sort(direction) {
-                this.service.sort(this.menuData.field.label, direction);
+                this.store.sort(this.menuData.field.label, direction);
             },
 
             toggleLock(state) {
@@ -586,12 +632,12 @@
             /**/
             tableContextMenu(item, index, event) {
                 event.preventDefault();
-                const columnIndex = parseInt(event.target.getAttribute('aria-colindex'));
-                const attribute = this.attributes[columnIndex - 1];
+                const attributeIndex = parseInt(event.target.getAttribute('aria-colindex'));
+                const attribute = this.attributes[attributeIndex - 1];
                 this.$refs.ctxCellMenu.open(this._eventModifier(event, {}),
                     {
                         row: index + 1,
-                        column: columnIndex,
+                        attribute: attributeIndex,
                         value: ['Text', 'Date', 'Datetime', 'Time'].includes(attribute.type)
                             ? `"${event.target.innerText.substring(0, 80)}"`
                             : event.target.innerText,
@@ -611,6 +657,10 @@
         font-size: .9em;
         margin: 0;
         min-width: 200px;
+    }
+
+    .table-preview {
+        position: relative;
     }
 
     .table {
@@ -640,9 +690,10 @@
     }
 
     .table>>>td {
-        /*min-width: 100px;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        */
+        font-size: 9pt;
+        min-width: 100px;
+        padding: 1px 4px;
+        /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
     }
 
     div.data-type {
@@ -666,5 +717,21 @@
         text-align: center;
         position: absolute;
         top: 100px;
+    }
+
+    .col-overlay {
+        border: 1px solid rgb(14, 101, 235);
+        border-bottom: 0;
+        left: -10000px;
+        position: absolute;
+        height: 80vh;
+        min-width: 100px;
+    }
+
+    .col-overlay div {
+        opacity: .02;
+        background-color: rgb(14, 101, 235);
+        height: 80vh;
+        width: 100%;
     }
 </style>
