@@ -19,15 +19,16 @@
                 </b-input-group>
             </div>
             <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split
-                @click="toggleSteps($event, true)" :disabled="! (steps && steps.length > 0)">
+                @click="store.toggleSteps($event, true)" :disabled="! (store.store && store.store.length > 0)">
                 <template #button-content>
-                    <input type="checkbox" @change="toggleSteps" :disabled="! (steps && steps.length > 0)" />
+                    <input type="checkbox" @change="store.toggleStep"
+                        :disabled="! (store.store && store.store.length > 0)" />
                 </template>
-                <b-dropdown-item @click=" enableSelected(true)">{{$t('dataExplorer.enableSelected')}}</b-dropdown-item>
-                <b-dropdown-item @click="enableSelected(false)">{{$t('dataExplorer.disableSelected')}}
+                <b-dropdown-item @click="store.enableSelected(true)">{{$t('dataExplorer.enableSelected')}}
                 </b-dropdown-item>
-                <!-- <b-dropdown-item>Copy selected</b-dropdown-item> -->
-                <b-dropdown-item @click="removeSelected">{{$t('dataExplorer.removeSelected')}}</b-dropdown-item>
+                <b-dropdown-item @click="store.enableSelected(false)">{{$t('dataExplorer.disableSelected')}}
+                </b-dropdown-item>
+                <b-dropdown-item @click="store.removeSelected">{{$t('dataExplorer.removeSelected')}}</b-dropdown-item>
             </b-dropdown>
 
             <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"><span
@@ -41,29 +42,30 @@
                 <strong>{{$tc('dataExplorer.step', 2)}}</strong>
                 <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true" id="step-scroll">
                     <div id="step-container">
-                        <draggable v-model="steps" @start="drag=true" @end="drag=false" class="list-group"
+                        <draggable v-model="store.store" @start="drag=true" @end="drag=false" class="list-group"
                             ghost-class="ghost" handle=".step-drag-handle">
-                            <transition-group>
-                                <div v-for="step, inx in steps" :key="step.id" class="list-group-item steps clearfix"
+                                <div v-for="step, inx in store.stepManager.steps" :key="step.id"
+                                    class="list-group-item steps clearfix"
                                     :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
-                                    <step :step="step" @toggle-step="toggleStep" @delete="deleteStep"
-                                        :service-bus="serviceBus" @update="updateStep"
-                                        @custom-open="customOpen" :attributes="tableData.attributes" :index="inx"/>
+                                    <step :step="step" :service-bus="store.serviceBus"
+                                        :attributes="tableData.attributes" :index="inx" @toggle="store.toggleStep(step)"
+                                        @delete="store.deleteStep(step)" @update="store.updateStep(step)"
+                                        @custom-open="store.customOpen" />
                                 </div>
-                            </transition-group>
                         </draggable>
                     </div>
                 </VuePerfectScrollbar>
             </div>
 
-            <div v-if="!steps || !steps.length" class="alert alert-warning">{{$t('dataExplorer.noStep')}}
+            <div v-if="!store.store || !store.store.length" class="alert alert-warning">{{$t('dataExplorer.noStep')}}
             </div>
         </div>
         <div class="col-md-9 bg-white">
-            <preview :attributes="tableData.attributes" :items="tableData.rows" :service="service"
+            <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
                 :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
-                :total="tableData.total" :service-bus="serviceBus" />
+                :total="tableData.total" :service-bus="store.serviceBus" />
         </div>
+        <!--
         <b-modal ref="modalSelectAttributes" button-size="sm" :title="$t('actions.selectAttributes')"
             @ok="okSelectAttributes">
             <div style="height: 300px; overflow:auto">
@@ -84,7 +86,7 @@
                 </draggable>
             </div>
         </b-modal>
-
+        -->
     </div>
 </template>
 <script>
@@ -108,14 +110,7 @@
 
     const SUPPORTED_OPERATIONS = ['cast', 'data-reader',
         'filter-selection', 'projection', 'sort', 'transformation'];
-    // FIXME: Must be loaded
-    const OPERATIONS = new Map();
-    OPERATIONS.set('projection', { id: 6, input_id: 3, output_id: 4 });
-    OPERATIONS.set('data-reader', { id: 18, output_id: 35 });
-    OPERATIONS.set('filter-selection', { id: 5, input_id: 1, output_id: 2 });
-    OPERATIONS.set('sort', { id: 32, input_id: 61, output_id: 62 });
-    OPERATIONS.set('transformation', { id: 7, input_id: 29, output_id: 30 });
-
+    
     export default {
         mixins: [Notifier],
         components: { Preview, draggable, VuePerfectScrollbar, contextMenu, Step },
@@ -132,150 +127,46 @@
                 isDirty: false,  //check if workflow is dirty before leaving page
                 job: null,  //last job details
                 loadingData: false,  //data loading state
-                service: null,  //service rules implementation
-                serviceBus: new Vue(), // service bus used to communicate
+                store: new Commands(new Vue(), 'pt'),  //store rules implementation
                 socket: null, // used by socketio (web sockets)
-                steps: [], // list of steps
-                tableData: {attributes: []}, // data used to render preview table
-                workflow: null, //workflow JSON data
+                tableData: { attributes: [] }, // data used to render preview table
             }
         },
         mounted() {
-            this.service = new Commands(this.serviceBus, this.steps, this.attributes, 'pt');
-            this.internalWorkflowId = (this.$route) ? this.$route.params.id : this.workflowId;
+            this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
             this.loadWorkflow();
-            this.serviceBus.$on('newStep', this.addTask);
-            this.serviceBus.$on('toggleScroll', this.toggleScroll);
+            /*this.serviceBus.$on('newStep', this.addTask);
+            this.serviceBus.$on('toggleScroll', this.toggleScroll);*/
         },
         beforeDestroy() {
             this.disconnectWebSocket();
+            /*
             this.serviceBus.$off('newStep');
             this.serviceBus.$off('toggleScroll');
+            */
         },
         methods: {
-            updateStep(editableStep){
-                const step = this.steps.find((s) => s.id === editableStep.id);
-                if (step){
-                    Object.assign(step, editableStep);
-                    step.description = this.service.formatI18n(
-                        step.parameters.functionName, step.parameters.i18nArgs(step)
-                    );
-                    editableStep.description = step.description;
-                    const task = this.workflow.tasks.find((t) => t.id === editableStep.id);
-                    if (task){
-                        Object.assign(task.forms, editableStep.forms);
-                        task.forms.comment = { value: step.description };
-                    }
-                }
-            },
-            toggleScroll(){
+            toggleScroll() {
                 console.debug(this.$refs.scrollBar);
             },
-            // Step maintenance
-            toggleStep(step) {
-                step.enabled = !step.enabled;
-                const task = this.workflow.tasks.find(task => task.id === step.id);
-                task.enabled = step.enabled;
-
-                this.workflow.tasks.forEach(task => task.forms.display_sample.value = '0');
-                const sortedTasks = this.workflow.tasks.sort(task => -task.display_order)
-                const lastEnabled = sortedTasks.find(task => task.enabled);
-                if (lastEnabled) {
-                    this.setupSampleProperties(lastEnabled);
-                }
-            },
-            setupSampleProperties(task) {
-                task.forms.display_sample.value = '1';
-                task.forms.infer_sample = { value: true };
-                task.forms.describe_sample = { value: true };
-                task.forms.sample_size = { value: 300 };
-            },
-            cleanSampleProperties(task) {
-                task.forms.display_sample.value = '0';
-                delete task.forms.infer_sample;
-                delete task.forms.describe_sample;
-                delete task.forms.sample_size;
-            },
-            deleteStep(id) {
-                const pos = this.workflow.tasks.findIndex(task => task.id === id);
-                if (pos > -1) {
-                    const stepIndex = this.steps.findIndex(step => step.id === id);
-                    this.steps.splice(stepIndex, 1);
-                    if (pos == this.workflow.tasks.length - 1) {
-
-                        const sourceFlowPos = this.workflow.flows.findIndex(flow => flow.target_id === id);
-                        const sourceTask = this.workflow.tasks.find(
-                            task => task.id === this.workflow.flows[sourceFlowPos].source_id)
-                        this.setupSampleProperties(sourceTask);
-
-                        this.workflow.flows.splice(sourceFlowPos, 1);
-                    } else {
-                        const targetFlowPos = this.workflow.flows.findIndex(flow => flow.source_id === id);
-                        const sourceFlowPos = this.workflow.flows.findIndex(flow => flow.target_id === id);
-
-                        console.debug(targetFlowPos, sourceFlowPos);
-                        this.workflow.flows.push({
-                            "source_port": this.workflow.flows[sourceFlowPos].source_port,
-                            "target_port": this.workflow.flows[targetFlowPos].target_port,
-                            "source_port_name": "output data",
-                            "target_port_name": "input data",
-                            "environment": "DESIGN",
-                            "source_id": this.workflow.flows[sourceFlowPos].source_id,
-                            "target_id": this.workflow.flows[targetFlowPos].target_id
-                        })
-                        this.setupSampleProperties(this.workflow.tasks[pos - 1]);
-                        this.workflow.flows = this.workflow.flows.filter(flow => flow.target_id !== id && flow.source_id !== id);
-                    }
-                    this.workflow.tasks.splice(pos, 1);
-                }
-            },
             // Attribute selection
+            /*
             selectAttributes() {
                 this.attributeSelection = JSON.parse(JSON.stringify(this.tableData.attributes));
                 this.$refs.modalSelectAttributes.show();
             },
             okSelectAttributes() {
-                this.service.selectAttributes(this.attributeSelection.filter(attr => attr.selected));
+                this.store.selectAttributes(this.attributeSelection.filter(attr => attr.selected));
             },
+            */
             // Filter
             addFilterTask(attributeName, operator, attributeValue) {
                 console.debug(attributeName, operator, attributeValue)
             },
             //
-            addTask(task, description) {
-                const lastTask = this.workflow.tasks[this.workflow.tasks.length - 1];
-
-                const operation = OPERATIONS.get(task.operation.slug);
-                const maxDisplayOrder = Math.max.apply(Math, this.workflow.tasks.map(t => t.display_order));
-                task.operation.id = operation.id;
-                task.display_order = maxDisplayOrder + 1;
-                task.enabled = true;
-                task.environment = 'DESIGN'
-                task.name = `${task.operation.slug} ${maxDisplayOrder + 1}`;
-                task.z_index = task.display_order || 10;
-                task.forms.display_sample = { value: '1' };
-                task.forms.comment = { value: description };
-                task.top = lastTask.top;
-                task.left = lastTask.left + 240;
-
-                this.workflow.tasks.push(task);
-                const lastTaskOperation = OPERATIONS.get(lastTask.operation.slug);
-
-                lastTask.forms.display_sample.value = '0';
-                this.workflow.flows.push({
-                    "source_port": lastTaskOperation.output_id,
-                    "target_port": operation.input_id,
-                    "source_port_name": "output data",
-                    "target_port_name": "input data",
-                    "environment": "DESIGN",
-                    "source_id": lastTask.id,
-                    "target_id": task.id
-                })
-
-            },
             saveWorkflow() {
                 let self = this
-                let cloned = JSON.parse(JSON.stringify(self.workflow));
+                let cloned = JSON.parse(JSON.stringify(self.store.workflow));
                 let url = `${tahitiUrl}/workflows`;
                 let method = 'post'
 
@@ -294,7 +185,7 @@
                 return axios[method](url, cloned, { headers: { 'Content-Type': 'application/json' } }).then(
                     (resp) => {
                         self.isDirty = false;
-                        self.workflow = resp.data.data;
+                        self.store.setWorkflow(resp.data.data, false);
 
                         self.success(self.$t('messages.savedWithSuccess',
                             { what: self.$tc('titles.workflow') }));
@@ -303,27 +194,7 @@
                     this.error(e);
                 }.bind(this));
             },
-            /* Step selecion actions */
-            toggleSteps(ev, fromButtom) {
-                if (fromButtom) {
-                    const check = ev.target.querySelector('input');
-                    if (check) {
-                        check.checked = !check.checked;
-                        this.steps.forEach(step => step.selected = check.checked);
-                    }
-                } else {
-                    this.steps.forEach(step => step.selected = ev.target.checked);
-                }
-            },
-            enableSelected(enabled) {
-                this.steps.forEach(step => step.selected && (step.enabled = enabled));
-            },
-            removeSelected() {
-                this.steps = this.steps.filter(step => !step.selected);
-            },
-            customOpen(event, data) {
-                //this.$refs.stepCtxMenu.open(event, data);
-            },
+
             /* Data loading */
             async loadWorkflow() {
                 const self = this;
@@ -351,11 +222,9 @@
                             self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format' });
                             return;
                         }
-                        this.service.createStepsFromTasks(workflow.tasks.slice(1));
-
                         self.loadingData = true;
-                        self.dataSource = { ...readerTask.forms['data_source'] };
-                        self.workflow = workflow;
+                        self.store.setWorkflow(workflow, true);
+
                     }).catch(function (e) {
                         self.error(e);
                     }).finally(() => {
@@ -363,13 +232,13 @@
                             this.$Progress.finish();
                         })
                     });
-                self.setupSampleProperties(self.workflow.tasks[self.workflow.tasks.length - 1]);
+
                 //self.loadData();
             },
             async loadData() {
                 const self = this;
                 self.loadingData = true;
-                const cloned = JSON.parse(JSON.stringify(this.workflow));
+                const cloned = JSON.parse(JSON.stringify(this.store.workflow));
                 cloned.platform_id = cloned.platform.id; //FIXME: review
 
                 cloned.tasks.forEach((task) => {
@@ -380,19 +249,13 @@
                 const body = {
                     workflow: cloned,
                     cluster: { id: 1 }, //FIXME: How to determine the cluster?
-                    name: `## explorer ${self.workflow.id} ##`,
+                    name: `## explorer ${self.store.workflow.id} ##`,
                     user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                     persist: false, // do not save the job in db.
                     app_configs: { sample_size: 200, },
                 }
                 self.disconnectWebSocket();
-                self.workflow.tasks.forEach((task, idx, tasks) => {
-                    if (idx !== tasks.length - 1) {
-                        self.cleanSampleProperties(task);
-                    } else {
-                        self.setupSampleProperties(task);
-                    }
-                });
+                self.store.prepareSampleProperties();
 
                 axios.post(`${standUrl}/jobs`, body, {
                     headers: { 'Locale': self.$root.$i18n.locale, }
@@ -436,15 +299,12 @@
                         self.tableData = msg.message;
 
                         const attributeIds = self.tableData.attributes.map(attr => attr.key);
-                        self.service.setAttributes(self.tableData.attributes);
+                        self.store.setAttributes(self.tableData.attributes);
 
                         self.tableData.rows = self.tableData.rows.map(
                             row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
                     }
-                    const step = self.steps.find(step => step.id === msg.id);
-                    if (step) {
-                        step.status = msg.status;
-                    }
+                    self.store.changeStepStatus(msg.id, msg.status);
                 });
                 socket.on('update job', msg => {
                     if (msg.status === 'ERROR') {

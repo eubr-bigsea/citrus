@@ -14,7 +14,7 @@
         <div class="float-left step" style="width: calc(100% - 25px)">
             <div class="mb-2">
                 <b-form-checkbox v-model="editableStep.selected" class="step-description">
-                    <del v-if="!editableStep.enabled">
+                    <del v-if="!step.enabled">
                         <span v-html="editableStep.description"></span>
                     </del>
                     <span v-else v-html="editableStep.description"></span>
@@ -22,8 +22,8 @@
             </div>
             <div class="ml-4">
                 <b-button-group v-if="!editing">
-                    <b-button variant="light" size="sm" @click="$emit('toggleStep', step)">
-                        <span v-if="editableStep.enabled" class="fa fa-toggle-on text-success"></span>
+                    <b-button variant="light" size="sm" @click="$emit('toggle', step)">
+                        <span v-if="step.enabled" class="fa fa-toggle-on text-success"></span>
                         <span v-else class="fa fa-toggle-off text-secondary"></span>
                     </b-button>
 
@@ -48,7 +48,7 @@
                     <div class="mb-3">
                         <template v-if="inputAttributes === 'single'">
                             {{$tc('common.attribute')}}:
-                            <b-form-select size="sm" v-model="editableStep.parameters.attributeName">
+                            <b-form-select size="sm" v-model="editableStep.task.forms.$meta.attribute">
                                 <b-form-select-option :value="attr.label" v-for="attr in validAttributes">
                                     {{attr.label}}
                                 </b-form-select-option>
@@ -127,7 +127,7 @@
             }
         },
         mounted() {
-            this.functionName = this.step.parameters.functionName;
+            this.functionName = this.step.functionName;
         },
         methods: {
             cancelEdit() {
@@ -144,11 +144,6 @@
                     [this.editableStep.parameters.attributeName,]);
 
                 this.$emit('update', this.editableStep);
-                /*switch(this.step.operationSlug){
-                    case 'transform':
-                        this.serviceBus.$emit('updateStep', this.editableStep);
-                        break;
-                }*/
                 this.editing = false;
             },
             getStepClass(step) {

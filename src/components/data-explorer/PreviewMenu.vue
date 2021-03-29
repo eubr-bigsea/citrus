@@ -3,20 +3,20 @@
         <b-nav pills>
             <b-nav-item-dropdown text="Editar" toggle-class="nav-link-custom" no-caret
                 :disabled="selected.key === undefined">
-                <b-dropdown-item @click="trigger('renameColumn')">
+                <b-dropdown-item @click="trigger('renameAttribute')">
                     <span class="fa fa-edit text-secondary"></span> {{$t('actions.rename')}} coluna
                 </b-dropdown-item>
 
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
 
-                <b-dropdown-item @click="trigger('deleteColumn')">
+                <b-dropdown-item @click="trigger('deleteAttribute')">
                     <span class="fa fa-times text-danger"></span> {{$t('actions.delete')}} coluna
                 </b-dropdown-item>
-                <b-dropdown-item @click="trigger('duplicateColumn')" key="actionDuplicate">
+                <b-dropdown-item @click="trigger('duplicateAttribute')" key="actionDuplicate">
                     <span class="fa fa-copy text-secondary"></span> {{$t('actions.duplicate')}}
                     coluna
                 </b-dropdown-item>
-                <b-dropdown-item @click="trigger('moveColumn')" key="actionMove">
+                <b-dropdown-item @click="trigger('moveAttribute')" key="actionMove">
                     <span class="fa fa-arrows-alt-h "></span> {{$t('actions.move')}} coluna
                 </b-dropdown-item>
                 <!--
@@ -52,7 +52,7 @@
             </b-nav-item-dropdown>
             <b-nav-item-dropdown text="Transformar" toggle-class="nav-link-custom" no-caret
                 :disabled="selected.key === undefined">
-                <b-dropdown-item @click="trigger('changeColumnType')">
+                <b-dropdown-item @click="trigger('changeAttributeType')">
                     {{$t('actions.changeDataType')}} para coluna
                 </b-dropdown-item>
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
@@ -87,10 +87,10 @@
                     <b-dropdown-item>Timestamp to date </b-dropdown-item>
                 </template>
                 <template v-if="selected.type === 'Text' ">
-                    <b-dropdown-item value="toLowerCase" @click="trigger('transform', 'lower', selected.label)">
+                    <b-dropdown-item value="lower" @click="trigger('transform', 'lower', 'lower', selected.label)">
                         {{$t('dataExplorer.toLowerCase')}}
                     </b-dropdown-item>
-                    <b-dropdown-item value="toUpperCase" @click="trigger('transform', 'upper', selected.label)">
+                    <b-dropdown-item value="upper" @click="trigger('transform', 'upper', 'upper', selected.label)">
                         {{$t('dataExplorer.toUpperCase')}}
                     </b-dropdown-item>
                     <b-dropdown-item @click="trigger('transform', 'title', selected.label)">
@@ -176,10 +176,10 @@
                     </b-dropdown-item>
 
                     <b-dropdown-item>
-                        <b>Move</b> invalid cells for meaning Integer to column_invalid.
+                        <b>Move</b> invalid cells for meaning Integer to attribute_invalid.
                     </b-dropdown-item>
                     <b-dropdown-item>
-                        <b>Remove</b> invalid cells for meaning Integer to column_invalid.
+                        <b>Remove</b> invalid cells for meaning Integer to attribute_invalid.
                     </b-dropdown-item>
                     <b-dropdown-item>
                         <b>Remove</b> rows with no value
