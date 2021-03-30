@@ -10,14 +10,14 @@ OPERATIONS.set('transformation', { id: 7, input_id: 29, output_id: 30 });
 
 const translations = {
     pt: {
-        changeAttributeType: '<b>Alterar tipo</b> Tipo da coluna <em>%s</em> alterado de <em>%s</em> para <em>%s</em>.',
-        deleteAttribute: '<b>Excluir coluna</b> <code>%s</code>.',
-        duplicateAttribute: '<b>Duplicar coluna</b> <code>%s</code> para <code>%s</code>.',
+        changeAttributeType: '<b>Alterar tipo</b> Tipo do atributo <em>%s</em> alterado de <em>%s</em> para <em>%s</em>.',
+        deleteAttribute: '<b>Excluir atributo</b> <code>%s</code>.',
+        duplicateAttribute: '<b>Duplicar atributo</b> <code>%s</code> para <code>%s</code>.',
         filterRows: '<b>Filtrar registros</b> com a condição <code>%s</code>.',
         lower: '<b>Converter para minúsculas</b> <code>%s</code>',
         moveAttribute: 'Coluna %s movida para a posição %s.',
         round: '<b>Arredondar</b> <code>%s</code>',
-        renameAttribute: '<b>Renomear coluna</b> <code>%s</code> para <code>%s</code>.',
+        renameAttribute: '<b>Renomear atributo</b> <code>%s</code> para <code>%s</code>.',
         selectAttributes: '<b>Selecionar atributos</b> Lista de atributos selecionados e/ou ordenados.',
         sortAttributes: '<b>Ordenar registros</b> por <code>%s</code>',
         strip_accents: '<b>Remover acentos</b> em <code>%s</code>',
@@ -534,8 +534,41 @@ export default class Store {
 
     transformWithFunction(attributeName, position, params) {
         const description = _formatI18n(this.language, functionName, [attributeName]);
-        debugger
-        const subAction = params[0];
+        const action  = params[0];
+        const functionName = params[1];
+        const alias = `${attributeName}_${functionName}`;
+
+        const allParams = params.splice(2).map(
+            //p => (typeof p === 'number') ? p.toString() : `'${p}'`)
+            p => p.toString())
+            .join(", ");
+            
+        const expression = `${functionName}(${allParams})`;
+        
+        this.addStep(
+            {
+                operation: { slug: 'transformation' },
+                forms: {
+                    expression: {
+                        value: [{
+                            alias, expression,
+                            tree: this.getTreeFromExpression(expression),
+                        }],
+                    },
+                    //where new attribute will be inserted
+                    position: { value: [position === null ? -1 : position + 1] },
+                    comment: { value: description },
+                    $meta: {
+                        value: {
+                            action,
+                            attribute: attributeName,
+                            function: functionName,
+                        }
+                    }
+                }
+            }, true);
+
+        /*const subAction = params[0];
         const functionName = params[1];
         const functionParams = params.slice(2);
 
@@ -570,7 +603,7 @@ export default class Store {
                         }
                     }
                 });
-        }
+        }*/
     }
     transform(attributeName, position, expressionList) {
         const description = _formatI18n(this.language, 'transformAttributes',

@@ -1,49 +1,63 @@
 <template>
-    <div class="row">
-        <div class="col-md-3 noselect">
-            <div class="title">
-                <h5>{{$t('dataExplorer.title')}}</h5>
+    <div>
+        <div class="row">
+            <div class="col-md-12">
+                <PreviewMenu :selected="selected" @select="menuAction" />
             </div>
-            <div class="mb-2">
+        </div>
 
-                <small>{{$tc('titles.dataSource')}}:</small>
-                <b-input-group>
-                    <b-input size="sm" v-model="dataSource.labelValue" disabled />
-                    <b-input-group-append>
-                        <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary" size="sm">
-                            <span class="fa fa-database"></span>
-                        </b-button>
-                        <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm"><span
-                                class="fa fa-vial"></span></b-button>
-                    </b-input-group-append>
-                </b-input-group>
+        <div class="row">
+            <div class="col-md-9 col-lg-10">
+                <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
+                    :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
+                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview" />
             </div>
-            <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split
-                @click="store.toggleSteps($event, true)" :disabled="! (store.store && store.store.length > 0)">
-                <template #button-content>
-                    <input type="checkbox" @change="store.toggleStep"
-                        :disabled="! (store.store && store.store.length > 0)" />
-                </template>
-                <b-dropdown-item @click="store.enableSelected(true)">{{$t('dataExplorer.enableSelected')}}
-                </b-dropdown-item>
-                <b-dropdown-item @click="store.enableSelected(false)">{{$t('dataExplorer.disableSelected')}}
-                </b-dropdown-item>
-                <b-dropdown-item @click="store.removeSelected">{{$t('dataExplorer.removeSelected')}}</b-dropdown-item>
-            </b-dropdown>
+            <div class="col-md-3 col-lg-2 noselect mt-1">
+                <div class="title">
+                    <h5>{{$t('dataExplorer.title')}}</h5>
+                </div>
+                <div class="mb-2">
+                    <small>{{$tc('titles.dataSource')}}:</small>
+                    <b-input-group>
+                        <b-input size="sm" v-model="dataSource.labelValue" disabled />
+                        <b-input-group-append>
+                            <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary"
+                                size="sm">
+                                <span class="fa fa-database"></span>
+                            </b-button>
+                            <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm">
+                                <span class="fa fa-vial"></span>
+                            </b-button>
+                        </b-input-group-append>
+                    </b-input-group>
+                </div>
+                <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split
+                    @click="store.toggleSteps($event, true)" :disabled="! (store.store && store.store.length > 0)">
+                    <template #button-content>
+                        <input type="checkbox" @change="store.toggleStep"
+                            :disabled="! (store.store && store.store.length > 0)" />
+                    </template>
+                    <b-dropdown-item @click="store.enableSelected(true)">{{$t('dataExplorer.enableSelected')}}
+                    </b-dropdown-item>
+                    <b-dropdown-item @click="store.enableSelected(false)">{{$t('dataExplorer.disableSelected')}}
+                    </b-dropdown-item>
+                    <b-dropdown-item @click="store.removeSelected">{{$t('dataExplorer.removeSelected')}}
+                    </b-dropdown-item>
+                </b-dropdown>
 
-            <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"><span
-                    class="fa fa-save"></span> {{$t('actions.save')}}
-            </b-button>
-            <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1" @click="loadData">
-                <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
-            </b-button>
+                <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"><span
+                        class="fa fa-save"></span> {{$t('actions.save')}}
+                </b-button>
+                <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1" @click="loadData">
+                    <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
+                </b-button>
 
-            <div class="mt-3">
-                <strong>{{$tc('dataExplorer.step', 2)}}</strong>
-                <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true" id="step-scroll">
-                    <div id="step-container">
-                        <draggable v-model="store.store" @start="drag=true" @end="drag=false" class="list-group"
-                            ghost-class="ghost" handle=".step-drag-handle">
+                <div class="mt-3" v-if="store.steps && store.steps.length">
+                    <strong>{{$tc('dataExplorer.step', 2)}}</strong>
+                    <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true" id="step-scroll">
+                        <div id="step-container">
+                            <draggable v-model="store.store" @start="drag=true" @end="drag=false" class="list-group"
+                                ghost-class="ghost" handle=".step-drag-handle">
                                 <div v-for="step, inx in store.stepManager.steps" :key="step.id"
                                     class="list-group-item steps clearfix"
                                     :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
@@ -52,20 +66,16 @@
                                         @delete="store.deleteStep(step)" @update="store.updateStep(step)"
                                         @custom-open="store.customOpen" />
                                 </div>
-                        </draggable>
-                    </div>
-                </VuePerfectScrollbar>
+                            </draggable>
+                        </div>
+                    </VuePerfectScrollbar>
+                </div>
+                <div v-else class="mt-5 alert alert-warning">
+                    <span class="fa fa-exclamation-triangle"></span> {{$t('dataExplorer.noStep')}}
+                </div>
             </div>
 
-            <div v-if="!store.store || !store.store.length" class="alert alert-warning">{{$t('dataExplorer.noStep')}}
-            </div>
-        </div>
-        <div class="col-md-9 bg-white">
-            <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
-                :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
-                :total="tableData.total" :service-bus="store.serviceBus" />
-        </div>
-        <!--
+            <!--
         <b-modal ref="modalSelectAttributes" button-size="sm" :title="$t('actions.selectAttributes')"
             @ok="okSelectAttributes">
             <div style="height: 300px; overflow:auto">
@@ -87,6 +97,7 @@
             </div>
         </b-modal>
         -->
+        </div>
     </div>
 </template>
 <script>
@@ -99,7 +110,7 @@
     import Step from './Step';
     import Notifier from '../../mixins/Notifier.js';
     import Commands from './Commands.js';
-
+    import PreviewMenu from './PreviewMenu.vue';
     import contextMenu from 'vue-context-menu';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
@@ -110,10 +121,10 @@
 
     const SUPPORTED_OPERATIONS = ['cast', 'data-reader',
         'filter-selection', 'projection', 'sort', 'transformation'];
-    
+
     export default {
         mixins: [Notifier],
-        components: { Preview, draggable, VuePerfectScrollbar, contextMenu, Step },
+        components: { Preview, draggable, VuePerfectScrollbar, contextMenu, Step, PreviewMenu },
         props: {
             attributes: { type: Array, default: () => [] },
             items: { type: Array },
@@ -127,6 +138,7 @@
                 isDirty: false,  //check if workflow is dirty before leaving page
                 job: null,  //last job details
                 loadingData: false,  //data loading state
+                selected: { field: {} }, // selected attribute in table preview
                 store: new Commands(new Vue(), 'pt'),  //store rules implementation
                 socket: null, // used by socketio (web sockets)
                 tableData: { attributes: [] }, // data used to render preview table
@@ -146,6 +158,13 @@
             */
         },
         methods: {
+            resetMenuData() {
+                this.selected = { field: {} };
+                this.$refs.preview.resetMenuData();
+            },
+            select(attr) {
+                this.selected = attr;
+            },
             toggleScroll() {
                 console.debug(this.$refs.scrollBar);
             },
@@ -193,6 +212,101 @@
                 ).catch(function (e) {
                     this.error(e);
                 }.bind(this));
+            },
+
+            /* Attribute actions */
+            menuAction(options) {
+                if (typeof this[options.action] === 'function') {
+                    this[options.action](options.params);
+                } else {
+                    console.log(`Unknown action: ${options.action}`);
+                }
+            },
+            transform(params) {
+                this.store.transformWithFunction(
+                    this.selected.field.label,
+                    this.selected.field.position, params);
+                //this.$refs.expressionEditor.openModal();
+            },
+            saveExpression(expressionList) {
+                this.store.transform(this.selected.field.label,
+                    this.selected.field.position, expressionList);
+            },
+            deleteAttribute() {
+                // OK
+                this.store.deleteAttribute(this.selected.field.label);
+                this.resetMenuData();
+            },
+            duplicateAttribute() {
+                //OK
+                const modalConfig =
+                {
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informNewName'),
+                    title: this.$t('actions.duplicate'),
+                    value: this.selected.field.label,
+                    options: null,
+                    ok: () => {
+                        this.store.duplicateAttribute(
+                            this.selected.field.label,
+                            this.$refs.simpleInput.value);
+                    }
+                };
+                this.$refs.simpleInput.show(modalConfig);
+            },
+            renameAttribute() {
+                //OK
+                const attributeName = this.selected.field.label;
+                const modalConfig =
+                {
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informNewName'),
+                    title: this.$t('actions.rename'),
+                    value: attributeName,
+                    ok: () => {
+                        this.store.renameAttribute(
+                            attributeName,
+                            this.$refs.simpleInput.value);
+                    }
+                };
+                this.$refs.simpleInput.show(modalConfig);
+                this.resetMenuData();
+                /*
+                this.$refs.modalRenameAttribute.show();
+                const col = this.attributes.find((f) => f.key === this.selected.field.key);
+                col.label = this.selected.field.label;
+                this.store.renameAttribute();*/
+            },
+            changeAttributeType() {
+                const modalConfig =
+                {
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informNewName'),
+                    options: this.dataTypes,
+                    title: this.$t('actions.changeDataType'),
+                    value: this.selected.field.type,
+                    ok: () => {
+                        this.store.changeAttributeType(
+                            this.selected.field.label,
+                            this.$refs.simpleInput.value);
+                    }
+                };
+                this.$refs.simpleInput.show(modalConfig);
+                /*if (this.dataTypes.includes(newType)) {
+                    const col = this.attributes.find((f) => f.key === this.selected.field.key);
+                    if (col) {
+                        this.store.changeAttributeType(
+                            this.selected.field.label,
+                            newType);
+                        ///col.type = newType;
+                    }
+                }*/
+            },
+            sort(direction) {
+                this.store.sort(this.selected.field.label, direction);
             },
 
             /* Data loading */
@@ -261,6 +375,7 @@
                     headers: { 'Locale': self.$root.$i18n.locale, }
                 }).then((response) => {
                     self.job = response.data.data;
+                    self.$refs.preview.loadData();
                     self.connectWebSocket();
                 }).catch((ex) => {
                     if (ex.data) {
