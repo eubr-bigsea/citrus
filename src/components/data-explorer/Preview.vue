@@ -4,27 +4,26 @@
             {{rightAlignedAttributes}} {
             text-align: right;
             }
-
         </v-style>
-        <div v-show="loading" class="preview-loading">
+        <div v-show="loading" class="preview-loading border">
             <h1 class="text-secondary  border-radius p-4">
                 <font-awesome-icon icon="spinner" spin class="text-success" />
                 {{$t('common.wait')}}
             </h1>
         </div>
         <template v-if="items">
-            <PreviewMenu :selected="menuData.field" @select="menuAction" />
+            <!--<PreviewMenu :selected="menuData.field" @select="menuAction" /> -->
             <div style="position: relative">
                 <div ref="colOverlay" class="col-overlay" @click="resetMenuData">
                     <div></div>
                 </div>
                 <b-table :no-border-collapse="false" :items="items" :fields="attributes" tbody-class="body"
-                    sticky-header="80vh" table-class="table-preview" class="table border"
+                    sticky-header="80vh" table-class="table-preview " class="table border"
                     @row-contextmenu="tableContextMenu" outlined small hover bordered responsive ref="table"
                     @row-clicked="tableClick" style>
                     <template #head()="scope">
-                        <div @click.prevent="customOpen($event, scope)">
-                            <div style="cursor: default;" class="clearfix no-wrap">
+                        <div @click.prevent="customOpen($event, scope)" style="cursor: default;">
+                            <div class="clearfix no-wrap">
                                 <div class="attribute-name mr-2">{{scope.label}} </div>
                                 <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
                                 <!--<font-awesome-icon v-else class="right" icon="chevron-down" />-->
@@ -381,15 +380,15 @@
                     this.$nextTick(() => this.$refs.table.$el.addEventListener('scroll', this.handleTableScrollEvent));
                     this.scrollEventSet = true;
                 }
+                this.$nextTick(() => {
+                    this.moveSelectionOverlay(this.lastHeader);
+                });
             }
         },
         mounted: function () {
             window.addEventListener("resize", this.resize);
             this.handleTableScroll = debounce(this.handleScroll, 100);
         },
-        created() {
-        },
-
         beforeDestroy() {
             window.removeEventListener("resize", this.resize);
             this.$refs.table &&
@@ -428,10 +427,7 @@
                     this.lastHeader = th;
                     this.lastHeader.classList.add('bg-info', 'text-white')
                     this.menuData = data;
-                    const clipRec = th.getBoundingClientRect();
-                    this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
-                    this.$refs.colOverlay.style.width = `${clipRec.width}px`;
-                    this.$refs.colOverlay.style.display = '';
+                    this.moveSelectionOverlay(th);
                 } else {
                     this.$refs.colOverlay.style.left = -10;
                     this.$refs.colOverlay.style.width = 0;
@@ -443,7 +439,8 @@
                 this.menuData = { field: { label: '', position: -1 } };
                 this.$refs.colOverlay.style.left = '-100px';
                 this.$refs.colOverlay.style.display = 'none';
-                document.querySelector('th.bg-info').classList.remove('bg-info', 'text-white');
+                const elem = document.querySelector('th.bg-info');
+                elem && elem.classList.remove('bg-info', 'text-white');
             },
             menuAction(options) {
                 if (typeof this[options.action] === 'function') {
@@ -455,7 +452,8 @@
             otherActionsOk(data) {
                 console.debug('Other actions', data)
             },
-            handleTableScrollEvent() {
+            handleTableScrollEvent(ev) {
+                this.moveSelectionOverlay(this.lastHeader);
                 this.$refs.ctxMenu.ctxVisible = false;
                 this.$refs.ctxCellMenu.ctxVisible = false;
                 this.$refs.dataTypeCtxMenu.ctxVisible = false;
@@ -472,14 +470,13 @@
                 this.lastHeader && this.lastHeader.classList.remove('bg-info', 'text-white');
                 if (this.menuData.field !== data.field) {
                     this.lastHeader = th;
-                    const clipRec = th.getBoundingClientRect();
-                    this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
-                    this.$refs.colOverlay.style.width = `${clipRec.width}px`;
-                    this.$refs.colOverlay.style.display = '';
+                    this.moveSelectionOverlay(th);
                     this.lastHeader.classList.add('bg-info', 'text-white')
                     this.menuData = data;
+                    this.$emit('select', data);
                 } else {
                     this.resetMenuData();
+                    this.$emit('select', { field: {} });
                 }
                 /*const rect = th.getBoundingClientRect();
                 const clientX = rect.left + window.pageXOffset;
@@ -490,6 +487,19 @@
                     }), data);
                     */
                 //console.debug(event.clientX, rect.left + window.pageXOffset, clientX > 0 ? clientX : 0)
+            },
+            moveSelectionOverlay(th) {
+                const scrollOffset = this.$refs.table.$el.scrollLeft;
+                if (th) {
+                    const clipRec = th.getBoundingClientRect();
+                    if (scrollOffset){
+                        this.$refs.colOverlay.style.left = `${th.offsetLeft - scrollOffset}px`;
+                    } else {
+                        this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
+                    }
+                    this.$refs.colOverlay.style.width = `${clipRec.width}px`;
+                    this.$refs.colOverlay.style.display = '';
+                }
             },
             onCtxOpen(data) {
                 this.menuData = data;
@@ -527,26 +537,7 @@
                     this.menuData.field.position, expressionList);
             },
             deleteAttribute() {
-                //OK
-                /*
-                const msg = this.$t('messages.confirmRemoveIt', '',
-                    { what: `a coluna "${this.menuData.field.key}"` });
-                const self = this;
-                this.$bvModal.msgBoxConfirm(msg, {
-                    title: this.$t('actions.confirm'),
-                    buttonSize: 'sm',
-                    okVariant: 'danger',
-                    okTitle: this.$t('common.yes'),
-                    cancelTitle: this.$t('common.no'),
-                    centered: true
-                }).then(value => {
-                    if (value) {
-                        self.store.deleteAttribute(this.menuData.field.label);
-                        this.resetMenuData();
-                    }
-                }).catch(err => {
-                });
-                */
+                // OK
                 this.store.deleteAttribute(this.menuData.field.label);
                 this.resetMenuData();
             },
@@ -628,7 +619,8 @@
                     col.locked = state;
                 }
             },
-
+            loadData() {
+            },
             /**/
             tableContextMenu(item, index, event) {
                 event.preventDefault();
@@ -691,7 +683,7 @@
 
     .table>>>td {
         font-size: 9pt;
-        min-width: 100px;
+        min-width: 150px;
         padding: 1px 4px;
         /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
     }
@@ -712,24 +704,26 @@
     .preview-loading {
         background: #fff;
         margin: 0 auto;
-        width: 50%;
+        width: 30%;
         left: 25%;
         text-align: center;
         position: absolute;
         top: 100px;
+        z-index: 101;
     }
 
     .col-overlay {
-        border: 1px solid rgb(14, 101, 235);
+        /*border: 1px solid rgb(14, 101, 235);*/
         border-bottom: 0;
         left: -10000px;
+        pointer-events: none;
         position: absolute;
         height: 80vh;
         min-width: 100px;
     }
 
     .col-overlay div {
-        opacity: .02;
+        opacity: .04;
         background-color: rgb(14, 101, 235);
         height: 80vh;
         width: 100%;
