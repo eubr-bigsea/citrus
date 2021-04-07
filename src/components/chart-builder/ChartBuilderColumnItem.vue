@@ -38,6 +38,8 @@
             margin: .25rem 0;
             display: flex;
             flex-direction: row;
+            white-space: nowrap;
+
 
             div {
                 width: 100%;
