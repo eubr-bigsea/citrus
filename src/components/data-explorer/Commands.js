@@ -7,6 +7,9 @@ OPERATIONS.set('data-reader', { id: 18, output_id: 35 });
 OPERATIONS.set('filter-selection', { id: 5, input_id: 1, output_id: 2 });
 OPERATIONS.set('sort', { id: 32, input_id: 61, output_id: 62 });
 OPERATIONS.set('transformation', { id: 7, input_id: 29, output_id: 30 });
+OPERATIONS.set('cast', { id: 140, input_id: 327, output_id: 326 });
+OPERATIONS.set('sample', { id: 28, input_id: 55, output_id: 56 });
+OPERATIONS.set('clean-missing', { id: 21, input_id: 44, output_id: 43 });
 
 const translations = {
     pt: {
@@ -15,15 +18,21 @@ const translations = {
         duplicateAttribute: '<b>Duplicar atributo</b> <code>%s</code> para <code>%s</code>.',
         filterRows: '<b>Filtrar registros</b> com a condição <code>%s</code>.',
         lower: '<b>Converter para minúsculas</b> <code>%s</code>',
-        moveAttribute: 'Coluna %s movida para a posição %s.',
         round: '<b>Arredondar</b> <code>%s</code>',
         renameAttribute: '<b>Renomear atributo</b> <code>%s</code> para <code>%s</code>.',
         selectAttributes: '<b>Selecionar atributos</b> Lista de atributos selecionados e/ou ordenados.',
         sortAttributes: '<b>Ordenar registros</b> por <code>%s</code>',
+        limit: '<b>Limitar</b> aos primeiros %s registro(s)',
+
+        move: '<b>Mover</b> <code>%s</code> para a posição %s',
+        substring: '<b>Truncar</b> <code>%s</code>',
         strip_accents: '<b>Remover acentos</b> em <code>%s</code>',
         transformAttributes: '<b>Aplicar transformação</b> <code>%s</code>',
         title: '<b>Converter iniciais para maiúsculas em</b> <code>%s</code>',
-        upper: '<b>Converter para maiúsculas</b> <code>%s</code>'
+        trim: '<b>Remove espaços vazios no início e no fim de</b> <code>%s</code>',
+        upper: '<b>Converter para maiúsculas</b> <code>%s</code>',
+
+        'handleMissing.removeRowUsingAttribute': '<b>Remover linhas</a> onde o atributo <code>%s</code> é nulo',
     },
     en: {
 
@@ -265,7 +274,7 @@ export default class Store {
     }
     //#endregion
 
-    prepareSampleProperties(){
+    prepareSampleProperties() {
         this.workflowManager.prepareSampleProperties();
     }
     //#region Setters
@@ -359,35 +368,22 @@ export default class Store {
             const aliases = [...names];
             aliases[pos] = newName;
 
-            this.attributes[pos].label = newName;
-            this.attributes[pos].id = newName;
-            this.attributes[pos].key = newName;
-
             const description = _formatI18n(this.language, 'renameAttribute', [attributeName, newName]);
-
-
-            const step = this.addStep('projection',
-                {
-                    attributes: names,
-                    aliases: aliases,
-                },
-                description
-            );
             this.addStep(
                 {
                     operation: { slug: 'projection' },
                     forms: {
-                        aliases: { value: aliases },
-                        attributes: { value: names },
+                        rename: { value: [attributeName, newName] },
                         comment: { value: description },
                         $meta: {
                             value: {
+                                action: 'rename',
                                 attribute: attributeName,
-                                action: 'renameAttribute',
                             }
                         }
                     }
-                });
+                }, true);
+
         }
     }
     deleteAttribute(attributeName) {
@@ -400,11 +396,71 @@ export default class Store {
                 {
                     operation: { slug: 'projection' },
                     forms: {
+                        //attributes: { value: this.getAttributeNames() },
+                        exclude: { value: [attributeName] },
+                        comment: { value: description },
+                        $meta: {
+                            value: {
+                                action: 'exclude',
+                                attribute: attributeName,
+                            }
+                        }
+                    }
+                }, true);
+        }
+    }
+    moveAttribute(attributeName, params) {
+        const position = params[0];
+        const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
+
+        if (pos > -1) {
+            const description = _formatI18n(this.language, 'move', [attributeName, position]);
+            this.attributes.splice(position, 0, this.attributes.splice(pos,1)[0])
+            this.attributes.forEach((attr, i) => attr.position = i);
+            
+            console.debug(position, pos, this.getAttributeNames());
+            this.addStep(
+                {
+                    operation: { slug: 'projection' },
+                    forms: {
                         attributes: { value: this.getAttributeNames() },
                         comment: { value: description },
                         $meta: {
                             value: {
+                                action: 'move',
                                 attribute: attributeName,
+                                position,
+                            }
+                        }
+                    }
+                }, true);
+        }
+    }
+    //#endregion
+    //#region Cleanup 
+    cleanMissing(attributeName, params) {
+        const action = params[0];
+        const mode = params[1];
+
+        const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
+        if (pos > -1) {
+            const description = _formatI18n(this.language, 'handleMissing.' + action,
+                [attributeName])
+
+            this.addStep(
+                {
+                    operation: { slug: 'clean-missing' },
+                    forms: {
+                        attributes: {
+                            value: [attributeName]
+                        },
+                        cleaning_mode: { value: mode },
+                        comment: { value: description },
+                        $meta: {
+                            value: {
+                                action,
+                                attribute: attributeName,
+                                mode
                             }
                         }
                     }
@@ -467,31 +523,36 @@ export default class Store {
     keepAttributes() {
 
     }
-    moveAttribute(attributeName, position) {
-        // Maps to projection operation
-        //OK
-        const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
-        if (pos > -1) {
-            this.attributes.splice(position, 0, this.attributes.splice(pos, 1)[0]);
-            this.addStep('projection', {
-                attributes: this.getAttributeNames(),
-            }, _formatI18n(this.language, 'moveAttribute', [attributeName, position])
-            );
-        }
-    }
+    castAttributeToDate(attributeName, format) {
 
-    changeAttributeType(attributeName, newType) {
+    }
+    changeAttributeType(attributeName, action, newType, errors) {
         const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
         if (pos > -1) {
             const oldType = this.attributes[pos].type;
             this.attributes[pos].type = newType;
-            this.addStep('cast',
+            const description = _formatI18n(this.language, 'changeAttributeType', [attributeName, oldType, newType])
+
+            this.addStep(
                 {
-                    attributes: [attributeName],
-                    type: newType
-                },
-                _formatI18n(this.language, 'changeAttributeType', [attributeName, oldType, newType])
-            );
+                    operation: { slug: 'cast' },
+                    forms: {
+                        attributes: {
+                            value:
+                                [{ attribute: attributeName, type: newType }]
+                        },
+                        errors: { value: errors },
+                        comment: { value: description },
+                        $meta: {
+                            value: {
+                                action,
+                                attribute: attributeName,
+                                newType,
+                                errors
+                            }
+                        }
+                    }
+                }, true);
         }
     }
     newAttributeFromFormula() {
@@ -511,40 +572,59 @@ export default class Store {
     removeRowsWithInvalidCell() {
 
     }
+    limit(max) {
+        const description = _formatI18n(this.language, 'limit', [max]);
+        this.addStep(
+            {
+                operation: { slug: 'sample' },
+                forms: {
+                    type: { value: 'value' },
+                    value: { value: max },
+                    comment: { value: description },
+                    $meta: {
+                        value: {
+                            action: 'limit',
+                            max, from: 1,
+                        }
+                    }
+                }
+            }, true);
+    }
     sort(attributeName, direction) {
         const description = _formatI18n(this.language, 'sortAttributes',
             [`${attributeName} (${direction})`]);
-        const attributes = [{ attribute: attributeName, f: direction }];
+        const attributes = { value: [{ attribute: attributeName, f: direction }] };
 
-        const step = this.addStep('sort',
-            { attributes }, description
-        );
-        this.serviceBus.$emit('newStep',
+        this.addStep(
             {
-                'id': step.id,
-                'operation': { 'slug': 'sort' },
-                'forms': {
-                    'attributes': {
-                        'value': attributes
-                    },
+                operation: { slug: 'sort' },
+                forms: {
+                    attributes,
+                    comment: { value: description },
+                    $meta: {
+                        value: {
+                            action: 'sort',
+                            direction,
+                            attribute: attributeName,
+                        }
+                    }
                 }
-            }, description
-        );
+            }, true);
     }
 
     transformWithFunction(attributeName, position, params) {
-        const description = _formatI18n(this.language, functionName, [attributeName]);
-        const action  = params[0];
         const functionName = params[1];
+        const description = _formatI18n(this.language, functionName, [attributeName]);
+        const action = params[0];
         const alias = `${attributeName}_${functionName}`;
 
         const allParams = params.splice(2).map(
             //p => (typeof p === 'number') ? p.toString() : `'${p}'`)
             p => p.toString())
             .join(", ");
-            
+
         const expression = `${functionName}(${allParams})`;
-        
+
         this.addStep(
             {
                 operation: { slug: 'transformation' },
@@ -560,9 +640,8 @@ export default class Store {
                     comment: { value: description },
                     $meta: {
                         value: {
-                            action,
+                            params,
                             attribute: attributeName,
-                            function: functionName,
                         }
                     }
                 }
@@ -802,8 +881,24 @@ export default class Store {
                         }, task.forms.comment.value, task.id,
                         task.forms.color.value.background, task);
                     break;
+                case 'clean-missing':
+                    this.addStep(task, false,
+                        {
+                            attributes: task.forms.attributes.value,
+                            cleaning_mode: task.forms.cleaning_mode.value,
+                        }, task.forms.comment.value, task.id,
+                        task.forms.color.value.background, task);
+                    break;
+                case 'sample':
+                    this.addStep(task, false,
+                        {
+                            type: task.forms.type.value,
+                            value: task.forms.value.value,
+                        }, task.forms.comment.value, task.id,
+                        task.forms.color.value.background, task);
+                    break;
                 default:
-                    alert('Invalid operation ' + task.operation.slug);
+                    alert('Command::createStepsFromTasks Invalid operation ' + task.operation.slug);
                     return;
             }
             if (step) {

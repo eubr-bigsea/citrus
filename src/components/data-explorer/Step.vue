@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div :style="{'background-color': editableStep.background }" class="mr-1 float-left text-secondary"></div>
         <div class="step-number">
             #{{index + 1}}
@@ -10,6 +9,7 @@
             <div class="mt-2">
                 <span :class="getStepClass(step)"></span>
             </div>
+            <Pulse />
         </div>
         <div class="float-left step" style="width: calc(100% - 25px)">
             <div class="mb-2">
@@ -97,7 +97,9 @@
     </div>
 </template>
 <script>
+    import Pulse from '../Pulse';
     export default {
+        components: {Pulse, },
         props: {
             attributes: { type: Array, required: true },
             inputAttributes: { type: String, default: 'single' },
