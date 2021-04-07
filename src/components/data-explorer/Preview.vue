@@ -1,8 +1,14 @@
 <template>
     <div>
-        <v-style v-if="rightAlignedAttributes">
+        <v-style v-if="rightAlignedAttributes && rightAlignedAttributes.length">
             {{rightAlignedAttributes}} {
             text-align: right;
+            }
+        </v-style>
+        <v-style v-if="dropColumn && dropColumn.length">
+            {{dropColumn}} {
+            border-left: 2px solid #888;
+            margin-left: 3px !important;
             }
         </v-style>
         <div v-show="loading" class="preview-loading border">
@@ -20,22 +26,29 @@
                 <b-table :no-border-collapse="false" :items="items" :fields="attributes" tbody-class="body"
                     sticky-header="80vh" table-class="table-preview " class="table border"
                     @row-contextmenu="tableContextMenu" outlined small hover bordered responsive ref="table"
-                    @row-clicked="tableClick" style>
+                    @row-clicked="tableClick">
                     <template #head()="scope">
-                        <div @click.prevent="customOpen($event, scope)" style="cursor: default;">
-                            <div class="clearfix no-wrap">
-                                <div class="attribute-name mr-2">{{scope.label}} </div>
-                                <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
-                                <!--<font-awesome-icon v-else class="right" icon="chevron-down" />-->
-                            </div>
-                            <div class="data-type">
-                                <!--<select>
+                        <div @click.prevent="customOpen($event, scope)" class="grabbable" draggable="true"
+                            v-on:dragstart="dragStart(scope.field, $event)"
+                            v-on:dragend.prevent="dragEnd(scope.field, $event)"
+                            v-on:dragenter="dragEnter(scope.field, $event)"
+                            v-on:dragleave="dragLeave(scope.field, $event)"
+                            v-on:dragover.prevent="dragOver(scope.field, $event)" v-on:drop="drop(scope.field, $event)">
+                            <div style="pointer-events: none;">
+                                <div class="clearfix no-wrap">
+                                    <div class="attribute-name mr-2">{{scope.label}} </div>
+                                    <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
+                                    <!--<font-awesome-icon v-else class="right" icon="chevron-down" />-->
+                                </div>
+                                <div class="data-type">
+                                    <!--<select>
                         <option v-for="dt in dataTypes" :value="dt" :key="dt">{{dt}}</option>
                     </select>-->
-                                {{scope.field.type}} <span v-if="scope.field.truncated">(trunc.)</span>
-                            </div>
-                            <div>
-                                <quality-bar :attribute="scope.field" />
+                                    {{scope.field.type}} <span v-if="scope.field.truncated">(trunc.)</span>
+                                </div>
+                                <div>
+                                    <quality-bar :attribute="scope.field" />
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -255,10 +268,6 @@
             <b-form-input class="form-control" v-model="menuData.field.label" autofocus></b-form-input>
         </b-modal>
 
-        <simple-input ref="simpleInput" :cancel-title="simpleInput.cancelTitle" :ok-title="simpleInput.okTitle"
-            :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
-            :initial="simpleInput.initial" />
-
         <b-modal ref="modaldeleteAttribute" :centered="true" button-size="sm" :title="$t('actions.rename')"
             :cancel-title="$t('common.no')" :ok-title="$t('common.yes')">
             <b-form-input class="form-control" autofocus></b-form-input>
@@ -314,7 +323,9 @@
                     message: null,
                 },
                 scrollEventSet: false,
-                rightAlignedAttributes: { type: String }
+                rightAlignedAttributes: { type: String },
+                dropColumn: { type: String },
+                dragTimeout: null,
             }
         },
         props: {
@@ -329,12 +340,12 @@
         },
         watch: {
             attributes() {
-                const rightAlinedTypes = new Set(['integer', 'date', 'decimal', 'boolean', 'time']);
+                const rightAlignedTypes = new Set(['integer', 'date', 'decimal', 'boolean', 'time']);
                 const rightAlignedAttributes = [];
 
                 const attributeIndexes = new Map();
                 this.attributes.forEach((attr, inx) => {
-                    if (rightAlinedTypes.has(attr.type.toLowerCase())) {
+                    if (rightAlignedTypes.has(attr.type.toLowerCase())) {
                         rightAlignedAttributes.push(inx)
                     }
                     attributeIndexes.set(attr.key, inx);
@@ -437,8 +448,10 @@
             },
             resetMenuData() {
                 this.menuData = { field: { label: '', position: -1 } };
-                this.$refs.colOverlay.style.left = '-100px';
-                this.$refs.colOverlay.style.display = 'none';
+                if (this.$refs.colOverlay) {
+                    this.$refs.colOverlay.style.left = '-100px';
+                    this.$refs.colOverlay.style.display = 'none';
+                }
                 const elem = document.querySelector('th.bg-info');
                 elem && elem.classList.remove('bg-info', 'text-white');
             },
@@ -492,7 +505,7 @@
                 const scrollOffset = this.$refs.table.$el.scrollLeft;
                 if (th) {
                     const clipRec = th.getBoundingClientRect();
-                    if (scrollOffset){
+                    if (scrollOffset) {
                         this.$refs.colOverlay.style.left = `${th.offsetLeft - scrollOffset}px`;
                     } else {
                         this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
@@ -639,7 +652,52 @@
             // Cell context menu
             onFilter(attributeName, operator, attributeValue) {
                 this.serviceBus.$emit('onFilter', attributeName, operator, attributeValue);
+            },
+            dragStart(item, e) {
+                e.dataTransfer.setData('position', item.position);
+                e.dataTransfer.dropEffect = 'move'
+                e.dataTransfer.effectAllowed = 'move'
+                this.resetMenuData();
+            },
+            dragEnd(item, e) {
+                this.dropColumn = null;
+                this.resetMenuData();
+            },
+            dragOver(item, e) {
+                return true;
+            },
+            dragEnter(item, e) {
+                event.dataTransfer.dropEffect = 'move';
+                if (this.dragTimeout) {
+                    clearTimeout(this.dragTimeout);
+                }
+                this.dragTimeout = setTimeout(
+                    () => {
+                        this.dropColumn = `.table-preview td:nth-child(${item.position + 1})`;
+                        const selectColumn = `th:nth-child(${item.position + 1})`;
+                        const th = this.$refs.table.$el.querySelector(selectColumn);
+                        this.moveSelectionOverlay(th);
+                    }, 100);
+
+            },
+            dragLeave(item, e) {
+                e.target.style.background = 'inherit';
+                this.dropColumn = null;
+            },
+            drop(item, e) {
+                const position = parseInt(e.dataTransfer.getData('position'));
+                
+                this.attributes.splice(item.position, 0,
+                    this.attributes.splice(position, 1)[0]);
+                this.attributes.forEach((attr, i) => attr.position = i);
+                this.$refs.table.refresh();
+
+                this.$emit('drop', {
+                    action: 'move',
+                    params: [this.attributes[item.position].label, item.position]
+                })
             }
+
         },
     }
 </script>
@@ -658,6 +716,7 @@
     .table {
         color: #aaa;
         font-size: 10pt;
+        xwhite-space: pre-wrap;
         /*
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -727,5 +786,20 @@
         background-color: rgb(14, 101, 235);
         height: 80vh;
         width: 100%;
+    }
+
+    .grabbable {
+        cursor: move;
+        /* fallback if grab cursor is unsupported */
+        cursor: grab;
+        cursor: -moz-grab;
+        cursor: -webkit-grab;
+    }
+
+    /* (Optional) Apply a "closed-hand" cursor during drag operation. */
+    .grabbable:active {
+        cursor: grabbing;
+        cursor: -moz-grabbing;
+        cursor: -webkit-grabbing;
     }
 </style>

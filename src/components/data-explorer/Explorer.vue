@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <div class="col-md-12">
-                <PreviewMenu :selected="selected" @select="menuAction" />
+                <PreviewMenu :selected="selected" @select="performAction" />
             </div>
         </div>
 
@@ -10,7 +10,8 @@
             <div class="col-md-9 col-lg-10">
                 <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
                     :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
-                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview" />
+                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview" 
+                    @drop="performAction"/>
             </div>
             <div class="col-md-3 col-lg-2 noselect mt-1">
                 <div class="title">
@@ -74,6 +75,9 @@
                     <span class="fa fa-exclamation-triangle"></span> {{$t('dataExplorer.noStep')}}
                 </div>
             </div>
+            <simple-input ref="simpleInput" :cancel-title="simpleInput.cancelTitle" :ok-title="simpleInput.okTitle"
+                :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
+                :initial="simpleInput.initial" />
 
             <!--
         <b-modal ref="modalSelectAttributes" button-size="sm" :title="$t('actions.selectAttributes')"
@@ -112,6 +116,7 @@
     import Commands from './Commands.js';
     import PreviewMenu from './PreviewMenu.vue';
     import contextMenu from 'vue-context-menu';
+    import SimpleInput from './SimpleInput';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
@@ -119,12 +124,16 @@
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
 
-    const SUPPORTED_OPERATIONS = ['cast', 'data-reader',
-        'filter-selection', 'projection', 'sort', 'transformation'];
+    const SUPPORTED_OPERATIONS = ['cast', 'data-reader', 
+        'filter-selection', 'projection', 'sort', 'transformation',
+        'sample', 'clean-missing'];
 
     export default {
         mixins: [Notifier],
-        components: { Preview, draggable, VuePerfectScrollbar, contextMenu, Step, PreviewMenu },
+        components: {
+            SimpleInput, Preview, draggable, VuePerfectScrollbar,
+            contextMenu, Step, PreviewMenu
+        },
         props: {
             attributes: { type: Array, default: () => [] },
             items: { type: Array },
@@ -142,6 +151,14 @@
                 store: new Commands(new Vue(), 'pt'),  //store rules implementation
                 socket: null, // used by socketio (web sockets)
                 tableData: { attributes: [] }, // data used to render preview table
+                simpleInput: {
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    okClicked: () => { },
+                    title: null,
+                    initial: null,
+                    message: null,
+                },
             }
         },
         mounted() {
@@ -215,12 +232,15 @@
             },
 
             /* Attribute actions */
-            menuAction(options) {
+            performAction(options) {
                 if (typeof this[options.action] === 'function') {
                     this[options.action](options.params);
                 } else {
                     console.log(`Unknown action: ${options.action}`);
                 }
+            },
+            move(params){
+                this.store.moveAttribute(params[0], params.slice(1))
             },
             transform(params) {
                 this.store.transformWithFunction(
@@ -237,6 +257,7 @@
                 this.store.deleteAttribute(this.selected.field.label);
                 this.resetMenuData();
             },
+            /*
             duplicateAttribute() {
                 //OK
                 const modalConfig =
@@ -254,7 +275,7 @@
                     }
                 };
                 this.$refs.simpleInput.show(modalConfig);
-            },
+            },*/
             renameAttribute() {
                 //OK
                 const attributeName = this.selected.field.label;
@@ -265,6 +286,7 @@
                     message: this.$t('dataExplorer.informNewName'),
                     title: this.$t('actions.rename'),
                     value: attributeName,
+                    format: 'text',
                     ok: () => {
                         this.store.renameAttribute(
                             attributeName,
@@ -305,10 +327,74 @@
                     }
                 }*/
             },
-            sort(direction) {
-                this.store.sort(this.selected.field.label, direction);
+            castToDate(attributeName){
+                this.store.changeAttributeType(this.selected.field.label, 
+                    'castToDate', 'DateTime', 'ignore');
             },
-
+            truncateTextAttribute(){
+                const attributeName = this.selected.field.label;
+                const modalConfig =
+                {
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informNewName'),
+                    title: this.$t('actions.rename'),
+                    value: '20',
+                    format: 'number',
+                    ok: () => {
+                        const val = parseInt(this.$refs.simpleInput.value);
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['truncateTextAttribute', 'substring',
+                            attributeName, 0, val]);
+                    }
+                };
+                this.$refs.simpleInput.show(modalConfig);
+            },
+            splitTextAttribute(){
+                const attributeName = this.selected.field.label;
+                const modalConfig =
+                {
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informNewName'),
+                    title: this.$t('actions.rename'),
+                    value: '20',
+                    format: 'number',
+                    ok: () => {
+                        const val = parseInt(this.$refs.simpleInput.value);
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['truncateTextAttribute', 'substring',
+                            attributeName, 0, val]);
+                    }
+                };
+                this.$refs.simpleInput.show(modalConfig);
+            },
+            sort(direction) {
+                this.store.sort(this.selected.field.label, direction[0]);
+            },
+            limit(){
+                const modalConfig =
+                {
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('actions.limit'),
+                    title: this.$t('actions.limit'),
+                    value: '1000',
+                    format: 'number',
+                    ok: () => {
+                        const val = parseInt(this.$refs.simpleInput.value);
+                        this.store.limit(val);
+                    }
+                };
+                this.$refs.simpleInput.show(modalConfig);
+            },
+            cleanMissing(params){
+                this.store.cleanMissing(this.selected.field.label, params);
+            },
             /* Data loading */
             async loadWorkflow() {
                 const self = this;

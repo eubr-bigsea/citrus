@@ -3,6 +3,7 @@
         :ok-title="okTitle" @ok="localOkClicked">
         <p>{{message}}:</p>
         <b-select v-if="options" :options="options" v-model="value"></b-select>
+        <b-form-input v-else-if="format === 'number'" class="form-control" v-model="value" type="number" autofocus></b-form-input>
         <b-form-input v-else class="form-control" v-model="value" autofocus></b-form-input>
     </b-modal>
 </template>
@@ -11,6 +12,7 @@
         data() {
             return {
                 cancelTitle: null,
+                format: null,
                 message: null,
                 okTitle: null,
                 ok: null,

@@ -1,9 +1,12 @@
 <template>
     <div class="border preview-menu">
         <b-nav>
+            <!--
             <b-nav-item link-classes="bg-primary text-light">
                 <span class="fa fa-save"></span> {{$t('actions.save')}}
             </b-nav-item>
+            -->
+            
             <b-nav-item-dropdown text="Editar" toggle-class="nav-link-custom" :disabled="selected.label === undefined">
                 <template slot="button-content">
                     <span class="fa fa-edit"></span> {{$t('actions.edit')}}
@@ -19,9 +22,11 @@
                     <span class="fa fa-times text-danger"></span> {{$t('actions.delete')}}
                     {{$tc('common.attribute').toLowerCase()}}
                 </b-dropdown-item>
+                <!--
                 <b-dropdown-item @click="trigger('duplicateAttribute')" key="actionDuplicate">
                     <span class="fa fa-copy text-secondary"></span> {{$t('actions.duplicate')}}
                     {{$tc('common.attribute').toLowerCase()}}
+                -->
                 </b-dropdown-item>
                 <b-dropdown-item @click="trigger('moveAttribute')" key="actionMove">
                     <span class="fa fa-arrows-alt-h "></span> {{$t('actions.move')}}
@@ -58,6 +63,48 @@
                 </template>
                 -->
             </b-nav-item-dropdown>
+            <b-nav-item-dropdown toggle-class="nav-link-custom">
+                <template slot="button-content">
+                    <span class="fa fa-database"></span> {{$tc('common.data', 2)}}
+                </template>
+
+                <b-dropdown-item @click="trigger('transform')" key="transformAction">
+                    <span class="fa fa-magic text-primary"></span> <b>Add attribute</b> using formula...
+                </b-dropdown-item>
+                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                <b-dropdown-item key="sortAsc" @click="trigger('sort', 'asc')" v-show="selected.label !== undefined">
+                    <span class="fa fa-sort-alpha-up text-secondary"></span> <b>{{$t('actions.sort')}}</b> by
+                    {{selected.label}} (ASC)
+                </b-dropdown-item>
+                <b-dropdown-item key="sortDesc" @click="trigger('sort', 'desc')" v-show="selected.label !== undefined">
+                    <span class="fa fa-sort-alpha-down text-secondary"></span> <b>{{$t('actions.sort')}}</b> by
+                    {{selected.label}} (DESC)
+                </b-dropdown-item>
+                <b-dropdown-item key="sortMultiple" @click="trigger('sortMultiple')">
+                    <span class="fa fa-sort text-secondary"></span> <b>{{$t('actions.sort')}} por ...</b>
+                </b-dropdown-item>
+                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                <b-dropdown-item>
+                    <span class="fa fa-filter text-success"></span> {{$t('actions.filter')}}
+                </b-dropdown-item>
+                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                <b-dropdown-item>{{$t('actions.groupData')}}...</b-dropdown-item>
+                <b-dropdown-item>{{$t('actions.joinData')}}...</b-dropdown-item>
+                <b-dropdown-item>{{$t('actions.appendData')}}...</b-dropdown-item>
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item>{{$t('actions.sample')}}...</b-dropdown-item>
+                <b-dropdown-item @click="trigger('limit')">{{$t('actions.limit')}}...</b-dropdown-item>
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item>{{$t('actions.applyWindowFunction')}}...</b-dropdown-item>
+
+                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                <b-dropdown-item>Transform using Python code</b-dropdown-item>
+
+                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                <b-dropdown-item @click="$refs.modalAnalyse.show()">
+                    <span class="fa fa-chart-bar text-info"></span> Analisar
+                </b-dropdown-item>
+            </b-nav-item-dropdown>
             <b-nav-item-dropdown toggle-class="nav-link-custom" :disabled="selected.label === undefined">
                 <template slot="button-content">
                     <span class="fa fa-magic"></span> {{$t('actions.transform')}}
@@ -71,17 +118,13 @@
                 </b-dropdown-item>
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
 
-                <b-dropdown-item @click="trigger('transform')" key="transformAction">
-                    <span class="fa fa-magic text-primary"></span> <b>Transform</b> coluna with
-                    custom function
-                </b-dropdown-item>
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
                 <template v-if="selected.field.type === 'Integer' || selected.field.type == 'Decimal'">
                     <b-dropdown-item @click="trigger('redefineScale')">
                         <b>Redefine scale of</b> coluna
                     </b-dropdown-item>
                     <b-dropdown-item v-if="selected.field.type == 'Decimal'"
-                        @click="trigger('transform', 'round', selected.label, 0)">
+                        @click="trigger('transform', 'round', 'round', selected.label, 0)">
                         <b>Round</b> coluna to integer
                     </b-dropdown-item>
                 </template>
@@ -113,15 +156,19 @@
                         {{$t('dataExplorer.removeAccents')}}
                     </b-dropdown-item>
                     <b-dropdown-item>Concatenate with... </b-dropdown-item>
-                    <b-dropdown-item @click="trigger('transform', 'trim', selected.label)">Remove initial and final
+                    <b-dropdown-item @click="trigger('transform', 'trim', 'trim', selected.label)">Remove initial and
+                        final
                         spaces (trim) </b-dropdown-item>
-                    <b-dropdown-item @click="trigger('transform', 'substring', selected.label, 0, 10)">
-                        {{$t('dataExplorer.truncateToNChars')}} </b-dropdown-item>
-                    <b-dropdown-item @click="trigger('transform', 'split', selected.label, '\' \'')">
+                    <b-dropdown-item @click="trigger('truncateTextAttribute')">
+                        {{$t('dataExplorer.truncateToNChars')}} ... </b-dropdown-item>
+                    <b-dropdown-item
+                        @click="trigger('transform', 'split', 'split', selected.label, '\'[\\\\b\\\\W\\\\b]+\'')">
                         Dividir em palavras </b-dropdown-item>
                     <b-dropdown-item>Split url </b-dropdown-item>
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
-                    <b-dropdown-item>Parse to date with custom format </b-dropdown-item>
+                    <b-dropdown-item @click="trigger('castToDate', selected.label)">
+                        Parse to date with custom format
+                    </b-dropdown-item>
 
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
                     <b-dropdown-item>Extract numbers </b-dropdown-item>
@@ -134,14 +181,16 @@
                     <b-dropdown-item>Sort array </b-dropdown-item>
                 </template>
                 <template v-if="selected.field.type === 'Datetime' ">
-                    <b-dropdown-item>Update hour from </b-dropdown-item>
+                    <b-dropdown-item>Update hour from...</b-dropdown-item>
                     <b-dropdown-item>Truncate hour to 00:00 </b-dropdown-item>
                     <b-dropdown-item>Extract date elements </b-dropdown-item>
-                    <b-dropdown-item>Compute difference between dates </b-dropdown-item>
-                    <b-dropdown-item>Format date with custom format </b-dropdown-item>
-                    <b-dropdown-item>Force date range </b-dropdown-item>
+                    <b-dropdown-item>Compute difference between dates... </b-dropdown-item>
+                    <b-dropdown-item>Add/subtract instant from dates... </b-dropdown-item>
+                    <b-dropdown-item>Format date with custom format... </b-dropdown-item>
+                    <b-dropdown-item>Force date range... </b-dropdown-item>
                     <b-dropdown-item>Date to timestamp </b-dropdown-item>
                 </template>
+                
 
             </b-nav-item-dropdown>
             <b-nav-item-dropdown text="(De)codificar" toggle-class="nav-link-custom"
@@ -189,24 +238,22 @@
                 </template>
                 <template>
                     <b-dropdown-item key="removeRowsEmptyCellsAction">
-                        <span class="fa fa-fill-drip text-secondary"></span> Treat <b>empty value(s)</b>
+                        <span class="fa fa-fill-drip text-secondary"></span> <b>Fill</b> empty values in <code>{{selected.field.label}}</code>
+                        with ...
                     </b-dropdown-item>
                     <b-dropdown-item key="fillRowsEmptyCellsAction">
                         <span class="fa fa-exclamation-triangle text-warning"></span> Treat <b>invalid value(s)</b>
                     </b-dropdown-item>
 
                     <b-dropdown-item>
-                        <b>Move</b> invalid cells for meaning Integer to attribute_invalid.
+                        <span class="fa fa-trash text-warning"></span> <b>Remover</b> invalid cells for meaning Integer
+                        in <code> {{selected.field.label}}</code>
                     </b-dropdown-item>
-                    <b-dropdown-item>
-                        <b>Remove</b> invalid cells for meaning Integer to attribute_invalid.
+                    <b-dropdown-item @click="trigger('cleanMissing', 'removeRowUsingAttribute', 'REMOVE_ROW')">
+                        <span class="fa fa-trash text-danger"></span> <b>Remove</b> rows with no value in
+                        <code>{{selected.field.label}}</code>
                     </b-dropdown-item>
-                    <b-dropdown-item>
-                        <b>Remove</b> rows with no value
-                    </b-dropdown-item>
-                    <b-dropdown-item>
-                        <b>Fill</b> empty rows with
-                    </b-dropdown-item>
+
                     <!--
                     <b-dropdown-item key="removeRowsEmptyCellsAction">
                         <span class="fa fa-times text-danger"></span> <b>Remove rows</b> with empty cell(s)
@@ -225,41 +272,7 @@
                     -->
                 </template>
             </b-nav-item-dropdown>
-            <b-nav-item-dropdown toggle-class="nav-link-custom">
-                <template slot="button-content">
-                    <span class="fa fa-database"></span> {{$tc('common.data', 2)}}
-                </template>
-
-                <b-dropdown-item key="sortAsc" @click="trigger('sort', 'asc')" v-show="selected.label !== undefined">
-                    <span class="fa fa-sort-alpha-up text-secondary"></span> <b>{{$t('actions.sort')}}</b> by
-                    {{selected.label}} (ASC)
-                </b-dropdown-item>
-                <b-dropdown-item key="sortDesc" @click="trigger('sort', 'desc')" v-show="selected.label !== undefined">
-                    <span class="fa fa-sort-alpha-down text-secondary"></span> <b>{{$t('actions.sort')}}</b> by
-                    {{selected.label}} (DESC)
-                </b-dropdown-item>
-                <b-dropdown-item key="sortMultiple" @click="trigger('sortMultiple')">
-                    <span class="fa fa-sort text-secondary"></span> <b>{{$t('actions.sort')}} por ...</b>
-                </b-dropdown-item>
-                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
-                <b-dropdown-item>
-                    <span class="fa fa-filter text-success"></span> {{$t('actions.filter')}}
-                </b-dropdown-item>
-                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
-                <b-dropdown-item>{{$t('actions.groupData')}}...</b-dropdown-item>
-                <b-dropdown-item>{{$t('actions.joinData')}}...</b-dropdown-item>
-                <b-dropdown-item>{{$t('actions.appendData')}}...</b-dropdown-item>
-                <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item>{{$t('actions.sample')}}...</b-dropdown-item>
-                <b-dropdown-item>{{$t('actions.limit')}}...</b-dropdown-item>
-                <b-dropdown-divider></b-dropdown-divider>
-                <b-dropdown-item>{{$t('actions.applyWindowFunction')}}...</b-dropdown-item>
-
-                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
-                <b-dropdown-item @click="$refs.modalAnalyse.show()">
-                    <span class="fa fa-chart-bar text-info"></span> Analisar
-                </b-dropdown-item>
-            </b-nav-item-dropdown>
+            
             <b-nav-item>
                 <span class="fa fa-cog"></span> Opções
             </b-nav-item>
