@@ -3,9 +3,10 @@ import ChartBuilderColumnItem from '../../components/chart-builder/ChartBuilderC
 import draggable from 'vuedraggable'
 
 const data = [
-    {name: "date", label: "Data", type: "date"},
-    {name: "name", label: "Nome", type: "string"},
-    {name: "age", label: "Idade", type: "int"},
+    {name: "date", label: "Data", type: "date", data: ['1976-11-01', '1952-07-14', '1981-05-04']},
+    {name: "name", label: "Nome", type: "string", data: ["José", "Maria", "João"]},
+    {name: "age", label: "Idade", type: "int", data: [72, 57, 38]},
+    {name: "childs", label: "Filhos", type: "int", data: [3, 5, 2]},
 ]
 
 export default {

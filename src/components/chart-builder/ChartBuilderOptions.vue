@@ -2,8 +2,6 @@
     <div class="chart-builder-options">
         <h4>Opções</h4>
 
-        {{ form }}
-
         <b-form>
             <b-form-group
               id="title"
@@ -12,7 +10,7 @@
             >
                 <b-form-input
                     id="title"
-                    v-model="form.title"
+                    v-model="form.title.text"
                     type="text"
             ></b-form-input>
             </b-form-group>
@@ -29,13 +27,28 @@
     data() {
     	return {
             form: {
-                title: ""
+                title: {
+                    text: ""
+                },
+                showlegend: false
             }
     	}
+    },
+    watch: {
+        form: {
+            handler: 'changeOptions',
+            deep: true
+        }
     },
     computed: {
     },
     methods: {
+        changeOptions() {
+            this.$root.$emit('chartBuilderUpdateChart', {
+                type: "layout", 
+                value: this.form
+            });
+        }
     }
   }
   </script>

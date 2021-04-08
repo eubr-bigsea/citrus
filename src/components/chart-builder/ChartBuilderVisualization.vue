@@ -12,29 +12,50 @@ import Plotly from 'plotly.js-dist-min'
     props: {},
     data() {
     	return {
+            chartData: {
+                data: {
+                    x: [],
+                    y: []
+                },
+                layout: {
+                    title: "",
+                    showlegend: false,
+                },
+                type: "bar"
+            }
     	}
     },
     mounted() {
 
-        var data = [
-            {
-                name: "Teste",
-                x: ['giraffes', 'orangutans', 'monkeys'],
-                y: [20, 14, 23],
-                type: 'bar'
-            }
-        ];
+        this.$root.$on('chartBuilderUpdateChart', this.updateChart)
 
-        var layout = {
-            title: "Titulo",
-            showlegend: true,
-        }
-
-        Plotly.newPlot('chartViewer', data, layout);
+        Plotly.newPlot('chartViewer', this.getFormatedData(), this.chartData.layout);
+    },
+    beforeDestroy() {
+        this.$root.$off('chartBuilderUpdateChart');
     },
     computed: {
     },
     methods: {
+        updateChart(updatedData) {
+            this.chartData[updatedData.type] = updatedData.value;
+            Plotly.react('chartViewer', this.getFormatedData(), this.chartData.layout)
+        },
+        
+        getFormatedData() {
+            let data = [];
+            for(let y of this.chartData.data.y) {
+                data.push(
+                    {
+                        name: y.label,
+                        x: this.chartData.data.x[0].data,
+                        y: y.data,
+                        type: this.chartData.type
+                    }
+                )
+            }
+           return data;
+        }
     }
   }
   </script>

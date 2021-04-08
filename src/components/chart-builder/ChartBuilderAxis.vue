@@ -2,17 +2,15 @@
     <div class="chart-builder-axis">
         <div>
             <div class="axis-box">
-                <span>Eixo Y</span>
-                <draggable class="axis-box-draggable" v-model="columnsList" :group="{name: 'chart'}" @start="drag=true" @end="drag=false">
-                    <chart-builder-column-item v-bind:column="{name: 'age', label: 'Idade', type: 'int'}" />
-                    <chart-builder-column-item v-bind:column="{name: 'age', label: 'Idade 2', type: 'int'}" />
+                <span>Eixo X</span>
+                <draggable class="axis-box-draggable" v-model="axis.x" :group="{name: 'chart'}" @start="drag=true" @end="drag=false">
+                    <chart-builder-column-item v-for="item in axis.x" :key="item.name" v-bind:column="item" />
                 </draggable>
             </div>
             <div class="axis-box">
-                <span>Eixo X</span>
-                <draggable class="axis-box-draggable" v-model="columnsList" :group="{name: 'chart'}" @start="drag=true" @end="drag=false">
-                    <chart-builder-column-item v-bind:column="{name: 'age', label: 'Idade', type: 'int'}" />
-                    <chart-builder-column-item v-bind:column="{name: 'age', label: 'Idade 2', type: 'int'}" />
+                <span>Eixo Y</span>
+                <draggable class="axis-box-draggable" v-model="axis.y" :group="{name: 'chart'}" @start="drag=true" @end="drag=false">
+                    <chart-builder-column-item v-for="item in axis.y" :key="item.name" v-bind:column="item" />
                 </draggable>
             </div>
         </div>
@@ -31,11 +29,27 @@
     props: {},
     data() {
     	return {
+            axis: {
+                y: [],
+                x: []
+            }
     	}
+    },
+    watch: {
+        axis: {
+            handler: 'changeData',
+            deep: true
+        }
     },
     computed: {
     },
     methods: {
+        changeData() {
+            this.$root.$emit('chartBuilderUpdateChart', {
+                type: "data", 
+                value: this.axis
+            });
+        }
     }
   }
   </script>

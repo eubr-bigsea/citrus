@@ -65,7 +65,13 @@
         
     },
     methods: {
-		setCurrentChart: function(chartType) { this.currentChart = chartType },
+		setCurrentChart: function(chartType) { 
+            this.currentChart = chartType;
+            this.$root.$emit('chartBuilderUpdateChart', {
+                type: "type", 
+                value: this.currentChart.name
+            });
+        },
 		getCurrentChart: function() { return this.currentChart || this.chartTypes[0] }
     }
   }
@@ -97,6 +103,7 @@
 			background-color: #fff;
 			border: 1px solid rgba(#000, .08);
 			left: 4rem;
+            z-index: 1;
 
 			li {
 				padding: .75rem;
