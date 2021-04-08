@@ -142,7 +142,6 @@
 
             </div>
 
-
             <small class="mt-2" v-if="multiple">
                 <span>{{$t('property.expression.explanation')}}</span>
                 <span v-html="$t('property.expression.tip')"></span> &nbsp;
@@ -227,7 +226,8 @@
                     try {
 
                         const tree = jsep(e.target.value || '');
-                        jsep.addBinaryOp(">=", 1);
+                        debugger
+                        //jsep.addBinaryOp(">=", 1);
                         jsep.removeBinaryOp('^');
                         row['error'] = null;
                         row['tree'] = tree
