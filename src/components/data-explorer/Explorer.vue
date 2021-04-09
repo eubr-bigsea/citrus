@@ -10,8 +10,8 @@
             <div class="col-md-9 col-lg-10">
                 <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
                     :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
-                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview" 
-                    @drop="performAction"/>
+                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview"
+                    @drop="performAction" />
             </div>
             <div class="col-md-3 col-lg-2 noselect mt-1">
                 <div class="title">
@@ -78,6 +78,13 @@
             <simple-input ref="simpleInput" :cancel-title="simpleInput.cancelTitle" :ok-title="simpleInput.okTitle"
                 :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
                 :initial="simpleInput.initial" />
+            <find-replace ref="findReplace" :cancel-title="findReplace.cancelTitle" :ok-title="findReplace.okTitle"
+                :title="findReplace.title" :message="findReplace.message" :ok="findReplace.okClicked"
+                :initial="findReplace.initial" />
+            <concat-input ref="concatInput" :cancel-title="findReplace.cancelTitle" :ok-title="findReplace.okTitle"
+                :title="findReplace.title" :message="findReplace.message" :ok="findReplace.okClicked"
+                :initial="findReplace.initial" :attributes="attributes" />
+
 
             <!--
         <b-modal ref="modalSelectAttributes" button-size="sm" :title="$t('actions.selectAttributes')"
@@ -117,6 +124,8 @@
     import PreviewMenu from './PreviewMenu.vue';
     import contextMenu from 'vue-context-menu';
     import SimpleInput from './SimpleInput';
+    import FindReplace from './FindReplace';
+    import ConcatInput from './ConcatInput';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
@@ -124,7 +133,7 @@
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
 
-    const SUPPORTED_OPERATIONS = ['cast', 'data-reader', 
+    const SUPPORTED_OPERATIONS = ['cast', 'data-reader',
         'filter-selection', 'projection', 'sort', 'transformation',
         'sample', 'clean-missing'];
 
@@ -132,7 +141,7 @@
         mixins: [Notifier],
         components: {
             SimpleInput, Preview, draggable, VuePerfectScrollbar,
-            contextMenu, Step, PreviewMenu
+            contextMenu, Step, PreviewMenu, FindReplace, ConcatInput
         },
         props: {
             attributes: { type: Array, default: () => [] },
@@ -143,6 +152,8 @@
             return {
                 attributeSelection: [], // used to select attributes
                 dataSource: {}, // current data source
+                dataTypes: [
+                    'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'JSON', 'Text', 'Time',],
                 internalWorkflowId: null, // workflow id
                 isDirty: false,  //check if workflow is dirty before leaving page
                 job: null,  //last job details
@@ -153,6 +164,14 @@
                 tableData: { attributes: [] }, // data used to render preview table
                 simpleInput: {
                     okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    okClicked: () => { },
+                    title: null,
+                    initial: null,
+                    message: null,
+                },
+                findReplace: {
+                    okTitle: this.$t('actions.replace'),
                     cancelTitle: this.$t('actions.cancel'),
                     okClicked: () => { },
                     title: null,
@@ -239,7 +258,7 @@
                     console.log(`Unknown action: ${options.action}`);
                 }
             },
-            move(params){
+            move(params) {
                 this.store.moveAttribute(params[0], params.slice(1))
             },
             transform(params) {
@@ -301,6 +320,68 @@
                 col.label = this.selected.field.label;
                 this.store.renameAttribute();*/
             },
+            findAndReplaceAttribute() {
+                const attributeName = this.selected.field.label;
+                const position = this.selected.field.position;
+                const isNumber = this.selected.field.type === 'Integer' || this.selected.field.type === 'Decimal';
+                const quotes = !isNumber;
+                const actionName = this.$t('actions.findAndReplace');
+
+                const modalConfig =
+                {
+                    attribute: this.selected.field,
+                    message: actionName,
+                    title: actionName,
+                    okTitle: this.$t('actions.replace'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    value: attributeName,
+                    format: isNumber ? 'number' : 'text',
+                    ok: () => {
+                        const handle = (str, quotes) => {
+                            if (str == null || str.length === 0) {
+                                return 'null'; //Must be str
+                            } else if (quotes) {
+                                return `"${str}"`;
+                            }
+                            return str;
+                        };
+                        this.store.findAndReplaceAttribute(
+                            attributeName,
+                            handle(this.$refs.findReplace.valueFind, quotes),
+                            handle(this.$refs.findReplace.valueReplace, quotes),
+                            this.$refs.findReplace.alias,
+                            this.$refs.findReplace.removeOriginal,
+                            position);
+                    }
+                };
+                this.$refs.findReplace.show(modalConfig);
+                this.resetMenuData();
+                /*
+                this.$refs.modalRenameAttribute.show();
+                const col = this.attributes.find((f) => f.key === this.selected.field.key);
+                col.label = this.selected.field.label;
+                this.store.renameAttribute();*/
+            },
+            concat() {
+                const modalConfig =
+                {
+                    attributes: this.attributes,
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informNewName'),
+                    options: this.dataTypes,
+                    title: this.$t('actions.changeDataType'),
+                    value: this.selected.field.type,
+                    ok: () => {
+                        this.store.changeAttributeType(
+                            this.selected.field.label,
+                            'changeAttributeType',
+                            this.$refs.simpleInput.value,
+                            'ignore');
+                    }
+                };
+                this.$refs.concatInput.show(modalConfig);
+            },
             changeAttributeType() {
                 const modalConfig =
                 {
@@ -313,25 +394,114 @@
                     ok: () => {
                         this.store.changeAttributeType(
                             this.selected.field.label,
-                            this.$refs.simpleInput.value);
+                            'changeAttributeType',
+                            this.$refs.simpleInput.value,
+                            'ignore');
                     }
                 };
                 this.$refs.simpleInput.show(modalConfig);
-                /*if (this.dataTypes.includes(newType)) {
-                    const col = this.attributes.find((f) => f.key === this.selected.field.key);
-                    if (col) {
-                        this.store.changeAttributeType(
-                            this.selected.field.label,
-                            newType);
-                        ///col.type = newType;
+            },
+            castToDate(attributeName) {
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    taggable: true,
+                    multiple: true,
+                    format: 'dateformatpicker',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.parseDate'),
+                    value: null,
+                    ok: () => {
+                        this.store.changeAttributeType(this.selected.field.label,
+                            'parseToDate', 'DateTime', 'coerce',
+                            modal.value[0]);
                     }
-                }*/
+                };
+                modal.show(modalConfig);
             },
-            castToDate(attributeName){
-                this.store.changeAttributeType(this.selected.field.label, 
-                    'castToDate', 'DateTime', 'ignore');
+            dateTruncate(attributeName) {
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    format: 'options',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.formatDate'),
+                    options: [
+                        { value: 'YEAR', text: this.$tc('common.periods.year') },
+                        { value: 'MONTH', text: this.$tc('common.periods.month') },
+                        { value: 'DAY', text: this.$tc('common.periods.day') },
+                        { value: 'HOUR', text: this.$tc('common.periods.hour') },
+                        { value: 'MINUTE', text: this.$tc('common.periods.minute') },
+                        { value: 'SECOND', text: this.$tc('common.periods.seconds') },
+                        { value: 'WEEK', text: this.$tc('common.periods.week') },
+                        //maybe quarter
+                    ],
+                    value: null,
+                    ok: () => {
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['dateTruncate', 'date_trunc', attributeName, `'${modal.value}'`]);
+                    }
+                };
+                modal.show(modalConfig);
             },
-            truncateTextAttribute(){
+            dateExtract(attributeName) {
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    format: 'options',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.formatDate'),
+                    options: [
+                        { value: 'year', text: this.$tc('common.periods.year') },
+                        { value: 'month', text: this.$tc('common.periods.month') },
+                        { value: 'dayofmonth', text: this.$tc('common.periods.day') },
+                        { value: 'weekofyear', text: this.$tc('common.periods.weekOfYear') },
+                        { value: 'dayofweek', text: this.$tc('common.periods.weekDay') },
+                        { value: 'hour', text: this.$tc('common.periods.hour') },
+                        { value: 'minute', text: this.$tc('common.periods.minute') },
+                        { value: 'seconds', text: this.$tc('common.periods.seconds') },
+                    ],
+                    value: null,
+                    ok: () => {
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['dateExtract', modal.value, attributeName]);
+                    }
+                };
+                modal.show(modalConfig);
+            },
+            dateFormat(attributeName) {
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    taggable: true,
+                    multiple: false,
+                    format: 'dateformatpicker',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.formatDate'),
+                    value: null,
+                    ok: () => {
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['dateFormat', 'date_format',
+                                attributeName, `"${modal.value}"`]);
+                    }
+                };
+                modal.show(modalConfig);
+            },
+            truncateTextAttribute() {
                 const attributeName = this.selected.field.label;
                 const modalConfig =
                 {
@@ -347,12 +517,12 @@
                             attributeName,
                             this.selected.field.position,
                             ['truncateTextAttribute', 'substring',
-                            attributeName, 0, val]);
+                                attributeName, 0, val]);
                     }
                 };
                 this.$refs.simpleInput.show(modalConfig);
             },
-            splitTextAttribute(){
+            splitTextAttribute() {
                 const attributeName = this.selected.field.label;
                 const modalConfig =
                 {
@@ -368,7 +538,7 @@
                             attributeName,
                             this.selected.field.position,
                             ['truncateTextAttribute', 'substring',
-                            attributeName, 0, val]);
+                                attributeName, 0, val]);
                     }
                 };
                 this.$refs.simpleInput.show(modalConfig);
@@ -376,7 +546,7 @@
             sort(direction) {
                 this.store.sort(this.selected.field.label, direction[0]);
             },
-            limit(){
+            limit() {
                 const modalConfig =
                 {
                     okTitle: this.$t('common.ok'),
@@ -392,7 +562,7 @@
                 };
                 this.$refs.simpleInput.show(modalConfig);
             },
-            cleanMissing(params){
+            cleanMissing(params) {
                 this.store.cleanMissing(this.selected.field.label, params);
             },
             /* Data loading */

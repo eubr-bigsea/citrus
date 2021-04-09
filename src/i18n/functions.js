@@ -84,11 +84,11 @@ export default {
             date_add:
                 '<i>date_add(start, days)</i>: Returns the date that is <i>days</i> days after <i>start</i>.',
             date_format:
-                "<i>date_format(date, format)</i>: Converts a date/timestamp/string to a value of string in the format specified by the date format given by the second argument. A pattern could be for instance <i>dd.MM.yyyy</i> and could return a string like '18.03.1993'. All pattern letters of the Java class <i><a href='http://docs.oracle.com/javase/tutorial/i18n/format/simpleDateFormat.html'>java.text.SimpleDateFormat</a></i> can be used.",
+                "<i>date_format(date, format)</i>: Converte uma data para uma representação em texto usando um formato especificado como segundo argumento. Um formato poderia ser, por exemplo, <i>dd-MM-yyyy</i> e retornaria um texto como '18-03-1993'. O formato segue a convenção da classe Java <i><a href='http://docs.oracle.com/javase/tutorial/i18n/format/simpleDateFormat.html'>java.text.SimpleDateFormat</a></i>.",
             date_sub:
                 '<i>date_sub(start, days)</i>: Returns the date that is <i>days</i> days before <i>start</i>.',
             date_trunc:
-                "<i>date_trunc(date, format)</i>: Returns timestamp truncated to the unit specified by the format ('year', 'yyyy', 'yy', 'month', 'mon', 'mm', 'day', 'dd', 'hour', 'minute', 'second', 'week', 'quarter')",
+                "<i>date_trunc(date, format)</i>: Retorna a data truncada para a unidade especificada por <i>format</i> ('year', 'yyyy', 'yy', 'month', 'mon', 'mm', 'day', 'dd', 'hour', 'minute', 'second', 'week', 'quarter').",
             datediff:
                 '<i>datediff(start, end)</i>: Returns the number of days from <i>start</i> to <i>end.',
             dayofmonth:

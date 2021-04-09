@@ -5,12 +5,6 @@
             text-align: right;
             }
         </v-style>
-        <v-style v-if="dropColumn && dropColumn.length">
-            {{dropColumn}} {
-            border-left: 2px solid #888;
-            margin-left: 3px !important;
-            }
-        </v-style>
         <div v-show="loading" class="preview-loading border">
             <h1 class="text-secondary  border-radius p-4">
                 <font-awesome-icon icon="spinner" spin class="text-success" />
@@ -62,14 +56,6 @@
             <div><small>{{$tc('common.pagerShowing', 0, {from: 1, to: 500, count: total})}}</small></div>
         </template>
 
-
-        <context-menu ref="dataTypeCtxMenu" @ctx-cancel="resetCtxLocals" class="menu">
-            <li v-for="dt in dataTypes" :key="dt" class="ctx-item" @click.prevent="changeAttributeType(dt)">{{dt}}</li>
-            <!--<li class="ctx-item"> Email </li>
-            <li class="ctx-item"> Geospatial </li>
-            <li class="ctx-item"> Object </li>-->
-        </context-menu>
-
         <context-menu ref="ctxCellMenu" class="menu" @ctx-open="onCellCtxOpen" @ctx-cancel="resetCellCtxLocals">
             <template v-if="cellMenuData">
                 <li class="ctx-item" @click="onFilter(cellMenuData.name, '!=', cellMenuData.value)">
@@ -90,6 +76,11 @@
                 -->
                 <li class="ctx-item"><span class="fa fa-flag"></span> <b>Flag</b> on
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                </li>
+                <li class="ctx-divider"></li>
+                <li class="ctx-item"><span class="fa fa-search"></span> 
+                    <b>Localizar</b> <code>{{cellMenuData.value}}</code> on 
+                    <code>{{cellMenuData.name}}</code> and replace...</code>
                 </li>
             </template>
         </context-menu>
@@ -324,7 +315,6 @@
                 },
                 scrollEventSet: false,
                 rightAlignedAttributes: { type: String },
-                dropColumn: { type: String },
                 dragTimeout: null,
             }
         },
@@ -469,7 +459,7 @@
                 this.moveSelectionOverlay(this.lastHeader);
                 this.$refs.ctxMenu.ctxVisible = false;
                 this.$refs.ctxCellMenu.ctxVisible = false;
-                this.$refs.dataTypeCtxMenu.ctxVisible = false;
+                //this.$refs.dataTypeCtxMenu.ctxVisible = false;
             },
 
             customOpen(event, data, index) {
@@ -501,7 +491,7 @@
                     */
                 //console.debug(event.clientX, rect.left + window.pageXOffset, clientX > 0 ? clientX : 0)
             },
-            moveSelectionOverlay(th) {
+            moveSelectionOverlay(th, showBorder) {
                 const scrollOffset = this.$refs.table.$el.scrollLeft;
                 if (th) {
                     const clipRec = th.getBoundingClientRect();
@@ -511,6 +501,11 @@
                         this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
                     }
                     this.$refs.colOverlay.style.width = `${clipRec.width}px`;
+                    if (showBorder) {
+                        this.$refs.colOverlay.style.borderLeft = '5px solid #888';
+                    } else {
+                        this.$refs.colOverlay.style.borderLeft = 'none';
+                    }
                     this.$refs.colOverlay.style.display = '';
                 }
             },
@@ -660,7 +655,6 @@
                 this.resetMenuData();
             },
             dragEnd(item, e) {
-                this.dropColumn = null;
                 this.resetMenuData();
             },
             dragOver(item, e) {
@@ -673,20 +667,18 @@
                 }
                 this.dragTimeout = setTimeout(
                     () => {
-                        this.dropColumn = `.table-preview td:nth-child(${item.position + 1})`;
                         const selectColumn = `th:nth-child(${item.position + 1})`;
                         const th = this.$refs.table.$el.querySelector(selectColumn);
-                        this.moveSelectionOverlay(th);
+                        this.moveSelectionOverlay(th, true);
                     }, 100);
 
             },
             dragLeave(item, e) {
                 e.target.style.background = 'inherit';
-                this.dropColumn = null;
             },
             drop(item, e) {
                 const position = parseInt(e.dataTransfer.getData('position'));
-                
+
                 this.attributes.splice(item.position, 0,
                     this.attributes.splice(position, 1)[0]);
                 this.attributes.forEach((attr, i) => attr.position = i);
