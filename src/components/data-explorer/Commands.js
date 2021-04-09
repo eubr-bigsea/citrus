@@ -17,9 +17,10 @@ const translations = {
         deleteAttribute: '<b>Excluir atributo</b> <code>%s</code>.',
         duplicateAttribute: '<b>Duplicar atributo</b> <code>%s</code> para <code>%s</code>.',
         filterRows: '<b>Filtrar registros</b> com a condição <code>%s</code>.',
-        lower: '<b>Converter para minúsculas</b> <code>%s</code>',
-        round: '<b>Arredondar</b> <code>%s</code>',
+        lower: '<b>Converter para minúsculas</b> <code>%s</code>.',
+        round: '<b>Arredondar</b> <code>%s</code>.',
         renameAttribute: '<b>Renomear atributo</b> <code>%s</code> para <code>%s</code>.',
+        findAndReplaceAttribute: '<b>Localizar</b> <code>%s</code> e <b>substituir</b> por <code>%s</code> em <code>%s</code>.',
         selectAttributes: '<b>Selecionar atributos</b> Lista de atributos selecionados e/ou ordenados.',
         sortAttributes: '<b>Ordenar registros</b> por <code>%s</code>',
         limit: '<b>Limitar</b> aos primeiros %s registro(s)',
@@ -120,7 +121,6 @@ class WorkflowManager {
                 const targetFlowPos = this.workflow.flows.findIndex(flow => flow.source_id === taskId);
                 const sourceFlowPos = this.workflow.flows.findIndex(flow => flow.target_id === taskId);
 
-                console.debug(targetFlowPos, sourceFlowPos);
                 this.workflow.flows.push({
                     source_port: this.workflow.flows[sourceFlowPos].source_port,
                     target_port: this.workflow.flows[targetFlowPos].target_port,
@@ -386,6 +386,43 @@ export default class Store {
 
         }
     }
+    findAndReplaceAttribute(attributeName, valueFind, valueReplace, alias, removeOriginal, position) {
+        // Maps to projection operation
+        // OK
+        const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
+        if (pos > -1) {
+            const names = this.getAttributeNames();
+            const aliases = [...names];
+            aliases[pos] = alias;
+            
+            const expression = `when(${attributeName} == ${valueFind}, ${valueReplace}, ${attributeName})`;
+
+            const description = _formatI18n(this.language, 'findAndReplaceAttribute', [valueFind, valueReplace, attributeName]);
+            this.addStep(
+                {
+                    operation: { slug: 'transformation' },
+                    forms: {
+                        position: { value: [position === null ? -1 : position + 1] },
+                        expression: {
+                            value: [{
+                                alias, expression,
+                                tree: this.getTreeFromExpression(expression),
+                            }],
+                        },
+                        comment: { value: description },
+                        $meta: {
+                            value: {
+                                action: 'findReplaceAttribute',
+                                attribute: attributeName,
+                                alias, valueFind, valueReplace, removeOriginal,
+                                position
+                            }
+                        }
+                    }
+                }, true);
+
+        }
+    }
     deleteAttribute(attributeName) {
         const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
         if (pos > -1) {
@@ -415,10 +452,9 @@ export default class Store {
 
         if (pos > -1) {
             const description = _formatI18n(this.language, 'move', [attributeName, position]);
-            this.attributes.splice(position, 0, this.attributes.splice(pos,1)[0])
+            this.attributes.splice(position, 0, this.attributes.splice(pos, 1)[0])
             this.attributes.forEach((attr, i) => attr.position = i);
-            
-            console.debug(position, pos, this.getAttributeNames());
+
             this.addStep(
                 {
                     operation: { slug: 'projection' },

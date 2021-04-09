@@ -5,12 +5,6 @@
             text-align: right;
             }
         </v-style>
-        <v-style v-if="dropColumn && dropColumn.length">
-            {{dropColumn}} {
-            border-left: 2px solid #888;
-            margin-left: 3px !important;
-            }
-        </v-style>
         <div v-show="loading" class="preview-loading border">
             <h1 class="text-secondary  border-radius p-4">
                 <font-awesome-icon icon="spinner" spin class="text-success" />
@@ -324,7 +318,6 @@
                 },
                 scrollEventSet: false,
                 rightAlignedAttributes: { type: String },
-                dropColumn: { type: String },
                 dragTimeout: null,
             }
         },
@@ -501,7 +494,7 @@
                     */
                 //console.debug(event.clientX, rect.left + window.pageXOffset, clientX > 0 ? clientX : 0)
             },
-            moveSelectionOverlay(th) {
+            moveSelectionOverlay(th, showBorder) {
                 const scrollOffset = this.$refs.table.$el.scrollLeft;
                 if (th) {
                     const clipRec = th.getBoundingClientRect();
@@ -511,6 +504,11 @@
                         this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
                     }
                     this.$refs.colOverlay.style.width = `${clipRec.width}px`;
+                    if (showBorder) {
+                        this.$refs.colOverlay.style.borderLeft = '5px solid #888';
+                    } else {
+                        this.$refs.colOverlay.style.borderLeft = 'none';
+                    }
                     this.$refs.colOverlay.style.display = '';
                 }
             },
@@ -660,7 +658,6 @@
                 this.resetMenuData();
             },
             dragEnd(item, e) {
-                this.dropColumn = null;
                 this.resetMenuData();
             },
             dragOver(item, e) {
@@ -673,20 +670,18 @@
                 }
                 this.dragTimeout = setTimeout(
                     () => {
-                        this.dropColumn = `.table-preview td:nth-child(${item.position + 1})`;
                         const selectColumn = `th:nth-child(${item.position + 1})`;
                         const th = this.$refs.table.$el.querySelector(selectColumn);
-                        this.moveSelectionOverlay(th);
+                        this.moveSelectionOverlay(th, true);
                     }, 100);
 
             },
             dragLeave(item, e) {
                 e.target.style.background = 'inherit';
-                this.dropColumn = null;
             },
             drop(item, e) {
                 const position = parseInt(e.dataTransfer.getData('position'));
-                
+
                 this.attributes.splice(item.position, 0,
                     this.attributes.splice(position, 1)[0]);
                 this.attributes.forEach((attr, i) => attr.position = i);

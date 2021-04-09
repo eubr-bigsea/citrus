@@ -11,6 +11,9 @@
                 <template slot="button-content">
                     <span class="fa fa-edit"></span> {{$t('actions.edit')}}
                 </template>
+                <b-dropdown-item @click="trigger('changeAttributeType')">
+                    <span class="fa fa-exchange-alt"></span> {{$t('actions.changeDataType')}} para atributo
+                </b-dropdown-item>
                 <b-dropdown-item @click="trigger('renameAttribute')">
                     <span class="fa fa-edit text-secondary"></span> {{$t('actions.rename')}}
                     {{$tc('common.attribute').toLowerCase()}}
@@ -26,12 +29,17 @@
                 <b-dropdown-item @click="trigger('duplicateAttribute')" key="actionDuplicate">
                     <span class="fa fa-copy text-secondary"></span> {{$t('actions.duplicate')}}
                     {{$tc('common.attribute').toLowerCase()}}
-                -->
                 </b-dropdown-item>
                 <b-dropdown-item @click="trigger('moveAttribute')" key="actionMove">
                     <span class="fa fa-arrows-alt-h "></span> {{$t('actions.move')}}
                     {{$tc('common.attribute').toLowerCase()}}
                 </b-dropdown-item>
+                -->
+                <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                <b-dropdown-item @click="trigger('findAndReplaceAttribute')" key="findReplace">
+                    <span class="fa fa-search"></span> Find in <code>{{selected.label}}</code> and replace...
+                </b-dropdown-item>
+
                 <!--
                 <template v-if="selected.field.type === 'Array' ">
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
@@ -109,13 +117,7 @@
                 <template slot="button-content">
                     <span class="fa fa-magic"></span> {{$t('actions.transform')}}
                 </template>
-                <b-dropdown-item @click="trigger('changeAttributeType')">
-                    {{$t('actions.changeDataType')}} para coluna
-                </b-dropdown-item>
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
-                <b-dropdown-item @click="trigger('findAndReplace')" key="findReplace">
-                    <span class="fa fa-search"></span> Find in coluna and replace
-                </b-dropdown-item>
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
 
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
@@ -155,7 +157,7 @@
                     <b-dropdown-item @click="trigger('transform', 'removeAccents', 'strip_accents', selected.label)">
                         {{$t('dataExplorer.removeAccents')}}
                     </b-dropdown-item>
-                    <b-dropdown-item>Concatenate with... </b-dropdown-item>
+                    <b-dropdown-item @click="trigger('concat', selected.label)">Concatenate with... </b-dropdown-item>
                     <b-dropdown-item @click="trigger('transform', 'trim', 'trim', selected.label)">Remove initial and
                         final
                         spaces (trim) </b-dropdown-item>
