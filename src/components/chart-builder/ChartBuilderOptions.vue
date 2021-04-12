@@ -30,7 +30,7 @@
                 title: {
                     text: ""
                 },
-                showlegend: false
+                showlegend: false,
             }
     	}
     },

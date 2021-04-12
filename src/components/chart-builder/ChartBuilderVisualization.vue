@@ -1,6 +1,9 @@
 <template>
     <div class="chart-builder-visualization">
-        <div id="chartViewer"></div>
+        <div v-show="chartIsVisible()" id="chartViewer"></div>
+        <div v-if="!chartIsVisible()" class="chart-not-available">
+            Selecione o tipo de gráfico e arraste os dados para os eixos acima
+        </div>
     </div>
 </template>
 <script>
@@ -13,23 +16,22 @@ import Plotly from 'plotly.js-dist-min'
     data() {
     	return {
             chartData: {
-                data: {
-                    x: [],
-                    y: []
+                axis: {
+                    x: {data: []},
+                    y: {data: []},
+                    z: {data: []},
                 },
                 layout: {
                     title: "",
                     showlegend: false,
                 },
-                type: "bar"
+                type: undefined
             }
     	}
     },
     mounted() {
-
         this.$root.$on('chartBuilderUpdateChart', this.updateChart)
-
-        Plotly.newPlot('chartViewer', this.getFormatedData(), this.chartData.layout);
+        //Plotly.newPlot('chartViewer', this.getFormatedData(), this.getFormatedLayout(), {responsive: true});
     },
     beforeDestroy() {
         this.$root.$off('chartBuilderUpdateChart');
@@ -38,28 +40,128 @@ import Plotly from 'plotly.js-dist-min'
     },
     methods: {
         updateChart(updatedData) {
+
+            if(updatedData.type=="type") {
+                Plotly.purge('chartViewer');
+            }
+
             this.chartData[updatedData.type] = updatedData.value;
-            Plotly.react('chartViewer', this.getFormatedData(), this.chartData.layout)
+            if(this.chartIsVisible()) 
+                Plotly.newPlot('chartViewer', this.getFormatedData(), this.getFormatedLayout(), {responsive: true})
+        },
+
+        chartIsVisible(){
+            if(['bubble', 'scatter'].includes(this.chartData.type)) {
+                return this.chartData.type 
+                    && this.chartData.axis.x.data.length>0 
+                    && this.chartData.axis.y.data.length>0
+                    && this.chartData.axis.z.data.length>0;
+            } else {
+                return this.chartData.type 
+                    && this.chartData.axis.x.data.length>0 
+                    && this.chartData.axis.y.data.length>0;
+            }
+            
         },
         
         getFormatedData() {
             let data = [];
-            for(let y of this.chartData.data.y) {
-                data.push(
-                    {
-                        name: y.label,
-                        x: this.chartData.data.x[0].data,
-                        y: y.data,
-                        type: this.chartData.type
+
+            switch(this.chartData.type) {
+                case "pie":
+                    data.push({
+                        type: this.chartData.type,
+                        labels: this.chartData.axis.x.data[0].data,
+                        values: this.chartData.axis.y.data[0].data,
+                    });
+                    break;
+                    
+                case "bubble":
+                    data.push({
+                        mode: 'markers',
+                        x: this.chartData.axis.x.data[0].data,
+                        y: this.chartData.axis.y.data[0].data,
+                        marker: {
+                            size: this.chartData.axis.z.data[0].data,
+                        }
+                    });
+                    break;
+                    
+                case "scatter":
+                    data.push({
+                        mode: 'markers',
+                        type: this.chartData.type,
+                        x: this.chartData.axis.x.data[0].data,
+                        y: this.chartData.axis.y.data[0].data,
+                        text: this.chartData.axis.z.data[0].data,
+                        marker: {
+                            size: 12,
+                        }
+                    });
+                    break;
+                    
+                case "filled-area":
+
+                    for(let y of this.chartData.axis.y.data) {
+                        data.push({
+                            name: y.label,
+                            type: 'scatter',
+                            fill: data.length==0 ? 'tozeroy' : 'tonexty',
+                            x: this.chartData.axis.x.data[0].data,
+                            y: y.data
+                        });
                     }
-                )
+                    
+                    break;
+
+                default:
+                    for(let y of this.chartData.axis.y.data) {
+                        data.push({
+                            name: y.label,
+                            type: this.chartData.type,
+                            x: this.chartData.axis.x.data[0].data,
+                            y: y.data
+                        });
+                    }
+                break;
             }
-           return data;
+            
+            return data;
+        },
+
+        getFormatedLayout(){
+            let l = {...this.chartData.layout};
+
+            //Ajusta o tamanho do chart ao div
+            let el = document.getElementsByClassName("chart-builder-visualization")[0];
+            l.width = el.offsetWidth;
+            l.height = el.offsetHeight;
+
+            return l;
         }
     }
   }
   </script>
   <style scoped lang="scss">
+
+        .chart-builder-visualization {
+            width: 50%;
+            height: 100%;
+        }
+
+        .chart-not-available {
+            background-color: #fff;
+            border: 1px solid rgba(#000, .08);
+            padding: 1rem;
+            margin: 0;
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: rgba(#000, .2);
+        }
 
   </style>
   

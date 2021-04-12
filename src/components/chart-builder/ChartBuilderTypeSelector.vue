@@ -48,11 +48,11 @@
                     label: "Gráfico de Dispersão",
                     image: "https://images.plot.ly/plotly-documentation/thumbnail/line-and-scatter.jpg"
                 },
-                {
+                /*{
                     name: "dots",
                     label: "Gráfico de Pontos",
                     image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
-                },
+                },*/
                 {
                     name: "filled-area",
                     label: "Gráfico de Área",
@@ -73,6 +73,11 @@
             });
         },
 		getCurrentChart: function() { return this.currentChart || this.chartTypes[0] }
+    },
+    mounted() {
+        setTimeout(()=>{
+            this.setCurrentChart(this.chartTypes[0]);
+        }, 100);
     }
   }
   </script>

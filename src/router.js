@@ -80,6 +80,8 @@ const TrackAdd = () => import('./views/TrackAdd.vue');
 
 const QueryEdit = () => import('./views/query/QueryEdit.vue');
 
+const ChartBuilder = () => import('./views/ChartBuilder.vue');
+
 Vue.use(Router);
 
 let router = new Router({
@@ -491,6 +493,14 @@ let router = new Router({
             component: About,
             meta: {
                 title: ['titles.lemonade', 1]
+            }
+        },
+        {
+            path: '/chart-builder',
+            name: 'chart_builder',
+            component: ChartBuilder,
+            meta: {
+                title: "Construtor de Gráficos"
             }
         },
         {

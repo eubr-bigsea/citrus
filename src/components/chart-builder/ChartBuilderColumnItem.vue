@@ -6,12 +6,16 @@
         <div class="label">
             {{ column.label }}
         </div>
+        <div v-if="remove" class="remove">
+            <span @click="removeItem()" class="fa fa-trash" />
+        </div>
     </div>
 </template>
 <script>
   export default {
     props: {
-        column: Object
+        column: Object,
+        remove: Object
     },
     data() {
       return {
@@ -25,6 +29,9 @@
     computed: {
     },
     methods: {
+        removeItem(){
+            this.$root.$emit('chartBuilderRemoveAxisItem', this.remove);
+        }
     }
   }
   </script>
@@ -48,6 +55,17 @@
             .type {
                 max-width: 30px;
                 text-align: left;
+            }
+
+            .remove {
+                margin-left: 1rem;
+                color: #dc3545;
+                opacity: .3;
+                cursor: pointer;
+
+                &:hover {
+                    opacity: .75;
+                }
             }
         }
   </style>
