@@ -56,14 +56,6 @@
             <div><small>{{$tc('common.pagerShowing', 0, {from: 1, to: 500, count: total})}}</small></div>
         </template>
 
-
-        <context-menu ref="dataTypeCtxMenu" @ctx-cancel="resetCtxLocals" class="menu">
-            <li v-for="dt in dataTypes" :key="dt" class="ctx-item" @click.prevent="changeAttributeType(dt)">{{dt}}</li>
-            <!--<li class="ctx-item"> Email </li>
-            <li class="ctx-item"> Geospatial </li>
-            <li class="ctx-item"> Object </li>-->
-        </context-menu>
-
         <context-menu ref="ctxCellMenu" class="menu" @ctx-open="onCellCtxOpen" @ctx-cancel="resetCellCtxLocals">
             <template v-if="cellMenuData">
                 <li class="ctx-item" @click="onFilter(cellMenuData.name, '!=', cellMenuData.value)">
@@ -84,6 +76,11 @@
                 -->
                 <li class="ctx-item"><span class="fa fa-flag"></span> <b>Flag</b> on
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                </li>
+                <li class="ctx-divider"></li>
+                <li class="ctx-item"><span class="fa fa-search"></span> 
+                    <b>Localizar</b> <code>{{cellMenuData.value}}</code> on 
+                    <code>{{cellMenuData.name}}</code> and replace...</code>
                 </li>
             </template>
         </context-menu>
@@ -462,7 +459,7 @@
                 this.moveSelectionOverlay(this.lastHeader);
                 this.$refs.ctxMenu.ctxVisible = false;
                 this.$refs.ctxCellMenu.ctxVisible = false;
-                this.$refs.dataTypeCtxMenu.ctxVisible = false;
+                //this.$refs.dataTypeCtxMenu.ctxVisible = false;
             },
 
             customOpen(event, data, index) {

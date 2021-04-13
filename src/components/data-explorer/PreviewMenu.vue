@@ -6,7 +6,7 @@
                 <span class="fa fa-save"></span> {{$t('actions.save')}}
             </b-nav-item>
             -->
-            
+
             <b-nav-item-dropdown text="Editar" toggle-class="nav-link-custom" :disabled="selected.label === undefined">
                 <template slot="button-content">
                     <span class="fa fa-edit"></span> {{$t('actions.edit')}}
@@ -40,17 +40,12 @@
                     <span class="fa fa-search"></span> Find in <code>{{selected.label}}</code> and replace...
                 </b-dropdown-item>
 
+
                 <!--
                 <template v-if="selected.field.type === 'Array' ">
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
                     <b-dropdown-item key="parseAction">
                         <span class="fa fa-exclamation"></span> <b>Parse</b> with numerical range 
-                    </b-dropdown-item>
-                </template>
-                <template v-if="selected.field.type === 'Boolean'">
-                    <b-dropdown-item class="ctx-divider"></b-dropdown-item>
-                    <b-dropdown-item key="negateAction">
-                        <span class="fa fa-exclamation"></span> <b>Negate/invert</b> boolean values 
                     </b-dropdown-item>
                 </template>
 
@@ -70,6 +65,7 @@
                     </b-dropdown-item>
                 </template>
                 -->
+
             </b-nav-item-dropdown>
             <b-nav-item-dropdown toggle-class="nav-link-custom">
                 <template slot="button-content">
@@ -113,14 +109,21 @@
                     <span class="fa fa-chart-bar text-info"></span> Analisar
                 </b-dropdown-item>
             </b-nav-item-dropdown>
+
             <b-nav-item-dropdown toggle-class="nav-link-custom" :disabled="selected.label === undefined">
                 <template slot="button-content">
                     <span class="fa fa-magic"></span> {{$t('actions.transform')}}
                 </template>
+                <template v-if="selected.field.type === 'Boolean'">
+                    <b-dropdown-item key="negateAction" @click="trigger('transform', 'negate', '~', selected.label)">
+                        <span class="fa fa-exclamation-triangle"></span> <b>Negate/invert</b> boolean values
+                    </b-dropdown-item>
+                </template>
+                <!--
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
-
                 <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                -->
                 <template v-if="selected.field.type === 'Integer' || selected.field.type == 'Decimal'">
                     <b-dropdown-item @click="trigger('redefineScale')">
                         <b>Redefine scale of</b> coluna
@@ -169,7 +172,7 @@
                     <b-dropdown-item>Split url </b-dropdown-item>
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
                     <b-dropdown-item @click="trigger('castToDate', selected.label)">
-                        Parse to date with custom format
+                        Parse to date with custom format...
                     </b-dropdown-item>
 
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
@@ -179,20 +182,33 @@
                 </template>
                 <template v-if="selected.field.type === 'Array' ">
                     <b-dropdown-item>Extract from array </b-dropdown-item>
+                    <b-dropdown-item>Expand from array </b-dropdown-item>
                     <b-dropdown-item>Fold an array </b-dropdown-item>
-                    <b-dropdown-item>Sort array </b-dropdown-item>
+                    <b-dropdown-item @click="trigger('transform', 'sort_array', 'sort_array', selected.label, 1)">
+                        Change array element type
+                    </b-dropdown-item>
+                    <b-dropdown-item @click="trigger('transform', 'sort_array', 'sort_array', selected.label, 0)">
+                        Sort array
+                    </b-dropdown-item>
                 </template>
                 <template v-if="selected.field.type === 'Datetime' ">
+                    <b-dropdown-item>Force date range... </b-dropdown-item>
                     <b-dropdown-item>Update hour from...</b-dropdown-item>
-                    <b-dropdown-item>Truncate hour to 00:00 </b-dropdown-item>
-                    <b-dropdown-item>Extract date elements </b-dropdown-item>
+                    <b-dropdown-item @click="trigger('dateTruncate', selected.label)">
+                        Truncate to...
+                    </b-dropdown-item>
+                    <b-dropdown-item class="ctx-divider"></b-dropdown-item>
                     <b-dropdown-item>Compute difference between dates... </b-dropdown-item>
                     <b-dropdown-item>Add/subtract instant from dates... </b-dropdown-item>
-                    <b-dropdown-item>Format date with custom format... </b-dropdown-item>
-                    <b-dropdown-item>Force date range... </b-dropdown-item>
+                    <b-dropdown-item class="ctx-divider"></b-dropdown-item>
+                    <b-dropdown-item @click="trigger('dateExtract', selected.label)">
+                        Extract date element...
+                    </b-dropdown-item>
+                    <b-dropdown-item @click="trigger('dateFormat', selected.label)">
+                        Format date with custom format... </b-dropdown-item>
                     <b-dropdown-item>Date to timestamp </b-dropdown-item>
                 </template>
-                
+
 
             </b-nav-item-dropdown>
             <b-nav-item-dropdown text="(De)codificar" toggle-class="nav-link-custom"
@@ -240,7 +256,8 @@
                 </template>
                 <template>
                     <b-dropdown-item key="removeRowsEmptyCellsAction">
-                        <span class="fa fa-fill-drip text-secondary"></span> <b>Fill</b> empty values in <code>{{selected.field.label}}</code>
+                        <span class="fa fa-fill-drip text-secondary"></span> <b>Fill</b> empty values in
+                        <code>{{selected.field.label}}</code>
                         with ...
                     </b-dropdown-item>
                     <b-dropdown-item key="fillRowsEmptyCellsAction">
@@ -274,7 +291,7 @@
                     -->
                 </template>
             </b-nav-item-dropdown>
-            
+
             <b-nav-item>
                 <span class="fa fa-cog"></span> Opções
             </b-nav-item>

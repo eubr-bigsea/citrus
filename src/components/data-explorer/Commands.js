@@ -15,6 +15,9 @@ const translations = {
     pt: {
         changeAttributeType: '<b>Alterar tipo</b> Tipo do atributo <em>%s</em> alterado de <em>%s</em> para <em>%s</em>.',
         deleteAttribute: '<b>Excluir atributo</b> <code>%s</code>.',
+        dateFormat: '<b>Formatar data</b> em <code>%s</code>.',
+        dateExtract: '<b>Extrair partes</b> da data em <code>%s</code>.',
+        dateTruncate: '<b>Truncar data</b> em <code>%s</code>.',
         duplicateAttribute: '<b>Duplicar atributo</b> <code>%s</code> para <code>%s</code>.',
         filterRows: '<b>Filtrar registros</b> com a condição <code>%s</code>.',
         lower: '<b>Converter para minúsculas</b> <code>%s</code>.',
@@ -26,9 +29,13 @@ const translations = {
         limit: '<b>Limitar</b> aos primeiros %s registro(s)',
 
         move: '<b>Mover</b> <code>%s</code> para a posição %s',
+        negate: '<b>Inverted o valor</b> de %s.',
+        parseToDate: '<b>Converter</b> <code>%s</code> para data usando formato(s).',
         substring: '<b>Truncar</b> <code>%s</code>',
         strip_accents: '<b>Remover acentos</b> em <code>%s</code>',
         transformAttributes: '<b>Aplicar transformação</b> <code>%s</code>',
+        split: '<b>Dividir</b> <code>%s</code> em palavras.',
+        sort_array: '<b>Ordenar lista</b> <code>%s</code>.',
         title: '<b>Converter iniciais para maiúsculas em</b> <code>%s</code>',
         trim: '<b>Remove espaços vazios no início e no fim de</b> <code>%s</code>',
         upper: '<b>Converter para maiúsculas</b> <code>%s</code>',
@@ -123,7 +130,7 @@ class WorkflowManager {
 
                 this.workflow.flows.push({
                     source_port: this.workflow.flows[sourceFlowPos].source_port,
-                    target_port: this.workflow.flows[targetFlowPos].target_port,
+                    target_port: targetFlowPos > -1 ? this.workflow.flows[targetFlowPos].target_port : null,
                     source_port_name: "output data",
                     target_port_name: "input data",
                     environment: "DESIGN",
@@ -394,7 +401,7 @@ export default class Store {
             const names = this.getAttributeNames();
             const aliases = [...names];
             aliases[pos] = alias;
-            
+
             const expression = `when(${attributeName} == ${valueFind}, ${valueReplace}, ${attributeName})`;
 
             const description = _formatI18n(this.language, 'findAndReplaceAttribute', [valueFind, valueReplace, attributeName]);
@@ -562,12 +569,12 @@ export default class Store {
     castAttributeToDate(attributeName, format) {
 
     }
-    changeAttributeType(attributeName, action, newType, errors) {
+    changeAttributeType(attributeName, action, newType, errors, formats) {
         const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
         if (pos > -1) {
             const oldType = this.attributes[pos].type;
             this.attributes[pos].type = newType;
-            const description = _formatI18n(this.language, 'changeAttributeType', [attributeName, oldType, newType])
+            const description = _formatI18n(this.language, action, [attributeName, oldType, newType])
 
             this.addStep(
                 {
@@ -575,7 +582,11 @@ export default class Store {
                     forms: {
                         attributes: {
                             value:
-                                [{ attribute: attributeName, type: newType }]
+                                [{
+                                    attribute: attributeName,
+                                    type: newType,
+                                    formats,
+                                }]
                         },
                         errors: { value: errors },
                         comment: { value: description },
@@ -650,9 +661,11 @@ export default class Store {
 
     transformWithFunction(attributeName, position, params) {
         const functionName = params[1];
-        const description = _formatI18n(this.language, functionName, [attributeName]);
         const action = params[0];
-        const alias = `${attributeName}_${functionName}`;
+        const alias = `${attributeName}_${action}`;
+
+        const description = _formatI18n(this.language, action, [attributeName]);
+        
 
         const allParams = params.splice(2).map(
             //p => (typeof p === 'number') ? p.toString() : `'${p}'`)
@@ -676,6 +689,7 @@ export default class Store {
                     comment: { value: description },
                     $meta: {
                         value: {
+                            action,
                             params,
                             attribute: attributeName,
                         }

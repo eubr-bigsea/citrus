@@ -402,8 +402,104 @@
                 this.$refs.simpleInput.show(modalConfig);
             },
             castToDate(attributeName) {
-                this.store.changeAttributeType(this.selected.field.label,
-                    'castToDate', 'DateTime', 'ignore');
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    taggable: true,
+                    multiple: true,
+                    format: 'dateformatpicker',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.parseDate'),
+                    value: null,
+                    ok: () => {
+                        this.store.changeAttributeType(this.selected.field.label,
+                            'parseToDate', 'DateTime', 'coerce',
+                            modal.value[0]);
+                    }
+                };
+                modal.show(modalConfig);
+            },
+            dateTruncate(attributeName) {
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    format: 'options',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.formatDate'),
+                    options: [
+                        { value: 'YEAR', text: this.$tc('common.periods.year') },
+                        { value: 'MONTH', text: this.$tc('common.periods.month') },
+                        { value: 'DAY', text: this.$tc('common.periods.day') },
+                        { value: 'HOUR', text: this.$tc('common.periods.hour') },
+                        { value: 'MINUTE', text: this.$tc('common.periods.minute') },
+                        { value: 'SECOND', text: this.$tc('common.periods.seconds') },
+                        { value: 'WEEK', text: this.$tc('common.periods.week') },
+                        //maybe quarter
+                    ],
+                    value: null,
+                    ok: () => {
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['dateTruncate', 'date_trunc', attributeName, `'${modal.value}'`]);
+                    }
+                };
+                modal.show(modalConfig);
+            },
+            dateExtract(attributeName) {
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    format: 'options',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.formatDate'),
+                    options: [
+                        { value: 'year', text: this.$tc('common.periods.year') },
+                        { value: 'month', text: this.$tc('common.periods.month') },
+                        { value: 'dayofmonth', text: this.$tc('common.periods.day') },
+                        { value: 'weekofyear', text: this.$tc('common.periods.weekOfYear') },
+                        { value: 'dayofweek', text: this.$tc('common.periods.weekDay') },
+                        { value: 'hour', text: this.$tc('common.periods.hour') },
+                        { value: 'minute', text: this.$tc('common.periods.minute') },
+                        { value: 'seconds', text: this.$tc('common.periods.seconds') },
+                    ],
+                    value: null,
+                    ok: () => {
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['dateExtract', modal.value, attributeName]);
+                    }
+                };
+                modal.show(modalConfig);
+            },
+            dateFormat(attributeName) {
+                const modal = this.$refs.simpleInput;
+                const modalConfig =
+                {
+                    taggable: true,
+                    multiple: false,
+                    format: 'dateformatpicker',
+                    okTitle: this.$t('common.ok'),
+                    cancelTitle: this.$t('actions.cancel'),
+                    message: this.$t('dataExplorer.informFormat'),
+                    title: this.$t('actions.formatDate'),
+                    value: null,
+                    ok: () => {
+                        this.store.transformWithFunction(
+                            attributeName,
+                            this.selected.field.position,
+                            ['dateFormat', 'date_format',
+                                attributeName, `"${modal.value}"`]);
+                    }
+                };
+                modal.show(modalConfig);
             },
             truncateTextAttribute() {
                 const attributeName = this.selected.field.label;
