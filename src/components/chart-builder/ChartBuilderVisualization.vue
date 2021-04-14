@@ -73,6 +73,7 @@ import Plotly from 'plotly.js-dist-min'
                         type: this.chartData.type,
                         labels: this.chartData.axis.x.data[0].data,
                         values: this.chartData.axis.y.data[0].data,
+                        hole: this.getFormatedLayout().hole
                     });
                     break;
                     
@@ -82,6 +83,7 @@ import Plotly from 'plotly.js-dist-min'
                         x: this.chartData.axis.x.data[0].data,
                         y: this.chartData.axis.y.data[0].data,
                         marker: {
+                            symbol: this.getFormatedLayout().symbol,
                             size: this.chartData.axis.z.data[0].data,
                         }
                     });
@@ -112,6 +114,41 @@ import Plotly from 'plotly.js-dist-min'
                         });
                     }
                     
+                    break;
+                    
+                case "bar":
+
+                    for(let y of this.chartData.axis.y.data) {
+                        if(this.getFormatedLayout().orientation=='h') {
+                            data.push({
+                                orientation: "h",
+                                name: y.label,
+                                type: this.chartData.type,
+                                y: this.chartData.axis.x.data[0].data,
+                                x: y.data
+                            });
+                        } else {
+                            data.push({
+                                name: y.label,
+                                type: this.chartData.type,
+                                x: this.chartData.axis.x.data[0].data,
+                                y: y.data
+                            });
+                        }
+                    }
+                    
+                    break;
+
+                case "line":
+                    for(let y of this.chartData.axis.y.data) {
+                        data.push({
+                            line: this.getFormatedLayout().line,
+                            name: y.label,
+                            type: this.chartData.type,
+                            x: this.chartData.axis.x.data[0].data,
+                            y: y.data
+                        });
+                    }
                     break;
 
                 default:
