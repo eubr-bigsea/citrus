@@ -88,6 +88,7 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 
 
 const Explorer = () => import ('./components/data-explorer/Explorer.vue');
+const ModelTraining = () => import ('./components/data-explorer/ModelTraining.vue');
 
 Vue.use(Router);
 
@@ -683,6 +684,15 @@ let router = new Router({
             path: '/explorer/:id',
             name: 'explorer',
             component: Explorer,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/model-training',
+            name: 'model-training',
+            component: ModelTraining,
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
