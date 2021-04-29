@@ -81,6 +81,7 @@ const TrackAdd = () => import('./views/TrackAdd.vue');
 const QueryEdit = () => import('./views/query/QueryEdit.vue');
 
 const Explorer = () => import ('./components/data-explorer/Explorer.vue');
+const ModelTraining = () => import ('./components/data-explorer/ModelTraining.vue');
 
 Vue.use(Router);
 
@@ -623,7 +624,15 @@ let router = new Router({
                 title: ['titles.dataExplorer', 1]
             }
         },
-
+        {
+            path: '/model-training',
+            name: 'model-training',
+            component: ModelTraining,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
         {
             path: '*',
             name: 'not-found',
