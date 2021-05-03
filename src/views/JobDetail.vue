@@ -10,13 +10,20 @@
                                 {{workflow.name}}
                             </h1>
                         </div>
+                        <div>
                         <router-link v-if="workflow.id"
                             :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                            class="btn btn-outline-primary d-print-none">
+                            class="btn btn-outline-primary d-print-none float-right btn-sm">
                             <i class="fa fa-chevron-left"></i>
                             &nbsp; {{$t('actions.back')}} -
                             {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
                         </router-link>
+					    <button v-if="job.status === 'RUNNING' || job.status === 'PENDING' || job.status === 'WAITING' " class="btn btn-sm btn-outline-danger mr-1 pull-right"
+    				    	:title="$t('actions.stop')"
+	    			    	@click="stop(job.id)">
+    				    	<font-awesome-icon icon="stop"></font-awesome-icon> {{$t('actions.stop')}}
+					    </button>
+                        </div>
                     </div>
                     <div>
                         <b-tabs nav-class="custom-tab mb-0">
@@ -384,6 +391,34 @@
             });
         },
         methods: {
+            stop(jobId){
+              this.confirm(
+                this.$t('actions.stop'),
+                this.$t('messages.doYouWantToStop'),
+                () => {
+                  this.$Progress.start();
+                  axios
+                    .post(`${standUrl}/jobs/${jobId}/stop`, {})
+                    .then(resp => {
+                      this.success(
+                        this.$t('messages.successStop', {
+                          what: this.$tc('titles.job', 1)
+                        })
+                      );
+                      this.$Progress.finish();
+                      this.$router.push({name: 'editWorkflow', 
+                        params: {id: this.workflow.id, 
+                            platform: this.workflow.platform.id}});
+                    })
+                    .catch(
+                      function(e) {
+                        this.$Progress.finish();
+                        this.error(e);
+                      }.bind(this)
+                    );
+                }
+              );
+            },
             getTask(taskId) {
                 return this.tasks[taskId];
             },
