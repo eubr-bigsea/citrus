@@ -7,8 +7,6 @@
                     <div>
                         <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-left mr-1">
                             {{$t('actions.back')}}</router-link>
-
-                        <button @click="testar">Testar</button>
                     </div>
                 </div>
                 <hr>
@@ -17,21 +15,25 @@
         <div class="row">
             <div class="col-md-2 col-lg-2 border-right">
                 <form @submit.prevent="execute($event)" ref="form">
-                    <div v-for="variable in workflow.variables" :key="variable.name" class="lemonade-widgets">
-                        <component
+                    <div v-for="variable in workflow.variables" :key="variable.name" class="lemonade-widgets" :data-variable="variable.name">
+                        <component v-if="prepareVariable(variable)"
+                            is="dropdown-component"
+                            :field="variable" :value="variable.default_value" :language="$root.$i18n.locale"
+                            :type="variable.type" xlookups-method="getLookups" xlookups="lookups" class="mt-2"/>
+                        <component v-else
                             :is="(variable.suggested_widget === null ? 'text': variable.suggested_widget) + '-component'"
                             :field="variable" :value="variable.default_value" :language="$root.$i18n.locale"
                             :type="variable.type" xlookups-method="getLookups" xlookups="lookups" class="mt-2">
                         </component>
                     </div>
-                    <div v-for="prop in properties" :key="`${prop.task}-${prop.name}`" class="lemonade-widgets">
+                    <div v-for="prop in properties" :key="`${prop.task}-${prop.name}`" class="lemonade-widgets" :data-property="prop.name">
                         <component
                             :is="(prop.field.suggested_widget === null ? 'text': prop.field.suggested_widget) + '-component'"
                             :field="prop.field" :value="prop.filled.value" :language="$root.$i18n.locale"
                             :type="prop.field.type" xlookups-method="getLookups" xlookups="lookups">
                         </component>
                     </div>
-                    <div v-for="fltr in filters" :key="fltr.id" class="lemonade-widgets mb-3">
+                    <div v-for="fltr in filters" v-if="(fltr.suggested_widget === null ? 'text': fltr.suggested_widget) !== undefined" :key="fltr.id" class="lemonade-widgets mb-3" data-filter="fltr.name">
                         <component :is="(fltr.suggested_widget === null ? 'text': fltr.suggested_widget) + '-component'"
                             :field="fltr" :value="fltr.value" :language="$root.$i18n.locale" :type="fltr.type"
                             xlookups-method="getLookups" xlookups="lookups">
@@ -155,6 +157,14 @@
             });
         },
         methods: {
+            prepareVariable(variable){
+                if (variable.parameters && variable.parameters.length) {
+                    variable.values = variable.parameters;
+                    variable['default'] = variable.default_value;
+                    return true;
+                }
+                return false;
+            },
             layoutUpdatedEvent: function (newLayout) {
                 newLayout.forEach(item => {
                     this.configuration[item.i] = {
