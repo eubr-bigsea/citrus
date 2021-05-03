@@ -23,12 +23,16 @@
 					>{{props.row.name}}</router-link>
 				</template>
 				<template slot="actions" slot-scope="props">
-					<button
-					class="btn btn-sm btn-danger"
-					:title="$t('actions.delete')"
-					@click="remove(props.row)"
-					>
-					<font-awesome-icon icon="trash"></font-awesome-icon>
+					<button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING'  " class="btn btn-sm btn-outline-danger mr-1"
+    					:title="$t('actions.stop')"
+	    				@click="stop(props.row)">
+    					<font-awesome-icon icon="stop"></font-awesome-icon>
+					</button>
+
+					<button class="btn btn-sm btn-danger"
+    					:title="$t('actions.delete')"
+	    				@click="remove(props.row)">
+    					<font-awesome-icon icon="trash"></font-awesome-icon>
 					</button>
 				</template>
 				<template slot="status" slot-scope="props">
@@ -131,6 +135,32 @@ export default {
             this.error(e);
           }.bind(this)
         );
+    },
+    stop(job){
+      this.confirm(
+        this.$t('actions.stop'),
+        this.$t('messages.doYouWantToStop'),
+        () => {
+          this.$Progress.start();
+          axios
+            .post(`${standUrl}/jobs/${job.id}/stop`, {})
+            .then(resp => {
+              this.success(
+                this.$t('messages.successStop', {
+                  what: this.$tc('titles.job', 1)
+                })
+              );
+              this.$refs.jobList.refresh();
+              this.$Progress.finish();
+            })
+            .catch(
+              function(e) {
+                this.$Progress.finish();
+                this.dispatch('error', e);
+              }.bind(this)
+            );
+        }
+      );
     },
     remove(job) {
       this.confirm(
