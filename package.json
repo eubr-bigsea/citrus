@@ -24,7 +24,7 @@
     "farahey": "^1.1.2",
     "force-graph": "^1.32.3",
     "google-palette": "^1.1.0",
-    "highcharts": "^7.2.2",
+    "highcharts": "^9.0.0",
     "highcharts-export-data": "^0.1.7",
     "highcharts-exporting": "^0.1.7",
     "highcharts-vue": "^1.3.5",
