@@ -4,6 +4,7 @@ import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import { openIdService } from './openid-auth';
 
 import VueI18n from 'vue-i18n';
 import messages from './i18n/messages';
@@ -96,9 +97,9 @@ Vue.use(Snotify, {
     }
 });
 Vue.directive('focus', {
-  inserted: function (el) {
-    el.focus()
-  }
+    inserted: function (el) {
+        el.focus()
+    }
 })
 /**
  * Setting this config so that Vue-tables-2 will be able to replace sort icons with chevrons
@@ -193,7 +194,7 @@ L.Icon.Default.mergeOptions({
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user'), '{}');
 if (token) {
-    axios.defaults.headers.common['Authorization'] = token;
+    //axios.defaults.headers.common['Authorization'] = token;
     axios.defaults.headers.common['X-Authentication'] = token;
     axios.defaults.headers.common['X-User-Id'] = user ? user.id : null;
     axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
@@ -231,8 +232,22 @@ router.beforeEach((to, from, next) => {
     } else {
         document.title = i18n.tc('titles.lemonade', 2)
     }
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.getters.isLoggedIn) {
+    if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
+        // If OpenId support is enabled in Thorn, use it. 
+        // Otherwise, it uses internal Thorn API.
+        if (openIdService.enabled) {
+            openIdService.isUserLoggedIn().then(isLoggedIn => {
+                //store.setters.isLoggedIn = isLoggedIn;
+                console.debug('user is logged ', isLoggedIn)
+                if (! isLoggedIn){
+                    openIdService.login();
+                } else {
+                    next();
+                    return;
+                }
+            })
+            return
+        } else if (store.getters.isLoggedIn) {
             if (to.matched.some(record => record.meta.requiresRole)) {
                 if (store.getters.hasRoles) {
                     next();
@@ -249,6 +264,7 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
+
 let newVue = new Vue({
     el: '#app',
     i18n,
@@ -257,16 +273,21 @@ let newVue = new Vue({
     render: h => h(App)
 });
 let requestCounter = 0;
+<<<<<<< HEAD
+axios.interceptors.request.use(async config => {
+=======
 axios.interceptors.request.use(config => {
-    if (requestCounter === 0){
+>>>>>>> 6e7050d... Inicial tests
+    if (requestCounter === 0) {
         newVue.$Progress.start()
     }
+    config.headers['Authorization'] = await openIdService.getAccessToken();
     requestCounter += 1
     return config
 })
 axios.interceptors.response.use(response => {
     requestCounter -= 1
-    if (requestCounter === 0){
+    if (requestCounter === 0) {
         newVue.$Progress.finish()
     }
     return response

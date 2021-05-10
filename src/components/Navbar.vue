@@ -51,6 +51,9 @@
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item :to="{ name: 'admin-openid' }">
+                        OpenId Sandbox
+                    </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">

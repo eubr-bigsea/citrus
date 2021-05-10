@@ -65,6 +65,9 @@ const ModelEdit = () => import(/* webpackChunkName: "group-model" */ './views/Mo
 const DashboardList = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardList.vue');
 const DashboardDetail = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardDetail.vue');
 const DashboardBuilder = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardBuilder.vue');
+const WebSocketPing = () => import('./views/WebSocketPing.vue');
+const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
+const OpenIdSandbox = () => import('./views/OpenIdSandbox.vue');
 
 const WebSocketPing = () => import(/* webpackChunkName: "group-util" */ './views/WebSocketPing.vue');
 const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */ './views/JsPlumbSandbox.vue');
@@ -86,7 +89,8 @@ const DisplayHtml = () => import(/* webpackChunkName: "group-app" */'./views/Dis
 Vue.use(Router);
 
 let router = new Router({
-    mode: 'hash',
+    //mode: 'hash',
+    mode: 'history',
     routes: [
         {
             path: '/',
@@ -624,7 +628,15 @@ let router = new Router({
                 title: ['titles.admin', 1]
             }
         },
-
+        {
+            path: '/admin/openid',
+            name: 'admin-openid',
+            component: OpenIdSandbox,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.admin', 1]
+            }
+        },
         {
             path: '*',
             name: 'not-found',
