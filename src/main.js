@@ -4,6 +4,7 @@ import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import { openIdService } from './openid-auth';
 
 import VueI18n from 'vue-i18n';
 import messages from './i18n/messages';
@@ -91,9 +92,9 @@ Vue.use(Snotify, {
     }
 });
 Vue.directive('focus', {
-  inserted: function (el) {
-    el.focus()
-  }
+    inserted: function (el) {
+        el.focus()
+    }
 })
 /**
  * Setting this config so that Vue-tables-2 will be able to replace sort icons with chevrons
@@ -226,8 +227,16 @@ router.beforeEach((to, from, next) => {
     } else {
         document.title = i18n.tc('titles.lemonade', 2)
     }
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (store.getters.isLoggedIn) {
+    if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
+        if (openIdService.enabled) {
+            openIdService.isUserLoggedIn().then(isLoggedIn => {
+                //store.setters.isLoggedIn = isLoggedIn;
+                if (! isLoggedIn){
+                    openIdService.login();
+                }
+            })
+            return
+        } else if (store.getters.isLoggedIn) {
             if (to.matched.some(record => record.meta.requiresRole)) {
                 if (store.getters.hasRoles) {
                     next();
@@ -244,6 +253,7 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
+
 let newVue = new Vue({
     el: '#app',
     i18n,
@@ -253,7 +263,7 @@ let newVue = new Vue({
 });
 let requestCounter = 0;
 axios.interceptors.request.use(config => {
-    if (requestCounter === 0){
+    if (requestCounter === 0) {
         newVue.$Progress.start()
     }
     requestCounter += 1
@@ -261,7 +271,7 @@ axios.interceptors.request.use(config => {
 })
 axios.interceptors.response.use(response => {
     requestCounter -= 1
-    if (requestCounter === 0){
+    if (requestCounter === 0) {
         newVue.$Progress.finish()
     }
     return response
