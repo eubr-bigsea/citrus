@@ -10,11 +10,11 @@
             <tbody>
                 <tr v-for="(row, index) in conditionList" class="inputs">
                     <td>
-                        <select class="form-control" @change="(v) => attrUpdated(row, 'first', v)" v-model="row.first"
-                            required>
-                            <option></option>
-                            <option v-for="s in suggestions1">{{s}}</option>
-                        </select>
+                        <v-select ref="select1" :options="suggestions1" v-model="row.first" :taggable="true" required
+                            :closeOnSelect="true" pushTags selectOnTag
+                            :clear-search-on-blur="({clearSearchOnSelect, multiple}) => handleBlurSelect(clearSearchOnSelect, multiple, 'select1', index)">
+                            <div slot="no-options"></div>
+                        </v-select>
                     </td>
                     <td class="text-center">
                         <select class="form-control" @change="(v) => attrUpdated(row, 'op', v)" v-model="row.op">
@@ -24,15 +24,15 @@
                             <option value="lt">&lt;</option>
                             <option value="ge">≥</option>
                             <option value="le">≤</option>
-                            
+
                         </select>
                     </td>
                     <td>
-                        <select class="form-control" @change="(v) => attrUpdated(row, 'second', v)" v-model="row.second"
-                            required>
-                            <option></option>
-                            <option v-for="s in suggestions2">{{s}}</option>
-                        </select>
+                        <v-select ref="select2" :options="suggestions2" v-model="row.second" :taggable="true"
+                            :closeOnSelect="true" pushTags selectOnTag
+                            :clear-search-on-blur="({clearSearchOnSelect, multiple}) => handleBlurSelect(clearSearchOnSelect, multiple, 'select2', index)">
+                            <div slot="no-options"></div>
+                        </v-select>
                     </td>
                     <td>
                         <button class="btn btn-sm btn-danger" @click="remove($event, index)">
@@ -69,7 +69,7 @@
                 if (this.conditionList === null) {
                     this.conditionList = [];
                 }
-                this.conditionList.push({ first: '', second: '' });
+                this.conditionList.push({ first: '', second: '', op: 'eq'});
                 // this.$nextTick(() => {
                 //     this.$refs.condition.parent.scrollTop = this.$refs.condition.lastElementChild.offsetHeight;
                 // });
@@ -97,7 +97,18 @@
             },
             getConditions() {
                 return [... this.conditionList];
-            }
+            },
+            handleBlurSelect(clearSearchOnSelect, multiple, selectRefName, index) {
+                const elem = this.$refs[selectRefName][index];
+                if (elem.searching) {
+                    // select currently highlighted value (like pressing Enter)
+                    elem.typeAheadSelect()
+                }
+
+                // return default value
+                return clearSearchOnSelect && !multiple
+            },
+
         },
     }
 </script>
