@@ -11,7 +11,7 @@
             <div class="row">
               <div class="col-md-4">
                 <label>{{$tc('common.name')}}:</label>
-                <input class="form-control mb-1" v-model="name">
+                <input class="form-control mb-1" v-model="name" v-focus>
               </div>
               <div class="col-md-12">
                 <b-tabs @input="changeTab" class="mt-2" nav-class="custom-tab">
@@ -33,10 +33,9 @@
                               <small>{{platform.description}}.</small>
                             </td>
                           </tr>
-                          <tr v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && platform.subset" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
-                            <td class="col-1">{{selectedSubset}}</td>
-                            <td class="col-11">
-                              <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" @change="selectOptions(true, platform.id)">
+                          <tr v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && platform.subsets" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
+                            <td class="col-12">
+                              <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" @change="selectOptions(true, platform.id)" class="pl-4">
                                   <b-form-radio :value="subset.id" name="subset" v-model="selectedSubset">
                                    {{subset.name}}
                                   </b-form-radio>
