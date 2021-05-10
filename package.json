@@ -36,6 +36,7 @@
     "leaflet": "^1.6.0",
     "leaflet.heat": "github:Leaflet/Leaflet.heat",
     "loadash": "^1.0.0",
+    "oidc-client": "^1.11.5",
     "perfect-scrollbar": "^1.5.0",
     "plotly.js-dist-min": "^1.54.7",
     "prismjs": "^1.23.0",
