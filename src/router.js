@@ -67,6 +67,7 @@ const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
 
 const WebSocketPing = () => import('./views/WebSocketPing.vue');
 const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
+const OpenIdSandbox = () => import('./views/OpenIdSandbox.vue');
 
 const NotificationList = () => import('./views/NotificationList.vue');
 
@@ -83,7 +84,8 @@ const QueryEdit = () => import('./views/query/QueryEdit.vue');
 Vue.use(Router);
 
 let router = new Router({
-    mode: 'hash',
+    //mode: 'hash',
+    mode: 'history',
     routes: [
         {
             path: '/',
@@ -612,7 +614,15 @@ let router = new Router({
                 title: ['titles.admin', 1]
             }
         },
-
+        {
+            path: '/admin/openid',
+            name: 'admin-openid',
+            component: OpenIdSandbox,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.admin', 1]
+            }
+        },
         {
             path: '*',
             name: 'not-found',

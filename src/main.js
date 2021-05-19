@@ -189,7 +189,7 @@ L.Icon.Default.mergeOptions({
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user'), '{}');
 if (token) {
-    axios.defaults.headers.common['Authorization'] = token;
+    //axios.defaults.headers.common['Authorization'] = token;
     axios.defaults.headers.common['X-Authentication'] = token;
     axios.defaults.headers.common['X-User-Id'] = user ? user.id : null;
     axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
@@ -228,11 +228,17 @@ router.beforeEach((to, from, next) => {
         document.title = i18n.tc('titles.lemonade', 2)
     }
     if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
+        // If OpenId support is enabled in Thorn, use it. 
+        // Otherwise, it uses internal Thorn API.
         if (openIdService.enabled) {
             openIdService.isUserLoggedIn().then(isLoggedIn => {
                 //store.setters.isLoggedIn = isLoggedIn;
+                console.debug('user is logged ', isLoggedIn)
                 if (! isLoggedIn){
                     openIdService.login();
+                } else {
+                    next();
+                    return;
                 }
             })
             return
@@ -262,10 +268,11 @@ let newVue = new Vue({
     render: h => h(App)
 });
 let requestCounter = 0;
-axios.interceptors.request.use(config => {
+axios.interceptors.request.use(async config => {
     if (requestCounter === 0) {
         newVue.$Progress.start()
     }
+    config.headers['Authorization'] = await openIdService.getAccessToken();
     requestCounter += 1
     return config
 })
