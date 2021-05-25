@@ -18,6 +18,14 @@
             <b-form-group>
                 <b-form-checkbox v-model="form.showlegend">Exibir legenda</b-form-checkbox>
             </b-form-group>
+            
+            <b-form-group
+                    label="Paleta de cor"
+                    label-for="line-width"
+                    >
+                    <b-form-select v-model="form.pallete" :options="palettes"></b-form-select>
+                    
+                </b-form-group>
 
             <template v-if="chartType=='bar'">
                 <b-form-group>
@@ -114,6 +122,8 @@
 </template>
 <script>
 
+  import palettes from '../widgets/util/palettes';
+
   export default {
     components: {},
     props: {},
@@ -124,6 +134,7 @@
                     text: ""
                 },
                 showlegend: false,
+                pallete: 0
             },
             chartType: "bar",
 
@@ -159,6 +170,7 @@
         }
     },
     computed: {
+        palettes: () => palettes.map(v=> v[0]).reduce( (prev, cur, i) => [...prev, {value: i, text: cur}], [] ),
     },
     mounted() {
         this.$root.$on('chartBuilderUpdateChart', this.updateChart)
@@ -168,6 +180,8 @@
         changeOptions() {
 
             let options = {...this.form};
+
+            options.colorway = palettes[this.form.pallete][1];
 
             switch(this.chartType) {
                 case "bar": 
@@ -184,8 +198,6 @@
                     options.symbol = this.chartCustomOptions.bubbleChart.symbol;
                     break;
             }
-
-            console.log(options);
 
             this.$root.$emit('chartBuilderUpdateChart', {
                 type: "layout", 

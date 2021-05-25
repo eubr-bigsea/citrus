@@ -8,7 +8,8 @@
 </template>
 <script>
 
-import Plotly from 'plotly.js-dist-min'
+  import Plotly from 'plotly.js-dist-min'
+  import palettes from '../widgets/util/palettes';
 
   export default {
     components: {},
@@ -24,6 +25,7 @@ import Plotly from 'plotly.js-dist-min'
                 layout: {
                     title: "",
                     showlegend: false,
+                    colorway: []
                 },
                 type: undefined
             }
