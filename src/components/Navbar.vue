@@ -2,7 +2,8 @@
     <b-navbar id="l-navbar" toggleable="md" sticky>
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand :to="{ name: 'home' }">
-            <img src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
+            <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
+            <img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32" alt="Lemonade">
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav>
@@ -235,7 +236,7 @@
     };
 </script>
 
-<style>
+<style lang="scss">
     #l-navbar {
         background-color: #fff;
         box-shadow: 0 0 8px rgba(0, 0, 0, .16);
@@ -247,6 +248,37 @@
 
     .navbar-brand {
         margin-right: 3rem !important;
+
+        .full_logo {
+            display: block;
+        }
+
+        .icon_logo {
+            display: none;
+        }
+
+        @media (max-width: 1140px) {
+
+            margin-right: 1.5rem !important;
+
+            .full_logo {
+                display: none;
+            }
+
+            .icon_logo {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .full_logo {
+                display: block;
+            }
+
+            .icon_logo {
+                display: none;
+            }
+        }
     }
 
     #l-navbar a.nav-link {
@@ -267,13 +299,26 @@
     }
 
     .navbar .nav-item {
-        margin: 0 .5rem;
+        margin: 0;
+        padding: 0;
     }
 
     .navbar .nav-item .nav-link {
         line-height: calc(60px - 4px);
-        padding: 0;
+        padding: 0 .5rem;
         border-bottom: solid 4px #FFFFFF00;
+
+        @media (max-width: 1000px) {
+            padding: 0 .5rem;
+    
+            span {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 870px) {
+            //padding: 0 .25rem;
+        }
     }
 
     .navbar .nav-item .nav-link:hover {
@@ -284,6 +329,18 @@
         color: #FFF !important;
         transform: translate(-3px, -9px);
     }
+
+    /*@media (max-width: 1140px) {
+
+        .navbar .nav-item .nav-link span {
+            display: none;
+        }
+        .navbar .nav-item .nav-link span {
+            display: none;
+        }
+    }
+    */
+
 
     @media (min-width: 768px) {
         .navbar-collapse {
