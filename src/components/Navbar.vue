@@ -18,29 +18,9 @@
                 <b-nav-item :to="{ name: 'dashboards' }" v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-
-                <template v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
-                    <template v-if="hasAnyPermission(['APP_EDIT']) || isAdmin">
-                        <b-nav-item-dropdown right>
-                            <template v-slot:button-content>
-                                <span class="fa fa-bolt"></span>
-                                {{ $tc('titles.track', 2) }}
-                            </template>
-                            <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
-                                {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
-                            </b-dropdown-item>
-                            <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'apps' }">
-                                {{ $tc('titles.track', 2) }}
-                            </b-dropdown-item>
-                        </b-nav-item-dropdown>
-                    </template>
-                    <template v-else>
-                        <b-nav-item :to="{ name: 'apps' }">
-                            <span class="fa fa-bolt"></span>
-                                {{ $tc('titles.track', 2) }}
-                        </b-nav-item>
-                    </template>
-                </template>
+                <b-nav-item :to="{ name: 'tracks' }">
+                    <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}
+                </b-nav-item>
 
                 <b-nav-item-dropdown v-if="isAdmin" right>
                     <template v-slot:button-content>
