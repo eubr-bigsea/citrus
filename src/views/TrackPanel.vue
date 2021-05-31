@@ -7,11 +7,11 @@
                         <h1>{{$tc('titles.track', 2)}}</h1>
                         <div class="float-right">
 
-                            <router-link :to="{name: 'addTrack'}"
-                                    v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
-                                    class="btn btn-primary btn-lemonade-primary float-left mr-1">
-                                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}</router-link>
-                                    
+                            <router-link :to="{name: 'addTrack'}" v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
+                                class="btn btn-primary btn-lemonade-primary float-left mr-1">
+                                <span class="fa fa-plus" /> {{$t('actions.addItem')}}
+                            </router-link>
+                            <!--
                             <button class="btn btn-outline-secondary mr-1" :disabled="display === 'large'"
                                 @click="show('large')">
                                 <span class="fa fa-th"></span>
@@ -21,7 +21,7 @@
                                 @click="show('small')">
                                 <span class="fa fa-list"></span>
                             </button>
-
+                        -->
                         </div>
                     </div>
                     <hr>
@@ -39,16 +39,13 @@
                             <div class=" track">
                                 <div v-for="item in items" class="track-item" :title="item.description">
                                     <b-dropdown variant="light" class="track-item-dropdown">
-                                            <b-dropdown-item 
-                                                :to="{name: 'trackParameter', params: {id: item.id}}">
-                                                Visualizar</b-dropdown-item>
-                                            <b-dropdown-item 
-                                                v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
-                                                :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}">
-                                                Editar</b-dropdown-item>
-                                            <b-dropdown-item 
-                                                :to="{name: 'trackParameter', params: {id: item.id}}">
-                                                Execuções anteriores</b-dropdown-item>
+                                        <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
+                                            Visualizar</b-dropdown-item>
+                                        <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
+                                            :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}">
+                                            Editar</b-dropdown-item>
+                                        <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
+                                            Execuções anteriores</b-dropdown-item>
                                     </b-dropdown>
                                     <div class="img text-center">
                                         <router-link :to="{name: 'trackParameter', params: {id: item.id}}">
@@ -61,11 +58,6 @@
                                     <div class="text text-center">
                                         <router-link :to="{name: 'trackParameter', params: {id: item.id}}">
                                             {{item.name}}
-                                        </router-link>
-                                    </div>
-                                    <div class="text2 text-center">
-                                        <router-link :to="{name: 'trackParameter', params: {id: item.id}}">
-                                            Execuções anteriores
                                         </router-link>
                                     </div>
                                 </div>
@@ -98,8 +90,8 @@
                                     <small v-if="props.row.description"
                                         class="break-word"><br />{{props.row.description}}</small>
                                 </template>
-                                <template slot="updated"
-                                    slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
+                                <template slot="updated" slot-scope="props">{{props.row.updated |
+                                    formatJsonDate}}</template>
                                 <template slot="actions" slot-scope="props">
                                     <!-- <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                                         <font-awesome-icon icon="trash"></font-awesome-icon>
@@ -109,17 +101,18 @@
                                             <font-awesome-icon icon="eye"></font-awesome-icon>
                                         </span>
                                     </router-link>
-                                    
-                                    <router-link 
-                                        v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
+
+                                    <router-link v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
                                         :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                        <span class="btn btn-sm btn-warning mr-1" :to="{name: 'trackParameter', params: {id: props.row.id}}">
+                                        <span class="btn btn-sm btn-warning mr-1"
+                                            :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                             <font-awesome-icon icon="pen"></font-awesome-icon>
                                         </span>
                                     </router-link>
 
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
-                                        <span class="btn btn-sm btn-primary" :to="{name: 'trackParameter', params: {id: props.row.id}}">
+                                        <span class="btn btn-sm btn-primary"
+                                            :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                             <font-awesome-icon icon="history"></font-awesome-icon>
                                         </span>
                                     </router-link>
@@ -132,16 +125,18 @@
             </div>
         </div>
     </div>
-    </div>
 </template>
 
 <script>
     import { mapGetters } from 'vuex';
     import axios from 'axios';
     import Notifier from '../mixins/Notifier';
+    import { debounce } from '../util.js';
+
     import VCarousel from '../components/Carousel';
     import Pagination from 'vue-pagination-2';
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+    const LIST_OF_FIELDS = 'id,name,updated,user,version,description,publishing_status,image,platform';
     export default {
         mixins: [Notifier],
         components: {
@@ -151,7 +146,7 @@
         data() {
             return {
                 records: 0,
-                display: 'large',
+                display: 'small',
                 search: '',
                 items: [],
                 page: 1,
@@ -176,6 +171,7 @@
                         image: this.$tc('common.image'),
                         name: this.$tc('common.name'),
                         updated: this.$tc('common.updated'),
+                        actions: this.$tc('common.action', 2)
                     },
 
                     preserveState: false,
@@ -189,7 +185,7 @@
                         data.size = data.limit;
                         data.name = this.$parent.search;
                         self.page = data.page;
-                        data.fields = 'id,name,updated,user,description,publishing_status,image';
+                        data.fields = LIST_OF_FIELDS;
 
                         let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
                         this.$Progress.start();
@@ -242,7 +238,7 @@
                     this.init();
                 }
             },
-            query: _.debounce(function () {
+            query: debounce(function () {
                 if (this.display === 'large') {
                     this.init();
                 } else {
@@ -257,7 +253,7 @@
                 data.page = self.page;
                 data.name = self.search;
                 // data.name = ;
-                data.fields = 'id,name,updated,user,version,description,publishing_status,image,platform';
+                data.fields = LIST_OF_FIELDS;
 
                 let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
                 this.$Progress.start();
@@ -303,7 +299,7 @@
             /*grow | shrink | basis */
             height: 280px;
             margin: 5px 2px;
-            border: 1px #ddd solid;
+            border: 1px #aaa solid;
             border-radius: 4px;
             padding: 10px;
             position: relative;
@@ -320,8 +316,6 @@
             }
 
             .text {
-                border-bottom: 1px solid #ddd;
-                border-top: 1px solid #ddd;
                 font-weight: bold;
                 padding-top: 5px;
                 height: 80px;
@@ -366,14 +360,14 @@
     }
 
     .circle-image {
-        width: 48px;
-        border: 1px solid #555;
+        padding: 2px;
 
-        height: 48px;
+        height: 50px;
+        width: 50px;
         background-size: cover;
         background-position: center;
-        border-radius: 50%;
-
+        border: 2px solid #eee;
+        border-radius: 15px;
     }
 
     .paginationx {
