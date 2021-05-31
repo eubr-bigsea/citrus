@@ -327,7 +327,7 @@ let router = new Router({
         {
             path: '/apps',
             name: 'tracks',
-            component: TrackList,
+            component: TrackPanel,
             meta: {
                 requiresAuth: true,
                 title: ['titles.track', 2]
@@ -351,15 +351,15 @@ let router = new Router({
                 title: ['titles.track', 2]
             }
         },
-        {
+        /*{
             path: '/apps/panel',
             name: 'apps',
-            component: TrackPanel,
+            component: TrackList,
             meta: {
                 requiresAuth: true,
                 title: ['titles.track', 2]
             }
-        },
+        },*/
         {
             path: '/workflows',
             name: 'workflows',

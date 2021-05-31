@@ -2,72 +2,26 @@
     <b-navbar id="l-navbar" toggleable="md" sticky>
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand :to="{ name: 'home' }">
-            <img src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
+            <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
+            <img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32" alt="Lemonade">
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
-            <b-navbar-nav>
+            <b-navbar-nav class="pt-1">
                 <b-nav-item :to="{ name: 'dataSources' }" v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin">
                     <span class="fa fa-database"></span> {{ $tc('titles.dataSource', 2) }}
                 </b-nav-item>
-
-                <b-nav-item-dropdown left
-                    v-if="hasAnyPermission(WORKFLOW_PERMISSIONS.concat(APP_PERMISSIONS)) || isAdmin">
-                    <template v-slot:button-content>
-                        <span class="fa fa-lightbulb"></span>
-                        Experimentos
-                    </template>
-                    <b-dropdown-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
-                        <span class="fa fa-flask text-primary"></span> {{ $tc('titles.workflow', 2) }}
-                    </b-dropdown-item>
-                    
-                    <b-dropdown-item :to="{ name: 'explorer' }" v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
-                        <span class="fa fa-table text-success"></span> {{ $tc('titles.dataExplorer', 2) }}
-                    </b-dropdown-item>
-
-                    <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
-                        <span class="fa fa-search-dollar"></span> {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
-                    </b-dropdown-item>
-                    <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'apps' }">
-                        {{ $tc('titles.track', 2) }}
-                    </b-dropdown-item>
-                </b-nav-item-dropdown>
-                <!--
                 <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
-                -->
                 <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
-                <!--
                 <b-nav-item :to="{ name: 'dashboards' }" v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-                -->
-
-                <template v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
-                    <template v-if="hasAnyPermission(['APP_EDIT']) || isAdmin">
-                        <b-nav-item-dropdown right>
-                            <template v-slot:button-content>
-                                <span class="fa fa-bolt"></span>
-                                {{ $tc('titles.track', 2) }}
-                            </template>
-                            <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin" :to="{ name: 'tracks' }">
-                                {{$t('actions.edit')}} {{ $tc('titles.track', 2) }}
-                            </b-dropdown-item>
-                            <b-dropdown-item v-if="hasAnyPermission(['APP_USE']) || isAdmin" :to="{ name: 'apps' }">
-                                {{ $tc('titles.track', 2) }}
-                            </b-dropdown-item>
-                        </b-nav-item-dropdown>
-                    </template>
-                    <template v-else>
-                        <b-nav-item :to="{ name: 'apps' }">
-                            <span class="fa fa-bolt"></span>
-                            {{ $tc('titles.track', 2) }}
-                        </b-nav-item>
-                    </template>
-                </template>
+                <b-nav-item :to="{ name: 'tracks' }">
+                    <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}
+                </b-nav-item>
 
                 <b-nav-item-dropdown v-if="isAdmin" right>
                     <template v-slot:button-content>
@@ -100,6 +54,7 @@
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
+                <!--
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
                     <template slot="button-content">
                         <span class="fa fa-bell"></span>
@@ -131,6 +86,7 @@
                         <span class="fa fa-angle-right"></span>
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
+            --> 
             </b-navbar-nav>
             <b-navbar-nav>
                 <b-nav-item-dropdown right ref="dropdown">
@@ -203,9 +159,9 @@
             }
         },
         mounted() {
-            return
             this.room = `user:${this.user.id}`;
             this.room = "user:1"
+            /*
             const socket = io(this.namespace, {
                 upgrade: true,
             });
@@ -234,6 +190,7 @@
                 .then(resp => {
                     this.unreadNotifications = resp.data.unread;
                 });
+            */
         },
         methods: {
             profile(evt) {
@@ -263,7 +220,7 @@
     };
 </script>
 
-<style>
+<style lang="scss">
     #l-navbar {
         background-color: #fff;
         box-shadow: 0 0 8px rgba(0, 0, 0, .16);
@@ -275,6 +232,37 @@
 
     .navbar-brand {
         margin-right: 3rem !important;
+
+        .full_logo {
+            display: block;
+        }
+
+        .icon_logo {
+            display: none;
+        }
+
+        @media (max-width: 1140px) {
+
+            margin-right: 1.5rem !important;
+
+            .full_logo {
+                display: none;
+            }
+
+            .icon_logo {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .full_logo {
+                display: block;
+            }
+
+            .icon_logo {
+                display: none;
+            }
+        }
     }
 
     #l-navbar a.nav-link {
@@ -295,13 +283,27 @@
     }
 
     .navbar .nav-item {
-        margin: 0 .5rem;
+        margin: 0;
+        padding: 0;
     }
 
     .navbar .nav-item .nav-link {
         line-height: calc(60px - 4px);
-        padding: 0;
+        padding: 0 .5rem;
         border-bottom: solid 4px #FFFFFF00;
+        white-space: nowrap;
+
+        @media (max-width: 1000px) {
+            padding: 0 .5rem;
+    
+            span {
+                xdisplay: none;
+            }
+        }
+        
+        @media (max-width: 870px) {
+            //padding: 0 .25rem;
+        }
     }
 
     .navbar .nav-item .nav-link:hover {
@@ -312,6 +314,18 @@
         color: #FFF !important;
         transform: translate(-3px, -9px);
     }
+
+    /*@media (max-width: 1140px) {
+
+        .navbar .nav-item .nav-link span {
+            display: none;
+        }
+        .navbar .nav-item .nav-link span {
+            display: none;
+        }
+    }
+    */
+
 
     @media (min-width: 768px) {
         .navbar-collapse {

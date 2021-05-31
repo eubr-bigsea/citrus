@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-md-6 border-right">
                         <h6>{{$t('widgets.join.type')}}:</h6>
-                        
+
                         <select class="form-control mb-2" v-model="joinType">
                             <option value="inner">Inner</option>
                             <option value="left_outer">Left outer</option>
@@ -90,18 +90,20 @@
             }
             if (this.extendedSuggestionEvent) {
                 const suggestions = this.extendedSuggestionEvent();
-                if (suggestions.inputs[0])
-                    this.suggestions1 = suggestions.inputs[0].attributes;
-                if (suggestions.inputs[1])
-                    this.suggestions2 = suggestions.inputs[1].attributes;
+                const inputs = suggestions.inputs.sort((s) => s.order);
+
+                if (inputs[0])
+                    this.suggestions1 = inputs[0].attributes;
+                if (inputs[1])
+                    this.suggestions2 = inputs[1].attributes;
             }
             if (this.valueObject === '') {
                 this.valueObject = {
                     conditions: [], firstSelect: [], secondSelect: []
                 };
             }
-            this.updateDisplayValue(this.valueObject);
             this.joinType = this.valueObject.joinType || 'inner';
+            this.updateDisplayValue(this.valueObject);
         },
         methods: {
             add() {
@@ -163,14 +165,20 @@
                 if (condition === '') {
                     condition = '?';
                 }
-                let result = `SELECT \n\t${select} \nFROM [${firstName}] \n${this.joinType.toUpperCase()} JOIN [${secondName}] ON \n\t${condition}`;
+                let result = `SELECT \n\t${select} \nFROM [${firstName}] \n${this.joinType.toUpperCase().replace('_', ' ')} JOIN [${secondName}] ON \n\t${condition}`;
                 this.displayValue = result;
             },
             okClicked(ev) {
                 if (!this.$refs.form.reportValidity()) {
                     this.error(null, this.$t('errors.missingRequiredValue'));
                 } else {
-                    this.submit();
+                    const missingConditions = this.valueObject.conditions.some(
+                        c => c.op === '' || c.first === '' || c.second === '');
+                    if (missingConditions) {
+                        this.error(null, this.$t('errors.missingRequiredValue'));
+                    } else {
+                        this.submit();
+                    }
                 }
             },
             submit(ev) {
@@ -194,6 +202,8 @@
                     this.valueObject.secondPrefix = this.$refs.secondSelect.getPrefix();
                 }
                 this.valueObject.conditions = this.$refs.condition.getConditions();
+                this.valueObject.joinType = this.joinType;
+
                 this.updateDisplayValue(this.valueObject);
                 this.$root.$emit(this.message, this.field,
                     this.valueObject);
