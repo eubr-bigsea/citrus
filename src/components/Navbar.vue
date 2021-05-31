@@ -6,7 +6,7 @@
             <img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32" alt="Lemonade">
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
-            <b-navbar-nav>
+            <b-navbar-nav class="pt-1">
                 <b-nav-item :to="{ name: 'dataSources' }" v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin">
                     <span class="fa fa-database"></span> {{ $tc('titles.dataSource', 2) }}
                 </b-nav-item>
@@ -74,6 +74,7 @@
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
+                <!--
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
                     <template slot="button-content">
                         <span class="fa fa-bell"></span>
@@ -105,6 +106,7 @@
                         <span class="fa fa-angle-right"></span>
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
+            --> 
             </b-navbar-nav>
             <b-navbar-nav>
                 <b-nav-item-dropdown right ref="dropdown">
@@ -179,6 +181,7 @@
         mounted() {
             this.room = `user:${this.user.id}`;
             this.room = "user:1"
+            /*
             const socket = io(this.namespace, {
                 upgrade: true,
             });
@@ -207,6 +210,7 @@
                 .then(resp => {
                     this.unreadNotifications = resp.data.unread;
                 });
+            */
         },
         methods: {
             profile(evt) {
@@ -307,12 +311,13 @@
         line-height: calc(60px - 4px);
         padding: 0 .5rem;
         border-bottom: solid 4px #FFFFFF00;
+        white-space: nowrap;
 
         @media (max-width: 1000px) {
             padding: 0 .5rem;
     
             span {
-                display: none;
+                xdisplay: none;
             }
         }
         
