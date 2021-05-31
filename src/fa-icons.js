@@ -70,6 +70,7 @@ import {
     faUser,
     faUserEdit,
     faUserLock,
+    faPen
 } from '@fortawesome/free-solid-svg-icons';
 
 /**
@@ -150,4 +151,5 @@ library.add(
     faUser,
     faUserEdit,
     faUserLock,
+    faPen,
 );

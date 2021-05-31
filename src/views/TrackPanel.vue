@@ -6,14 +6,22 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>{{$tc('titles.track', 2)}}</h1>
                         <div class="float-right">
+
+                            <router-link :to="{name: 'addTrack'}"
+                                    v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
+                                    class="btn btn-primary btn-lemonade-primary float-left mr-1">
+                                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}</router-link>
+                                    
                             <button class="btn btn-outline-secondary mr-1" :disabled="display === 'large'"
                                 @click="show('large')">
                                 <span class="fa fa-th"></span>
                             </button>
+
                             <button class="btn btn-outline-secondary" :disabled="display === 'small'"
                                 @click="show('small')">
                                 <span class="fa fa-list"></span>
                             </button>
+
                         </div>
                     </div>
                     <hr>
@@ -30,6 +38,18 @@
                         <div class="col-md-12" v-if="display==='large'">
                             <div class=" track">
                                 <div v-for="item in items" class="track-item" :title="item.description">
+                                    <b-dropdown variant="light" class="track-item-dropdown">
+                                            <b-dropdown-item 
+                                                :to="{name: 'trackParameter', params: {id: item.id}}">
+                                                Visualizar</b-dropdown-item>
+                                            <b-dropdown-item 
+                                                v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
+                                                :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}">
+                                                Editar</b-dropdown-item>
+                                            <b-dropdown-item 
+                                                :to="{name: 'trackParameter', params: {id: item.id}}">
+                                                Execuções anteriores</b-dropdown-item>
+                                    </b-dropdown>
                                     <div class="img text-center">
                                         <router-link :to="{name: 'trackParameter', params: {id: item.id}}">
                                             <img v-if="item.image" class="circle-image" :src="item.image"
@@ -81,9 +101,29 @@
                                 <template slot="updated"
                                     slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
                                 <template slot="actions" slot-scope="props">
-                                    <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                                    <!-- <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                                         <font-awesome-icon icon="trash"></font-awesome-icon>
-                                    </button>
+                                    </button> -->
+                                    <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
+                                        <span class="btn btn-sm btn-info mr-1">
+                                            <font-awesome-icon icon="eye"></font-awesome-icon>
+                                        </span>
+                                    </router-link>
+                                    
+                                    <router-link 
+                                        v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
+                                        :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                        <span class="btn btn-sm btn-warning mr-1" :to="{name: 'trackParameter', params: {id: props.row.id}}">
+                                            <font-awesome-icon icon="pen"></font-awesome-icon>
+                                        </span>
+                                    </router-link>
+
+                                    <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
+                                        <span class="btn btn-sm btn-primary" :to="{name: 'trackParameter', params: {id: props.row.id}}">
+                                            <font-awesome-icon icon="history"></font-awesome-icon>
+                                        </span>
+                                    </router-link>
+
                                 </template>
                             </v-server-table>
                         </div>
@@ -96,6 +136,7 @@
 </template>
 
 <script>
+    import { mapGetters } from 'vuex';
     import axios from 'axios';
     import Notifier from '../mixins/Notifier';
     import VCarousel from '../components/Carousel';
@@ -118,11 +159,13 @@
                     'image',
                     'name',
                     'updated',
+                    'actions'
                 ],
 
             };
         },
         computed: {
+            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user']),
             options() {
                 const self = this;
                 return {
@@ -214,7 +257,7 @@
                 data.page = self.page;
                 data.name = self.search;
                 // data.name = ;
-                data.fields = 'id,name,updated,user,version,description,publishing_status,image';
+                data.fields = 'id,name,updated,user,version,description,publishing_status,image,platform';
 
                 let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
                 this.$Progress.start();
@@ -263,6 +306,13 @@
             border: 1px #ddd solid;
             border-radius: 4px;
             padding: 10px;
+            position: relative;
+
+            .track-item-dropdown {
+                position: absolute;
+                right: 0;
+                top: 0;
+            }
 
 
             .img {
