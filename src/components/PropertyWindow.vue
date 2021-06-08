@@ -224,9 +224,11 @@
                     });
                     self.forms.forEach((f, i) => {
                         f.fields.forEach((field, j) => {
+                            self.allFields[field.name] = field;
+                        });
+                        f.fields.forEach((field, j) => {
                             field.category = f.category;
                             Vue.set(field, "enabled", true);
-                            self.allFields[field.name] = field;
                             field.enabled = true;
                             if (field.enable_conditions) {
                                 if (field.enable_conditions === 'false') {
