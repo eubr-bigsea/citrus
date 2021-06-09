@@ -1,5 +1,6 @@
 import jsep from 'jsep';
-
+import VueI18n from 'vue-i18n';
+import Vue from 'vue';
 // FIXME: Must be loaded
 const OPERATIONS = new Map();
 OPERATIONS.set('projection', { id: 6, input_id: 3, output_id: 4 });
@@ -11,10 +12,12 @@ OPERATIONS.set('cast', { id: 140, input_id: 327, output_id: 326 });
 OPERATIONS.set('sample', { id: 28, input_id: 55, output_id: 56 });
 OPERATIONS.set('clean-missing', { id: 21, input_id: 44, output_id: 43 });
 
-const translations = {
+const messages = {
     pt: {
+        attribute: 'Atributo|Atributos|Atributo(s)',
+        alias: 'Novo nome',
         changeAttributeType: '<b>Alterar tipo</b> Tipo do atributo <em>%s</em> alterado de <em>%s</em> para <em>%s</em>.',
-        deleteAttribute: '<b>Excluir atributo</b> <code>%s</code>.',
+        deleteAttribute: '<b>Excluir atributo(s)</b> <code>%s</code>.',
         dateFormat: '<b>Formatar data</b> em <code>%s</code>.',
         dateExtract: '<b>Extrair partes</b> da data em <code>%s</code>.',
         dateTruncate: '<b>Truncar data</b> em <code>%s</code>.',
@@ -46,23 +49,149 @@ const translations = {
 
     }
 };
+const i18n = new VueI18n({
+    locale: 'pt',
+    fallbackLocale: 'en',
+    messages
+});
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 }
+
+function getTreeFromExpression(expression) {
+    jsep.addBinaryOp(">=", 1);
+    jsep.removeBinaryOp('^');
+    return jsep(expression || '');
+}
+
 function _formatI18n(language, key, args) {
-    const value = translations[language][key];
+    const value = messages[language][key];
     if (value) {
-        return [...args].reduce((p, c) => p.replace(/%s/, c), value);
+        return [...args].reduce((p, c) => p.replace(/%s/, Array.isArray(c)
+            ? c.join(', ') : c), value);
     } else {
         return `Key ${key} not found in language`;
     }
 }
+function stringFormat(template) {
+    return data => {
+        return Object.keys(data)
+            .reduce((acc, key) => acc.replaceAll(`\$\{${key}\}`, data[key]), template)
+    }
+}
+
+let aliasAttribute = 'Novo nome';
+let keepAttribute = 'Manter atributo original';
+let nameAttribute = i18n.t('attribute')
+
+const attributeField = { name: 'attributes', label: i18n.t('attribute'), type: 'single-attribute', value: null, isList: true, required: true };
+const excludeField = { name: 'exclude', label: i18n.tc('attribute', 3), type: 'multiple-attribute', value: null, isList: false, required: true };
+const aliasField = { name: 'alias', label: aliasAttribute, type: 'text', maxLength: 50 };
+const expression = { name: 'expression', label: 'Expressão', type: 'text', maxLength: 50, isList: true };
+const toRename = { name: 'rename', label: i18n.t('alias'), type: 'text', maxLength: 50, value: null, isList: true, required: true };
+
+const transformSingleParam = {
+    fields: [
+        { name: 'attribute', label: 'Atributo', type: 'single-attribute', maxLength: 50, isList: false, value: null},
+        { name: 'expression', childName: 'alias', label: 'aliasAttribute', type: 'text', maxLength: 50, isList: true, value: null,  },
+    ],
+    callbacks: {
+        in: (field, value, $meta) => {
+            if (field.name === 'attribute') {
+                field.value = [$meta.attribute];
+            } else {
+                field.value = field.isList ? [value[field.childName]] : value[field.childName];
+            }
+        },
+        out: (step, $meta) => {
+            const finalFields = [
+                { name: 'expression', value: [{}] },
+            ];
+            step.forms.fields.forEach((f) => {
+                if (f.name === 'attribute') {
+                    //???? finalFields[1].value['attribute'] = f.value[0]; 
+                    //updates attribute name in $meta
+                    $meta.attribute = f.value[0];
+                    const expression = stringFormat($meta.template)($meta)
+                    finalFields[0]['value'][0]['expression'] = expression;
+                    finalFields[0]['value'][0]['tree'] = getTreeFromExpression(expression);
+                    //New Meta
+                    finalFields.push({ name: '$meta', value: JSON.parse(JSON.stringify($meta)) })
+                } else {
+                    finalFields[0]['value'][0][f.childName] = f.isList ? f.value[0] : f.value;
+                }
+            });
+            step.forms.updateFields = finalFields;
+        }
+    }
+}
+
+const actions = {
+    'changeAttributeType': {
+        fields: [
+            {
+                name: 'attributes', childName: 'attribute', label: i18n.tc('attribute', 0), type: 'single-attribute',
+                value: null, isList: true, required: true
+            },
+            {
+                name: 'attributes', childName: 'type', label: i18n.tc('FIXME', 0), type: 'dropdown',
+                value: null, isList: false, required: true,
+                options: ['Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'JSON', 'Text', 'Time']
+            }
+        ],
+        callbacks: {
+            in: (field, value, meta) => {
+                field.value = field.isList ? [value[field.childName]] : value[field.childName];
+            },
+            out: (step, $meta) => {
+                const finalFields = [{ name: 'attributes', value: [{}] }];
+                step.forms.fields.forEach((f) => {
+                    finalFields[0]['value'][0][f.childName] = f.isList ? f.value[0] : f.value;
+                });
+                step.forms.updateFields = finalFields;
+            }
+        }
+    },
+    'renameAttribute': {
+        fields: [attributeField, toRename,],
+        callback: (opts) => console.debug(opts)
+    },
+    'deleteAttribute': {
+        fields: [excludeField],
+    },
+    'edit.delete': {
+        fields: [
+            { attribute: { label: nameAttribute, type: 'attribute', multiple: true } },
+        ]
+    },
+    'edit.find.replace': {
+        fields: [
+            { attribute: { label: nameAttribute, type: 'attributeAliasKeep', multiple: true } },
+        ]
+    },
+    'edit.move': {
+        fields: [
+            { attribute: { label: nameAttribute, type: 'attribute' } },
+            { reference: { type: 'attribute' } },
+            { after: { type: 'boolean' } },
+        ]
+    },
+    'lower': transformSingleParam,
+    'split': transformSingleParam,
+    'strip_accents': transformSingleParam,
+    'title': transformSingleParam,
+    'trim': transformSingleParam,
+    'upper': transformSingleParam,
+}
+
 class Step {
-    constructor(id, description, background) {
+    constructor(id, type, forms, description, background) {
         this.id = id;
+        this.type = type;
+        this.forms = forms;
         this.description = description;
         this.background = background;
 
@@ -178,8 +307,10 @@ class StepManager {
     addFromTask(task) {
         const step = new Step(
             task.id,
+            task?.forms?.$meta?.value?.action,
+            actions[task.forms.$meta?.value.action], // inject action's params
             task.forms.comment.value,
-            task.forms.color === undefined ? '#fff' : task.forms.color.value.background);
+            task?.forms?.color?.value?.background || '#fff');
         this.steps.push(step);
         step.setTask(task);
         return step;
@@ -209,6 +340,7 @@ export default class Store {
         this.stepManager = new StepManager(this.steps);
         this.workflowManager = new WorkflowManager(this.workflow);
         //this.serviceBus.$on('onFilter', this.filterRows.bind(this));
+        //this.serviceBus.$on('updateStep', this.updateStep);
     }
     //addStep(operationSlug, parameters, description, id, background, taskData) {
 
@@ -228,18 +360,26 @@ export default class Store {
         this.stepManager.changeStepStatus(stepId, status);
     }
 
-    updateStep(editableStep) {
-        const step = this.steps.find((s) => s.id === editableStep.id);
+    updateStep(step) {
+        // this is not available here
         if (step) {
-            Object.assign(step, editableStep);
-            step.description = _formatI18n(this.language,
-                step.parameters.functionName, step.parameters.i18nArgs(step)
-            );
-            editableStep.description = step.description;
-            const task = this.workflow.tasks.find((t) => t.id === editableStep.id);
+            const params = step.forms.fields.map(f => {
+                if (!!f.isList) {
+                    return f.value[0];
+                } else {
+                    return f.value;
+                }
+            });
+            step.description = _formatI18n(this.language, step.type, params);
+            const task = this.workflow.tasks.find((t) => t.id === step.id);
             if (task) {
-                Object.assign(task.forms, editableStep.forms);
+                const fields = step.forms.updateFields ? step.forms.updateFields : step.forms.fields;
+                fields.forEach(f => {
+                    task.forms[f.name] = JSON.parse(JSON.stringify({ value: f.value }));
+                })
                 task.forms.comment = { value: step.description };
+                //Needed in order to update step
+                step.task = task;
             }
         }
     }
@@ -307,16 +447,11 @@ export default class Store {
         return this.attributes.map((attribute) => attribute.label);
     }
 
-    getTreeFromExpression(expression) {
-        jsep.addBinaryOp(">=", 1);
-        jsep.removeBinaryOp('^');
-        return jsep(expression || '');
-    }
     // Row operations
     filterRows(attributeName, operator, attributeValue) {
         const expression = `${attributeName} ${operator} ${attributeValue}`;
 
-        const tree = this.getTreeFromExpression(expression);
+        const tree = getTreeFromExpression(expression);
         const description = _formatI18n(this.language, 'filterRows', [expression]);
         const step = this.addStep('filter-selection', { expression },
             description
@@ -380,11 +515,12 @@ export default class Store {
                 {
                     operation: { slug: 'projection' },
                     forms: {
-                        rename: { value: [attributeName, newName] },
+                        attributes: { value: [attributeName] },
+                        rename: { value: [newName] },
                         comment: { value: description },
                         $meta: {
                             value: {
-                                action: 'rename',
+                                action: 'renameAttribute',
                                 attribute: attributeName,
                             }
                         }
@@ -413,7 +549,7 @@ export default class Store {
                         expression: {
                             value: [{
                                 alias, expression,
-                                tree: this.getTreeFromExpression(expression),
+                                tree: getTreeFromExpression(expression),
                             }],
                         },
                         comment: { value: description },
@@ -445,7 +581,7 @@ export default class Store {
                         comment: { value: description },
                         $meta: {
                             value: {
-                                action: 'exclude',
+                                action: 'deleteAttribute',
                                 attribute: attributeName,
                             }
                         }
@@ -659,20 +795,28 @@ export default class Store {
             }, true);
     }
 
-    transformWithFunction(attributeName, position, params) {
-        const functionName = params[1];
-        const action = params[0];
-        const alias = `${attributeName}_${action}`;
+    transformWithFunction(attribute, position, params) {
+        /*
+        const action = params.action;
+        const f = params.f;
+        const template = params.template;
+        const label = params.label;*/
+        const { action, template, ...rest } = params[0];
+        const alias = `${attribute}_${action}`;
+        const description = _formatI18n(this.language, action, [attribute]);
 
-        const description = _formatI18n(this.language, action, [attributeName]);
-        
-
-        const allParams = params.splice(2).map(
+        /*
+        const extraParams = params.splice(1).map(
             //p => (typeof p === 'number') ? p.toString() : `'${p}'`)
             p => p.toString())
             .join(", ");
-
-        const expression = `${functionName}(${allParams})`;
+        */
+        if (! (template && action)){
+            console.debug('Missing parameters')
+            return;
+        }
+        //const expression = `${f}(${extraParams})`;
+        const expression = stringFormat(template)({ attribute, ...params[0] });
 
         this.addStep(
             {
@@ -681,7 +825,7 @@ export default class Store {
                     expression: {
                         value: [{
                             alias, expression,
-                            tree: this.getTreeFromExpression(expression),
+                            tree: getTreeFromExpression(expression),
                         }],
                     },
                     //where new attribute will be inserted
@@ -690,8 +834,9 @@ export default class Store {
                     $meta: {
                         value: {
                             action,
-                            params,
-                            attribute: attributeName,
+                            template,
+                            ... rest,
+                            attribute,
                         }
                     }
                 }
@@ -718,7 +863,7 @@ export default class Store {
                         expression: {
                             value: [{
                                 alias: newAlias, expression,
-                                tree: this.getTreeFromExpression(expression),
+                                tree: getTreeFromExpression(expression),
                             }],
                         },
                         //where new attribute will be inserted
@@ -734,7 +879,9 @@ export default class Store {
                 });
         }*/
     }
+    /*
     transform(attributeName, position, expressionList) {
+        debugger
         const description = _formatI18n(this.language, 'transformAttributes',
             [`${expressionList[0].alias} = ${expressionList[0].expression}`]);
 
@@ -753,7 +900,7 @@ export default class Store {
                 }
             }, description
         );
-    }
+    }*/
     // Boolean operations
     negate() {
 

@@ -10,9 +10,15 @@
                 <b-nav-item :to="{ name: 'dataSources' }" v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin">
                     <span class="fa fa-database"></span> {{ $tc('titles.dataSource', 2) }}
                 </b-nav-item>
+
                 <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
+
+                <b-nav-item :to="{ name: 'explorer' }" v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
+                    <span class="fa fa-table text-success"></span> {{ $tc('titles.dataExplorer', 2) }}
+                </b-nav-item>
+
                 <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
@@ -86,7 +92,7 @@
                         <span class="fa fa-angle-right"></span>
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
-            --> 
+            -->
             </b-navbar-nav>
             <b-navbar-nav>
                 <b-nav-item-dropdown right ref="dropdown">
@@ -103,10 +109,12 @@
                             <small>{{user.email}}</small>
                         </p>
                         <p class="text-center">
-                            <strong>{{$tc('titles.role', 2)}}</strong><br />
-                            <span class="badge badge-info mr-1 p-1" v-for="role in user.roles" :key="role.id">
-                                {{role.label}}
-                            </span>
+                        <p>
+                            <strong>{{$tc('titles.role', 2)}}</strong>
+                        </p>
+                        <span class="badge badge-info mr-1 p-1" v-for="role in user.roles" :key="role.id">
+                            {{role.label}}
+                        </span>
                         </p>
                         <p class="border-top pt-2">
                             <b-button variant="primary" size="sm" @click="profile">{{ $t('titles.profile') }}</b-button>
@@ -295,12 +303,12 @@
 
         @media (max-width: 1000px) {
             padding: 0 .5rem;
-    
+
             span {
                 xdisplay: none;
             }
         }
-        
+
         @media (max-width: 870px) {
             //padding: 0 .25rem;
         }

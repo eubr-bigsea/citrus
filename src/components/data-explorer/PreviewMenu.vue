@@ -146,28 +146,28 @@
                     <b-dropdown-item>Timestamp to date </b-dropdown-item>
                 </template>
                 <template v-if="selected.field.type === 'Text' ">
-                    <b-dropdown-item value="lower" @click="trigger('transform', 'lower', 'lower', selected.label)">
+                    <b-dropdown-item value="lower" @click="trigger('transform', {action: 'lower', template: 'lower(${attribute})', label: selected.label})">
                         {{$t('dataExplorer.toLowerCase')}}
                     </b-dropdown-item>
-                    <b-dropdown-item value="upper" @click="trigger('transform', 'upper', 'upper', selected.label)">
+                    <b-dropdown-item value="upper" @click="trigger('transform', {action: 'upper', template: 'upper(${attribute})', label: selected.label})">
                         {{$t('dataExplorer.toUpperCase')}}
                     </b-dropdown-item>
-                    <b-dropdown-item @click="trigger('transform', 'capitalizeFirst', 'title', selected.label)">
+                    <b-dropdown-item @click="trigger('transform', {action: 'title', template: 'title(${attribute})', label: selected.label})">
                         {{$t('dataExplorer.capitalizeFirst')}}
                     </b-dropdown-item>
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
 
-                    <b-dropdown-item @click="trigger('transform', 'removeAccents', 'strip_accents', selected.label)">
+                    <b-dropdown-item @click="trigger('transform', {action: 'strip_accents', template: 'strip_accents(${attribute})', label: selected.label})">
                         {{$t('dataExplorer.removeAccents')}}
                     </b-dropdown-item>
-                    <b-dropdown-item @click="trigger('concat', selected.label)">Concatenate with... </b-dropdown-item>
-                    <b-dropdown-item @click="trigger('transform', 'trim', 'trim', selected.label)">Remove initial and
+                    <b-dropdown-item @click="trigger('concat', selected.label)">Concatenate with...FIXME </b-dropdown-item>
+                    <b-dropdown-item @click="trigger('transform', {action: 'trim', template: 'trim(${attribute})', label: selected.label})">Remove initial and
                         final
                         spaces (trim) </b-dropdown-item>
                     <b-dropdown-item @click="trigger('truncateTextAttribute')">
                         {{$t('dataExplorer.truncateToNChars')}} ... </b-dropdown-item>
                     <b-dropdown-item
-                        @click="trigger('transform', 'split', 'split', selected.label, '\'[\\\\b\\\\W\\\\b]+\'')">
+                        @click="trigger('transform',{action: 'split', template: 'split(${attribute}, ${regex})', label: selected.label, regex: '\'[\\\\b\\\\W\\\\b]+\''})">
                         Dividir em palavras </b-dropdown-item>
                     <b-dropdown-item>Split url </b-dropdown-item>
                     <b-dropdown-item class="ctx-divider"></b-dropdown-item>
