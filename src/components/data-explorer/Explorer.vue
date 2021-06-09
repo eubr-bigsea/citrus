@@ -7,13 +7,13 @@
         </div>
 
         <div class="row">
-            <div class="col-md-9 col-lg-10">
+            <div class="col-md-8 col-lg-9">
                 <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
                     :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
                     :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview"
                     @drop="performAction" />
             </div>
-            <div class="col-md-3 col-lg-2 noselect mt-1">
+            <div class="col-md-4 col-lg-3 noselect mt-1">
                 <div class="title">
                     <h5>{{$t('dataExplorer.title')}}</h5>
                 </div>
@@ -62,7 +62,7 @@
                                 <div v-for="step, inx in store.stepManager.steps" :key="step.id"
                                     class="list-group-item steps clearfix"
                                     :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
-                                    <step :step="step" :service-bus="store.serviceBus"
+                                    <step :step="step" :service-bus="store.serviceBus" :language="language"
                                         :attributes="tableData.attributes" :index="inx" @toggle="store.toggleStep(step)"
                                         @delete="store.deleteStep(step)" @update="store.updateStep(step)"
                                         @custom-open="store.customOpen" />
@@ -157,6 +157,7 @@
                 internalWorkflowId: null, // workflow id
                 isDirty: false,  //check if workflow is dirty before leaving page
                 job: null,  //last job details
+                language: 'pt', //FIXME
                 loadingData: false,  //data loading state
                 selected: { field: {} }, // selected attribute in table preview
                 store: new Commands(new Vue(), 'pt'),  //store rules implementation
