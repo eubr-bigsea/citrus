@@ -88,60 +88,71 @@
                                 </div>
                             </b-tab>
                             <b-tab :title="$tc('titles.operation', 2)" @click.prevent="loadOperations">
-                                <div class="alert mt-1 mb-2 alert-warning">
-                                    <li>
-                                        Desabilitar uma operação ou desassociá-la de um subconjunto pode fazer com que
-                                        fluxos de trabalho deixem de funcionar. Faça alterações com cautela.
-                                    </li>
-                                    <li>
-                                        Todas as operações são feitas imediatamente ao marcar ou desmarcar uma opção,
-                                        sem confirmação prévia.
-                                    </li>
-                                    <li>
-                                        Algumas operações podem estar listadas, mas não significa que elas estão
-                                        implementadas e por isto podem
-                                        não funcionar durante a execução do fluxo de trabalho.
-                                    </li>
-                                </div>
-
-                                <div v-if="loadingOperations" class="loading">
-                                    <div class="spinner-grow">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="alert mt-1 mb-2 alert-warning">
+                                            <li>
+                                                Desabilitar uma operação ou desassociá-la de um subconjunto pode fazer
+                                                com que
+                                                fluxos de trabalho deixem de funcionar. Faça alterações com cautela.
+                                            </li>
+                                            <li>
+                                                Todas as operações são feitas imediatamente ao marcar ou desmarcar uma
+                                                opção,
+                                                sem confirmação prévia.
+                                            </li>
+                                            <li>
+                                                Algumas operações podem estar listadas, mas não significa que elas estão
+                                                implementadas e por isto podem
+                                                não funcionar durante a execução do fluxo de trabalho.
+                                            </li>
+                                        </div>
                                     </div>
-                                    <p>{{$t('common.loading')}}</p>
+                                    <div class="md-10">
+                                        <div v-if="loadingOperations" class="loading">
+                                            <div class="spinner-grow">
+                                            </div>
+                                            <p>{{$t('common.loading')}}</p>
+                                        </div>
+                                        <div class="oplist">
+                                        <table class="table table-sm table-smallest table-bordered table-stripped">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th class="text-center" style="width: 80px">{{$tc('common.enabled',
+                                                        1)}}
+                                                    </th>
+                                                    <th class="text-center" style="width: 80px">{{$tc('common.id', 1)}}
+                                                    </th>
+                                                    <th class="text-center">{{$tc('common.name', 1)}}</th>
+                                                    <th v-for="subset in platform.subsets" :key="subset.id"
+                                                        class="subset text-center">
+                                                        {{subset.name}}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tr v-for="op in operations" :key="op.id" class="child">
+                                                <td style="width: 50px" class="text-center">
+                                                    <b-form-checkbox v-model="op.enabled" @change="toggleOperation(op)">
+                                                    </b-form-checkbox>
+                                                </td>
+                                                <td style="width: 50px" class="text-center">
+                                                    {{op.id}}
+                                                </td>
+                                                <td style="width: 120px" :title="op.description" class="pt-2">
+                                                    {{op.name}}
+                                                    <br /><em>{{getCategory(op)}}</em>
+                                                </td>
+                                                <td v-for="subset in platform.subsets" :key="subset.id"
+                                                    class="subset text-center">
+                                                    <b-form-checkbox v-model="op.subsetIds" :value="subset.id"
+                                                        @change="toggleSubsetOperation(subset, op)">
+                                                    </b-form-checkbox>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    </div>
                                 </div>
-                                <table class="table table-sm table-smallest table-stripped">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th class="text-center" style="width: 120px">{{$tc('common.enabled', 1)}}
-                                            </th>
-                                            <th class="text-center" style="width: 120px">{{$tc('common.id', 1)}}</th>
-                                            <th class="text-center">{{$tc('common.name', 1)}}</th>
-                                            <th v-for="subset in platform.subsets" :key="subset.id"
-                                                class="subset text-center">
-                                                {{subset.name}}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tr v-for="op in operations" :key="op.id" class="child">
-                                        <td style="width: 50px" class="text-center">
-                                            <b-form-checkbox v-model="op.enabled" @change="toggleOperation(op)">
-                                            </b-form-checkbox>
-                                        </td>
-                                        <td style="width: 50px" class="text-center">
-                                            {{op.id}}
-                                        </td>
-                                        <td style="width: 120px" :title="op.description" class="pt-2">
-                                            {{op.name}}
-                                            <br /><em>{{getCategory(op)}}</em>
-                                        </td>
-                                        <td v-for="subset in platform.subsets" :key="subset.id"
-                                            class="subset text-center">
-                                            <b-form-checkbox v-model="op.subsetIds" :value="subset.id"
-                                                @change="toggleSubsetOperation(subset, op)">
-                                            </b-form-checkbox>
-                                        </td>
-                                    </tr>
-                                </table>
                             </b-tab>
                             <!--
                             <b-tab :title="$tc('platform.subset', 2)">
@@ -411,5 +422,9 @@
 
     .rotate {
         transform: rotate(90deg);
+    }
+    .oplist {
+        height: 60vh;
+        overflow: auto;
     }
 </style>

@@ -3,7 +3,7 @@
         {{value === null ? field.default: value}}
     </div>
     <div v-else>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <LabelComponent :field="field" :value="value" :show-help="showHelp"></LabelComponent>
         <input type="text" maxlength="100" class="form-control input-sm" :value="value === null ? field.default: value"
             @input="updated" />
     </div>

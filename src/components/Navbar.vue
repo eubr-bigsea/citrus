@@ -13,14 +13,14 @@
                 <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
+                <b-nav-item :to="{ name: 'tracks' }">
+                    <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }}
+                </b-nav-item>
                 <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
                 <b-nav-item :to="{ name: 'dashboards' }" v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
-                </b-nav-item>
-                <b-nav-item :to="{ name: 'tracks' }">
-                    <span class="fa fa-bolt"></span> {{ $tc('titles.track', 2) }}
                 </b-nav-item>
 
                 <b-nav-item-dropdown v-if="isAdmin" right>

@@ -4,7 +4,7 @@
             {{value === null ? field.default: value}}
         </div>
         <div v-else>
-            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <LabelComponent :field="field" :value="value" :show-help="showHelp"></LabelComponent>
             <textarea class="form-control input-sm" @keyup="updated" autocomplete="off" autocorrect="off"
                 autocapitalize="off" spellcheck="false" :value="value === null ? field.default: value"
                 rows="3"></textarea>

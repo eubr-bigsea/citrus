@@ -8,9 +8,9 @@
                 <SwitchComponent class="float-left" :checked="checked" :onchange="changed">{{field.label || field.name}}
                 </SwitchComponent>
             </div>
-            <div class="float-right">
+            <span v-if="(showHelp === undefined || showHelp) && field.help" class="data-help">
                 <span class="fa fa-question-circle float-right" :title="field.help"></span>
-            </div>
+            </span>
             <!-- <div style="clear: both">
                 <b-form-checkbox v-model="checked" value="true" switch @change="changed"
                     unchecked-value="false">

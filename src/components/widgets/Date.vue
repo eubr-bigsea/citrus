@@ -1,6 +1,6 @@
 <template>
     <div>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <LabelComponent :field="field" :value="value" :show-help="showHelp"></LabelComponent>
         <div v-if="readOnly">
             {{value === null ? field.default: value}}
         </div>

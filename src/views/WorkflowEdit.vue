@@ -881,7 +881,7 @@
             },
             _retrieveClusters() {
                 const self = this;
-                return axios.get(`${standUrl}/clusters?enabled=true`, {})
+                return axios.get(`${standUrl}/clusters?enabled=true&platform=${self.workflow.platform.id}`, {})
                     .then((response) => {
                         self.clusters = response.data.data;
                         if (self.clusters.length) {
@@ -891,8 +891,6 @@
                             if (self.name === '') {
                                 self.clusterInfo.workflowName = self.workflow.name;
                             }
-                        } else {
-                            self.error(null, self.$t("workflow.errorNoCluster"));
                         }
                     }).catch((ex) => {
                         self.error(ex);

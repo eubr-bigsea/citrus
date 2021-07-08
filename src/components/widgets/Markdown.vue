@@ -12,7 +12,6 @@
         },
         computed: {
             markdown() {
-                console.debug(snarkdown(this.text || ''))
                 return snarkdown(this.text || '');
             },
         }
