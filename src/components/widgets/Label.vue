@@ -1,9 +1,9 @@
 <template>
     <span class="label">
         <span :data-order="field.order" :data-name="field.name"
-            :class="{'text-danger': error}" :title="error">{{field.label || field.name}}</span>
-        <span v-show="field.required">*</span>
-        <span v-if="field.help" class="data-help">
+            :class="{'text-danger': error, required: field.required}" :title="error">{{field.label || field.name}}</span>
+        <span v-show="field.required">*</span>:
+        <span v-if="(showHelp === undefined || showHelp) && field.help" class="data-help">
             <span class="fa fa-question-circle float-right" :title="field.help"></span>
         </span>
     </span>

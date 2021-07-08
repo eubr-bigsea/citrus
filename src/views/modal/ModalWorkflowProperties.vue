@@ -5,20 +5,19 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-7">
-                            <b-form-group :label="$tc('common.name', 1) + ':'">
-                                <b-form-input type="text" v-model="workflow.name" required />
-                            </b-form-group>
+                            <label>{{$tc('common.name', 1)}}:</label>
+                            <b-form-input type="text" v-model="workflow.name" required />
                         </div>
                         <div class="col-md-5">
                             <label>{{$t('workflow.preferredCluster')}}:</label>
-                            <select v-model="workflow.preferred_cluster_id" class="form-control">
-                                <option v-for="cluster in clusters" :key="cluster.id" :value="cluster.id">{{cluster.name}}</option>
+                            <select v-model="workflow.preferred_cluster_id" class="form-control w-75">
+                                <option v-for="cluster in clusters" :key="cluster.id" :value="cluster.id">
+                                    {{cluster.name}}</option>
                             </select>
                         </div>
                         <div class="col-md-12">
-                            <b-form-group :label="$tc('common.description', 1) + ':'">
-                                <b-form-textarea v-model="workflow.description" :rows="3" :max-rows="6" />
-                            </b-form-group>
+                            <label>{{$tc('common.description', 1)}}:</label>
+                            <b-form-textarea v-model="workflow.description" :rows="3" :max-rows="6" />
                         </div>
                     </div>
                 </div>
@@ -44,9 +43,9 @@
                         <small><strong>{{$t('workflow.publishingEnabled')}}</strong></small>
                     </b-form-checkbox>
                     <small><em>{{$t('workflow.publishingEnabledExplanation')}}</em></small>
-                    <div v-if="workflow.publishing_enabled" class="mt-3">
-                        <label>{{$t('workflow.publishingStatus')}}</label>
-                        <select class="form-control" v-model="workflow.publishing_status">
+                    <div v-if="workflow.publishing_enabled" class="mt-1">
+                        <label>{{$t('workflow.publishingStatus')}}:</label>
+                        <select class="form-control w-50" v-model="workflow.publishing_status">
                             <option value="EDITING">{{$t('workflow.publisingStatusEditing')}}</option>
                             <option value="PUBLISHED">{{$t('workflow.publisingStatusPublished')}}</option>
                         </select>

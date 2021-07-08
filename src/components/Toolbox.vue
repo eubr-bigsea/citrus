@@ -215,6 +215,7 @@
                 if (this.search) {
                     this.operations.forEach(op => {
                         result[op.id] = op.name
+                            .replace('ı́', 'i')
                             .normalize('NFD')
                             .replace(/[\u0300-\u036f]/g, '')
                             .toLowerCase();

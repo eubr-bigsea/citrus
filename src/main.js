@@ -37,6 +37,8 @@ import IntegerComponent from './components/widgets/Integer.vue'
 import JoinComponent from './components/widgets/Join.vue'
 import LookupComponent from './components/widgets/Lookup.vue'
 import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue'
+import MarkdownComponent from './components/widgets/Markdown.vue'
+import RadioComponent from './components/widgets/Radio.vue'
 import RangeComponent from './components/widgets/Range.vue'
 import SampleLookupComponent from './components/widgets/SampleLookup.vue'
 import Select2Component from './components/widgets/Select2.vue'
@@ -66,7 +68,9 @@ const widgets = new Map([
     ['integer-component', IntegerComponent],
     ['join-component', JoinComponent],
     ['lookup-component', LookupComponent],
+    ['markdown-component', MarkdownComponent],
     ['percentage-component', RangeComponent],
+    ['radio-component', RadioComponent],
     ['range-component', RangeComponent],
     ['rich-text-component', MarkdownEditorComponent],
     ['sample-lookup-component', SampleLookupComponent],

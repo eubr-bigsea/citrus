@@ -19,10 +19,11 @@ export default {
         suggestionEvent: {
             type: Function,
         },
+        showHelp: { type: Boolean, default: true },
         extendedSuggestionEvent: {
             type: Function,
         },
-        value: { 
+        value: {
             default: '',
         },
     }
