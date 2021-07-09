@@ -133,7 +133,7 @@
                     axios
                         .get(url)
                         .then(resp => {
-                            this.cluster = resp.data.data;
+                            this.cluster = resp.data.data[0];
                         })
                         .catch(
                             function (e) {

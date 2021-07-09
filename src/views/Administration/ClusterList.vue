@@ -20,7 +20,6 @@
                         {{props.row.name}}</router-link>
                 </template>
                 <template slot="type" slot-scope="props">{{props.row.type}}</template>
-                <template slot="address" slot-scope="props">{{props.row.address}}</template>
                 <template slot="enabled" slot-scope="props">
                     {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
                 </template>
@@ -48,7 +47,7 @@
             return {
                 platform: '',
                 platforms: [],
-                columns: ['id', 'name', 'type', 'address', 'enabled', 'actions'],
+                columns: ['id', 'name', 'type', 'enabled', 'actions'],
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
@@ -57,7 +56,6 @@
                         id: 'ID',
                         name: this.$tc('common.name'),
                         type: this.$tc('common.type'),
-                        address: this.$tc('common.address'),
                         enabled: this.$tc('common.enabled'),
                         actions: this.$tc('common.action', 2)
                     },
@@ -79,7 +77,7 @@
                         data.size = data.limit;
                         data.name = data.query;
 
-                        data.fields = 'id,name,type,address,enabled';
+                        data.fields = 'id,name,type,enabled';
 
                         let url = `${standUrl}/clusters`;
                         let headers = {};
