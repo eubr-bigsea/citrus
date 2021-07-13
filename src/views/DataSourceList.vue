@@ -33,10 +33,16 @@
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <span class="fa fa-eye"></span>
                                     </button>
+									<a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info" 
+											:title="$t('actions.download')" target="_blank">
+                                        <span class="fa fa-download" />
+									</a>
+									<!-- 
                                     <button class="btn btn-sm btn-info" :title="$t('actions.download')"
                                         @click="download(props.row)">
                                         <span class="fa fa-download" />
                                     </button>
+									-->
                                     <button v-if="loggedUserIsOwnerOrAdmin(props.row)"
                                         class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                                         <font-awesome-icon icon="trash" />
@@ -197,6 +203,9 @@
                 );
             },
             download(dataSource) {
+				window.open(
+                    `${limoneroUrl}/datasources/${dataSource.id}/download?token=${dataSource.download_token}`);
+				return 
                 axios({
                     url: `${limoneroUrl}/datasources/${dataSource.id}/download`,
                     method: 'GET',
@@ -213,6 +222,9 @@
                     link.click();
                 });
             },
+			getDownloadLink(row){
+				return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}`;
+			},
             remove(dataSourceId) {
                 const self = this;
                 this.confirm(
