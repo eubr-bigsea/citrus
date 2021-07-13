@@ -2,7 +2,7 @@
     <footer class="footer-page fixed-bottom bg-secondary d-print-none">
         <ul class="footer-list">
             <li>
-                <span>© 2020 Lemonade Project</span>
+                <span>© 2017-2021 Lemonade Project</span>
             </li>
             <li>
                 <a href="https://docs.lemonade.org.br/" target="_blank">
