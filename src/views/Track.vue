@@ -15,41 +15,64 @@
         </div>
         -->
         <div class="row">
-            <div class="col-md-2 col-lg-2 border-right">
+            <div class="col-md-4 col-lg-3 border-right">
                 <div class="mb-4 text-secondary">
                     <p class="border-bottom">
                         <!--span v-if="executeOnStart" class="fa fa-bolt text-warning"></span--> {{workflow.name}}
                     </p>
+                    <!--
                     <VuePerfectScrollbar v-if="loaded" ref="scrollBar" useBothWheelAxes="true" class="scroll-area"
                         style="margin-right:-15px">
-                        <form @submit.prevent="execute($event)" ref="form" class="pr-3">
-                            <div v-for="field in form" :key="field.name" class="lemonade-widgets"
-                                :data-name="field.name" :data-type="field.parameterType">
-                                <markdown-component v-if="field.textBefore" :text="field.textBefore" />
-                                <template v-if="!!!field.hidden">
-                                    <component v-if="prepareVariable(field)" :is="`${field.suggested_widget}-component`"
-                                        :field="field" :value="field.default_value" :language="$root.$i18n.locale"
-                                        :show-help="false" :type="field.type" xlookups-method="getLookups"
-                                        xlookups="lookups" class="mt-2" />
-                                    <component v-else
-                                        :is="(field.suggested_widget === null ? 'text': field.suggested_widget) + '-component'"
-                                        :field="field" :value="field.default_value" :language="$root.$i18n.locale"
-                                        :show-help="false" :type="field.type" xlookups-method="getLookups"
-                                        xlookups="lookups" class="mt-2">
-                                    </component>
-                                </template>
-                                <markdown-component v-if="field.textAfter" :text="field.textAfter" />
+                        -->
+                    <form v-if="loaded" ref="form" class="pr-3 zoom-90">
 
-                            </div>
-                            <div v-for="prop in properties" :key="`${prop.task}-${prop.name}`" class="lemonade-widgets"
-                                :data-property="prop.name">
-                                <component
-                                    :is="(prop.field.suggested_widget === null ? 'text': prop.field.suggested_widget) + '-component'"
-                                    :field="prop.field" :value="prop.filled.value" :language="$root.$i18n.locale"
-                                    :type="prop.field.type" xlookups-method="getLookups" xlookups="lookups">
+                        <div v-for="field in sortedEditFields" :key="field.key" class="lemonade-widgets"
+                            :data-name="field.name" :data-type="field.sourceType" :data-component="field.suggested_widget" :data-index="field.display_index">
+                            <markdown-component v-if="field.textBefore" :text="field.textBefore" />
+                            <template v-if="!!!field.hidden">
+                                <component v-if="prepareVariable(field)" :is="`${field.suggested_widget}-component`"
+                                    :field="field" :value="field.value" :language="$root.$i18n.locale"
+                                    :show-help="false" :type="field.type" xlookups-method="getLookups"
+                                    xlookups="lookups" class="mt-2" :data-component="field.suggested_widget"
+                                    :data-index="field.display_index" @update-form-field-value="updateFieldValue" />
+                                <component v-else
+                                    :is="(field.suggested_widget === null ? 'text': field.suggested_widget) + '-component'"
+                                    :field="field" :value="field.value" :language="$root.$i18n.locale"
+                                    :show-help="false" :type="field.type" class="mt-2"
+                                    @update-form-field-value="updateFieldValue">
                                 </component>
-                            </div>
-                            <!--
+                            </template>
+                            <markdown-component v-if="field.textAfter" :text="field.textAfter" />
+
+                        </div>
+                        <!--
+                        <div v-for="field in form" :key="field.name" class="lemonade-widgets" :data-name="field.name"
+                            :data-type="field.sourceType">
+                            <markdown-component v-if="field.textBefore" :text="field.textBefore" />
+                            <template v-if="!!!field.hidden">
+                                <component v-if="prepareVariable(field)" :is="`${field.suggested_widget}-component`"
+                                    :field="field" :value="field.default_value" :language="$root.$i18n.locale"
+                                    :show-help="false" :type="field.type" xlookups-method="getLookups"
+                                    xlookups="lookups" class="mt-2" />
+                                <component v-else
+                                    :is="(field.suggested_widget === null ? 'text': field.suggested_widget) + '-component'"
+                                    :field="field" :value="field.default_value" :language="$root.$i18n.locale"
+                                    :show-help="false" :type="field.type" xlookups-method="getLookups"
+                                    xlookups="lookups" class="mt-2">
+                                </component>
+                            </template>
+                            <markdown-component v-if="field.textAfter" :text="field.textAfter" />
+                        </div>
+                        -->
+                        <div v-for="prop in properties" :key="`${prop.task}-${prop.name}`" class="lemonade-widgets"
+                            :data-property="prop.name">
+                            <component
+                                :is="(prop.field.suggested_widget === null ? 'text': prop.field.suggested_widget) + '-component'"
+                                :field="prop.field" :value="prop.filled.value" :language="$root.$i18n.locale"
+                                :type="prop.field.type" xlookups-method="getLookups" xlookups="lookups">
+                            </component>
+                        </div>
+                        <!--
                             <div v-for="fltr in filters"
                                 v-if="(fltr.suggested_widget === null ? 'text': fltr.suggested_widget) !== undefined"
                                 :key="fltr.id" class="lemonade-widgets mb-3" data-filter="fltr.name">
@@ -61,8 +84,10 @@
                                 </component>
                             </div>
                         -->
-                        </form>
+                    </form>
+                    <!--
                     </VuePerfectScrollbar>
+                    -->
                     <div v-else class="text-bold-normal">
                         <label>{{$tc('common.filter')}}:</label>
                         <b-skeleton type="input" width="65%"></b-skeleton>
@@ -80,29 +105,42 @@
 
                     </div>
                     <div class="buttons mt-5 pt-2 text-center border-top">
-                        <button class="btn btn-sm btn-primary float-right ml-1 mb-2" type="submit" :disabled="running">
+                        <button class="btn btn-sm btn-outline-secondary ml-1 mb-2" @click="showWorkflowInfo">
+                            <span class="fas fa-info-circle"></span>
+                        </button>
+                        <button class="btn btn-sm btn-primary float-right ml-1 mb-2" type="submit" :disabled="running"
+                            @click="execute">
                             <span class="fa fa-search"></span> {{$t('actions.search')}}
                         </button>
-                        <button v-if="help" class="btn btn-sm btn-outline-info float-right" type="button"
-                            @click="showHelp" :disabled="running">
+                        <button class="btn btn-sm btn-outline-info float-right" type="button" @click="showHelp"
+                            :disabled="running">
                             <span class="fa fa-question-circle"></span> {{$t('variables.help')}}
                         </button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-10 col-lg-10 p-2 bg-white" style="min-height: 85vh;">
-                <div>
-                    {{workflow.description}}
-                </div>
+            <div class="col-md-8 col-lg-9 p-2 bg-white" style="min-height: 85vh;">
                 <div v-if="empty" class="empty-state text-center justify-content-between mt-4 pt-4">
                     <h4>
                         <span class="fa fa-flask fa-3x"></span>
                     </h4>
                     <h4>Execução da trilha "{{workflow.name}}"</h4>
+                    <p class="font-italic">{{workflow.description}}</p>
                     <p>
                         Para executar a trilha, preencha os valores para os filtros na caixa à esquerda e
                         depois clique o botão "Pesquisar".
                     </p>
+                </div>
+                <div v-else-if="statusError && !running" class="empty-state text-center justify-content-between mt-4 pt-4">
+                    <h4>
+                        <span class="fa fa-flask fa-3x"></span>
+                    </h4>
+                    <h4>Execução da trilha "{{workflow.name}}"</h4>
+                    <p class="font-italic">{{workflow.description}}</p>
+                    <p>
+                        Um problema aconteceu:
+                    </p>
+                    <div class="alert alert-danger p-2 m-4">{{statusError}}</div>
                 </div>
                 <div v-else>
                     <div class="">
@@ -119,8 +157,7 @@
                                         <b-spinner variant="success" type="grow"></b-spinner>
                                         <p>{{$t('common.wait')}}</p>
                                     </div>
-                                    <div style="position: absolute; top:0; left:0">{{item.x}}/{{item.y}}
-                                        {{item.w}}/{{item.h}} {{100*item.h}}</div>
+
                                 </grid-item>
                             </grid-layout>
                         </div>
@@ -132,7 +169,42 @@
                 -->
             </div>
         </div>
-        <b-modal ref="modalHelp" :title="$tc('variables.help')" ok-only size="lg">
+        <b-modal ref="modalWorkflowInfo" :title="$tc('titles.info', 2)" ok-only size="lg" button-size="sm">
+            <table class="table table-sm small">
+                <tbody>
+                    <tr>
+                        <td>{{$tc('titles.workflow', 1)}}:</td>
+                        <td>{{workflow.id}} - {{workflow.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{$tc('common.author', 1)}}:</td>
+                        <td>{{workflow.user? workflow.user.name: ''}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{$tc('common.created', 1)}}:</td>
+                        <td>{{workflow.created|formatJsonDate}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{$tc('common.updated', 1)}}:</td>
+                        <td>{{workflow.updated|formatJsonDate}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{$tc('workflow.preferredCluster', 1)}}:</td>
+                        <td>{{preferredCluster.name}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </b-modal>
+        <b-modal ref="modalHelp" :title="$tc('variables.help')" ok-only size="lg" button-size="sm">
+            <small>
+                Você deve necessariamente informar todos os campos obrigatórios do formulário.
+                Os campos obrigatórios são destacados em negrito e têm um asterisco (*) em seu rótulo.
+
+                O botão Pesquisar dispara a execução da trilha e se tudo estiver certo, começa a executar a trilha. A
+                área de resultados muda, inicialmente mostrando indicadores <b-spinner variant="success" small
+                    type="grow"></b-spinner> e depois, mostrando as visualizações, à medida que os dados vão sendo
+                recebidos.
+            </small>
             <table class="table table-sm small">
                 <thead class="">
                     <tr>
@@ -141,7 +213,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="h in help" :key="h.name">
+                    <tr v-for="h in sortedEditFields" :key="h.key" v-if="h.help">
                         <td>{{h.label}}</td>
                         <td>{{h.help}}</td>
                     </tr>
@@ -169,6 +241,65 @@
     const standSocketIOPath = process.env.VUE_APP_STAND_SOCKET_IO_PATH;
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
+    class EditField {
+        constructor(obj, sourceType) {
+            this.sourceType = sourceType;
+            // Text before/after not supported for variables and props
+            this.textBefore = null;
+            this.textAfter = null;
+            this.taskId = null;
+            this.property = null;
+            this.variable = null;
+            if (sourceType === 'variable') {
+                this.default_value = obj.default_value;
+                this.display_index = parseInt(obj.parameters.display_index || '0');
+                this.help = obj.description;
+                this.label = obj.label;
+                this.multiplicity = obj.multiplicity;
+                this.name = obj.name;
+                this.required = obj.multiplicity === 1 || obj.multiplicity === 3;
+                this.suggested_widget = obj.suggested_widget;
+                this.type = obj.type;
+                this.variable = obj.variable;
+                this.value = null;
+                this.values = obj.values;
+            } else if (sourceType === 'property') {
+                this.default_value = obj.value;
+                this.display_index = parseInt(obj.display_index || '0');
+                this.help = obj.help;
+                this.label = obj.property.label;
+                this.multiplicity = '0'; //FIXME
+                this.name = obj.name;
+                this.property = obj.property;
+                this.suggested_widget = obj.suggested_widget;
+                this.type = obj.type;
+                this.value = obj.property?.value;
+                this.taskId = obj.taskId;
+                this.values = JSON.parse(obj.values); //FIXME
+            } else if (sourceType === 'filter') {
+                this.default_value = obj.value;
+                this.display_index = parseInt(obj.display_index || '0');
+                this.field = { label: obj.label, value: null };
+                this.help = obj.help;
+                this.label = obj.label;
+                this.lookup = obj.lookup; // Fill sample lookup
+                this.multiplicity = '0'; //FIXME
+                this.name = obj.name;
+                this.key = obj.key;
+                this.required = obj.multiplicity !== 'OPTIONAL' 
+                    && obj.multiplicity !== 'ZERO_OR_MORE'; // FIXME
+                this.suggested_widget = obj.suggested_widget;
+                this.type = obj.type;
+                this.textBefore = obj.textBefore;
+                this.textAfter = obj.textAfter;
+                this.value = obj.value;
+                this.filter = obj;
+                //this.values = obj.parameters.values;
+            } else {
+                throw new Error(`Invalid source type: ${sourceType}`);
+            }
+        }
+    }
     export default {
         mixins: [Notifier],
         components: {
@@ -180,21 +311,22 @@
             return {
                 configuration: {},
                 executeOnStart: true,
+                editFields: [],
                 form: [],
                 filters: [],
                 job: { steps: [], user: {}, cluster: {}, id: null },
                 empty: true,
-                help: [],
                 layout: [],
                 loaded: false,
                 lookups: {},
-                operations: [],
                 operationsLookup: new Map(),
-                properties: [],
+                preferredCluster: {},
+                properties: [], //FIXME: remove
                 running: false,
                 savedFiltersName: null,
                 savedFilters: {},
                 socket: null,
+                statusError: null,
                 visualizations: [],
                 workflow: {},
             }
@@ -207,26 +339,36 @@
             }
         },
         mounted() {
-            const self = this;
-            self.load();
-            this.$root.$on('update-form-field-value', (field, value, labelValue) => {
-                if (field.parameterType === 'field') {
-                    field.value = value;
-                } else if (field.parameterType === 'variable') {
-                    const variable = self.workflow.variables.find((v) => v.name === field.name);
-                    if (variable) {
-                        variable.value = value;
-                    }
-                } else {
-                    field.field.value = value;
-                }
-            });
+            this.load();
+            this.$root.$on('update-form-field-value', this.updateFieldValue)
+        },
+
+        computed: {
+            sortedEditFields() {
+                return this.editFields.sort((a, b) => a.display_index - b.display_index);
+            }
         },
         methods: {
+            updateFieldValue(field, value, labelValue) {
+                if (field.sourceType === 'filter') {
+                    field.filter.value = value;
+                    field.value = value;
+                } else if (field.sourceType === 'variable') {
+                    field.variable.value = value;
+                } else if (field.sourceType === 'property'){
+                    field.property.value = value;
+                } else {
+                    console.log(`Unknown field type: ${field.sourceType}`);
+                }
+            },
+            showWorkflowInfo() {
+                this.$refs.modalWorkflowInfo.show();
+            },
             showHelp() {
                 this.$refs.modalHelp.show();
             },
             prepareVariable(variable) {
+                return true; //FIXME
                 if (variable.parameters && variable.parameters.length) {
                     variable.values = variable.parameters;
                     variable['default'] = variable.default_value;
@@ -321,7 +463,8 @@
                                         ''
                                     );
                                 }
-                                self.error(null, self.$t('job.error'));
+                                self.statusError = msg.message;
+                                //self.error(null, msg.message);
                                 self.running = false;
                             }
                         }
@@ -337,6 +480,7 @@
                     if (self.$refs.form.checkValidity()) {
                         self.running = true;
                         self.empty = false;
+                        self.statusError = null;
                         self.visualizations.forEach((v) => v.data = null);
 
                         const payload = {
@@ -348,7 +492,7 @@
                         const user = this.$store.getters.user;
                         const body = {
                             workflow: self.workflow,
-                            cluster: { id: 1 }, // @FIXME Handle cluster information
+                            cluster: { id: self.workflow.preferred_cluster_id },
                             name: self.workflow.name, //@FIXME
                             user: {
                                 id: user.id,
@@ -384,8 +528,7 @@
                 let self = this;
                 self.$Progress.start()
                 try {
-                    const workflow = await axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
-                        (resp) => resp.data);
+                    let workflow = (await axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`)).data;
                     const query = self.$route.query;
                     //console.debug(query)
 
@@ -396,27 +539,29 @@
                         workflow: workflow.id,
                         _ts: new Date().getTime(),
                     }
-                    const operations = await axios.get(`${tahitiUrl}/operations`, { params }).then(
-                        (resp) => resp.data);
+                    const operations = (await axios.get(`${tahitiUrl}/operations`, { params })).data;
 
                     operations.forEach((op) => { self.operationsLookup[op.id] = op });
-
-                    self.operations = operations;
-
                     workflow.platform_id = workflow.platform.id;
+
+                    // Load preferred cluster info
+                    if (workflow.preferred_cluster_id) {
+                        self.preferredCluster = (await axios.get(`${standUrl}/clusters/${workflow.preferred_cluster_id}`)).data.data[0];
+                    } else {
+                        self.error(null, 'O fluxo de trabalho não possui um cluster de processamento associado a ele. A trilha não funcionará.');
+                    }
 
                     /* Prepare form */
                     workflow.variables.forEach((variable) => {
-                        return
-                        variable.parameterType = 'variable';
+                        variable.sourceType = 'variable';
                         variable.help = variable.description;
                         variable.required = variable.multiplicity === 1 || variable.multiplicity == 3;
                         if (variable.description) {
-                            self.help.push(variable);
+                            variable.help = variable.description;
                         }
-                        if (variable.parameters && variable.parameters.trim()) {
-                            variable.choices = JSON.parse(variable.parameters);
-                            if (variable.choices.length > 5) {
+                        if (variable?.parameters?.values?.trim()) {
+                            variable.values = JSON.parse(variable.parameters.values);
+                            if (variable.values.length > 5 || true) {
                                 variable.suggested_widget = 'dropdown';
                             } else {
                                 variable.suggested_widget = 'radio';
@@ -433,7 +578,9 @@
                             self.error(null, 'Trilha possui configuração incorreta para variável');
                             console.debug(variable);
                         }
-                        self.form.push(variable)
+                        const field = new EditField(variable, 'variable');
+                        field.variable = variable;
+                        this.editFields.push(field)
                     });
 
                     self.savedFiltersName = `savedFilters_${self.$route.params.id}`;
@@ -445,23 +592,30 @@
                         if (task.enabled) {
                             const op = self.operationsLookup[task.operation.id];
                             const opFields = new Map(op.forms.flatMap(f => f.fields).map(f => [f.name, f]));
-                            task.operation = op;
-                            for (var [name, value] of Object.entries(task.forms)) {
-                                if (value.publishing_enabled === true) {
-                                    const field = opFields.get(name);
-                                    // Copy field from the task
-                                    field.field = task.forms[field.name];
-                                    self.properties.push({
-                                        name, filled: value, field
-                                    });
+                            //task.operation = op;
+                            if (op.slug !== 'user-filter') {
+                                for (var [name, value] of Object.entries(task.forms)) {
+                                    if (value.publishing_enabled === true) {
+                                        const field = JSON.parse(JSON.stringify(opFields.get(name)));
+                                        // Update field from the task properties
+                                        const prop = task.forms[field.name];
+                                        // Assign a reference to property from the task.
+                                        // So, when input is updated, it changes to prop directly.
+                                        field.property = prop;
+
+                                        field.label = prop.new_label;
+                                        field.display_index = prop.display_index;
+                                        field.taskId = task.id;
+
+                                        this.editFields.push(new EditField(field, 'property'));
+                                    }
                                 }
                             }
-                            if (task.operation.type === 'VISUALIZATION') {
+                            if (op.type === 'VISUALIZATION') {
                                 task.data = null;
                                 let taskCoords = (task.forms.grid_coordinates || {}).value || {};
-                                //console.debug("===", taskCoords)
                                 const coords = {
-                                    // x and y are zero-based
+                                    // x and y are one-based
                                     "x": parseInt(taskCoords.column || 1) - 1,
                                     "y": parseInt(taskCoords.row || 1) - 1,
                                     "w": parseInt(taskCoords.width || 12),
@@ -472,26 +626,24 @@
                                 self.layout.push(coords);
                                 self.visualizations.push(task);
                             }
-                            if (task.operation.slug === 'user-filter') { // special operation
+                            if (op.slug === 'user-filter') { // special operation
                                 task.forms.filters.value.forEach((f) => {
-
                                     if (self.savedFilters && self.savedFilters.filters && self.savedFilters.filters.has(f.id)) {
                                         f.value = self.savedFilters.filters.get(f.id);
                                     } else {
                                         f.value = f.default_value;
                                     }
-                                    f.parameterType = 'field';
-                                    if (f.help){
-                                        self.help.push(f);
-                                    }
+                                    f.sourceType = 'field';
                                     f.required = ['ONE', 'ONE_OR_MORE'].indexOf(f.multiplicity) > -1; //FIXME
+                                    
+                                    //FIXME: remove?
                                     self.filters.push(f);
                                     self.form.push(f);
 
                                     self.executeOnStart = (!f.required || (f.value !== null && f.value !== '')) && self.executeOnStart;
                                     if (f.customList && f.customList.trim()) {
                                         f.parameters = JSON.parse(f.customList);
-                                        if (f.parameters.length > 5) {
+                                        if (f.parameters.length > 5 || true) {
                                             f.suggested_widget = 'dropdown';
                                         } else {
                                             f.suggested_widget = 'radio';
@@ -520,6 +672,7 @@
                                                 break;
                                         }
                                     }
+                                    this.editFields.push(new EditField(f, 'filter'))
                                 });
                             }
                         }
@@ -555,10 +708,14 @@
 </style>
 <style scoped>
     .scroll-area {
-        max-height: 75vh;
+        max-height: 85vh;
     }
 
-    /deep/ .lemonade-widgets .label span.required {
+    .zoom-90 {
+        zoom: 90%;
+    }
+
+    .lemonade-widgets .label span.required {
         font-weight: bold !important;
     }
 
@@ -566,8 +723,6 @@
         width: 100%;
         margin-top: 20px;
     }
-
-
 
     /* .visualization {
         border: 1px solid #eee;

@@ -91,6 +91,11 @@
                                                 <option value="ONE_OR_MORE">1 ou mais</option>
                                             </select>
                                         </div>
+                                        <div class="col-md-4">
+                                            <label>{{$t('variables.index')}}:</label>
+                                            <input v-model="selected.display_index" maxlength="4" autocomplete="off"
+                                                class="form-control w-50" type="number" min="0" max="100"/>
+                                        </div>
                                         <div class="col-md-12">
                                             <label>{{$t('variables.help')}}:</label>
                                             <textarea v-model="selected.help" maxlength="300" autocomplete="off"
@@ -204,13 +209,13 @@
                 }
                 this.selected.id = name;
             },
-            openModal() {
+            async openModal() {
                 this.$refs.modal.show();
                 if (this.suggestionEvent) {
                     this.suggestions = this.suggestionEvent();
                 }
                 if (this.lookupsMethod) {
-                    this.lookups = this.lookupsMethod();
+                    this.lookups = await this.lookupsMethod();
                 }
             },
             updateDisplayValue(v) {
@@ -240,7 +245,8 @@
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
-                const value = { id: '', name: '', operator: 'eq', multiplicity: 'OPTIONAL', customList: '' };
+                const value = { id: '', name: '', operator: 'eq', multiplicity: 'OPTIONAL', customList: '', 
+                    key: Math.random().toString(36).substring(2)};
                 this.selected = value;
                 value.index = this.valueList.length;
                 this.valueList.push(value);
@@ -257,6 +263,7 @@
                     this.$root.$emit(this.message, this.field,
                         this.valueList);
                     this.$refs.modal.hide();
+                    this.valueList.forEach(v => v.key = v.key || Math.random().toString(36).substring(2));
                     this.updateDisplayValue(this.valueList);
                 } else {
                     this.error(null, this.$t('errors.missingRequiredValue'));
@@ -271,7 +278,7 @@
             }
         },
         props: {
-            // lookups: { type: Array, default: () => [] },
+            //lookups: { type: Array, default: () => [] },
             lookupsMethod: null
         },
     }

@@ -55,6 +55,11 @@
                                         <option value="3">1 ou mais</option>
                                     </select>
                                 </div>
+                                <div class="col-md-4">
+                                    <label>{{$t('variables.index')}}:</label>
+                                    <input v-model="selected.parameters.display_index" maxlength="4" autocomplete="off"
+                                        class="form-control w-50" type="number" min="0" max="100"/>
+                                </div>
                                 <div class="col-md-12">
                                     <label>{{$t('variables.description')}}:</label>
                                     <textarea v-model="selected.description" autocomplete="off"
@@ -69,7 +74,7 @@
                                 -->
                                 <div class="col-md-12">
                                     <label>Lista de valores personalizados (use JSON):</label>
-                                    <textarea v-model="selected.parameters" maxlength="300" autocomplete="off"
+                                    <textarea v-model="selected.parameters.values" maxlength="300" autocomplete="off"
                                         class="form-control form-control-sm" rows="3"></textarea>
                                     <em>Exemplo:</em>
                                     <br />
@@ -154,7 +159,8 @@
                 }
                 const value = {
                     name: '', description: '', help: '',
-                    type: '', label: '', default_value: '', parameters: '', index: 0,
+                    type: '', label: '', default_value: '', 
+                    parameters: {values: [], display_index: null}, index: 0,
                 };
                 this.selected = value;
                 value.index = this.items.length;

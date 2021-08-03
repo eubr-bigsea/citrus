@@ -69,10 +69,11 @@
                         <table class="table table-sm table-bordered">
                             <thead class="thead-light">
                                 <tr>
-                                    <th class="text-center" style="width: 5%"></th>
-                                    <th class="text-center" style="width: 15%">{{$tc('titles.property')}}</th>
-                                    <th class="text-center" style="width: 25%">{{$tc('variables.label')}}</th>
+                                    <th class="text-center" style="width: 1%"></th>
+                                    <th class="text-center" style="width: 14%">{{$tc('titles.property')}}</th>
+                                    <th class="text-center" style="width: 20%">{{$tc('variables.label')}}</th>
                                     <th class="text-center" style="width: 15%">{{$tc('titles.actualValue')}}</th>
+                                    <th class="text-center" style="width: 8%">{{$tc('variables.index')}}</th>
                                     <th class="text-center" style="width: 15%">{{$tc('variables.associateTo')}}</th>
                                     <th class="text-center" style="width: 30%">
                                         {{$tc('variables.associateToLookup')}}
@@ -90,7 +91,7 @@
                                         </td>
                                         <td>{{field.label}}</td>
                                         <td>
-                                            <input type="text" class="form-control" maxlength="100"
+                                            <input type="text" class="form-control form-control-sm" maxlength="100"
                                                 v-model="task.forms[field.name].new_label" />
                                         </td>
                                         <td>
@@ -98,6 +99,10 @@
                                                 :value="getValue(field.name)" :type="field.suggested_widget"
                                                 context="context" :read-only="true">
                                             </component>
+                                        </td>
+                                        <td>
+                                            <input v-model="task.forms[field.name].display_index" maxlength="4" autocomplete="off"
+                                                class="form-control form-control-sm" type="number" min="0" max="100"/>
                                         </td>
                                         <td>
                                             <v-select :options="variableNames" :multiple="false"
@@ -175,21 +180,16 @@
                 this.getLookups();
                 this.$refs.publishingModal.show();
             },
-            getLookups() {
+            async getLookups() {
                 if (this.lookups === undefined || this.lookups.length === 0) {
                     const self = this;
                     const params = {
                         lookup: true,
                         fields: 'id,name,attributes.id,attributes.name',
                     };
-                    axios
-                        .get(`${limoneroUrl}/datasources`, { params })
-                        .then(resp => {
-                            self.lookups = resp.data.data;
-                        })
-                        .catch(function (e) {
-                            self.error(e);
-                        });
+                    const resp = await axios.get(`${limoneroUrl}/datasources`, { params });
+                    self.lookups = resp.data.data;
+                    return self.lookups;
                 }
             },
             getValue(name) {
@@ -215,9 +215,17 @@
                         f.fields.forEach((field) => {
                             if (self.task && self.task.forms[field.name]) {
                                 Vue.set(field, "internalValue", self.task.forms[field.name].value);
-                                if (!self.task.forms[field.name]['new_label']) {
+                                const f = self.task.forms[field.name];
+                                if (!f['new_label']) {
                                     Vue.set(self.task.forms[field.name], "new_label",
                                         self.task.forms[field.name].label);
+                                }
+                                if (!f['publishing_enabled']) {
+                                    delete f['new_label'];
+                                    delete f['display_index'];
+                                    delete f['suggested_widget'];
+                                    delete f['lookup'];
+                                    delete f['variable'];
                                 }
                             }
                         });

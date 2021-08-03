@@ -535,6 +535,7 @@
                 axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
                     (resp) => {
                         let workflow = resp.data;
+                        workflow.variables = workflow.variables || [];
                         this.$Progress.start()
                         const params = {
                             platform: workflow.platform.id, //this.$route.params.platform,

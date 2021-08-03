@@ -5,7 +5,10 @@
             {{value === null ? field.default: value}}
         </div>
         <div v-else>
-            <input type="date" class="form-control" v-model="dateValue" @change="updated" max="2199-12-31" />
+            <input type="date" class="form-control" v-model="dateValue" @change="updated" max="2199-12-31"  :required="field.required"/>
+            <div class="invalid-feedback">
+                Please provide a valid zip.
+              </div>
         </div>
     </div>
 </template>
