@@ -49,8 +49,8 @@
         data() {
             return {
                 coordinates: {
-                    row: 0,
-                    column: 0,
+                    row: 1,
+                    column: 1,
                     height: 3,
                     width: 12,
                 }
