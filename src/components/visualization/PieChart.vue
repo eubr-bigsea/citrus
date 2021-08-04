@@ -12,6 +12,7 @@
             return {
                 data: this.getData(),
                 layout: {
+                    ... this.visualizationData.layout,
                     title: { text: this.visualizationData.title },
                     autosize: true,
                     height: this.height,

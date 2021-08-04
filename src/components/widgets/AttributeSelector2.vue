@@ -107,7 +107,12 @@
         mounted() {
             this.originalValue = [... (this.value || [])];
             if (this.field && this.field.values) {
-                this.fieldParameters = JSON.parse(this.field.values);
+                const o = this.field.values;
+                if (o !== null && typeof o === 'object' && Array.isArray(o) === false){
+                    this.fieldParameters = o;
+                } else {
+                    this.fieldParameters = JSON.parse(o);
+                }
             }
             if (this.fieldParameters.multiple === false && this.suggestionEvent) {
                 this.suggestions = this.suggestionEvent();

@@ -27,7 +27,8 @@
                     <form v-if="loaded" ref="form" class="pr-3 zoom-90">
 
                         <div v-for="field in sortedEditFields" :key="field.key" class="lemonade-widgets"
-                            :data-name="field.name" :data-type="field.sourceType" :data-component="field.suggested_widget" :data-index="field.display_index">
+                            :data-name="field.name" :data-type="field.sourceType"
+                            :data-component="field.suggested_widget" :data-index="field.display_index">
                             <markdown-component v-if="field.textBefore" :text="field.textBefore" />
                             <template v-if="!!!field.hidden">
                                 <component v-if="prepareVariable(field)" :is="`${field.suggested_widget}-component`"
@@ -105,7 +106,7 @@
 
                     </div>
                     <div class="buttons mt-5 pt-2 text-center border-top">
-                        <button class="btn btn-sm btn-outline-secondary ml-1 mb-2" @click="showWorkflowInfo">
+                        <button class="btn btn-sm btn-outline-secondary float-right ml-1 mb-2" @click="showWorkflowInfo">
                             <span class="fas fa-info-circle"></span>
                         </button>
                         <button class="btn btn-sm btn-primary float-right ml-1 mb-2" type="submit" :disabled="running"
@@ -131,7 +132,8 @@
                         depois clique o botão "Pesquisar".
                     </p>
                 </div>
-                <div v-else-if="statusError && !running" class="empty-state text-center justify-content-between mt-4 pt-4">
+                <div v-else-if="statusError && !running"
+                    class="empty-state text-center justify-content-between mt-4 pt-4">
                     <h4>
                         <span class="fa fa-flask fa-3x"></span>
                     </h4>
@@ -286,7 +288,7 @@
                 this.multiplicity = '0'; //FIXME
                 this.name = obj.name;
                 this.key = obj.key;
-                this.required = obj.multiplicity !== 'OPTIONAL' 
+                this.required = obj.multiplicity !== 'OPTIONAL'
                     && obj.multiplicity !== 'ZERO_OR_MORE'; // FIXME
                 this.suggested_widget = obj.suggested_widget;
                 this.type = obj.type;
@@ -355,7 +357,7 @@
                     field.value = value;
                 } else if (field.sourceType === 'variable') {
                     field.variable.value = value;
-                } else if (field.sourceType === 'property'){
+                } else if (field.sourceType === 'property') {
                     field.property.value = value;
                 } else {
                     console.log(`Unknown field type: ${field.sourceType}`);
@@ -599,15 +601,18 @@
                                         const field = JSON.parse(JSON.stringify(opFields.get(name)));
                                         // Update field from the task properties
                                         const prop = task.forms[field.name];
-                                        // Assign a reference to property from the task.
-                                        // So, when input is updated, it changes to prop directly.
-                                        field.property = prop;
+                                        // Only show property if there is no variable associated to it 
+                                        if (!prop.variable) {
+                                            // Assign a reference to property from the task.
+                                            // So, when input is updated, it changes to prop directly.
+                                            field.property = prop;
 
-                                        field.label = prop.new_label;
-                                        field.display_index = prop.display_index;
-                                        field.taskId = task.id;
+                                            field.label = prop.new_label;
+                                            field.display_index = prop.display_index;
+                                            field.taskId = task.id;
 
-                                        this.editFields.push(new EditField(field, 'property'));
+                                            this.editFields.push(new EditField(field, 'property'));
+                                        }
                                     }
                                 }
                             }
@@ -635,7 +640,7 @@
                                     }
                                     f.sourceType = 'field';
                                     f.required = ['ONE', 'ONE_OR_MORE'].indexOf(f.multiplicity) > -1; //FIXME
-                                    
+
                                     //FIXME: remove?
                                     self.filters.push(f);
                                     self.form.push(f);
