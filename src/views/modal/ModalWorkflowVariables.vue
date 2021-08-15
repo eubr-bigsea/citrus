@@ -181,6 +181,7 @@
                 }
             },
             show() {
+                this.selected = null;
                 this.$refs.modal.show();
             },
             okClicked(ev) {

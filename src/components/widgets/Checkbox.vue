@@ -30,9 +30,8 @@
         components: { LabelComponent, SwitchComponent },
         methods: {
             changed(newValue) {
-                this.checked = newValue ? '1' : '0';
-                this.$root.$emit(this.message, this.field, this.checked,
-                    this.checked ? this.$t('common.yes') : this.$t('common.no'));
+                this.$root.$emit(this.message, this.field, newValue ? '1' : '0',
+                    newValue ? this.$t('common.yes') : this.$t('common.no'));
             }
         },
         data() {
@@ -42,10 +41,9 @@
             };
         },
         mounted() {
-            this.$on('input', () => { alert('fff') })
             let input = this.$refs.fieldElement //this.$el.querySelector('input[type="checkbox"]');
             input.id = `checkboxComponentInput-${this.field.name}`;
-            this.checked = this.value === 1 || this.value === '1';
+            this.checked = this.value === 1 || this.value === '1' || this.value === 'true';
             if (this.value === null && this.field.default === '1') {
                 this.checked = true;
                 this.changed(this.field.default);

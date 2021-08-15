@@ -1,6 +1,11 @@
 /* Common props and methods for all widgets */
 export default {
     props: {
+        // Handle different versions
+        compatibility: {
+            default: '2.0.0',
+            type: String
+        },
         field: {
             default: function () { return {}; },
             required: true,
@@ -26,5 +31,6 @@ export default {
         value: {
             default: '',
         },
+
     }
 }

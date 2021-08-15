@@ -31,40 +31,25 @@
                             :data-component="field.suggested_widget" :data-index="field.display_index">
                             <markdown-component v-if="field.textBefore" :text="field.textBefore" />
                             <template v-if="!!!field.hidden">
-                                <component v-if="prepareVariable(field)" :is="`${field.suggested_widget}-component`"
-                                    :field="field" :value="field.value" :language="$root.$i18n.locale"
-                                    :show-help="false" :type="field.type" xlookups-method="getLookups"
-                                    xlookups="lookups" class="mt-2" :data-component="field.suggested_widget"
-                                    :data-index="field.display_index" @update-form-field-value="updateFieldValue" />
+                                <component :is="`${field.suggested_widget}-component`" :field="field"
+                                    :value="field.value" :language="$root.$i18n.locale" :show-help="false"
+                                    :type="field.type" xlookups-method="getLookups" xlookups="lookups" class="mt-2"
+                                    :data-component="field.suggested_widget" :data-index="field.display_index"
+                                    @update-form-field-value="updateFieldValue" compatibility="2.1.0" />
+                                <!--
                                 <component v-else
                                     :is="(field.suggested_widget === null ? 'text': field.suggested_widget) + '-component'"
                                     :field="field" :value="field.value" :language="$root.$i18n.locale"
                                     :show-help="false" :type="field.type" class="mt-2"
-                                    @update-form-field-value="updateFieldValue">
+                                    @update-form-field-value="updateFieldValue"
+                                    compatibility="2.1.0">
                                 </component>
+                                -->
                             </template>
                             <markdown-component v-if="field.textAfter" :text="field.textAfter" />
 
                         </div>
-                        <!--
-                        <div v-for="field in form" :key="field.name" class="lemonade-widgets" :data-name="field.name"
-                            :data-type="field.sourceType">
-                            <markdown-component v-if="field.textBefore" :text="field.textBefore" />
-                            <template v-if="!!!field.hidden">
-                                <component v-if="prepareVariable(field)" :is="`${field.suggested_widget}-component`"
-                                    :field="field" :value="field.default_value" :language="$root.$i18n.locale"
-                                    :show-help="false" :type="field.type" xlookups-method="getLookups"
-                                    xlookups="lookups" class="mt-2" />
-                                <component v-else
-                                    :is="(field.suggested_widget === null ? 'text': field.suggested_widget) + '-component'"
-                                    :field="field" :value="field.default_value" :language="$root.$i18n.locale"
-                                    :show-help="false" :type="field.type" xlookups-method="getLookups"
-                                    xlookups="lookups" class="mt-2">
-                                </component>
-                            </template>
-                            <markdown-component v-if="field.textAfter" :text="field.textAfter" />
-                        </div>
-                        -->
+
                         <div v-for="prop in properties" :key="`${prop.task}-${prop.name}`" class="lemonade-widgets"
                             :data-property="prop.name">
                             <component
@@ -73,18 +58,6 @@
                                 :type="prop.field.type" xlookups-method="getLookups" xlookups="lookups">
                             </component>
                         </div>
-                        <!--
-                            <div v-for="fltr in filters"
-                                v-if="(fltr.suggested_widget === null ? 'text': fltr.suggested_widget) !== undefined"
-                                :key="fltr.id" class="lemonade-widgets mb-3" data-filter="fltr.name">
-                                {{fltr}}
-                                <component
-                                    :is="(fltr.suggested_widget === null ? 'text': fltr.suggested_widget) + '-component'"
-                                    :field="fltr" :value="fltr.value" :language="$root.$i18n.locale" :type="fltr.type"
-                                    xlookups-method="getLookups" xlookups="lookups">
-                                </component>
-                            </div>
-                        -->
                     </form>
                     <!--
                     </VuePerfectScrollbar>
@@ -106,12 +79,13 @@
 
                     </div>
                     <div class="buttons mt-5 pt-2 text-center border-top">
-                        <button class="btn btn-sm btn-outline-secondary float-right ml-1 mb-2" @click="showWorkflowInfo">
+                        <button class="btn btn-sm btn-outline-secondary float-right ml-1 mb-2"
+                            @click="showWorkflowInfo">
                             <span class="fas fa-info-circle"></span>
                         </button>
                         <button class="btn btn-sm btn-primary float-right ml-1 mb-2" type="submit" :disabled="running"
                             @click="execute">
-                            <span class="fa fa-search"></span> {{$t('actions.search')}}
+                            <span class="fa fa-search"></span> {{$t('actions.execute')}}
                         </button>
                         <button class="btn btn-sm btn-outline-info float-right" type="button" @click="showHelp"
                             :disabled="running">
@@ -253,6 +227,7 @@
             this.property = null;
             this.variable = null;
             if (sourceType === 'variable') {
+                this.data_type = obj.data_type;
                 this.default_value = obj.default_value;
                 this.display_index = parseInt(obj.parameters.display_index || '0');
                 this.help = obj.description;
@@ -263,9 +238,10 @@
                 this.suggested_widget = obj.suggested_widget;
                 this.type = obj.type;
                 this.variable = obj.variable;
-                this.value = null;
+                this.value = obj.value;
                 this.values = obj.values;
             } else if (sourceType === 'property') {
+                this.data_type = obj.data_type;
                 this.default_value = obj.value;
                 this.display_index = parseInt(obj.display_index || '0');
                 this.help = obj.help;
@@ -279,6 +255,7 @@
                 this.taskId = obj.taskId;
                 this.values = JSON.parse(obj.values); //FIXME
             } else if (sourceType === 'filter') {
+                this.data_type = obj.data_type;
                 this.default_value = obj.value;
                 this.display_index = parseInt(obj.display_index || '0');
                 this.field = { label: obj.label, value: null };
@@ -357,6 +334,7 @@
                     field.value = value;
                 } else if (field.sourceType === 'variable') {
                     field.variable.value = value;
+                    field.value = value;
                 } else if (field.sourceType === 'property') {
                     field.property.value = value;
                 } else {
@@ -368,15 +346,6 @@
             },
             showHelp() {
                 this.$refs.modalHelp.show();
-            },
-            prepareVariable(variable) {
-                return true; //FIXME
-                if (variable.parameters && variable.parameters.length) {
-                    variable.values = variable.parameters;
-                    variable['default'] = variable.default_value;
-                    return true;
-                }
-                return false;
             },
             layoutUpdatedEvent: function (newLayout) {
                 newLayout.forEach(item => {
@@ -561,25 +530,36 @@
                         if (variable.description) {
                             variable.help = variable.description;
                         }
-                        if (variable?.parameters?.values?.trim()) {
-                            variable.values = JSON.parse(variable.parameters.values);
-                            if (variable.values.length > 5 || true) {
-                                variable.suggested_widget = 'dropdown';
+                        if (variable?.parameters?.values.length > 0) {
+                            if (Array.isArray(variable?.parameters?.values)) {
+                                variable.values = variable.parameters.values
                             } else {
-                                variable.suggested_widget = 'radio';
+                                variable.values = JSON.parse(variable.parameters.values);
+                                if (variable.values.length > 5 || true) {
+                                    variable.suggested_widget = 'dropdown';
+                                } else {
+                                    variable.suggested_widget = 'radio';
+                                }
                             }
-                        } else if (['INTEGER', 'DECIMAL', 'DATE'].indexOf(variable.type) > -1) {
-                            variable.suggested_widget = variable.type.toLowerCase();
+                        } else if (['INTEGER', 'DECIMAL'].indexOf(variable.type) > -1) {
+                            variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : variable.type.toLowerCase();
+                            variable.data_type = 'number'
+                        } else if (variable.type === 'DATE') {
+                            variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : variable.type.toLowerCase();
+                            variable.data_type = 'date'
                         } else if (variable.type === 'BINARY') {
                             variable.suggested_widget = 'checkbox';
+                            variable.data_type = 'number'
                         } else if (variable.type === 'CHARACTER') {
-                            variable.suggested_widget = 'text';
+                            variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : 'text';
+                            variable.data_type = 'text'
                         } else if (variable.type == 'STATIC_TEXT') {
                             variable.hidden = true;
                         } else {
                             self.error(null, 'Trilha possui configuração incorreta para variável');
                             console.debug(variable);
                         }
+                        variable.value = variable.default_value;
                         const field = new EditField(variable, 'variable');
                         field.variable = variable;
                         this.editFields.push(field)
@@ -720,7 +700,7 @@
         zoom: 90%;
     }
 
-    .lemonade-widgets .label span.required {
+    .lemonade-widgets>>>.label .required {
         font-weight: bold !important;
     }
 
