@@ -454,7 +454,7 @@ export default {
                 explanation:
                     'Adicione uma ou mais expressões. Novos atributos serão criados para as expressões informadas aqui, portanto, é necessário informar um nome (alias) para eles.',
                 tip: `Para usar um atributo existente, basta informar seu nome. Para constantes do tipo texto (string), delimite-as com aspas ou apóstrofos (' ou ").
-                Examplos: <strong><code>substring(atributo, instr(atributo, " "))</code><strong>.`,
+                Exemplos: <strong><code>substring(atributo, instr(atributo, " "))</code><strong>.`,
                 title: 'Expressão',
                 validExpressions: `Expressões válidas incluem expressões matemáticas
                 (ex. <strong><code>atributo * 10 - 4 </code></strong>) e chamadas a funções
