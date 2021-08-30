@@ -88,14 +88,17 @@
 
                         data.fields = 'id,name,type,enabled';
 
-                        let url = `${limoneroUrl}/storages`;
+                        let url = `${limoneroUrl}/storages?enabled=true`;
                         let headers = {};
                         this.$Progress.start();
                         return axios
                             .get(url, { params: data })
                             .then(resp => {
                                 this.$Progress.finish();
-                                return resp.data;
+                                return {
+                                    data: resp.data.data,
+                                    count: resp.data.pagination.total
+                                };
                             })
                             .catch(
                                 function (e) {

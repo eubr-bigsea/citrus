@@ -71,6 +71,7 @@
                     }
                 },
                 set(value) {
+                    this.value = value;
                 }
             }
         },
@@ -93,7 +94,9 @@
             }
         },
         data() {
-            return { tags: [] }
+            return { tags: [],
+             internalSelected: null
+           }
         }
 
     }

@@ -66,7 +66,7 @@
                     },
                     texts: {
                         count: this.$t('common.pagerShowing'),
-                        filter: this.$t('common.filter'),
+                        filter: this.$tc('common.filter'),
                         limit: this.$t('common.limit'),
                     },
                     headings: {

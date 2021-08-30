@@ -1,16 +1,17 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ add ? $t('actions.add', {type: $tc('titles.storage', 1).toLowerCase()}) : $t('actions.edit') + ' ' + $tc('titles.storage', 1).toLowerCase()}}
-                        </h1>
-                    </div>
-                    <hr>
-                </div>
-                <div class="row p-2">
-                    <div class="col-md-9 col-xg-9 mx-auto border">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h1>{{ add ? $t('actions.add', {type: $tc('titles.storage', 1).toLowerCase()}) :
+                                    $t('actions.edit') + ' ' + $tc('titles.storage', 1).toLowerCase()}}
+                                </h1>
+                            </div>
+                            <hr>
+                        </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <label class="font-weight-bold">{{$tc('common.name')}}:</label>
@@ -66,7 +67,8 @@
         data() {
             return {
                 storage: {},
-                types: ['HDFS', 'HIVE', 'HIVE_WAREHOUSE', 'JDBC', 'LOCAL'].sort()
+                types: ['HDFS', 'HIVE', 'HIVE_WAREHOUSE', 'JDBC', 'KAFKA',
+                    'LOCAL']
             };
         },
         computed: {},
