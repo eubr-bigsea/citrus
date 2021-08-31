@@ -57,7 +57,7 @@
                                             <div class="col-md-6">
                                                 <label>{{$tc('titles.platform', 2)}}:</label>
                                                 <input v-model="cluster.auth_token" type="text" class="form-control" />
-                                                {{platforms}}
+                                                
 
                                                 <label>{{$tc('cluster.authToken')}}:</label>
                                                 <input v-model="cluster.auth_token" type="password" autocomplete=""
@@ -147,8 +147,9 @@
                     const errorHandler = function (e) { this.error(e); }.bind(this);
                     this.cluster = await axios
                         .get(`${standUrl}/clusters/${this.$route.params.id}`)
-                        .then(resp => resp.data.data)
+                        .then(resp => resp.data.data[0])
                         .catch(errorHandler);
+                    console.debug(this.cluster)
                     this.platforms = await axios
                         .get(`${tahitiUrl}/platforms`) //FIXME: it returns old style without "data" field in json
                         .then(resp => resp.data)
