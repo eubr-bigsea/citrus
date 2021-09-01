@@ -9,9 +9,8 @@
                     </router-link>
                 </div>
             </div>
-            
-            <v-server-table ref="listTable" :columns="columns" :options="options"
-                name="modelList">
+
+            <v-server-table ref="listTable" :columns="columns" :options="options" name="modelList">
                 <template slot="id" slot-scope="props">
                     <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
                         {{props.row.id}}</router-link>
@@ -20,8 +19,7 @@
                     <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
                         {{props.row.name}}</router-link>
                 </template>
-                <template slot="created"
-                    slot-scope="props">{{props.row.created | formatJsonDate}}</template>
+                <template slot="created" slot-scope="props">{{props.row.created | formatJsonDate}}</template>
                 <template slot="actions" slot-scope="props">
                     <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
                         <font-awesome-icon icon="trash"></font-awesome-icon>
@@ -42,7 +40,7 @@
         mixins: [Notifier],
         data() {
             return {
-                columns: ['id', 'name', 'type', 'created', 'actions'],
+                columns: ['id', 'name', 'type', 'created', 'class_name', 'actions',],
 
                 showSideBar: false,
                 options: {
@@ -52,6 +50,7 @@
                     headings: {
                         id: 'ID',
                         name: this.$tc('common.name'),
+                        class_name: this.$tc('common.class'),
                         type: this.$tc('common.type'),
                         created: this.$tc('common.created'),
                         actions: this.$tc('common.action', 2)
@@ -74,7 +73,7 @@
                         data.size = data.limit;
                         data.q = data.query;
 
-                        data.fields = 'id,name,created,type';
+                        data.fields = 'id,name,created,type,class_name';
 
                         let url = `${limoneroUrl}/models`;
 

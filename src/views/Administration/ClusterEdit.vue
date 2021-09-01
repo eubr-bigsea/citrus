@@ -56,9 +56,12 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <label>{{$tc('titles.platform', 2)}}:</label>
-                                                <input v-model="cluster.auth_token" type="text" class="form-control" />
-                                                
-
+                                                <v-select v-model="cluster.platforms" :options="platforms"
+                                                    :multiple="true" item-value="id" label="name"
+                                                    :placeholder="$t('actions.chooseOneOrMoreOption')"
+                                                    :close-on-select="false"
+                                                    :selectable="option => cluster.platforms && !cluster.platforms.includes(option)">
+                                                </v-select>
                                                 <label>{{$tc('cluster.authToken')}}:</label>
                                                 <input v-model="cluster.auth_token" type="password" autocomplete=""
                                                     class="form-control" />
@@ -145,16 +148,17 @@
                 const self = this;
                 if (!self.add) {
                     const errorHandler = function (e) { this.error(e); }.bind(this);
+                    this.platforms = await axios
+                        .get(`${tahitiUrl}/platforms?simple=true`) //FIXME: it returns old style without "data" field in json
+                        .then(resp => resp.data)
+                        .catch(errorHandler);
                     this.cluster = await axios
                         .get(`${standUrl}/clusters/${this.$route.params.id}`)
                         .then(resp => resp.data.data[0])
                         .catch(errorHandler);
-                    console.debug(this.cluster)
-                    this.platforms = await axios
-                        .get(`${tahitiUrl}/platforms`) //FIXME: it returns old style without "data" field in json
-                        .then(resp => resp.data)
-                        .catch(errorHandler);
-                    console.debug(this.platforms)
+                    // Associate to Platform record containing its name
+                    this.cluster.platforms = this.cluster.platforms.map(
+                        (p) => this.platforms.find(pl => pl.id === p.id));
                 } else {
                     self.cluster = { id: null, enabled: false };
                 }

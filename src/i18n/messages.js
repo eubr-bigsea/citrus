@@ -94,6 +94,7 @@ export default {
             basicInformation: 'Informação básica',
             category: 'Categoria | Categorias',
             changePassword: 'Criar nova Senha',
+            class: 'Classe|Classes',
             column: 'Coluna | Colunas',
             command: 'Comando SQL',
             confirmed_at: 'Confirmado em',
@@ -146,6 +147,7 @@ export default {
                 'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
             parameters: 'Parâmetro | Parâmetros',
             password: 'Senha',
+            path: 'Caminho|Caminhos',
             plugin: 'Plugin',
             project: {
                 category: 'Categoria',
@@ -802,6 +804,7 @@ export default {
             basicInformation: 'Basic Information',
             category: 'Category | Categories',
             changePassword: 'Create new password',
+            class: 'Class|Classes',
             column: 'Column | Columns',
             command: 'SQL Command',
             confirm: 'Confirm',
@@ -852,6 +855,7 @@ export default {
                 'Showing {from} to {to} of {count} records|{count} records|One record',
             parameters: 'Parameter | Parameters',
             password: 'Password',
+            path: 'Path | Paths',
             plugin: 'Plugin',
             project: {
                 name: 'Name',

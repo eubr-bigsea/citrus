@@ -5,7 +5,7 @@
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <select v-if="!field.multiplicity || field.multiplicity === 1 || field.multiplicity === 0"
-            class="form-control input-sm custom-select" v-bind:data-field="field.name" v-model="selected"
+            class="form-control input-sm " v-bind:data-field="field.name" v-model="selected"
             @change="updated" :required="field.required">
             <!--<option v-if="!field.default"></option>-->
             <option v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key">
