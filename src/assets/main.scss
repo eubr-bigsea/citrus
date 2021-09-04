@@ -48,7 +48,7 @@ div.openid-logo {
 }
 /* Bootstrap */
 .custom-control-label {
-    padding-top: 4px;
+    padding-top: 0px;
 }
 
 .object-align-center,
@@ -736,4 +736,22 @@ h1 {
     .menu>div:last-child>div[data-parent='submenus']>div>div:last-child>div:last-child>button {
         border-bottom: 1px solid rgba(0, 0, 0, 0.125);
     }    
+}
+@media (min-width: 768px) {
+    .row.equal-height {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+.card.clickable .fa-stack {
+    font-size: 2vw;
+    text-align: center;
+}
+.card.clickable {
+    cursor: pointer;
+    text-align: center;
+}
+.clickable:hover {
+    background: #f2f2f2;
+    cursor: pointer;
 }

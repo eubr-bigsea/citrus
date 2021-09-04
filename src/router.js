@@ -88,7 +88,9 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 
 
 const Explorer = () => import ('./components/data-explorer/Explorer.vue');
-const ModelTraining = () => import ('./components/data-explorer/ModelTraining.vue');
+const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
+const ModelTraining = () => import ('./views/data-explorer/ModelTraining.vue');
+const ChooseTechnique = () => import ('./views/data-explorer/ChooseTechnique.vue');
 
 Vue.use(Router);
 
@@ -690,8 +692,26 @@ let router = new Router({
             }
         },
         {
-            path: '/model-training',
-            name: 'model-training',
+            path: '/explorer',
+            name: 'index-explorer',
+            component: ExplorerIndex,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/explorer-choose-technique',
+            name: 'choose-technique',
+            component: ChooseTechnique,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/explorer-mode/:technique',
+            name: 'explorer-mode',
             component: ModelTraining,
             meta: {
                 requiresAuth: true,

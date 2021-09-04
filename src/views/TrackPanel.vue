@@ -119,10 +119,8 @@
                                             <font-awesome-icon icon="history"></font-awesome-icon>
                                         </span>
                                     </router-link>
-                                 -->
-
                                 </template>
-                                -->
+                                 -->
                             </v-server-table>
                         </div>
                     </div>
