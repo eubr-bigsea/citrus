@@ -274,7 +274,12 @@ export default {
             selectDataSource: 'Selecionar a fonte de dados',
             setupSample: 'Configurar a amostra de dados',
             step: 'Step | Steps',
-            tagline: 'Analisar dados - o que você quer fazer hoje?',
+            tagline: 'Experimentos - o que você quer fazer hoje?',
+            task: {
+                classification: 'Classificação',
+                clustering: 'Agrupamento',
+                regression: 'Regressão'
+            },
             title: 'Explorador de Dados',
             truncateToNChars: 'Truncar para N caracteres',
             toLowerCase: 'Converter para minúsculas',
@@ -587,7 +592,7 @@ export default {
             cluster: 'Cluster | Clusters',
             configuration: 'Configuração | Configurações',
             darkMode: 'Modo escuro',
-            dataExplorer: 'Analisar dados',
+            dataExplorer: 'Experimentos',
             dataSource: 'Fonte de dados | Fontes de dados',
             dataSource2: 'Fonte de dados | Fontes de dados',
             dashboard: 'Dashboard | Dashboards',
@@ -813,6 +818,13 @@ export default {
             address2: 'URL secundária',
             extraParameters: 'Parâmetros extras',
         },
+        status: {
+            COMPLETED: 'Completado',
+            CANCELED: 'Cancelado',
+            ERROR: 'Erro',
+            PENDING: 'Pendente',
+            RUNNING: 'Executando',
+        }
     },
 
     en: {
@@ -1587,7 +1599,13 @@ export default {
             address2: 'Secondary URL',
             extraParameters: 'Extra parameters',
         },
-
+        status: {
+            COMPLETED: 'Completed',
+            CANCELED: 'Canceled',
+            ERROR: 'Error',
+            PENDING: 'Pending',
+            RUNNING: 'Running',
+        }
 
     }
 };

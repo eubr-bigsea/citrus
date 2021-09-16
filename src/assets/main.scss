@@ -336,6 +336,9 @@ ul.nav-tabs {
 .w-0 {
   width: 0 !important;
 }
+.w-10 {
+    width: 10%;
+}
 
 h2.title {
   font-size: 1.4em;
@@ -440,7 +443,7 @@ h1 {
   }
 }
 
-.custom-tab a {
+.custom-tab .nav-tabs>li>a {
   background-color: transparent !important;
   border: 0 !important;
   color: rgb(119, 119, 119);
@@ -449,13 +452,13 @@ h1 {
   padding-bottom: 12px !important;
 }
 
-.custom-tab a.active {
+.custom-tab .nav-tabs>li>a.active {
   border-bottom: 3px solid #1a73e8 !important;
   color: #1a73e8 !important;
   font-weight: bold !important;
 }
 
-.custom-tab li:first-child {
+.custom-tab .nav-tabs>li:first-child {
   padding-left: 0;
 }
 
@@ -754,4 +757,9 @@ h1 {
 .clickable:hover {
     background: #f2f2f2;
     cursor: pointer;
+}
+/* Perfect scroll bar*/ 
+.ps>.ps__scrollbar-x-rail,
+.ps>.ps__scrollbar-y-rail {
+    opacity: 0.6;
 }
