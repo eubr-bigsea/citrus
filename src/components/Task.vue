@@ -6,7 +6,7 @@
 
         <div class="hide circle" v-bind:style="getStyle"></div>
         <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
-            <span style="font-size:7pt">{{task.$meta}}</span>
+            <!-- <span style="font-size:7pt">{{task.$meta}}</span> -->
             {{task.name}} 
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>

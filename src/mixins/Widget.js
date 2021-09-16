@@ -1,6 +1,7 @@
 /* Common props and methods for all widgets */
 export default {
     props: {
+        acceptExtendedInput: { default: false, type: Boolean },
         // Handle different versions
         compatibility: {
             default: '2.0.0',
@@ -25,6 +26,7 @@ export default {
         suggestionEvent: {
             type: Function,
         },
+        small: { default: false, type: Boolean },
         showHelp: { type: Boolean, default: true },
         extendedSuggestionEvent: {
             type: Function,

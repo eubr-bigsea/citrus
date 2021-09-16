@@ -18,12 +18,87 @@ const FEATURES_PERMISSIONS = {
         'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
         'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
 }
+const dataExplorerModule = {
+    namespaced: true,
+    state: () => (
+        {
+            dataSource: null,
+            dirty: false,
+            labelAttribute: null,
+            taskName: '',
+            name: '',
+            workflow: {
+                tasks: [
+                    {
+                        operation: {
+                            id: 117, slug: 'linear-regression',
+                            forms: []
+                        }
+                    }
+                ], name: null, cluster: null,
+            }
+        }
+    ),
+    mutations: {
+        setName(state, { name }) {
+            state.name = name;
+        },
+        setTask(state, { taskName }) {
+            state.taskName = taskName;
+        },
+        setDataSource(state, { ds }) {
+            state.dataSource = ds;
+        },
+        setDataSourceAndLabel(state, { label, dataSource }) {
+            state.dataSource = dataSource;
+            state.labelAttribute = label;
+        },
+        setLabelAttribute(state, { attribute }) {
+            state.labelAttribute = attribute;
+        }
+    },
+    actions: {
+        setTask({ commit }, taskName) {
+            commit('setTask', { taskName })
+        },
+        setLabelAttribute({ commit }, attribute) {
+            commit('setLabelAttribute', { attribute })
+        },
+        setDataSource({ commit }, ds) {
+            commit('setDataSource', { ds })
+        },
+        setName({ commit }, name) {
+            commit('setName', { name })
+        },
+        createExperiment({ commit }, { name, label, dataSource }) {
+            commit('setName', { name });
+            commit('setDataSourceAndLabel', { label, dataSource });
+        },
+    },
+    getters: {
+        taskName: state => {
+            return state.taskName;
+        },
+        dataSource: state => {
+            return state.dataSource;
+        },
+        labelAttribute: state => {
+            return state.labelAttribute;
+        },
+        name: state => {
+            return state.name;
+        }
+    }
+};
 export default new Vuex.Store({
-    state: {
+    modules: {
+        dataExplorer: dataExplorerModule
+    },
+    state: () => ({
         status: '',
         token: localStorage.getItem('token') || '',
         user: JSON.parse(localStorage.getItem('user') || '{}')
-    },
+    }),
     mutations: {
         auth_request(state) {
             state.status = 'loading';
