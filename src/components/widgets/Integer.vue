@@ -7,7 +7,7 @@
             <LabelComponent :field="field" :value="value" :show-help="showHelp"></LabelComponent>
             <input type="number" maxlength="10" class="form-control input-sm"
                 :value="value === null ? field['default']: value" pattern="\\d*" @input="updated"
-                onkeypress="return this.value.length <=15" 
+                onkeypress="return this.value.length <=15" :class="{'form-control-sm': small, 'w-25': small}"
                 :required="field.required" />
         </div>
     </div>
