@@ -90,7 +90,9 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const Explorer = () => import ('./components/data-explorer/Explorer.vue');
 const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
 const ModelTraining = () => import ('./views/data-explorer/ModelTraining.vue');
-const ChooseTechnique = () => import ('./views/data-explorer/ChooseTechnique.vue');
+const ChooseTask = () => import ('./views/data-explorer/ChooseTask.vue');
+const Design = () => import ('./views/data-explorer/Design.vue');
+const TestEntities = () => import ('./views/data-explorer/TestEntities.vue');
 
 Vue.use(Router);
 
@@ -682,8 +684,8 @@ let router = new Router({
                 title: ['titles.admin', 1]
             }
         },
-        }
-            path: '/explorer/:id',
+        {
+            path: '/data-explorer/:id',
             name: 'explorer',
             component: Explorer,
             meta: {
@@ -701,18 +703,36 @@ let router = new Router({
             }
         },
         {
-            path: '/explorer-choose-technique',
-            name: 'choose-technique',
-            component: ChooseTechnique,
+            path: '/explorer-choose-task',
+            name: 'choose-task',
+            component: ChooseTask,
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
             }
         },
         {
-            path: '/explorer-mode/:technique',
+            path: '/explorer-mode/:task',
             name: 'explorer-mode',
             component: ModelTraining,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/explorer-mode/:task/design',
+            name: 'explorer-design',
+            component: Design,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/test',
+            name: 'experiment-test',
+            component: TestEntities,
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]

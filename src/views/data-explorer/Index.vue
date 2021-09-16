@@ -14,7 +14,7 @@
                                 <span class="fas fa-table fa-stack-1x fa-inverse"></span>
                             </span>
                         </div>
-                        <div class="col-md-9 mt-2">
+                        <div class="col-md-9 mt-2" @click="navigate('data-explorer')">
                             <h6>Analisar, tratar e transformar fontes de dados</h6>
                             <small>
                                 Utilize uma interface bla bla bla para tratar os dados. Você poderá experimentar
@@ -24,7 +24,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" @click="navigate('choose-technique')">
+                <b-card class="clickable m-1" @click="navigate('choose-task')">
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">

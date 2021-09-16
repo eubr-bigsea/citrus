@@ -2,15 +2,18 @@
     <main role="main">
         <div>
             <div class="d-flex justify-content-between align-items-center">
-                <h1>Escolha como parametrizar a classificação</h1>
+                <h1>Escolha como parametrizar o modelo de {{$t('dataExplorer.task.' + taskType).toLowerCase()}}</h1>
             </div>
             <hr>
             <div class="row">
                 <div class="col-md-3">
                     <b-card>
-                        <label class="font-weight-bold">Escolha a fonte de dados:</label>
-                        <vue-select @search="loadOptions" :filterable="false" :options="options"
-                            v-model="selectedDataSource" @input="retrieveAttributes">
+                        <label class="" for="name">Nome do modelo:</label>
+                        <input type="text" class="form-control" maxlength="100" id="name" v-focus v-model="name">
+
+                        <label class="">Escolha a fonte de dados:</label>
+                        <vue-select @search="loadDataSourceList" :filterable="false" :options="dataSourceList"
+                            label="name" v-model="selectedDataSource" @input="retrieveAttributes">
                             <template v-slot:no-options="{ search, searching }">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
@@ -26,18 +29,22 @@
                             </template>
                         </vue-select>
 
-                        <label class="font-weight-bold mt-2">Escolha o atributo alvo (rótulo):</label>
-                        <vue-select :options="attributes" v-model="selectedAttribute" :searchable="true" />
+                        <template v-if="supervisioned">
+                            <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
+                            <vue-select :options="attributes" v-model="selectedAttribute" :searchable="true" />
+                        </template>
+
                         <hr />
-                        <router-link :to="{name: 'choose-technique'}"
+                        <router-link :to="{name: 'choose-task'}"
                             class="btn btn-sm btn-outline-secondary pl-4 pr-4 mr-2 mb-1">
                             {{$t('actions.back')}}
                         </router-link>
-                        <button v-if="valid" class="btn btn-primary btn-sm">{{$t('actions.create', {type:
+                        <button v-if="valid" class="btn btn-primary btn-sm" @click="design">{{$t('actions.create',
+                            {type:
                             'modelo'})}}</button>
                     </b-card>
                 </div>
-                <div class="col-md-9">
+                <div v-if="supervisioned" class="col-md-9">
                     <div class="card-deck1 text-center">
                         <div class="custom-card">
                             <div class="row">
@@ -117,8 +124,89 @@
                                         EM ANÁLISE
                                     </div>
 
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="code">
+                                        Crie seu próprio avaliador
+                                    </b-form-radio>
+                                    <div class="description">
+                                        EM ANÁLISE
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div v-if="clustering" class="col-md-9">
+                    <div class="card-deck1 text-center">
+                        <div class="custom-card">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="fa-stack fa-3x">
+                                        <span class="fas fa-circle text-info fa-stack-2x"></span>
+                                        <span class="fas fa-robot fa-stack-1x fa-inverse"></span>
+                                    </span>
+                                    <h6>Automática</h6>
+                                    <small>
+                                        O modelo será criado automaticamente, sendo escolhido aquele que melhor atender
+                                        às metricas de avaliação (experimental).
+                                    </small>
+                                </div>
+                                <div class="col-md-8 text-left">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="fast">
+                                        Protótipo rápido
+                                    </b-form-radio>
+                                    <div class="description">
+                                        Criar um modelo usando o algoritmo K-Means e parametros automáticos.
+                                    </div>
+
                                     <b-form-radio name="method" class="font-weight-bold" v-model="type"
-                                        value="code">
+                                        value="performance">Detecção de anomalia</b-form-radio>
+                                    <div class="description">
+                                        Usar o Isolation Forest???
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="custom-card">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <span class="fa-stack fa-3x">
+                                        <span class="fas fa-circle text- fa-stack-2x"></span>
+                                        <span class="fas fa-glasses fa-stack-1x fa-inverse"></span>
+                                    </span>
+                                    <h6>Especialista</h6>
+                                    <small>
+                                        Você controla como o modelo será criado, podendo {{$t('common.ok')}} os
+                                        algoritmos,
+                                        parâmetros, métricas e qual será
+                                        o modelo a ser salvo.
+                                    </small>
+                                </div>
+                                <div class="col-md-8 text-left">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="custom">
+                                        Escolha os
+                                        algoritmos</b-form-radio>
+                                    <div class="description">
+                                        Escolha algoritmos, hiperparâmetros, amostra e validação cruzada.
+                                    </div>
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                        value="use-workflow">Use um fluxo de
+                                        trabalho
+                                    </b-form-radio>
+                                    <div class="description">
+                                        Use um fluxo de trabalho existente, mas parametrize sua execução.
+                                    </div>
+
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                        value="use-previous">
+                                        Use uma execução
+                                        anterior
+                                    </b-form-radio>
+                                    <div class="description">
+                                        EM ANÁLISE
+                                    </div>
+
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="code">
                                         Crie seu próprio avaliador
                                     </b-form-radio>
                                     <div class="description">
@@ -134,125 +222,68 @@
         </div>
     </main>
 </template>
-<!--
-<template>
 
-    <div>
-                <div v-if="step === 1">
-                    <h4 class="title1">Escolha a técnica</h4>
-                    <div class="row">
-                        <div class="col-md-4 text-center">
-                            <b-card title="Predição">
-                                <span class="fa fa-chart-line fa-8x"></span>
-                                <b-card-text class="task-card-text">
-                                    <br/>
-                                    <small></small>
-
-                                </b-card-text>
-                            </b-card>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <b-card title="Agrupamento">
-                                <span class="fa fa-code-branch fa-8x fa-rotate-90"></span>
-                                <br/>
-                                <b-card-text class="task-card-text">
-                                    <small>
-                                    </small>
-                                </b-card-text>
-                            </b-card>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <b-card title="Padrões frequentes">
-                                <span class="fa fa-cart-plus fa-8x"></span>
-                                <br/>
-                                <b-card-text class="task-card-text">
-                                    <small></small>
-                                </b-card-text>
-                            </b-card>
-                        </div>
-
-                    </div>
-                </div>
-                <div v-if="step === 2">
-                    <h4 class="title1">Escolha a o tipo de predição a ser feito</h4>
-                    <div class="row">
-                        <div class="col-md-4 text-center offset-md-4 mt-3 mb-5">
-                            <label>Variável-alvo do modelo:</label>
-                            <select name="" id="" class="form-control">
-                                <option>fraude</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4"></div>
-                        <div class="offset-md-2 col-md-4 text-center">
-                            <b-card title="Automática">
-                                <b-card-text class="task-card-text">
-                                    <small>
-                                        O modelo será criado automaticamente, sendo escolhido aquele que melhor atender
-                                        às metricas de avaliação. Usa tecnologia conhecida como AutoML
-                                        (experimental).
-                                    </small>
-
-                                </b-card-text>
-                                <span class="fa fa-robot fa-8x"></span>
-                            </b-card>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <b-card title="Especialista">
-                                <b-card-text class="task-card-text">
-                                    <small>
-                                        Você controla como o modelo será criado, podendo {{$t('common.ok')}} os algoritmos,
-                                        parâmetros, métricas e qual será
-                                        o modelo a ser salvo.
-                                    </small>
-                                </b-card-text>
-                                <span class="fa fa-rocket fa-8x"></span>
-                            </b-card>
-                        </div>
-                    </div>
-
-                </div>
-                <div v-if="step === 3"></div>
-            </b-card-text>
-            <div class="float-right">
-                <b-button v-if="step !== 1" href="#" variant="secondary" size="sm" class="mr-1" @click="previous">
-                    Anterior</b-button>
-                <b-button href="#" variant="primary" size="sm" @click="next">Próximo</b-button>
-            </div>
-    </div>
-</template>
--->
 <script>
     import axios from 'axios';
     import vSelect from 'vue-select';
     import Notifier from '../../mixins/Notifier';
+    import DataSourceMixin from './DataSourceMixin.js';
+
     import { debounce } from "../../util.js";
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     export default {
         components: { 'vue-select': vSelect },
-        mixins: [Notifier],
+        mixins: [Notifier, DataSourceMixin],
         data() {
             return {
-                options: [], selectedDataSource: null,
-                selectedAttribute: null,
-                attributes: [], type: 'fast'
+                name: 'Teste',
+                selectedDataSource: { id: 15, name: 'Iris' },
+                selectedAttribute: 'Species',
             };
+        },
+        mounted() {
+            this.$store.dispatch('dataExplorer/setTask',
+                this.$route.params.task);
         },
         computed: {
             valid() {
+                return true;
+                //FIXME
                 return this.selectedDataSource !== null &&
                     this.selectedAttribute !== null &&
                     this.type !== null;
+            },
+            taskType() {
+                return this.$route.params.task;
+            },
+            supervisioned(){
+                return this.taskType === 'regression' || this.taskType === 'classification';
+            },
+            clustering(){
+                return this.taskType === 'clustering';
             }
         },
         methods: {
-            pad: (num, places, ch) => String(num).padStart(places, ch),
             navigate(name) {
                 this.$router.push({ name });
             },
-            loadOptions: debounce(function (search, loading) {
+            design() {
+                const task = this.$store.state.dataExplorer.taskName;
+                this.$store.dispatch('dataExplorer/createExperiment',
+                    {
+                        name: this.name,
+                        label: this.selectedAttribute,
+                        dataSource: this.selectedDataSource
+                    });
+
+                this.$router.push({ name: 'explorer-design', params: { task } });
+            },
+            /*
+            pad: (num, places, ch) => String(num).padStart(places, ch),
+            loadDataSourceList: debounce(function (search, loading) {
                 if (search) {
-                    this.asyncLoadOptions(search, loading);
+                    this.asyncLoadDataSourceList(search, loading);
                 }
             }, 800),
             async retrieveAttributes() {
@@ -262,9 +293,9 @@
                         fields: 'id,name,attributes'
                     };
                     try {
-                        const options = await axios.get(
+                        const dataSourceList = await axios.get(
                             `${limoneroUrl}/datasources/${this.selectedDataSource.id}`);
-                        this.attributes = options.data.attributes.map(attr => attr.name).sort();
+                        this.attributes = dataSourceList.data.attributes.map(attr => attr.name).sort();
                     } catch (e) {
                         this.error(e);
                     } finally {
@@ -275,23 +306,23 @@
                     this.attributes = [];
                 }
             },
-            async asyncLoadOptions(search, loading) {
+            async asyncLoadDataSourceList(search, loading) {
                 this.$Progress.start();
                 const params = {
                     sort: 'name', size: 20, name: search,
                     enabled: true, simple: true, fields: 'id,name'
                 };
                 try {
-                    const options = await axios.get(
+                    const dataSourceList = await axios.get(
                         `${limoneroUrl}/datasources`, { params });
-                    this.options = options.data.data;
+                    this.dataSourceList = dataSourceList.data.data;
                 } catch (e) {
                     this.error(e);
                 } finally {
                     this.$Progress.finish();
                     loading(false);
                 }
-            }
+            }*/
         }
     }
 </script>
