@@ -32,6 +32,7 @@ export default {
             clear: 'Limpar',
             clearFilters: 'Limpar filtros',
             create: 'Criar um novo {type}',
+            create2: 'Criar',
             delete: 'Excluir',
             deploy: 'Implantar',
             disable: 'Desabilitar',
@@ -263,6 +264,11 @@ export default {
             copySelected: 'Copiar etapas selecionadas',
             disableSelected: 'Desabilitar etapas selecionadas',
             enableSelected: "Habilitar etapas selecionadas",
+            experiments: {
+                DATA_EXPLORER: 'Análise de dados',
+                MODEL_BUILDER: 'Criação de modelos',
+                VIS_BUILDER: 'Criação de visualizações'
+            },
             informNewName: 'Informe o novo nome',
             invalid: 'Inválido',
             missing: 'Ausente',
@@ -860,6 +866,7 @@ export default {
             clear: 'Clear',
             clearFilters: 'Clear filters',
             create: 'Create new {type}',
+            create2: 'Create',
             delete: 'Delete',
             deploy: 'Deploy',
             disable: 'Disable',

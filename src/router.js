@@ -88,6 +88,7 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 
 
 const Explorer = () => import ('./components/data-explorer/Explorer.vue');
+const DataExplorerStart = () => import ('./views/data-explorer/DataExplorerStart.vue');
 const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
 const ModelTraining = () => import ('./views/data-explorer/ModelTraining.vue');
 const ChooseTask = () => import ('./views/data-explorer/ChooseTask.vue');
@@ -687,14 +688,15 @@ let router = new Router({
         {
             path: '/data-explorer/:id',
             name: 'explorer',
-            component: Explorer,
+            name: 'data-explorer',
+            component: DataExplorerStart,
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
             }
         },
         {
-            path: '/explorer',
+            path: '/experiments',
             name: 'index-explorer',
             component: ExplorerIndex,
             meta: {
@@ -703,7 +705,7 @@ let router = new Router({
             }
         },
         {
-            path: '/explorer-choose-task',
+            path: '/experiments/model/choose-task',
             name: 'choose-task',
             component: ChooseTask,
             meta: {
@@ -712,7 +714,7 @@ let router = new Router({
             }
         },
         {
-            path: '/explorer-mode/:task',
+            path: '/experiments/model/task/:task',
             name: 'explorer-mode',
             component: ModelTraining,
             meta: {
@@ -721,7 +723,7 @@ let router = new Router({
             }
         },
         {
-            path: '/explorer-mode/:task/design',
+            path: '/experiments/model/task/:task/design',
             name: 'explorer-design',
             component: Design,
             meta: {

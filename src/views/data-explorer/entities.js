@@ -1,7 +1,7 @@
 class Workflow {
-    constructor({ id = null, platform = null, name = null, cluster = null, tasks = [], flows = [], version = null } = {}) {
+    constructor({ id = null, platform = null, name = null, type = null, cluster = null, tasks = [], flows = [], version = null } = {}) {
         const p = new Platform(platform);
-        Object.assign(this, { id, name, platform: p, cluster, tasks, version, flows });
+        Object.assign(this, { id, name, platform: p, cluster, tasks, version, flows, type });
         this.history = 0;
 
     }
@@ -17,7 +17,7 @@ class Operation {
         Object.assign(this, { id, name, slug, forms: newForms, ports });
 
     }
-    _generateTaskId() {
+    generateTaskId() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             let r = (Math.random() * 16) | 0,
                 v = c == 'x' ? r : (r & 0x3) | 0x8;
@@ -27,7 +27,7 @@ class Operation {
 
     createTask({ name = null } = {}) {
         const task = new Task({
-            name, id: this._generateTaskId(),
+            name, id: this.generateTaskId(),
             operation: { id: this.id, slug: this.slug, name: name || this.name }
         });
         task._operation = this;
@@ -68,6 +68,9 @@ class Task {
         this.top = 0;
         this.left = 0;
         this.z_index = 0;
+        if (this.id === null){
+            this.id = this.operation.generateTaskId();
+        }
 
         Object.defineProperty(this, '_operation', {
             value: null,

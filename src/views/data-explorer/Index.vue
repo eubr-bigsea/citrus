@@ -2,7 +2,7 @@
     <main role="main">
         <div>
             <div class="d-flex justify-content-between align-items-center">
-                <h1>{{$tc('dataExplorer.tagline', 1)}}</h1>
+                <h1><span class="fa fa-vial"></span> {{$tc('dataExplorer.tagline', 1)}}</h1>
             </div>
             <hr>
             <div class="card-deck">
@@ -15,11 +15,10 @@
                             </span>
                         </div>
                         <div class="col-md-9 mt-2" @click="navigate('data-explorer')">
-                            <h6>Analisar, tratar e transformar fontes de dados</h6>
+                            <h6>Analisar, tratar e transformar dados</h6>
                             <small>
-                                Utilize uma interface bla bla bla para tratar os dados. Você poderá experimentar
-                                como
-                                transformar bla bla
+                                Utilize uma interface amigável e responsiva para tratar os dados. Você poderá experimentar
+                                como transformar os dados, obtendo um retorno imediato (usa amostra dos dados).
                             </small>
                         </div>
                     </div>
@@ -35,9 +34,8 @@
                         <div class="col-md-9 mt-2">
                             <h6>Criar modelo de aprendizado de máquina</h6>
                             <small>
-                                Utilize uma interface bla bla bla para tratar os dados. Você poderá experimentar
-                                como
-                                transformar bla bla
+                                Crie modelos de aprendizado de máquina, definindo qual tarefa e algoritmos aplicar, quais <em>features</em> usar e quais métricas lhe
+                                darão o melhor modelo. 
                             </small>
                         </div>
                     </div>
@@ -53,9 +51,8 @@
                         <div class="col-md-9 mt-2">
                             <h6>Criar visualizações de dados</h6>
                             <small>
-                                Utilize uma interface bla bla bla para tratar os dados. Você poderá experimentar
-                                como
-                                transformar bla bla
+                                Crie <em>dashboards</em> para apresentar os dados. Monte gráficos, tabelas e outras visualizações 
+                                de dados. Compartilhe com outros usuários.
                             </small>
                         </div>
                     </div>
@@ -90,11 +87,11 @@
                     <form class="form-inline">
                         
                         <label class="sr-only" for="type">{{$tc('common.type')}}</label>
-                        <select class="form-control w-25 pt-0" id="type">
-                            <option selected disabled >{{$tc('actions.choose')}}...</option>
-                            <option value="3">{{$tc('titles.procedure')}}</option>
-                            <option value="1">{{$tc('titles.model')}}</option>
-                            <option value="2">{{$tc('titles.visualization')}}</option>
+                        <select class="form-control w-25 pt-0" v-model="typeFilter">
+                            <option selected disabled>{{$tc('actions.choose')}}...</option>
+                            <option value="DATA_EXPLORER">{{$t('dataExplorer.experiments.DATA_EXPLORER')}}</option>
+                            <option value="MODEL_BUILDER">{{$t('dataExplorer.experiments.MODEL_BUILDER')}}</option>
+                            <option value="VIS_BUILDER">{{$t('dataExplorer.experiments.VIS_BUILDER')}}</option>
                         </select>
                         <label class="sr-only" for="search">{{$tc('common.name')}}</label>
                         <input type="text" class="form-control m-2 w-25" :placeholder="$tc('common.name')"
@@ -107,12 +104,15 @@
                         name="workflowListDataExplorer">
                         <template slot="id" slot-scope="props">
                             <router-link
-                                :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.id}}</router-link>
+                        </template>
+                        <template slot="type" slot-scope="props">
+                            {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
                         <template slot="name" slot-scope="props">
                             <router-link
-                                :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.name}}</router-link>
                         </template>
                         <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
@@ -146,10 +146,11 @@
             const self = this;
             return {
                 searchFilter: null,
+                typeFilter: null,
                 columns: [
                     'id',
-                    'type',
                     'name',
+                    'type',
                     'updated',
                     'version',
                 ],
@@ -183,10 +184,16 @@
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = 5;
                         data.name = self.searchFilter //data.query;
+                        if (self.typeFilter){
+                            data.types = self.typeFilter;
+                        } else {
+                            data.types='experiment';
+                        }
 
                         data.fields = 'id,name,platform,updated,user,version,description,type';
+                        data.enabled = 1;
 
-                        let url = `${tahitiUrl}/workflows?enabled=1&track=1`;
+                        let url = `${tahitiUrl}/workflows`;
                         self.$Progress.start();
                         return axios
                             .get(url, {

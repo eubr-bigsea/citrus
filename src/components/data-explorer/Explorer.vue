@@ -7,13 +7,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-8 col-lg-9">
-                <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
-                    :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
-                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview"
-                    @drop="performAction" />
-            </div>
-            <div class="col-md-4 col-lg-3 noselect mt-1">
+            <div class="col-md-4 col-lg-3 noselect mt-1 pl-3">
                 <div class="title">
                     <h5>{{$t('dataExplorer.title')}}</h5>
                 </div>
@@ -27,7 +21,7 @@
                                 <span class="fa fa-database"></span>
                             </b-button>
                             <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm">
-                                <span class="fa fa-vial"></span>
+                                <span class="fa fa-vials"></span>
                             </b-button>
                         </b-input-group-append>
                     </b-input-group>
@@ -74,6 +68,12 @@
                 <div v-else class="mt-5 alert alert-warning">
                     <span class="fa fa-exclamation-triangle"></span> {{$t('dataExplorer.noStep')}}
                 </div>
+            </div>
+            <div class="col-md-8 col-lg-9 border-left fill-height">
+                <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
+                    :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
+                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview"
+                    @drop="performAction" />
             </div>
             <simple-input ref="simpleInput" :cancel-title="simpleInput.cancelTitle" :ok-title="simpleInput.okTitle"
                 :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
@@ -732,5 +732,8 @@
         position: relative;
         margin: auto;
         height: 60vh;
+    }
+    .fill-height {
+        min-height: 85vh
     }
 </style>

@@ -119,6 +119,7 @@ import {
     faCalendarAlt,
     faListAlt,
     faVial,
+    faVials,
 } from '@fortawesome/free-solid-svg-icons';
 
 /**
@@ -246,4 +247,6 @@ library.add(
     faUserEdit,
     faUserLock,
     faVial,
+    faVials,
+    
 );
