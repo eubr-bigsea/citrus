@@ -40,45 +40,46 @@ import About from './views/About.vue';
 import PageNotFound from './views/PageNotFound.vue';
 
 // Lazy routes
-const TermsOfService = () => import('./views/TermsOfService.vue');
-const Welcome = () => import('./views/Welcome.vue');
-const ConfigurationList = () => import('./views/ConfigurationList.vue');
+const TermsOfService = () => import(/* webpackChunkName: "group-global" */ './views/TermsOfService.vue');
+const Welcome = () => import(/* webpackChunkName: "group-global" */ './views/Welcome.vue');
 
-const RoleList = () => import('./views/Administration/RoleList.vue');
-const RoleEdit = () => import('./views/Administration/RoleEdit.vue');
+const ConfigurationList = () => import(/* webpackChunkName: "group-configuration" */ './views/ConfigurationList.vue');
 
-const UserList = () => import('./views/Administration/UserList.vue');
-const UserAdd = () => import('./views/Administration/UserAdd.vue');
-const UserEdit = () => import('./views/Administration/UserEdit.vue');
+const RoleList = () => import(/* webpackChunkName: "group-role" */ './views/Administration/RoleList.vue');
+const RoleEdit = () => import(/* webpackChunkName: "group-app" */ './views/Administration/RoleEdit.vue');
 
-const ClusterList = () => import('./views/Administration/ClusterList.vue');
-const ClusterEdit = () => import('./views/Administration/ClusterEdit.vue');
+const UserList = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserList.vue');
+const UserAdd = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserAdd.vue');
+const UserEdit = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserEdit.vue');
 
-const StorageList = () => import('./views/Administration/StorageList.vue');
-const StorageEdit = () => import('./views/Administration/StorageEdit.vue');
+const ClusterList = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterList.vue');
+const ClusterEdit = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterEdit.vue');
 
-const ModelList = () => import('./views/ModelList.vue');
-const ModelAdd = () => import('./views/ModelAdd.vue');
-const ModelEdit = () => import('./views/ModelEdit.vue');
+const StorageList = () => import(/* webpackChunkName: "group-storage" */ './views/Administration/StorageList.vue');
+const StorageEdit = () => import(/* webpackChunkName: "group-storage" */ './views/Administration/StorageEdit.vue');
 
-const DashboardList = () => import('./views/DashboardList.vue');
-const DashboardDetail = () => import('./views/DashboardDetail.vue');
-const DashboardBuilder = () => import('./views/DashboardBuilder.vue');
+const ModelList = () => import(/* webpackChunkName: "group-model" */ './views/ModelList.vue');
+const ModelAdd = () => import(/* webpackChunkName: "group-model" */ './views/ModelAdd.vue');
+const ModelEdit = () => import(/* webpackChunkName: "group-model" */ './views/ModelEdit.vue');
 
-const WebSocketPing = () => import('./views/WebSocketPing.vue');
-const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
+const DashboardList = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardList.vue');
+const DashboardDetail = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardDetail.vue');
+const DashboardBuilder = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardBuilder.vue');
 
-const NotificationList = () => import('./views/NotificationList.vue');
+const WebSocketPing = () => import(/* webpackChunkName: "group-util" */ './views/WebSocketPing.vue');
+const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */ './views/JsPlumbSandbox.vue');
+const QueryEdit = () => import(/* webpackChunkName: "group-util" */ './views/query/QueryEdit.vue');
 
-const PlatformList = () => import('./views/Administration/PlatformList.vue');
-const PlatformAdd = () => import('./views/Administration/PlatformAdd.vue');
-const PlatformEdit = () => import('./views/Administration/PlatformEdit.vue');
+const NotificationList = () => import(/* webpackChunkName: "group-notification" */ './views/NotificationList.vue');
 
-const TrackPanel = () => import('./views/TrackPanel.vue');
-const Track = () => import('./views/Track.vue');
-const TrackAdd = () => import('./views/TrackAdd.vue');
+const PlatformList = () => import(/* webpackChunkName: "group-platform" */ './views/Administration/PlatformList.vue');
+const PlatformAdd = () => import(/* webpackChunkName: "group-platform" */ './views/Administration/PlatformAdd.vue');
+const PlatformEdit = () => import(/* webpackChunkName: "group-platform" */ './views/Administration/PlatformEdit.vue');
 
-const QueryEdit = () => import('./views/query/QueryEdit.vue');
+const TrackPanel = () => import(/* webpackChunkName: "group-app" */ './views/TrackPanel.vue');
+const Track = () => import(/* webpackChunkName: "group-app" */'./views/Track.vue');
+const TrackAdd = () => import(/* webpackChunkName: "group-app" */'./views/TrackAdd.vue');
+
 
 Vue.use(Router);
 
@@ -103,7 +104,7 @@ let router = new Router({
                 title: ['titles.query', 1]
             }
         },
-        
+
         {
             path: '/administration',
             name: 'administration',
@@ -128,7 +129,7 @@ let router = new Router({
             path: '/administration/roles/new',
             name: 'AdministrationAddRole',
             component: RoleEdit,
-            props: {add: true},
+            props: { add: true },
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
@@ -514,7 +515,7 @@ let router = new Router({
         {
             path: '/administration/clusters/add',
             name: 'addCluster',
-            props: {add: true},
+            props: { add: true },
             component: ClusterEdit,
             meta: {
                 requiresAuth: true,
@@ -542,7 +543,7 @@ let router = new Router({
         {
             path: '/administration/storages/add',
             name: 'addStorage',
-            props: {add: true},
+            props: { add: true },
             component: StorageEdit,
             meta: {
                 requiresAuth: true,
@@ -623,5 +624,9 @@ let router = new Router({
         }
     ]
 });
-
+router.onError(error => {
+    if (/loading chunk \d* failed./i.test(error.message)) {
+        window.location.reload()
+    }
+});
 export default router;

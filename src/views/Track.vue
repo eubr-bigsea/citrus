@@ -510,7 +510,9 @@
                         workflow: workflow.id,
                         _ts: new Date().getTime(),
                     }
-                    const operations = (await axios.get(`${tahitiUrl}/operations`, { params })).data;
+
+                    const resp = await axios.get(`${tahitiUrl}/operations`, { params });
+                    const operations = resp.data.data;
 
                     operations.forEach((op) => { self.operationsLookup[op.id] = op });
                     workflow.platform_id = workflow.platform.id;
@@ -527,6 +529,11 @@
                         variable.sourceType = 'variable';
                         variable.help = variable.description;
                         variable.required = variable.multiplicity === 1 || variable.multiplicity == 3;
+                        if (variable.parameters) {
+                            if ('string' === typeof(variable.parameters)) {
+                                variable.parameters = JSON.parse(variable.parameters);
+                            }
+                        }
                         if (variable.description) {
                             variable.help = variable.description;
                         }

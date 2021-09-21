@@ -159,6 +159,7 @@
                     'updated',
                     //'actions'
                 ],
+                customQueries: {}
 
             };
         },
@@ -192,18 +193,19 @@
                         data.sort = data.orderBy;
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
-                        
-                        data.name = this.customQueries['name'];
+                        data.name = self.customQueries['name'];
                         self.page = data.page;
                         data.fields = LIST_OF_FIELDS;
 
                         let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
-                        this.$Progress.start();
+                        self.$Progress.start();
                         return axios
                             .get(url, {
                                 params: data
                             })
                             .then(resp => {
+                                self.items = resp.data.data;
+                                self.records = resp.data.pagination.total;
                                 self.$Progress.finish();
                                 return {
                                     data: resp.data.data,
@@ -230,7 +232,7 @@
         },
         mounted() {
             this.search = this.$refs.trackPanelList.customQueries['name'];
-            this.init();
+            //this.init();
         },
         /* Methods */
         methods: {
@@ -267,38 +269,6 @@
                 }
             }, 800),
             init() {
-                const self = this;
-                let data = {};
-                data.asc = 'true';
-                data.size = 10;
-                data.page = self.page;
-                data.name = self.search;
-                // data.name = ;
-                data.fields = LIST_OF_FIELDS;
-
-                let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
-                this.$Progress.start();
-                axios
-                    .get(url, {
-                        params: data
-                    })
-                    .then(resp => {
-                        this.$Progress.finish();
-                        self.items = resp.data.data;
-                        self.records = resp.data.pagination.total;
-                        return {
-                            data: resp.data.data,
-                            count: resp.data.pagination ? resp.data.pagination.total :
-                                resp.data.data.length,
-                        };
-                    })
-                    .catch(
-                        function (e) {
-                            this.$Progress.finish();
-                            this.error(e);
-                        }.bind(this)
-                    );
-
             },
             clearFilters() {
                 this.$refs.workflowList.setFilter('');
