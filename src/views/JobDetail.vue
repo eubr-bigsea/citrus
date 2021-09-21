@@ -329,7 +329,7 @@
                     axios
                         .get(`${tahitiUrl}/operations`, { params })
                         .then(resp => {
-                            self.operations = resp.data;
+                            self.operations = resp.data.data;
                             self.operations.forEach(op => {
                                 self.operationsLookup[op.id] = op;
                             });

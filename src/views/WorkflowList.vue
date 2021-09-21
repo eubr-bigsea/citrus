@@ -8,34 +8,34 @@
                             <h1>{{$tc('titles.workflow', 2)}}</h1>
                             <div>
                                 <button @click.prevent="showImportWorkflow"
-                                    class="btn btn-outline-info float-left"><span class="fa fa-download" /> {{$t('actions.import')}}</button>
+                                    class="btn btn-outline-info float-left"><span class="fa fa-download" />
+                                    {{$t('actions.import')}}</button>
                                 <router-link :to="{name: 'addWorkflow'}"
                                     class="btn btn-primary btn-lemonade-primary float-left ml-2">
-                                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}</router-link>
-                                
+                                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}
+                                </router-link>
+
                             </div>
                         </div>
                     </div>
-                    <v-server-table :columns="columns" :options="options" ref="workflowList"
-                        name="workflowList">
+                    <v-server-table :columns="columns" :options="options" ref="workflowList" name="workflowList">
                         <template slot="id" slot-scope="props">
                             <router-link
                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.id}}</router-link>
-                            </template>
-                            <template slot="name" slot-scope="props">
-                                <router-link
+                        </template>
+                        <template slot="name" slot-scope="props">
+                            <router-link
                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.name}}</router-link>
-                                <small v-if="props.row.description" class="break-word"><br/>{{props.row.description}}</small>
+                            <small v-if="props.row.description"
+                                class="break-word"><br />{{props.row.description}}</small>
                         </template>
-                        <template slot="platform"
-                            slot-scope="props">{{props.row.platform.name}}</template>
-                        <template slot="is_template"
-                            slot-scope="props">{{$tc(props.row.is_template ? 'common.yes': 'common.no')}}</template>
+                        <template slot="platform" slot-scope="props">{{props.row.platform.name}}</template>
+                        <template slot="is_template" slot-scope="props">{{$tc(props.row.is_template ? 'common.yes':
+                            'common.no')}}</template>
                         <template slot="user_name" slot-scope="props">{{props.row.user.name}}</template>
-                        <template slot="updated"
-                            slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
+                        <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
                         <div slot="afterFilter" class="ml-2">
                             <label>{{$tc('common.platform')}}</label>
                             <select class="form-control" v-model="platform">
@@ -43,8 +43,7 @@
                                 <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">
                                     {{p.name}}</option>
                             </select>
-                            <button type="button"
-                                class="btn btn-sm btn-light btn-outline-secondary ml-2"
+                            <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
                                 @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
                         </div>
                         <template slot="actions" slot-scope="props">
@@ -168,22 +167,17 @@
                 }
             };
         },
-        mounted() {
+        async mounted() {
             let url = `${tahitiUrl}/platforms`;
             this.$Progress.start();
-            axios
-                .get(url)
-                .then(resp => {
-                    this.platforms = resp.data.sort((a, b) => a.name.localeCompare(b.name));
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                )
-                .finally(() => {
-                    this.$Progress.finish();
-                });
+            try {
+                const resp = await axios.get(url);
+                this.platforms = resp.data.data;
+            } catch (e) {
+                this.error(e);
+            } finally {
+                this.$Progress.finish();
+            }
             this.platform = this.$refs.workflowList.customQueries['platform'];
         },
         /* Methods */
@@ -214,8 +208,8 @@
             importWorkflow() {
                 const self = this;
                 const file = self.$refs.importFile.files.length
-                ? self.$refs.importFile.files[0]
-                : null;
+                    ? self.$refs.importFile.files[0]
+                    : null;
                 if (file !== null) {
                     var content;
                     const reader = new FileReader();
@@ -223,13 +217,13 @@
                         const headers = { 'Content-Type': 'application/json' };
                         const url = `${tahitiUrl}/workflows/import`;
                         content = new TextDecoder("utf-8").decode(event.target.result);
-                        const payload = {content};
+                        const payload = { content };
                         axios.post(url, payload, { headers }).then(
-                        (resp) => {
-                            self.success(self.$t('messages.successImport',
+                            (resp) => {
+                                self.success(self.$t('messages.successImport',
                                     { what: resp.data.workflow }));
-                        })
-                        .catch(e => self.error(e));
+                            })
+                            .catch(e => self.error(e));
                     };
                     reader.readAsArrayBuffer(file);
                     self.closeImport();

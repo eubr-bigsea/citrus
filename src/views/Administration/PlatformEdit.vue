@@ -331,7 +331,7 @@
                     axios
                         .get(`${tahitiUrl}/platforms/${this.$route.params.id}`)
                         .then(resp => {
-                            self.platform = resp.data;
+                            self.platform = resp.data.data[0];
                             resolve();
                         })
                         .catch(function (e) {
@@ -372,8 +372,14 @@
                 return axios
                     .get(url, { params })
                     .then(resp => {
-                        self[target] = resp.data;
-                        resp.data.forEach(op => op.subsetIds = op.subsets.map(s => s.id));
+                        self[target] = resp.data.data;
+                        resp.data.data.forEach(op =>  {
+                            if (op.subsets){
+                                op.subsetIds = op.subsets.map(s => s.id)
+                            } else {
+                                op.subset = [];
+                            }
+                        });
                     }).catch(self.error)
                     .finally(() => { self[loading] = false; });
             },

@@ -599,7 +599,7 @@ export default {
             restoreHistory:
                 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored:
-                'Versão {version} restaurada com sucesso e agora é a versão {version2}. Mas ELE NÃO FOI SALVO, você precisa explicitamente salvá-lo.',
+                'Versão {version} restaurada com sucesso.',
 			setImage: 'Definir imagem para o workflow',
             useAsTemplate: 'Disponibilizar este fluxo de trabalho como modelo',
             useAsTemplateExplanation:
@@ -1283,7 +1283,7 @@ export default {
                 'Please, complete the required information for the execution of the workflow',
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored:
-                'Version {version} restored with success and now it is also version {version2}. But IT IS NOT SAVED, you need to explicitly save it.',
+                'Version {version} restored with success.',
 			setImage: 'Set workflow\'s image',
             useAsTemplate: 'This workflow is a template',
             useAsTemplateExplanation:

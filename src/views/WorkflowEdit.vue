@@ -490,6 +490,7 @@
             },
             _loadOperations(self, workflow, resp, showDisabledOpsAlert) {
                 self.operations = resp.data
+
                 self.operations.forEach((op) => {
                     self.operationsLookup[op.id] = op
                 })
@@ -545,7 +546,8 @@
                             workflow: workflow.id,
                             t: new Date().getTime(), // Force refresh
                         }
-                        axios.get(`${tahitiUrl}/operations`, { params }).then(resp => self._loadOperations(self, workflow, resp, true)
+                        axios.get(`${tahitiUrl}/operations`, { params }).then(
+                            resp => self._loadOperations(self, workflow, resp.data, true)
                         ).catch(function (e) {
                             this.error(e);
                         }.bind(this)).finally(() => {
@@ -554,7 +556,8 @@
                                 self.loadingToolbox = true;
                                 delete params['workflow'];
                                 delete params['t'];
-                                axios.get(`${tahitiUrl}/operations`, { params }).then(resp => self._loadOperations(self, workflow, resp, false)
+                                axios.get(`${tahitiUrl}/operations`, { params }).then(
+                                    resp => self._loadOperations(self, workflow, resp.data, false)
                                 ).catch(function (e) {
                                     this.error(e);
                                 });
@@ -764,16 +767,12 @@
                             let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
                             axios.post(url, { version })
                                 .then((resp) => {
-                                    let workflow = resp.data;
-                                    workflow.tasks.forEach((task) => {
-                                        task.operation = self.operationsLookup[task.operation.id]
-                                        task.step = null
-                                    });
-                                    self.success(self.$t('workflow.versionRestored',
-                                        { version, version2: 2343 }));
-                                    self.workflow = workflow;
-                                    self.closeHistory();
                                     self.isDirty = false;
+                                    self.success(self.$t('workflow.versionRestored',
+                                        { version}));
+                                    //self.$router.go(self.$router.currentRoute);
+                                    self.closeHistory();
+                                    self.load();
                                 }).catch((e) => self.error(e))
                         });
                     });
@@ -833,7 +832,7 @@
                     }.bind(this));
             },
             closeHistory() {
-                this.$refs.historyModal.hide();
+                this.$refs.historyModal.close();
             },
             saveWorkflowProperties() {
             },

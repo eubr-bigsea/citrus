@@ -5,12 +5,12 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1>{{$tc('titles.platform', 2)}}</h1>
                 <router-link :to="{name: 'addPlatform'}" class="btn btn-primary btn-lemonade-primary">
-                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}</router-link>
+                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}
+                </router-link>
             </div>
         </div>
-        
-        <v-server-table ref="platformList" :columns="columns" :options="options"
-            name="platformList">
+
+        <v-server-table ref="platformList" :columns="columns" :options="options" name="platformList">
             <template slot="id" slot-scope="props">
                 <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
                     {{props.row.id}}</router-link>
@@ -33,7 +33,7 @@
             <template slot="version" slot-scope="props">{{props.row.version}}</template>
         </v-server-table>
     </div>
-    
+
 </template>
 
 <script>
@@ -77,7 +77,7 @@
                     saveState: true,
                     customFilters: ['platform'],
                     filterByColumn: false,
-                    requestFunction: function (data) {
+                    requestFunction: async function (data) {
                         data.sort = data.orderBy;
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
@@ -89,20 +89,15 @@
                         let url = `${tahitiUrl}/platforms`;
                         let headers = {};
                         this.$Progress.start();
-                        return axios
-                            .get(url, { params: data })
-                            .then(resp => {
-                                this.$Progress.finish();
-                                return {
-                                    data: resp.data,
-                                };
-                            })
-                            .catch(
-                                function (e) {
-                                    this.$Progress.finish();
-                                    this.error(e);
-                                }.bind(this)
-                            );
+                        try {
+                            const resp = await axios.get(url, { params: data });
+                            return resp.data;
+                        } catch (e) {
+                            this.error(e);
+                        } finally {
+                            this.$Progress.finish();
+                        }
+
                     },
                     texts: {
                         filter: this.$tc('common.filter'),
