@@ -67,11 +67,11 @@
                         this.tags = JSON.parse(this.value);
                         return this.tags;
                     } else {
-                        return this.value || this.field.default;
+                        return this.internalSelected || this.value || this.field.default;
                     }
                 },
                 set(value) {
-                    this.value = value;
+                    this.internalSelected = value;
                 }
             }
         },
@@ -84,7 +84,7 @@
             },
             updated(e) {
                 this.selected = e.target ? e.target.value : e;
-                this.$root.$emit(this.message, this.field, this.selected,
+                this.$root.$emit(this.message, this.field, this.internalSelected,
                     e.target.options[e.target.selectedIndex].text);
             }
         },
