@@ -19,6 +19,9 @@
                     GitHub
                 </a>
             </li>
+            <li v-if="instance">
+                {{instance}}
+            </li>
         </ul>  
         
     </footer>
@@ -51,6 +54,9 @@
         computed: {
             version(){
                 return process.env.VUE_APP_VERSION || '2.0.0';
+            },
+            instance(){
+                return process.env.VUE_APP_INSTANCE;
             }
         }
     };
