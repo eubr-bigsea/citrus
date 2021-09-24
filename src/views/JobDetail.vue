@@ -11,18 +11,19 @@
                             </h1>
                         </div>
                         <div>
-                        <router-link v-if="workflow.id"
-                            :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                            class="btn btn-outline-primary d-print-none float-right btn-sm">
-                            <i class="fa fa-chevron-left"></i>
-                            &nbsp; {{$t('actions.back')}} -
-                            {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
-                        </router-link>
-					    <button v-if="job.status === 'RUNNING' || job.status === 'PENDING' || job.status === 'WAITING' " class="btn btn-sm btn-outline-danger mr-1 pull-right"
-    				    	:title="$t('actions.stop')"
-	    			    	@click="stop(job.id)">
-    				    	<font-awesome-icon icon="stop"></font-awesome-icon> {{$t('actions.stop')}}
-					    </button>
+                            <router-link v-if="workflow.id"
+                                :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
+                                class="btn btn-outline-primary d-print-none float-right btn-sm">
+                                <i class="fa fa-chevron-left"></i>
+                                &nbsp; {{$t('actions.back')}} -
+                                {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
+                            </router-link>
+                            <button
+                                v-if="job.status === 'RUNNING' || job.status === 'PENDING' || job.status === 'WAITING' "
+                                class="btn btn-sm btn-outline-danger mr-1 pull-right" :title="$t('actions.stop')"
+                                @click="stop(job.id)">
+                                <font-awesome-icon icon="stop"></font-awesome-icon> {{$t('actions.stop')}}
+                            </button>
                         </div>
                     </div>
                     <div>
@@ -34,8 +35,6 @@
                                         :editable="false" :shink="true" :loaded="loaded" :show-task-decoration="true"
                                         :initial-zoom=".85" />
                                 </div>
-
-
                                 <div class="job-details">
                                     <b-card no-body>
                                         <b-tabs card>
@@ -47,7 +46,6 @@
                                                     {{$tc('job.logs', 2)}}
                                                 </template>
                                                 <div>
-
                                                     <div class="alert" :class="{
                                                             'alert-success': job.status=='COMPLETED',
                                                             'alert-danger': job.status=='ERROR',
@@ -77,8 +75,8 @@
                                                                     }"></span>
                                                                     -->
 
-                                                                <span
-                                                                    class="date">{{log.date | formatJsonHourMinute}}</span>
+                                                                <span class="date">{{log.date |
+                                                                    formatJsonHourMinute}}</span>
                                                                 <span class="info">{{log.message}}</span>
                                                             </p>
                                                         </template>
@@ -115,8 +113,8 @@
                                             <b-tab v-if="job.exception_stack" :title="$t('titles.errorDetail')">
                                                 <div style="font-size:.8em">
                                                     <code>
-                              <pre>{{job.exception_stack}}</pre>
-                            </code>
+                                                       <pre>{{job.exception_stack}}</pre>
+                                                    </code>
                                                 </div>
                                             </b-tab>
                                             <b-tab :title="$tc('job.details', 2)">
@@ -157,7 +155,7 @@
                                 </div>
 
                             </b-tab>
-                            <b-tab :title="$tc('job.results', 2)">
+                            <b-tab v-if="false" :title="$tc('job.results', 2)">
                                 <div v-for="(step, inx) in job.steps" :key="inx" class="row">
                                     <div class="col-md-12 lemonade">
                                         <div v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
@@ -175,10 +173,31 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div v-if="step.logs.find(s => s.type === 'OBJECT')"
+                                            class="mt-2 border-bottom pb-2">
+                                            <TaskDisplay :task="getTask(step.task.id)" />
+                                            &nbsp;
+                                            {{step.status}}
+                                            <div v-for="log in step.logs" :key="log.id"
+                                                style="font-size:.9em; margin-top: 20px">
+                                                <span v-if="log.type === 'OBJECT'">
+                                                    <!--
+                                                    <b-table :no-border-collapse="false" :items="log.message.rows"
+                                                        :per-page="50" :fields="log.message.attributes"
+                                                        tbody-class="body" sticky-header="500px" class="table border"
+                                                        outlined small hover striped bordered responsive>
+                                                    </b-table>
+                                                    -->
+                                                    <v-client-table ref="jobList" :data="log.message.rows"
+                                                        :columns="log.message.attributes.map(a=>a.label)"
+                                                        :options="sampleOptions"></v-client-table>
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </b-tab>
-                            <b-tab v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
+                            <b-tab v-if="false" v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
                                 @click="showVisualizations = true">
                                 <div v-for="result in job.results" :key="result.id" class="row">
                                     <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
@@ -188,6 +207,71 @@
                                     </div>
                                 </div>
                             </b-tab>
+  
+                            <b-tab :title="$tc('job.results', 2)">
+                                <div class="row">
+                                    <div class="col-md-3 pt-3 result-area">
+                                        <b-list-group>
+                                            <b-list-group-item v-for="(results, taskId) in allResults" @click.prevent="showResult(taskId)" button  href="#" >
+                                                {{results[0].value.task.name}}
+                                                <br/><em><small>{{results[0].value.task.operation.name}}</small></em>
+                                            </b-list-group-item>
+                                        </b-list-group>
+                                    </div>
+                                    <div class="col-md-9 border-left result-area">
+                                        <div v-for="(results, taskId) in allResults" :key="taskId" class="row">
+                                            <div class="col-md-12">
+                                                <b-card :header="getTask(taskId).name" class="mt-2"
+                                                    header-bg-variant="light" border-variant="info" :id="`task-${taskId}`">
+                                                    <template v-for="(result, inx) in results">
+                                                        <div v-if="result.type === 'result'" class="col-md-12 lemonade">
+                                                            <div v-if="result.value.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
+                                                                :header="result.value.task.name" class="mt-2"
+                                                                header-bg-variant="light" border-variant="info">
+
+                                                                <div class="pl-5 mt-2" v-for="log in result.value.logs"
+                                                                    :key="log.id">
+                                                                    <span v-if="log.type === 'HTML'">
+                                                                        <div class="html-div" v-html="log.message">
+                                                                        </div>
+                                                                    </span>
+                                                                    <div v-else-if="log.type === 'IMAGE'"
+                                                                        class="image-result">
+                                                                        <img
+                                                                            :src="'data:image/png;base64,' + log.message">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div v-if="result.value.logs.find(s => s.type === 'OBJECT')"
+                                                                :header="result.value.task.name" class="mt-2"
+                                                                header-bg-variant="light" border-variant="info">
+                                                                <h6>({{result.value.task.operation.name}})</h6>
+
+                                                                <div class="pl-5 mt-2" v-for="log in result.value.logs"
+                                                                    :key="log.id">
+                                                                    <span v-if="log.type === 'OBJECT'">
+                                                                        <v-client-table ref="jobList"
+                                                                            :data="log.message.rows"
+                                                                            :columns="log.message.attributes.map(a=>a.label)"
+                                                                            :options="sampleOptions"></v-client-table>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div v-if="result.type === 'visualization'"
+                                                            class="col-md-12 lemonade">
+                                                            <caipirinha-visualization
+                                                                :url="getCaipirinhaLink(job.id, result.value.task.id, 0)">
+                                                            </caipirinha-visualization>
+                                                        </div>
+                                                    </template>
+                                                </b-card>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </b-tab>
+
                             <b-tab :title="$tc('job.sourceCode')" @click="showSourceCode = 1">
                                 <b-card class="mt-3">
                                     <SourceCode v-if="showSourceCode" :job="job.id" />
@@ -284,6 +368,23 @@
                 showProperties: false,
                 showVisualizations: false,
                 progressIndicators: [],
+                sampleOptions: {
+                    filterable: false, perPageValues: [],
+                    sortIcon: {
+                        base: 'fa fas',
+                        is: 'fa-sort ml-10',
+                        up: 'fa-sort-amount-up',
+                        down: 'fa-sort-amount-down'
+                    },
+                    texts: {
+                        filter: this.$tc('common.filter'),
+                        count: this.$t('common.pagerShowing'),
+                        limit: this.$t('common.limit'),
+                        noResults: this.$t('common.noData'),
+                        loading: this.$t('common.loading'),
+                        filterPlaceholder: this.$t('common.filterPlaceholder')
+                    }
+                }
             };
         },
         computed: {
@@ -298,6 +399,25 @@
                 return logs.sort((a, b) => {
                     return a.id - b.id;
                 });
+            },
+            allResults() {
+                const results = [];
+                const self = this;
+                this.job.steps.filter(s => s.logs.find(l => l.type === 'HTML' || l.type === 'IMAGE')).forEach(step => {
+                    step.task = self.tasks[step.task.id];
+                    results.push({ type: 'result', order: 0, value: step });
+                });
+                if (this.job.results) {
+                    this.job.results.forEach(result => {
+                        result.task = self.tasks[result.task.id];
+                        results.push({ type: 'visualization', order: 0, value: result });
+                    });
+                }
+                return results.reduce((acc, curr) => {
+                    if (!acc[curr.value.task.id]) acc[curr.value.task.id] = [];
+                    acc[curr.value.task.id].push(curr);
+                    return acc;
+                }, {});
             }
         },
         beforeDestroy() {
@@ -319,10 +439,11 @@
                     self.job = resp.data;
                     const workflow = self.job.workflow;
                     self.jobStatus = self.job.status.toLowerCase();
+                    const operationIds = workflow.tasks.map(t => t.operation.id.toString());
                     const params = {
                         platform: this.$route.params.platform,
                         lang: this.$root.$i18n.locale,
-                        workflow: workflow.id,
+                        ids: operationIds,
                         disabled: true, // even disabled operations must be returned to keep compatibility
                         ts: new Date().getTime() // in order to avoid cache
                     };
@@ -370,6 +491,17 @@
                     });
                     self.job.steps.forEach(step => {
                         self.tasks[step.task.id].status = step.status;
+                        step.logs.forEach(log => {
+                            if (log.type === 'OBJECT' && typeof (log.message) === 'string') {
+                                log.message = JSON.parse(log.message);
+                                if (log.message.rows) { // Sample table
+                                    const attributeNames = log.message.attributes.map(attr => attr.key);
+                                    log.message.rows = log.message.rows.map(
+                                        row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                                }
+                            }
+
+                        });
                     });
                     resp.data.results.forEach(result => {
                         self.results[result.task.id] = result;
@@ -391,33 +523,43 @@
             });
         },
         methods: {
-            stop(jobId){
-              this.confirm(
-                this.$t('actions.stop'),
-                this.$t('messages.doYouWantToStop'),
-                () => {
-                  this.$Progress.start();
-                  axios
-                    .post(`${standUrl}/jobs/${jobId}/stop`, {})
-                    .then(resp => {
-                      this.success(
-                        this.$t('messages.successStop', {
-                          what: this.$tc('titles.job', 1)
-                        })
-                      );
-                      this.$Progress.finish();
-                      this.$router.push({name: 'editWorkflow', 
-                        params: {id: this.workflow.id, 
-                            platform: this.workflow.platform.id}});
-                    })
-                    .catch(
-                      function(e) {
-                        this.$Progress.finish();
-                        this.error(e);
-                      }.bind(this)
-                    );
+            stop(jobId) {
+                this.confirm(
+                    this.$t('actions.stop'),
+                    this.$t('messages.doYouWantToStop'),
+                    () => {
+                        this.$Progress.start();
+                        axios
+                            .post(`${standUrl}/jobs/${jobId}/stop`, {})
+                            .then(resp => {
+                                this.success(
+                                    this.$t('messages.successStop', {
+                                        what: this.$tc('titles.job', 1)
+                                    })
+                                );
+                                this.$Progress.finish();
+                                this.$router.push({
+                                    name: 'editWorkflow',
+                                    params: {
+                                        id: this.workflow.id,
+                                        platform: this.workflow.platform.id
+                                    }
+                                });
+                            })
+                            .catch(
+                                function (e) {
+                                    this.$Progress.finish();
+                                    this.error(e);
+                                }.bind(this)
+                            );
+                    }
+                );
+            },
+            showResult(taskId){
+                const elem = document.getElementById(`task-${taskId}`);
+                if (elem){
+                    elem.scrollIntoView();
                 }
-              );
             },
             getTask(taskId) {
                 return this.tasks[taskId];
@@ -463,13 +605,19 @@
                         if (step) {
                             step.status = msg.status;
                             const found = step.logs.filter(v => v.id === msg.id);
+                            let message = msg.message;
+                            if (msg.type === 'OBJECT') {
+                                const attributeNames = message.attributes.map(attr => attr.key);
+                                message.rows = message.rows.map(
+                                    row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                            }
                             if (found.length === 0) {
                                 step.logs.push({
                                     id: msg.step_id,
                                     level: msg.level,
                                     date: msg.date,
                                     type: msg.type,
-                                    message: msg.message
+                                    message
                                 });
                             }
                         }
@@ -493,7 +641,7 @@
                                 window.setTimeout(() => {
                                     self.jobStatus = 'COMPLETED';
                                     self.job.steps.forEach(step => {
-                                        if (step.status !== 'COMPLETED'){
+                                        if (step.status !== 'COMPLETED') {
                                             step.status = 'COMPLETED';
                                         }
                                     });
@@ -710,9 +858,21 @@
         text-decoration: none;
     }
 
+    .plot-container.plotly {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .table-parameters td,
     .table-parameters th {
         padding: 1px !important;
         font-size: 0.75em;
+    }
+    .result-area {
+        max-height: 75vh;
+        border: 1px solid #ccc;
+        padding: 4px 0;
+        overflow: auto;
     }
 </style>
