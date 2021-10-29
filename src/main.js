@@ -145,7 +145,7 @@ const locales = {
 
 Vue.filter('formatJsonDate', v => {
     if (v) {
-        return format(parse(v), 'DD/MM/YYYY HH:MM');
+        return format(parse(v), 'DD/MM/YYYY HH:mm');
     }
 });
 Vue.filter('timeFromNow', (v, l) =>
@@ -153,7 +153,7 @@ Vue.filter('timeFromNow', (v, l) =>
 );
 Vue.filter('formatJsonHourMinute', v => {
     if (v) {
-        return format(parse(v), 'HH:MM:ss');
+        return format(parse(v), 'HH:mm:ss');
     }
 });
 
