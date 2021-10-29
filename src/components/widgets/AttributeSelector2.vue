@@ -130,7 +130,8 @@
             },
             move(direction, index) {
                 if (direction === 'all-right') {
-                    let sel = [... this.value];
+                    
+                    let sel = this.value ? [... this.value] : [];
                     this.suggestions.forEach((v) => {
                         if (sel.indexOf(v) === -1)
                             sel.push(v)
