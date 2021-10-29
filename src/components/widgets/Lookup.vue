@@ -2,10 +2,10 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="readOnly || !field.editable">
-            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
+            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control form-control-sm" />
         </div>
         <div v-else class="mb-1">
-            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
+            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control form-control-sm" />
             <b-link @click.prevent="$refs.modal.show()" variant="sm">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>

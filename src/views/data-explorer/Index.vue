@@ -128,6 +128,7 @@
     import { Event } from 'vue-tables-2';
 
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+    const META_PLATFORM_SLUG = 'meta';
     export default {
         mixins: [Notifier],
         methods: {
@@ -184,6 +185,7 @@
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = 5;
                         data.name = self.searchFilter //data.query;
+                        data.platform = META_PLATFORM_SLUG;
                         if (self.typeFilter){
                             data.types = self.typeFilter;
                         } else {

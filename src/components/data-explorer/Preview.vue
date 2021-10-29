@@ -276,8 +276,10 @@
 
         <modal-other-actions :attribute="menuData.field" @ok="otherActionsOk" ref="modalOtherActions" />
 
+        <!--
         <expression-editor :as-widget="false" :multiple="false" :field="propertyField" ref="expressionEditor"
             message="click" @click="saveExpression" />
+            -->
     </div>
 </template>
 <script>
@@ -626,8 +628,6 @@
                 if (col) {
                     col.locked = state;
                 }
-            },
-            loadData() {
             },
             /**/
             tableContextMenu(item, index, event) {

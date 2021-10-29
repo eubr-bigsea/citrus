@@ -244,6 +244,7 @@ class WorkflowManager {
         })
     }
     deleteTask(taskId) {
+        debugger
         const pos = this.workflow.tasks.findIndex(task => task.id === taskId);
         if (pos > -1) {
             if (pos == this.workflow.tasks.length - 1) {
@@ -567,6 +568,7 @@ export default class Store {
         }
     }
     deleteAttribute(attributeName) {
+        debugger
         const pos = this.attributes.findIndex((attribute) => attribute.label === attributeName);
         if (pos > -1) {
             this.attributes.splice(pos, 1);

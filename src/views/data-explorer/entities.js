@@ -1,9 +1,27 @@
 class Workflow {
-    constructor({ id = null, platform = null, name = null, type = null, cluster = null, tasks = [], flows = [], version = null } = {}) {
-        const p = new Platform(platform);
-        Object.assign(this, { id, name, platform: p, cluster, tasks, version, flows, type });
-        this.history = 0;
+    constructor({ id = null, platform = null, name = null, type = null, cluster = null, tasks = [], flows = [], version = null, user = null} = {}) {
 
+        let _platform = platform instanceof Platform ? platform : new Platform(platform);
+        let _tasks = tasks.map(task => (task instanceof Task) ? task : new Task(task));
+        let _flows = flows.map(flow => (flow instanceof Flow) ? flow : new Flow(flow));
+
+        Object.assign(this, {
+            id, name, type, version,
+            platform: _platform,
+            cluster,
+            tasks: _tasks,
+            flows: _flows,
+            enabled: true,
+            user,
+        });
+        this.history = 0;
+    }
+    addTask(op) {
+        this.tasks.push(op.createTask({name: op.name}));
+        this.tasks.forEach((task, inx) => task.display_order = inx);
+    }
+    deleteTask(task){
+        this.tasks = this.tasks.filter(t => t.id !== task.id);
     }
 }
 class Platform {
@@ -28,8 +46,9 @@ class Operation {
     createTask({ name = null } = {}) {
         const task = new Task({
             name, id: this.generateTaskId(),
-            operation: { id: this.id, slug: this.slug, name: name || this.name }
+            operation: this //{ id: this.id, slug: this.slug, name: name || this.name }
         });
+       
         task._operation = this;
         return task;
     }
@@ -63,14 +82,29 @@ class FormField {
     }
 }
 class Task {
-    constructor({ id = null, name = 'unnamed', operation = null } = {}) {
+    constructor({ id = null, name = 'unnamed', enabled = true, operation = null, display_order = 0,
+            environment = null, left = 0, top = 0, forms ={} } = {}) {
         Object.assign(this, { id, name, operation });
         this.top = 0;
         this.left = 0;
         this.z_index = 0;
-        if (this.id === null){
+        this.enabled = enabled;
+        this.display_order = display_order;
+        this.environment = environment;
+        this.left = left;
+        this.top = top;
+        
+        //Initialize form fields
+        operation.forms.filter(f => f.category === 'execution')
+            .forEach(f => f.fields.forEach(field => this.forms[field.name] = {value: field.default_value}));
+
+        this.forms = forms;
+        this.forms =  Object.assign(forms, this.forms);
+
+        if (this.id === null) {
             this.id = this.operation.generateTaskId();
         }
+        
 
         Object.defineProperty(this, '_operation', {
             value: null,
@@ -83,7 +117,11 @@ class Task {
         return this._operation.ports.find(p => p.slug === slug);
     }
     setProperty(name, value) {
-        this.forms[name] = { value, label: null, labelValue: null };
+        if (value instanceof Object) {
+            this.forms[name] = value;
+        } else {
+            this.forms[name] = { value };
+        }
     }
     move(left, top) {
         this.left = left;
@@ -93,7 +131,7 @@ class Task {
         const localPortObj = this.getPortBySlug(myPort);
         const otherPortObj = other.getPortBySlug(otherPort);
 
-        if (!localPortObj || ! otherPortObj){
+        if (!localPortObj || !otherPortObj) {
             console.debug(myPort, otherPort, this._operation.ports, other._operation.ports);
         }
         return new Flow({

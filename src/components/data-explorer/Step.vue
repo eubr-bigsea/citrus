@@ -4,7 +4,7 @@
         <div class="step-number">
             #{{index + 1}}
         </div>
-        <div style="width:15px" class="pt-1 float-left text-secondary step-drag-handle">
+        <div style="width:15px" class="float-left text-secondary step-drag-handle">
             <span class="fa fa-grip-vertical"></span>
             <div class="mt-2">
                 <span :class="getStepClass(step)"></span>
@@ -14,31 +14,33 @@
             <div class="mb-2">
                 <b-form-checkbox v-model="step.selected" class="step-description">
                     <del v-if="!step.enabled">
-                        <span v-html="step.description"></span>
+                        <span v-html="step.name"></span>
                     </del>
-                    <span v-else v-html="step.description"></span>
+                    <span v-else v-html="step.name"></span>
                 </b-form-checkbox>
             </div>
-            <div class="ml-4">
-                <b-button-group v-if="!editing">
+            <div class="">
+                <b-button-group v-if="!editing" class="zoom-85">
                     <b-button variant="light" size="sm" @click="$emit('toggle', step)" :title="$t('actions.enable')">
                         <span v-if="step.enabled" class="fa fa-toggle-on text-success"></span>
                         <span v-else class="fa fa-toggle-off text-secondary"></span>
                     </b-button>
 
-                    <b-button variant="light" size="sm" class="text-primary" @click="edit" :title="$t('actions.edit')">
+                    <b-button variant="light" size="sm" class="text-secondary" @click="edit" :title="$t('actions.edit')">
                         <span class="fa fa-edit"></span>
                     </b-button>
 
+                    <!--
                     <b-button variant="light" size="sm" class="text-secondary" :title="$t('actions.view')"><span
                             class="fa fa-eye"></span>
                     </b-button>
+                    -->
 
                     <b-button variant="light" size="sm" class="text-secondary" @click="$emit('delete', step.id)"
                         :title="$t('actions.delete')">
                         <span class="fa fa-trash"></span>
                     </b-button>
-                    
+
                     <!--
                     <b-button variant="light" size="sm" class="text-secondary"
                         @click.prevent="$emit('customOpen', $event, step)">
@@ -48,77 +50,13 @@
                 </b-button-group>
                 <div v-else class="border-top" style="width: 100%; padding: 2px">
                     <div class="mb-3">
-                        <div v-for="field in step.forms.fields" :key="`${field.name}:${field.childName}`" class="mb-2">
-                            |||{{field.value.__ob__ !== undefined}}|||
-                            <strong>{{field.label}}:</strong>
-                            <template v-if="field.type === 'single-attribute'">
-                                <v-select :multiple="false" :taggable="true" :options="suggestedAttributes"
-                                    v-model="field.value[0]">
-                                    <div slot="no-options"></div>
-                                </v-select>
-                                <input type="text" v-model="field.value[0]">
-                            </template>
-                            <template v-if="field.type === 'multiple-attribute'">
-                                <v-select :multiple="true" :taggable="true" :options="suggestedAttributes"
-                                    v-model="field.value">
-                                    <div slot="no-options"></div>
-                                </v-select>
-                            </template>
-
-                            <template v-else-if="field.type === 'text'">
-                                <b-input v-if="field.isList" v-model="field.value[0]" :maxlength="field.maxLength"
-                                    size="sm" />
-                                <b-input v-else v-model="field.value" :maxlength="field.maxLength" size="sm" />
-                            </template>
-
-                            <template v-else-if="field.type === 'dropdown'">
-                                {{field.value}}
-                                <b-form-select v-model="field.value" :options="field.options" size="sm" />
-                            </template>
-                            <!--
-                            <b>{{field}}</b>
-                            {{step.task.forms.$meta}}
-                            {{step.task.forms[field.name]}}
-                            -->
-                        </div>
-                        <!--
-                        <template v-if="inputAttributes === 'single'">
-                            {{$tc('common.attribute')}}:
-                            <b-form-select size="sm" v-model="step.task.forms.$meta.attribute">
-                                <b-form-select-option :value="attr.label" v-for="attr in validAttributes">
-                                    {{attr.label}}
-                                </b-form-select-option>
-                            </b-form-select>
-                        </template>
-                        <template v-if="inputAttributes === 'single'">
-                            {{$tc('common.attribute', 2)}}:
-                            <v-select :multiple="true" :taggable="true" :options="attributes">
-                                <div slot="no-options"></div>
-                            </v-select>
-                        </template>
-                        <template v-if="inputAlias">
-                            {{$tc('common.alias')}}:
-                            <b-form-input size="sm" v-model="step.parameters.alias" />
-
-                            <div v-if="functionName === 'round'">
-                                Número de dígitos:
-                                <b-form-input type="number" size="sm" />
+                        <template v-for="form in step.operation.forms">
+                            <div v-for="field in form.fields" :key="`${step.id}:${field.name}`" class="mb-2 zoom-85">
+                                <component :is="getWidget(field)" :field="field" :value="getValue(field.name)"
+                                    :type="field.suggested_widget" :read-only="!field.editable" context="context">
+                                </component>
                             </div>
                         </template>
-                        <template v-if="showKeepAttribute" v-model="keepAttribute">
-                            <b-form-checkbox>Manter atributo original</b-form-checkbox>
-                        </template>
-                        <template v-if="keepAttribute">
-                            Adicionar novo atributo:
-                            <b-form-radio-group plain>
-                                <b-form-radio>Antes</b-form-radio>
-                                <b-form-radio>Após</b-form-radio>
-                            </b-form-radio-group>
-                            <v-select :multiple="true" :taggable="true" :options="attributes">
-                                <div slot="no-options"></div>
-                            </v-select>
-                        </template>
-                    -->
                     </div>
                     <b-button-group class="float-right">
                         <b-button variant="light text-primary" size="sm" @click="save" :title="$t('actions.save')">
@@ -174,11 +112,28 @@
             this.functionName = this.step.functionName;
         },
         methods: {
+            getValue(name) {
+                return this.task
+                    && this.task.forms
+                    && this.task.forms[name]
+                    ? this.task.forms[name].value : null;
+            },
+            getWidget(field) {
+                if (field.suggested_widget.endsWith(':read-only')) {
+                    const s = field.suggested_widget;
+                    return s.substring(0, s.length - 10) + '-component';
+                } else {
+                    return field.suggested_widget + '-component';
+                }
+            },
             cancelEdit() {
                 this.editing = false;
                 //this.step = JSON.parse(JSON.stringify(this.step));
             },
             edit() {
+                this.editing = true;
+            },
+            edit2() {
                 const self = this;
                 this.step.forms.fields.forEach((field) => {
                     if (self.step?.forms?.callbacks?.in) {
@@ -186,7 +141,7 @@
                         self.step.forms.callbacks.in(
                             field, value,
                             self.step.task.forms['$meta']?.value);
-                    } else if(self.step.task.forms[field.name]) {
+                    } else if (self.step.task.forms[field.name]) {
                         field.value = JSON.parse(JSON.stringify(self.step.task.forms[field.name]?.value));
                     }
                 });
@@ -253,5 +208,8 @@
     .step-description>>>code {
         color: #222;
         font-weight: lighter;
+    }
+    .zoom-85 {
+        zoom: 85%;
     }
 </style>

@@ -87,7 +87,7 @@ const DeploymentList = () => import(/* webpackChunkName: "group-deployment" */ '
 const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentEdit.vue');
 
 
-const Explorer = () => import ('./components/data-explorer/Explorer.vue');
+const Explorer = () => import ('./views/data-explorer/Explorer.vue');
 const DataExplorerStart = () => import ('./views/data-explorer/DataExplorerStart.vue');
 const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
 const ModelTraining = () => import ('./views/data-explorer/ModelTraining.vue');

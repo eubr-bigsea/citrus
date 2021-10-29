@@ -1,11 +1,12 @@
 <template>
     <div>
+        <!--
         <div class="row">
             <div class="col-md-12">
                 <PreviewMenu :selected="selected" @select="performAction" />
             </div>
         </div>
-
+        -->
         <div class="row">
             <div class="col-md-4 col-lg-3 noselect mt-1 pl-3">
                 <div class="title">
@@ -14,14 +15,15 @@
                 <div class="mb-2">
                     <small>{{$tc('titles.dataSource')}}:</small>
                     <b-input-group>
-                        <b-input size="sm" v-model="dataSource.labelValue" disabled />
+                        <b-input size="sm" v-model="dataSourceLabel" disabled />
                         <b-input-group-append>
-                            <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary"
-                                size="sm">
+                            <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary" size="sm"
+                                @click="warning('Under development')">
                                 <span class="fa fa-database"></span>
                             </b-button>
-                            <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm">
-                                <span class="fa fa-vials"></span>
+                            <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm"
+                                @click="warning('Under development')">
+                                <span class="fa fa-filter"></span>
                             </b-button>
                         </b-input-group-append>
                     </b-input-group>
@@ -58,23 +60,44 @@
                                     :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
                                     <step :step="step" :service-bus="store.serviceBus" :language="language"
                                         :attributes="tableData.attributes" :index="inx" @toggle="store.toggleStep(step)"
-                                        @delete="store.deleteStep(step)" @update="store.updateStep(step)"
+                                        @delete="store.deleteStep(step)" update="store.updateStep(step)"
                                         @custom-open="store.customOpen" />
                                 </div>
                             </draggable>
                         </div>
                     </VuePerfectScrollbar>
                 </div>
+                <!--
                 <div v-else class="mt-5 alert alert-warning">
                     <span class="fa fa-exclamation-triangle"></span> {{$t('dataExplorer.noStep')}}
                 </div>
+                -->
+                <div v-if="workflowObj" class="mt-5">
+                    <div id="step-container">
+                        <draggable @start="drag=true" @end="drag=false" class="list-group" ghost-class="ghost"
+                            handle=".step-drag-handle" :list="workflowObj.tasks">
+                            <div v-for="task, inx in workflowObj.tasks" :key="task.id" v-if="task.operation.slug !== 'read-data'" 
+                                class="list-group-item steps clearfix" :title="task.name">
+                                <step :step="task" :service-bus="store.serviceBus" :language="language"
+                                    :attributes="tableData.attributes" :index="inx - 1"
+                                    @toggle="task.enabled = !task.enabled" @delete="workflowObj.deleteTask(task)"
+                                    @update="store.updateStep(task)" @custom-open="store.customOpen" />
+                            </div>
+                        </draggable>
+                    </div>
+                    <!--FIXME -->
+                </div>
             </div>
+            <!-- Preview area -->
             <div class="col-md-8 col-lg-9 border-left fill-height">
+                <PreviewMenu :selected="selected" @select="performAction" :menus="menus" />
                 <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
                     :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
                     :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview"
                     @drop="performAction" />
             </div>
+            
+            <!--
             <simple-input ref="simpleInput" :cancel-title="simpleInput.cancelTitle" :ok-title="simpleInput.okTitle"
                 :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
                 :initial="simpleInput.initial" />
@@ -84,7 +107,7 @@
             <concat-input ref="concatInput" :cancel-title="findReplace.cancelTitle" :ok-title="findReplace.okTitle"
                 :title="findReplace.title" :message="findReplace.message" :ok="findReplace.okClicked"
                 :initial="findReplace.initial" :attributes="attributes" />
-
+                -->
 
             <!--
         <b-modal ref="modalSelectAttributes" button-size="sm" :title="$t('actions.selectAttributes')"
@@ -117,15 +140,16 @@
     import axios from 'axios';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import draggable from 'vuedraggable';
-    import Preview from './Preview';
-    import Step from './Step';
+    import Preview from '../../components/data-explorer/Preview';
+    import Step from '../../components/data-explorer/Step';
     import Notifier from '../../mixins/Notifier.js';
-    import Commands from './Commands.js';
-    import PreviewMenu from './PreviewMenu.vue';
+    import Commands from '../../components/data-explorer/Commands.js';
+    import PreviewMenu from '../../components/data-explorer/PreviewMenu.vue';
     import contextMenu from 'vue-context-menu';
-    import SimpleInput from './SimpleInput';
-    import FindReplace from './FindReplace';
-    import ConcatInput from './ConcatInput';
+    import SimpleInput from '../../components/data-explorer/SimpleInput';
+    import FindReplace from '../../components/data-explorer/FindReplace';
+    import ConcatInput from '../../components/data-explorer/ConcatInput';
+    import { Workflow, Platform, Operation, OperationList, Task } from './entities.js'
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
@@ -133,11 +157,13 @@
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
 
-    const SUPPORTED_OPERATIONS = ['cast', 'data-reader',
+    const SUPPORTED_OPERATIONS = ['cast', 'read-data',
         'filter-selection', 'projection', 'sort', 'transformation',
         'sample', 'clean-missing'];
 
+    const META_PLATFORM_ID = 1000;
     export default {
+        name: "DataExplorer",
         mixins: [Notifier],
         components: {
             SimpleInput, Preview, draggable, VuePerfectScrollbar,
@@ -152,6 +178,7 @@
             return {
                 attributeSelection: [], // used to select attributes
                 dataSource: {}, // current data source
+                dataSourceLabel: null,
                 dataTypes: [
                     'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'JSON', 'Text', 'Time',],
                 internalWorkflowId: null, // workflow id
@@ -159,10 +186,11 @@
                 job: null,  //last job details
                 language: 'pt', //FIXME
                 loadingData: false,  //data loading state
+                operationLookup: new Map(),
+                schemas: {},
                 selected: { field: {} }, // selected attribute in table preview
                 store: new Commands(new Vue(), 'pt'),  //store rules implementation
                 socket: null, // used by socketio (web sockets)
-                tableData: { attributes: [] }, // data used to render preview table
                 simpleInput: {
                     okTitle: this.$t('common.ok'),
                     cancelTitle: this.$t('actions.cancel'),
@@ -179,14 +207,20 @@
                     initial: null,
                     message: null,
                 },
+                tableData: { attributes: [] }, // data used to render preview table
+                workflowObj: null,
+                //
+                menus: []
             }
         },
-        mounted() {
+        async mounted() {
             this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
-            this.loadWorkflow();
+            await this.loadOperations();
+            await this.loadWorkflow();
             /*this.serviceBus.$on('newStep', this.addTask);
             this.serviceBus.$on('toggleScroll', this.toggleScroll);*/
         },
+
         beforeDestroy() {
             this.disconnectWebSocket();
             /*
@@ -195,6 +229,40 @@
             */
         },
         methods: {
+            async loadOperations() {
+                // Platform is always META_OPERATION_ID
+                try {
+                    const resp = await axios.get(`${tahitiUrl}/operations?platform=${META_PLATFORM_ID}`);
+                    const operations = resp.data.data;
+                    const menuCategories = new Map();
+                    operations.forEach(op => {
+                        const dataType = op.categories.find(c => c.type === 'data-type');
+                        op.dataType = (dataType) ? dataType.name : 'all'; //FIXME
+                        const menu = op.categories.find(c => c.type.substring(0, 4) === 'menu');
+                        if (menu) {
+                            if (!menuCategories.has(menu.id)) {
+                                menuCategories.set(menu.id, { operations: [op], menu });
+                            } else {
+                                menuCategories.get(menu.id).operations.push(op);
+                            }
+                        }
+                        this.operationLookup.set(op.id, new Operation(op));
+                    });
+
+                    this.menus = Array.from(menuCategories.values()).sort((a, b) => a.menu.order - b.menu.order);
+                    this.menus.forEach(menu => {
+                        menu.operations.sort((a, b) => a.id - b.id);
+                        // type contains 3 parts: menu/enableCondition/icon
+                        const parts = menu.menu.type.split('/');
+                        menu.enableCondition = parts[1];
+                        menu.icon = parts[2];
+                    });
+
+                } catch (e) {
+                    this.error(e);
+                }
+
+            },
             resetMenuData() {
                 this.selected = { field: {} };
                 this.$refs.preview.resetMenuData();
@@ -222,7 +290,8 @@
             //
             saveWorkflow() {
                 let self = this
-                let cloned = JSON.parse(JSON.stringify(self.store.workflow));
+                //let cloned = JSON.parse(JSON.stringify(self.store.workflow));
+                let cloned = JSON.parse(JSON.stringify(self.workflowObj));
                 let url = `${tahitiUrl}/workflows`;
                 let method = 'post'
 
@@ -231,7 +300,7 @@
                     method = 'patch'
                 }
 
-                cloned.platform_id = 4; // FIXME
+                cloned.platform_id = META_PLATFORM_ID;
                 cloned.tasks.forEach((task) => {
                     task.operation = { id: task.operation.id };
                     delete task.version;
@@ -241,7 +310,7 @@
                 return axios[method](url, cloned, { headers: { 'Content-Type': 'application/json' } }).then(
                     (resp) => {
                         self.isDirty = false;
-                        self.store.setWorkflow(resp.data.data, false);
+                        //self.store.setWorkflow(resp.data.data, false);
 
                         self.success(self.$t('messages.savedWithSuccess',
                             { what: self.$tc('titles.workflow') }));
@@ -252,9 +321,15 @@
             },
 
             /* Attribute actions */
+            /**
+             * Handle preview menu clicks
+             */
             performAction(options) {
                 if (typeof this[options.action] === 'function') {
                     this[options.action](options.params);
+                } else if (options.action === 'menu') {
+                    this.workflowObj.addTask(this.operationLookup.get(options.params[0].id));
+                    console.debug(options);
                 } else {
                     console.log(`Unknown action: ${options.action}`);
                 }
@@ -570,46 +645,53 @@
             async loadWorkflow() {
                 const self = this;
                 this.$Progress.start()
-                await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`).then(
-                    (resp) => {
-                        const workflow = resp.data;
-                        workflow.tasks = workflow.tasks.sort(
-                            (a, b) => { return a.display_order - b.display_order; });
+                try {
+                    const resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
+                    const workflow = resp.data;
+                    workflow.tasks = workflow.tasks.sort(
+                        (a, b) => { return a.display_order - b.display_order; });
+                    const readerTask = workflow.tasks.find(t => t.operation.slug === 'read-data');
+                    this.dataSourceLabel = `${readerTask.forms.data_source.value} - ${readerTask.forms.data_source.labelValue}`
+                    const totalOfTasks = workflow.tasks.length;
 
-                        const readerTask = workflow.tasks[0];
-                        const totalOfTasks = workflow.tasks.length;
-                        /*
-                        workflow.tasks.forEach((task, inx) => {
-                            task.forms['display_sample'].value = (inx + 1) === totalOfTasks ? '1' : '0';
-                        });
-                        */
-                        //To be compatible: 
-                        // 1 - First task must be data reader
-                        // 2 - Last task must emit samples
-                        // 3 - No output can be used more than once (?)
-                        // 4 - Only some operations are supported
-                        const hasUnsupported = workflow.tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
-                        if (hasUnsupported || readerTask.operation.slug !== 'data-reader') {
-                            self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format' });
-                            return;
-                        }
-                        self.loadingData = true;
-                        self.store.setWorkflow(workflow, true);
-
-                    }).catch(function (e) {
-                        self.error(e);
-                    }).finally(() => {
-                        Vue.nextTick(() => {
-                            this.$Progress.finish();
-                        })
+                    workflow.tasks.forEach(t => t.operation = self.operationLookup.get(t.operation.id));
+                    const user = this.$store.getters.user;
+                    workflow.user_id = user.id;
+                    workflow.user_login = user.login;
+                    workflow.user_name = user.name;
+                    this.workflowObj = new Workflow(workflow);
+                    /*
+                    workflow.tasks.forEach((task, inx) => {
+                        task.forms['display_sample'].value = (inx + 1) === totalOfTasks ? '1' : '0';
                     });
-
+                    */
+                    //To be compatible: 
+                    // 1 - First task must be data reader
+                    // 2 - Last task must emit samples
+                    // 3 - No output can be used more than once (?)
+                    // 4 - Only some operations are supported
+                    const hasUnsupported = workflow.platform.slug !== 'meta' //tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
+                    if (hasUnsupported || readerTask.operation.slug !== 'read-data') {
+                        self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format' });
+                        return;
+                    }
+                    self.loadingData = false;
+                    //self.store.setWorkflow(workflow, true);
+                } catch (e) {
+                    console.debug(e)
+                    self.error(e);
+                } finally {
+                    Vue.nextTick(() => {
+                        this.$Progress.finish();
+                    });
+                }
                 //self.loadData();
             },
             async loadData() {
                 const self = this;
                 self.loadingData = true;
-                const cloned = JSON.parse(JSON.stringify(this.store.workflow));
+                //const cloned = JSON.parse(JSON.stringify(this.store.workflow));
+                const cloned = JSON.parse(JSON.stringify(this.workflowObj));
                 cloned.platform_id = cloned.platform.id; //FIXME: review
 
                 cloned.tasks.forEach((task) => {
@@ -620,19 +702,18 @@
                 const body = {
                     workflow: cloned,
                     cluster: { id: 1 }, //FIXME: How to determine the cluster?
-                    name: `## explorer ${self.store.workflow.id} ##`,
+                    name: `## explorer ${self.workflowObj.id} ##`,
                     user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                     persist: false, // do not save the job in db.
                     app_configs: { sample_size: 200, },
                 }
                 self.disconnectWebSocket();
-                self.store.prepareSampleProperties();
+                //self.store.prepareSampleProperties();
 
                 axios.post(`${standUrl}/jobs`, body, {
                     headers: { 'Locale': self.$root.$i18n.locale, }
                 }).then((response) => {
                     self.job = response.data.data;
-                    self.$refs.preview.loadData();
                     self.connectWebSocket();
                 }).catch((ex) => {
                     if (ex.data) {
@@ -660,23 +741,27 @@
 
                 socket.on('update task', (msg, callback) => {
                     if (msg.type === 'OBJECT') {
-                        // Update must be done before assigning to observable self.tableData!
-                        const truncated = msg.message.truncated || [];
-                        msg.message.attributes.forEach((attr, index) => {
-                            attr['selected'] = true;
-                            attr['truncated'] = truncated.indexOf(attr.key) > -1;
-                            attr['position'] = index;
-                        });
+                        if (msg.meaning === 'sample') {
+                            // Update must be done before assigning to observable self.tableData!
+                            const truncated = msg.message.truncated || [];
+                            msg.message.attributes.forEach((attr, index) => {
+                                attr['selected'] = true;
+                                attr['truncated'] = truncated.indexOf(attr.key) > -1;
+                                attr['position'] = index;
+                            });
 
-                        self.tableData = msg.message;
+                            self.tableData = msg.message;
 
-                        const attributeIds = self.tableData.attributes.map(attr => attr.key);
-                        self.store.setAttributes(self.tableData.attributes);
+                            const attributeIds = self.tableData.attributes.map(attr => attr.key);
+                            //self.store.setAttributes(self.tableData.attributes);
 
-                        self.tableData.rows = self.tableData.rows.map(
-                            row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
+                            self.tableData.rows = self.tableData.rows.map(
+                                row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
+                        } else if (msg.meaning === 'schema') {
+                            self.schemas[msg.id] = JSON.parse(msg.message);
+                        }
                     }
-                    self.store.changeStepStatus(msg.id, msg.status);
+                    //self.store.changeStepStatus(msg.id, msg.status);
                 });
                 socket.on('update job', msg => {
                     if (msg.status === 'ERROR') {
@@ -733,6 +818,7 @@
         margin: auto;
         height: 60vh;
     }
+
     .fill-height {
         min-height: 85vh
     }
