@@ -18,7 +18,7 @@
                             <option value="inner">Inner</option>
                             <option value="left_outer">Left outer</option>
                             <option value="right_outer">Right outer</option>
-                            <!-- <option value="full_outer">Full outer</option> -->
+                            <option value="full_outer">Full outer</option>
                         </select>
                         <h6>{{$t('widgets.join.conditions')}}</h6>
                         <div class="side">
