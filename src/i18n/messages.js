@@ -669,8 +669,12 @@ export default {
             text: 'Texto curto',
             textarea: 'Texto longo',
             join: {
+                allAttributesWithPrefix: 'Todos os atributos prefixados',
                 conditions: 'Condição(ões) para a junção',
+                nameCollision: 'As entradas têm atributos com o mesmo nome. Isto pode causar problemas se você não usar um prefixo ou renomear os atributos.',
                 noCondition: 'Nenhuma condição informada. Pressione o botão abaixo para adicionar uma nova.',
+                noAttributes: 'Nenhum atributo',
+                selectAttributes: 'Selecionar atributos',
                 type: 'Tipo de Junção',
             },
             expressionEditor:{
@@ -1355,8 +1359,12 @@ export default {
             text: 'Text input',
             textarea: 'Long text input',
             join: {
+                allAttributesWithPrefix: 'All attributes with prefix',
                 conditions: 'Join condition(s)',
+                nameCollision: 'Inputs have attributes with same name. This may cause problems if you do not use a prefix or rename them.',
+                noAttributes: 'No attributes',
                 noCondition: 'No condition specified. Press button below to add a new one.',
+                selectAttributes: 'Select attributes',
                 type: 'Join type',
             },
             expressionEditor:{
