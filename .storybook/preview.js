@@ -11,6 +11,7 @@ import '../src/assets/main.scss'
 
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import Snotify from 'vue-snotify';
+import vSelect from 'vue-select'
 
 Vue.use(VueTheMask);
 Vue.use(Snotify, {
@@ -22,6 +23,7 @@ Vue.use(Snotify, {
 });
 Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.component('v-select', vSelect);
 import '../src/fa-icons';
 
 Vue.use(VueI18n);

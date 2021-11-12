@@ -99,7 +99,7 @@
             }
             if (this.extendedSuggestionEvent) {
                 const suggestions = this.extendedSuggestionEvent();
-                const inputs = suggestions.inputs.sort((s) => s.order);
+                const inputs = suggestions.inputs.sort((a, b) => a.order - b.order);
 
                 if (inputs[0])
                     this.suggestions1 = inputs[0].attributes;
