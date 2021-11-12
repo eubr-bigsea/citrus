@@ -5,15 +5,15 @@
             <h1>{{$t('home.recentlyUpdated')}}</h1>
         </div>
 
-        <div class="row">
-            <HomeCard v-if="listings.has('dataSources')" :type="'dataSource'" :items="dataSources"
+        <div class="home-card-container">
+            <HomeCard v-if="listings.has('dataSources')" :type="'dataSource'" :items="dataSources" icon="fa fa-database"
                 :total="total.dataSources"></HomeCard>
-            <HomeCard v-if="listings.has('workflows')" :type="'workflow'" :items="workflows" :total="total.workflows">
+            <HomeCard v-if="listings.has('workflows')" :type="'workflow'" :items="workflows" :total="total.workflows" icon="fa fa-flask">
             </HomeCard>
-            <HomeCard v-if="listings.has('jobs')" :type="'job'" :items="jobs" :total="total.jobs"></HomeCard>
+            <HomeCard v-if="listings.has('jobs')" :type="'job'" :items="jobs" :total="total.jobs" icon="fa fa-tasks"></HomeCard>
+            <HomeCard v-if="listings.has('apps')" :type="'app'" :items="apps" :total="total.apps" icon="fa fa-microscope"></HomeCard>
             <HomeCard v-if="listings.has('dashboards')" :type="'dashboard'" :items="dashboards"
-                :total="total.dashboards"></HomeCard>
-            <HomeCard v-if="listings.has('apps')" :type="'app'" :items="apps" :total="total.apps"></HomeCard>
+                :total="total.dashboards" icon="fa fa-chart-line"></HomeCard>
         </div>
     </main>
 </template>
@@ -120,3 +120,13 @@
         }
     };
 </script>
+<style>
+    .home-card-container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: start;
+        align-items: auto;
+        align-content: start
+    }
+</style>

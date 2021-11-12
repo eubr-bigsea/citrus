@@ -4,9 +4,10 @@
             {{value === null ? field.default: value}}
         </div>
         <div v-else>
-            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <LabelComponent :field="field" :value="value" :show-help="showHelp"></LabelComponent>
             <input type="number" max="999999999999" min="-999999999" step="any" class="form-control input-sm"
-                :value="value === null ? field['default']: value" @input="updated" pattern="\\d{1,10}\\.\\d{2}" />
+                onkeypress="return this.value.length <=15" :value="value === null ? field['default']: value"
+                @input="updated" pattern="\\d{1,10}\\.\\d{2}"  :required="field.required"/>
         </div>
     </div>
 </template>

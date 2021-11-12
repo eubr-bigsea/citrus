@@ -114,7 +114,7 @@ export default {
     axios
       .get(`${tahitiUrl}/platforms?enabled=true`)
       .then(resp => {
-        this.platforms = resp.data;
+        this.platforms = resp.data.data;
         if (this.platforms && this.platforms.length) {
           this.selectedPlatform = this.platforms[0].id;
         }

@@ -37,10 +37,12 @@ import IntegerComponent from './components/widgets/Integer.vue'
 import JoinComponent from './components/widgets/Join.vue'
 import LookupComponent from './components/widgets/Lookup.vue'
 import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue'
+import MarkdownComponent from './components/widgets/Markdown.vue'
+import RadioComponent from './components/widgets/Radio.vue'
 import RangeComponent from './components/widgets/Range.vue'
 import SampleLookupComponent from './components/widgets/SampleLookup.vue'
 import Select2Component from './components/widgets/Select2.vue'
-import TagComponent from './components/widgets/Select2.vue'
+import TagComponent from './components/widgets/Tag.vue'
 import TextComponent from './components/widgets/Text.vue'
 import TextAreaComponent from './components/widgets/TextArea.vue'
 import UrlComponent from './components/widgets/Url.vue'
@@ -66,12 +68,15 @@ const widgets = new Map([
     ['integer-component', IntegerComponent],
     ['join-component', JoinComponent],
     ['lookup-component', LookupComponent],
+    ['markdown-component', MarkdownComponent],
     ['percentage-component', RangeComponent],
+    ['radio-component', RadioComponent],
     ['range-component', RangeComponent],
     ['rich-text-component', MarkdownEditorComponent],
     ['sample-lookup-component', SampleLookupComponent],
     ['select2-component', Select2Component],
-    ['tag-component', TagComponent],
+    ['tag-component', Select2Component],
+    ['tag2-component', TagComponent],
     ['text-component', TextComponent],
     ['textarea-component', TextAreaComponent],
     ['url-component', UrlComponent],
@@ -140,7 +145,7 @@ const locales = {
 
 Vue.filter('formatJsonDate', v => {
     if (v) {
-        return format(parse(v), 'DD/MM/YYYY HH:MM');
+        return format(parse(v), 'DD/MM/YYYY HH:mm');
     }
 });
 Vue.filter('timeFromNow', (v, l) =>
@@ -148,7 +153,7 @@ Vue.filter('timeFromNow', (v, l) =>
 );
 Vue.filter('formatJsonHourMinute', v => {
     if (v) {
-        return format(parse(v), 'HH:MM:ss');
+        return format(parse(v), 'HH:mm:ss');
     }
 });
 

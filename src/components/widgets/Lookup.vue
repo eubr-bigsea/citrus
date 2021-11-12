@@ -10,7 +10,7 @@
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
             </b-link>
-            <b-modal size="lg" :title="`${field.label} - ${(label ? (selected + ' - ' + label): '')}`" ok-disabled
+            <b-modal size="lg" :title="field.label" ok-disabled
                 :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
                 {{field.help}}
                 <v-client-table :data="lookupOptions" :columns="['key', 'value','tags']" class="lookupTable"
@@ -66,7 +66,7 @@
                     },
                     texts: {
                         count: this.$t('common.pagerShowing'),
-                        filter: this.$t('common.filter'),
+                        filter: this.$tc('common.filter', 1),
                         limit: this.$t('common.limit'),
                     },
                     headings: {

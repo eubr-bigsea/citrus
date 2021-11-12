@@ -19,13 +19,13 @@
                                 <option value="all">Todas</option>
                                 <option v-for="f in treeData" :key="f.key" :value="f.key">{{f.name}}</option>
                             </select>
-                            <select class="form-control shadow-none" size="10" @change="displayFunctionHelp($event)">
+                            <select class="form-control shadow-none" size="10" @change="displayFunctionHelp($event)" @dblclick="copyPasteValue">
                                 <option v-for="f in displayFunctions" :key="f" :value="f">{{f}}</option>
                             </select>
                             <div class="function-help" v-html="currentFunctionHelp"> </div>
                         </b-tab>
                         <b-tab title="Atributos">
-                            <select class="form-control shadow-none" size="18">
+                            <select class="form-control shadow-none" size="18" @dblclick="copyPasteValue">
                                 <option v-for="sg in suggestions">{{sg}}</option>
                             </select>
                         </b-tab>
@@ -43,6 +43,7 @@
                             </table>
                         </b-tab>
                     </b-tabs>
+                    <small>{{$t('property.copyAttributeName')}}</small>
                 </div>
                 <div class="col-md-8">
                     <form v-if="expressionList && expressionList.length" onsubmit="return false" ref="form" action="">
@@ -58,7 +59,7 @@
                                         <td class="expression-editor-area autocomplete">
                                             <input type="text" class="form-control" :class="{'text-danger': row.error}"
                                                 @keyup="onKeyUp($event, row, 'expression')" ref="expr"
-                                                @blur="elementBlur(row, $event)"
+                                                @blur="elementBlur(row, $event)" v-focus
                                                 @paste="changed($event, row, 'expression')" :value="row.expression"
                                                 required @dblclick="debugExpression(row)" />
                                             <ul v-show="isOpen" class="autocomplete-results">
@@ -99,7 +100,7 @@
                 </div>
                 <!-- <div class="col-md-4 border-left">
                     <strong>{{$tc('property.expression.availableAttribute', 2)}}:</strong>
-                    <select class="form-control no-border mt-2" size="10" @dblclick="copyAttributeName"
+                    <select class="form-control no-border mt-2" size="10" @dblclick="copyPasteValue"
                         style="font-size:.9em">
                         <option v-for="sg in suggestions">{{sg}}</option>
                     </select>
@@ -114,11 +115,11 @@
                 {{$t('property.expression.explanation')}}
                 <span v-html="$t('property.expression.tip')"></span> &nbsp;
                 <span v-html="$t('property.expression.validExpressions')"></span>
-
+                
             </small>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click.prevent="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
-                <b-btn @click.prevent="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
+                <b-btn @click.prevent="okClicked" variant="primary" class="btn-sm mr-1">{{$t('common.ok')}}</b-btn>
+                <b-btn @click.prevent="cancelClicked" variant="secondary" class="btn-sm ">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -229,7 +230,7 @@
                 }).length == 0;
             },
             okClicked(e) {
-                const result = this.$refs.form.reportValidity() & this.validate();
+                const result = this.$refs.form && this.$refs.form.reportValidity() & this.validate();
                 if (result) {
                     this.$root.$emit(this.message, this.field,
                         this.expressionList);
@@ -305,7 +306,7 @@
             remove(e, index) {
                 this.expressionList.splice(index, 1);
             },
-            copyAttributeName(v) {
+            copyPasteValue(v) {
                 if (this.lastEdited && this.lastEdited.el) {
                     // console.debug(this.lastEdited.row)
                     // if (this.lastEdited.row && 
@@ -361,6 +362,7 @@
             this.treeData = resources.tree.functions.sort((a, b) => a.name.localeCompare(b.name));
             this.operators = resources.operators;
             this.updateDisplayedFunctions('all');
+            this.lastEdited =  this.expressionList && this.expressionList.length > 0 ? this.expressionList.length - 1: {};
         }
     }
 </script>

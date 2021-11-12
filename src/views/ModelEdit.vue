@@ -11,11 +11,19 @@
                         <div v-if="model.id" class="col-md-12 col-xg-12 mx-auto">
                             <b-card>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
                                         <label class="font-weight-bold">{{$tc('common.name')}}:</label>
                                         <input v-model="model.name" type="text" class="form-control">
                                     </div>
                                     <div class="col-md-3">
+                                        <label class="font-weight-bold">{{$tc('common.class')}}:</label>
+                                        <input v-model="model.class_name" disabled class="form-control" />
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="font-weight-bold">{{$tc('common.created')}}:</label>
+                                        <input v-model="model.created" disabled class="form-control" />
+                                    </div>
+                                    <div class="col-md-2">
                                         <label class="font-weight-bold">{{$tc('common.type')}}:</label>
                                         <select v-model="model.type" class="form-control">
                                             <option v-for="fmt in types" :key="fmt" :value="fmt">
@@ -23,10 +31,16 @@
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label class="font-weight-bold">{{$tc('model.storage')}}:</label>
                                         <input v-model="model.storage.name + ' (' + model.storage.type + ')'" disabled
                                             class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="font-weight-bold">{{$tc('common.path')}}:</label>
+                                        <input v-model="model.path" disabled class="form-control" />
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-5 mb-4 border-top pt-2">
@@ -71,7 +85,7 @@
         },
         computed: {
         },
-        watch: {
+        xwatch: {
             '$route.params.id': function (id) {
                 this.load().then(() => {
                     Vue.nextTick(() => {
@@ -82,11 +96,7 @@
         },
         mounted() {
             let self = this;
-            this.load().then(() => {
-                Vue.nextTick(() => {
-                    self.isDirty = false;
-                });
-            });
+            this.load();
         },
         /* Methods */
         methods: {
@@ -103,19 +113,14 @@
                     return [];
                 }
             },
-            load() {
-                let self = this;
-                return new Promise((resolve, reject) => {
-                    axios
-                        .get(`${limoneroUrl}/models/${this.$route.params.id}`)
-                        .then(resp => {
-                            self.model = resp.data;
-                            resolve();
-                        })
-                        .catch(function (e) {
-                            self.error(e);
-                        });
-                });
+            async load() {
+                try {
+                    const resp = await axios.get(`${limoneroUrl}/models/${this.$route.params.id}`);
+                    this.model = resp.data
+                } catch (e) {
+                    this.error(e);
+                }
+
             },
             success(msg) {
                 this.$snotify.success(msg, this.$t('titles.success'));

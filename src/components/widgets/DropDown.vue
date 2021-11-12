@@ -4,12 +4,32 @@
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <select class="form-control input-sm" v-bind:data-field="field.name" v-model="selected" @change="updated">
-            <option v-if="!field.default"></option>
+        <select v-if="!field.multiplicity || field.multiplicity === 1 || field.multiplicity === 0"
+            class="form-control input-sm " v-bind:data-field="field.name" v-model="selected"
+            @change="updated" :required="field.required">
+            <!--<option v-if="!field.default"></option>-->
             <option v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key">
                 {{opt[language] || opt.value}}
             </option>
         </select>
+        <b-form-tags v-else-if="field.multiplicity === 2 || field.multiplicity === 3" v-model="selected"
+            @input="updatedTag" add-on-change no-outer-focus :name="field.name">
+            <template v-slot="{ tags, inputAttrs, inputHandlers, disabled, removeTag }">
+                <b-form-select v-bind="inputAttrs" v-on="inputHandlers" :disabled="pairOptionValueList.length === 0"
+                    :options="pairOptionValueList" value-field="key" text-field="value" size="sm">
+                    <template #first>
+                        <!-- This is required to prevent bugs with Safari -->
+                        <option disabled value="">{{$t('actions.chooseOneOrMoreOption')}}</option>
+                    </template>
+                </b-form-select>
+                <ul v-if="tags.length > 0" class="list-inline d-inline-block mt-3">
+                    <li v-for="tag in tags" :key="tag" class="list-inline-item xsmall">
+                        <b-form-tag @remove="removeTag(tag)" :title="tag" :disabled="disabled" variant="secondary">{{
+                            tag }} </b-form-tag>
+                    </li>
+                </ul>
+            </template>
+        </b-form-tags>
     </div>
 </template>
 <script>
@@ -24,12 +44,18 @@
         },
         computed: {
             pairOptionValueList() {
+                this.tags; //In order to recompute if tags is changed
+                let v;
                 try {
-                    if (typeof this.field.values === 'string' || this.field.values instanceof String){
-                        return JSON.parse(this.field.values);
+                    if (typeof this.field.values === 'string' || this.field.values instanceof String) {
+                        v = JSON.parse(this.field.values);
                     } else {
-                        return this.field.values;
+                        v = this.field.values;
                     }
+                    v.forEach(opt => {
+                        opt.value = opt[this.language] || opt.value;
+                    });
+                    return v.filter(opt => this.tags.indexOf(opt.key) === -1);
                 } catch (ex) {
                     console.error(ex);
                     return [];
@@ -37,16 +63,28 @@
             },
             selected: {
                 get() {
-                    return this.value || this.field.default;
+                    if (this.field.multiplicity > 1 && (typeof this.value === 'string' || this.value instanceof String)) {
+                        this.tags = JSON.parse(this.value);
+                        return this.tags;
+                    } else {
+                        return this.internalSelected || this.value || this.field.default;
+                    }
                 },
                 set(value) {
+                    this.internalSelected = value;
                 }
             }
         },
         methods: {
+            updatedTag(values) {
+                this.$root.$emit(this.message, this.field, values,
+                    'Unsupported if DropDown is multiple');
+                this.tags = values;
+
+            },
             updated(e) {
-                this.selected = e.target.value;
-                this.$root.$emit(this.message, this.field, e.target.value,
+                this.selected = e.target ? e.target.value : e;
+                this.$root.$emit(this.message, this.field, this.internalSelected,
                     e.target.options[e.target.selectedIndex].text);
             }
         },
@@ -55,6 +93,11 @@
                 this.value = this.field['default'];
             }
         },
+        data() {
+            return { tags: [],
+             internalSelected: null
+           }
+        }
 
     }
 

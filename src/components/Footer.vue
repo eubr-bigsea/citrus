@@ -2,16 +2,16 @@
     <footer class="footer-page fixed-bottom bg-secondary d-print-none">
         <ul class="footer-list">
             <li>
-                <span>© 2017-2021 Lemonade Project</span>
+                © 2017-2021 Lemonade Project {{$t('common.version')}} {{version}} |
             </li>
             <li>
                 <a href="https://docs.lemonade.org.br/" target="_blank">
-                   {{$t('titles.about')}} 
+                    {{$t('titles.about')}}
                 </a>
             </li>
             <li>
                 <a href="https://docs.lemonade.org.br/pt-br/spark/visualizacao-de-dados/tabela.html" target="_blank">
-                   {{$t('titles.documentation')}} 
+                    {{$t('titles.documentation')}}
                 </a>
             </li>
             <li>
@@ -19,14 +19,20 @@
                     GitHub
                 </a>
             </li>
-        </ul>
+            <li v-if="instance">
+                {{instance}}
+            </li>
+        </ul>  
+        
     </footer>
 </template>
 
 <style>
-    .footer-page a, .footer-page {
+    .footer-page a,
+    .footer-page {
         color: #fff;
     }
+
     .footer-list {
         list-style: none;
         display: flex;
@@ -36,6 +42,7 @@
         padding-bottom: 6px;
         padding-left: 15px;
     }
+
     .footer-list>li {
         margin-right: 16px;
     }
@@ -43,6 +50,14 @@
 
 <script>
     export default {
-        name: 'LFooter'
+        name: 'LFooter',
+        computed: {
+            version(){
+                return process.env.VUE_APP_VERSION || '2.0.0';
+            },
+            instance(){
+                return process.env.VUE_APP_INSTANCE;
+            }
+        }
     };
 </script>

@@ -2,11 +2,11 @@
     <home-card-item-base>
         <template slot="head">
             <router-link :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}" :title="item.name">
-                {{item.name}}
+                {{item.id}} - {{item.name}}
             </router-link>
         </template>
         <template slot="body">
-            <small>{{this.item.description}}</small>
+            {{this.item.description}}
         </template>
         <template slot="footer">
         </template>

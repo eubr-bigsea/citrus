@@ -4,60 +4,75 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ add ? $t('actions.add', {type: $tc('titles.cluster', 1).toLowerCase()}) : $t('actions.edit') + ' ' + $tc('titles.cluster', 1).toLowerCase()}}</h1>
+                        <h1>{{ add ? $t('actions.add', {type: $tc('titles.cluster', 1).toLowerCase()}) :
+                            $t('actions.edit') + ' ' + $tc('titles.cluster', 1).toLowerCase()}}</h1>
                     </div>
                     <hr>
                     <div class="row">
                         <div class="col-md-12 col-xg-12 mx-auto">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                            <input v-model="cluster.name" type="text" class="form-control">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                                <input v-model="cluster.name" type="text" class="form-control">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="font-weight-bold">{{$tc('common.type')}}:</label>
+                                                <select v-model="cluster.type" class="form-control">
+                                                    <option v-for="typ in types" :key="typ" :value="typ">{{typ}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="font-weight-bold">{{$t('cluster.address')}}:</label>
+                                                <input v-model="cluster.address" class="form-control">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="font-weight-bold">{{$tc('cluster.executors')}}:</label>
+                                                <input type="number" v-model="cluster.executors"
+                                                    class="form-control w-25">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label
+                                                    class="font-weight-bold">{{$tc('cluster.executorCores')}}:</label>
+                                                <input type="number" v-model="cluster.executor_cores"
+                                                    class="form-control w-25">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label
+                                                    class="font-weight-bold">{{$tc('cluster.executorMemory')}}:</label>
+                                                <input v-model="cluster.executor_memory" class="form-control w-25">
+                                            </div>
+                                            <div class="col-md-3 mt-3 mb-3 mt-3">
+                                                <b-form-checkbox v-model="cluster.enabled">{{ $t('common.enabled') }}
+                                                </b-form-checkbox>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>{{$tc('common.description')}}:</label>
+                                                <textarea v-model="cluster.description" class="form-control"
+                                                    rows="5"></textarea>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>{{$tc('titles.platform', 2)}}:</label>
+                                                <v-select v-model="cluster.platforms" :options="platforms"
+                                                    :multiple="true" item-value="id" label="name"
+                                                    :placeholder="$t('actions.chooseOneOrMoreOption')"
+                                                    :close-on-select="false"
+                                                    :selectable="option => cluster.platforms && !cluster.platforms.includes(option)">
+                                                </v-select>
+                                                <label>{{$tc('cluster.authToken')}}:</label>
+                                                <input v-model="cluster.auth_token" type="password" autocomplete=""
+                                                    class="form-control" />
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label>{{$tc('common.parameters', 2)}}:</label>
+                                                <textarea v-model="cluster.general_parameters" class="form-control"
+                                                    rows="8"></textarea>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <label class="font-weight-bold">{{$tc('common.type')}}:</label>
-                                            <select v-model="cluster.type" class="form-control">
-                                                <option v-for="typ in types" :key="typ" :value="typ">{{typ}}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="font-weight-bold">{{$t('cluster.address')}}:</label>
-                                            <input v-model="cluster.address" class="form-control">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="font-weight-bold">{{$tc('cluster.executors')}}:</label>
-                                            <input v-model="cluster.executors" class="form-control">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="font-weight-bold">{{$tc('cluster.executorCores')}}:</label>
-                                            <input v-model="cluster.executor_cores" class="form-control">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="font-weight-bold">{{$tc('cluster.executorMemory')}}:</label>
-                                            <input v-model="cluster.executor_memory" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mt-3 mb-3 mt-3">
-                                            <b-form-checkbox v-model="cluster.enabled">{{ $t('common.enabled') }}
-                                            </b-form-checkbox>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>{{$tc('common.description')}}:</label>
-                                            <textarea v-model="cluster.description" class="form-control"
-                                                rows="5"></textarea>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label>{{$tc('cluster.authToken')}}:</label>
-                                            <input v-model="cluster.auth_token" type="password" class="form-control" />
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label>{{$tc('common.parameters', 2)}}:</label>
-                                            <textarea v-model="cluster.general_parameters" class="form-control"
-                                                rows="8"></textarea>
-                                        </div>
-                                    </div>
+                                    </form>
                                     <div class="row">
                                         <div class="col-md-12 mt-4 border-top pt-2">
                                             <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
@@ -65,7 +80,8 @@
                                                 <span class="fa fa-save"></span>
                                                 {{$tc('actions.save')}}
                                             </button>
-                                            <router-link :to="{name: 'clusters'}" class="btn btn-secondary mr-1">
+                                            <router-link :to="{name: 'clusters'}"
+                                                class="btn btn-outline-secondary mr-1">
                                                 {{$tc('actions.cancel')}}</router-link>
                                         </div>
                                     </div>
@@ -86,6 +102,7 @@
     import SwitchComponent from '../../components/widgets/Switch.vue';
 
     let standUrl = process.env.VUE_APP_STAND_URL;
+    let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
     export default {
         components: {
@@ -94,8 +111,9 @@
         },
         data() {
             return {
-                isDirty: false,
                 cluster: {},
+                isDirty: false,
+                platforms: [],
                 types: ['KUBERNETES', 'SPARK_LOCAL', 'MESOS', 'YARN'].sort()
             };
         },
@@ -126,20 +144,21 @@
         },
         /* Methods */
         methods: {
-            load() {
+            async load() {
                 const self = this;
                 if (!self.add) {
-                    const url = `${standUrl}/clusters/${this.$route.params.id}`;
-                    axios
-                        .get(url)
-                        .then(resp => {
-                            this.cluster = resp.data.data[0];
-                        })
-                        .catch(
-                            function (e) {
-                                this.error(e);
-                            }.bind(this)
-                        );
+                    const errorHandler = function (e) { this.error(e); }.bind(this);
+                    this.platforms = await axios
+                        .get(`${tahitiUrl}/platforms?simple=true`) //FIXME: it returns old style without "data" field in json
+                        .then(resp => resp.data)
+                        .catch(errorHandler);
+                    this.cluster = await axios
+                        .get(`${standUrl}/clusters/${this.$route.params.id}`)
+                        .then(resp => resp.data.data[0])
+                        .catch(errorHandler);
+                    // Associate to Platform record containing its name
+                    this.cluster.platforms = this.cluster.platforms.map(
+                        (p) => this.platforms.find(pl => pl.id === p.id));
                 } else {
                     self.cluster = { id: null, enabled: false };
                 }

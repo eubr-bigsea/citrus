@@ -1,11 +1,16 @@
 <template>
     <div>
         <div class="text-center font-weight-bold">{{label}}</div>
-        <b-radio value="1" v-model.number="innerSelectionType"> Todos os atributos prefixados</b-radio>
-        <input type="text" class="form-control" v-if="innerSelectionType === 1" v-model.number="selectionPrefix">
-        <b-radio class="mb-2 mt-3" value="3" v-model="innerSelectionType"> Nenhum atributo</b-radio>
-        <b-radio class="mb-2 mt-3" value="2" v-model.number="innerSelectionType"> Selecionar atributos</b-radio>
-        
+        <b-form-group>
+            <b-radio value="1" v-model.number="innerSelectionType">{{$t('widgets.join.allAttributesWithPrefix')}}
+            </b-radio>
+            <input type="text" class="form-control" v-if="innerSelectionType === 1" v-model="selectionPrefix">
+            <b-radio class="mt-2" value="3" v-model.number="innerSelectionType">{{$t('widgets.join.noAttributes')}}
+            </b-radio>
+            <b-radio class="mt-2" value="2" v-model.number="innerSelectionType">
+                {{$t('widgets.join.selectAttributes')}}</b-radio>
+        </b-form-group>
+
         <table class="table table-sm table-borderless" v-if="innerSelectionType === 2">
             <tbody>
                 <tr class="table-secondary">
@@ -31,7 +36,7 @@
                         <small><em>{{s.attribute}}</em></small>
                     </td>
                     <td style="width: 20px">
-                        <b-form-checkbox v-model="s.select" name="check-button" switch/>
+                        <b-form-checkbox v-model="s.select" name="check-button" switch />
                     </td>
                 </tr>
             </tbody>
@@ -115,10 +120,10 @@
             getSelectList() {
                 return this.selectList;
             },
-            getPrefix(){
+            getPrefix() {
                 return this.selectionPrefix;
             },
-            getSelectionType(){
+            getSelectionType() {
                 return this.innerSelectionType;
             }
         },

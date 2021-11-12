@@ -41,7 +41,7 @@
         <div class="btn-group" role="group">
             <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')"
                 variant="success" id="tlb-execute-wf">
-                <span class="fa fa-play text-primary"></span> {{$t('actions.execute')}}
+                <span class="fa fa-play text-primary"></span> {{$t('actions.execute')}}...
             </button>
             <!--
         <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"

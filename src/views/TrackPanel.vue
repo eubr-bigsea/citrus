@@ -7,10 +7,12 @@
                         <h1>{{$tc('titles.track', 2)}}</h1>
                         <div class="float-right">
 
+                            <!--
                             <router-link :to="{name: 'addTrack'}" v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
                                 class="btn btn-primary btn-lemonade-primary float-left mr-1">
                                 <span class="fa fa-plus" /> {{$t('actions.addItem')}}
                             </router-link>
+                            -->
                             <!--
                             <button class="btn btn-outline-secondary mr-1" :disabled="display === 'large'"
                                 @click="show('large')">
@@ -26,15 +28,6 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><span class="fa fa-search"></span></span>
-                                </div>
-                                <input type="text" class="form-control" :placeholder="$t('track.whichTrack')"
-                                    maxlength="60" @input="query" v-model="search">
-                            </div>
-                        </div>
                         <div class="col-md-12" v-if="display==='large'">
                             <div class=" track">
                                 <div v-for="item in items" class="track-item" :title="item.description">
@@ -71,6 +64,16 @@
                         <div class="col-md-12" v-else>
                             <v-server-table :columns="columns" :options="options" ref="trackPanelList"
                                 name="trackPanelList" @pagination="paginate">
+
+                                <div slot="beforeTable" class="ml-2">
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><span class="fa fa-search"></span></span>
+                                        </div>
+                                        <input v-focus type="text" class="form-control" :placeholder="$t('track.whichTrack')"
+                                            maxlength="60" @input="query" v-model="search">
+                                    </div>
+                                </div>
                                 <template slot="id" slot-scope="props">
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         {{props.row.id}}
@@ -92,10 +95,9 @@
                                 </template>
                                 <template slot="updated" slot-scope="props">{{props.row.updated |
                                     formatJsonDate}}</template>
+                                <!--
                                 <template slot="actions" slot-scope="props">
-                                    <!-- <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
-                                        <font-awesome-icon icon="trash"></font-awesome-icon>
-                                    </button> -->
+                                    
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         <span class="btn btn-sm btn-info mr-1">
                                             <font-awesome-icon icon="eye"></font-awesome-icon>
@@ -118,6 +120,7 @@
                                     </router-link>
 
                                 </template>
+                                -->
                             </v-server-table>
                         </div>
                     </div>
@@ -151,11 +154,12 @@
                 items: [],
                 page: 1,
                 columns: [
-                    'image',
+                    //'image',
                     'name',
                     'updated',
-                    'actions'
+                    //'actions'
                 ],
+                customQueries: {}
 
             };
         },
@@ -173,9 +177,15 @@
                         updated: this.$tc('common.updated'),
                         actions: this.$tc('common.action', 2)
                     },
-
+                    sortIcon: {
+                        base: 'fa fas',
+                        is: 'fa-sort ml-10',
+                        up: 'fa-sort-amount-up',
+                        down: 'fa-sort-amount-down'
+                    },
+                    sortable: ['name', 'updated'],
                     preserveState: false,
-                    saveState: false,
+                    saveState: true,
                     filterable: false,
                     filterByColumn: false,
                     hidePerPageSelect: true,
@@ -183,17 +193,19 @@
                         data.sort = data.orderBy;
                         data.asc = data.ascending === 1 ? 'true' : 'false';
                         data.size = data.limit;
-                        data.name = this.$parent.search;
+                        data.name = self.customQueries['name'];
                         self.page = data.page;
                         data.fields = LIST_OF_FIELDS;
 
                         let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
-                        this.$Progress.start();
+                        self.$Progress.start();
                         return axios
                             .get(url, {
                                 params: data
                             })
                             .then(resp => {
+                                self.items = resp.data.data;
+                                self.records = resp.data.pagination.total;
                                 self.$Progress.finish();
                                 return {
                                     data: resp.data.data,
@@ -219,7 +231,8 @@
             }
         },
         mounted() {
-            this.init();
+            this.search = this.$refs.trackPanelList.customQueries['name'];
+            //this.init();
         },
         /* Methods */
         methods: {
@@ -242,42 +255,20 @@
                 if (this.display === 'large') {
                     this.init();
                 } else {
+                    // This is not working
+                    // Event.$emit('vue-tables.workflowList.filter::platform', v);
+                    // Event.$emit('vue-tables.filter::platform', v);
+
+                    // This works, but it uses internal details of component
+                    const table = this.$refs.trackPanelList;
+                    table.customQueries['name'] = this.search;
+                    table.updateState('customQueries', table.customQueries);
+                    table.getData();
+
                     this.$refs.trackPanelList.refresh();
                 }
             }, 800),
             init() {
-                const self = this;
-                let data = {};
-                data.asc = 'true';
-                data.size = 10;
-                data.page = self.page;
-                data.name = self.search;
-                // data.name = ;
-                data.fields = LIST_OF_FIELDS;
-
-                let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
-                this.$Progress.start();
-                axios
-                    .get(url, {
-                        params: data
-                    })
-                    .then(resp => {
-                        this.$Progress.finish();
-                        self.items = resp.data.data;
-                        self.records = resp.data.pagination.total;
-                        return {
-                            data: resp.data.data,
-                            count: resp.data.pagination ? resp.data.pagination.total :
-                                resp.data.data.length,
-                        };
-                    })
-                    .catch(
-                        function (e) {
-                            this.$Progress.finish();
-                            this.error(e);
-                        }.bind(this)
-                    );
-
             },
             clearFilters() {
                 this.$refs.workflowList.setFilter('');
@@ -375,7 +366,8 @@
         margin: 0 auto;
     }
 
+    /*
     tr td:nth-child(1) {
         width: 60px;
-    }
+    }*/
 </style>

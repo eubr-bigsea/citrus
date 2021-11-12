@@ -2,7 +2,7 @@
     <home-card-item-base>
         <template slot="head">
             <router-link :to="{name: 'editDataSource', params: {id: item.id}}" :title="item.name">
-                {{item.name}}
+                {{item.id}} - {{item.name}}
             </router-link>
         </template>
         <template slot="body">

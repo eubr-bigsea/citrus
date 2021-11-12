@@ -12,7 +12,7 @@
                         <div class="d-print-none">
                             <div v-if="isLoggedIn" class="btn-group float-right" role="group">
                                 <button class="btn btn-sm btn-outline-dark" @click.stop="save">
-                                    <span class="far fa-save"></span>
+                                    <span class="fa fa-save"></span> {{$t('actions.save')}}
                                 </button>
                                 <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties"
                                     :title="$t('actions.showProperties')">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <b-modal id="dashboardProperties" size="lg" ref="dashboardProperties" :title="$tc('titles.property', 2)"
+        <b-modal id="dashboardProperties" size="md" button-size="sm" ref="dashboardProperties" :title="$tc('titles.property', 2)"
             :ok-only="true">
             <b-form @submit="save">
                 <b-form-group :label="$tc('common.title', 1) + ':'">
@@ -122,23 +122,8 @@
             this.$root.$off('onsave-visualization');
         },
         mounted() {
-            const path = this.publicRoute ? 'public/dashboard' : 'dashboards';
-            const param = this.publicRoute ? this.$route.params.hash : this.$route.params.id;
-            axios
-                .get(`${caipirinhaUrl}/${path}/${param}`)
-                .then(response => {
-                    this.dashboard = response.data;
-                    if (this.dashboard.hash === null) {
-                        this.dashboard.hash = this.broofa();
-                    }
-                    this.configuration = this.getConfiguration(response);
-                    this.layout = this.getLayout();
-                })
-                .catch(e => {
-                    this.error(e);
-                    this.errorState = true;
-                });
-            const self = this;
+           this.load()
+           const self = this;
             this.$root.$on('ondelete-visualization', (visId) => {
                 this.confirm(this.$t('actions.delete'),
                     this.$t('messages.doYouWantToDelete'),
@@ -179,6 +164,24 @@
             });
         },
         methods: {
+            load(){
+                const path = this.publicRoute ? 'public/dashboard' : 'dashboards';
+                const param = this.publicRoute ? this.$route.params.hash : this.$route.params.id;
+                axios
+                    .get(`${caipirinhaUrl}/${path}/${param}`)
+                    .then(response => {
+                        this.dashboard = response.data;
+                        if (this.dashboard.hash === null) {
+                            this.dashboard.hash = this.broofa();
+                        }
+                        this.configuration = this.getConfiguration(response);
+                        this.layout = this.getLayout();
+                    })
+                    .catch(e => {
+                        this.error(e);
+                        this.errorState = true;
+                    });
+            }, 
             addText() {
                 const newText = { dashboard: { id: this.dashboard.id } };
                 axios
@@ -200,6 +203,7 @@
                         }
                         this.layout.push(newItem)
                         this.$refs.dashboardProperties.hide();
+                        this.save(null, true);
                     })
                     .catch(e => {
                         this.error(e);
@@ -228,16 +232,18 @@
                 //this.layout = this.getLayout();
                 window.dispatchEvent(new Event('resize'));
             },
-            save: function (event) {
+            save: function (event, hideMessage) {
                 this.dashboard.configuration = this.configuration;
                 axios
                     .patch(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`, this.dashboard)
                     .then(response => {
-                        this.success(
-                            this.$t('messages.savedWithSuccess', {
-                                what: this.$tc('titles.dashboard')
-                            })
-                        );
+                        if (! hideMessage){
+                            this.success(
+                                this.$t('messages.savedWithSuccess', {
+                                    what: this.$tc('titles.dashboard')
+                                })
+                            );
+                        }
                         this.$refs.dashboardProperties.hide();
                     })
                     .catch(e => {

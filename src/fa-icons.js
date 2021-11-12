@@ -36,6 +36,7 @@ import {
     faHistory,
     faHome,
     faImage,
+    faInfoCircle,
     faLayerGroup,
     faLightbulb,
     faLink,
@@ -70,7 +71,8 @@ import {
     faUser,
     faUserEdit,
     faUserLock,
-    faPen
+    faPen,
+    
 } from '@fortawesome/free-solid-svg-icons';
 
 /**
@@ -117,6 +119,7 @@ library.add(
     faHistory,
     faHome,
     faImage,
+    faInfoCircle,
     faLayerGroup,
     faLightbulb,
     faLink,
@@ -152,4 +155,5 @@ library.add(
     faUserEdit,
     faUserLock,
     faPen,
+
 );

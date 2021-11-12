@@ -9,16 +9,16 @@
         </span>
         <b-modal size="xl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade
             ref="modal">
-            <form @submit.stop.prevent="submit" onsubmit="return false" ref="form" action="">
+            <form @submit.stop.prevent="submit" onsubmit="return false" ref="form" action="" class="zoom80">
                 <div class="row">
-                    <div class="col-md-6 border-right">
+                    <div class="col-md-6 col-sm-12 border-right">
                         <h6>{{$t('widgets.join.type')}}:</h6>
 
                         <select class="form-control mb-2" v-model="joinType">
                             <option value="inner">Inner</option>
                             <option value="left_outer">Left outer</option>
                             <option value="right_outer">Right outer</option>
-                            <!-- <option value="full_outer">Full outer</option> -->
+                            <option value="full_outer">Full outer</option>
                         </select>
                         <h6>{{$t('widgets.join.conditions')}}</h6>
                         <div class="side">
@@ -30,26 +30,30 @@
                                 <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 col-sm-12">
                         <h6>Seleção de atributos</h6>
+                        <div v-if="hasNameCollision">
+                            <span class="fa fa-exclamation-circle text-danger"></span> {{$t('widgets.join.nameCollision')}}
+                        </div>
                         <div ref="selection">
                             <div class="row side">
                                 <JoinSelect class="col-md-6" :selected="valueObject.firstSelect"
                                     :suggestions="suggestions1" :label="$tc('common.input') + ' 1'" ref="firstSelect"
                                     :selectionType="valueObject.firstSelectionType || 1"
-                                    :prefix="valueObject.firstPrefix || 'ds1_'" />
+                                    :prefix="valueObject.firstPrefix" />
                                 <JoinSelect class="col-md-6" :selected="valueObject.secondSelect"
                                     :suggestions="suggestions2" :label="$tc('common.input') +' 2'" ref="secondSelect"
                                     :selectionType="valueObject.secondSelectionType || 1"
-                                    :prefix="valueObject.secondPrefix || 'ds2_'" />
+                                    :prefix="valueObject.secondPrefix" />
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-button @click.prevent.stop="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-button>
-                <b-btn @click="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
+                <b-button @click.prevent.stop="okClicked" variant="primary" class="mr-1" size="sm">{{$t('common.ok')}}
+                </b-button>
+                <b-btn @click="cancelClicked" variant="secondary" size="sm">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -83,6 +87,11 @@
 
             }
         },
+        computed: {
+            hasNameCollision() {
+                return this._intersect(this.suggestions1, this.suggestions2).length > 0;
+            }
+        },
         mounted() {
             this.inferCondition();
             if (this.modalOpened) {
@@ -90,7 +99,7 @@
             }
             if (this.extendedSuggestionEvent) {
                 const suggestions = this.extendedSuggestionEvent();
-                const inputs = suggestions.inputs.sort((s) => s.order);
+                const inputs = suggestions.inputs.sort((a, b) => a.order - b.order);
 
                 if (inputs[0])
                     this.suggestions1 = inputs[0].attributes;
@@ -106,6 +115,9 @@
             this.updateDisplayValue(this.valueObject);
         },
         methods: {
+            _intersect(a, b) {
+                return a.filter(Set.prototype.has, new Set(b));
+            },
             add() {
                 this.$refs.condition.add();
                 this.$nextTick(() => {
@@ -221,5 +233,9 @@
         overflow-y: scroll;
         padding-bottom: 30px;
         border-bottom: 1px solid #aaa;
+    }
+
+    .zoom80 {
+        font-size: .9em;
     }
 </style>

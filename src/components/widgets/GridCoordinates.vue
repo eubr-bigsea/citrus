@@ -34,8 +34,8 @@
                 </div>
             </div>
             <div slot="modal-footer" class="w-100">
-                <b-btn @click="closeModal" variant="primary" class="ml-1 float-right">{{$t('common.ok')}}</b-btn>
-                <b-btn @click="removeValue" variant="outline-primary" class="float-right">{{$t('actions.removeValue')}}</b-btn>
+                <b-btn @click="closeModal" variant="primary" size="sm" class="ml-1 float-right">{{$t('common.ok')}}</b-btn>
+                <b-btn @click="removeValue" variant="outline-primary" size="sm" class="float-right">{{$t('actions.removeValue')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -49,8 +49,8 @@
         data() {
             return {
                 coordinates: {
-                    row: 0,
-                    column: 0,
+                    row: 1,
+                    column: 1,
                     height: 3,
                     width: 12,
                 }

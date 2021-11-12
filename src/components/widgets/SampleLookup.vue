@@ -3,7 +3,7 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div>
             <v-select :options="suggestions" :multiple="multiple"
-                :value.sync="values" @input="updated" label="label" :taggable="false" :closeOnSelect="true"
+                :value.sync="value" @input="updated" label="label" :taggable="false" :closeOnSelect="true"
                 :reduce="option => option.value">
                 <div slot="no-options"></div>
             </v-select>
@@ -35,6 +35,7 @@
         },
         methods: {
             updated(val) {
+                console.debug('Valor', val, this.field)
                 this.$root.$emit(this.message, this.field, val);
             },
             _loadLookup() {
@@ -58,6 +59,11 @@
             dataSourceId: null,
             value: { default: [] },
         },
+        watch: {
+            value(v){
+                console.debug(v);
+            }
+        }
     }
 </script>
 <style>

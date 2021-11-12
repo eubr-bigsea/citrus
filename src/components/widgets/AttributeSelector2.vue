@@ -107,7 +107,12 @@
         mounted() {
             this.originalValue = [... (this.value || [])];
             if (this.field && this.field.values) {
-                this.fieldParameters = JSON.parse(this.field.values);
+                const o = this.field.values;
+                if (o !== null && typeof o === 'object' && Array.isArray(o) === false){
+                    this.fieldParameters = o;
+                } else {
+                    this.fieldParameters = JSON.parse(o);
+                }
             }
             if (this.fieldParameters.multiple === false && this.suggestionEvent) {
                 this.suggestions = this.suggestionEvent();
@@ -125,7 +130,8 @@
             },
             move(direction, index) {
                 if (direction === 'all-right') {
-                    let sel = [... this.value];
+                    
+                    let sel = this.value ? [... this.value] : [];
                     this.suggestions.forEach((v) => {
                         if (sel.indexOf(v) === -1)
                             sel.push(v)
