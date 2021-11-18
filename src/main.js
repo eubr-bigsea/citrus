@@ -273,11 +273,7 @@ let newVue = new Vue({
     render: h => h(App)
 });
 let requestCounter = 0;
-<<<<<<< HEAD
 axios.interceptors.request.use(async config => {
-=======
-axios.interceptors.request.use(config => {
->>>>>>> 6e7050d... Inicial tests
     if (requestCounter === 0) {
         newVue.$Progress.start()
     }
