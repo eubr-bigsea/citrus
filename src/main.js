@@ -235,7 +235,7 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
         // If OpenId support is enabled in Thorn, use it. 
         // Otherwise, it uses internal Thorn API.
-        if (openIdService.enabled) {
+        if (openIdService.enabled && false) {
             openIdService.isUserLoggedIn().then(isLoggedIn => {
                 //store.setters.isLoggedIn = isLoggedIn;
                 console.debug('user is logged ', isLoggedIn)
@@ -259,7 +259,7 @@ router.beforeEach((to, from, next) => {
             next();
             return;
         }
-        next('/login');
+        next('/auth/login');
     } else {
         next();
     }
@@ -277,7 +277,8 @@ axios.interceptors.request.use(async config => {
     if (requestCounter === 0) {
         newVue.$Progress.start()
     }
-    config.headers['Authorization'] = await openIdService.getAccessToken();
+    let accessToken = await openIdService.getAccessToken();
+    accessToken && (config.headers['Authorization'] = accessToken);    
     requestCounter += 1
     return config
 })

@@ -1,25 +1,30 @@
 <template>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 border-bottom mb-2">
             <h2>Open Id Tester</h2>
-            <button class="btn btn-primary btn-sm" @click="goLogin">Go to login</button>
         </div>
-        <div class="col-md-12" v-if="query">
-            <h4>Query</h4>
-            {{query}}
-            |{{user}}|
+        <div class="col-md-12 mb-5">
+            <button class="btn btn-primary btn-sm" @click="goLogin">1 - Go to login</button>
+            <div  v-if="query">
+                <h4>Query</h4>
+                {{query}}
+            </div>
         </div>
-        <div class="col-md-12">
-            <button class="btn btn-success btn-sm" @click="getUser">Get user info</button>
-            <div v-if="user">{{user}}
-                <strong>{{token}}</strong>
+        <div class="col-md-12 mb-5">
+            <button class="btn btn-success btn-sm" @click="getUser">2 - Get user info</button>
+            <div v-if="user && user.sub">
+                User: <br />
+                {{user}}</div>
+            <div v-if="token">
+                Token: <br/>
+                {{token}}
             </div>
         </div>
         <div class="col-md-12 mt-2">
-            <button class="btn btn-secondary btn-sm" @click="callApi">Test API call</button>
+            <button class="btn btn-secondary btn-sm" @click="callApi">3 - Test API call</button>
         </div>
         <div class="col-md-12 mt-2">
-            <button class="btn btn-danger btn-sm" @click="logout">Logout</button>
+            <button class="btn btn-danger btn-sm" @click="logout">4 - Logout</button>
         </div>
     </div>
 </template>
@@ -67,17 +72,20 @@
             },
             getUser() {
                 this.authService.getProfile().then((user) => this.user = user);
-                this.authService.getAccessToken().then(token => this.token = new Date(parseJwt(token).exp * 1000));
+                this.authService.getAccessToken().then(token => this.token = parseJwt(token));
             },
-            callApi(){
-                axios.get('/api/v1/thorn/configurations').then(resp =>{
+            callApi() {
+                axios.get('/api/v1/thorn/configurations').then(resp => {
                     console.debug(resp);
-                }).catch(error =>{
+                }).catch(error => {
                     console.debug('Error', error);
                 })
             },
-            logout(){
+            logout() {
                 this.authService.logout();
+                this.token = null;
+                this.user = null;
+                this.query = null;
             }
         }
     }

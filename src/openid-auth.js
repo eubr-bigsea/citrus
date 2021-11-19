@@ -31,7 +31,7 @@ class AuthService {
         }
         this.enabled = false;
         this.userManager = null;
-        axios.get(`${thornUrl}/configurations/OPENID_CONFIG`).then(resp => {
+        axios.get(`${thornUrl}/public/configurations/OPENID_CONFIG`).then(resp => {
             this.enabled = resp?.data?.data?.enabled;
             if (this.enabled){
                 let merged = {...settings, ...resp['data']['data']};
@@ -116,7 +116,7 @@ class AuthService {
             this.userManager.getUser()
                 .then(user => {
                     console.log('Got access token from user')
-                    resolve(user.access_token)
+                    resolve(user? user.access_token: null)
                 })
                 .catch(error => reject(error))
         })

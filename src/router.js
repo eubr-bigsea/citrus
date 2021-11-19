@@ -65,12 +65,9 @@ const ModelEdit = () => import(/* webpackChunkName: "group-model" */ './views/Mo
 const DashboardList = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardList.vue');
 const DashboardDetail = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardDetail.vue');
 const DashboardBuilder = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardBuilder.vue');
-const WebSocketPing = () => import('./views/WebSocketPing.vue');
-const JsPlumbSandbox = () => import('./views/JsPlumbSandbox.vue');
-const OpenIdSandbox = () => import('./views/OpenIdSandbox.vue');
-
-const WebSocketPing = () => import(/* webpackChunkName: "group-util" */ './views/WebSocketPing.vue');
-const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */ './views/JsPlumbSandbox.vue');
+const WebSocketPing = () => import(/* webpackChunkName: "group-util" */'./views/WebSocketPing.vue');
+const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */'./views/JsPlumbSandbox.vue');
+const OpenIdSandbox = () => import(/* webpackChunkName: "group-util" */'./views/OpenIdSandbox.vue');
 const QueryEdit = () => import(/* webpackChunkName: "group-util" */ './views/query/QueryEdit.vue');
 
 const NotificationList = () => import(/* webpackChunkName: "group-notification" */ './views/NotificationList.vue');
@@ -464,11 +461,12 @@ let router = new Router({
             }
         },
         {
-            path: '/login',
+            path: '/auth/login',
             name: 'login',
             component: Login,
             meta: {
-                title: ['titles.login', 1]
+                title: ['titles.login', 1],
+                requiresAuth: false
             }
         },
         {
