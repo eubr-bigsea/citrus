@@ -115,18 +115,20 @@
                 }
             }
             if (this.fieldParameters.multiple === false && this.suggestionEvent) {
-                this.suggestions = this.suggestionEvent();
+                this.suggestions = this.suggestionEvent() || [];
                 this.select2Value = this.originalValue;
             }
         },
         methods: {
             add() {
-                if (this.extra && this.value.indexOf(this.extra) === -1) {
-                    this.value.push(this.extra);
+                let sel = this.value ? [... this.value] : [];
+                if (this.extra && sel.indexOf(this.extra) === -1) {
+                    sel.push(this.extra);
                     this.extra = '';
                 } else {
                     this.extra = '';
                 }
+                this.updated(sel);
             },
             move(direction, index) {
                 if (direction === 'all-right') {
@@ -151,9 +153,9 @@
             },
             updated(val) {
                 if (Array.isArray(val)) {
-                    this.$root.$emit(this.message, this.field, val);
+                    this.triggerUpdateEvent(this.message, this.field, val);
                 } else {
-                    this.$root.$emit(this.message, this.field, [val]);
+                    this.triggerUpdateEvent(this.message, this.field, [val])
                 }
                 this.$forceUpdate();
             },
@@ -165,11 +167,11 @@
                 this.updated([... this.originalValue]);
                 this.$refs.modal.hide();
             },
-            openModal() {
-                this.$refs.modal.show();
+            async openModal() {
                 if (this.suggestionEvent) {
-                    this.suggestions = this.suggestionEvent();
+                    this.suggestions = this.suggestionEvent() || [];
                 }
+                this.$refs.modal.show();
             }
         },
         props: {

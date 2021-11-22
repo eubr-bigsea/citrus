@@ -62,7 +62,7 @@
             async create() {
                 const dataReader = new Task({
                     name: 'Ler dados',
-                    operation: new Operation({id: 18}) //FIXME
+                    operation: new Operation({id: 2100}) //FIXME
                 });
                 dataReader.setProperty('data_source', 
                     {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name});
@@ -71,7 +71,7 @@
                 const workflow = new Workflow({
                     name: this.name, 
                     type: 'DATA_EXPLORER',
-                    platform: new Platform({id: 4}), //FIXME Scikit-learn?!
+                    platform: new Platform({id: 1000}), //FIXME Scikit-learn?!
                     tasks: [dataReader]
                 });
                 try {

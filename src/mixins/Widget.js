@@ -34,6 +34,11 @@ export default {
         value: {
             default: '',
         },
-
-    }
+    },
+    methods: {
+        triggerUpdateEvent(message, field, value){
+            this.$root.$emit(message, field, value); 
+            this.$emit('update', field, value);
+        }
+    },
 }

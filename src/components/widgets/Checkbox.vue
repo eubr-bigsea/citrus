@@ -30,8 +30,8 @@
         components: { LabelComponent, SwitchComponent },
         methods: {
             changed(newValue) {
-                this.$root.$emit(this.message, this.field, newValue ? '1' : '0',
-                    newValue ? this.$t('common.yes') : this.$t('common.no'));
+                this.triggerUpdateEvent(this.message, this.field, newValue ? '1' : '0',
+                    newValue ? this.$t('common.yes') : this.$t('common.no')); 
             }
         },
         data() {

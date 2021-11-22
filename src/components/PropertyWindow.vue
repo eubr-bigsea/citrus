@@ -200,7 +200,13 @@
             },
             evalInContext(js, context) {
                 //# Return the results of the in-line anonymous function we .call with the passed context
-                return function () { return eval(js); }.call(context);
+                return function () { 
+                    try{
+                        return eval(js); 
+                    } catch(pass){
+                        return false;
+                    }
+                }.call(context);
             },
             update() {
                 const self = this;

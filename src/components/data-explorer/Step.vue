@@ -26,7 +26,8 @@
                         <span v-else class="fa fa-toggle-off text-secondary"></span>
                     </b-button>
 
-                    <b-button variant="light" size="sm" class="text-secondary" @click="edit" :title="$t('actions.edit')">
+                    <b-button variant="light" size="sm" class="text-secondary" @click="edit"
+                        :title="$t('actions.edit')">
                         <span class="fa fa-edit"></span>
                     </b-button>
 
@@ -51,9 +52,11 @@
                 <div v-else class="border-top" style="width: 100%; padding: 2px">
                     <div class="mb-3">
                         <template v-for="form in step.operation.forms">
-                            <div v-for="field in form.fields" :key="`${step.id}:${field.name}`" class="mb-2 zoom-85">
+                            <div v-for="field in form.fields" v-if="field.enabled" :key="`${step.id}:${field.name}`"
+                                class="mb-2 step-properties">
                                 <component :is="getWidget(field)" :field="field" :value="getValue(field.name)"
-                                    :type="field.suggested_widget" :read-only="!field.editable" context="context">
+                                    :type="field.suggested_widget" :read-only="!field.editable" context="context"
+                                    @update="updateField" :suggestionEvent="suggestionEvent">
                                 </component>
                             </div>
                         </template>
@@ -86,12 +89,14 @@
             serviceBus: { type: Object },
             showKeepAttribute: { type: Boolean, default: true },
             step: { type: Object, required: true },
+            suggestionEvent: { type: Function },
         },
         data() {
             return {
                 editing: false,
                 functionName: '',
                 keepAttribute: true,
+                editableStep: null
             }
         },
         computed: {
@@ -110,13 +115,57 @@
         },
         mounted() {
             this.functionName = this.step.functionName;
+            this.editableStep = JSON.parse(JSON.stringify(this.step));
         },
         methods: {
+            evalInContext(js, context) {
+                //# Return the results of the in-line anonymous function we .call with the passed context
+                return function () {
+                    try {
+                        return eval(js);
+                    } catch (pass) {
+                        return false;
+                    }
+                }.call(context);
+            },
+            updateField(field, value, labelValue) {
+                const self = this;
+                this.editableStep.forms[field.name] = { value };
+
+                const conditional = /\bthis\..+?\b/g;
+                const allFields = {};
+                this.step.operation.forms.forEach((f, i) => {
+                    f.fields.forEach((field, j) => {
+                        allFields[field.name] = this.editableStep.forms[field.name];
+                        allFields[field.name].internalValue = allFields[field.name].value;
+                    });
+                    f.fields.forEach((field, j) => {
+                        field.category = f.category;
+                        Vue.set(field, "enabled", true);
+                        field.enabled = true;
+                        if (field.enable_conditions) {
+                            if (field.enable_conditions === 'false') {
+                                field.enabled = false;
+                            } else {
+                                field.enable_conditions.match(conditional).forEach(v => {
+                                    const key = v.replace('this.', '');
+                                    /*if (!self.conditionalFields.has(key)) {
+                                        self.conditionalFields.set(key, []);
+                                    }
+                                    self.conditionalFields.get(key).push(field);*/
+                                    field.enabled = self.evalInContext(field.enable_conditions, allFields);
+                                });
+                            }
+                        }
+
+                    });
+                });
+            },
             getValue(name) {
-                return this.task
-                    && this.task.forms
-                    && this.task.forms[name]
-                    ? this.task.forms[name].value : null;
+                return this.editableStep
+                    && this.editableStep.forms
+                    && this.editableStep.forms[name]
+                    ? this.editableStep.forms[name].value : null;
             },
             getWidget(field) {
                 if (field.suggested_widget.endsWith(':read-only')) {
@@ -128,39 +177,21 @@
             },
             cancelEdit() {
                 this.editing = false;
-                //this.step = JSON.parse(JSON.stringify(this.step));
+                this.editableStep = JSON.parse(JSON.stringify(this.step));
             },
             edit() {
                 this.editing = true;
-            },
-            edit2() {
-                const self = this;
-                this.step.forms.fields.forEach((field) => {
-                    if (self.step?.forms?.callbacks?.in) {
-                        const value = field.isList ? self.step.task.forms[field.name]?.value[0] : self.step.task.forms[field.name]?.value;
-                        self.step.forms.callbacks.in(
-                            field, value,
-                            self.step.task.forms['$meta']?.value);
-                    } else if (self.step.task.forms[field.name]) {
-                        field.value = JSON.parse(JSON.stringify(self.step.task.forms[field.name]?.value));
-                    }
-                });
-                this.editing = true;
-            },
-            executeCallback() {
-                if (this.step.forms.callback) {
-                    this.step.forms.callback("Vamos testar")
-                }
             },
             save() {
                 //Cloned object doesn't carry function
                 //this.step.parameters.i18nArgs = this.step.parameters.i18nArgs;
                 //this.step.forms = this.step.parameters.getForms(this.step.parameters.alias,
                 //    [this.step.parameters.attributeName,]);
+                /*
                 if (this.step?.forms?.callbacks?.out) {
-                    this.step?.forms?.callbacks?.out(this.step, this.step.task.forms['$meta']?.value);
-                }
-                this.$emit('update', this.step, this.language);
+                    this.step?.forms?.callbacks?.out(this.step, this.step.editableStep.forms['$meta']?.value);
+                }*/
+                this.$emit('update', this.editableStep);
                 this.editing = false;
             },
             getStepClass(step) {
@@ -209,7 +240,13 @@
         color: #222;
         font-weight: lighter;
     }
+
     .zoom-85 {
-        zoom: 85%;
+        zoom: 100%;
+    }
+
+    .step-properties>>>textarea,
+    .step-properties>>>input {
+        font-size: .9em;
     }
 </style>

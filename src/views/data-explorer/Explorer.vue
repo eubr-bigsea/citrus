@@ -7,6 +7,7 @@
             </div>
         </div>
         -->
+        <TahitiSuggester />
         <div class="row">
             <div class="col-md-4 col-lg-3 noselect mt-1 pl-3">
                 <div class="title">
@@ -60,7 +61,7 @@
                                     :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
                                     <step :step="step" :service-bus="store.serviceBus" :language="language"
                                         :attributes="tableData.attributes" :index="inx" @toggle="store.toggleStep(step)"
-                                        @delete="store.deleteStep(step)" update="store.updateStep(step)"
+                                        @delete="store.deleteStep(step)" @update="updateStep"
                                         @custom-open="store.customOpen" />
                                 </div>
                             </draggable>
@@ -76,12 +77,15 @@
                     <div id="step-container">
                         <draggable @start="drag=true" @end="drag=false" class="list-group" ghost-class="ghost"
                             handle=".step-drag-handle" :list="workflowObj.tasks">
-                            <div v-for="task, inx in workflowObj.tasks" :key="task.id" v-if="task.operation.slug !== 'read-data'" 
-                                class="list-group-item steps clearfix" :title="task.name">
+                            <div v-for="task, inx in workflowObj.tasks" :key="task.id"
+                                v-if="task.operation.slug !== 'read-data'" class="list-group-item steps clearfix"
+                                :title="task.name">
                                 <step :step="task" :service-bus="store.serviceBus" :language="language"
                                     :attributes="tableData.attributes" :index="inx - 1"
                                     @toggle="task.enabled = !task.enabled" @delete="workflowObj.deleteTask(task)"
-                                    @update="store.updateStep(task)" @custom-open="store.customOpen" />
+                                    @update="updateStep" @custom-open="store.customOpen" 
+                                    :suggestionEvent="() => getSuggestions(task.id)"
+                                    />
                             </div>
                         </draggable>
                     </div>
@@ -96,7 +100,7 @@
                     :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview"
                     @drop="performAction" />
             </div>
-            
+
             <!--
             <simple-input ref="simpleInput" :cancel-title="simpleInput.cancelTitle" :ok-title="simpleInput.okTitle"
                 :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
@@ -167,7 +171,15 @@
         mixins: [Notifier],
         components: {
             SimpleInput, Preview, draggable, VuePerfectScrollbar,
-            contextMenu, Step, PreviewMenu, FindReplace, ConcatInput
+            contextMenu, Step, PreviewMenu, FindReplace, ConcatInput,
+            TahitiSuggester: () => {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.setAttribute('id', 'tahiti-script');
+                    script.async = true;
+                    document.head.appendChild(script)
+                })
+            }
         },
         props: {
             attributes: { type: Array, default: () => [] },
@@ -210,7 +222,8 @@
                 tableData: { attributes: [] }, // data used to render preview table
                 workflowObj: null,
                 //
-                menus: []
+                menus: [],
+                attributeSuggestion: {}
             }
         },
         async mounted() {
@@ -229,6 +242,96 @@
             */
         },
         methods: {
+            _queryDataSource(id, callback) {
+                let attributes = null;
+                let self = this;
+                id = parseInt(id);
+                if (window.TahitiAttributeSuggester.cached === undefined) {
+                    window.TahitiAttributeSuggester.cached = {};
+                }
+                if (window.TahitiAttributeSuggester.cached[id]) {
+                    attributes = window.TahitiAttributeSuggester.cached[id];
+                    callback(attributes);
+                } else {
+                    let url = `${limoneroUrl}/datasources/${id}`;
+                    axios.get(url).then(
+                        (response) => {
+                            //console.debug(response.data)
+                            let ds = response.data;
+                            attributes = ds.attributes.map(function (attr) { return attr.name });
+                            window.TahitiAttributeSuggester.cached[id] = attributes;
+                            callback(attributes);
+                        },
+                        () => {
+                            self.warning(self.$t('errors.invalidDataSource'));
+                            callback([]);
+                        }
+                    );
+                }
+            },
+            updateAttributeSuggestion(){
+                const self = this;
+                let attributeSuggestion = {};
+                try {
+                    // Add sequential flows to compute attribute suggestion
+                    const clonedWorkflow = JSON.parse(JSON.stringify(self.workflowObj));
+                    clonedWorkflow.flows = [];
+                    clonedWorkflow.tasks = clonedWorkflow.tasks.sort((a, b) => a.display_order - b.display_order);
+                    let task = clonedWorkflow.tasks[0];
+                    for(let i = 1; i < clonedWorkflow.tasks.length; i++){
+                        clonedWorkflow.flows.push({
+                            source_id: task.id,
+                            target_id: clonedWorkflow.tasks[i].id
+                        });
+                        task = clonedWorkflow.tasks[i];
+                    }
+                    window.TahitiAttributeSuggester.compute(clonedWorkflow, this._queryDataSource,
+                        (result) => {
+                            Object.keys(result).forEach(key => {
+                                attributeSuggestion[key] = result[key].uiPorts;
+                            });
+                            Object.assign(self.attributeSuggestion, attributeSuggestion);
+                            window.TahitiAttributeSuggester.processed = true;
+                        });
+                } catch (e) {
+                    console.log(e);
+                }
+            },
+            _unique(data) {
+                return Array.from(new Set(data))
+            },
+            getSuggestions(taskId) {
+                const extendedSuggestions = this.getExtendedSuggestions(taskId);
+                if (extendedSuggestions && extendedSuggestions.inputs.length) {
+                    return this._unique(Array.prototype.concat.apply([],
+                        extendedSuggestions.inputs.map(
+                            (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
+                } else {
+                    return [];
+                }
+            },
+            getExtendedSuggestions(taskId) {
+                if (window.hasOwnProperty('TahitiAttributeSuggester')) {
+                    if (window.TahitiAttributeSuggester.processed === undefined
+                        || this.attributeSuggestion[taskId] === undefined
+                        || this.attributeSuggestion[taskId].length === 0) {
+                        this.updateAttributeSuggestion();
+                    }
+                    if (this.attributeSuggestion[taskId]) {
+                        return this.attributeSuggestion[taskId];
+                    } else {
+                        return [];
+                    }
+                }
+            },
+            updateStep(step) {
+                const task = this.workflowObj.tasks.find(t => t.id === step.id);
+                if (task) {
+                    Object.assign(task.forms, step.forms);
+                }
+                this.updateAttributeSuggestion();
+                //console.debug(JSON.stringify(step))
+            },
             async loadOperations() {
                 // Platform is always META_OPERATION_ID
                 try {
@@ -676,6 +779,9 @@
                         return;
                     }
                     self.loadingData = false;
+                    document.getElementById('tahiti-script').setAttribute(
+                        'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.workflowObj.platform.id}`);
+
                     //self.store.setWorkflow(workflow, true);
                 } catch (e) {
                     console.debug(e)
