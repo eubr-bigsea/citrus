@@ -55,16 +55,24 @@ export default new Vuex.Store({
         register_request(user) {
             console.info('User', user);
         },
-        change_profile_success(state, { user }) {
+        change_profile_success(state, { user, token }) {
             state.user.email = user.email;
             state.user.login = user.login;
             state.user.locale = user.locale;
             state.user.roles = user.roles || [];
             state.status = 'success';
             state.user = user;
+            localStorage.setItem('user', JSON.stringify(user));
+            if (token){
+                this.state.token = token;
+                localStorage.setItem('token', token);
+            }
         }
     },
     actions: {
+        setUser({commit}, {user, token}){
+            commit('change_profile_success', { user, token });
+        },
         changeProfile({ commit }, params) {
             return new Promise((resolve, reject) => {
                 const url = `${params.thornUrl}/users/me`;
@@ -186,20 +194,20 @@ export default new Vuex.Store({
         isLoggedIn: state => !!state.token,
         authStatus: state => state.status,
         user: state => state.user || {},
-        isAdmin: state => state.user.roles.map(r => r.name).includes('admin'),
+        isAdmin: state => state.user?.roles?.map(r => r.name).includes('admin'),
         isManager: state => state.user.roles.map(r => r.name).includes('manager'),
         isMonitor: state => state.user.roles.map(r => r.name).includes('monitor'),
         hasRoles: state => state.user.roles.length > 0,
-        userPermissions: state => state.user.roles.flatMap(r => r.permissions.map(p => p.name)) || {},
+        userPermissions: state => state.user.roles?.flatMap(r => r.permissions.map(p => p.name)) || {},
         token: state => state.token,
         hasAnyPermission: state => permissionList => {
             const permissions = state.user.roles.flatMap(r => r.permissions.map(p => p.name));
             return permissionList.some(r => permissions.includes(r));
         },
         hasFeaturePermission: state => feature => {
-            const permissions = state.user.roles.flatMap(r => r.permissions.map(p => p.name));
+            const permissions = state.user.roles?.flatMap(r => r.permissions.map(p => p.name));
             const testPermissions = FEATURES_PERMISSIONS[feature] || [];
-            return testPermissions.some(r => permissions.includes(r));
+            return testPermissions.some(r => permissions?.includes(r));
         },
         hasAnyRole: state => roleList => {
             const roles = state.user.roles.map(r => r.name);

@@ -189,106 +189,113 @@ L.Icon.Default.mergeOptions({
     iconUrl: require('leaflet/dist/images/marker-icon.png'),
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
-
-// Auth
-const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user'), '{}');
-if (token) {
-    //axios.defaults.headers.common['Authorization'] = token;
-    axios.defaults.headers.common['X-Authentication'] = token;
-    axios.defaults.headers.common['X-User-Id'] = user ? user.id : null;
-    axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
-    axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-    axios.defaults.headers.common['Access-Control-Allow-Headers'] =
-        'Origin, X-Requested-With, Content-Type, Accept';
-    axios.defaults.headers.common['Access-Control-Allow-Methods'] =
-        'POST, GET, PUT, DELETE, OPTIONS';
-}
-
-// i18n
-const i18n = new VueI18n({
-    locale: user ? user.locale : 'pt',
-    fallbackLocale: 'en',
-    messages
-});
-
-Object.defineProperty(Vue.prototype, '$locale', {
-    get: function () {
-        return i18n.locale;
-    },
-    set: function (locale) {
-        i18n.locale = locale;
+Vue.prototype.$openIdService = openIdService;
+openIdService.loadConfig().then(() => {
+    // Auth
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'), '{}');
+    if (token) {
+        //axios.defaults.headers.common['Authorization'] = token;
+        axios.defaults.headers.common['X-Authentication'] = token;
+        axios.defaults.headers.common['X-User-Id'] = user ? user.id : null;
+        axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
+        axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+        axios.defaults.headers.common['Access-Control-Allow-Headers'] =
+            'Origin, X-Requested-With, Content-Type, Accept';
+        axios.defaults.headers.common['Access-Control-Allow-Methods'] =
+            'POST, GET, PUT, DELETE, OPTIONS';
     }
-});
 
-router.beforeEach((to, from, next) => {
-    if (to.meta.title) {
-        let title = i18n.tc('titles.lemonade') + ' :: ' +
-            i18n.tc(to.meta.title[0], to.meta.title[1]);
-        if (to.params.id) {
-            title += ' #' + to.params.id;
+    // i18n
+    const i18n = new VueI18n({
+        locale: user ? user.locale : 'pt',
+        fallbackLocale: 'en',
+        messages
+    });
+
+    Object.defineProperty(Vue.prototype, '$locale', {
+        get: function () {
+            return i18n.locale;
+        },
+        set: function (locale) {
+            i18n.locale = locale;
         }
-        document.title = title;
-    } else {
-        document.title = i18n.tc('titles.lemonade', 2)
-    }
-    if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
-        // If OpenId support is enabled in Thorn, use it. 
-        // Otherwise, it uses internal Thorn API.
-        if (openIdService.enabled && false) {
-            openIdService.isUserLoggedIn().then(isLoggedIn => {
-                //store.setters.isLoggedIn = isLoggedIn;
-                console.debug('user is logged ', isLoggedIn)
-                if (! isLoggedIn){
-                    openIdService.login();
-                } else {
-                    next();
-                    return;
-                }
-            })
-            return
-        } else if (store.getters.isLoggedIn) {
-            if (to.matched.some(record => record.meta.requiresRole)) {
-                if (store.getters.hasRoles) {
-                    next();
-                    return;
-                } else {
-                    next('/');
-                }
+    });
+
+    router.beforeEach((to, from, next) => {
+        if (to.meta.title) {
+            let title = i18n.tc('titles.lemonade') + ' :: ' +
+                i18n.tc(to.meta.title[0], to.meta.title[1]);
+            if (to.params.id) {
+                title += ' #' + to.params.id;
             }
-            next();
-            return;
+            document.title = title;
+        } else {
+            document.title = i18n.tc('titles.lemonade', 2)
         }
-        next('/auth/login');
-    } else {
-        next();
-    }
-});
+        if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
+            // If OpenId support is enabled in Thorn, use it. 
+            // Otherwise, it uses internal Thorn API.
 
-let newVue = new Vue({
-    el: '#app',
-    i18n,
-    router,
-    store,
-    render: h => h(App)
-});
-let requestCounter = 0;
-axios.interceptors.request.use(async config => {
-    if (requestCounter === 0) {
-        newVue.$Progress.start()
-    }
-    let accessToken = await openIdService.getAccessToken();
-    accessToken && (config.headers['Authorization'] = accessToken);    
-    requestCounter += 1
-    return config
-})
-axios.interceptors.response.use(response => {
-    requestCounter -= 1
-    if (requestCounter === 0) {
+            if (openIdService.enabled) {
+                openIdService.isUserLoggedIn().then(isLoggedIn => {
+                    //store.setters.isLoggedIn = isLoggedIn;
+                    console.debug('Using OpenID. Status: ', isLoggedIn)
+                    if (!isLoggedIn) {
+                        openIdService.login();
+                    } else {
+                        next();
+                    }
+                })
+                return;
+            } else if (store.getters.isLoggedIn) {
+                if (to.matched.some(record => record.meta.requiresRole)) {
+                    if (store.getters.hasRoles) {
+                        next();
+                        return;
+                    } else {
+                        next('/');
+                    }
+                }
+                next();
+                return;
+            }
+            next('/auth/login');
+        } else {
+            next();
+        }
+    });
+
+    let newVue = new Vue({
+        el: '#app',
+        i18n,
+        router,
+        store,
+        render: h => h(App)
+    });
+
+    let requestCounter = 0;
+    axios.interceptors.request.use(async config => {
+        if (requestCounter === 0) {
+            newVue.$Progress.start()
+        }
+        if (openIdService.enabled){
+            let accessToken = await openIdService.getAccessToken();
+            accessToken && (config.headers['Authorization'] = accessToken);
+        } else {
+            config.headers['Authorization'] = localStorage.getItem('token');
+        }
+        requestCounter += 1
+        return config
+    })
+    axios.interceptors.response.use(response => {
+        requestCounter -= 1
+        if (requestCounter === 0) {
+            newVue.$Progress.finish()
+        }
+        return response
+    }, (error) => {
         newVue.$Progress.finish()
-    }
-    return response
-}, (error) => {
-    newVue.$Progress.finish()
-    throw error
-})
+        throw error
+    })
+});

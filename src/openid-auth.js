@@ -7,6 +7,8 @@ const thornUrl = process.env.VUE_APP_THORN_URL;
 */
 class AuthService {
     constructor() {
+    }
+    async loadConfig(){
         // Config for the oidc client.
         const settings = {
             // Where the tokens will be stored
@@ -31,14 +33,28 @@ class AuthService {
         }
         this.enabled = false;
         this.userManager = null;
-        axios.get(`${thornUrl}/public/configurations/OPENID_CONFIG`).then(resp => {
-            this.enabled = resp?.data?.data?.enabled;
-            if (this.enabled){
-                let merged = {...settings, ...resp['data']['data']};
-                //merged.scope = 'profile, email'
-                this.userManager = new UserManager(merged);
+        const resp = await axios.get(`${thornUrl}/public/configurations/OPENID_CONFIG`);
+        this.enabled = resp?.data?.data?.enabled;
+        if (this.enabled){
+            let merged = {...settings, ...resp['data']['data']};
+            //merged.scope = 'profile, email'
+            /*
+            merged.authority = "dummy"
+            merged.userinfo_endpoint = "https://localhost:9443/oauth2/userinfo";
+            merged.metadata = {
+                issuer: 'https://localhost:9443/oauth2/token',
+                authorization_endpoint: 'https://localhost:9443/oauth2/authorize',
             }
-        });
+            */
+
+            /*merged.loadUserInfo = false
+            merged.userinfo_endpoint = "https://sso.gsi.mpmg.mp.br/oauth2/userinfo";
+            merged.metadata = {
+                issuer: 'https://ssogsi.mpmg.mp.br/oauth2/token',
+                authorization_endpoint: 'https://sso.gsi.mpmg.mp.br/oauth2/authorize',
+            }*/
+            this.userManager = new UserManager(merged);
+        }
     }
     /**
      * Initate the login process.

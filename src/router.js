@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
 
 // import ProjectList from './views/Administration/ProjectList.vue';
@@ -40,6 +39,8 @@ import About from './views/About.vue';
 import PageNotFound from './views/PageNotFound.vue';
 
 // Lazy routes
+const Home =  () => import(/* webpackChunkName: "group-global" */ './views/Home.vue');
+const Index =  () => import(/* webpackChunkName: "group-global" */ './views/Index.vue');
 const TermsOfService = () => import(/* webpackChunkName: "group-global" */ './views/TermsOfService.vue');
 const Welcome = () => import(/* webpackChunkName: "group-global" */ './views/Welcome.vue');
 
@@ -91,6 +92,15 @@ let router = new Router({
     routes: [
         {
             path: '/',
+            name: 'index',
+            component: Index,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.home', 1]
+            }
+        },
+        {
+            path: '/home',
             name: 'home',
             component: Home,
             meta: {

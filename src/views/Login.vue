@@ -105,7 +105,7 @@
                     .dispatch('login', { thornUrl, user: { email, password } })
                     .then(() => this.$router.push('/'))
                     .catch(e => {
-                       this.error(e.response.data);
+                       this.error(e?.response?.data || e);
                        this.submit = false;
                     });
             }
