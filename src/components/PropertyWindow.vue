@@ -263,22 +263,36 @@
                 this.tabIndex = 0;
                 callback();
             },
+            toggleFields(field, value){
+                const self = this;
+                field.internalValue = value;
+                const f = self.allFields[field.name];
+                //if (f){
+                    f.internalValue = value
+                //}
+                if (self.conditionalFields.has(field.name)) {
+                    const duplicatedOk = new Set();
+                    const fieldsToCheck = self.conditionalFields.get(field.name);
+                    console.debug(self.allFields['validation']?.internalValue)
+                    fieldsToCheck.forEach(fieldToCheck => {
+                        try {
+                            fieldToCheck.enabled = self.evalInContext(fieldToCheck.enable_conditions, self.allFields);
+                        } catch (e) {
+                            console.debug(e)
+                        }
+                    });
+                    if (fieldsToCheck?.length){
+                        [...new Set(fieldsToCheck.map(item => item.name))].forEach(item => {
+                            self.toggleFields(self.allFields[item], self.allFields[item].internalValue)
+                        });
+                    }
+                }
+            }
         },
         mounted() {
             const self = this;
             this.update();
-            self.$root.$on('update-form-field-value', (field, value) => {
-                field.internalValue = value;
-                if (self.conditionalFields.has(field.name)) {
-                    self.conditionalFields.get(field.name).forEach(fieldToCheck => {
-                        try {
-                            fieldToCheck.enabled = self.evalInContext(fieldToCheck.enable_conditions, self.allFields);
-                        } catch (e) {
-                            // Ignore
-                        }
-                    });
-                }
-            });
+            self.$root.$on('update-form-field-value', this.toggleFields);
         },
         props: {
             task: { type: Object, default: {} },

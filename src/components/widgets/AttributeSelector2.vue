@@ -12,16 +12,16 @@
                 <div slot="default">
                     <div class="row">
                         <div class="col-md-4 offset-md-1 p-0">
-                            <span>{{$tc('property.availableAttribute', 2)}}:</span>
+                            <small>{{$tc('property.availableAttribute', 2)}}:</small>
                             <div class="left options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in available" class="border mb-1 p-1 suggested-attr"
                                     :key="suggestion" @click="move('right', index)">
                                     {{suggestion}}
                                 </div>
                             </div>
-                            <label class="m-0 mt-2">{{$t('property.informAttributeName')}}:</label>
+                            <label class="m-0 mt-2"><small>{{$t('property.informAttributeName')}}:</small></label>
                             <b-input-group class="">
-                                <b-form-input v-model="extra"></b-form-input>
+                                <b-form-input v-model="extra" class="form-control-sm"></b-form-input>
                                 <b-input-group-append>
                                     <b-button size="sm" @click="add" :disabled="extra === null || extra.trim() === ''">
                                         {{$t('actions.addItem')}}</b-button>
@@ -40,7 +40,7 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <span>{{$tc('property.selectedAttribute', 2)}}:</span>
+                            <small>{{$tc('property.selectedAttribute', 2)}}:</small>
                             <div class="options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in value" class="border mb-1 p-1 selected-attr"
                                     :key="suggestion" @click="move('left', index)">
@@ -51,9 +51,9 @@
                     </div>
                 </div>
                 <div slot="modal-footer">
-                    <b-btn @click="cancelModal" variant="" size="sm" class="float-right">{{$t('actions.cancel')}}
+                    <b-btn @click="cancelModal" variant="outline-secondary" size="sm" class="float-right">{{$t('actions.cancel')}}
                     </b-btn>
-                    <b-btn @click="okModal" variant="success mr-1" size="sm" class="float-right">{{$t('common.ok')}}
+                    <b-btn @click="okModal" variant="primary mr-1" size="sm" class="float-right">{{$t('common.ok')}}
                     </b-btn>
                 </div>
             </b-modal>

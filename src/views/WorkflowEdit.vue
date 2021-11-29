@@ -955,7 +955,7 @@
                                     if (field.enabled || field.enabled === undefined) {
                                         if (field.required && field.enable_conditions !== 'false') {
                                             const value = t.forms[field.name] ? t.forms[field.name].value : null;
-                                            if (value === null || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
+                                            if (value === null || value === undefined || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
                                                 warning = this.$tc("errors.missingRequiredValue");
                                                 self.validationErrors.push({
                                                     id: counter++, task: { id: t.id, name: t.name },

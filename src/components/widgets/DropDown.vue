@@ -4,14 +4,17 @@
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <select v-if="!field.multiplicity || field.multiplicity === 1 || field.multiplicity === 0"
-            class="form-control input-sm " v-bind:data-field="field.name" v-model="selected"
-            @change="updated" :required="field.required">
-            <!--<option v-if="!field.default"></option>-->
-            <option v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key">
-                {{opt[language] || opt.value}}
-            </option>
-        </select>
+        <div v-if="!field.multiplicity || field.multiplicity === 1 || field.multiplicity === 0">
+            <select 
+                class="form-control input-sm " v-bind:data-field="field.name" v-model="selected"
+                @change="updated" :required="field.required">
+                <!--<option v-if="!field.default"></option>-->
+                <option v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key">
+                    {{opt[language] || opt.value}}
+                </option>
+            </select>
+            <a v-if="help" :href="help" target="_blank">{{$tc('titles.reference')}} <span class="fa fa-external-link-alt"></span></a>
+        </div>
         <b-form-tags v-else-if="field.multiplicity === 2 || field.multiplicity === 3" v-model="selected"
             @input="updatedTag" add-on-change no-outer-focus :name="field.name">
             <template v-slot="{ tags, inputAttrs, inputHandlers, disabled, removeTag }">
@@ -43,6 +46,9 @@
                 this.field, this.value || this.field['default']);
         },
         computed: {
+            help(){
+                return this.helpLink && this.value ? this.helpLink.replace('${key}', this.value) : null
+            },
             pairOptionValueList() {
                 this.tags; //In order to recompute if tags is changed
                 let v;
@@ -51,6 +57,11 @@
                         v = JSON.parse(this.field.values);
                     } else {
                         v = this.field.values;
+                    }
+                    // test if it is an object, instead of a list
+                    if (!Array.isArray(v)) {
+                        this.helpLink = v.help;
+                        v = v.values;
                     }
                     v.forEach(opt => {
                         opt.value = opt[this.language] || opt.value;
@@ -95,7 +106,8 @@
         },
         data() {
             return { tags: [],
-             internalSelected: null
+                internalSelected: null,
+                helpLink: null
            }
         }
 

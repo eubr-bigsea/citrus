@@ -80,6 +80,8 @@ const TrackPanel = () => import(/* webpackChunkName: "group-app" */ './views/Tra
 const Track = () => import(/* webpackChunkName: "group-app" */'./views/Track.vue');
 const TrackAdd = () => import(/* webpackChunkName: "group-app" */'./views/TrackAdd.vue');
 
+const DisplayHtml = () => import(/* webpackChunkName: "group-app" */'./views/DisplayHtml.vue');
+
 
 Vue.use(Router);
 
@@ -269,6 +271,15 @@ let router = new Router({
                 title: ['titles.dataSource', 1]
             }
         },
+        {
+            path: '/display/:id',
+            name: 'displayHtml',
+            component: DisplayHtml,
+            meta: {
+                requiresAuth: true,
+            }
+        },
+
         {
             path: '/models',
             name: 'models',

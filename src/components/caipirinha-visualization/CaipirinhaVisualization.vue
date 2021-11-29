@@ -49,6 +49,7 @@
     import Markdown from "../visualization/Markdown";
     import PieChart from "../visualization/PieChart";
     import Treemap from "../visualization/Treemap";
+    import Html from '../visualization/Html';
 
     let highchartsDefaultLang = undefined;
 
@@ -122,6 +123,7 @@
             'iframe-panel': IFrame,
             'markdown': Markdown,
             'treemap': Treemap,
+            'html-display': Html
         },
         data() {
             return {
@@ -136,7 +138,7 @@
             getVisualizationComponent(typeId) {
                 switch (typeId) {
                     case 1:
-                        return "caipirinha-visualization-html";
+                        return "html-display";
                     case 35:
                         return "caipirinha-visualization-table";
                     case 68:
