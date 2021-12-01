@@ -13,7 +13,7 @@
                 <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'tracks' }">
+                <b-nav-item :to="{ name: 'tracks' }" v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
                     <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }}
                 </b-nav-item>
                 <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">
@@ -51,6 +51,9 @@
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item :to="{ name: 'admin-openid' }">
+                        OpenId Sandbox
+                    </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
@@ -86,7 +89,7 @@
                         <span class="fa fa-angle-right"></span>
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
-            --> 
+            -->
             </b-navbar-nav>
             <b-navbar-nav>
                 <b-nav-item-dropdown right ref="dropdown">
@@ -102,16 +105,18 @@
                             <br />
                             <small>{{user.email}}</small>
                         </p>
-                        <p class="text-center">
+                        <div class="text-center">
                             <strong>{{$tc('titles.role', 2)}}</strong><br />
-                            <span class="badge badge-info mr-1 p-1" v-for="role in user.roles" :key="role.id">
-                                {{role.label}}
-                            </span>
-                        </p>
+                            <div class="mt-2">
+                                <span class="badge badge-info mr-1 p-1" v-for="role in user.roles" :key="role.id">
+                                    {{role.label}}
+                                </span>
+                            </div>
+                        </div>
                         <p class="border-top pt-2">
                             <b-button variant="primary" size="sm" @click="profile">{{ $t('titles.profile') }}</b-button>
-                            <router-link :to="{name: 'logout'}" class="ml-2 btn btn-sm btn-danger">
-                                {{ $t('common.logout') }}</router-link>
+                            <b-button variant="danger" size="sm" class="ml-2" @click="logout">
+                                {{ $t('common.logout') }}</b-button>
                         </p>
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
@@ -193,6 +198,13 @@
             */
         },
         methods: {
+            logout() {
+                if (this.$openIdService.enabled){
+                    this.$openIdService.logout();
+                } else {
+                    this.$router.push({ name: 'logout' });
+                }
+            },
             profile(evt) {
                 this.$refs.dropdown.hide(true);
                 this.$router.push({ name: 'profile' });
@@ -295,12 +307,12 @@
 
         @media (max-width: 1000px) {
             padding: 0 .5rem;
-    
+
             span {
                 xdisplay: none;
             }
         }
-        
+
         @media (max-width: 870px) {
             //padding: 0 .25rem;
         }

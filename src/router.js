@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Home from './views/Home.vue';
 import Administration from './views/Administration.vue';
 
 // import ProjectList from './views/Administration/ProjectList.vue';
@@ -40,6 +39,8 @@ import About from './views/About.vue';
 import PageNotFound from './views/PageNotFound.vue';
 
 // Lazy routes
+const Home =  () => import(/* webpackChunkName: "group-global" */ './views/Home.vue');
+const Index =  () => import(/* webpackChunkName: "group-global" */ './views/Index.vue');
 const TermsOfService = () => import(/* webpackChunkName: "group-global" */ './views/TermsOfService.vue');
 const Welcome = () => import(/* webpackChunkName: "group-global" */ './views/Welcome.vue');
 
@@ -65,9 +66,9 @@ const ModelEdit = () => import(/* webpackChunkName: "group-model" */ './views/Mo
 const DashboardList = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardList.vue');
 const DashboardDetail = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardDetail.vue');
 const DashboardBuilder = () => import(/* webpackChunkName: "group-dashboard" */ './views/DashboardBuilder.vue');
-
-const WebSocketPing = () => import(/* webpackChunkName: "group-util" */ './views/WebSocketPing.vue');
-const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */ './views/JsPlumbSandbox.vue');
+const WebSocketPing = () => import(/* webpackChunkName: "group-util" */'./views/WebSocketPing.vue');
+const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */'./views/JsPlumbSandbox.vue');
+const OpenIdSandbox = () => import(/* webpackChunkName: "group-util" */'./views/OpenIdSandbox.vue');
 const QueryEdit = () => import(/* webpackChunkName: "group-util" */ './views/query/QueryEdit.vue');
 
 const NotificationList = () => import(/* webpackChunkName: "group-notification" */ './views/NotificationList.vue');
@@ -86,10 +87,20 @@ const DisplayHtml = () => import(/* webpackChunkName: "group-app" */'./views/Dis
 Vue.use(Router);
 
 let router = new Router({
-    mode: 'hash',
+    //mode: 'hash',
+    mode: 'history',
     routes: [
         {
             path: '/',
+            name: 'index',
+            component: Index,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.home', 1]
+            }
+        },
+        {
+            path: '/home',
             name: 'home',
             component: Home,
             meta: {
@@ -460,11 +471,12 @@ let router = new Router({
             }
         },
         {
-            path: '/login',
+            path: '/auth/login',
             name: 'login',
             component: Login,
             meta: {
-                title: ['titles.login', 1]
+                title: ['titles.login', 1],
+                requiresAuth: false
             }
         },
         {
@@ -624,7 +636,15 @@ let router = new Router({
                 title: ['titles.admin', 1]
             }
         },
-
+        {
+            path: '/admin/openid',
+            name: 'admin-openid',
+            component: OpenIdSandbox,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.admin', 1]
+            }
+        },
         {
             path: '*',
             name: 'not-found',

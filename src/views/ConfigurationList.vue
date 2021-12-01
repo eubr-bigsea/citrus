@@ -4,9 +4,6 @@
 			<div class="title">
 				<div class="d-flex justify-content-between align-items-center">
 					<h1>{{$tc('titles.configuration', 2)}}</h1>
-					<router-link :to="{name: 'addCluster'}" class="btn btn-primary btn-lemonade-primary">
-						<span class="fa fa-plus" /> {{$t('actions.addItem')}}
-					</router-link>
 				</div>
 			</div>
 			<v-server-table ref="configurationList" :columns="table.columns" :options="table.options" name="configurationList">
@@ -28,14 +25,14 @@
 			
 		</div>
 
-	<b-modal id="modalConfig" ref="modalConfig" :title="currentRow? currentRow.name: ''">
+	<b-modal id="modalConfig" ref="modalConfig" :title="currentRow? currentRow.name: ''" size="lg">
 		<div v-if="currentRow" class="row">
 			<div class="col-md-12">
 				<label>{{currentRow.description}}:</label>
 			</div>
 			<div class="col-md-12">
 				<template v-if="currentRow.editor === 'TEXTAREA'">
-					<textarea v-model="editableValue" class="form-control text-monospace"></textarea>
+					<textarea v-model="editableValue" class="form-control text-monospace" rows="20"></textarea>
 				</template>
 				<template v-if="currentRow.editor === 'TEXT' || currentRow.editor === 'URL'">
 					<input v-model="editableValue" type="text" class="form-control text-monospace"/>

@@ -2,11 +2,13 @@
     <div class="row">
         <div class="col-12 col-sm-6 col-md-6 col-lg-4 mx-auto">
             <div class="card-wrapper">
-                <div class="brand" />
-                <div class="card fat">
-                    <div class="card-body">
+                <div class="brand"></div>
+                <div class="card fat ">
+                    <div class="card-header">
                         <h4 class="card-title float-left">{{ $t('titles.login') }}</h4>
-                        <div class="float-right navbar-brand logo" style="width:32px; margin:0"/>
+                        <div class="float-right navbar-brand logo" style="width:32px; margin:0"></div>
+                    </div>
+                    <div class="card-body">
                         <form @submit.prevent="login">
                             <div class="form-group">
                                 <label for="email">{{ $t('common.email') }} / {{ $t('common.user.login') }}:</label>
@@ -17,7 +19,8 @@
                             <div class="form-group">
                                 <label for="password">
                                     {{ $t('common.password') }}:
-                                    <router-link class="float-right" :to="{name: 'reset_password'}">{{$t('common.forgotPassword')}}</router-link>
+                                    <router-link class="float-right" :to="{name: 'reset_password'}">
+                                        {{$t('common.forgotPassword')}}</router-link>
                                 </label>
                                 <div style="position:relative">
                                     <input v-model="password" :type="showingPassword ? 'text' : 'password'"
@@ -32,7 +35,7 @@
                             <div class="form-group">
                                 <label>
                                     <b-check v-model="rememberPassword">
-                                    {{ $t('common.rememberMe') }}
+                                        {{ $t('common.rememberMe') }}
                                     </b-check>
                                 </label>
                             </div>
@@ -48,10 +51,18 @@
                                 <router-link :to="{name: 'register'}">{{$t('common.createAccount')}}</router-link>
                             </div>
                         </form>
+                        <div v-if="openIdEnabled">
+                            <div class="or">
+                                <h2><span>{{$tc('common.or').toUpperCase()}}</span></h2>
+                            </div>
+                            <div class="openid-logo"></div>
+                            <button class="btn btn-outline-primary w-100" @click="useOpenId">ENTRAR USANDO OPEN
+                                ID</button>
+                        </div>
                     </div>
                 </div>
                 <div class="footer text-center">
-                    Copyright © 2017-2021 — Lemonade Project
+                    <small>Copyright © 2017-2021 — Lemonade Project</small>
                 </div>
             </div>
         </div>
@@ -94,9 +105,16 @@
         computed: {
             passwordShowText() {
                 return this.$t(this.showingPassword ? 'common.hide' : 'common.show');
+            },
+            openIdEnabled() {
+                return this.$openIdService.enabled;
             }
         },
         methods: {
+            useOpenId() {
+                this.$openIdService.login().catch(e =>
+                    this.error(e))
+            },
             login: function () {
                 let thornUrl = process.env.VUE_APP_THORN_URL;
                 let email = this.email;
@@ -105,10 +123,26 @@
                     .dispatch('login', { thornUrl, user: { email, password } })
                     .then(() => this.$router.push('/'))
                     .catch(e => {
-                       this.error(e.response.data);
-                       this.submit = false;
+                        this.error(e?.response?.data || e);
+                        this.submit = false;
                     });
             }
         }
     };
 </script>
+<style scoped>
+    div.or h2 {
+        width: 100%;
+        font-size: 12pt;
+        font-weight: normal;
+        text-align: center;
+        border-bottom: 1px solid #aaa;
+        line-height: 0.1em;
+        margin: 20px 0 20px;
+    }
+
+    div.or h2 span {
+        background: #fff;
+        padding: 0 10px;
+    }
+</style>

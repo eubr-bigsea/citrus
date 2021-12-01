@@ -38,7 +38,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div v-if="user.authentication_type !== 'LDAP' " class="form-group row">
+                            <div v-if="isPasswordChangeable" class="form-group row">
                                 <label for="inputPassword3"
                                     class="col-sm-3 col-form-label">{{ $t('common.current_password') }}:</label>
                                 <div class="col-sm-9">
@@ -47,7 +47,7 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <div v-if="user.authentication_type !== 'LDAP'" class="col-md-12">
+                                <div v-if="isPasswordChangeable" class="col-md-12">
                                     <b-link v-b-toggle.changePassword class="float-right">
                                         {{ $t('profile.alsoChangePassword') }}</b-link>
                                 </div>
@@ -101,6 +101,12 @@
         components: {
             'slideout-panel': SlideOutPanel
         },
+        computed: {
+            isPasswordChangeable(){
+                return this.user.authentication_type !== 'LDAP' 
+                    && this.user.authentication_type !== 'OPENID' 
+            },
+        },
         mixins: [Notifier],
         data() {
             return {
@@ -127,6 +133,7 @@
                 );
         },
         methods: {
+            
             save() {
                 const self = this;
                 let thornUrl = process.env.VUE_APP_THORN_URL;
