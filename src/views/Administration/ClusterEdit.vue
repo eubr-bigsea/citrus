@@ -150,7 +150,7 @@
                     const errorHandler = function (e) { this.error(e); }.bind(this);
                     this.platforms = await axios
                         .get(`${tahitiUrl}/platforms?simple=true`) //FIXME: it returns old style without "data" field in json
-                        .then(resp => resp.data)
+                        .then(resp => resp.data.data)
                         .catch(errorHandler);
                     this.cluster = await axios
                         .get(`${standUrl}/clusters/${this.$route.params.id}`)

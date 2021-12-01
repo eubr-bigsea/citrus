@@ -88,7 +88,8 @@
                 });
             },
             callApi() {
-                axios.get('/api/v1/thorn/configurations').then(resp => {
+                const headers = {'Authorization': this.token}
+                axios.get('/api/v1/thorn/users/me', {headers}).then(resp => {
                     this.api = JSON.stringify(resp.data);
                 }).catch(error => {
                     console.debug('Error', error);

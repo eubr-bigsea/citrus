@@ -34,6 +34,18 @@ body {
     font-size: 0.9rem;
   }
 }
+div.openid-logo {
+    background-image: url(./openid.png);
+    background-repeat: no-repeat;
+    background-size: auto 40px;
+    background-position: center;
+    text-align: right;
+    height: 60px;
+    min-width: 240px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0 auto;
+}
 
 .object-align-center,
 .object-align-center-v,

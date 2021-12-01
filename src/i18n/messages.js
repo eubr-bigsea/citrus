@@ -143,6 +143,7 @@ export default {
             ok: 'OK',
             operation: 'Operação | Operações',
             optional: 'Opcional',
+            or: 'Ou',
             owner: 'Proprietário',
             pagerShowing:
                 'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
@@ -308,7 +309,7 @@ export default {
         },
         errors: {
             acceptTerms: 'Você deve concordar com os termos de uso',
-            accessDenied: 'Acesso negado.',
+            accessDenied: 'Acesso negado. Redirecionando para a página de login.',
             badGateway: 'Há um problema na comunicação com o servidor. Por favor, tente mais tarde.',
             disconnected:
                 'Você não está conectado. Por favor, verifique se você tem acesso à Internet.',
@@ -857,6 +858,7 @@ export default {
             ok: 'OK',
             operation: 'Operation | Operations',
             optional: 'Optional',
+            or: 'Or',
             owner: 'Owner',
             pagerShowing:
                 'Showing {from} to {to} of {count} records|{count} records|One record',
@@ -1018,7 +1020,7 @@ export default {
         },
         errors: {
             acceptTerms: 'You must accept the terms of service',
-            accessDenied: 'Access denied.',
+            accessDenied: 'Access denied. Redirecting to login page.',
             badGateway: 'There is a problem connecting to the server. Please, try again later.',
             disconnected:
                 'You are disconnected. Please check if you have access to the Internet.',

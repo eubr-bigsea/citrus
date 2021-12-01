@@ -13,7 +13,7 @@
                 <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'tracks' }">
+                <b-nav-item :to="{ name: 'tracks' }" v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
                     <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }}
                 </b-nav-item>
                 <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">

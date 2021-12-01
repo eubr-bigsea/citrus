@@ -7,8 +7,10 @@ const thornUrl = process.env.VUE_APP_THORN_URL;
 */
 class AuthService {
     constructor() {
+        
     }
-    async loadConfig(){
+    async loadConfig(vueStore){
+        this.vueStore = vueStore;
         // Config for the oidc client.
         const settings = {
             // Where the tokens will be stored
@@ -35,7 +37,7 @@ class AuthService {
         this.userManager = null;
         const resp = await axios.get(`${thornUrl}/public/configurations/OPENID_CONFIG`);
         this.enabled = resp?.data?.data?.enabled;
-        if (this.enabled){
+        //if (this.enabled){
             let merged = {...settings, ...resp['data']['data']};
             //merged.scope = 'profile, email'
             /*
@@ -54,20 +56,29 @@ class AuthService {
                 authorization_endpoint: 'https://sso.gsi.mpmg.mp.br/oauth2/authorize',
             }*/
             this.userManager = new UserManager(merged);
-        }
+        //}
     }
     /**
      * Initate the login process.
      */
     login() {
-        this.userManager.signinRedirect()
-            .catch(error => console.log(error))
+        return this.userManager.signinRedirect()
+            //.catch(error => console.log(error))
     }
 
     logout() {
+        this.userManager.removeUser();
+        this.vueStore && this.vueStore.dispatch('logout');
         this.userManager.signoutRedirect()
-            .then(() => console.log('User logged out'))
-            .catch(error => console.log(error))
+            .then(() => {
+                console.log('User logged out');
+                debugger
+                this.vueStore && this.vueStore.dispatch('logout');
+            }).catch(error => {
+                console.log(error);
+                this.userManager.removeUser();
+                this.vueStore && this.vueStore.dispatch('logout');
+            })
     }
 
     /**
@@ -128,10 +139,8 @@ class AuthService {
      */
     getAccessToken() {
         return new Promise((resolve, reject) => {
-            console.log('Get access token from user')
             this.userManager.getUser()
                 .then(user => {
-                    console.log('Got access token from user')
                     resolve(user? user.access_token: null)
                 })
                 .catch(error => reject(error))

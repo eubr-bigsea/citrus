@@ -190,7 +190,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 Vue.prototype.$openIdService = openIdService;
-openIdService.loadConfig().then(() => {
+openIdService.loadConfig(store).then(() => {
     // Auth
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'), '{}');
@@ -237,7 +237,7 @@ openIdService.loadConfig().then(() => {
             // If OpenId support is enabled in Thorn, use it. 
             // Otherwise, it uses internal Thorn API.
 
-            if (openIdService.enabled) {
+            if (false && openIdService.enabled) {
                 openIdService.isUserLoggedIn().then(isLoggedIn => {
                     //store.setters.isLoggedIn = isLoggedIn;
                     console.debug('Using OpenID. Status: ', isLoggedIn)
@@ -279,11 +279,13 @@ openIdService.loadConfig().then(() => {
         if (requestCounter === 0) {
             newVue.$Progress.start()
         }
-        if (openIdService.enabled){
+        const token = localStorage.getItem('token');
+        if (token){
+            config.headers['Authorization'] = token
+            config.headers['X-THORN-ID'] = 'true'
+        } else {
             let accessToken = await openIdService.getAccessToken();
             accessToken && (config.headers['Authorization'] = accessToken);
-        } else {
-            config.headers['Authorization'] = localStorage.getItem('token');
         }
         requestCounter += 1
         return config
@@ -295,7 +297,16 @@ openIdService.loadConfig().then(() => {
         }
         return response
     }, (error) => {
+        if (false && error.response.status === 401) {
+            newVue.$snotify.error(i18n.tc('errors.accessDenied'));
+            if (openIdService.enabled) {
+                openIdService.logout();
+            } else {
+                store.dispatch('logout');
+            }
+            router.push({ name: 'logout' });
+        }
         newVue.$Progress.finish()
-        throw error
+        throw error;
     })
 });
