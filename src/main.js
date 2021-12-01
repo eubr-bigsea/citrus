@@ -195,8 +195,9 @@ openIdService.loadConfig(store).then(() => {
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'), '{}');
     if (token) {
-        //axios.defaults.headers.common['Authorization'] = token;
-        axios.defaults.headers.common['X-Authentication'] = token;
+        axios.defaults.headers.common['Authorization'] = token;
+        axios.defaults.headers.common['X-THORN-ID'] = 'true';
+        //axios.defaults.headers.common['X-Authentication'] = token;
         axios.defaults.headers.common['X-User-Id'] = user ? user.id : null;
         axios.defaults.headers.common['Accept'] = 'application/json; charset=utf-8';
         axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
