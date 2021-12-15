@@ -72,6 +72,7 @@ import {
     faUserEdit,
     faUserLock,
     faPen,
+    faServer,
     
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -135,6 +136,7 @@ library.add(
     faQuestionCircle,
     faSave,
     faSearch,
+    faServer,
     faShareAlt,
     faSort,
     faSortAmountDown,
