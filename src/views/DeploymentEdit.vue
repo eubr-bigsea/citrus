@@ -10,7 +10,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-12 col-xg-12 mx-auto">
-                            <div class="card">
+                            <div class="card" v-if="ready">
                                 <div class="card-body">
                                     <form>
                                         <div class="row">
@@ -19,7 +19,12 @@
                                                 <input v-model="deployment.name" type="text" class="form-control"
                                                     maxlength="100" v-focus required>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-1">
+                                                <label class="font-weight-bold">{{$tc('deployment.replica',2)}}:</label>
+                                                <input type="number" class="form-control" v-model="deployment.replicas"
+                                                    max="4" min="1" step="1" />
+                                            </div>
+                                            <div class="col-3">
                                                 <label class="font-weight-bold">{{$tc('deployment.model')}}:</label>
                                                 <v-select :options="models" :taggable="false" label="name"
                                                     @search="fetchModels" :reduce="(opt) => opt.id" 
@@ -32,8 +37,8 @@
                                             </div>
                                             <div class="col-4">
                                                 <label class="font-weight-bold">{{$tc('deployment.target')}}:</label>
-                                                <v-select :options="targets" :reduce="(opt) => opt.id"
-                                                    v-model="deployment.target_id" label="name">
+                                                <v-select :options="targets" 
+                                                    v-model="deployment.target" label="name">
                                                     <template #option="{ description, id, name, target_type }">
                                                         {{ name }}<br />
                                                         <small><em>{{ description }} ({{ target_type }})</em></small>
@@ -44,21 +49,19 @@
                                         <div class="row mt-3">
                                             <div class="col-4">
                                                 <label class="font-weight-bold">{{$tc('deployment.image')}}:</label>
-                                                {{deployment.image_id}}
-                                                <v-select :options="images" :reduce="(opt) => opt.id"
-                                                    v-model="deployment.image_id" label="name">
+                                                <v-select :options="images" 
+                                                    v-model="deployment.image" label="description">
                                                     <template #option="{ description, id, name, tag }">
                                                         {{ description }}<br />
                                                         <small><em>{{ name }}:{{ tag }}</em></small>
                                                     </template>
                                                 </v-select>
                                             </div>
-                                            <div class="col-2">
-                                                <label class="font-weight-bold">{{$tc('deployment.replica',2)}}:</label>
-                                                <input type="number" class="form-control" v-model="deployment.replicas"
-                                                    max="4" min="1" step="1" />
+                                            <div class="col-1">
+                                                <label>{{$tc('deployment.port',1)}}:</label>
+                                                <input type="number" class="form-control" v-model="deployment.port" max="99999" min="1025"/>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-7">
                                                 <label>{{$tc('common.description')}}:</label>
                                                 <input v-model="deployment.description" type="text" class="form-control"
                                                     maxlength="100">
@@ -115,6 +118,13 @@
                                     </div>
                                 </div>
                             </div>
+                            <div v-else>
+                                <b-card>
+                                    <b-skeleton animation="fade" width="85%" height="40px"></b-skeleton>
+                                    <b-skeleton animation="fade" width="55%" height="40px"></b-skeleton>
+                                    <b-skeleton animation="fade" width="70%" height="40px"></b-skeleton>
+                                  </b-card>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -144,6 +154,7 @@
         data() {
             return {
                 deployment: {},
+                ready: false,
                 isDirty: false,
                 types: ['KUBERNETES', 'SPARK_LOCAL', 'MESOS', 'YARN'].sort(),
                 images: [],
@@ -212,6 +223,7 @@
                             replicas: 1
                         };
                     }
+                    this.ready = true;
                 } catch (e) {
                     this.error(e);
                 }
@@ -240,6 +252,8 @@
                     data.limit_memory = data.limit_memory + 'M';
                     data.model_name = this.models.find((m) => m.id === data.model_id).name;
                     data.deploy = deploy;
+                    data.target_id = data.target.id;
+                    data.image_id = data.image.id;
 
                     let url = `${seedUrl}/deployments/${this.deployment.id}`;
                     let axiosCall = axios.patch;

@@ -73,6 +73,8 @@ import {
     faUserLock,
     faPen,
     faServer,
+    faBan,
+    faPowerOff,
     
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -89,6 +91,7 @@ library.add(
     faArrowsAltH,
     faArrowsAltV,
     faAsterisk,
+    faBan,
     faBars,
     faBell,
     faBolt,
@@ -132,6 +135,7 @@ library.add(
     faPauseCircle,
     faPlay,
     faPlus,
+    faPowerOff,
     faProjectDiagram,
     faQuestionCircle,
     faSave,
