@@ -162,6 +162,7 @@ export default {
                 name: 'Nome',
                 subcategory: 'Categoria Secundária',
             },
+            publicLink: 'Link público',
             python: 'Código Python',
             team: {
                 description: 'Descrição',
@@ -398,6 +399,7 @@ export default {
         deployment: {
             address: 'URL',
             port: 'Porta | Portas',
+            deleteNotice: 'Esta ação remove a instalação (se houver) para esta implantação.',
             confirmDeploy: 'Confirma a implantação?',
             confirmUndeploy: 'Confirma a desinstalação?',
             log: 'Histórico | Histórico',
@@ -908,6 +910,7 @@ export default {
                 subcategory: 'Sub Category',
                 managers: 'Managers'
             },
+            publicLink: 'Public link',
             python: 'Python code',
             team: {
                 name: 'Name',
@@ -1214,6 +1217,7 @@ export default {
         deployment: {
             address: 'URL',
             port: 'Port | Ports',
+            deleteNotice: 'This action removes any installation for this deployment.',
             confirmDeploy: 'Confirm the deployment?',
             confirmUndeploy: 'Confirm the undeployment?',
             log: 'Log | Logs',

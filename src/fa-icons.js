@@ -75,6 +75,8 @@ import {
     faServer,
     faBan,
     faPowerOff,
+    faCalendarAlt,
+    faListAlt,
     
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -95,6 +97,7 @@ library.add(
     faBars,
     faBell,
     faBolt,
+    faCalendarAlt,
     faChartLine,
     faCheck,
     faCheckCircle,
@@ -128,6 +131,7 @@ library.add(
     faLightbulb,
     faLink,
     faList,
+    faListAlt,
     faMicroscope,
     faMinusCircle,
     faObjectGroup,
