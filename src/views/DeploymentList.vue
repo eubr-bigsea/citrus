@@ -28,21 +28,27 @@
                 </template>
                 <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
                 <template slot="actions" slot-scope="props">
-                    <button
-                        v-if="loggedUserIsOwnerOrAdmin(props.row) && ['PENDING', 'DEPLOYED_OLD', 'PENDING_UNDEPLOY', 'UNDEPLOYED', 'ERROR', 'SUSPENDED'].indexOf(props.row.current_status) > -1"
-                        class="ml-1 btn btn-sm btn-success" @click="deploy(props.row.id)" :title="$t('actions.deploy')">
-                        <font-awesome-icon icon="power-off" />
-                    </button>
-                    <button
-                        v-if="loggedUserIsOwnerOrAdmin(props.row) && ['DEPLOYED', 'DEPLOYED_OLD'].indexOf(props.row.current_status) > -1"
-                        class="ml-1 btn btn-sm btn-danger" @click="undeploy(props.row.id)"
-                        :title="$t('actions.undeploy')">
-                        <font-awesome-icon icon="power-off" />
-                    </button>
-                    <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ml-1 btn btn-sm btn-outline-info"
-                        @click="showInfo(props.row)" :title="$t('actions.info')">
-                        {{$tc('deployment.log', 2)}}
-                    </button>
+                    <div v-if="loggedUserIsOwnerOrAdmin(props.row)">
+                        <button
+                            v-if="['PENDING', 'DEPLOYED_OLD', 'PENDING_UNDEPLOY', 'UNDEPLOYED', 'ERROR', 'SUSPENDED'].indexOf(props.row.current_status) > -1"
+                            class="ml-1 btn btn-sm btn-success" @click="deployOrUndeploy(props.row.id, true)"
+                            :title="$t('actions.deploy')">
+                            <font-awesome-icon icon="power-off" />
+                        </button>
+                        <button v-if="['DEPLOYED', 'DEPLOYED_OLD'].indexOf(props.row.current_status) > -1"
+                            class="ml-1 btn btn-sm btn-danger" @click="deployOrUndeploy(props.row.id, false)"
+                            :title="$t('actions.undeploy')">
+                            <font-awesome-icon icon="power-off" />
+                        </button>
+                        <button class="ml-1 btn btn-sm btn-outline-info" @click="showInfo(props.row)"
+                            :title="$t('actions.info')">
+                            <font-awesome-icon icon="list-alt"/>
+                            {{$tc('deployment.log', 2)}}
+                        </button>
+                        <button class="ml-2 btn btn-sm btn-outline-danger" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash"/>
+                        </button>
+                    </div>
                 </template>
             </v-server-table>
             <b-modal v-if="currentRow" ref="modalInfo" size="xl" :title="currentRow.name" :okOnly="true">
@@ -132,7 +138,7 @@
 
                         this.$Progress.start();
                         return axios
-                            .get(`${seedUrl}/deployments`, {
+                            .get(`${seedUrl}/deployments?enabled=true`, {
                                 params: data
                             })
                             .then(resp => {
@@ -165,20 +171,10 @@
             const socket = io(standNamespace, { upgrade: true, });
             const room = `deployment.list.${this.$store.getters.user.id}`;
 
-            socket.on('disconnect', () => {
-                console.debug('You are not connected');
-            });
             socket.on('connect', () => {
-                console.debug('Connecting to room "' + room + '"');
                 socket.emit('join', { room });
             });
-            socket.on('connect_error', () => {
-                console.debug('Web socket server offline');
-            });
             socket.on('refresh', self.refresh);
-            socket.on('response', (msg) => {
-                console.debug(msg)
-            });
         },
         methods: {
             async showInfo(row) {
@@ -203,16 +199,20 @@
                 const user = this.$store.getters.user;
                 return deployment.user_id === user.id || user.roles.indexOf('admin') >= 0;
             },
-            refresh(){
+            refresh() {
                 this && this.$refs && this.$refs.listTable && this.$refs.listTable.refresh();
             },
-            deploy(deploymentId) {
+            deployOrUndeploy(deploymentId, deploy) {
                 const self = this;
+                let confirmMsg = this.$t('deployment.confirmDeploy');
+                if (!deploy) {
+                    confirmMsg = this.$t('deployment.confirmUndeploy');
+                }
                 this.confirm(
                     this.$tc('titles.deployment'),
-                    this.$t('deployment.confirmDeploy'),
+                    confirmMsg,
                     () => {
-                        const url = `${seedUrl}/deployments/${deploymentId}?deploy=true`;
+                        const url = `${seedUrl}/deployments/${deploymentId}?deploy=${deploy}`;
                         axios
                             .patch(url, { deploy: true })
                             .then(resp => {
@@ -223,29 +223,12 @@
                     }
                 );
             },
-            undeploy(deploymentId) {
-                const self = this;
-                this.confirm(
-                    this.$tc('titles.deployment'),
-                    this.$t('deployment.confirmUndeploy'),
-                    () => {
-                        const url = `${seedUrl}/deployments/${deploymentId}?undeploy=true`;
-                        axios
-                            .patch(url, { undeploy: true })
-                            .then(resp => {
-                                self.success(resp.message);
-                                self.refresh();
-                            })
-                            .catch(e => self.error(e));
-                    }
-                );
-            },
-            /*
             remove(deploymentId) {
                 const self = this;
                 this.confirm(
                     this.$t('actions.delete'),
-                    this.$t('messages.doYouWantToDelete'),
+                    this.$t('messages.doYouWantToDelete') + ' '
+                        + this.$t('deployment.deleteNotice'),
                     () => {
                         const url = `${seedUrl}/deployments/${deploymentId}`;
                         axios
@@ -259,7 +242,7 @@
                     }
                 );
 
-            }*/
+            }
         }
     };
 </script>
