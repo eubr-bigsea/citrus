@@ -9,12 +9,13 @@
     export default {
         mixins: [VisualizationMixin],
         data() {
+            const isVertical = this.visualizationData.data[0]?.orientation === 'v';
             return {
                 data: this.getData(),
                 layout: {
                     title: { text: this.visualizationData.title },
                     xaxis: {
-                        type: 'category',
+                        type: isVertical ? 'category': '-',
                         title: { text: this.visualizationData.x.title, },
                         ticksuffix: this.visualizationData.x.suffix,
                         tickprefix: this.visualizationData.x.prefix,
@@ -23,8 +24,9 @@
                         title: { text: this.visualizationData.y.title, },
                         ticksuffix: this.visualizationData.y.suffix,
                         tickprefix: this.visualizationData.y.prefix,
+                        type: !isVertical ? 'category': '-'
                     },
-                    barmode: 'group',
+                    barmode: this.visualizationData.barmode || 'group',
                     bargap: 0.15,
                     bargroupgap: 0.05,
                 },
@@ -35,12 +37,13 @@
                 const series = [];
                 const colors = [];
                 const xValues = this.visualizationData.data.map(item => item.name);
-                this.visualizationData.data.forEach(item => {
-                    item.values.forEach(value => {
+                this.visualizationData.data.forEach(dataSerie => {
+                    dataSerie.values.forEach(value => {
                         const found = series.find((s) => s.name === value.x);
                         if (!found) {
                             let serie = null;
-                            if (this.visualizationData.orientation === 'h') {
+                            if (dataSerie.orientation === 'h') {
+                                const yValues = dataSerie.values.map(value => value.y);
                                 serie = {
                                     x: [value.y],
                                     y: xValues,
@@ -58,13 +61,17 @@
                                 };
                             }
                             series.push(serie);
+                        } else if (dataSerie.orientation === 'h'){
+                            found.x.push(value.y);
                         } else {
                             found.y.push(value.y);
                         }
                     });
-                    colors.push(item.color);
+                    colors.push(dataSerie.color);
                 });
                 series.forEach((serie, inx) => { serie.marker = { color: colors[inx] } });
+                console.debug(series)
+                console.debug(colors)
                 return series;
             }
         },

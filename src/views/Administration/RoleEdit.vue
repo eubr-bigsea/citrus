@@ -12,8 +12,8 @@
                         <div class="col-md-12 col-xg-12 mx-auto">
                             <div class="card">
                                 <div class="card-body">
-                                    <form @submit.prevent="save" :disabled="role.system">
-                                        <fieldset :disabled="role.system">
+                                    <form @submit.prevent="save">
+                                        <fieldset>
                                             <div class="row">
                                                 <div class="col-md-2">
                                                     <label class="font-weight-bold">{{$tc('common.name')}}:</label>
@@ -39,7 +39,7 @@
                                         </fieldset>
                                         <div class="row">
                                             <div class="col-md-6 pb-3 pt-4">
-                                                <fieldset :disabled="role.system">
+                                                <fieldset>
                                                     <h6>
                                                         {{ $tc('common.permission', 2) }}:
                                                     </h6>
@@ -64,7 +64,7 @@
                                                     </div>
                                                 </fieldset>
                                             </div>
-                                            <div v-if="!role.all_user" class="col-md-6 pb-3 pt-4 border-top ">
+                                            <div v-if="!role.all_user" class="col-md-6 pb-3 pt-4">
                                                 <h6>
                                                     {{ $tc('titles.user', 2) }}:
                                                 </h6>
@@ -149,8 +149,7 @@
                 });
             },
             selectedPermissions(v) {
-                const self = this
-                self.role.permissions = self.permissions.filter(
+                this.role.permissions = this.permissions.filter(
                     p => v.includes(p.id));
             },
             selectedUsers(v) {
@@ -179,6 +178,9 @@
                     }
                     );
                     self.permissions = data;
+                    this.role.permissions = this.permissions.filter(
+                        p => this.selectedPermissions.includes(p.id));
+
                     self.groupedPermissions = data.reduce(
                         (entryMap, e) => entryMap.set(e.applicable_to,
                             [...entryMap.get(e.applicable_to) || [], e]),
@@ -260,8 +262,6 @@
 
                 return axiosCall(url, this.role)
                     .then(resp => {
-                        event.target.removeAttribute('disabled');
-                        event.target.classList.add('btn-spinner');
                         self.role = resp.data;
                         Vue.nextTick(() => {
                             self.isDirty = false;
