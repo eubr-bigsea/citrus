@@ -150,7 +150,7 @@ export default {
                   what: this.$tc('titles.job', 1)
                 })
               );
-              this.$refs.jobList.refresh();
+              this.$refs.jobList.getData();
               this.$Progress.finish();
             })
             .catch(
@@ -176,7 +176,7 @@ export default {
                   what: this.$tc('titles.job', 1)
                 })
               );
-              this.$refs.jobList.refresh();
+              this.$refs.jobList.getData();
               this.$Progress.finish();
             })
             .catch(
