@@ -83,6 +83,9 @@ const TrackAdd = () => import(/* webpackChunkName: "group-app" */'./views/TrackA
 
 const DisplayHtml = () => import(/* webpackChunkName: "group-app" */'./views/DisplayHtml.vue');
 
+const DeploymentList = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentList.vue');
+const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentEdit.vue');
+
 
 Vue.use(Router);
 
@@ -526,6 +529,35 @@ let router = new Router({
                 requiresRole: true
             }
         },
+        /* Deployment */
+        {
+            path: '/deployment',
+            name: 'deployments',
+            component: DeploymentList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.deployment', 2]
+            }
+        },
+        {
+            path: '/deployment/add',
+            name: 'addDeployment',
+            props: { add: true },
+            component: DeploymentEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.deployment', 1]
+            }
+        },
+        {
+            path: '/deployment/:id',
+            name: 'editDeployment',
+            component: DeploymentEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.deployment', 1]
+            }
+        },
         {
             path: '/administration/clusters',
             name: 'clusters',
@@ -652,7 +684,8 @@ let router = new Router({
             meta: {
                 title: ['titles.notFound']
             }
-        }
+        },
+        
     ]
 });
 router.onError(error => {

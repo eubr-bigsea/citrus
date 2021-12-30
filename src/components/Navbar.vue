@@ -51,6 +51,10 @@
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item :to="{ name: 'deployments' }">
+                        {{ $tc('titles.deployment', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item :to="{ name: 'admin-openid' }">
                         OpenId Sandbox
                     </b-dropdown-item>

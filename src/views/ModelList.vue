@@ -1,15 +1,6 @@
 <template>
     <main role="main">
         <div>
-            <div class="title">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$tc('titles.model', 2)}}</h1>
-                    <router-link :to="{name: 'addModel'}" class="btn btn-primary btn-lemonade-primary">
-                        <span class="fa fa-plus" /> {{$t('actions.addItem')}}
-                    </router-link>
-                </div>
-            </div>
-
             <v-server-table ref="listTable" :columns="columns" :options="options" name="modelList">
                 <template slot="id" slot-scope="props">
                     <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
@@ -19,11 +10,27 @@
                     <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
                         {{props.row.name}}</router-link>
                 </template>
+                <template slot="deployment_status" slot-scope="props">
+                    <font-awesome-icon icon="circle" :class="getDeploymentClass(props.row)"/>
+                    {{$t(`model.status_${props.row.deployment_status}`)}}
+                </template>
                 <template slot="created" slot-scope="props">{{props.row.created | formatJsonDate}}</template>
                 <template slot="actions" slot-scope="props">
-                    <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
-                        <font-awesome-icon icon="trash"></font-awesome-icon>
+                    <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
+                        @click="remove(props.row.id)" :title="$t('actions.delete')">
+                        <font-awesome-icon icon="trash" />
                     </button>
+                    <button
+                        v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && props.row.deployment_status === 'NOT_DEPLOYED' "
+                        class="ml-1 btn btn-sm btn-success" @click="remove(props.row.id)" :title="$t('actions.deploy')">
+                        <font-awesome-icon icon="server" />
+                    </button>
+                    <button
+                        v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && ['DEPLOYED', 'RUNNING'].indexOf(props.row.deployment_status) > -1"
+                        class="ml-1 btn btn-sm btn-warning" @click="remove(props.row.id)" :title="$t('actions.undeploy')">
+                        <font-awesome-icon icon="server" />
+                    </button>
+
                 </template>
             </v-server-table>
         </div>
@@ -40,22 +47,25 @@
         mixins: [Notifier],
         data() {
             return {
-                columns: ['id', 'name', 'type', 'created', 'class_name', 'actions',],
+                columns: ['id', 'name', 'deployment_status', 'type', 'created', 'user_name', 'class_name', 'actions',],
 
                 showSideBar: false,
                 options: {
                     debounce: 800,
                     skin: 'table-sm table table-hover',
                     dateColumns: ['created'],
+                    columnsClasses: {'actions': 'text-center'},
                     headings: {
                         id: 'ID',
                         name: this.$tc('common.name'),
                         class_name: this.$tc('common.class'),
+                        deployment_status: this.$tc('model.deployment_status'),
                         type: this.$tc('common.type'),
+                        user_name: this.$t('common.user.name'),
                         created: this.$tc('common.created'),
                         actions: this.$tc('common.action', 2)
                     },
-                    sortable: ['id', 'name', 'type', 'created'],
+                    sortable: ['id', 'name', 'type', 'created', 'deployment_status'],
                     filterable: ['id', 'name', 'type', 'created'],
                     sortIcon: {
                         base: 'fa fas',
@@ -73,7 +83,7 @@
                         data.size = data.limit;
                         data.q = data.query;
 
-                        data.fields = 'id,name,created,type,class_name';
+                        data.fields = 'id,name,created,type,class_name,user_name,user_id,deployment_status';
 
                         let url = `${limoneroUrl}/models`;
 
@@ -109,6 +119,20 @@
         },
         /* Methods */
         methods: {
+            getDeploymentClass(item){
+                switch (item.deployment_status){
+                    case 'NOT_DEPLOYED':
+                        return 'text-secondary';
+                    case 'DEPLOYED':
+                        return 'text-success';
+                    case 'PENDING':
+                        return 'text-warning'
+                } 
+            },
+            loggedUserIsOwnerOrAdmin(model) {
+                const user = this.$store.getters.user;
+                return model.user_id === user.id || user.roles.indexOf('admin') >= 0;
+            },
             remove(modelId) {
                 const self = this;
                 this.confirm(

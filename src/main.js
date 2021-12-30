@@ -146,15 +146,15 @@ const locales = {
 
 Vue.filter('formatJsonDate', v => {
     if (v) {
-        return format(parse(v), 'DD/MM/YYYY HH:mm');
+        return format(parse(v + '.000Z'), 'DD/MM/YYYY HH:mm');
     }
 });
 Vue.filter('timeFromNow', (v, l) =>
-    distanceInWordsStrict(new Date(), v, { addSuffix: true, locale: locales[l] })
+    distanceInWordsStrict(new Date(), (v + '.000Z'), { addSuffix: true, locale: locales[l] })
 );
 Vue.filter('formatJsonHourMinute', v => {
     if (v) {
-        return format(parse(v), 'HH:mm:ss');
+        return format(parse(v + '.000Z'), 'HH:mm:ss');
     }
 });
 
@@ -310,4 +310,6 @@ openIdService.loadConfig(store).then(() => {
         newVue.$Progress.finish()
         throw error;
     })
+}).catch((e) => {
+    alert(e);
 });
