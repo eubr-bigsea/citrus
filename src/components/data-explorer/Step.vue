@@ -5,7 +5,7 @@
             class="mr-1"></div>
         -->
         <div class="float-left text-secondary step-drag-handle">
-            <span class="fa fa-grip-vertical"></span>
+            <span class="fa fa-grip-vertical" v-if="!protected"></span>
             <!--
             <div class="mt-2">
                 <span :class="getStepClass(step)"></span>
@@ -14,7 +14,7 @@
         </div>
         <div class="float-left step" style="width: calc(100% - 25px)" ref="step">
             <div class="step-description">
-                <input type="checkbox" v-model="step.selected" />&nbsp;
+                <input type="checkbox" v-model="step.selected" v-if="!protected" />&nbsp;
                 <span class="step-number">#{{index + 1}}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()"></span>
@@ -22,6 +22,8 @@
                 <span v-else v-html="step.getLabel()"></span>
             </div>
             <div>
+                <span v-if="step.error" class="fa fa-exclamation-circle text-danger" v-b-tooltip.html :title="step.error"></span>
+    
                 <b-button-group v-if="!editing" class="zoom-buttom float-right">
                     <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
                         @click="edit('execution')" :title="$t('actions.edit')">
@@ -33,12 +35,11 @@
                             :class="{'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable}"></span>
                     </b-button>
 
-                    <b-button variant="light" size="sm" class="text-secondary" @click="$emit('delete', step.id)"
-                        :title="$t('actions.delete')">
+                    <b-button v-if="!protected" variant="light" size="sm" class="text-secondary"
+                        @click="$emit('delete', step.id)" :title="$t('actions.delete')">
                         <span class="fa fa-trash"></span>
                     </b-button>
-
-                    <b-button variant="light" size="sm" @click="$emit('toggle', step)"
+                    <b-button v-if="index > 0" variant="light" size="sm" @click="$emit('toggle', step)"
                         :title="step.enabled ? $t('actions.disable') : $t('actions.enable')">
                         <span v-if="step.enabled" class="fa fa-toggle-on text-success"></span>
                         <span v-else class="fa fa-toggle-off text-secondary"></span>
@@ -96,6 +97,7 @@
             inputAlias: { type: Boolean, default: true },
             index: { type: Number, required: true },
             language: { type: String, required: true },
+            protected: { type: Boolean, default: false },
             serviceBus: { type: Object },
             showKeepAttribute: { type: Boolean, default: true },
             step: { type: Object, required: true },

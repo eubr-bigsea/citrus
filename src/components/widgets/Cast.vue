@@ -2,19 +2,19 @@
     <div class="function-editor">
         <span v-if="!readOnly">
             <LabelComponent :field="field" :value="value"></LabelComponent>
-            <textarea disabled :value="displayValue" class="form-control" rows="4"></textarea>
+            <textarea readonly :value="displayValue" class="form-control" rows="4"
+                @click.prevent="openModal"></textarea>
             <b-link variant="sm" @click.prevent="openModal">
                 {{$t('actions.chooseOption')}}
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-        {{suggestions}}
         <b-modal id="lookupModal" button-size="sm" size="lg" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" no-fade ref="modal" v-if="parameters">
+            :cancel-title="$t('actions.cancel')" no-fade ref="modal" v-if="parameters" centered>
             <p>
                 {{field.label||field.name}}
             </p>
-            <table class="table table-bordered table-sm" v-if="valueList && valueList.length">
+            <table class="table table-sm" v-if="valueList && valueList.length" ref="table">
                 <thead>
                     <th class="text-center">{{$t('property.attribute')}}</th>
                     <th class="text-center">{{$t('property.type')}}</th>
@@ -23,23 +23,24 @@
                 <tbody>
                     <tr v-for="(row, index) in valueList">
                         <td style="width:50%">
-                            
                             <v-select :options="suggestions" :multiple="false" :value="row.attribute"
                                 @input="(v) => attrUpdated(row, 'attribute', v)" :taggable="true" :closeOnSelect="true"
-                                size="sm">
+                                size="sm" class="vue-select-small">
                                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
                             </v-select>
                         </td>
                         <td style="width:20%">
-                            <select class="form-control" :value="row.type" @change="updated($event, row, 'type')" size="sm">
+                            <select class="form-control form-control-sm" :value="row.type"
+                                @change="updated($event, row, 'type')" size="sm">
                                 <option v-for="v in JSON.parse(field.values)" :value="v.key">{{v.value}}</option>
                             </select>
                         </td>
                         <td style="width:10%" class="text-center">
-                            <a href="#" @click="remove($event, index)" :title="$t('actions.delete')">
+                            <a href="#" @click="remove($event, index)" :title="$t('actions.delete')" class="pr-1">
                                 <span class="fa fa-minus-circle"></span>
                             </a>
-                            <a href="#" @click="moveUp($event, index)" v-if="index !== 0" :title="$t('actions.moveUp')">
+                            <a href="#" @click="moveUp($event, index)" v-if="index !== 0" :title="$t('actions.moveUp')"
+                                class="pr-1">
                                 <span class="fa fa-chevron-circle-up"></span>
                             </a>
                             <a href="#" @click="moveDown($event, index)" v-if="index !== (valueList.length-1)"
@@ -88,6 +89,7 @@
         },
         mounted() {
             this.updateDisplayValue(this.value);
+
         },
         methods: {
             openModal() {
@@ -98,7 +100,7 @@
             },
             updateDisplayValue(v) {
                 if (v) {
-                    this.displayValue = v.map((v) => `(${v.type}) ${v.attribute}`).join('\n')
+                    this.displayValue = v.map((v) => `${v.attribute} = (${v.type}) ${v.attribute}`).join('\n')
                 } else {
                     this.displayValue = '';
                 }
@@ -113,7 +115,7 @@
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
-                this.valueList.push({ attribute: '', type: '' })
+                this.valueList.push({ attribute: '', type: '' });
             },
             remove(e, index) {
                 this.valueList.splice(index, 1);
@@ -134,7 +136,7 @@
                 return false;
             },
             okClicked(ev) {
-                this.$root.$emit(this.message, this.field,
+                this.triggerUpdateEvent(this.message, this.field,
                     this.valueList);
                 this.$refs.modal.hide();
                 this.updateDisplayValue(this.valueList);
@@ -144,6 +146,17 @@
             }
         },
         props: {
+            schema: { type: Object, default: null },
         },
     }
 </script>
+<style>
+    .vue-select-small .vs__dropdown-toggle {
+        height: 30px;
+    }
+
+    .vue-select-small .vs__fade-enter-active,
+    .vue-select-small .vs__fade-leave-active {
+        transition: none;
+    }
+</style>

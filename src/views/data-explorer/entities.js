@@ -1,10 +1,15 @@
-
+class Constants {
+    static DATA_TYPES = [
+        'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'Text', 'Time',]
+}
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null } = {}) {
 
         let _platform = platform instanceof Platform ? platform : new Platform(platform);
         let _tasks = tasks.map(task => (task instanceof Task) ? task : new Task(task));
         let _flows = flows.map(flow => (flow instanceof Flow) ? flow : new Flow(flow));
+        this._tasksLookup = new Map();
+        _tasks.forEach(task => this._tasksLookup.set(task.id, task));
 
         Object.assign(this, {
             id, name, type, version,
@@ -17,26 +22,36 @@ class Workflow {
         });
         this.history = 0;
     }
+    getTaskById(id){
+        return this._tasksLookup.get(id);
+    }
     addTask(op, selected, fields) {
         //const requiresAttributes = !!op.forms.fields.find((f) => f.name === 'attributes');
         const attrs = (selected) ? [selected.column] : [];
         let forms = null;
+
+        // Operations that handle 'attributes' in a different field
         if (op.slug === 'sort') {
             forms = { order_by: { value: attrs.map(attr => { return { attribute: attr, f: 'asc' } }) } };
+        } else if (op.slug === 'cast') {
+            forms = { cast_attributes: { value: attrs.map(attr => { return { attribute: attr, type: 'Text' } }) } };
         } else {
             forms = { attributes: { value: attrs } }
         }
         if (fields) {
             Object.assign(forms, fields);
         }
-        this.tasks.push(op.createTask({
-            name: op.name,
-            forms
-        }));
+        const newTask = op.createTask({ name: op.name, forms })
+        this.tasks.push(newTask);
+        this._tasksLookup.set(newTask.id, newTask);
+
         this.tasks.forEach((task, inx) => task.display_order = inx);
+
+        return newTask;
     }
     deleteTask(task) {
         this.tasks = this.tasks.filter(t => t.id !== task.id);
+        this._tasksLookup.delete(task.id);
     }
     static createSampleTask(display_order, op) {
         const forms = {
@@ -148,7 +163,9 @@ class Task {
         this.display_order = display_order;
         this.environment = environment;
         this.left = left;
+        this.selected = false;
         this.top = top;
+        this.error = null;
 
         //Initialize form fields
         operation.forms.filter(f => f.category === 'execution')
@@ -245,4 +262,5 @@ module.exports = {
     Task,
     Form,
     FormField,
+    Constants,
 }

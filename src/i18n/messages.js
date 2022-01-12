@@ -264,6 +264,7 @@ export default {
             capitalizeFirst: 'Converter iniciais para maiúsculas',
             copySelected: 'Copiar etapas selecionadas',
             disableSelected: 'Desabilitar etapas selecionadas',
+            doYouWantToDeleteStep: 'Você realmente quer excluir esse(s) passo(s)?',
             enableSelected: "Habilitar etapas selecionadas",
             experiments: {
                 DATA_EXPLORER: 'Análise de dados',

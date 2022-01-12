@@ -56,8 +56,11 @@
             </div>
             <div><small>{{$tc('common.pagerShowing', 0, {from: 1, to: 500, count: total})}}</small></div>
         </template>
+        <template v-else></template>
 
-        <context-menu ref="ctxCellMenu" class="menu" @ctx-open="onCellCtxOpen" @ctx-cancel="resetCellCtxLocals">
+        <!-- FIXME: translation -->
+        <context-menu ref="ctxCellMenu" class="menu" @ctx-open="(data) => cellMenuData = data"
+            @ctx-cancel="resetCellCtxLocals">
             <template v-if="cellMenuData">
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('filter', cellMenuData.name, '!=', cellMenuData.value)">
@@ -119,71 +122,31 @@
                 </li>
             </template>
         </context-menu>
-
-        <b-modal ref="modalRenameAttribute" :centered="true" button-size="sm" :title="$t('actions.rename')"
-            :cancel-title="$t('actions.cancel')" @ok="renameAttribute">
-            <b-form-input class="form-control" v-model="menuData.field.label" autofocus></b-form-input>
-        </b-modal>
-
-        <b-modal ref="modaldeleteAttribute" :centered="true" button-size="sm" :title="$t('actions.rename')"
-            :cancel-title="$t('common.no')" :ok-title="$t('common.yes')">
-            <b-form-input class="form-control" autofocus></b-form-input>
-        </b-modal>
-
-        <b-modal ref="modalAnalyse" :centered="true" button-size="sm" :title="$t('actions.analyse')" :ok-only="true"
-            :ok-title="$t('common.yes')">
-            <b-form-input class="form-control" autofocus></b-form-input>
-        </b-modal>
-
-        <b-modal ref="modalChangeDataType" :centered="true" button-size="sm" :title="$t('actions.analyse')"
-            :ok-only="true">
-            <b-form-select class="form-control" :options="dataTypes" v-model="menuData.field.type" autofocus />
-        </b-modal>
-
-        <modal-other-actions :attribute="menuData.field" @ok="otherActionsOk" ref="modalOtherActions" />
-
     </div>
 </template>
 <script>
-    import Vue from 'vue';
-    import QualityBar from './QualityBar';
-    import SimpleInput from './SimpleInput';
-    import contextMenu from 'vue-context-menu';
     import { debounce } from '../../util.js';
+    import Vue from 'vue';
+    import contextMenu from 'vue-context-menu';
     import Notifier from '../../mixins/Notifier.js';
-    import ModalOtherActions from './ModalOtherActions.vue';
     import PreviewMenu from './PreviewMenu.vue';
-
-    import ExpressionEditor from '../widgets/ExpressionEditor.vue';
 
     export default {
         mixins: [Notifier],
-        components: { QualityBar, SimpleInput, contextMenu, ModalOtherActions, ExpressionEditor, PreviewMenu },
+        components: { contextMenu, PreviewMenu },
         data() {
             return {
-                dataTypes: [
-                    'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'JSON', 'Text', 'Time',],
                 menuData: { field: { label: '', position: -1 } },
                 cellMenuData: { row: 0, attribute: 0, value: null, name: null },
-                currentAttributeLabel: null,
                 handleTableScroll: null,
                 lastHeader: null,
-                propertyField: { label: '' },
-                simpleInput: {
-                    okTitle: this.$t('common.ok'),
-                    cancelTitle: this.$t('actions.cancel'),
-                    okClicked: () => { },
-                    title: null,
-                    initial: null,
-                    message: null,
-                },
                 scrollEventSet: false,
                 rightAlignedAttributes: { type: String },
                 dragTimeout: null,
             }
         },
         props: {
-            attributes: { type: Array, default: () => ['a'] },
+            attributes: { type: Array, default: () => [''] },
             invalid: { type: Object },
             items: { type: Array },
             loading: { type: Boolean },
@@ -194,6 +157,7 @@
         },
         watch: {
             attributes() {
+                const self = this;
                 const rightAlignedTypes = new Set(['integer', 'date', 'decimal', 'boolean', 'time']);
                 const rightAlignedAttributes = [];
 
@@ -203,12 +167,18 @@
                         rightAlignedAttributes.push(inx)
                     }
                     attributeIndexes.set(attr.key, inx);
+                    /*
+                    if (attr.type.toLowerCase() === 'boolean'){
+                        attr.formatter = (v) => v === 0 ? self.$tc('common.no') : self.$tc('common.yes');
+                    }
+                    */
                 });
                 if (rightAlignedAttributes.length) {
                     this.rightAlignedAttributes = rightAlignedAttributes.map(v => `.table-preview td:nth-child(${v + 1})`).join(', ');
                 } else {
                     this.rightAlignedAttributes = null;
                 }
+                /*
                 const self = this;
                 Vue.nextTick(() => {
                     const tbody = self.$refs.table.$el.querySelector('tbody');
@@ -239,6 +209,7 @@
                         });
                     }
                 });
+                */
             },
             items() {
                 if (!this.scrollEventSet) {
@@ -317,9 +288,6 @@
                     console.log(`Unknown action: ${options.action}`);
                 }
             },
-            otherActionsOk(data) {
-                console.debug('Other actions', data)
-            },
             handleTableScrollEvent(ev) {
                 this.moveSelectionOverlay(this.lastHeader);
                 this.$refs.ctxCellMenu.ctxVisible = false;
@@ -374,21 +342,6 @@
                     this.$refs.colOverlay.style.display = '';
                 }
             },
-            onCtxOpen(data) {
-                this.menuData = data;
-            },
-            onCtxClose(data) {
-                if (data.close === undefined || data.close)
-                    this.lastHeader.classList.remove('bg-info', 'text-white');
-            },
-            onCellCtxOpen(data) {
-                this.cellMenuData = data;
-            },
-
-            resetCtxLocals(data) {
-                this.resetMenuData();
-                this.lastHeader.classList.remove('bg-info', 'text-white')
-            },
             resetCellCtxLocals(data) {
                 this.cellMenuData = { row: 0, attribute: 0, value: null, name: null };
             },
@@ -397,100 +350,6 @@
                     get: (target, prop) => obj[prop] || target[prop]
                 })
                 return new evt.constructor(evt.type, proxy)
-            },
-            /* Attribute actions */
-            transform(params) {
-                this.store.transformWithFunction(
-                    this.menuData.field.label,
-                    this.menuData.field.position, params);
-                //this.$refs.expressionEditor.openModal();
-            },
-            saveExpression(expressionList) {
-                this.store.transform(this.menuData.field.label,
-                    this.menuData.field.position, expressionList);
-            },
-            deleteAttribute() {
-                // OK
-                this.store.deleteAttribute(this.menuData.field.label);
-                this.resetMenuData();
-            },
-            duplicateAttribute() {
-                //OK
-                const modalConfig =
-                {
-                    okTitle: this.$t('common.ok'),
-                    cancelTitle: this.$t('actions.cancel'),
-                    message: this.$t('dataExplorer.informNewName'),
-                    title: this.$t('actions.duplicate'),
-                    value: this.menuData.field.label,
-                    options: null,
-                    ok: () => {
-                        this.store.duplicateAttribute(
-                            this.menuData.field.label,
-                            this.$refs.simpleInput.value);
-                    }
-                };
-                this.$refs.simpleInput.show(modalConfig);
-            },
-            renameAttribute() {
-                //OK
-                const attributeName = this.menuData.field.label;
-                const modalConfig =
-                {
-                    okTitle: this.$t('common.ok'),
-                    cancelTitle: this.$t('actions.cancel'),
-                    message: this.$t('dataExplorer.informNewName'),
-                    title: this.$t('actions.rename'),
-                    value: attributeName,
-                    ok: () => {
-                        this.store.renameAttribute(
-                            attributeName,
-                            this.$refs.simpleInput.value);
-                    }
-                };
-                this.$refs.simpleInput.show(modalConfig);
-                this.resetMenuData();
-                /*
-                this.$refs.modalRenameAttribute.show();
-                const col = this.attributes.find((f) => f.key === this.menuData.field.key);
-                col.label = this.menuData.field.label;
-                this.store.renameAttribute();*/
-            },
-            changeAttributeType() {
-                const modalConfig =
-                {
-                    okTitle: this.$t('common.ok'),
-                    cancelTitle: this.$t('actions.cancel'),
-                    message: this.$t('dataExplorer.informNewName'),
-                    options: this.dataTypes,
-                    title: this.$t('actions.changeDataType'),
-                    value: this.menuData.field.type,
-                    ok: () => {
-                        this.store.changeAttributeType(
-                            this.menuData.field.label,
-                            this.$refs.simpleInput.value);
-                    }
-                };
-                this.$refs.simpleInput.show(modalConfig);
-                /*if (this.dataTypes.includes(newType)) {
-                    const col = this.attributes.find((f) => f.key === this.menuData.field.key);
-                    if (col) {
-                        this.store.changeAttributeType(
-                            this.menuData.field.label,
-                            newType);
-                        ///col.type = newType;
-                    }
-                }*/
-            },
-            sort(direction) {
-                this.store.sort(this.menuData.field.label, direction);
-            },
-
-            toggleLock(state) {
-                const col = this.attributes.find((f) => f.key === this.menuData.field.key);
-                if (col) {
-                    col.locked = state;
-                }
             },
             /**/
             tableContextMenu(item, index, event) {
@@ -520,7 +379,6 @@
             },
             // Cell context menu
             onCellContextMenuAction(action, attributeName, operator, attributeValue) {
-                console.debug(action, attributeName, operator, attributeValue)
                 this.$emit('context-menu', action, attributeName, operator, attributeValue);
             },
             dragStart(item, e) {
@@ -575,8 +433,9 @@
         margin: 0;
         min-width: 200px;
     }
+
     div.menu>>>li.ctx-item>span {
-        margin-right: 5px 
+        margin-right: 5px
     }
 
     .table-preview {

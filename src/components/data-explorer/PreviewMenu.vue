@@ -7,11 +7,12 @@
                     <template slot="button-content">
                         <span :class="menu.icon"></span> {{menu.menu.name}}
                     </template>
+                    
                     <template v-for="op in menu.operations">
                         <template
-                            v-if="op.css_class === 'separator' || op.css_class === '' || op.css_class.includes(selected.field.type)">
+                            v-if="op.css_class === 'separator' || op.css_class === '' || (selected.field.type && op.css_class.includes(selected.field.type.toLowerCase()))">
                             <b-dropdown-item @click="trigger('menu', op)">
-                                <span :class="op.icon"></span> {{op.name}}
+                                <span :class="op.icon"></span> {{op.name}} <!-- |{{op.css_class}}| -->
                             </b-dropdown-item>
                             <b-dropdown-item v-if="op.css_class.includes('separator')" class="ctx-divider">
                             </b-dropdown-item>
