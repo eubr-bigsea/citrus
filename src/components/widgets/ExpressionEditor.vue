@@ -193,9 +193,9 @@
                 if (attr === 'expression') {
                     try {
 
-                        const tree = jsep(e.target.value || '');
                         jsep.addBinaryOp(">=", 1);
                         jsep.removeBinaryOp('^');
+                        const tree = jsep(e.target.value || '');
                         row['error'] = null;
                         row['tree'] = tree
                         if (tree.type.includes("Compound")) {
@@ -232,10 +232,10 @@
             okClicked(e) {
                 const result = this.$refs.form && this.$refs.form.reportValidity() & this.validate();
                 if (result) {
-                    this.$root.$emit(this.message, this.field,
+                    this.triggerUpdateEvent(this.message, this.field,
                         this.expressionList);
 
-                    this.$emit(this.message, this.field, this.expressionList);
+                        this.triggerUpdateEvent(this.message, this.field, this.expressionList);
 
                     this.$refs.modal.hide();
                 } else {

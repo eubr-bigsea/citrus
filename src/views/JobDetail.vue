@@ -155,6 +155,7 @@
                                 </div>
 
                             </b-tab>
+                            <!--
                             <b-tab v-if="false" :title="$tc('job.results', 2)">
                                 <div v-for="(step, inx) in job.steps" :key="inx" class="row">
                                     <div class="col-md-12 lemonade">
@@ -181,13 +182,6 @@
                                             <div v-for="log in step.logs" :key="log.id"
                                                 style="font-size:.9em; margin-top: 20px">
                                                 <span v-if="log.type === 'OBJECT'">
-                                                    <!--
-                                                    <b-table :no-border-collapse="false" :items="log.message.rows"
-                                                        :per-page="50" :fields="log.message.attributes"
-                                                        tbody-class="body" sticky-header="500px" class="table border"
-                                                        outlined small hover striped bordered responsive>
-                                                    </b-table>
-                                                    -->
                                                     <v-client-table ref="jobList" :data="log.message.rows"
                                                         :columns="log.message.attributes.map(a=>a.label)"
                                                         :options="sampleOptions"></v-client-table>
@@ -197,6 +191,8 @@
                                     </div>
                                 </div>
                             </b-tab>
+                            -->
+                            <!--
                             <b-tab v-if="false" v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
                                 @click="showVisualizations = true">
                                 <div v-for="result in job.results" :key="result.id" class="row">
@@ -207,7 +203,7 @@
                                     </div>
                                 </div>
                             </b-tab>
-  
+                            -->
                             <b-tab :title="$tc('job.results', 2)">
                                 <div class="row">
                                     <div class="col-md-3 pt-3 result-area">
@@ -223,6 +219,7 @@
                                             <div class="col-md-12">
                                                 <b-card :header="getTask(taskId).name" class="mt-2"
                                                     header-bg-variant="light" border-variant="info" :id="`task-${taskId}`">
+                                                    
                                                     <template v-for="(result, inx) in results">
                                                         <div v-if="result.type === 'result'" class="col-md-12 lemonade">
                                                             <div v-if="result.value.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
@@ -245,8 +242,6 @@
                                                             <div v-if="result.value.logs.find(s => s.type === 'OBJECT')"
                                                                 :header="result.value.task.name" class="mt-2"
                                                                 header-bg-variant="light" border-variant="info">
-                                                                <h6>({{result.value.task.operation.name}})</h6>
-
                                                                 <div class="pl-5 mt-2" v-for="log in result.value.logs"
                                                                     :key="log.id">
                                                                     <span v-if="log.type === 'OBJECT'">
@@ -369,7 +364,9 @@
                 showVisualizations: false,
                 progressIndicators: [],
                 sampleOptions: {
+                    skin: 'table-smallest table table-hover',
                     filterable: false, perPageValues: [],
+                    sortable: [],
                     sortIcon: {
                         base: 'fa fas',
                         is: 'fa-sort ml-10',
@@ -403,7 +400,7 @@
             allResults() {
                 const results = [];
                 const self = this;
-                this.job.steps.filter(s => s.logs.find(l => l.type === 'HTML' || l.type === 'IMAGE')).forEach(step => {
+                this.job.steps.filter(s => s.logs.find(l => l.type === 'HTML' || l.type === 'IMAGE' || l.type === 'OBJECT')).forEach(step => {
                     step.task = self.tasks[step.task.id];
                     results.push({ type: 'result', order: 0, value: step });
                 });
@@ -606,7 +603,7 @@
                             step.status = msg.status;
                             const found = step.logs.filter(v => v.id === msg.id);
                             let message = msg.message;
-                            if (msg.type === 'OBJECT'){
+                            if (msg.type === 'OBJECT' && msg.meaning === 'sample'){
                                 const attributeNames = message.attributes.map(attr => attr.key);
                                 message.rows = message.rows.map(
                                         row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))

@@ -59,7 +59,7 @@
                         v = this.field.values;
                     }
                     // test if it is an object, instead of a list
-                    if (!Array.isArray(v)) {
+                    if (v && !Array.isArray(v)) {
                         this.helpLink = v.help;
                         v = v.values;
                     }
@@ -88,14 +88,13 @@
         },
         methods: {
             updatedTag(values) {
-                this.$root.$emit(this.message, this.field, values,
-                    'Unsupported if DropDown is multiple');
+                this.triggerUpdateEvent(this.message, this.field, values, 'Unsupported if DropDown is multiple');    
                 this.tags = values;
 
             },
             updated(e) {
                 this.selected = e.target ? e.target.value : e;
-                this.$root.$emit(this.message, this.field, this.internalSelected,
+                this.triggerUpdateEvent(this.message, this.field, this.internalSelected,
                     e.target.options[e.target.selectedIndex].text);
             }
         },

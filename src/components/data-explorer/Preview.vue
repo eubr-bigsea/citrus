@@ -12,13 +12,12 @@
             </h1>
         </div>
         <template v-if="items">
-            <!--<PreviewMenu :selected="menuData.field" @select="menuAction" /> -->
             <div style="position: relative">
                 <div ref="colOverlay" class="col-overlay" @click="resetMenuData">
                     <div></div>
                 </div>
                 <b-table :no-border-collapse="false" :items="items" :fields="attributes" tbody-class="body"
-                    sticky-header="80vh" table-class="table-preview " class="table border"
+                    sticky-header="80vh" table-class="table-preview " class="table border scroll-area"
                     @row-contextmenu="tableContextMenu" outlined small hover bordered responsive ref="table"
                     @row-clicked="tableClick">
                     <template #head()="scope">
@@ -40,9 +39,11 @@
                     </select>-->
                                     {{scope.field.type}} <span v-if="scope.field.truncated">(trunc.)</span>
                                 </div>
+                                <!--
                                 <div>
                                     <quality-bar :attribute="scope.field" />
                                 </div>
+                                -->
                             </div>
                         </div>
                     </template>
@@ -58,198 +59,63 @@
 
         <context-menu ref="ctxCellMenu" class="menu" @ctx-open="onCellCtxOpen" @ctx-cancel="resetCellCtxLocals">
             <template v-if="cellMenuData">
-                <li class="ctx-item" @click="onFilter(cellMenuData.name, '!=', cellMenuData.value)">
-                    <span class="fa fa-times text-danger"></span> <b>Remove</b> rows where
+                <li class="ctx-item"
+                    @click="onCellContextMenuAction('filter', cellMenuData.name, '!=', cellMenuData.value)">
+                    <span class="fa fa-times text-danger"></span> <b>Remover</b> registros onde
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
-                <li class="ctx-item" @click="onFilter(cellMenuData.name, '==', cellMenuData.value)">
-                    <span class="fa fa-check text-success"></span> <b>Keep</b> only rows where
+                <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '!', null)">
+                    <span class="fa fa-times text-secondary"></span> <b>Remover</b> registros onde
+                    <b><code>{{cellMenuData.name}} é nulo</code></b>
+                </li>
+                <li class="ctx-divider"></li>
+
+                <li class="ctx-item"
+                    @click="onCellContextMenuAction('filter', cellMenuData.name, '==', cellMenuData.value)">
+                    <span class="fa fa-check text-success"></span> <b>Manter</b> apenas registros onde
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
-                <li class="ctx-item"><span class="fa fa-eraser text-warning"></span> <b>Clear</b> cells where
+                <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '', null)">
+                    <span class="fa fa-check text-secondary"></span> <b>Manter</b> apenas registros onde
+                    <b><code>{{cellMenuData.name}} é nulo</code></b>
+                </li>
+
+                <li class="ctx-divider"></li>
+
+                <li class="ctx-item"
+                    @click="onCellContextMenuAction('flag', cellMenuData.name, '==', cellMenuData.value)"><span
+                        class="fa fa-flag text-primary"></span>
+                    <b>Sinalizar</b> quando
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
-                <!--
-                <li class="ctx-item"><span class="fa fa-filter text-primary"></span> <b>Filter</b> on
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                <li class="ctx-item"
+                    @click="onCellContextMenuAction('flag', cellMenuData.name, '!=', cellMenuData.value)"><span
+                        class="fa fa-flag text-danger"></span>
+                    <b>Sinalizar</b> quando
+                    <b><code>{{cellMenuData.name}} 	&#8800; {{cellMenuData.value}}</code></b>
                 </li>
-                -->
-                <li class="ctx-item"><span class="fa fa-flag"></span> <b>Flag</b> on
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '', null)"><span
+                        class="fa fa-flag text-warning"></span>
+                    <b>Sinalizar</b> quando
+                    <b><code>{{cellMenuData.name}} é nulo</code></b>
                 </li>
-                <li class="ctx-divider"></li>
-                <li class="ctx-item"><span class="fa fa-search"></span> 
-                    <b>Localizar</b> <code>{{cellMenuData.value}}</code> on 
-                    <code>{{cellMenuData.name}}</code> and replace...</code>
-                </li>
-            </template>
-        </context-menu>
-
-        <context-menu ref="ctxMenu" @ctx-open="onCtxOpen" @ctx-cancel="resetCtxLocals" class="menu"
-            @ctx-close="onCtxClose">
-            <!--<li class="ctx-header">{{menuData && menuData.label}}</li>-->
-            <template v-if="menuData && menuData.field && !menuData.field.locked">
-
-                <li class="ctx-item" @click="renameAttribute">
-                    <span class="fa fa-edit text-secondary"></span> {{$t('actions.rename')}}
-                </li>
-                <li class="ctx-item" @click="changeAttributeType">
-                    {{$t('actions.changeDataType')}}
+                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '!', null)"><span
+                        class="fa fa-flag text-secondary"></span>
+                    <b>Sinalizar </b> quando
+                    <b><code>{{cellMenuData.name}} não é nulo</code></b>
                 </li>
                 <li class="ctx-divider"></li>
-                <!--
-                <li class="ctx-item" @click="deleteAttribute" key="actionSelect">
-                    <span class="fa fa-columns"></span> Select attributes to <b>keep</b> or to <b>delete</b>...
-                </li>
-                -->
-                <li class="ctx-item" @click="deleteAttribute" key="actionDelete">
-                    <span class="fa fa-times text-danger"></span> {{$t('actions.delete')}}...
-                </li>
-                <!--
-            <li class="ctx-item" @click="deleteAttribute">
-                <span class="fa fa-check text-success"></span> {{$t('actions.keep')}}...
-            </li>
-            -->
-                <li class="ctx-item" @click="duplicateAttribute">
-                    <span class="fa fa-copy text-secondary"></span> {{$t('actions.duplicate')}}
-                </li>
-                <li class="ctx-item" @click="deleteAttribute" key="actionMove">
-                    <span class="fa fa-arrows-alt-h "></span> {{$t('actions.move')}}...
-                </li>
-                <!--<li class="ctx-item disabled">option two (disabled)</li>-->
-                <!--
-                <template v-if="menuData.field.type === 'Text' ">
-                    <li class="ctx-divider"></li>
-                    <li class="ctx-item">
-                        <b>Convert</b> to lowercase
-                    </li>
-                    <li class="ctx-item">
-                        <b>Convert</b> to uppercase
-                    </li>
-                </template>
-                -->
-                <!--
-                <template v-if="menuData.field.type === 'Array' ">
-                    <li class="ctx-divider"></li>
-                    <li class="ctx-item" key="parseAction">
-                        <span class="fa fa-exclamation"></span> <b>Parse</b> with numerical range ...
-                    </li>
-                </template>
-                <template v-if="menuData.field.type === 'Boolean'">
-                    <li class="ctx-divider"></li>
-                    <li class="ctx-item" key="negateAction">
-                        <span class="fa fa-exclamation"></span> <b>Negate/invert</b> boolean values ...
-                    </li>
-                </template>
 
-                <template v-if="menuData.field.type === 'Date' || menuData.field.type == 'Time' ">
-                    <li class="ctx-divider"></li>
-                    <li class="ctx-item">
-                        <span class="fa fa-calendar"></span> <b>Parse</b> with numerical range ...
-                    </li>
-                    <li class="ctx-item">
-                        <b>Format</b> date ...
-                    </li>
-                    <li class="ctx-item" v-if="menuData.field.type === 'Date'">
-                        <b>Extract</b> date components ...
-                    </li>
-                    <li class="ctx-item" v-if="menuData.field.type === 'Time'">
-                        <b>Extract</b> time components ...
-                    </li>
-                </template>
-                -->
-                <li class="ctx-divider"></li>
-                <li class="ctx-item" key="sortAsc" @click="sort('asc')">
-                    <span class="fa fa-sort-alpha-up text-secondary"></span> <b>{{$t('actions.sort')}}</b> (ASC)
-                </li>
-                <li class="ctx-item" key="sortDesc" @click="sort('desc')">
-                    <span class="fa fa-sort-alpha-down text-secondary"></span> <b>{{$t('actions.sort')}}</b> (DESC)
+                <li class="ctx-item"
+                    @click="onCellContextMenuAction('clean', cellMenuData.name, '==', cellMenuData.value)">
+                    <span class="fa fa-eraser text-warning"></span> <b>Limpar</b> dados do atributo
+                    onde <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-divider"></li>
-                <template>
-                    <li class="ctx-item" key="removeRowsEmptyCellsAction">
-                        <span class="fa fa-fill-drip text-secondary"></span> Treat <b>empty value(s)</b>...
-                    </li>
-                    <li class="ctx-item" key="fillRowsEmptyCellsAction">
-                        <span class="fa fa-exclamation-triangle text-warning"></span> Treat <b>invalid value(s)</b>...
-                    </li>
-                    <!--
-                    <li class="ctx-item" key="removeRowsEmptyCellsAction">
-                        <span class="fa fa-times text-danger"></span> <b>Remove rows</b> with empty cell(s)
-                    </li>
-                    <li class="ctx-item" key="fillRowsEmptyCellsAction">
-                        <span class="fa fa-fill-drip text-secondary"></span> <b>Fill empty cells</b> with ...
-                    </li>
-                    -->
-                    <!--
-                    <li class="ctx-item">
-                        <b>Remove invalid rows</b> for meaning <em>{{menuData.field.type}}</em>
-                    </li>
-                    <li class="ctx-item">
-                        <b>Clear invalid cells</b> for meaning <em>{{menuData.field.type}}</em>
-                    </li>
-                    -->
-                </template>
-                <template v-if="menuData.field.type === 'Integer' || menuData.field.type == 'Decimal'">
-                    <li class="ctx-divider"></li>
-                    <li class="ctx-item">
-                        <b>Redefine scale</b> ...
-                    </li>
-                    <li class="ctx-item" v-if="menuData.field.type == 'Decimal'">
-                        <b>Round</b> to integer
-                    </li>
-                </template>
-                <template>
-                    <li class="ctx-divider"></li>
-                    <li class="ctx-item" key="transformAction" @click="transform">
-                        <span class="fa fa-cogs text-primary"></span> <b>Transform</b> with custom function ...
-                    </li>
-                    <!--
-                    <li class="ctx-item" key="changeRepresentationAction">
-                        <span class="fa fa-cogs text-primary"></span> <b>Change represention</b> with (One-Hot-Encoding)
-                        ...
-                    </li>
-                    -->
-                    <li class="ctx-item">
-                        <span class="fa fa-filter text-success"></span> {{$t('actions.filter')}} ...
-                    </li>
-                    <!--
-                    <li class="ctx-item">
-                        <span class="fa fa-exchange-alt"></span> Replace value with...
-                    </li>
-                    -->
-                    <!--
-                    <li class="ctx-item">
-                        <span class="fa fa-flag"></span> <b>New flag attribute </b> based on ...
-                    </li>
-                    -->
 
-
-                    <li class="ctx-divider"></li>
-                    <li class="ctx-item" @click="$refs.modalAnalyse.show()">
-                        <span class="fa fa-chart-bar text-info"></span> {{$t('actions.analyse')}}...
-                    </li>
-                    <!--
-                    <li class="ctx-item">
-                        <span class="fa fa-palette text-warning"></span> <b>Color</b> attribute by value ...
-                    </li>
-                    -->
-                </template>
-
-                <li class="ctx-divider"></li>
-                <li class="ctx-item" @click="$refs.modalOtherActions.show()">
-                    <span class="fa fa-angle-double-right"></span> <b>More</b> actions...
-                </li>
-                <!--
-                <li class="ctx-divider"></li>
-                <li class="ctx-item" @click="toggleLock(true)">
-                    <span class="fa fa-lock"></span> <b>Lock</b> attribute
-                </li>
-                -->
-            </template>
-            <template v-if="menuData && menuData.field && menuData.field.locked">
-                <li class="ctx-item" @click="toggleLock(false)" key="unlock">
-                    <span class="fa fa-lock-open"></span> <b>Unlock</b> attribute
+                <li class="ctx-item"><span class="fa fa-search"></span>
+                    <b>Localizar</b> <code>{{cellMenuData.value}}</code> on
+                    <code>{{cellMenuData.name}}</code> e substituir ...</code>
                 </li>
             </template>
         </context-menu>
@@ -276,10 +142,6 @@
 
         <modal-other-actions :attribute="menuData.field" @ok="otherActionsOk" ref="modalOtherActions" />
 
-        <!--
-        <expression-editor :as-widget="false" :multiple="false" :field="propertyField" ref="expressionEditor"
-            message="click" @click="saveExpression" />
-            -->
     </div>
 </template>
 <script>
@@ -406,6 +268,7 @@
                     this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
                     this.$refs.colOverlay.style.width = `${clipRec.width}px`;
                     this.$refs.colOverlay.style.display = '';
+                    this.$refs.colOverlay.style.height = `${this.$refs.table.$el.offsetHeight}px`;
                 }
             },
             tableClick(item, rowIndex, event) {
@@ -459,7 +322,6 @@
             },
             handleTableScrollEvent(ev) {
                 this.moveSelectionOverlay(this.lastHeader);
-                this.$refs.ctxMenu.ctxVisible = false;
                 this.$refs.ctxCellMenu.ctxVisible = false;
                 //this.$refs.dataTypeCtxMenu.ctxVisible = false;
             },
@@ -508,6 +370,7 @@
                     } else {
                         this.$refs.colOverlay.style.borderLeft = 'none';
                     }
+                    this.$refs.colOverlay.style.height = `${this.$refs.table.$el.offsetHeight}px`;
                     this.$refs.colOverlay.style.display = '';
                 }
             },
@@ -634,19 +497,31 @@
                 event.preventDefault();
                 const attributeIndex = parseInt(event.target.getAttribute('aria-colindex'));
                 const attribute = this.attributes[attributeIndex - 1];
-                this.$refs.ctxCellMenu.open(this._eventModifier(event, {}),
-                    {
-                        row: index + 1,
-                        attribute: attributeIndex,
-                        value: ['Text', 'Date', 'Datetime', 'Time'].includes(attribute.type)
-                            ? `"${event.target.innerText.substring(0, 80)}"`
-                            : event.target.innerText,
-                        name: attribute.label,
-                    })
+                const cellText = event.target.innerText;
+                // Users cannot filter using garge text and context menu
+                if (cellText.length <= 40) {
+                    let value;
+                    if (['Text', 'Date', 'Datetime', 'Time'].includes(attribute.type)) {
+                        value = `"${cellText.substring(0, 40)}"`
+                    } else {
+                        // Convert to Number
+                        value = Number(event.target.innerText);
+                    }
+                    const raw = `"{value}"`;
+                    this.$refs.ctxCellMenu.open(this._eventModifier(event, {}),
+                        {
+                            row: index + 1,
+                            attribute: attributeIndex,
+                            value,
+                            raw,
+                            name: attribute.label,
+                        })
+                }
             },
             // Cell context menu
-            onFilter(attributeName, operator, attributeValue) {
-                this.serviceBus.$emit('onFilter', attributeName, operator, attributeValue);
+            onCellContextMenuAction(action, attributeName, operator, attributeValue) {
+                console.debug(action, attributeName, operator, attributeValue)
+                this.$emit('context-menu', action, attributeName, operator, attributeValue);
             },
             dragStart(item, e) {
                 e.dataTransfer.setData('position', item.position);
@@ -700,6 +575,9 @@
         margin: 0;
         min-width: 200px;
     }
+    div.menu>>>li.ctx-item>span {
+        margin-right: 5px 
+    }
 
     .table-preview {
         position: relative;
@@ -734,7 +612,7 @@
 
     .table>>>td {
         font-size: 9pt;
-        min-width: 150px;
+        /*min-width: 150px;*/
         padding: 1px 4px;
         /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
     }
@@ -767,10 +645,11 @@
         /*border: 1px solid rgb(14, 101, 235);*/
         border-bottom: 0;
         left: -10000px;
+        overflow: hidden;
         pointer-events: none;
         position: absolute;
         height: 80vh;
-        min-width: 100px;
+        /*min-width: 100px;*/
     }
 
     .col-overlay div {

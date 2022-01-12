@@ -7,6 +7,8 @@
             <hr>
             <div class="card-deck">
                 <b-card>
+                    <h6>Passo 1</h6>
+                    <hr/>
                     <label class="" for="name">Nome do experimento:</label>
                     <input type="text" class="form-control w-50 form-control-sm mb-2" maxlength="100" id="name" v-focus
                         v-model="name">
@@ -60,22 +62,11 @@
         },
         methods: {
             async create() {
-                const dataReader = new Task({
-                    name: 'Ler dados',
-                    operation: new Operation({id: 2100}) //FIXME
-                });
-                dataReader.setProperty('data_source', 
-                    {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name});
-                dataReader.setProperty('display-sample', '1');
-
-                const workflow = new Workflow({
-                    name: this.name, 
-                    type: 'DATA_EXPLORER',
-                    platform: new Platform({id: 1000}), //FIXME Scikit-learn?!
-                    tasks: [dataReader]
-                });
                 try {
-                    const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                    const resp = await axios.post(`${tahitiUrl}/workflows`, 
+                        Workflow.build(
+                            this.name,
+                            {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name}));
                     const workflowResp = resp.data;
                     this.$router.push({name: 'data-explorer-panel', params: {id: workflowResp.id}});
                 }catch(e){

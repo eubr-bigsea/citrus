@@ -129,7 +129,7 @@
         methods: {
             removeValue() {
                 this.label = '';
-                this.$root.$emit(this.message, this.field, null, null);
+                this.triggerUpdateEvent(this.message, this.field, null, null);
                 this.closeModal();
             },
             closeModal() {
@@ -149,7 +149,7 @@
             select(evt, newValue) {
                 this.selected = newValue.key;
                 this.label = newValue.value;
-                this.$root.$emit(this.message, this.field, this.selected,
+                this.triggerUpdateEvent(this.message, this.field, this.selected,
                     this.label);
                 this.closeModal()
             }

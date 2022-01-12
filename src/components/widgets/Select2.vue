@@ -7,7 +7,7 @@
                 <div slot="no-options"></div>
             </v-select>
             <v-select v-else :multiple="true" v-model="values" @input="updated" :on-change="updated" label="value" :taggable="true"
-                :closeOnSelect="true">
+                :closeOnSelect="false">
                 <div slot="no-options"></div>
             </v-select>
         </div>
@@ -35,7 +35,8 @@
         },
         methods: {
             updated(val) {
-                this.$root.$emit(this.message, this.field, val);
+                //this.$root.$emit(this.message, this.field, val);
+                this.triggerUpdateEvent(this.message, this.field, val);
             }
         },
         mounted() {

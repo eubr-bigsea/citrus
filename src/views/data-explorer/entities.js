@@ -1,5 +1,6 @@
+
 class Workflow {
-    constructor({ id = null, platform = null, name = null, type = null, cluster = null, tasks = [], flows = [], version = null, user = null} = {}) {
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null } = {}) {
 
         let _platform = platform instanceof Platform ? platform : new Platform(platform);
         let _tasks = tasks.map(task => (task instanceof Task) ? task : new Task(task));
@@ -8,7 +9,7 @@ class Workflow {
         Object.assign(this, {
             id, name, type, version,
             platform: _platform,
-            cluster,
+            preferred_cluster_id,
             tasks: _tasks,
             flows: _flows,
             enabled: true,
@@ -16,12 +17,55 @@ class Workflow {
         });
         this.history = 0;
     }
-    addTask(op) {
-        this.tasks.push(op.createTask({name: op.name}));
+    addTask(op, selected, fields) {
+        //const requiresAttributes = !!op.forms.fields.find((f) => f.name === 'attributes');
+        const attrs = (selected) ? [selected.column] : [];
+        let forms = null;
+        if (op.slug === 'sort') {
+            forms = { order_by: { value: attrs.map(attr => { return { attribute: attr, f: 'asc' } }) } };
+        } else {
+            forms = { attributes: { value: attrs } }
+        }
+        if (fields) {
+            Object.assign(forms, fields);
+        }
+        this.tasks.push(op.createTask({
+            name: op.name,
+            forms
+        }));
         this.tasks.forEach((task, inx) => task.display_order = inx);
     }
-    deleteTask(task){
+    deleteTask(task) {
         this.tasks = this.tasks.filter(t => t.id !== task.id);
+    }
+    static createSampleTask(display_order, op) {
+        const forms = {
+            'type': { value: 'head' },
+            'value': { value: 50 },
+            'seed': { value: 0 },
+        }
+        const realOp = op || new Operation({ id: 2110 });
+        return realOp.createTask({ name: realOp.name, forms, display_order })
+    }
+    static build(name, ds) {
+        const dataReader = new Task({
+            name: 'Ler dados', //FIXME
+            operation: new Operation({ id: 2100 }), //FIXME
+            display_order: 0,
+        });
+        dataReader.setProperty('data_source', ds);
+        dataReader.setProperty('display-sample', '0');
+
+        const sample = Workflow.createSampleTask(1);
+        dataReader.setProperty('display-sample', '1');
+
+        const workflow = new Workflow({
+            name: name,
+            type: 'DATA_EXPLORER',
+            platform: new Platform({ id: 1000 }), //FIXME Meta platform id
+            tasks: [dataReader, sample]
+        });
+        return workflow;
     }
 }
 class Platform {
@@ -30,12 +74,12 @@ class Platform {
     }
 }
 class Operation {
-    constructor({ id = null, name = 'unnamed', slug = null, forms = [], ports = [] } = {}) {
+    constructor({ id = null, name = 'unnamed', slug = null, forms = [], ports = [], label_format = null } = {}) {
         const newForms = forms.map(f => new Form(f));
-        Object.assign(this, { id, name, slug, forms: newForms, ports });
+        Object.assign(this, { id, name, slug, label_format, forms: newForms, ports });
 
     }
-    generateTaskId() {
+    static generateTaskId() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             let r = (Math.random() * 16) | 0,
                 v = c == 'x' ? r : (r & 0x3) | 0x8;
@@ -43,12 +87,23 @@ class Operation {
         });
     }
 
-    createTask({ name = null } = {}) {
+    createTask({ name = null, display_order = -1, forms = [] } = {}) {
+        const finalForms = {};
+        this.forms.forEach((form) => {
+            form.fields.forEach(field => {
+                finalForms[field.name] = { 'value': null };
+            }
+            )
+        })
+        Object.assign(finalForms, forms);
+
         const task = new Task({
-            name, id: this.generateTaskId(),
+            name, forms: finalForms, id: Operation.generateTaskId(),
+            display_order,
+            environment: 'DESIGN', //Required!
             operation: this //{ id: this.id, slug: this.slug, name: name || this.name }
         });
-       
+
         task._operation = this;
         return task;
     }
@@ -83,28 +138,29 @@ class FormField {
 }
 class Task {
     constructor({ id = null, name = 'unnamed', enabled = true, operation = null, display_order = 0,
-            environment = null, left = 0, top = 0, forms ={} } = {}) {
+        environment = null, left = 0, top = 0, forms = {} } = {}) {
         Object.assign(this, { id, name, operation });
         this.top = 0;
         this.left = 0;
         this.z_index = 0;
+        this.previewable = true;
         this.enabled = enabled;
         this.display_order = display_order;
         this.environment = environment;
         this.left = left;
         this.top = top;
-        
+
         //Initialize form fields
         operation.forms.filter(f => f.category === 'execution')
-            .forEach(f => f.fields.forEach(field => this.forms[field.name] = {value: field.default_value}));
+            .forEach(f => f.fields.forEach(field => this.forms[field.name] = { value: field.default_value }));
 
         this.forms = forms;
-        this.forms =  Object.assign(forms, this.forms);
+        this.forms = Object.assign(forms, this.forms);
 
         if (this.id === null) {
-            this.id = this.operation.generateTaskId();
+            this.id = Operation.generateTaskId();
         }
-        
+
 
         Object.defineProperty(this, '_operation', {
             value: null,
@@ -112,6 +168,24 @@ class Task {
             configurable: true,
             enumerable: false // this is the default value, so it could be excluded
         });
+    }
+    get backgroundColor() {
+        return this.forms.color?.value?.background || '#ccc';
+    }
+    _fillTemplate() {
+        return new Function("return `" + this.operation.label_format + "`;").call(this.forms);
+    }
+    getLabel() {
+        try {
+            let result = (this.operation.label_format && this.operation.label_format.trim() !== '')
+                ? this._fillTemplate() : `<b>${this.operation.name}</b>`;
+            if (this.forms.comment?.value) {
+                result += `<br/><em>${this.forms.comment.value}</em>`;
+            }
+            return result;
+        } catch (ignore) {
+            return `<b>${this.operation.name}</b>`;
+        }
     }
     getPortBySlug(slug) {
         return this._operation.ports.find(p => p.slug === slug);

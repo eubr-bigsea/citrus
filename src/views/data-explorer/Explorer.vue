@@ -1,118 +1,94 @@
 <template>
     <div>
-        <!--
-        <div class="row">
-            <div class="col-md-12">
-                <PreviewMenu :selected="selected" @select="performAction" />
-            </div>
-        </div>
-        -->
         <TahitiSuggester />
         <div class="row">
-            <div class="col-md-4 col-lg-3 noselect mt-1 pl-3">
-                <div class="title">
-                    <h5>{{$t('dataExplorer.title')}}</h5>
-                </div>
-                <div class="mb-2">
-                    <small>{{$tc('titles.dataSource')}}:</small>
-                    <b-input-group>
-                        <b-input size="sm" v-model="dataSourceLabel" disabled />
-                        <b-input-group-append>
-                            <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary" size="sm"
-                                @click="warning('Under development')">
-                                <span class="fa fa-database"></span>
-                            </b-button>
-                            <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm"
-                                @click="warning('Under development')">
-                                <span class="fa fa-filter"></span>
-                            </b-button>
-                        </b-input-group-append>
-                    </b-input-group>
-                </div>
-                <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split
-                    @click="store.toggleSteps($event, true)" :disabled="! (store.store && store.store.length > 0)">
-                    <template #button-content>
-                        <input type="checkbox" @change="store.toggleStep"
-                            :disabled="! (store.store && store.store.length > 0)" />
-                    </template>
-                    <b-dropdown-item @click="store.enableSelected(true)">{{$t('dataExplorer.enableSelected')}}
-                    </b-dropdown-item>
-                    <b-dropdown-item @click="store.enableSelected(false)">{{$t('dataExplorer.disableSelected')}}
-                    </b-dropdown-item>
-                    <b-dropdown-item @click="store.removeSelected">{{$t('dataExplorer.removeSelected')}}
-                    </b-dropdown-item>
-                </b-dropdown>
+            <div class="col noselect step-list p-1">
+                <div class="p-2">
+                    <div class="title">
+                        <h5>{{$t('dataExplorer.title')}}</h5>
+                    </div>
+                    <div class="mb-2">
+                        <small>{{$tc('titles.cluster')}}:</small>
+                        {{clusterId}}
+                        <v-select :options="clusters" v-model="clusterId" label="name" :reduce="(opt) => opt.id"
+                            :taggable="false" :close-on-select="true" :filterable="false">
+                            <template #option="{ description, id, name, type }">
+                                {{ name }}<br />
+                                <small><em>{{ description }}</em></small>
+                            </template>
+                        </v-select>
+                        <!--
+                        <small>{{$tc('titles.dataSource')}}:</small>
+                        <b-input-group>
+                            <b-input size="sm" v-model="dataSourceLabel" disabled />
+                            <b-input-group-append>
+                                <b-button :title="$t('dataExplorer.selectDataSource')" variant="outline-secondary"
+                                    size="sm" @click="warning('Under development')">
+                                    <span class="fa fa-database"></span>
+                                </b-button>
+                                <b-button :title="$t('dataExplorer.setupSample')" variant="outline-secondary" size="sm"
+                                    @click="warning('Under development')">
+                                    <span class="fa fa-filter"></span>
+                                </b-button>
+                            </b-input-group-append>
+                        </b-input-group>
+                        -->
+                    </div>
 
-                <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"><span
-                        class="fa fa-save"></span> {{$t('actions.save')}}
-                </b-button>
-                <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1" @click="loadData">
-                    <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
-                </b-button>
+                    <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split
+                        @click="store.toggleSteps($event, true)" :disabled="! (store.store && store.store.length > 0)">
+                        <template #button-content>
+                            <input type="checkbox" @change="store.toggleStep"
+                                :disabled="! (store.store && store.store.length > 0)" />
+                        </template>
+                        <b-dropdown-item @click="store.enableSelected(true)">{{$t('dataExplorer.enableSelected')}}
+                        </b-dropdown-item>
+                        <b-dropdown-item @click="store.enableSelected(false)">{{$t('dataExplorer.disableSelected')}}
+                        </b-dropdown-item>
+                        <b-dropdown-item @click="store.removeSelected">{{$t('dataExplorer.removeSelected')}}
+                        </b-dropdown-item>
+                    </b-dropdown>
 
-                <div class="mt-3" v-if="store.steps && store.steps.length">
-                    <strong>{{$tc('dataExplorer.step', 2)}}</strong>
-                    <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true" id="step-scroll">
-                        <div id="step-container">
-                            <draggable v-model="store.store" @start="drag=true" @end="drag=false" class="list-group"
-                                ghost-class="ghost" handle=".step-drag-handle">
-                                <div v-for="step, inx in store.stepManager.steps" :key="step.id"
-                                    class="list-group-item steps clearfix"
-                                    :title="step.operationSlug + '' + JSON.stringify(step.parameters)">
-                                    <step :step="step" :service-bus="store.serviceBus" :language="language"
-                                        :attributes="tableData.attributes" :index="inx" @toggle="store.toggleStep(step)"
-                                        @delete="store.deleteStep(step)" @update="updateStep"
-                                        @custom-open="store.customOpen" />
-                                </div>
+                    <b-button :disabled="false && loadingData" variant="primary" size="sm" class="float-right mt-2"
+                        @click="saveWorkflow"><span class="fa fa-save"></span> {{$t('actions.save')}}
+                    </b-button>
+                    <b-button :disabled="false && loadingData" size="sm" variant="outline-secondary"
+                        class="float-right mt-2 mr-1" @click="loadData">
+                        <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
+                    </b-button>
+                </div>
+                <!-- Steps -->
+                <div v-if="workflowObj" class="clearfix mt-2">
+                    <div id="step-container">
+                        <div class="step-scroll-area scroll-area" style="overflow-y: auto;">
+                            <draggable @start="drag=true" @end="endSortSteps" class="list-group" ghost-class="ghost"
+                                handle=".step-drag-handle" :list="workflowObj.tasks">
+                                    <div v-for="task, inx in workflowObj.tasks" :key="task.id"
+                                        xv-if="task.operation.slug !== 'read-data'"
+                                        class="list-group-item steps clearfix p-0" :title="task.name"
+                                        :style="{'border-left': '4px solid ' + task.backgroundColor}">
+                                        <step :step="task" :language="language" :attributes="tableData.attributes"
+                                            :index="inx - 1" @toggle="task.enabled = !task.enabled"
+                                            @delete="workflowObj.deleteTask(task)" @update="updateStep"
+                                            @previewUntilHere="previewUntilHere(task)" @duplicate="duplicate"
+                                            @custom-open="store.customOpen"
+                                            :suggestionEvent="() => getSuggestions(task.id)" />
+                                    </div>
                             </draggable>
                         </div>
-                    </VuePerfectScrollbar>
-                </div>
-                <!--
-                <div v-else class="mt-5 alert alert-warning">
-                    <span class="fa fa-exclamation-triangle"></span> {{$t('dataExplorer.noStep')}}
-                </div>
-                -->
-                <div v-if="workflowObj" class="mt-5">
-                    <div id="step-container">
-                        <draggable @start="drag=true" @end="drag=false" class="list-group" ghost-class="ghost"
-                            handle=".step-drag-handle" :list="workflowObj.tasks">
-                            <div v-for="task, inx in workflowObj.tasks" :key="task.id"
-                                v-if="task.operation.slug !== 'read-data'" class="list-group-item steps clearfix"
-                                :title="task.name">
-                                <step :step="task" :service-bus="store.serviceBus" :language="language"
-                                    :attributes="tableData.attributes" :index="inx - 1"
-                                    @toggle="task.enabled = !task.enabled" @delete="workflowObj.deleteTask(task)"
-                                    @update="updateStep" @custom-open="store.customOpen" 
-                                    :suggestionEvent="() => getSuggestions(task.id)"
-                                    />
-                            </div>
-                        </draggable>
                     </div>
+                    <small class="text-secondary">{{jobStatus}}</small>
                     <!--FIXME -->
                 </div>
             </div>
             <!-- Preview area -->
-            <div class="col-md-8 col-lg-9 border-left fill-height">
+            <div class="col border-left fill-height mt-3">
                 <PreviewMenu :selected="selected" @select="performAction" :menus="menus" />
                 <preview :attributes="tableData.attributes" :items="tableData.rows" :store="store"
                     :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData"
-                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" ref="preview"
-                    @drop="performAction" />
+                    :total="tableData.total" :service-bus="store.serviceBus" @select="select" @drop="performAction"
+                    @context-menu="handleContextMenu" ref="preview" />
             </div>
-
-            <!--
-            <simple-input ref="simpleInput" :cancel-title="simpleInput.cancelTitle" :ok-title="simpleInput.okTitle"
-                :title="simpleInput.title" :message="simpleInput.message" :ok="simpleInput.okClicked"
-                :initial="simpleInput.initial" />
-            <find-replace ref="findReplace" :cancel-title="findReplace.cancelTitle" :ok-title="findReplace.okTitle"
-                :title="findReplace.title" :message="findReplace.message" :ok="findReplace.okClicked"
-                :initial="findReplace.initial" />
-            <concat-input ref="concatInput" :cancel-title="findReplace.cancelTitle" :ok-title="findReplace.okTitle"
-                :title="findReplace.title" :message="findReplace.message" :ok="findReplace.okClicked"
-                :initial="findReplace.initial" :attributes="attributes" />
-                -->
-
             <!--
         <b-modal ref="modalSelectAttributes" button-size="sm" :title="$t('actions.selectAttributes')"
             @ok="okSelectAttributes">
@@ -140,9 +116,9 @@
 </template>
 <script>
     import Vue from 'vue';
+    import jsep from 'jsep';
     import io from 'socket.io-client';
     import axios from 'axios';
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import draggable from 'vuedraggable';
     import Preview from '../../components/data-explorer/Preview';
     import Step from '../../components/data-explorer/Step';
@@ -155,22 +131,26 @@
     import ConcatInput from '../../components/data-explorer/ConcatInput';
     import { Workflow, Platform, Operation, OperationList, Task } from './entities.js'
 
+    jsep.addBinaryOp(">=", 1);
+    jsep.removeBinaryOp('^');
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     const standUrl = process.env.VUE_APP_STAND_URL
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
 
+    /* Remove 
     const SUPPORTED_OPERATIONS = ['cast', 'read-data',
         'filter-selection', 'projection', 'sort', 'transformation',
         'sample', 'clean-missing'];
+    */
 
     const META_PLATFORM_ID = 1000;
     export default {
         name: "DataExplorer",
         mixins: [Notifier],
         components: {
-            SimpleInput, Preview, draggable, VuePerfectScrollbar,
+            SimpleInput, Preview, draggable,
             contextMenu, Step, PreviewMenu, FindReplace, ConcatInput,
             TahitiSuggester: () => {
                 return new Promise((resolve, reject) => {
@@ -189,6 +169,8 @@
         data() {
             return {
                 attributeSelection: [], // used to select attributes
+                clusters: [],
+                clusterId: null,
                 dataSource: {}, // current data source
                 dataSourceLabel: null,
                 dataTypes: [
@@ -196,8 +178,10 @@
                 internalWorkflowId: null, // workflow id
                 isDirty: false,  //check if workflow is dirty before leaving page
                 job: null,  //last job details
-                language: 'pt', //FIXME
-                loadingData: false,  //data loading state
+                jobStatus: null,
+                language: this.$store.getters.user.locale,
+                loadingData: true,  //data loading state
+                operations: [],
                 operationLookup: new Map(),
                 schemas: {},
                 selected: { field: {} }, // selected attribute in table preview
@@ -220,14 +204,15 @@
                     message: null,
                 },
                 tableData: { attributes: [] }, // data used to render preview table
-                workflowObj: null,
+                workflowObj: { cluster: null },
                 //
                 menus: [],
-                attributeSuggestion: {}
+                attributeSuggestion: {},
             }
         },
         async mounted() {
             this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
+            await this.loadClusters();
             await this.loadOperations();
             await this.loadWorkflow();
             /*this.serviceBus.$on('newStep', this.addTask);
@@ -269,7 +254,7 @@
                     );
                 }
             },
-            updateAttributeSuggestion(){
+            updateAttributeSuggestion() {
                 const self = this;
                 let attributeSuggestion = {};
                 try {
@@ -278,7 +263,7 @@
                     clonedWorkflow.flows = [];
                     clonedWorkflow.tasks = clonedWorkflow.tasks.sort((a, b) => a.display_order - b.display_order);
                     let task = clonedWorkflow.tasks[0];
-                    for(let i = 1; i < clonedWorkflow.tasks.length; i++){
+                    for (let i = 1; i < clonedWorkflow.tasks.length; i++) {
                         clonedWorkflow.flows.push({
                             source_id: task.id,
                             target_id: clonedWorkflow.tasks[i].id
@@ -302,7 +287,7 @@
             },
             getSuggestions(taskId) {
                 const extendedSuggestions = this.getExtendedSuggestions(taskId);
-                if (extendedSuggestions && extendedSuggestions.inputs.length) {
+                if (extendedSuggestions && extendedSuggestions.inputs?.length) {
                     return this._unique(Array.prototype.concat.apply([],
                         extendedSuggestions.inputs.map(
                             (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
@@ -324,13 +309,41 @@
                     }
                 }
             },
+            /* Trigged by the step action */
+            duplicate(step) {
+                // Clone tasks instance
+                const cloned = new Task(JSON.parse(JSON.stringify(step)));
+                cloned.id = Operation.generateTaskId();
+                this.workflowObj.tasks.splice(step.display_order, 0, cloned);
+                // Update the display_order
+                this.workflowObj.tasks.slice(step.display_order + 1).forEach(
+                    (task) => task.display_order++);
+            },
+            previewUntilHere(step) {
+                this.workflowObj.tasks.forEach((task) => {
+                    const previewable = (task.display_order <= step.display_order);
+                    task.previewable = previewable;
+                    if (task.forms?.$meta?.value) {
+                        task.forms.$meta.value.previewable = previewable;
+                    } else {
+                        task.forms.$meta = { value: { previewable } };
+                    }
+                });
+            },
             updateStep(step) {
                 const task = this.workflowObj.tasks.find(t => t.id === step.id);
                 if (task) {
                     Object.assign(task.forms, step.forms);
                 }
                 this.updateAttributeSuggestion();
-                //console.debug(JSON.stringify(step))
+            },
+            async loadClusters() {
+                try {
+                    const resp = await axios.get(`${standUrl}/clusters?enable=true&fields=id,name,description,type,platforms`);
+                    this.clusters = resp.data.data;
+                } catch (e) {
+                    this.error(e);
+                }
             },
             async loadOperations() {
                 // Platform is always META_OPERATION_ID
@@ -338,10 +351,12 @@
                     const resp = await axios.get(`${tahitiUrl}/operations?platform=${META_PLATFORM_ID}`);
                     const operations = resp.data.data;
                     const menuCategories = new Map();
+                    this.operations = operations;
                     operations.forEach(op => {
                         const dataType = op.categories.find(c => c.type === 'data-type');
                         op.dataType = (dataType) ? dataType.name : 'all'; //FIXME
                         const menu = op.categories.find(c => c.type.substring(0, 4) === 'menu');
+
                         if (menu) {
                             if (!menuCategories.has(menu.id)) {
                                 menuCategories.set(menu.id, { operations: [op], menu });
@@ -402,7 +417,7 @@
                     url = `${url}/${cloned.id}`;
                     method = 'patch'
                 }
-
+                cloned.preferred_cluster_id = self.clusterId;
                 cloned.platform_id = META_PLATFORM_ID;
                 cloned.tasks.forEach((task) => {
                     task.operation = { id: task.operation.id };
@@ -423,15 +438,50 @@
                 }.bind(this));
             },
 
-            /* Attribute actions */
-            /**
-             * Handle preview menu clicks
-             */
+            /* Handle Preview component context menu event */
+            handleContextMenu(action, attributeName, operator, attributeValue) {
+                //Formula using JSep syntax (https://ericsmekens.github.io/jsep/)
+                let op = null;
+                let expression = null;
+                let alias = attributeName;
+
+                if (action === 'filter') {
+                    op = this.operations.find(op => op.slug === 'filter');
+                    expression = `${attributeName} ${operator} ${attributeValue}`;
+                } else if (action === 'filterNull') {
+                    op = this.operations.find(op => op.slug === 'filter');
+                    const f = operator === '!' ? 'isnotnull' : 'isnull';
+                    expression = `${f}(${attributeName}) `;
+                } else if (action === 'flag') {
+                    op = this.operations.find(op => op.slug === 'add-by-formula');
+                    if (operator == '==' || operator == '!=') {
+                        expression = `${attributeName} ${operator} ${attributeValue}`;
+                    } else {
+                        const f = operator === '!' ? 'isnotnull' : 'isnull';
+                        expression = `${f}(${attributeName}) `;
+                    }
+                    alias = `${attributeName}_flag`;
+                } else if (action === 'clean') {
+                    op = this.operations.find(op => op.slug === 'add-by-formula');
+                    expression = `when(${attributeName} == ${attributeValue}, null, ${attributeName})`;
+                }
+
+                const formula = { alias, expression };
+                formula['tree'] = jsep(expression);
+                this.performAction({
+                    action: 'menu',
+                    fields: { formula: { value: [formula] } },
+                    params: [op], 'selected': attributeName,
+                });
+            },
+            /* Handle Preview component menu clicks */
             performAction(options) {
-                if (typeof this[options.action] === 'function') {
+                if (typeof this[options.action] === 'function') { //FIXME: remove
+                    debugger
                     this[options.action](options.params);
                 } else if (options.action === 'menu') {
-                    this.workflowObj.addTask(this.operationLookup.get(options.params[0].id));
+                    this.workflowObj.addTask(this.operationLookup.get(options.params[0].id),
+                        options.selected, options.fields);
                     console.debug(options);
                 } else {
                     console.log(`Unknown action: ${options.action}`);
@@ -747,36 +797,52 @@
             /* Data loading */
             async loadWorkflow() {
                 const self = this;
+                self.loadingData = true;
                 this.$Progress.start()
                 try {
                     const resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
                     const workflow = resp.data;
                     workflow.tasks = workflow.tasks.sort(
                         (a, b) => { return a.display_order - b.display_order; });
-                    const readerTask = workflow.tasks.find(t => t.operation.slug === 'read-data');
-                    this.dataSourceLabel = `${readerTask.forms.data_source.value} - ${readerTask.forms.data_source.labelValue}`
-                    const totalOfTasks = workflow.tasks.length;
+                    workflow.tasks.forEach(t => {
+                        t.operation = self.operationLookup.get(t.operation.id)
+                    });
 
-                    workflow.tasks.forEach(t => t.operation = self.operationLookup.get(t.operation.id));
                     const user = this.$store.getters.user;
                     workflow.user_id = user.id;
                     workflow.user_login = user.login;
                     workflow.user_name = user.name;
                     this.workflowObj = new Workflow(workflow);
-                    /*
-                    workflow.tasks.forEach((task, inx) => {
-                        task.forms['display_sample'].value = (inx + 1) === totalOfTasks ? '1' : '0';
+                    if (this.clusters && this.clusters.length && !this.workflowObj.preferred_cluster_id) {
+                        this.workflowObj.preferred_cluster_id = this.clusters[0].id;
+                    }
+                    this.clusterId = this.workflowObj.preferred_cluster_id;
+
+                    this.workflowObj.tasks.forEach((task, inx) => {
+                        task.previewable = task?.forms?.$meta?.value?.previewable != false;
                     });
-                    */
-                    //To be compatible: 
+
+                    //To be compatible:
                     // 1 - First task must be data reader
-                    // 2 - Last task must emit samples
-                    // 3 - No output can be used more than once (?)
-                    // 4 - Only some operations are supported
+                    // 2 - Second task must be a sample
+                    // 3 - Last task must emit samples
+                    // 4 - No output can be used more than once (?)
+                    // 5 - Only some operations are supported
+                    const readerTask = workflow.tasks[0]; //workflow.tasks.find(t => t.operation.slug === 'read-data');
+                    const sampleTask = workflow.tasks[1];
+                    this.dataSourceLabel = `${readerTask.forms.data_source.value} - ${readerTask.forms.data_source.labelValue}`
+
                     const hasUnsupported = workflow.platform.slug !== 'meta' //tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
-                    if (hasUnsupported || readerTask.operation.slug !== 'read-data') {
-                        self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format' });
+                    if (hasUnsupported || readerTask?.operation?.slug !== 'read-data') {
+                        self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format.' });
+                        self.$router.push({ name: 'index-explorer' })
                         return;
+                    }
+                    if (sampleTask?.operation?.slug !== 'sample') {
+                        const op = this.operationLookup.get(2110) // FIXME;
+                        const sample = Workflow.createSampleTask(1, op);
+                        self.warning('FIXME: Invalid workflow. Tried to fix it.');
+                        this.workflowObj.tasks.splice(1, 0, sample);
                     }
                     self.loadingData = false;
                     document.getElementById('tahiti-script').setAttribute(
@@ -789,6 +855,7 @@
                 } finally {
                     Vue.nextTick(() => {
                         this.$Progress.finish();
+                        this.loadingData = false;
                     });
                 }
                 //self.loadData();
@@ -799,12 +866,18 @@
                 //const cloned = JSON.parse(JSON.stringify(this.store.workflow));
                 const cloned = JSON.parse(JSON.stringify(this.workflowObj));
                 cloned.platform_id = cloned.platform.id; //FIXME: review
+                cloned.preferred_cluster_id = self.clusterId;
 
+                const enableTasksForPreview = []
                 cloned.tasks.forEach((task) => {
-                    // Remove unnecessary attributes from operation
-                    task.operation = { id: task.operation.id };
-                    delete task.version;
+                    if (task.enabled && task.previewable) {
+                        // Remove unnecessary attributes from operation
+                        task.operation = { id: task.operation.id };
+                        delete task.version;
+                        enableTasksForPreview.push(task);
+                    }
                 });
+                cloned.tasks = enableTasksForPreview;
                 const body = {
                     workflow: cloned,
                     cluster: { id: 1 }, //FIXME: How to determine the cluster?
@@ -813,7 +886,7 @@
                     persist: false, // do not save the job in db.
                     app_configs: { sample_size: 200, },
                 }
-                self.disconnectWebSocket();
+                //self.disconnectWebSocket();
                 //self.store.prepareSampleProperties();
 
                 axios.post(`${standUrl}/jobs`, body, {
@@ -838,45 +911,62 @@
                     this.socket.close();
                 }
             },
+            endSortSteps({originalEvent }){
+                let elem = null;
+                this.workflowObj.tasks.forEach((task, i) => {
+                    task.display_order = i;
+                    if (task.previewable) {
+                        elem = task;
+                        return false
+                    }
+                })
+                this.previewUntilHere(elem)
+            },
             connectWebSocket() {
                 const self = this;
-                const socket = io(standNamespace, { upgrade: true, });
-                self.socket = socket;
+                if (self.socket === null) {
+                    const socket = io(standNamespace, { upgrade: true, });
+                    self.socket = socket;
 
-                socket.on('connect', () => { socket.emit('join', { room: self.job.id }); });
+                    socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
 
-                socket.on('update task', (msg, callback) => {
-                    if (msg.type === 'OBJECT') {
-                        if (msg.meaning === 'sample') {
-                            // Update must be done before assigning to observable self.tableData!
-                            const truncated = msg.message.truncated || [];
-                            msg.message.attributes.forEach((attr, index) => {
-                                attr['selected'] = true;
-                                attr['truncated'] = truncated.indexOf(attr.key) > -1;
-                                attr['position'] = index;
-                            });
+                    socket.on('update task', (msg, callback) => {
+                        if (msg.type === 'OBJECT') {
+                            if (msg.meaning === 'sample') {
+                                // Update must be done before assigning to observable self.tableData!
+                                const messageJson = JSON.parse(msg.message);
+                                const truncated = messageJson.truncated || [];
+                                messageJson.attributes.forEach((attr, index) => {
+                                    attr['selected'] = true;
+                                    attr['truncated'] = truncated.indexOf(attr.key) > -1;
+                                    attr['position'] = index;
+                                });
+                                self.tableData = messageJson;
 
-                            self.tableData = msg.message;
+                                const attributeIds = self.tableData.attributes.map(attr => attr.key);
+                                //self.store.setAttributes(self.tableData.attributes);
 
-                            const attributeIds = self.tableData.attributes.map(attr => attr.key);
-                            //self.store.setAttributes(self.tableData.attributes);
-
-                            self.tableData.rows = self.tableData.rows.map(
-                                row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
-                        } else if (msg.meaning === 'schema') {
-                            self.schemas[msg.id] = JSON.parse(msg.message);
+                                self.tableData.rows = self.tableData.rows.map(
+                                    row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
+                            } else if (msg.meaning === 'schema') {
+                                self.schemas[msg.id] = JSON.parse(msg.message);
+                            }
                         }
-                    }
-                    //self.store.changeStepStatus(msg.id, msg.status);
-                });
-                socket.on('update job', msg => {
-                    if (msg.status === 'ERROR') {
-                        self.error(msg);
-                    }
-                    if (msg.status === 'COMPLETED')
-                        self.loadingData = false;
-                });
-
+                        //self.store.changeStepStatus(msg.id, msg.status);
+                    });
+                    socket.on('update job', msg => {
+                        self.jobStatus = '';
+                        if (msg.status === 'ERROR') {
+                            self.error(msg);
+                        }
+                        if (msg.status === 'COMPLETED') {
+                            self.loadingData = false;
+                            self.jobStatus = msg.message;
+                        }
+                    });
+                } else {
+                    //self.socket.emit('join', { room: self.job.id });
+                }
             }
         }
     }
@@ -889,6 +979,10 @@
 
     .list-group {
         min-height: 20px;
+    }
+
+    .steps {
+        border-radius: 0 !important;
     }
 
     .steps .list-group-item {
@@ -916,7 +1010,6 @@
 
     #step-container {
         position: relative;
-        margin-right: 10px;
     }
 
     #step-scroll {
@@ -926,6 +1019,16 @@
     }
 
     .fill-height {
-        min-height: 85vh
+        height: 75vh
     }
+
+    .step-list {
+        -ms-flex: 0 0 305px;
+        flex: 0 0 305px;
+    }
+    .step-scroll-area {
+        width: 300px;
+        height: 64vh;
+    }
+
 </style>

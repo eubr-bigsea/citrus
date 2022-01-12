@@ -8,7 +8,7 @@
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-
+        {{suggestions}}
         <b-modal id="lookupModal" button-size="sm" size="lg" :title="field.label" :hide-header="true"
             :cancel-title="$t('actions.cancel')" no-fade ref="modal" v-if="parameters">
             <p>
@@ -23,6 +23,7 @@
                 <tbody>
                     <tr v-for="(row, index) in valueList">
                         <td style="width:50%">
+                            
                             <v-select :options="suggestions" :multiple="false" :value="row.attribute"
                                 @input="(v) => attrUpdated(row, 'attribute', v)" :taggable="true" :closeOnSelect="true"
                                 size="sm">

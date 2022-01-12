@@ -19,7 +19,10 @@
         mixins: [Widget],
         components: { LabelComponent },
         methods: {
-            updated: _.debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
+            updated: _.debounce(function (e) {
+                //this.$root.$emit(this.message, this.field, e.target.value);
+                this.triggerUpdateEvent(this.message, this.field, e.target.value);
+            } , 500)
         },
         mounted() {
             const value = (this.field['default'] ? parseInt(this.field['default']) : null)

@@ -3,7 +3,7 @@
         {{selected}}
     </div>
     <div v-else>
-        <LabelComponent :field="field" :value="value"></LabelComponent>
+        <LabelComponent :field="field" :value="value"></LabelComponent>aa
         <b-form-tags @input="updatedTag" v-model="selected" name="field.name" class="lemonade-tag-input pt-3"
             placeholder="" add-button-text="+" :input-type="inputType" />
     </div>

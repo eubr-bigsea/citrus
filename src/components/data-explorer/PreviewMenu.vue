@@ -2,18 +2,16 @@
     <div>
         <div class="border preview-menu">
             <b-nav v-if="menus">
-                <!--div v-for="menu in menus" :key="menu.menu.id">
-                    {{menu.menu}}
-                </div-->
                 <b-nav-item-dropdown v-for="menu in menus" :key="menu.menu.id" toggle-class="nav-link-custom"
-                    xdisabled="'always' !== menu.enableCondition && selected.label === undefined">
+                    :disabled="'always' !== menu.enableCondition && selected.label === undefined">
                     <template slot="button-content">
                         <span :class="menu.icon"></span> {{menu.menu.name}}
                     </template>
                     <template v-for="op in menu.operations">
-                        <template v-if="op.css_class === '' || op.css_class.includes(selected.field.type)">
+                        <template
+                            v-if="op.css_class === 'separator' || op.css_class === '' || op.css_class.includes(selected.field.type)">
                             <b-dropdown-item @click="trigger('menu', op)">
-                                <span :class="op.icon"></span> {{op.name}} {{op.css_class}}
+                                <span :class="op.icon"></span> {{op.name}}
                             </b-dropdown-item>
                             <b-dropdown-item v-if="op.css_class.includes('separator')" class="ctx-divider">
                             </b-dropdown-item>
@@ -25,6 +23,9 @@
     </div>
 </template>
 <script>
+    /*
+     * Menu for Data Explorer
+     */
     export default {
         props: {
             selected: { type: Object, default: () => ({}) },
@@ -32,7 +33,7 @@
         },
         methods: {
             trigger(action, ...params) {
-                this.$emit('select', { action, params })
+                this.$emit('select', { action, params, 'selected': this.selected })
             }
         }
     }

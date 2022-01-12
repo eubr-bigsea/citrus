@@ -4,7 +4,7 @@
         <div class="color-items">
             <div v-for="(opt, index) in pairOptionValueList" @click="doUpdate(opt)"
              :key="index" class="color-item" :class="{active: value && opt && opt.background === value.background && opt.foreground == value.foreground && opt.foreground == value.foreground}"
-                :style="{background: opt.background}">
+                :style="{background: opt.background}" :title="opt.background">
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
         },
         methods: {
             doUpdate(value) {
-                this.$root.$emit(this.message, this.field, value)
+                this.triggerUpdateEvent(this.message, this.field, value)
             }
         },
         props: {
@@ -41,14 +41,14 @@
 
     .color-item {
         float: left;
-        height: 20px;
+        height: 25px;
         margin-right: 0px;
-        width: 20px;
-        border: 1px solid #CCC;
+        width: 25px;
+        border: 1px solid #bbb;
     }
 
     .color-item:hover {
-        border: 2px solid #777
+        border: 2px solid #444
     }
     .active {
         border: 2px double #111;
