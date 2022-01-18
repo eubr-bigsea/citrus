@@ -16,10 +16,16 @@
                 <div ref="colOverlay" class="col-overlay" @click="resetMenuData">
                     <div></div>
                 </div>
-                <b-table :no-border-collapse="false" :items="items" :fields="attributes" tbody-class="body"
-                    sticky-header="80vh" table-class="table-preview " class="table border scroll-area"
-                    @row-contextmenu="tableContextMenu" outlined small hover bordered responsive ref="table"
-                    @row-clicked="tableClick">
+                <b-table :no-border-collapse="false" :items="items" :fields="['#'].concat(attributes)"
+                    tbody-class="body" sticky-header="80vh" table-class="table-preview"
+                    class="border scroll-area table-preview" @row-contextmenu="tableContextMenu" outlined small hover
+                    bordered responsive ref="table" @row-clicked="tableClick">
+
+                    <!-- A custom formatted column -->
+                    <template #cell(#)="data">
+                        {{ data.index + 1 }}
+                      </template>
+
                     <template #head()="scope">
                         <div @click.prevent="customOpen($event, scope)" class="grabbable" draggable="true"
                             v-on:dragstart="dragStart(scope.field, $event)"
@@ -54,7 +60,6 @@
                     -->
                 </b-table>
             </div>
-            <div><small>{{$tc('common.pagerShowing', 0, {from: 1, to: 500, count: total})}}</small></div>
         </template>
         <template v-else></template>
 
@@ -223,7 +228,7 @@
         },
         mounted: function () {
             window.addEventListener("resize", this.resize);
-            this.handleTableScroll = debounce(this.handleScroll, 100);
+            //this.handleTableScroll = debounce(this.handleScroll, 100);
         },
         beforeDestroy() {
             window.removeEventListener("resize", this.resize);
@@ -292,6 +297,7 @@
                 this.moveSelectionOverlay(this.lastHeader);
                 this.$refs.ctxCellMenu.ctxVisible = false;
                 //this.$refs.dataTypeCtxMenu.ctxVisible = false;
+                this.$emit('scroll', ev);
             },
 
             customOpen(event, data, index) {
@@ -355,7 +361,7 @@
             tableContextMenu(item, index, event) {
                 event.preventDefault();
                 const attributeIndex = parseInt(event.target.getAttribute('aria-colindex'));
-                const attribute = this.attributes[attributeIndex - 1];
+                const attribute = this.attributes[attributeIndex - 2]; // -2 because starts in zero and first is the row number
                 const cellText = event.target.innerText;
                 // Users cannot filter using garge text and context menu
                 if (cellText.length <= 40) {
@@ -442,7 +448,11 @@
         position: relative;
     }
 
-    .table {
+    .table-preview>>>table {
+        width: unset !important;
+    }
+
+    .table-preview {
         color: #aaa;
         font-size: 10pt;
         xwhite-space: pre-wrap;
@@ -452,11 +462,11 @@
         user-select: none*/
     }
 
-    .table>>>td.invalid-data {
+    .table-preview>>>td.invalid-data {
         background-color: #fee;
     }
 
-    .table>>>td.missing-data {
+    .table-preview>>>td.missing-data {
         background-color: #fffdeb;
     }
 
@@ -469,7 +479,7 @@
         display: inline-block;
     }
 
-    .table>>>td {
+    .table-preview>>>td {
         font-size: 9pt;
         /*min-width: 150px;*/
         padding: 1px 4px;

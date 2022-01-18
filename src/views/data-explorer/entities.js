@@ -22,21 +22,31 @@ class Workflow {
         });
         this.history = 0;
     }
-    getTaskById(id){
+    getTaskById(id) {
         return this._tasksLookup.get(id);
     }
     addTask(op, selected, fields) {
         //const requiresAttributes = !!op.forms.fields.find((f) => f.name === 'attributes');
         const attrs = (selected) ? [selected.column] : [];
-        let forms = null;
+        let forms = {};
 
         // Operations that handle 'attributes' in a different field
-        if (op.slug === 'sort') {
-            forms = { order_by: { value: attrs.map(attr => { return { attribute: attr, f: 'asc' } }) } };
-        } else if (op.slug === 'cast') {
-            forms = { cast_attributes: { value: attrs.map(attr => { return { attribute: attr, type: 'Text' } }) } };
-        } else {
-            forms = { attributes: { value: attrs } }
+        if (attrs && attrs.length && attrs[0]) {
+            if (op.slug === 'sort') {
+                forms = { order_by: { value: attrs.map(attr => { return { attribute: attr, f: 'asc' } }) } };
+            } else if (op.slug === 'cast') {
+                forms = { cast_attributes: { value: attrs.map(attr => { return { attribute: attr, type: 'Text' } }) } };
+            } else if (op.slug === 'select') {
+                forms = { mode: {value: 'include'}, attributes: { value: attrs.map(attr => { return { attribute: attr, alias: null } }) } };
+            } else if (op.slug === 'rename') {
+                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: attr } }) } };
+            } else if (op.slug === 'duplicate') {
+                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: `${attr}_1`} }) } };
+            } else if (op.slug === 'extract-from-array'){
+                forms = { attributes: { value: attrs }, indexes: {value: "0"}};
+            } else {
+                forms = { attributes: { value: attrs } }
+            }
         }
         if (fields) {
             Object.assign(forms, fields);

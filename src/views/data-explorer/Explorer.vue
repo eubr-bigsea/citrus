@@ -69,15 +69,23 @@
                             </draggable>
                         </div>
                     </div>
-                    <small class="text-secondary">{{jobStatus}}</small>
+                    <div class="text-secondary">
+                        <small>{{jobStatus}} (p. {{page}})</small>
+                        <br />
+                        <small class="text-info" v-if="loadedDataSize > 1">
+                            {{$tc('common.pagerShowing', 0,
+                            {from: 1,
+                            to: Math.min(pageSize * page, tableData.total), count: tableData.total
+                            })}}.</small>
+                    </div>
                 </div>
             </div>
             <!-- Preview area -->
             <div class="col border-left fill-height mt-3">
                 <PreviewMenu :selected="selected" @select="performAction" :menus="menus" />
-                <preview :attributes="tableData.attributes" :items="tableData.rows" :missing="tableData.missing"
+                <preview :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
                     :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total" @select="select"
-                    @drop="performAction" @context-menu="handleContextMenu" ref="preview" />
+                    @drop="performAction" @context-menu="handleContextMenu" ref="preview" @scroll="handleScroll" />
             </div>
             <!-- FIXME
         <b-modal ref="modalExport" button-size="sm" :title="$t('actions.export')"
@@ -109,6 +117,7 @@
     import jsep from 'jsep';
     import io from 'socket.io-client';
     import axios from 'axios';
+    import { debounce } from '../../util';
     import draggable from 'vuedraggable';
     import Preview from '../../components/data-explorer/Preview';
     import Step from '../../components/data-explorer/Step';
@@ -125,6 +134,7 @@
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
 
     const META_PLATFORM_ID = 1000;
+    const PAGE_SIZE = 100;
 
     export default {
         name: "DataExplorer",
@@ -171,6 +181,10 @@
                 //
                 menus: [],
                 attributeSuggestion: {},
+                loadedDataSize: 0,
+                page: 1,
+                pageSize: PAGE_SIZE,
+                rows: []
             }
         },
         async mounted() {
@@ -183,6 +197,25 @@
             this.disconnectWebSocket();
         },
         methods: {
+            /**/
+            handleScroll: debounce(function (el) {
+                if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) >= el.srcElement.scrollHeight) {
+                    if (this.loadedDataSize < this.tableData?.total) {
+                        if (this.socket) {
+                            const workflow_id = this.workflowObj.id;
+                            const job_id = 800000 + workflow_id;
+                            // Get the last visible and enabled task
+                            const task_id = [... this.workflowObj.tasks].reverse().find(
+                                task => task.enabled && task.previewable)['id'];
+                            this.socket.emit("more data", {
+                                workflow_id, job_id, room: `${job_id}`, task_id,
+                                size: PAGE_SIZE, page: this.page + 1, type: "more data",
+                            });
+                            this.loadingData = true;
+                        }
+                    }
+                }
+            }, 500),
             /* Data loading */
             async loadWorkflow() {
                 const self = this;
@@ -271,16 +304,17 @@
                     name: `## explorer ${self.workflowObj.id} ##`,
                     user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                     persist: false, // do not save the job in db.
-                    app_configs: { sample_size: 200, },
+                    app_configs: { verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1 },
                 }
                 //self.disconnectWebSocket();
 
-                axios.post(`${standUrl}/jobs`, body, {
-                    headers: { 'Locale': self.$root.$i18n.locale, }
-                }).then((response) => {
+                try {
+                    const response = await axios.post(`${standUrl}/jobs`, body,
+                        { headers: { 'Locale': self.$root.$i18n.locale, } })
                     self.job = response.data.data;
+                    self.page = 1;
                     self.connectWebSocket();
-                }).catch((ex) => {
+                } catch (ex) {
                     if (ex.data) {
                         self.error(ex.data.message);
                     } else if (ex.status === 0) {
@@ -288,8 +322,9 @@
                     } else {
                         self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                     }
+                } finally {
                     self.$Progress.finish();
-                });
+                }
             },
             async loadClusters() {
                 try {
@@ -337,7 +372,7 @@
 
             },
 
-            handleExport(){
+            handleExport() {
                 //TODO
             },
             handleStepDrag(e) {
@@ -477,7 +512,7 @@
                 }
                 this.updateAttributeSuggestion();
             },
-            
+
             resetMenuData() {
                 this.selected = { field: {} };
                 this.$refs.preview.resetMenuData();
@@ -596,7 +631,7 @@
                 modal.show(modalConfig);
             },
 
-            
+
             disconnectWebSocket() {
                 if (this.socket) {
                     this.socket.emit('leave', { room: this.job.id });
@@ -634,21 +669,39 @@
                         if (msg.type === 'OBJECT') {
                             if (msg.meaning === 'sample') {
                                 // Update must be done before assigning to observable self.tableData!
-                                const messageJson = JSON.parse(msg.message);
+                                const messageJson = msg.message;
                                 const truncated = messageJson.truncated || [];
                                 messageJson.attributes.forEach((attr, index) => {
                                     attr['selected'] = true;
                                     attr['truncated'] = truncated.indexOf(attr.key) > -1;
                                     attr['position'] = index;
                                 });
-                                self.tableData = messageJson;
 
-                                const attributeIds = self.tableData.attributes.map(attr => attr.key);
-
-                                self.tableData.rows = self.tableData.rows.map(
+                                const attributeIds = messageJson.attributes.map(attr => attr.key);
+                                const mapped = messageJson.rows.map(
                                     row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
+
+
+                                if (messageJson.page === 1) {
+                                    self.tableData = messageJson;
+                                    // Update selected attribute (may have its time changed during processing)
+                                    const selected = self.tableData.attributes.find(t => t?.key === self.selected.column)
+                                    if (selected) {
+                                        self.select({ field: selected, column: selected.key, label: selected.key })
+                                    }
+                                    self.rows = mapped;
+                                    self.page = 1;
+                                    self.loadedDataSize = messageJson.size;
+                                } else if (messageJson.page === self.page + 1 && mapped.length > 0) {
+                                    self.rows.push.apply(self.rows, mapped);
+                                    self.page = messageJson.page;
+                                    self.loadedDataSize += Math.min(self.tableData.size, mapped.length);
+                                    self.loadingData = false;
+                                } else {
+                                    self.loadingData = false;
+                                }
                             } else if (msg.meaning === 'schema') {
-                                self.schemas[msg.id] = JSON.parse(msg.message);
+                                self.schemas[msg.id] = msg.message;
                                 /*
                                 const task = self.workflowObj.tasks.find(t => t.id == msg.id)
                                 if (task) {
@@ -662,11 +715,12 @@
                         self.jobStatus = '';
                         if (msg.status === 'ERROR') {
                             self.error(msg);
+                            self.loadingData = false;
                         }
                         if (msg.status === 'COMPLETED') {
                             self.jobStatus = msg.message;
+                            self.loadingData = false;
                         }
-                        self.loadingData = false;
                     });
                 } else {
                     //self.socket.emit('join', { room: self.job.id });
