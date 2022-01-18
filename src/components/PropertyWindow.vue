@@ -279,7 +279,7 @@
                 if (self.conditionalFields.has(field.name)) {
                     const duplicatedOk = new Set();
                     const fieldsToCheck = self.conditionalFields.get(field.name);
-                    console.debug(self.allFields['validation']?.internalValue)
+                    //console.debug(self.allFields['validation']?.internalValue)
                     fieldsToCheck.forEach(fieldToCheck => {
                         try {
                             fieldToCheck.enabled = self.evalInContext(fieldToCheck.enable_conditions, self.allFields);
