@@ -103,10 +103,10 @@
     import axios from 'axios';
     import { debounce } from '../../util';
     import draggable from 'vuedraggable';
-    import Preview from '../../components/data-explorer/Preview';
-    import Step from '../../components/data-explorer/Step';
+    import Preview from './Preview';
+    import PreviewMenu from './PreviewMenu';
+    import Step from './Step';
     import Notifier from '../../mixins/Notifier.js';
-    import PreviewMenu from '../../components/data-explorer/PreviewMenu.vue';
     import contextMenu from 'vue-context-menu';
     import { Workflow, Platform, Operation, OperationList, Task, Constants } from './entities.js'
     import ModalExport from './ModalExport.vue';
