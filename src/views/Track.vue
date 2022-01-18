@@ -537,7 +537,7 @@
                         if (variable.description) {
                             variable.help = variable.description;
                         }
-                        if (variable?.parameters?.values.length > 0) {
+                        if (variable?.parameters?.values?.length > 0) {
                             if (Array.isArray(variable?.parameters?.values)) {
                                 variable.values = variable.parameters.values
                             } else {
