@@ -6,7 +6,7 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="multiple">
             <textarea readonly :value="value ? value.join(', '): ''" class="form-control pointer"
-                @click.prevent="openModal"></textarea>
+                @click.prevent="openModal" :rows="(value && value.length) ? Math.min(value.length / 3, 10) : 2"></textarea>
             <b-modal size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal"
                 no-fade>
                 <div slot="default">
