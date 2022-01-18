@@ -24,6 +24,7 @@ import './fa-icons';
 /* Widgets */
 import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
 import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue'
+import AttributeAliasSelectorComponent from './components/widgets/AttributeAliasSelector.vue'
 import CheckboxComponent from './components/widgets/Checkbox.vue'
 import CastComponent from './components/widgets/Cast.vue'
 import CodeComponent from './components/widgets/Code.vue'
@@ -58,6 +59,7 @@ Vue.component('v-select', vSelect)
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
     ['attribute-selector-component', AttributeSelector2Component],
+    ['attribute-alias-selector-component', AttributeAliasSelectorComponent],
     ['cast-component', CastComponent],
     ['checkbox-component', CheckboxComponent],
     ['code-component', CodeComponent],

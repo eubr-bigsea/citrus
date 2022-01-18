@@ -577,6 +577,7 @@ export default {
             function: 'Função',
             help: 'Ajuda',
             informAttributeName: 'Não está na lista? Informe um nome',
+            multipleTimes: 'Um mesmo atributo poderá ser selecionado várias vezes, mas neste caso, é necessário informar um novo nome.',
             noExpressions: 'Nenhuma expressão',
             queryBuilder: {
                 explanation:
@@ -1426,6 +1427,7 @@ export default {
             function: 'Function',
             help: 'Help',
             informAttributeName: 'Not in the list? Inform a name',
+            multipleTimes: 'Same attribute may be selected multiple times, but it is necessary to inform a new name.',
             noExpressions: '0 Expression defined',
             taskName: 'Task name (optional)',
             expression: {
