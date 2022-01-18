@@ -4,8 +4,9 @@
         <div class="row">
             <div class="col noselect step-list p-1">
                 <div class="p-2">
+                    <h6>{{$t('dataExplorer.title')}}</h6>
                     <div>
-                        <small>{{$t('dataExplorer.title')}}</small>
+                        <small>{{$tc('common.name')}}</small>
                         <input type="text" class="form-control form-control-sm" v-model="workflowObj.name"
                             maxlength="50" />
                     </div>
@@ -30,7 +31,7 @@
                         <b-dropdown-item @click="handleRemoveSelected">{{$t('dataExplorer.removeSelected')}}
                         </b-dropdown-item>
                     </b-dropdown>
-                    <!-- FIXME -->
+                    <!-- FIXME 
                     <b-dropdown :disabled="false && loadingData" variant="secondary" size="sm"
                         class="float-right mt-2 ml-1" @click="saveWorkflow">
                         <template #button-content>
@@ -40,14 +41,16 @@
                             {{$tc('actions.export')}} ...
                         </b-dropdown-item>
                     </b-dropdown>
+                    -->
 
-                    <b-button :disabled="false && loadingData" variant="primary" size="sm" class="float-right mt-2"
+                    <b-button :disabled="!isDirty || loadingData" variant="primary" size="sm" class="float-right mt-2"
                         @click="saveWorkflow"><span class="fa fa-save"></span> {{$t('actions.save')}}
                     </b-button>
                     <b-button :disabled="false && loadingData" size="sm" variant="outline-secondary"
                         class="float-right mt-2 mr-1" @click="loadData">
                         <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
                     </b-button>
+                    <b-button @click="loadingData = !loadingData" class="btn btn-sm">OK</b-button>
                 </div>
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
@@ -60,7 +63,7 @@
                                     class="list-group-item steps clearfix p-0" :title="task.name"
                                     :style="{'border-left': '4px solid ' + task.backgroundColor}">
                                     <step :step="task" :language="language" :attributes="tableData.attributes"
-                                        :index="inx" @toggle="task.enabled = !task.enabled" :protected="inx <=1 "
+                                        :index="inx" @toggle="task.enabled = !task.enabled; isDirty=true" :protected="inx <=1 "
                                         :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
                                         @delete="workflowObj.deleteTask(task)" @update="updateStep"
                                         @previewUntilHere="previewUntilHere(task)" @duplicate="duplicate"
@@ -87,28 +90,9 @@
                     :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total" @select="select"
                     @drop="performAction" @context-menu="handleContextMenu" ref="preview" @scroll="handleScroll" />
             </div>
-            <!-- FIXME
-        <b-modal ref="modalExport" button-size="sm" :title="$t('actions.export')"
-            @ok="okSelectAttributes">
-            <div style="height: 300px; overflow:auto">
-                <draggable v-model="attributeSelection" @start="drag=true" @end="drag=false" class="list-group"
-                    ghost-class="ghost">
-                    <div v-for="attr in attributeSelection" :key="attr.key" class="list-group-item steps clearfix">
-                        <div style="width:15px" class="pt-1 float-left text-secondary">
-                            <span class="fa fa-grip-vertical"></span>
-                        </div>
-                        <div class="float-left mt-1">
-                            <del v-if="!attr.selected">{{attr.label}} [{{attr.type}}]</del>
-                            <span v-else>{{attr.label}} [{{attr.type}}]</span>
-                        </div>
-                        <div class="float-right">
-                            <b-form-checkbox switch size="sm" v-model="attr.selected"></b-form-checkbox>
-                        </div>
-                    </div>
-                </draggable>
-            </div>
-        </b-modal>
-        -->
+
+            <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
+
         </div>
     </div>
 </template>
@@ -125,6 +109,7 @@
     import PreviewMenu from '../../components/data-explorer/PreviewMenu.vue';
     import contextMenu from 'vue-context-menu';
     import { Workflow, Platform, Operation, OperationList, Task, Constants } from './entities.js'
+    import ModalExport from './ModalExport.vue';
 
     jsep.addBinaryOp(">=", 1);
     jsep.removeBinaryOp('^');
@@ -135,13 +120,14 @@
 
     const META_PLATFORM_ID = 1000;
     const PAGE_SIZE = 100;
+    const WORKFLOW_OFFSET = 800000;
 
     export default {
         name: "DataExplorer",
         mixins: [Notifier],
         components: {
             Preview, draggable,
-            contextMenu, Step, PreviewMenu,
+            contextMenu, Step, PreviewMenu, ModalExport,
             TahitiSuggester: () => {
                 return new Promise((resolve, reject) => {
                     const script = document.createElement('script');
@@ -187,11 +173,22 @@
                 rows: []
             }
         },
+        beforeRouteLeave(to, from, next) {
+            if (!this.isDirty || (confirm(this.$tc('warnings.dirtyCheck')))) {
+                next();
+            }
+        },
         async mounted() {
             this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
+            
+            const job_id = WORKFLOW_OFFSET + parseInt(this.internalWorkflowId);
+            this.job = {id: job_id}
+
             await this.loadClusters();
             await this.loadOperations();
             await this.loadWorkflow();
+            
+            this.connectWebSocket();
         },
         beforeDestroy() {
             this.disconnectWebSocket();
@@ -203,7 +200,7 @@
                     if (this.loadedDataSize < this.tableData?.total) {
                         if (this.socket) {
                             const workflow_id = this.workflowObj.id;
-                            const job_id = 800000 + workflow_id;
+                            const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
                             // Get the last visible and enabled task
                             const task_id = [... this.workflowObj.tasks].reverse().find(
                                 task => task.enabled && task.previewable)['id'];
@@ -277,6 +274,7 @@
                     Vue.nextTick(() => {
                         this.$Progress.finish();
                         this.loadingData = false;
+                        this.isDirty = false;
                     });
                 }
                 //self.loadData();
@@ -304,7 +302,7 @@
                     name: `## explorer ${self.workflowObj.id} ##`,
                     user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                     persist: false, // do not save the job in db.
-                    app_configs: { verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1 },
+                    app_configs: { verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1, target_platform: 'scikit-learn' },
                 }
                 //self.disconnectWebSocket();
 
@@ -372,9 +370,6 @@
 
             },
 
-            handleExport() {
-                //TODO
-            },
             handleStepDrag(e) {
                 // Disable some steps to be dragged
                 return (e?.relatedContext?.element?.display_order > 1);
@@ -388,6 +383,7 @@
             handleToggleSelected(value) {
                 this.workflowObj.tasks.forEach((task) => {
                     task.enabled = (task.selected && value) || (task.display_order <= 1);
+                    this.isDirty = true;
                 })
             },
             handleRemoveSelected() {
@@ -397,6 +393,7 @@
                         this.workflowObj.tasks.forEach((task) => {
                             if (task.display_order > 1 && task.selected) {
                                 this.workflowObj.deleteTask(task);
+                                this.isDirty = true;
                             }
                         })
                     }
@@ -493,6 +490,7 @@
                 // Update the display_order
                 this.workflowObj.tasks.slice(step.display_order + 1).forEach(
                     (task) => task.display_order++);
+                this.isDirty = true;
             },
             previewUntilHere(step) {
                 this.workflowObj.tasks.forEach((task) => {
@@ -504,6 +502,7 @@
                         task.forms.$meta = { value: { previewable } };
                     }
                 });
+                this.isDirty = true;
             },
             updateStep(step) {
                 const task = this.workflowObj.tasks.find(t => t.id === step.id);
@@ -589,13 +588,12 @@
             },
             /* Handle Preview component menu clicks */
             performAction(options) {
-                if (typeof this[options.action] === 'function') { //FIXME: remove
-                    debugger
-                    this[options.action](options.params);
+                if (options.action === 'export') {
+                    this.$refs.modalExport.show();
                 } else if (options.action === 'menu') {
                     this.workflowObj.addTask(this.operationLookup.get(options.params[0].id),
                         options.selected, options.fields);
-                    console.debug(options);
+                    this.isDirty = true;
                 } else {
                     console.log(`Unknown action: ${options.action}`);
                 }
@@ -630,8 +628,6 @@
                 };
                 modal.show(modalConfig);
             },
-
-
             disconnectWebSocket() {
                 if (this.socket) {
                     this.socket.emit('leave', { room: this.job.id });
@@ -647,7 +643,37 @@
                         return false
                     }
                 })
+                this.isDirty = true;
                 this.previewUntilHere(elem)
+            },
+            handleExport({ newName, exportDisabled, platform }) {
+                
+                const cloned = JSON.parse(JSON.stringify(this.workflowObj));
+                cloned.platform_id = META_PLATFORM_ID;
+                
+                if (!exportDisabled) {
+                    cloned.tasks = cloned.tasks.filter((t) => t.enabled);
+                }
+                cloned.tasks.forEach((task) => {
+                    task.operation = { id: task.operation.id };
+                    delete task.version;
+                    delete task.step;
+                    delete task.status;
+                });
+                const workflow_id = this.workflowObj.id;
+                const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
+                
+                this.socket.emit("export", {
+                    workflow_id, job_id, room: `${job_id}`, 
+                    app_id: workflow_id,
+                    format: 'JSON',
+                    ticket: new Date().getTime(),
+                    target_platform: platform, name: newName,
+                    app_configs: {persist: false},
+                    workflow: cloned,
+                    type: "export",
+                });
+                this.info('Exportando o fluxo de trabalho. Quando a exportação terminar, você será notificado.', 10000);
             },
             /* WebSocket Handling */
             connectWebSocket() {
@@ -658,6 +684,9 @@
 
                     socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
 
+                    socket.on('exported result', (msg) => {
+                        console.debug(msg)
+                    });
                     socket.on('update task', (msg, callback) => {
 
                         // Meta add a suffix to task id when converting tasks to other platform.

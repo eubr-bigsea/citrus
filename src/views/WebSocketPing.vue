@@ -62,6 +62,9 @@
             socket.on('connect_error', () => {
                 console.debug('Web socket server offline');
             });
+            socket.on('exported result', (msg) => {
+                this.responses.push(msg)
+            });
             socket.on('echo', (msg) => {
                 this.responses.push(msg)
             });

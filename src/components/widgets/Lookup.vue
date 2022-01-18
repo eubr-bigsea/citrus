@@ -27,9 +27,9 @@
                     </template>
                 </v-client-table>
                 <div slot="modal-footer" class="w-100">
-                    <b-btn @click="closeModal" variant="secondary" class="ml-1 float-right">{{$t('actions.cancel')}}
+                    <b-btn @click="closeModal" variant="secondary" size="sm" class="btn-sm ml-1 float-right">{{$t('actions.cancel')}}
                     </b-btn>
-                    <b-btn @click="removeValue" variant="outline-primary" class="float-right">
+                    <b-btn @click="removeValue" variant="outline-primary" size="sm" class="btn-sm float-right">
                         {{$t('actions.removeValue')}}
                     </b-btn>
                 </div>

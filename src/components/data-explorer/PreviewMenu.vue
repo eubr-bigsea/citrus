@@ -6,7 +6,7 @@
                     <template slot="button-content">
                         <span class="fa fa-cog"></span> {{$tc('actions.export')}}
                     </template>
-                    <b-dropdown-item @click="trigger('menu', op)">
+                    <b-dropdown-item @click="trigger('export', null)">
                         <span class="fa fa-flask"></span> {{$tc('actions.new')}} {{$tc('titles.workflow')}}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>

@@ -79,10 +79,10 @@ class Workflow {
             display_order: 0,
         });
         dataReader.setProperty('data_source', ds);
-        dataReader.setProperty('display-sample', '0');
+        dataReader.setProperty('display_sample', '0');
 
         const sample = Workflow.createSampleTask(1);
-        dataReader.setProperty('display-sample', '1');
+        dataReader.setProperty('display_sample', '1');
 
         const workflow = new Workflow({
             name: name,

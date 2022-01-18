@@ -5,11 +5,9 @@
             text-align: right;
             }
         </v-style>
-        <div v-show="loading" class="preview-loading border">
-            <h1 class="text-secondary  border-radius p-4">
-                <font-awesome-icon icon="spinner" spin class="text-success" />
-                {{$t('common.wait')}}
-            </h1>
+        <div v-show="loading" class="preview-loading">
+            <font-awesome-icon icon="lemon" spin class="text-success"></font-awesome-icon>
+            {{$t('common.wait')}}
         </div>
         <template v-if="items">
             <div style="position: relative">
@@ -24,7 +22,7 @@
                     <!-- A custom formatted column -->
                     <template #cell(#)="data">
                         {{ data.index + 1 }}
-                      </template>
+                    </template>
 
                     <template #head()="scope">
                         <div @click.prevent="customOpen($event, scope)" class="grabbable" draggable="true"
@@ -169,9 +167,9 @@
                 const attributeIndexes = new Map();
                 this.attributes.forEach((attr, inx) => {
                     if (rightAlignedTypes.has(attr.type.toLowerCase())) {
-                        rightAlignedAttributes.push(inx)
+                        rightAlignedAttributes.push(inx + 1); // +1 because there is a row index at column 0
                     }
-                    attributeIndexes.set(attr.key, inx);
+                    attributeIndexes.set(attr.key, inx + 1);
                     /*
                     if (attr.type.toLowerCase() === 'boolean'){
                         attr.formatter = (v) => v === 0 ? self.$tc('common.no') : self.$tc('common.yes');
@@ -500,13 +498,17 @@
     }
 
     .preview-loading {
-        background: #fff;
-        margin: 0 auto;
-        width: 30%;
+        background: #f3f3f4;
+        border: 1px solid #222;
+        font-size: 20pt;
+        color: #666;
+        padding: 10px;
         left: 25%;
-        text-align: center;
+        margin: 0 auto;
         position: absolute;
-        top: 100px;
+        text-align: center;
+        top: 40%;
+        width: 40%;
         z-index: 101;
     }
 

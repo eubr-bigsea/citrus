@@ -208,9 +208,10 @@
                                 <div class="row">
                                     <div class="col-md-3 pt-3 result-area">
                                         <b-list-group>
-                                            <b-list-group-item v-for="(results, taskId) in allResults" @click.prevent="showResult(taskId)" button  href="#" >
+                                            <b-list-group-item v-for="(results, taskId) in allResults"
+                                                @click.prevent="showResult(taskId)" button href="#">
                                                 {{results[0].value.task.name}}
-                                                <br/><em><small>{{results[0].value.task.operation.name}}</small></em>
+                                                <br /><em><small>{{results[0].value.task.operation.name}}</small></em>
                                             </b-list-group-item>
                                         </b-list-group>
                                     </div>
@@ -218,8 +219,9 @@
                                         <div v-for="(results, taskId) in allResults" :key="taskId" class="row">
                                             <div class="col-md-12">
                                                 <b-card :header="getTask(taskId).name" class="mt-2"
-                                                    header-bg-variant="light" border-variant="info" :id="`task-${taskId}`">
-                                                    
+                                                    header-bg-variant="light" border-variant="info"
+                                                    :id="`task-${taskId}`">
+
                                                     <template v-for="(result, inx) in results">
                                                         <div v-if="result.type === 'result'" class="col-md-12 lemonade">
                                                             <div v-if="result.value.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
@@ -244,15 +246,15 @@
                                                                 header-bg-variant="light" border-variant="info">
                                                                 <div class="pl-5 mt-2" v-for="log in result.value.logs"
                                                                     :key="log.id">
-                                                                    <span v-if="log.type === 'OBJECT'">
+                                                                    <span v-if="log.type === 'OBJECT' && log.message.attributes">
                                                                         <v-client-table ref="jobList"
                                                                             :data="log.message.rows"
                                                                             :columns="log.message.attributes.map(a=>a.label)"
                                                                             :options="sampleOptions">
-                                                                            <span :slot="`h__${header}`" v-for="header in log.message.attributes.map(a=>a.label)">
-                                                                                 {{header}}
+                                                                            <span :slot="`h__${header}`"
+                                                                                v-for="header in log.message.attributes.map(a=>a.label)">
+                                                                                {{header}}
                                                                             </span>
-                                                            
                                                                         </v-client-table>
                                                                     </span>
                                                                 </div>
@@ -519,6 +521,9 @@
             });
         },
         methods: {
+            ttype(v){
+                return typeof(v)
+            },
             stop(jobId) {
                 this.confirm(
                     this.$t('actions.stop'),
@@ -551,9 +556,9 @@
                     }
                 );
             },
-            showResult(taskId){
+            showResult(taskId) {
                 const elem = document.getElementById(`task-${taskId}`);
-                if (elem){
+                if (elem) {
                     elem.scrollIntoView();
                 }
             },
@@ -602,11 +607,11 @@
                             step.status = msg.status;
                             const found = step.logs.filter(v => v.id === msg.id);
                             let message = msg.message;
-                            if (msg.type === 'OBJECT' && msg.meaning === 'sample'){
+                            if (msg.type === 'OBJECT' && msg.meaning === 'sample') {
                                 message = JSON.parse(message);
                                 const attributeNames = message.attributes.map(attr => attr.key);
                                 message.rows = message.rows.map(
-                                        row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                                    row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
                             }
                             if (found.length === 0) {
                                 step.logs.push({
@@ -866,6 +871,7 @@
         padding: 1px !important;
         font-size: 0.75em;
     }
+
     .result-area {
         max-height: 75vh;
         border: 1px solid #ccc;
