@@ -248,7 +248,12 @@
                                                                         <v-client-table ref="jobList"
                                                                             :data="log.message.rows"
                                                                             :columns="log.message.attributes.map(a=>a.label)"
-                                                                            :options="sampleOptions"></v-client-table>
+                                                                            :options="sampleOptions">
+                                                                            <span :slot="`h__${header}`" v-for="header in log.message.attributes.map(a=>a.label)">
+                                                                                 {{header}}
+                                                                            </span>
+                                                            
+                                                                        </v-client-table>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -367,12 +372,6 @@
                     skin: 'table-smallest table table-hover',
                     filterable: false, perPageValues: [],
                     sortable: [],
-                    sortIcon: {
-                        base: 'fa fas',
-                        is: 'fa-sort ml-10',
-                        up: 'fa-sort-amount-up',
-                        down: 'fa-sort-amount-down'
-                    },
                     texts: {
                         filter: this.$tc('common.filter'),
                         count: this.$t('common.pagerShowing'),
@@ -604,6 +603,7 @@
                             const found = step.logs.filter(v => v.id === msg.id);
                             let message = msg.message;
                             if (msg.type === 'OBJECT' && msg.meaning === 'sample'){
+                                message = JSON.parse(message);
                                 const attributeNames = message.attributes.map(attr => attr.key);
                                 message.rows = message.rows.map(
                                         row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
