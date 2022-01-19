@@ -2,8 +2,9 @@ class Constants {
     static DATA_TYPES = [
         'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'Text', 'Time',]
 }
+const META_PLATFORM_ID = 1000;
 class Workflow {
-    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null } = {}) {
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null } = {}) {
 
         let _platform = platform instanceof Platform ? platform : new Platform(platform);
         let _tasks = tasks.map(task => (task instanceof Task) ? task : new Task(task));
@@ -14,6 +15,7 @@ class Workflow {
         Object.assign(this, {
             id, name, type, version,
             platform: _platform,
+            forms,
             preferred_cluster_id,
             tasks: _tasks,
             flows: _flows,
@@ -37,13 +39,13 @@ class Workflow {
             } else if (op.slug === 'cast') {
                 forms = { cast_attributes: { value: attrs.map(attr => { return { attribute: attr, type: 'Text' } }) } };
             } else if (op.slug === 'select') {
-                forms = { mode: {value: 'include'}, attributes: { value: attrs.map(attr => { return { attribute: attr, alias: null } }) } };
+                forms = { mode: { value: 'include' }, attributes: { value: attrs.map(attr => { return { attribute: attr, alias: null } }) } };
             } else if (op.slug === 'rename') {
                 forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: attr } }) } };
             } else if (op.slug === 'duplicate') {
-                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: `${attr}_1`} }) } };
-            } else if (op.slug === 'extract-from-array'){
-                forms = { attributes: { value: attrs }, indexes: {value: "0"}};
+                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: `${attr}_1` } }) } };
+            } else if (op.slug === 'extract-from-array') {
+                forms = { attributes: { value: attrs }, indexes: { value: "0" } };
             } else {
                 forms = { attributes: { value: attrs } }
             }
@@ -63,32 +65,53 @@ class Workflow {
         this.tasks = this.tasks.filter(t => t.id !== task.id);
         this._tasksLookup.delete(task.id);
     }
-    static createSampleTask(display_order, op) {
+    static createSampleTask(display_order, op, i18n) {
         const forms = {
             'type': { value: 'head' },
             'value': { value: 50 },
             'seed': { value: 0 },
         }
         const realOp = op || new Operation({ id: 2110 });
-        return realOp.createTask({ name: realOp.name, forms, display_order })
+        return realOp.createTask({
+            name: i18n.$tc('dataExplorer.sampelData') || realOp.name,
+            forms, display_order
+        })
     }
-    static build(name, ds) {
+    static buildDataExplorer(name, ds, i18n) {
         const dataReader = new Task({
-            name: 'Ler dados', //FIXME
-            operation: new Operation({ id: 2100 }), //FIXME
+            name: i18n.$tc('dataExplorer.readData'),
+            operation: new Operation({ id: 2100 }),
             display_order: 0,
         });
         dataReader.setProperty('data_source', ds);
         dataReader.setProperty('display_sample', '0');
 
-        const sample = Workflow.createSampleTask(1);
+        const sample = Workflow.createSampleTask(1, null, i18n);
         dataReader.setProperty('display_sample', '1');
 
         const workflow = new Workflow({
             name: name,
             type: 'DATA_EXPLORER',
-            platform: new Platform({ id: 1000 }), //FIXME Meta platform id
+            platform: new Platform({ id: META_PLATFORM_ID }),
             tasks: [dataReader, sample]
+        });
+        return workflow;
+    }
+    static buildModelBuilder(name, ds, labelAttribute, method, taskType, i18n) {
+        const dataReader = new Task({
+            name: i18n.$tc('dataExplorer.readData'),
+            operation: new Operation({ id: 2100 }),
+            display_order: 0,
+        });
+        dataReader.setProperty('data_source', ds);
+        dataReader.setProperty('display_sample', '0');
+
+        const workflow = new Workflow({
+            name: name,
+            tasks: [dataReader],
+            type: 'MODEL_BUILDER',
+            platform: new Platform({ id: META_PLATFORM_ID }),
+            forms: { $meta: { value: { label: labelAttribute, method, taskType } } }
         });
         return workflow;
     }

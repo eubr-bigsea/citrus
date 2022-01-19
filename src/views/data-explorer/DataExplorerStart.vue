@@ -8,7 +8,7 @@
             <div class="card-deck">
                 <b-card>
                     <h6>Passo 1</h6>
-                    <hr/>
+                    <hr />
                     <label class="" for="name">Nome do experimento:</label>
                     <input type="text" class="form-control w-50 form-control-sm mb-2" maxlength="100" id="name" v-focus
                         v-model="name">
@@ -31,8 +31,10 @@
                         </template>
                     </vue-select>
                     <hr />
-                    <button class="btn btn-sm btn-primary pr-4 pl-4" @click.prevent="create">{{$t('actions.create2')}}</button>
-                    <b-link :to="{ name: 'index-explorer'}" class="btn btn-secondary btn-sm ml-1">{{$t('actions.cancel')}}</b-link>
+                    <button class="btn btn-sm btn-primary pr-4 pl-4"
+                        @click.prevent="create">{{$t('actions.create2')}}</button>
+                    <b-link :to="{ name: 'index-explorer'}" class="btn btn-secondary btn-sm ml-1">
+                        {{$t('actions.cancel')}}</b-link>
                 </b-card>
             </div>
         </div>
@@ -63,16 +65,17 @@
         methods: {
             async create() {
                 try {
-                    const resp = await axios.post(`${tahitiUrl}/workflows`, 
-                        Workflow.build(
+                    const workflow = Workflow.buildDataExplorer(
                             this.name,
-                            {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name}));
+                            {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name},
+                            this)
+                    const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
                     const workflowResp = resp.data;
-                    this.$router.push({name: 'data-explorer-panel', params: {id: workflowResp.id}});
-                }catch(e){
+                    this.$router.push({ name: 'data-explorer-panel', params: { id: workflowResp.id } });
+                } catch (e) {
                     this.error(e);
                 }
-                
+
             }
         },
     }

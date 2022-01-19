@@ -8,10 +8,10 @@
             <div class="row">
                 <div class="col-md-3">
                     <b-card>
-                        <label class="" for="name">Nome do modelo:</label>
+                        <label class="" for="name">Nome do experimento:</label>
                         <input type="text" class="form-control" maxlength="100" id="name" v-focus v-model="name">
 
-                        <label class="">Escolha a fonte de dados:</label>
+                        <label class="mt-2">Escolha a fonte de dados:</label>
                         <vue-select @search="loadDataSourceList" :filterable="false" :options="dataSourceList"
                             label="name" v-model="selectedDataSource" @input="retrieveAttributes">
                             <template v-slot:no-options="{ search, searching }">
@@ -36,12 +36,11 @@
 
                         <hr />
                         <router-link :to="{name: 'choose-task'}"
-                            class="btn btn-sm btn-outline-secondary pl-4 pr-4 mr-2 mb-1">
+                            class="btn btn-sm btn-outline-secondary mr-2">
                             {{$t('actions.back')}}
                         </router-link>
-                        <button v-if="valid" class="btn btn-primary btn-sm" @click="design">{{$t('actions.create',
-                            {type:
-                            'modelo'})}}</button>
+                        <button v-if="valid" class="btn btn-primary btn-sm" @click="create">
+                            {{$t('actions.create', {type: 'experimento'})}}</button>
                     </b-card>
                 </div>
                 <div v-if="supervisioned" class="col-md-9">
@@ -60,21 +59,21 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="fast">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
                                         Obtenha alguns modelos genéricos rapidamente. Útil para testes.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="performance">Desempenho</b-form-radio>
                                     <div class="description">
                                         Crie modelos com as melhores pontuações, mas tenha paciência,
                                         pois pode demorar mais.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="interpretable">
                                         Crie modelos interpretáveis
                                     </b-form-radio>
@@ -100,14 +99,15 @@
                                         o modelo a ser salvo.
                                     </small>
                                 </div>
-                                <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="custom">
+                                <div class="col-md-8 pt-5 text-left">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="custom">
                                         Escolha os
                                         algoritmos</b-form-radio>
                                     <div class="description">
                                         Escolha algoritmos, hiperparâmetros, amostra e validação cruzada.
                                     </div>
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                    <!--
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="use-workflow">Use um fluxo de
                                         trabalho
                                     </b-form-radio>
@@ -115,7 +115,7 @@
                                         Use um fluxo de trabalho existente, mas parametrize sua execução.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="use-previous">
                                         Use uma execução
                                         anterior
@@ -124,12 +124,13 @@
                                         EM ANÁLISE
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="code">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="code">
                                         Crie seu próprio avaliador
                                     </b-form-radio>
                                     <div class="description">
                                         EM ANÁLISE
                                     </div>
+                                    -->
                                 </div>
                             </div>
                         </div>
@@ -152,14 +153,14 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="fast">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
                                         Criar um modelo usando o algoritmo K-Means e parametros automáticos.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="performance">Detecção de anomalia</b-form-radio>
                                     <div class="description">
                                         Usar o Isolation Forest???
@@ -183,13 +184,13 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="custom">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="custom">
                                         Escolha os
                                         algoritmos</b-form-radio>
                                     <div class="description">
                                         Escolha algoritmos, hiperparâmetros, amostra e validação cruzada.
                                     </div>
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="use-workflow">Use um fluxo de
                                         trabalho
                                     </b-form-radio>
@@ -197,7 +198,7 @@
                                         Use um fluxo de trabalho existente, mas parametrize sua execução.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type"
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="use-previous">
                                         Use uma execução
                                         anterior
@@ -206,7 +207,7 @@
                                         EM ANÁLISE
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="type" value="code">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="code">
                                         Crie seu próprio avaliador
                                     </b-form-radio>
                                     <div class="description">
@@ -226,30 +227,26 @@
 <script>
     import axios from 'axios';
     import vSelect from 'vue-select';
-    import Notifier from '../../mixins/Notifier';
-    import DataSourceMixin from './DataSourceMixin.js';
+    import Notifier from '../../../mixins/Notifier';
+    import DataSourceMixin from '../DataSourceMixin.js';
+    import { debounce } from "../../../util.js";
+    import { Workflow, Platform, Operation, OperationList, Task, Form, FormField } from '../entities.js';
 
-    import { debounce } from "../../util.js";
+    const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
-    const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     export default {
         components: { 'vue-select': vSelect },
         mixins: [Notifier, DataSourceMixin],
         data() {
             return {
-                name: 'Teste',
-                selectedDataSource: { id: 15, name: 'Iris' },
-                selectedAttribute: 'Species',
+                name: '',
+                method: 'fast',
+                selectedDataSource: null,
+                selectedAttribute: null,
             };
-        },
-        mounted() {
-            this.$store.dispatch('dataExplorer/setTask',
-                this.$route.params.task);
         },
         computed: {
             valid() {
-                return true;
-                //FIXME
                 return this.selectedDataSource !== null &&
                     this.selectedAttribute !== null &&
                     this.type !== null;
@@ -257,10 +254,10 @@
             taskType() {
                 return this.$route.params.task;
             },
-            supervisioned(){
+            supervisioned() {
                 return this.taskType === 'regression' || this.taskType === 'classification';
             },
-            clustering(){
+            clustering() {
                 return this.taskType === 'clustering';
             }
         },
@@ -268,61 +265,26 @@
             navigate(name) {
                 this.$router.push({ name });
             },
-            design() {
-                const task = this.$store.state.dataExplorer.taskName;
-                this.$store.dispatch('dataExplorer/createExperiment',
-                    {
-                        name: this.name,
-                        label: this.selectedAttribute,
-                        dataSource: this.selectedDataSource
-                    });
-
-                this.$router.push({ name: 'explorer-design', params: { task } });
-            },
-            /*
-            pad: (num, places, ch) => String(num).padStart(places, ch),
-            loadDataSourceList: debounce(function (search, loading) {
-                if (search) {
-                    this.asyncLoadDataSourceList(search, loading);
-                }
-            }, 800),
-            async retrieveAttributes() {
-                if (this.selectedDataSource) {
-                    this.$Progress.start();
-                    const params = {
-                        fields: 'id,name,attributes'
-                    };
-                    try {
-                        const dataSourceList = await axios.get(
-                            `${limoneroUrl}/datasources/${this.selectedDataSource.id}`);
-                        this.attributes = dataSourceList.data.attributes.map(attr => attr.name).sort();
-                    } catch (e) {
-                        this.error(e);
-                    } finally {
-                        this.$Progress.finish();
-                    }
-                } else {
-                    this.selectedAttribute = null;
-                    this.attributes = [];
-                }
-            },
-            async asyncLoadDataSourceList(search, loading) {
-                this.$Progress.start();
+            async create() {
                 const params = {
-                    sort: 'name', size: 20, name: search,
-                    enabled: true, simple: true, fields: 'id,name'
+                    name: this.name,
+                    label: this.selectedAttribute,
+                    dataSource: this.selectedDataSource
                 };
+                
                 try {
-                    const dataSourceList = await axios.get(
-                        `${limoneroUrl}/datasources`, { params });
-                    this.dataSourceList = dataSourceList.data.data;
+                    const ds = { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name };
+                    const workflow = Workflow.buildModelBuilder(
+                        this.name, ds, this.selectedAttribute, this.method, this.taskType, this);
+
+                    console.debug(workflow);
+                    const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
+                    const workflowResp = resp.data;
+                    this.$router.push({ name: 'model-design', params: { id: workflowResp.id } });
                 } catch (e) {
                     this.error(e);
-                } finally {
-                    this.$Progress.finish();
-                    loading(false);
                 }
-            }*/
+            },
         }
     }
 </script>

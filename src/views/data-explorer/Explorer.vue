@@ -219,7 +219,7 @@
                 self.loadingData = true;
                 this.$Progress.start()
                 try {
-                    const resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
+                    const resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}?type=DATA_EXPLORER`);
                     const workflow = resp.data;
                     workflow.tasks = workflow.tasks.sort(
                         (a, b) => { return a.display_order - b.display_order; });
@@ -259,7 +259,7 @@
                     }
                     if (sampleTask?.operation?.slug !== 'sample') {
                         const op = this.operationLookup.get(2110) // FIXME;
-                        const sample = Workflow.createSampleTask(1, op);
+                        const sample = Workflow.createSampleTask(1, op, this.$tc);
                         self.warning('FIXME: Invalid workflow. Tried to fix it.');
                         this.workflowObj.tasks.splice(1, 0, sample);
                     }
@@ -270,6 +270,7 @@
                 } catch (e) {
                     console.debug(e)
                     self.error(e);
+                    self.$router.push({ name: 'index-explorer' })
                 } finally {
                     Vue.nextTick(() => {
                         this.$Progress.finish();

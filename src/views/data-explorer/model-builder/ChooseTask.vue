@@ -6,7 +6,7 @@
             </div>
             <hr>
             <div class="card-deck">
-                <b-card class="clickable" @click="navigate('explorer-mode', {task: 'classification'})">
+                <b-card class="clickable" @click="navigate('model-builder', {task: 'classification'})" role="button">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -23,7 +23,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" @click="navigate('explorer-mode', {task: 'regression'})">
+                <b-card class="clickable" @click="navigate('model-builder', {task: 'regression'})" role="button">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" @click="navigate('explorer-mode', {task: 'clustering'})">
+                <b-card class="clickable" @click="navigate('model-builder', {task: 'clustering'})" role="button">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -59,10 +59,10 @@
                         </div>
                     </div>
                 </b-card>
-                
+
             </div>
             <div v-if="false" class="card-deck mt-4">
-                <b-card class="clickable" @click="navigate('explorer-model-training')">
+                <b-card class="clickable" @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -81,9 +81,9 @@
                     </div>
 
                 </b-card>
-                
 
-                <b-card class="clickable" @click="navigate('explorer-model-training')">
+
+                <b-card class="clickable" @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" @click="navigate('explorer-model-training')">
+                <b-card class="clickable" @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">

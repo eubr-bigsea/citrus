@@ -24,7 +24,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" @click="navigate('choose-task')">
+                <b-card class="clickable m-1" @click="navigate('choose-task')" role="button">
                     <div class="row">
                         <div class="col-md-4 mt-2 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1">
+                <b-card class="clickable m-1" role="button">
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
@@ -99,7 +99,8 @@
                         <label class="sr-only" for="search">{{$tc('common.name')}}</label>
                         <input type="text" class="form-control m-2 w-25" :placeholder="$tc('common.name')"
                             v-model="searchFilter">
-                        <button @click.prevent="search" ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner">
+                        <button @click.prevent="search" ref="searchBtn"
+                            class="btn btn-secondary btn-sm mb-2 btn-spinner">
                             <span class="fa fa-search default-icon"></span> {{$t('actions.search')}}
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                         </button>
@@ -109,16 +110,22 @@
                     <v-server-table v-show="totalRecords > 0" :columns="columns" :options="options" ref="workflowList"
                         name="workflowListDataExplorer">
                         <template slot="id" slot-scope="props">
-                            <router-link
+                            <router-link v-if="props.row.type === 'DATA_EXPLORER' "
                                 :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.id}}</router-link>
+                            <router-link v-if="props.row.type === 'MODEL_BUILDER' "
+                                :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.id}}</router-link>
                         </template>
                         <template slot="type" slot-scope="props">
                             {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
                         <template slot="name" slot-scope="props">
-                            <router-link
+                            <router-link v-if="props.row.type === 'DATA_EXPLORER' "
                                 :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.name}}</router-link>
+                            <router-link v-if="props.row.type === 'MODEL_BUILDER' "
+                                :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.name}}</router-link>
                         </template>
                         <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>

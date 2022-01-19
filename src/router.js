@@ -91,9 +91,11 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const Explorer = () => import ('./views/data-explorer/Explorer.vue');
 const DataExplorerStart = () => import ('./views/data-explorer/DataExplorerStart.vue');
 const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
-const ModelTraining = () => import ('./views/data-explorer/ModelTraining.vue');
-const ChooseTask = () => import ('./views/data-explorer/ChooseTask.vue');
-const Design = () => import ('./views/data-explorer/Design.vue');
+
+const ChooseTask = () => import ('./views/data-explorer/model-builder/ChooseTask.vue');
+const ModelTraining = () => import ('./views/data-explorer/model-builder/ModelTraining.vue');
+const Design = () => import ('./views/data-explorer/model-builder/Design.vue');
+
 const TestEntities = () => import ('./views/data-explorer/TestEntities.vue');
 
 Vue.use(Router);
@@ -724,7 +726,7 @@ let router = new Router({
         },
         {
             path: '/experiments/model/task/:task',
-            name: 'explorer-mode',
+            name: 'model-builder',
             component: ModelTraining,
             meta: {
                 requiresAuth: true,
@@ -732,8 +734,8 @@ let router = new Router({
             }
         },
         {
-            path: '/experiments/model/task/:task/design',
-            name: 'explorer-design',
+            path: '/experiments/model/design/:id',
+            name: 'model-design',
             component: Design,
             meta: {
                 requiresAuth: true,
