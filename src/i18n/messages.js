@@ -260,6 +260,9 @@ export default {
             width: 'Largura | Larguras',
             yes: 'Sim'
         },
+        modelBuilder: {
+            invalidType: 'O fluxo de trabalho não é compatível com o tipo "Criação de modelos".'
+        },
         dataExplorer: {
             capitalizeFirst: 'Converter iniciais para maiúsculas',
             copySelected: 'Copiar etapas selecionadas',

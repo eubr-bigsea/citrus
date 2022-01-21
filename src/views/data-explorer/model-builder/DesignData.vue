@@ -1,7 +1,6 @@
 <template>
-    <div>
+    <div v-if="label">
         <h5>Dados</h5>
-        {{label_}}, {{dataSource_}}
         <hr />
         <label for="">Fonte de dados:</label> &nbsp;
         <vue-select @search="searchDataSource" :filterable="false" :options="dataSourceList" label="name"
@@ -23,37 +22,48 @@
             </template>
         </vue-select>
 
-        <small class="form-text text-muted">
-            Fonte de dados para treino e teste do modelo. Alterar a fonte de dados de um
+        <small class="form-text text-muted mb-3">
+            Fonte de dados para treino e teste do modelo. <span class="text-danger">Alterar a fonte de dados de um
             experimento
-            existente pode fazer com que ele pare de funcionar!
+            existente pode fazer com que ele pare de funcionar!</span>
         </small>
 
+        <!--
         <template v-if="supervisioned">
             <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
-            <vue-select :options="attributes" v-model="label_" :searchable="true" class="w-25" />
-            TODO: adicionar um gráfico com a distribuição dos dados segundo o alvo
-        </template>
+            <vue-select :options="attributes" v-model="editableLabel" :searchable="true" class="w-25" label="name" 
+                :reduce="(o) => o.id"/>
+            
+                TODO: adicionar um gráfico com a distribuição dos dados segundo o alvo
+            </template>
+        -->
 
-        <h6 class="mt-4">Amostragem</h6>
-
+        <h5 class="mt-4">Amostragem</h5>
+        <hr />
         <label for="">Forma de amostragem:</label> &nbsp;
-        <select name="" id="" class="form-control w-50 form-control-sm">
-            <option value="">Sem amostragem</option>
-            <option value="">Primeiros registros</option>
-            <option value="">X% aproximadamente</option>
-            <option value="">Classe rebalanceadas (quantidade)</option>
-            <option value="">Classe rebalanceadas (percentual)</option>
+        <select name="" id="" class="form-control w-50 form-control-sm" v-model="sample.forms.type.value">
+            <option v-for="opt in sample.operation.fieldsMap.get('type').values" :value="opt.key">{{opt.pt}}</option>
         </select>
-        <small class="form-text text-muted">
+        <small class="form-text text-muted mb-3">
             Como gerar a amostra dos dados.
         </small>
 
-        <label for="">Total de registros:</label> &nbsp;
-        <input type="number" class="form-control form-control-sm w-25">
-        <small class="form-text text-muted">
-            Total de registros a serem amostrados.
-        </small>
+        <template v-if="sample.forms.type.value !== 'percent' ">
+            <label for="">Total de registros:</label> &nbsp;
+            <input type="number" class="form-control form-control-sm w-25" min="1" max="12"
+                v-model="sample.forms.value.value">
+            <small class="form-text text-muted">
+                Total de registros a serem amostrados.
+            </small>
+        </template>
+        <template v-else>
+            <label for="">Percentual de registros:</label> &nbsp;
+            <input type="number" class="form-control form-control-sm w-25" min="0.1" max="100" step="0.1" maxlength="5"
+                v-model="sample.forms.fraction.value" />
+            <small class="form-text text-muted">
+                Percentual registros a serem amostrados.
+            </small>
+        </template>
     </div>
 </template>
 <script>
@@ -67,16 +77,17 @@
             dataSourceList: { type: Array },
             label: { type: String },
             supervisioned: { type: Boolean },
+            sample: { type: Object }
         },
         data() {
             return {
                 labelAttribute: null,
-                label_: null,
+                editableLabel: null,
                 dataSource_: null,
             }
         },
         mounted() {
-            this.label_ = this.label;
+            this.editableLabel = this.label;
             this.dataSource_ = this.dataSource;
         },
         methods: {
@@ -84,8 +95,8 @@
             searchDataSource(search, loading) {
                 this.$emit('search-data-source', search, loading)
             },
-            retrieveAttributes() {
-                this.$emit('retrieve-attributes');
+            retrieveAttributes(ds) {
+                this.$emit('retrieve-attributes', ds);
             }
         }
     }

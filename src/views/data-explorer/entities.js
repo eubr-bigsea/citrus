@@ -116,6 +116,46 @@ class Workflow {
         return workflow;
     }
 }
+class ModelBuilderWorkflow extends Workflow {
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null } = {}, operations) {
+        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+        //
+        this.readData = null;
+        this.sample = null;
+        this.evaluator = null;
+        this.features = null;
+        this.reduction = null;
+        this.algorithms = [];
+        this.split = null;
+        this.grid = null;
+
+        const pairs = new Map([
+            ['sample', 'sample'],
+            ['evaluator', 'evaluator'],
+            ['features', 'features'],
+            ['read-data', 'readData'],
+            ['features-reduction', 'reduction'],
+            ['split', 'split'],
+            ['grid', 'grid']
+        ]);
+        this.algorithms = []
+        this.tasks.forEach((task) => {
+            if (pairs.has(task.operation.slug)) {
+                this[pairs.get(task.operation.slug)] = task;
+                task.operation = operations.get(task.operation.slug);
+            }
+        });
+        for (let [slug, prop] of pairs.entries()) {
+            // recreate the tasks
+            if (this[prop] === null) {
+                this[prop] = this.addTask(operations.get(slug), null, null);
+                console.debug(this[prop]);
+            }
+            if (this[prop] == null)
+                console.debug(prop, slug, this[prop]);
+        }
+    }
+}
 class Platform {
     constructor({ id = null, slug = null, name = null } = {}) {
         Object.assign(this, { id, name, slug });
@@ -125,7 +165,13 @@ class Operation {
     constructor({ id = null, name = 'unnamed', slug = null, forms = [], ports = [], label_format = null } = {}) {
         const newForms = forms.map(f => new Form(f));
         Object.assign(this, { id, name, slug, label_format, forms: newForms, ports });
-
+        this.fieldsMap = new Map();
+        newForms.forEach(form => form.fields.forEach(field => { 
+            if (field.values){
+                field.values = JSON.parse(field.values);
+            }
+            this.fieldsMap.set(field.name, field);
+        }));
     }
     static generateTaskId() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -134,7 +180,6 @@ class Operation {
             return v.toString(16);
         });
     }
-
     createTask({ name = null, display_order = -1, forms = [] } = {}) {
         const finalForms = {};
         this.forms.forEach((form) => {
@@ -201,8 +246,10 @@ class Task {
         this.error = null;
 
         //Initialize form fields
-        operation.forms.filter(f => f.category === 'execution')
-            .forEach(f => f.fields.forEach(field => this.forms[field.name] = { value: field.default_value }));
+        if (operation.form) {
+            operation.forms.filter(f => f.category === 'execution')
+                .forEach(f => f.fields.forEach(field => this.forms[field.name] = { value: field.default_value }));
+        }
 
         this.forms = forms;
         this.forms = Object.assign(forms, this.forms);
@@ -296,4 +343,5 @@ module.exports = {
     Form,
     FormField,
     Constants,
+    ModelBuilderWorkflow,
 }

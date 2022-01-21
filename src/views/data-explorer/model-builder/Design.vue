@@ -2,20 +2,24 @@
     <div>
         <div>
             <div class="d-flex justify-content-between align-items-center border-bottom">
-                <h4>Construção de Modelo de {{$t('dataExplorer.task.' + taskType).toLowerCase()}}</h4>
+                <div class="title">
+                    <h1>Construção de Modelos</h1>
+                </div>
+
                 <form class="float-right form-inline w-50 d-flex justify-content-end">
 
                     <label class="sr-only">{{$tc('common.name')}}:</label>
                     <input type="text" class="form-control form-control-sm w-50" :placeholder="$tc('common.name')"
                         v-model="workflowObj.name" maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ml-1 float-right"><span class="fa fa-save"></span>
+                    <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow"><span
+                            class="fa fa-save"></span>
                         {{$t('actions.save')}}</button>
                     <button class="btn btn-sm btn-outline-primary ml-1 float-right"><span class="fa fa-play"></span>
                         {{$t('actions.execute')}}</button>
                 </form>
             </div>
             <div class="custom-card">
-                <b-tabs class="p-2 custom-tab" align="center">
+                <b-tabs v-if="loaded" class="p-2 custom-tab bg-white" align="center">
                     <b-tab title="Parâmetros" class="m-1 parameters">
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
@@ -28,51 +32,16 @@
                                     <template v-if="selected === 'target'">
                                         <DesignData :attributes="attributes" :dataSourceList="dataSourceList"
                                             :supervisioned="supervisioned" :label="labelAttribute"
-                                            :data-source="dataSource" @search-data-source="loadDataSourceList"
-                                            @retrieve-attributes="retrieveAttributes" />
-
-                                        <h5>Dados</h5>
-                                        <hr />
-
-                                        <label for="">Fonte de dados:</label> &nbsp;
-                                        <vue-select @search="loadDataSourceList" :filterable="false"
-                                            :options="dataSourceList" label="name" v-model="dataSource"
-                                            @input="retrieveAttributes" class="w-50">
-                                            <template v-slot:no-options="{ search, searching }">
-                                                <small>Digite parte do nome pesquisar ...</small>
-                                            </template>
-                                            <template slot="option" slot-scope="option">
-                                                <div class="d-center">
-                                                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{
-                                                    option.name }}
-                                                </div>
-                                            </template>
-                                            <template slot="selected-option" slot-scope="option">
-                                                <div class="selected d-center">
-                                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                                </div>
-                                            </template>
-                                        </vue-select>
-                                        <small class="form-text text-muted">
-                                            Fonte de dados para treino e teste do modelo. Alterar a fonte de dados de um
-                                            experimento
-                                            existente pode fazer com que ele pare de funcionar!
-                                        </small>
-
-                                        <template v-if="supervisioned">
-                                            <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
-                                            <vue-select :options="attributes" v-model="labelAttribute"
-                                                :searchable="true" class="w-25" />
-                                            TODO: adicionar um gráfico com a distribuição dos dados segundo o alvo
-                                        </template>
-
-
+                                            :data-source="dataSource" 
+                                            :sample="workflowObj.sample"
+                                            @search-data-source="loadDataSourceList"
+                                            @retrieve-attributes="handleRetrieveAttributes" />
                                     </template>
                                     <template v-if="selected === 'data'">
-                                        <TrainTest />
+                                        <TrainTest :split="workflowObj.split"/>
                                     </template>
                                     <template v-if="selected === 'metric'">
-                                        <Metric />
+                                        <Metric :evaluator="workflowObj.evaluator"/>
                                     </template>
                                     <template v-if="selected === 'adjusts'">
                                         <FeatureSelection :attributes="attributes" />
@@ -81,19 +50,19 @@
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <FeatureReduction />
+                                        <FeatureReduction :reduction="workflowObj.reduction"/>
                                     </template>
                                     <template v-if="selected === 'algorithms'">
                                         <Algorithms />
                                     </template>
-                                    <template v-if="selected === 'hyperparameters'">
-                                        <Grid />
+                                    <template v-if="selected === 'grid'">
+                                        <Grid :grid="workflowObj.grid"/>
                                     </template>
                                     <template v-if="selected === 'weighting'">
                                         <Weighting />
                                     </template>
                                     <template v-if="selected === 'runtime'">
-                                        <Runtime />
+                                        <Runtime :clusters="clusters" />
                                     </template>
                                 </form>
                             </div>
@@ -126,22 +95,30 @@
     import DataSourceMixin from '../DataSourceMixin.js';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import { debounce } from "../../../util.js";
+    import Notifier from '../../../mixins/Notifier.js';
+
+    import { ModelBuilderWorkflow, Operation } from '../entities.js';
+
     import axios from 'axios';
     import vSelect from 'vue-select';
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+    const standUrl = process.env.VUE_APP_STAND_URL;
+    const META_PLATFORM_ID = 1000;
+
     export default {
         components: {
             InputHeader, 'vue-select': vSelect,
             SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
             FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result
         },
-        mixins: [DataSourceMixin],
+        mixins: [DataSourceMixin, Notifier],
         computed: {
-            dataSourceId() {
-                return this.workflowObj.tasks[0].forms.data_source.value;
+            dataSourceId: {
+                get() { return this.workflowObj.tasks[0].forms.data_source.value; },
+                set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
             },
-            labelAttribute: {
+            xlabelAttribute: {
                 get() { return this.workflowObj.forms.$meta.value.label; },
                 set(newValue) {
                     return this.$store.dispatch('dataExplorer/setLabelAttribute', newValue)
@@ -160,39 +137,50 @@
         data() {
             return {
                 algorithms: [],
+                clusters: [],
                 internalWorkflowId: null,
                 isDirty: false,
+                labelAttribute: '',
+                loaded: false,
                 loadingData: false,
+                operationsMap: new Map(),
                 selectedAlgorithm: { forms: [] },
                 selected: 'target',
                 attributes: [],
                 dataSourceOptions: [],
                 dataSource: null,
+                targetPlatform: 1,
                 workflowObj: { forms: { $meta: { value: { taskType: '' } } } },
 
                 //FIXME: hard-coded. It'd be best defined in Tahiti
                 unsupportedParameters: new Set(['perform_cross_validation', 'cross_validation', 'one_vs_rest'])
             }
         },
-        mounted() {
+        async created() {
             this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
-            this.load();
+            await this.load();
         },
         methods: {
             async load() {
                 this.loadingData = true;
                 this.$Progress.start()
                 try {
+                    await this.loadOperations();
                     let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`)
-                    this.workflowObj = resp.data;
+                    this.workflowObj = new ModelBuilderWorkflow(resp.data, this.operationsMap);
+                    if (this.workflowObj.type !== 'MODEL_BUILDER') {
+                        this.error(null, this.$tc('modelBuilder.invalidType'));
+                        this.$router.push({ name: 'index-explorer' })
+                        return;
+                    }
+                    await this.loadDataSource(this.dataSourceId);
+                    this.labelAttribute = this.workflowObj.forms.$meta.value.label;
 
-                    resp = await axios.get(`${limoneroUrl}/datasources/${this.dataSourceId}`);
-                    this.dataSource = resp.data;
-                    this.attributes = this.dataSource.attributes.map(attr => attr.name).sort();
-
+                    this.loadClusters();
+                    this.loaded = true;
                 } catch (e) {
-                    self.error(e);
-                    self.$router.push({ name: 'index-explorer' })
+                    this.error(e);
+                    this.$router.push({ name: 'index-explorer' })
                 } finally {
                     Vue.nextTick(() => {
                         this.$Progress.finish();
@@ -201,8 +189,26 @@
                     });
                 }
             },
+            async loadOperations() {
+                const params = { category: 'model-builder', platform: META_PLATFORM_ID };
+
+                const resp = await axios.get(`${tahitiUrl}/operations`, {params});
+                resp.data.data.forEach(op => this.operationsMap.set(op.slug, new Operation(op)));
+            },
+            async loadDataSource(id) {
+                const resp = await axios.get(`${limoneroUrl}/datasources/${id}`);
+                this.dataSource = resp.data;
+                this.attributes = this.dataSource.attributes.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            },
+            async loadClusters() {
+                try {
+                    const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${this.targetPlatform}`)
+                    this.clusters = resp.data.data;
+                } catch (ex) {
+                    this.error(ex);
+                }
+            },
             edit(option) {
-                console.debug(option);
                 this.selected = option;
             },
             getWidget(field) {
@@ -213,12 +219,37 @@
                     return field.suggested_widget + '-component';
                 }
             },
+            async saveWorkflow() {
+                let cloned = JSON.parse(JSON.stringify(this.workflowObj));
+                let url = `${tahitiUrl}/workflows/${cloned.id}`;
+
+                cloned.preferred_cluster_id = 1; //FIXME! 
+                cloned.platform_id = META_PLATFORM_ID;
+
+                cloned.tasks.forEach((task) => {
+                    task.operation = { id: task.operation.id };
+                    delete task.version;
+                    delete task.step;
+                    delete task.status;
+                });
+                try {
+                    const resp = await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
+                    this.isDirty = false;
+                    this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
+                } catch (e) {
+                    this.error(e);
+                }
+            },
             getFieldValue(field) {
                 //FIXME
                 return null;
             },
             selectAlgorithm(algo) {
                 this.selectedAlgorithm = algo;
+            },
+            handleRetrieveAttributes(ds) {
+                this.dataSourceId = ds.id;
+                this.loadDataSource(ds.id);
             }
         },
         watch: {
@@ -241,28 +272,6 @@
 </script>
 
 <style scoped>
-    .explorer-nav>>>.nav-item {
-        margin-bottom: 0px;
-        padding: 0
-    }
-
-    .explorer-nav>>>.nav-item a {
-        padding: 6px 0px 1px 10px;
-        font-size: .9em;
-    }
-
-    .explorer-nav>>>.nav-item.active a {
-        border-left: 5px solid green;
-        padding-left: 5px !important;
-    }
-
-    .explorer-nav>>>.header {
-        color: #555;
-        font-size: .9em;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-
     .custom-card {
         padding: 0 5px;
     }
@@ -277,7 +286,7 @@
     }
 
     form {
-        font-size: .8em;
+        font-size: 11pt;
     }
 
     .editor {
