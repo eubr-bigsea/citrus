@@ -14,7 +14,8 @@
         <template v-if="split.forms.strategy.value === 'split'">
 
             <label for="">Razão treino/teste:</label> &nbsp;
-            <input type="number" class="form-control form-control-sm w-10" min="0.01" max="0.99" step="0.01">
+            <input type="number" class="form-control form-control-sm w-10" min="0.01" max="0.99" step="0.01"
+                v-model="split.forms.ratio.value">
             <small class="form-text text-muted mb-3">
                 Entre 0,01 e 0,99 (1% e 99%). Por exemplo, 0,8 significa 80% dos
                 dados destinados ao treino e 20% ao teste.

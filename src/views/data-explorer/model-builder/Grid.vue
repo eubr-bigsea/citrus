@@ -10,32 +10,34 @@
             </select>
         </div>
         <ul class="list-unstyled mt-3">
-            <li v-if="grid.forms.strategy.value === 'grid' "><strong>Grade (grid): </strong>
-                The most classical strategy for optimizing search parameters is called
-                “Grid search”. For each hyperparameter, you specify either a list of
-                values to test, or a range specification like “5 values equally spaced
-                between 30 and 80” or “8 values logarithmically spaced beween 1 and
-                1000”.
-
-                DSS tries all combinations of all hyperparameters as discrete “grid
-                points”.
-
-                The grid can either be explored in order or in a shuffled order.
-                Shuffling the grid tends to find better points earlier on average, which
-                is preferable if you want to interrupt search.
+            <li v-if="grid.forms.strategy.value === 'grid'"><strong>Grade (grid): </strong>
+                Estratégia de otimização de parâmetros onde, para cada hiperparâmetro,
+                é especificada um conjunto ou faixa de valores a serem testados (veja a seção de parâmetros para os
+                algoritmos).
+                Por exemplo, pode ser um conjunto como
+                <code>{2, 4, 8, 16, 20}</code>, ou uma faixa, como valores entre <code>[0.0, 1.0]</code>. Neste caso,
+                também é necessário
+                informar a quantidade de valores a serem gerados e qual a função a ser usada (linear, logaritmica, etc).
+                Os valores gerados por faixas são igualmente espaçados.
+                <br />
+                Uma vez definidos os valores, serão testadas todas as suas possíveis combinações, em uma grade discreta
+                de pontos.
+                A grade pode ser explorada em ordem, ou aleatorizada (veja parâmetro abaixo).
+                Em geral, aleatorizar a grade, em média, tende a encontrar os melhores pontos mais cedo, o que é
+                interessante
+                quando você quer interromper a busca (seja por limite de iterações ou por tempo).
             </li>
 
             <li v-if="grid.forms.strategy.value === 'random' "><strong>Aleatório (random): </strong>
-                Instead of exploring discrete points on a grid, random searching
-                considers hyperparameters as a continuous spaces and tests
-                randomly-chosen points in the hyperparameters space.
-
-                For each hyperparameter, you specify a range to test. DSS will then pick
-                random points in the space defined by all parameters and test them.
-
-                A Random search is by nature infinite, so it is mandatory to select a
-                maximum number of iterations and/or maximum time before stopping the
-                search.
+                <div class="alert alert-danger">
+                    <span class="fa fa-info-circle"></span> Esta opção não está disponível nesta implementação.
+                </div>
+                Busca pontos na grade, considerando a faixa dos hiperparâmetros como espaços
+                contínuos (você deve especificar uma faixa de valores).
+                Um ponto nesse espaço de hiperparâmetros é sorteado aleatoriamente e então
+                testado.
+                A busca aleatória por definição é infinita, portanto é obrigatório selecionar o
+                número máximo de iterações a fim de interromper a busca.
             </li>
             <!-- 
             <li>
@@ -63,28 +65,29 @@
             </li>
             -->
         </ul>
-        <div v-if="strategy === 'grid' ">
-            <b-checkbox v-model="grid.forms.random_grid.value">Randomize grid search</b-checkbox>
-            <small>Shuffle the grid before doing the search (using the random state)</small>
+        <div v-if="grid.forms.strategy.value === 'grid'">
+            <b-checkbox v-model="grid.forms.random_grid.value">Aleatorizar a busca na grade</b-checkbox>
+            <small>Aleatoriza a grade antes de realizar a busca</small>
             <br />
         </div>
         <div class="row">
             <div class="col-6">
-                <label>Semente para números aleatórios (seed):</label>
-                <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="12"
-                    v-model="grid.forms.seed.value" />
-                <small>grid.forms.strategy.value
-                    Modify the seed to change hyperparameters sampling
-                </small>
-                <br />
-                <label>Max number of iterations:</label>
-                <input class="form-control form-control-sm w-25" type="number" min="0" 
-                    maxlength="4" max="9999" v-model="grid.forms.max_iterations.value" />
+                <template v-if="grid.forms.strategy.value === 'grid'">
+                    <label>Semente para números aleatórios (seed):</label>
+                    <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="12"
+                        v-model="grid.forms.seed.value" />
+                    <small>Semente usada para aleatorizar a grade, permitindo repetir experimentos.
+                        Se vazio, usa uma semente definida durante a execução.</small>
+                    <br />
+                </template>
+                <label>Número máximo de iterações:</label>
+                <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="4" max="9999"
+                    v-model="grid.forms.max_iterations.value" />
                 <small>
-                    Maximum number of iterations for the grid search. 0 means unlimited.
+                    Número máximo de iterações (buscas na grade). 0 significa ilimitado.
                 </small>
             </div>
-            <div class="col-6">
+            <div class="col-6" v-if="false">
                 <label>Max search time:</label>
                 <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="10"
                     v-model="grid.forms.max_search_time.value" />
@@ -94,7 +97,7 @@
                 <br />
                 <label>Parallelism:</label>
                 <input class="form-control form-control-sm w-25" type="number" min="0" max="999" maxlength="3"
-                    v-model="grid.forms.parallelism.value"/>
+                    v-model="grid.forms.parallelism.value" />
                 <small>
                     0 means auto.
                 </small>

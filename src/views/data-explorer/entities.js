@@ -12,6 +12,7 @@ class Workflow {
         this._tasksLookup = new Map();
         _tasks.forEach(task => this._tasksLookup.set(task.id, task));
 
+        _tasks.sort((a, b) => a.display_order - b.display_order);
         Object.assign(this, {
             id, name, type, version,
             platform: _platform,
@@ -125,7 +126,7 @@ class ModelBuilderWorkflow extends Workflow {
         this.evaluator = null;
         this.features = null;
         this.reduction = null;
-        this.algorithms = [];
+        //this.algorithms = [];
         this.split = null;
         this.grid = null;
 
@@ -138,22 +139,33 @@ class ModelBuilderWorkflow extends Workflow {
             ['split', 'split'],
             ['grid', 'grid']
         ]);
-        this.algorithms = []
         this.tasks.forEach((task) => {
             if (pairs.has(task.operation.slug)) {
                 this[pairs.get(task.operation.slug)] = task;
                 task.operation = operations.get(task.operation.slug);
-            }
+            } 
+            /*if (task.operation.categories.find(c => c.type === 'algorithm')){
+                this.algorithms.push(task);
+            }*/
         });
         for (let [slug, prop] of pairs.entries()) {
             // recreate the tasks
             if (this[prop] === null) {
-                this[prop] = this.addTask(operations.get(slug), null, null);
-                console.debug(this[prop]);
+                this[prop] = this.addTask(operations.get(slug));
+                //console.debug(this[prop]);
             }
-            if (this[prop] == null)
-                console.debug(prop, slug, this[prop]);
+            //if (this[prop] == null)
+            //    console.debug(prop, slug, this[prop]);
         }
+        /*
+        if (this.evaluator?.forms?.task_type){
+            this.evaluator.forms.task_type.value = this.forms.$meta.value.taskType;
+        } else {
+
+        }*/
+    }
+    addTask(op) {
+        return super.addTask(op, null, null);
     }
 }
 class Platform {
@@ -162,9 +174,9 @@ class Platform {
     }
 }
 class Operation {
-    constructor({ id = null, name = 'unnamed', slug = null, forms = [], ports = [], label_format = null } = {}) {
+    constructor({ id = null, name = 'unnamed', slug = null, forms = [], ports = [], label_format = null, categories = [] } = {}) {
         const newForms = forms.map(f => new Form(f));
-        Object.assign(this, { id, name, slug, label_format, forms: newForms, ports });
+        Object.assign(this, { id, name, slug, label_format, forms: newForms, ports, categories });
         this.fieldsMap = new Map();
         newForms.forEach(form => form.fields.forEach(field => { 
             if (field.values){

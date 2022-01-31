@@ -6,7 +6,7 @@
             <b-nav-item :class="{active: selected === 'data'}" @click.prevent="edit('data')">Divisão entre treino e
                 teste
             </b-nav-item>
-            <b-nav-item :class="{active: selected === 'metric'}" @click.prevent="edit('metric')">Tarefa e Métrica</b-nav-item>
+            <b-nav-item :class="{active: selected === 'metric'}" @click.prevent="edit('metric')">Tarefa e métrica</b-nav-item>
 
             <b-nav-text class="header">Atributos (Features)</b-nav-text>
             <b-nav-item :class="{active: selected === 'adjusts'}" @click.prevent="edit('adjusts')">Seleção, alvo e ajustes

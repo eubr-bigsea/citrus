@@ -24,8 +24,8 @@
 
         <small class="form-text text-muted mb-3">
             Fonte de dados para treino e teste do modelo. <span class="text-danger">Alterar a fonte de dados de um
-            experimento
-            existente pode fazer com que ele pare de funcionar!</span>
+                experimento
+                existente pode fazer com que ele pare de funcionar!</span>
         </small>
 
         <!--
@@ -41,14 +41,15 @@
         <h5 class="mt-4">Amostragem</h5>
         <hr />
         <label for="">Forma de amostragem:</label> &nbsp;
-        <select name="" id="" class="form-control w-50 form-control-sm" v-model="sample.forms.type.value">
+        <select id="" class="form-control w-50 form-control-sm" v-model="sample.forms.type.value">
+            <option value="">Sem amostragem, usar todos os registros</option>
             <option v-for="opt in sample.operation.fieldsMap.get('type').values" :value="opt.key">{{opt.pt}}</option>
         </select>
         <small class="form-text text-muted mb-3">
             Como gerar a amostra dos dados.
         </small>
 
-        <template v-if="sample.forms.type.value !== 'percent' ">
+        <template v-if="sample.forms.type.value !== 'percent' && sample.forms.type.value !== '' ">
             <label for="">Total de registros:</label> &nbsp;
             <input type="number" class="form-control form-control-sm w-25" min="1" max="12"
                 v-model="sample.forms.value.value">
@@ -56,12 +57,20 @@
                 Total de registros a serem amostrados.
             </small>
         </template>
-        <template v-else>
+        <template v-if="sample.forms.type.value === 'percent'">
             <label for="">Percentual de registros:</label> &nbsp;
             <input type="number" class="form-control form-control-sm w-25" min="0.1" max="100" step="0.1" maxlength="5"
                 v-model="sample.forms.fraction.value" />
             <small class="form-text text-muted">
                 Percentual registros a serem amostrados.
+            </small>
+        </template>
+        <template v-if="sample.forms.type.value !== 'head' && sample.forms.type.value !== '' ">
+            <label for="">Semente para números aleatórios (seed):</label> &nbsp;
+            <input type="number" class="form-control form-control-sm w-25" min="0" step="1" maxlength="12"
+                v-model="sample.forms.seed.value" />
+            <small class="form-text text-muted">
+                Semente usada para poder repetir o experimento.
             </small>
         </template>
     </div>

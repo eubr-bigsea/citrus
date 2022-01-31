@@ -23,6 +23,7 @@ export default {
             type: Object
         },
         readOnly: { default: false, type: Boolean },
+        visualStyle: {type: String },
         suggestionEvent: {
             type: Function,
         },

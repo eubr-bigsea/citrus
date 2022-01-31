@@ -25,7 +25,7 @@
         },
         computed: {
             suggestions() {
-                const obj = JSON.parse(this.field.values);
+                const obj = (typeof(this.field.values) === 'object')? this.field.values : JSON.parse(this.field.values);
                 if (obj) {
                     return obj.sort((a, b) => a.value < b.value ? -1 : (a.value === b.value ? 0 : 1));
                 } else {

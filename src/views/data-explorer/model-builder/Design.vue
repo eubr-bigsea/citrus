@@ -15,7 +15,7 @@
                             class="fa fa-save"></span>
                         {{$t('actions.save')}}</button>
                     <button class="btn btn-sm btn-outline-primary ml-1 float-right"><span class="fa fa-play"></span>
-                        {{$t('actions.execute')}}</button>
+                        {{$t('actions.train')}}</button>
                 </form>
             </div>
             <div class="custom-card">
@@ -32,31 +32,33 @@
                                     <template v-if="selected === 'target'">
                                         <DesignData :attributes="attributes" :dataSourceList="dataSourceList"
                                             :supervisioned="supervisioned" :label="labelAttribute"
-                                            :data-source="dataSource" 
-                                            :sample="workflowObj.sample"
+                                            :data-source="dataSource" :sample="workflowObj.sample"
                                             @search-data-source="loadDataSourceList"
                                             @retrieve-attributes="handleRetrieveAttributes" />
                                     </template>
                                     <template v-if="selected === 'data'">
-                                        <TrainTest :split="workflowObj.split"/>
+                                        <TrainTest :split="workflowObj.split" />
                                     </template>
                                     <template v-if="selected === 'metric'">
-                                        <Metric :evaluator="workflowObj.evaluator"/>
+                                        <Metric :evaluator="workflowObj.evaluator" :attributes="attributes" />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
-                                        <FeatureSelection :attributes="attributes" />
+                                        <FeatureSelection :attributes="attributes" :features="workflowObj.features"
+                                            :target="workflowObj.forms.$meta.value.target"
+                                            @update-target="handleUpdateTarget" />
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <FeatureReduction :reduction="workflowObj.reduction"/>
+                                        <FeatureReduction :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
-                                        <Algorithms />
+                                        <Algorithms :operations="algorithmOperation" 
+                                            :workflow="workflowObj" :operation-map="operationsMap"/>
                                     </template>
                                     <template v-if="selected === 'grid'">
-                                        <Grid :grid="workflowObj.grid"/>
+                                        <Grid :grid="workflowObj.grid" />
                                     </template>
                                     <template v-if="selected === 'weighting'">
                                         <Weighting />
@@ -114,6 +116,10 @@
         },
         mixins: [DataSourceMixin, Notifier],
         computed: {
+            algorithmOperation(){
+                const taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+                return Array.from(this.operationsMap.values()).filter((op) => op.categories.find(cat => cat.subtype === taskType));
+            },
             dataSourceId: {
                 get() { return this.workflowObj.tasks[0].forms.data_source.value; },
                 set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
@@ -136,7 +142,7 @@
         },
         data() {
             return {
-                algorithms: [],
+                //algorithms: [],
                 clusters: [],
                 internalWorkflowId: null,
                 isDirty: false,
@@ -150,7 +156,7 @@
                 dataSourceOptions: [],
                 dataSource: null,
                 targetPlatform: 1,
-                workflowObj: { forms: { $meta: { value: { taskType: '' } } } },
+                workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
 
                 //FIXME: hard-coded. It'd be best defined in Tahiti
                 unsupportedParameters: new Set(['perform_cross_validation', 'cross_validation', 'one_vs_rest'])
@@ -177,6 +183,7 @@
                     this.labelAttribute = this.workflowObj.forms.$meta.value.label;
 
                     this.loadClusters();
+
                     this.loaded = true;
                 } catch (e) {
                     this.error(e);
@@ -190,15 +197,16 @@
                 }
             },
             async loadOperations() {
-                const params = { category: 'model-builder', platform: META_PLATFORM_ID };
+                const params = { category: 'model-builder', platform: META_PLATFORM_ID, 
+                    fields: 'id,forms,categories,name,slug'};
 
-                const resp = await axios.get(`${tahitiUrl}/operations`, {params});
+                const resp = await axios.get(`${tahitiUrl}/operations`, { params });
                 resp.data.data.forEach(op => this.operationsMap.set(op.slug, new Operation(op)));
             },
             async loadDataSource(id) {
                 const resp = await axios.get(`${limoneroUrl}/datasources/${id}`);
                 this.dataSource = resp.data;
-                this.attributes = this.dataSource.attributes.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+                this.attributes = this.dataSource.attributes; //.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
             },
             async loadClusters() {
                 try {
@@ -250,6 +258,9 @@
             handleRetrieveAttributes(ds) {
                 this.dataSourceId = ds.id;
                 this.loadDataSource(ds.id);
+            },
+            handleUpdateTarget(target) {
+                this.workflowObj.forms.$meta.value.target = target;
             }
         },
         watch: {
@@ -263,8 +274,8 @@
                     }
                     const resp = await axios.get(
                         `${tahitiUrl}/operations`, { params });
-                    this.algorithms = resp.data;
-                    this.selectedAlgorithm = this.algorithms[0];
+                    //this.algorithms = resp.data;
+                    //this.selectedAlgorithm = this.algorithms[0];
                 }
             }
         }
