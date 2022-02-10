@@ -35,7 +35,7 @@
                             :title="$t('actions.deploy')">
                             <font-awesome-icon icon="power-off" />
                         </button>
-                        <button v-if="['DEPLOYED', 'DEPLOYED_OLD'].indexOf(props.row.current_status) > -1"
+                        <button v-if="['PENDING', 'DEPLOYED', 'DEPLOYED_OLD'].indexOf(props.row.current_status) > -1"
                             class="ml-1 btn btn-sm btn-danger" @click="deployOrUndeploy(props.row.id, false)"
                             :title="$t('actions.undeploy')">
                             <font-awesome-icon icon="power-off" />
@@ -174,7 +174,9 @@
             socket.on('connect', () => {
                 socket.emit('join', { room });
             });
-            socket.on('refresh', self.refresh);
+            socket.on('refresh', () => {
+                self.refresh();
+            });
         },
         methods: {
             async showInfo(row) {
@@ -212,9 +214,11 @@
                     this.$tc('titles.deployment'),
                     confirmMsg,
                     () => {
-                        const url = `${seedUrl}/deployments/${deploymentId}?deploy=${deploy}`;
+                        const params = deploy ? { deploy: true } : { undeploy: true};
+
+                        const url = `${seedUrl}/deployments/${deploymentId}`;
                         axios
-                            .patch(url, { deploy: true })
+                            .patch(url, params)
                             .then(resp => {
                                 self.success(resp.message);
                                 self.refresh();
