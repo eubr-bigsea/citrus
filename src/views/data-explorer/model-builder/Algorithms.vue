@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <h5>Algoritmos</h5>
                 <small>Informe os parâmetros para a execução do algoritmo. <u>Nenhum parâmetro é
                         obrigatório.</u></small>
@@ -16,21 +16,19 @@
                         </div>
                     </b-list-group-item>
                 </b-list-group>
-                {{selectedAlgorithm.forms}}
                 <hr />
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation">
-                    {{selectedAlgorithm.operation.forms}}
+                    {{selectedAlgorithm.forms}}
                 </div>
-                {{conditionalFields}}
             </div>
-            <div class="col-md-8 border p-3">
+            <div class="col-md-9 border p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
                     <h6>{{selectedAlgorithm.operation.name}}</h6>
                     <hr />
                     <template v-for="form in selectedAlgorithm.operation.forms">
                         <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="field.name"
                             :data-name="field.name">
-                            {{field.name}} {{field.enable_conditions}} {{getWidget(field)}}
+                            <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}-->
                             <keep-alive>
                                 <div v-if="getWidget(field) === 'checkbox-component'">
                                     <checkboxes-component :field="field" :value="getFieldValue(field.name)"
@@ -42,13 +40,15 @@
                                     visual-style="explorer" :is="getWidget(field)" :field="field"
                                     :value="getFieldValue(field.name)" :language="$root.$i18n.locale"
                                     :type="field.suggested_widget" :small="true" :read-only="!field.editable"
-                                    context="context" @update="handleUpdateField">
+                                    context="context" @update="handleUpdateField"
+                                    :show-quantity="workflow.grid.forms.strategy.value === 'grid' ">
                                 </component>
                                 <div v-else>
-                                    FIXME: select attribute
                                 </div>
                             </keep-alive>
                         </div>
+                        <button class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">Limpar
+                            parâmetros</button>
                     </template>
                 </div>
                 <div v-else class="text-center text-secondary mt-5 pt-5">
@@ -64,11 +64,13 @@
     import { Task } from '../entities.js';
     import Checkboxes from '../../../components/widgets/Checkboxes.vue';
     import InputTag from '../../../components/widgets/InputTag.vue';
+    import NumericRangeOrSet from '../../../components/widgets/NumericRangeOrSet.vue';
     const conditional = /\bthis\..+?\b/g;
     export default {
         components: {
             'checkboxes-component': Checkboxes,
-            'input-tag-component': InputTag
+            'input-tag-component': InputTag,
+            'numeric-range-or-set-component': NumericRangeOrSet
         },
         props: {
             operations: { type: Array, required: true },
@@ -132,7 +134,7 @@
                 } else if (field.suggested_widget === 'dropdown') {
                     return 'checkboxes-component';
                 } else if (field.suggested_widget === 'integer' || field.suggested_widget === 'decimal') {
-                    return 'input-tag-component';
+                    return 'numeric-range-or-set-component';
                 } else {
                     return field.suggested_widget + '-component';
                 }
@@ -152,6 +154,13 @@
                         field.enabled = 
                     });
                 }*/
+            },
+            handleCleanAll(form) {
+                Object.entries(this.selectedAlgorithm.forms).forEach(([name, value], inx) => {
+                    console.debug(name, value)
+                    value.value = null;
+                    value.internalValue = null;
+                });
             }
         },
         mounted() {
@@ -179,3 +188,9 @@
         },
     }
 </script>
+<style scoped>
+    .algorithm {
+        height: 75vh;
+        overflow: auto;
+    }
+</style>

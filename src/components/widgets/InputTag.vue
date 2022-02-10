@@ -4,7 +4,7 @@
         <b-form-tags v-model="internalValue" no-outer-focus class="mb-2 border-0 p-0" @input="handleInput">
             <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
                 <b-input-group class="w-25 float-left">
-                    <input v-bind="inputAttrs" :type="inputType.type" v-on="inputHandlers"
+                    <input v-bind="inputAttrs" :type="inputType.type" v-on="inputHandlers" onKeyPress="return this.value.length < 12"
                         class="w-50 form-control form-control-sm" :step="inputType.step" @keyup="handleKeyUp">
                     <b-input-group-append>
                         <b-button @click="addTag()" variant="secondary" size="sm"><span class="fa fa-plus"></span>

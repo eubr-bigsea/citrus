@@ -2,6 +2,7 @@
     <form class="form">
         <h5>Grade de parâmetros</h5>
         <hr />
+        {{grid.forms}}
         <div>
             <label>Estratégia:</label>
             <select class="form-control w-25 form-control-sm" v-model="grid.forms.strategy.value">
@@ -71,26 +72,25 @@
             <br />
         </div>
         <div class="row">
-            <div class="col-6">
-                <template v-if="grid.forms.strategy.value === 'grid'">
-                    <label>Semente para números aleatórios (seed):</label>
-                    <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="12"
-                        v-model="grid.forms.seed.value" />
-                    <small>Semente usada para aleatorizar a grade, permitindo repetir experimentos.
-                        Se vazio, usa uma semente definida durante a execução.</small>
-                    <br />
-                </template>
+            <div class="col-12">
                 <label>Número máximo de iterações:</label>
                 <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="4" max="9999"
-                    v-model="grid.forms.max_iterations.value" />
+                    v-model.number="grid.forms.max_iterations.value" />
                 <small>
-                    Número máximo de iterações (buscas na grade). 0 significa ilimitado.
+                    Número máximo de iterações (buscas na grade). 0 significa ilimitado para estratégia de grade e 20 para estratégia aleatória.
                 </small>
+            </div>
+            <div class="col-12">
+                <label>Semente para números aleatórios (seed):</label>
+                <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="12"
+                    v-model.number="grid.forms.seed.value" />
+                <small>Semente usada para aleatorizar a grade, permitindo repetir experimentos.
+                    Se vazio, usa uma semente definida durante a execução.</small>
             </div>
             <div class="col-6" v-if="false">
                 <label>Max search time:</label>
                 <input class="form-control form-control-sm w-25" type="number" min="0" maxlength="10"
-                    v-model="grid.forms.max_search_time.value" />
+                    v-model.number="grid.forms.max_search_time.value" />
                 <small>
                     Maximum number of minutes for the grid search. 0 means unlimited.
                 </small>

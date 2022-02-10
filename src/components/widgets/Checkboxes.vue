@@ -6,8 +6,8 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <b-form-group class="checks">
             <b-form-checkbox-group :name="field.name" switches v-model="internalValue"
-                :stacked="pairOptionValueList.length < 6">
-                <b-form-checkbox v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key"
+                >
+                <b-form-checkbox class="col-3" v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key"
                     @input="handleCheckboxChange(opt[language] || opt.value, $event)">
                     {{opt[language] || opt.value}}
                 </b-form-checkbox>
@@ -58,7 +58,7 @@
         },
         methods: {
             handleCheckboxChange(v, ev) {
-                this.triggerUpdateEvent(this.message, this.field, ev);
+                this.triggerUpdateEvent(this.message, this.field, ev.filter(v => v !== null));
             },
         },
         mounted() {
@@ -70,8 +70,3 @@
         }
     }
 </script>
-<style>
-    .checks .custom-checkbox {
-        width: 45%;
-    }
-</style>

@@ -273,9 +273,9 @@
                 const self = this;
                 field.internalValue = value;
                 const f = self.allFields[field.name];
-                //if (f){
+                if (f){
                     f.internalValue = value
-                //}
+                }
                 if (self.conditionalFields.has(field.name)) {
                     const duplicatedOk = new Set();
                     const fieldsToCheck = self.conditionalFields.get(field.name);

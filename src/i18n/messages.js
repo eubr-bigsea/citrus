@@ -838,6 +838,7 @@ export default {
             COMPLETED: 'Completado',
             CANCELED: 'Cancelado',
             ERROR: 'Erro',
+            INTERRUPTED: 'Interrompido',
             PENDING: 'Pendente',
             RUNNING: 'Executando',
         }
@@ -1624,6 +1625,7 @@ export default {
             COMPLETED: 'Completed',
             CANCELED: 'Canceled',
             ERROR: 'Error',
+            INTERRUPTED: 'Interrupted',
             PENDING: 'Pending',
             RUNNING: 'Running',
         }
