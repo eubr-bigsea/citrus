@@ -2,7 +2,6 @@
     <form class="form">
         <h5>Grade de parâmetros</h5>
         <hr />
-        {{grid.forms}}
         <div>
             <label>Estratégia:</label>
             <select class="form-control w-25 form-control-sm" v-model="grid.forms.strategy.value">

@@ -9,7 +9,7 @@
                         <span class="text-primary fa fa-bullseye"></span>
                         Alvo atual: {{selectedTarget.name}}</label>
                 </div>
-                <div v-else class="text-danger">É necessário informar um atributo alvo!</div>
+                <div v-else-if="supervisioned" class="text-danger">É necessário informar um atributo alvo!</div>
                 <div class="mt-2 features-list scroll-area">
                     <b-list-group>
                         <b-list-group-item v-for="attr in features.forms.features.value" :key="attr.name" class="p-0"
@@ -20,7 +20,7 @@
                                     {{attr.name}}
                                 </b-form-checkbox>
                             </div>
-                            <div class="w-100 p-1" v-else title="Alvo">
+                            <div class="w-100 p-1" v-else-if="supervisioned" title="Alvo">
                                 <span class="text-primary p-2 fa fa-bullseye"></span> {{attr.name}}
                             </div>
                         </b-list-group-item>
@@ -40,7 +40,7 @@
                                     <b-form-radio name="usage" value="unused">
                                         <span class="fa text-danger fa-times"></span> Não usar
                                     </b-form-radio>
-                                    <b-form-radio name="usage" value="label">
+                                    <b-form-radio name="usage" value="label" v-if="supervisioned">
                                         <span class="fa text-primary fa-bullseye"></span> Alvo (rótulo)
                                     </b-form-radio>
                                     <b-form-radio name="usage" value="feature">
@@ -164,11 +164,12 @@
             attributes: { type: Array, required: true },
             features: { required: true, type: Object, default: () => { return { forms: {} } } },
             target: { type: String },
+            supervisioned: { type: Boolean },
         },
         computed: {
             selectedAttributeUsed() {
                 return this?.selectedAttribute?.usage !== 'unused';
-            }
+            },
         },
         data() {
             return {

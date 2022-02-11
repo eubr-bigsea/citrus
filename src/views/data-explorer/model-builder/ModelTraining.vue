@@ -35,8 +35,7 @@
                         </template>
 
                         <hr />
-                        <router-link :to="{name: 'choose-task'}"
-                            class="btn btn-sm btn-outline-secondary mr-2">
+                        <router-link :to="{name: 'choose-task'}" class="btn btn-sm btn-outline-secondary mr-2">
                             {{$t('actions.back')}}
                         </router-link>
                         <button v-if="valid" class="btn btn-primary btn-sm" @click="create">
@@ -100,7 +99,8 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 pt-5 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="custom">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                        value="custom">
                                         Escolha os
                                         algoritmos</b-form-radio>
                                     <div class="description">
@@ -159,12 +159,13 @@
                                     <div class="description">
                                         Criar um modelo usando o algoritmo K-Means e parametros automáticos.
                                     </div>
-
+                                    <!--
                                     <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="performance">Detecção de anomalia</b-form-radio>
                                     <div class="description">
                                         Usar o Isolation Forest???
                                     </div>
+                                    -->
                                 </div>
                             </div>
                         </div>
@@ -184,12 +185,14 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="custom">
+                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                        value="custom">
                                         Escolha os
                                         algoritmos</b-form-radio>
                                     <div class="description">
                                         Escolha algoritmos, hiperparâmetros, amostra e validação cruzada.
                                     </div>
+                                    <!--
                                     <b-form-radio name="method" class="font-weight-bold" v-model="method"
                                         value="use-workflow">Use um fluxo de
                                         trabalho
@@ -213,6 +216,7 @@
                                     <div class="description">
                                         EM ANÁLISE
                                     </div>
+                                    -->
                                 </div>
                             </div>
                         </div>
@@ -247,8 +251,9 @@
         },
         computed: {
             valid() {
+                console.debug(this.clustering)
                 return this.selectedDataSource !== null &&
-                    this.selectedAttribute !== null &&
+                    (this.selectedAttribute !== null || this.clustering) &&
                     this.type !== null;
             },
             taskType() {
@@ -271,7 +276,7 @@
                     label: this.selectedAttribute,
                     dataSource: this.selectedDataSource
                 };
-                
+
                 try {
                     const ds = { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name };
                     const workflow = Workflow.buildModelBuilder(

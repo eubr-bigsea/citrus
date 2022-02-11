@@ -1,5 +1,5 @@
 <template>
-    <div v-if="label">
+    <div v-if="label || ! supervisioned">
         <h5>Dados</h5>
         <hr />
         <label for="">Fonte de dados:</label> &nbsp;

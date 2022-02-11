@@ -32,7 +32,7 @@
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
-                                    <SideBar :selected="selected" @edit="edit" />
+                                    <SideBar :selected="selected" @edit="edit" :supervisioned="supervisioned"/>
                                 </div>
                             </div>
                             <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
@@ -53,7 +53,8 @@
                                     <template v-if="selected === 'adjusts'">
                                         <FeatureSelection :attributes="attributes" :features="workflowObj.features"
                                             :target="workflowObj.forms.$meta.value.target"
-                                            @update-target="handleUpdateTarget" />
+                                            @update-target="handleUpdateTarget" 
+                                            :supervisioned="supervisioned"/>
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
@@ -80,7 +81,7 @@
                     </b-tab>
                     <b-tab title="Resultados" class="pt-2" ref="tabResults">
                         <Result :jobs="jobs" ref="results"
-                            :number-of-features="workflowObj.features.forms.features.value.length"
+                            :number-of-features="numberOfFeatures"
                             @delete-job="handleDeleteJob" />
                     </b-tab>
                 </b-tabs>
@@ -150,6 +151,9 @@
                 set(newValue) {
                     return this.$store.dispatch('dataExplorer/setTaskName', newValue)
                 }
+            },
+            numberOfFeatures(){
+                return this.workflowObj?.features?.forms?.features?.value?.length || 0;
             }
         },
         data() {
@@ -214,7 +218,8 @@
                             content: msg.message
                         })
                         this.jobs[0].groupedResults = this.jobs[0].results.reduce((rv, x) => {
-                            (rv[x.task_id] = rv[x.task_id] || []).push(x);
+                            const key = `${x.task_id}:${x.title}`;
+                            (rv[key] = rv[key] || []).push(x);
                             return rv;
                         }, {});
                         this.$refs.results.selectFirst();
@@ -294,6 +299,10 @@
                     }
                     await this.loadDataSource(this.dataSourceId);
                     this.labelAttribute = this.workflowObj.forms.$meta.value.label;
+                    const evaluator = this.workflowObj.tasks.find(t => t.operation.slug === 'evaluator');
+                    if (evaluator && ! evaluator?.forms?.task_type?.value){
+                        evaluator.forms.task_type.value = this.workflowObj.forms.$meta.value.taskType;
+                    }
 
                     await this.loadJobs();
 
@@ -331,7 +340,8 @@
                     });
                     job.results.sort((a, b) => a.t - b.t);
                     job.groupedResults = job.results.reduce((rv, x) => {
-                        (rv[x.task_id] = rv[x.task_id] || []).push(x);
+                        const key = `${x.task_id}:${x.title}`;
+                        (rv[key] = rv[key] || []).push(x);
                         return rv;
                     }, {});
                     Object.entries(job.groupedResults).forEach(([id, results]) => {

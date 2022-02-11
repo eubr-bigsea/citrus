@@ -3,7 +3,7 @@
         <b-nav vertical class="model-builder-sidebar">
             <b-nav-text class="header">Entrada</b-nav-text>
             <b-nav-item :class="{active: selected === 'target'}" @click.prevent="edit('target')">Dados</b-nav-item>
-            <b-nav-item :class="{active: selected === 'data'}" @click.prevent="edit('data')">Divisão entre treino e
+            <b-nav-item v-if="supervisioned" :class="{active: selected === 'data'}" @click.prevent="edit('data')">Divisão entre treino e
                 teste
             </b-nav-item>
             <b-nav-item :class="{active: selected === 'metric'}" @click.prevent="edit('metric')">Tarefa e métrica</b-nav-item>
@@ -41,6 +41,7 @@
         name: 'model-builder-side-bar',
         props: {
             selected: { type: String, default: () => 'target' },
+            supervisioned: {type: Boolean}
         },
         methods: {
             edit(item) {

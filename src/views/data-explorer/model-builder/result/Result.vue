@@ -23,8 +23,9 @@
                         <div class="result">
                             <div v-for="result, i in job.groupedResults" :key="i" role="button"
                                 v-if="result[0].type !== 'OTHER'">
-                                {{result[0].title}} 
-                                <div class="float-right" v-if="result[0] && result[0].best">{{result[0].best.toFixed(4)}}</div>
+                                {{result[0].title}}
+                                <div class="float-right" v-if="result[0] && result[0].best">
+                                    {{result[0].best.toFixed(4)}}</div>
                                 <!--
                                 {{result.title}}
 
@@ -69,12 +70,13 @@
                                 </template>
                             </b-card>
                         </div>
-                        <div class="col-9 mt-2">
+                        <div class="col-12 mt-2">
                             <b-card border-variant="primary">
                                 <Plotly ref="plotly" :data="lineData" :layout="lineLayout" :display-mode-bar="true"
                                     :auto-resize="true" :options="{displayModeBar: false}" />
                             </b-card>
                         </div>
+                        <!--
                         <div class="col-3 mt-2 text-center" v-if="finalReport">
                             <b-card border-variant="primary">
                                 <small>Treino/teste</small>
@@ -82,6 +84,7 @@
                                     :auto-resize="true" :options="{displayModeBar: false}" />
                             </b-card>
                         </div>
+                        -->
                         <!--
                             <div class="row">
                                 <div class="col-3">Métrica <span class="fa fa-trophy text-secondary"></span> R2</div>
@@ -241,6 +244,15 @@
                     }
                 },
                 lineLayout: {
+                    showlegend: true,
+                    legend: {
+                        orientation: "h",
+                        yanchor: "bottom",
+                        y: 1.02,
+                        xanchor: "right",
+                        x: 1,
+                        bgcolor: '#eaeaea',
+                    },
                     height: 200,
                     margin: {
                         t: 5, b: 30, l: 50, r: 30
@@ -296,6 +308,7 @@
             lineData() {
                 const series = []
                 if (this.selectedJob && this.selectedJob.groupedResults) {
+                    console.debug(this.selectedJob.groupedResults)
                     Object.entries(this.selectedJob.groupedResults).forEach(([k, results]) => {
                         let x = [];
                         let y = [];
@@ -305,7 +318,7 @@
                             if (!content.error && content.metric) {
                                 x.push(content.t);
                                 y.push(content.metric.value);
-                                text.push(JSON.stringify(content.params));
+                                text.push(JSON.stringify(content.params, null, '<br>').replace(/[{}]/g, ''));
                             }
                         });
                         series.push({

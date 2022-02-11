@@ -157,9 +157,8 @@
             },
             handleCleanAll(form) {
                 Object.entries(this.selectedAlgorithm.forms).forEach(([name, value], inx) => {
-                    console.debug(name, value)
                     value.value = null;
-                    value.internalValue = null;
+                    value.internalValue = {type: 'list'};
                 });
             }
         },
