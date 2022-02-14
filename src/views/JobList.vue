@@ -13,14 +13,16 @@
 				name="jobList"
 				>
 				<template slot="id" slot-scope="props">
-					<router-link
+					<router-link v-if="props.row.type !== 'MODEL_BUILDER'"
 					:to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
 					>{{props.row.id}}</router-link>
+                    <span v-else>{{props.row.id}}</span>
 				</template>
 				<template slot="name" slot-scope="props">
-					<router-link
+					<router-link  v-if="props.row.type !== 'MODEL_BUILDER'"
 					:to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
 					>{{props.row.name}}</router-link>
+                    <span v-else>{{props.row.name}}</span>
 				</template>
 				<template slot="actions" slot-scope="props">
 					<button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING'  " class="btn btn-sm btn-outline-danger mr-1"
@@ -46,8 +48,11 @@
 					slot-scope="props"
 				>{{props.row.created | formatJsonDate}}</template>
 				<template slot="workflow" slot-scope="props">
-					<router-link
+					<router-link v-if="props.row.type !== 'MODEL_BUILDER'"
 					:to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}"
+					>{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
+                    <router-link v-else
+					:to="{name: 'model-design', params: {'id': props.row.workflow.id}}"
 					>{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
 				</template>
 				</v-server-table>

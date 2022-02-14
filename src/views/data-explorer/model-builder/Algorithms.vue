@@ -17,7 +17,7 @@
                     </b-list-group-item>
                 </b-list-group>
                 <hr />
-                <div v-if="selectedAlgorithm && selectedAlgorithm.operation">
+                <div v-if="false && selectedAlgorithm && selectedAlgorithm.operation">
                     {{selectedAlgorithm.forms}}
                 </div>
             </div>
@@ -158,7 +158,7 @@
             handleCleanAll(form) {
                 Object.entries(this.selectedAlgorithm.forms).forEach(([name, value], inx) => {
                     value.value = null;
-                    value.internalValue = {type: 'list'};
+                    value.internalValue = { type: 'list', list: [] };
                 });
             }
         },

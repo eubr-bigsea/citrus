@@ -30,7 +30,7 @@
 
             <li v-if="grid.forms.strategy.value === 'random' "><strong>Aleatório (random): </strong>
                 <div class="alert alert-danger">
-                    <span class="fa fa-info-circle"></span> Esta opção não está disponível nesta implementação.
+                    <span class="fa fa-info-circle"></span> Esta opção está em estágio de testes nesta implementação do Lemonade.
                 </div>
                 Busca pontos na grade, considerando a faixa dos hiperparâmetros como espaços
                 contínuos (você deve especificar uma faixa de valores).

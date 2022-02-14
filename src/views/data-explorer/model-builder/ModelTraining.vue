@@ -55,6 +55,8 @@
                                     <small>
                                         O modelo será criado automaticamente, sendo escolhido aquele que melhor atender
                                         às metricas de avaliação (experimental).
+                                        <br>
+                                        <strong>Você ainda terá que escolher os atributos a serem usados no experimento!</strong>
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
@@ -251,7 +253,6 @@
         },
         computed: {
             valid() {
-                console.debug(this.clustering)
                 return this.selectedDataSource !== null &&
                     (this.selectedAttribute !== null || this.clustering) &&
                     this.type !== null;
@@ -281,8 +282,8 @@
                     const ds = { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name };
                     const workflow = Workflow.buildModelBuilder(
                         this.name, ds, this.selectedAttribute, this.method, this.taskType, this);
-
-                    console.debug(workflow);
+                    //debugger
+                    const self = this;
                     const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
                     const workflowResp = resp.data;
                     this.$router.push({ name: 'model-design', params: { id: workflowResp.id } });

@@ -63,6 +63,7 @@
 <script>
     import Widget from '../../mixins/Widget.js';
     import LabelComponent from './Label.vue';
+    import Vue from 'vue';
     export default {
         mixins: [Widget],
         components: { LabelComponent },
@@ -80,7 +81,7 @@
                 count: 10,
                 distribution: 'uniform',
                 type: 'list',
-                internalValue: []
+                internalValue: {}
             }
         },
         computed: {
@@ -101,6 +102,10 @@
             } else {
                 this.internalValue = this.value || {};
             }
+            /*
+            if (this.internalValue.type === undefined){
+                this.internalValue.type = 'list';
+            }*/
         },
         methods: {
             handleKeyUp(ev) {

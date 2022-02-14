@@ -3,7 +3,7 @@
         <h5>Tarefa e Métrica</h5>
         <hr />
         <label>Tipo de tarefa de aprendizado de máquina:</label>
-        <select disabled name="" id="" class="form-control w-25 form-control-sm" v-model="evaluator.forms.task_type.value">
+        <select class="form-control w-25 form-control-sm" v-model="evaluator.forms.task_type.value">
             <option v-for="opt in evaluator.operation.fieldsMap.get('task_type').values" :value="opt.key">{{opt.pt}}</option>
         </select>
 

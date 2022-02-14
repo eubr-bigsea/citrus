@@ -4,7 +4,7 @@ class Constants {
 }
 const META_PLATFORM_ID = 1000;
 class Workflow {
-    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null } = {}) {
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null, $meta = null } = {}) {
 
         let _platform = platform instanceof Platform ? platform : new Platform(platform);
         let _tasks = tasks.map(task => (task instanceof Task) ? task : new Task(task));
@@ -22,6 +22,7 @@ class Workflow {
             flows: _flows,
             enabled: true,
             user,
+            $meta
         });
         this.history = 0;
     }
@@ -108,6 +109,7 @@ class Workflow {
         dataReader.setProperty('display_sample', '0');
 
         const workflow = new Workflow({
+            $meta: {method, task_type: taskType},
             name: name,
             tasks: [dataReader],
             type: 'MODEL_BUILDER',

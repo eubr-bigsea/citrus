@@ -70,13 +70,12 @@
                                 </template>
                             </b-card>
                         </div>
-                        <div class="col-12 mt-2">
+                        <div class="col-9 mt-2">
                             <b-card border-variant="primary">
-                                <Plotly ref="plotly" :data="lineData" :layout="lineLayout" :display-mode-bar="true"
+                                <Plotly ref="plotly" :data="scatterData" :layout="scatterLayout" :display-mode-bar="true"
                                     :auto-resize="true" :options="{displayModeBar: false}" />
                             </b-card>
                         </div>
-                        <!--
                         <div class="col-3 mt-2 text-center" v-if="finalReport">
                             <b-card border-variant="primary">
                                 <small>Treino/teste</small>
@@ -84,7 +83,6 @@
                                     :auto-resize="true" :options="{displayModeBar: false}" />
                             </b-card>
                         </div>
-                        -->
                         <!--
                             <div class="row">
                                 <div class="col-3">Métrica <span class="fa fa-trophy text-secondary"></span> R2</div>
@@ -243,19 +241,22 @@
                         t: 10, b: 10, l: 10, r: 10
                     }
                 },
-                lineLayout: {
+                scatterLayout: {
                     showlegend: true,
                     legend: {
                         orientation: "h",
                         yanchor: "bottom",
                         y: 1.02,
                         xanchor: "right",
-                        x: 1,
-                        bgcolor: '#eaeaea',
+                        x: .52,
+                        xbgcolor: '#f0f0f0',
+                        font: { size: 10 },
+                        bordercolor: '#222',
+                        borderwidth: 0.5
                     },
-                    height: 200,
+                    height: 240,
                     margin: {
-                        t: 5, b: 30, l: 50, r: 30
+                        t: 0, b: 25, l: 50, r: 10
                     },
                     xplot_bgcolor: '#444',
                     xpaper_bgcolor: '#fff',
@@ -282,7 +283,7 @@
                             size: 12
                         },
                         padding: {
-                            t: 40,
+                            t: 400,
                             b: 50,
                             l: 40,
                             r: 40
@@ -305,7 +306,7 @@
                         hole: .7,
                     }] : [{}]
             },
-            lineData() {
+            scatterData() {
                 const series = []
                 if (this.selectedJob && this.selectedJob.groupedResults) {
                     console.debug(this.selectedJob.groupedResults)
@@ -323,7 +324,7 @@
                         });
                         series.push({
                             x, y, mode: 'markers', type: 'scatter',
-                            text, marker: { size: 12 }, name: results[0].title
+                            text, marker: { size: 8 }, name: results[0].title
                         })
                     });
                 }
