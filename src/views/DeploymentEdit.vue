@@ -218,8 +218,8 @@
 
                     } else {
                         this.deployment = {
-                            id: null, image_id: null, request_cpu: 1000, request_memory: 512,
-                            limit_memory: 0, limit_cpu: 0, extra_paramters: null, model_id: null, target_id: null,
+                            id: null, image_id: null, request_cpu: '1000', request_memory: '512',
+                            limit_memory: '0', limit_cpu: '0', extra_paramters: null, model_id: null, target_id: null,
                             replicas: 1
                         };
                     }
