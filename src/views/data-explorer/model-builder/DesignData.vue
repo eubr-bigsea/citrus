@@ -1,0 +1,112 @@
+<template>
+    <div v-if="label || ! supervisioned">
+        <h5>Dados</h5>
+        <hr />
+        <label for="">Fonte de dados:</label> &nbsp;
+        <vue-select @search="searchDataSource" :filterable="false" :options="dataSourceList" label="name"
+            v-model="dataSource_" @input="retrieveAttributes" class="w-50">
+
+            <template v-slot:no-options="{ search, searching }">
+                <small>Digite parte do nome pesquisar ...</small>
+            </template>
+            <template slot="option" slot-scope="option">
+                <div class="d-center">
+                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{
+                    option.name }}
+                </div>
+            </template>
+            <template slot="selected-option" slot-scope="option">
+                <div class="selected d-center">
+                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                </div>
+            </template>
+        </vue-select>
+
+        <small class="form-text text-muted mb-3">
+            Fonte de dados para treino e teste do modelo. <span class="text-danger">Alterar a fonte de dados de um
+                experimento
+                existente pode fazer com que ele pare de funcionar!</span>
+        </small>
+
+        <!--
+        <template v-if="supervisioned">
+            <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
+            <vue-select :options="attributes" v-model="editableLabel" :searchable="true" class="w-25" label="name" 
+                :reduce="(o) => o.id"/>
+            
+                TODO: adicionar um gráfico com a distribuição dos dados segundo o alvo
+            </template>
+        -->
+
+        <h5 class="mt-4">Amostragem</h5>
+        <hr />
+        <label for="">Forma de amostragem:</label> &nbsp;
+        <select id="" class="form-control w-50 form-control-sm" v-model="sample.forms.type.value">
+            <option value="">Sem amostragem, usar todos os registros</option>
+            <option v-for="opt in sample.operation.fieldsMap.get('type').values" :value="opt.key">{{opt.pt}}</option>
+        </select>
+        <small class="form-text text-muted mb-3">
+            Como gerar a amostra dos dados.
+        </small>
+
+        <template v-if="sample.forms.type.value !== 'percent' && sample.forms.type.value !== '' ">
+            <label for="">Total de registros:</label> &nbsp;
+            <input type="number" class="form-control form-control-sm w-25" min="1" max="12"
+                v-model="sample.forms.value.value">
+            <small class="form-text text-muted">
+                Total de registros a serem amostrados.
+            </small>
+        </template>
+        <template v-if="sample.forms.type.value === 'percent'">
+            <label for="">Percentual de registros:</label> &nbsp;
+            <input type="number" class="form-control form-control-sm w-25" min="0.1" max="100" step="0.1" maxlength="5"
+                v-model="sample.forms.fraction.value" />
+            <small class="form-text text-muted">
+                Percentual registros a serem amostrados.
+            </small>
+        </template>
+        <template v-if="sample.forms.type.value !== 'head' && sample.forms.type.value !== '' ">
+            <label for="">Semente para números aleatórios (seed):</label> &nbsp;
+            <input type="number" class="form-control form-control-sm w-25" min="0" step="1" maxlength="12"
+                v-model="sample.forms.seed.value" />
+            <small class="form-text text-muted">
+                Semente usada para poder repetir o experimento.
+            </small>
+        </template>
+    </div>
+</template>
+<script>
+    import vSelect from 'vue-select';
+    import DataSourceMixin from '../DataSourceMixin.js';
+    export default {
+        components: { 'vue-select': vSelect, },
+        props: {
+            attributes: { type: Array },
+            dataSource: { type: Object },
+            dataSourceList: { type: Array },
+            label: { type: String },
+            supervisioned: { type: Boolean },
+            sample: { type: Object }
+        },
+        data() {
+            return {
+                labelAttribute: null,
+                editableLabel: null,
+                dataSource_: null,
+            }
+        },
+        mounted() {
+            this.editableLabel = this.label;
+            this.dataSource_ = this.dataSource;
+        },
+        methods: {
+            pad: (num, places, ch) => String(num).padStart(places, ch),
+            searchDataSource(search, loading) {
+                this.$emit('search-data-source', search, loading)
+            },
+            retrieveAttributes(ds) {
+                this.$emit('retrieve-attributes', ds);
+            }
+        }
+    }
+</script>

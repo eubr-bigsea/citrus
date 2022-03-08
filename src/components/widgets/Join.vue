@@ -33,7 +33,8 @@
                     <div class="col-md-6 col-sm-12">
                         <h6>Seleção de atributos</h6>
                         <div v-if="hasNameCollision">
-                            <span class="fa fa-exclamation-circle text-danger"></span> {{$t('widgets.join.nameCollision')}}
+                            <span class="fa fa-exclamation-circle text-danger"></span>
+                            {{$t('widgets.join.nameCollision')}}
                         </div>
                         <div ref="selection">
                             <div class="row side">
@@ -217,8 +218,7 @@
                 this.valueObject.joinType = this.joinType;
 
                 this.updateDisplayValue(this.valueObject);
-                this.$root.$emit(this.message, this.field,
-                    this.valueObject);
+                this.triggerUpdateEvent(this.message, this.field, this.valueObject);
                 this.$refs.modal.hide();
             },
             cancelClicked(ev) {

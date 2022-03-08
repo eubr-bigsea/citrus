@@ -155,6 +155,7 @@
                                 </div>
 
                             </b-tab>
+                            <!--
                             <b-tab v-if="false" :title="$tc('job.results', 2)">
                                 <div v-for="(step, inx) in job.steps" :key="inx" class="row">
                                     <div class="col-md-12 lemonade">
@@ -181,13 +182,6 @@
                                             <div v-for="log in step.logs" :key="log.id"
                                                 style="font-size:.9em; margin-top: 20px">
                                                 <span v-if="log.type === 'OBJECT'">
-                                                    <!--
-                                                    <b-table :no-border-collapse="false" :items="log.message.rows"
-                                                        :per-page="50" :fields="log.message.attributes"
-                                                        tbody-class="body" sticky-header="500px" class="table border"
-                                                        outlined small hover striped bordered responsive>
-                                                    </b-table>
-                                                    -->
                                                     <v-client-table ref="jobList" :data="log.message.rows"
                                                         :columns="log.message.attributes.map(a=>a.label)"
                                                         :options="sampleOptions"></v-client-table>
@@ -197,6 +191,8 @@
                                     </div>
                                 </div>
                             </b-tab>
+                            -->
+                            <!--
                             <b-tab v-if="false" v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
                                 @click="showVisualizations = true">
                                 <div v-for="result in job.results" :key="result.id" class="row">
@@ -207,14 +203,15 @@
                                     </div>
                                 </div>
                             </b-tab>
-  
+                            -->
                             <b-tab :title="$tc('job.results', 2)">
                                 <div class="row">
                                     <div class="col-md-3 pt-3 result-area">
                                         <b-list-group>
-                                            <b-list-group-item v-for="(results, taskId) in allResults" @click.prevent="showResult(taskId)" button  href="#" >
+                                            <b-list-group-item v-for="(results, taskId) in allResults"
+                                                @click.prevent="showResult(taskId)" button href="#">
                                                 {{results[0].value.task.name}}
-                                                <br/><em><small>{{results[0].value.task.operation.name}}</small></em>
+                                                <br /><em><small>{{results[0].value.task.operation.name}}</small></em>
                                             </b-list-group-item>
                                         </b-list-group>
                                     </div>
@@ -222,7 +219,9 @@
                                         <div v-for="(results, taskId) in allResults" :key="taskId" class="row">
                                             <div class="col-md-12">
                                                 <b-card :header="getTask(taskId).name" class="mt-2"
-                                                    header-bg-variant="light" border-variant="info" :id="`task-${taskId}`">
+                                                    header-bg-variant="light" border-variant="info"
+                                                    :id="`task-${taskId}`">
+
                                                     <template v-for="(result, inx) in results">
                                                         <div v-if="result.type === 'result'" class="col-md-12 lemonade">
                                                             <div v-if="result.value.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
@@ -245,15 +244,18 @@
                                                             <div v-if="result.value.logs.find(s => s.type === 'OBJECT')"
                                                                 :header="result.value.task.name" class="mt-2"
                                                                 header-bg-variant="light" border-variant="info">
-                                                                <h6>({{result.value.task.operation.name}})</h6>
-
                                                                 <div class="pl-5 mt-2" v-for="log in result.value.logs"
                                                                     :key="log.id">
-                                                                    <span v-if="log.type === 'OBJECT'">
+                                                                    <span v-if="log.type === 'OBJECT' && log.message.attributes">
                                                                         <v-client-table ref="jobList"
                                                                             :data="log.message.rows"
                                                                             :columns="log.message.attributes.map(a=>a.label)"
-                                                                            :options="sampleOptions"></v-client-table>
+                                                                            :options="sampleOptions">
+                                                                            <span :slot="`h__${header}`"
+                                                                                v-for="header in log.message.attributes.map(a=>a.label)">
+                                                                                {{header}}
+                                                                            </span>
+                                                                        </v-client-table>
                                                                     </span>
                                                                 </div>
                                                             </div>
@@ -369,13 +371,9 @@
                 showVisualizations: false,
                 progressIndicators: [],
                 sampleOptions: {
+                    skin: 'table-smallest table table-hover',
                     filterable: false, perPageValues: [],
-                    sortIcon: {
-                        base: 'fa fas',
-                        is: 'fa-sort ml-10',
-                        up: 'fa-sort-amount-up',
-                        down: 'fa-sort-amount-down'
-                    },
+                    sortable: [],
                     texts: {
                         filter: this.$tc('common.filter'),
                         count: this.$t('common.pagerShowing'),
@@ -403,7 +401,7 @@
             allResults() {
                 const results = [];
                 const self = this;
-                this.job.steps.filter(s => s.logs.find(l => l.type === 'HTML' || l.type === 'IMAGE')).forEach(step => {
+                this.job.steps.filter(s => s.logs.find(l => l.type === 'HTML' || l.type === 'IMAGE' || l.type === 'OBJECT')).forEach(step => {
                     step.task = self.tasks[step.task.id];
                     results.push({ type: 'result', order: 0, value: step });
                 });
@@ -523,6 +521,9 @@
             });
         },
         methods: {
+            ttype(v){
+                return typeof(v)
+            },
             stop(jobId) {
                 this.confirm(
                     this.$t('actions.stop'),
@@ -555,9 +556,9 @@
                     }
                 );
             },
-            showResult(taskId){
+            showResult(taskId) {
                 const elem = document.getElementById(`task-${taskId}`);
-                if (elem){
+                if (elem) {
                     elem.scrollIntoView();
                 }
             },
@@ -606,7 +607,8 @@
                             step.status = msg.status;
                             const found = step.logs.filter(v => v.id === msg.id);
                             let message = msg.message;
-                            if (msg.type === 'OBJECT') {
+                            if (msg.type === 'OBJECT' && msg.meaning === 'sample') {
+                                message = JSON.parse(message);
                                 const attributeNames = message.attributes.map(attr => attr.key);
                                 message.rows = message.rows.map(
                                     row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
@@ -869,6 +871,7 @@
         padding: 1px !important;
         font-size: 0.75em;
     }
+
     .result-area {
         max-height: 75vh;
         border: 1px solid #ccc;

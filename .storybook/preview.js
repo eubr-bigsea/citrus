@@ -7,6 +7,7 @@ import VueTheMask from 'vue-the-mask'
 import VueI18n from 'vue-i18n'
 import messages from '../src/i18n/messages';
 import '../src/assets/main.scss'
+import VueProgressBar from 'vue-progressbar';
 
 
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
@@ -18,9 +19,31 @@ Vue.use(Snotify, {
     toast: {
         titleMaxLength: 100,
         timeout: 5000,
-        xposition: 'centerTop'
+        position: 'centerTop'
     }
 });
+Vue.directive('focus', {
+    inserted: function (el) {
+        Vue.nextTick(() => {
+            el.focus();
+        });
+    }
+})
+
+Vue.use(VueProgressBar, {
+    color: '#568f32',
+    failedColor: '#874b4b',
+    thickness: '5px',
+    transition: {
+        speed: '0.5s',
+        opacity: '0.2s',
+        termination: 300
+    },
+    autoRevert: true,
+    location: 'top',
+    inverse: false
+});
+
 Vue.component('font-awesome-layers', FontAwesomeLayers);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('v-select', vSelect);
@@ -37,12 +60,12 @@ export const i18n = new VueI18n({
 // Internationalisation
 addDecorator(() => ({
     i18n,
-    beforeCreate: function() {
-      this.$root._i18n = this.$i18n;
+    beforeCreate: function () {
+        this.$root._i18n = this.$i18n;
     },
     template: "<story/>"
-  }));
+}));
 
 export const parameters = {
-  actions: { argTypesRegex: "^on[A-Z].*" },
+    actions: { argTypesRegex: "^on[A-Z].*" },
 }

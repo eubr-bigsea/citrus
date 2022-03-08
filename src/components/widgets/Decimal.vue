@@ -7,7 +7,8 @@
             <LabelComponent :field="field" :value="value" :show-help="showHelp"></LabelComponent>
             <input type="number" max="999999999999" min="-999999999" step="any" class="form-control input-sm"
                 onkeypress="return this.value.length <=15" :value="value === null ? field['default']: value"
-                @input="updated" pattern="\\d{1,10}\\.\\d{2}"  :required="field.required"/>
+                @input="updated" pattern="\\d{1,10}\\.\\d{2}" :required="field.required"
+                :class="{'form-control-sm': small, 'w-25': small}" />
         </div>
     </div>
 </template>

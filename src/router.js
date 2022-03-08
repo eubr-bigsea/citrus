@@ -87,6 +87,20 @@ const DeploymentList = () => import(/* webpackChunkName: "group-deployment" */ '
 const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentEdit.vue');
 
 
+/* Experiments */
+const Explorer = () => import ('./views/data-explorer/Explorer.vue');
+const DataExplorerStart = () => import ('./views/data-explorer/DataExplorerStart.vue');
+const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
+
+const ChooseTask = () => import ('./views/data-explorer/model-builder/ChooseTask.vue');
+const ModelTraining = () => import ('./views/data-explorer/model-builder/ModelTraining.vue');
+const Design = () => import ('./views/data-explorer/model-builder/Design.vue');
+
+const VisualizationDesign = () => import ('./views/data-explorer/vis-builder/VisualizationDesign.vue');
+const CreateVisualization  = () => import ('./views/data-explorer/vis-builder/CreateVisualization.vue');
+
+const TestEntities = () => import ('./views/data-explorer/TestEntities.vue');
+
 Vue.use(Router);
 
 let router = new Router({
@@ -675,6 +689,87 @@ let router = new Router({
             meta: {
                 requiresAuth: false,
                 title: ['titles.admin', 1]
+            }
+        },
+        {
+            path: '/experiments/data-explorer',
+            name: 'data-explorer',
+            component: DataExplorerStart,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/data-explorer/:id',
+            name: 'data-explorer-panel',
+            component: Explorer,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments',
+            name: 'index-explorer',
+            component: ExplorerIndex,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/model/choose-task',
+            name: 'choose-task',
+            component: ChooseTask,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/model/task/:task',
+            name: 'model-builder',
+            component: ModelTraining,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/model/design/:id',
+            name: 'model-design',
+            component: Design,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/visualization/design/:id',
+            name: 'visualization-design',
+            component: VisualizationDesign,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/visualization/new',
+            name: 'new-visualization',
+            component: CreateVisualization,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/test',
+            name: 'experiment-test',
+            component: TestEntities,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
             }
         },
         {

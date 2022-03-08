@@ -2,10 +2,10 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="readOnly || !field.editable">
-            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
+            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control form-control-sm" />
         </div>
         <div v-else class="mb-1">
-            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control" />
+            <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control form-control-sm" />
             <b-link @click.prevent="$refs.modal.show()" variant="sm">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
@@ -27,9 +27,9 @@
                     </template>
                 </v-client-table>
                 <div slot="modal-footer" class="w-100">
-                    <b-btn @click="closeModal" variant="secondary" class="ml-1 float-right">{{$t('actions.cancel')}}
+                    <b-btn @click="closeModal" variant="secondary" size="sm" class="btn-sm ml-1 float-right">{{$t('actions.cancel')}}
                     </b-btn>
-                    <b-btn @click="removeValue" variant="outline-primary" class="float-right">
+                    <b-btn @click="removeValue" variant="outline-primary" size="sm" class="btn-sm float-right">
                         {{$t('actions.removeValue')}}
                     </b-btn>
                 </div>
@@ -129,7 +129,7 @@
         methods: {
             removeValue() {
                 this.label = '';
-                this.$root.$emit(this.message, this.field, null, null);
+                this.triggerUpdateEvent(this.message, this.field, null, null);
                 this.closeModal();
             },
             closeModal() {
@@ -149,7 +149,7 @@
             select(evt, newValue) {
                 this.selected = newValue.key;
                 this.label = newValue.value;
-                this.$root.$emit(this.message, this.field, this.selected,
+                this.triggerUpdateEvent(this.message, this.field, this.selected,
                     this.label);
                 this.closeModal()
             }

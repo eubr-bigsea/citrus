@@ -61,7 +61,7 @@
                                                 @keyup="onKeyUp($event, row, 'expression')" ref="expr"
                                                 @blur="elementBlur(row, $event)" v-focus
                                                 @paste="changed($event, row, 'expression')" :value="row.expression"
-                                                required @dblclick="debugExpression(row)" />
+                                                required @dblclick="debugExpression(row)"/>
                                             <ul v-show="isOpen" class="autocomplete-results">
                                                 <li v-for="(result, i) in suggestionResults" :key="i"
                                                     @click="setResult(result)" class="autocomplete-result"
@@ -193,9 +193,9 @@
                 if (attr === 'expression') {
                     try {
 
-                        const tree = jsep(e.target.value || '');
                         jsep.addBinaryOp(">=", 1);
                         jsep.removeBinaryOp('^');
+                        const tree = jsep(e.target.value || '');
                         row['error'] = null;
                         row['tree'] = tree
                         if (tree.type.includes("Compound")) {
@@ -232,10 +232,10 @@
             okClicked(e) {
                 const result = this.$refs.form && this.$refs.form.reportValidity() & this.validate();
                 if (result) {
-                    this.$root.$emit(this.message, this.field,
+                    this.triggerUpdateEvent(this.message, this.field,
                         this.expressionList);
 
-                    this.$emit(this.message, this.field, this.expressionList);
+                        this.triggerUpdateEvent(this.message, this.field, this.expressionList);
 
                     this.$refs.modal.hide();
                 } else {
@@ -304,9 +304,17 @@
                 })
             },
             remove(e, index) {
-                this.expressionList.splice(index, 1);
+                const removed = this.expressionList.splice(index, 1);
+                if (this.lastEdited && removed[0] === this.lastEdited.row) {
+                    this.lastEdited = null;
+                }
             },
             copyPasteValue(v) {
+                if (this.$refs.expr && this.$refs.expr.length > 0 && ! (this.lastEdited)){
+                    this.lastEdited = {
+                        el: this.$refs.expr[this.$refs.expr.length - 1], 
+                        row: this.expressionList[this.$refs.expr.length - 1]};
+                }
                 if (this.lastEdited && this.lastEdited.el) {
                     // console.debug(this.lastEdited.row)
                     // if (this.lastEdited.row && 

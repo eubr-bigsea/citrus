@@ -24,11 +24,14 @@ import './fa-icons';
 /* Widgets */
 import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
 import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue'
+import AttributeAliasSelectorComponent from './components/widgets/AttributeAliasSelector.vue'
 import CheckboxComponent from './components/widgets/Checkbox.vue'
+import CastComponent from './components/widgets/Cast.vue'
 import CodeComponent from './components/widgets/Code.vue'
 import ColorComponent from './components/widgets/Color.vue'
 import ColorPaletteComponent from './components/widgets/ColorPalette.vue'
 import ColorScaleComponent from './components/widgets/ColorScale.vue'
+import DateComponent from './components/widgets/Date.vue'
 import DecimalComponent from './components/widgets/Decimal.vue'
 import DropDownComponent from './components/widgets/DropDown.vue'
 import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
@@ -39,6 +42,7 @@ import JoinComponent from './components/widgets/Join.vue'
 import LookupComponent from './components/widgets/Lookup.vue'
 import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue'
 import MarkdownComponent from './components/widgets/Markdown.vue'
+import PercentageComponent from './components/widgets/Percentage.vue'
 import RadioComponent from './components/widgets/Radio.vue'
 import RangeComponent from './components/widgets/Range.vue'
 import SampleLookupComponent from './components/widgets/SampleLookup.vue'
@@ -55,12 +59,15 @@ Vue.component('v-select', vSelect)
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
     ['attribute-selector-component', AttributeSelector2Component],
+    ['attribute-alias-selector-component', AttributeAliasSelectorComponent],
+    ['cast-component', CastComponent],
     ['checkbox-component', CheckboxComponent],
     ['code-component', CodeComponent],
     ['color-component', ColorComponent],
     ['color-palette-component', ColorPaletteComponent],
     ['color-pallete-component', ColorPaletteComponent], // FIXME: Remove
     ['color-scale-component', ColorScaleComponent],
+    ['date-component', DateComponent],
     ['decimal-component', DecimalComponent],
     ['dropdown-component', DropDownComponent],
     ['expression-component', ExpressionComponent],
@@ -70,7 +77,7 @@ const widgets = new Map([
     ['join-component', JoinComponent],
     ['lookup-component', LookupComponent],
     ['markdown-component', MarkdownComponent],
-    ['percentage-component', RangeComponent],
+    ['percentage-component', PercentageComponent],
     ['radio-component', RadioComponent],
     ['range-component', RangeComponent],
     ['rich-text-component', MarkdownEditorComponent],
@@ -155,6 +162,11 @@ Vue.filter('timeFromNow', (v, l) =>
 Vue.filter('formatJsonHourMinute', v => {
     if (v) {
         return format(parse(v + '.000Z'), 'HH:mm:ss');
+    }
+});
+Vue.component('v-style', {
+    render: function (createElement) {
+        return createElement('style', this.$slots.default)
     }
 });
 

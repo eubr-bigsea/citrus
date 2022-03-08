@@ -3,14 +3,14 @@ import { action } from '@storybook/addon-actions';
 import "vue-select/dist/vue-select.css";
 
 const field1 = {
-    label: 'Select an attribute',
+    label: 'Select an attribute, please',
     name: 'attribute',
     required: true, 
     values: '{"multiple": false}'
 };
 
 const onUpdateFieldAction = action('onUpdateField');
-const suggestions = ['id', 'age', 'name', 'gender', 'fair', 'incoming', 'destination', 'home town', 'siblings'];
+const suggestions = ['address', 'id', 'age', 'name', 'gender', 'fair', 'incoming', 'destination', 'home town', 'siblings'];
 
 const suggestionEvent = () => suggestions;
 
@@ -49,7 +49,7 @@ Single.args = {
     suggestionEvent,
 };
 
-export const Single2 = Template.bind({});
+export const SingleReadOnly = Template.bind({});
 Single2.args = {
     field: field1,
     readOnly: false,

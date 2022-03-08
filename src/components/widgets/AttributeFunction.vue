@@ -71,14 +71,14 @@
                                         @change="updated($event, row, 'alias')" />
                                 </td>
                                 <td style="width:10%" class="text-center">
-                                    <a href="#" @click="remove($event, index)" :title="$t('actions.delete')">
+                                    <a href="#" @click.prevent="remove($event, index)" :title="$t('actions.delete')">
                                         <span class="fa fa-minus-circle"></span>
                                     </a>
-                                    <a href="#" @click="moveUp($event, index)" v-if="index !== 0"
+                                    <a href="#" @click.prevent="moveUp($event, index)" v-if="index !== 0"
                                         :title="$t('actions.moveUp')">
                                         <span class="fa fa-chevron-circle-up"></span>
                                     </a>
-                                    <a href="#" @click="moveDown($event, index)" v-if="index !== (valueList.length-1)"
+                                    <a href="#" @click.pervent="moveDown($event, index)" v-if="index !== (valueList.length-1)"
                                         :title="$t('actions.moveDown')">
                                         <span class="fa fa-chevron-circle-down"></span>
                                     </a>
@@ -138,7 +138,7 @@
                 }
             },
             updateDisplayValue(v) {
-                if (v) {
+                if (v?.map) {
                     this.displayValue = v.map((v) => {
                         if (this.parameters.options.show_alias) {
                             return `${v.alias} = ${v.f}(${v.attribute})`
@@ -181,7 +181,7 @@
                 return false;
             },
             okClicked(ev) {
-                this.$root.$emit(this.message, this.field,
+                this.triggerUpdateEvent(this.message, this.field,
                     this.valueList);
                 this.$refs.modal.hide();
                 this.updateDisplayValue(this.valueList);

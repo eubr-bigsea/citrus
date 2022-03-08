@@ -222,6 +222,7 @@
                             (resp) => {
                                 self.success(self.$t('messages.successImport',
                                     { what: resp.data.workflow }));
+                                self.$refs.workflowList.refresh();
                             })
                             .catch(e => self.error(e));
                     };

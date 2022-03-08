@@ -36,7 +36,8 @@
                                             Visualizar</b-dropdown-item>
                                         <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
                                             :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}">
-                                            Editar</b-dropdown-item>
+                                            {{$t('actions.edit')}}
+                                        </b-dropdown-item>
                                         <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
                                             Execuções anteriores</b-dropdown-item>
                                     </b-dropdown>
@@ -99,28 +100,27 @@
                                 <template slot="actions" slot-scope="props">
                                     
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
-                                        <span class="btn btn-sm btn-info mr-1">
+                                        <span class="btn btn-sm btn-info mr-1" :title="$t('actions.view')">
                                             <font-awesome-icon icon="eye"></font-awesome-icon>
                                         </span>
                                     </router-link>
 
                                     <router-link v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
                                         :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                        <span class="btn btn-sm btn-warning mr-1"
+                                        <span class="btn btn-sm btn-warning mr-1" :title="$t('actions.edit')"
                                             :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                             <font-awesome-icon icon="pen"></font-awesome-icon>
                                         </span>
                                     </router-link>
-
+                                    <!--
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         <span class="btn btn-sm btn-primary"
                                             :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                             <font-awesome-icon icon="history"></font-awesome-icon>
                                         </span>
                                     </router-link>
-
                                 </template>
-                                -->
+                                 -->
                             </v-server-table>
                         </div>
                     </div>

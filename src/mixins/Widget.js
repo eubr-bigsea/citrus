@@ -1,6 +1,7 @@
 /* Common props and methods for all widgets */
 export default {
     props: {
+        acceptExtendedInput: { default: false, type: Boolean },
         // Handle different versions
         compatibility: {
             default: '2.0.0',
@@ -11,6 +12,7 @@ export default {
             required: true,
             type: Object,
         },
+        asWidget: { default: true, type: Boolean },
         language: {
             default: 'en',
             type: String
@@ -21,9 +23,11 @@ export default {
             type: Object
         },
         readOnly: { default: false, type: Boolean },
+        visualStyle: {type: String },
         suggestionEvent: {
             type: Function,
         },
+        small: { default: false, type: Boolean },
         showHelp: { type: Boolean, default: true },
         extendedSuggestionEvent: {
             type: Function,
@@ -31,6 +35,11 @@ export default {
         value: {
             default: '',
         },
-
-    }
+    },
+    methods: {
+        triggerUpdateEvent(message, field, value, labelValue){
+            this.$root.$emit(message, field, value, labelValue); 
+            this.$emit('update', field, value, labelValue);
+        }
+    },
 }

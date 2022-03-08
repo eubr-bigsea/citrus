@@ -200,7 +200,13 @@
             },
             evalInContext(js, context) {
                 //# Return the results of the in-line anonymous function we .call with the passed context
-                return function () { return eval(js); }.call(context);
+                return function () { 
+                    try{
+                        return eval(js); 
+                    } catch(pass){
+                        return false;
+                    }
+                }.call(context);
             },
             update() {
                 const self = this;
@@ -267,13 +273,13 @@
                 const self = this;
                 field.internalValue = value;
                 const f = self.allFields[field.name];
-                //if (f){
+                if (f){
                     f.internalValue = value
-                //}
+                }
                 if (self.conditionalFields.has(field.name)) {
                     const duplicatedOk = new Set();
                     const fieldsToCheck = self.conditionalFields.get(field.name);
-                    console.debug(self.allFields['validation']?.internalValue)
+                    //console.debug(self.allFields['validation']?.internalValue)
                     fieldsToCheck.forEach(fieldToCheck => {
                         try {
                             fieldToCheck.enabled = self.evalInContext(fieldToCheck.enable_conditions, self.allFields);

@@ -5,7 +5,10 @@
         </div>
         <div v-else class="clearfix">
             <div class="float-left" :data-name="field.name">
-                <SwitchComponent class="float-left" :checked="checked" :onchange="changed">{{field.label || field.name}}
+                <b-form-checkbox v-if="visualStyle === 'explorer'" switch :checked="checked" @input="changed">{{field.label
+                    || field.name}}</b-form-checkbox>
+                <SwitchComponent v-else class="float-left" :checked="checked" :onchange="changed">{{field.label ||
+                    field.name}}
                 </SwitchComponent>
             </div>
             <span v-if="(showHelp === undefined || showHelp) && field.help" class="data-help">
@@ -30,7 +33,7 @@
         components: { LabelComponent, SwitchComponent },
         methods: {
             changed(newValue) {
-                this.$root.$emit(this.message, this.field, newValue ? '1' : '0',
+                this.triggerUpdateEvent(this.message, this.field, newValue ? '1' : '0',
                     newValue ? this.$t('common.yes') : this.$t('common.no'));
             }
         },
