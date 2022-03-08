@@ -2,20 +2,26 @@
     <div>
         <span v-if="!readOnly">
             <LabelComponent :field="field" :value="value"></LabelComponent>
+
             <div class="palette clearfix">
-                <div v-if="displayValue" v-for="color in displayValue">
-                    <div class="color" :style="{'background-color': color}"></div>
+                <template v-if="displayValue && displayValue.length > 0">
+                    <div v-for="color in displayValue">
+                        <div class="color" :style="{'background-color': color}"></div>
+                    </div>
+                </template>
+                <div v-else>
+                    -
                 </div>
             </div>
             <p>
                 <b-link variant="sm" @click.prevent="openModal">
                     {{$t('actions.chooseOption')}}
                 </b-link>
-                <br/>
+                |
                 <b-link variant="sm" @click.prevent="clear">
                     {{$t('actions.clear')}}
                 </b-link>
-                
+
             </p>
         </span>
         <span v-else>{{displayValue}}</span>
@@ -88,7 +94,7 @@
         mixins: [Widget],
         components: { LabelComponent },
         methods: {
-            clear(){
+            clear() {
                 this.$root.$emit(this.message, this.field, null);
                 this.displayValue = null;
             },
@@ -99,7 +105,7 @@
                 }
             },
             select(inx) {
-                this.$root.$emit(this.message, this.field, this.palettes[inx][1]);
+                this.triggerUpdateEvent(this.message, this.field, this.palettes[inx][1]);
                 this.$refs.modal.hide();
                 this.displayValue = this.palettes[inx][1];
             },
@@ -109,10 +115,16 @@
         },
         mounted() {
             this.displayValue = this.value;
+            if (this.value === null || this.value === undefined){
+                this.internalValue = this.palettes[6][1]; // D3
+                this.triggerUpdateEvent(this.message, this.field, this.internalValue);
+                this.displayValue = this.internalValue;
+            }
         },
         data() {
             return {
                 displayValue: '',
+                internalValue: null,
                 palettes
             }
         },

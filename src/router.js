@@ -96,6 +96,9 @@ const ChooseTask = () => import ('./views/data-explorer/model-builder/ChooseTask
 const ModelTraining = () => import ('./views/data-explorer/model-builder/ModelTraining.vue');
 const Design = () => import ('./views/data-explorer/model-builder/Design.vue');
 
+const VisualizationDesign = () => import ('./views/data-explorer/vis-builder/VisualizationDesign.vue');
+const CreateVisualization  = () => import ('./views/data-explorer/vis-builder/CreateVisualization.vue');
+
 const TestEntities = () => import ('./views/data-explorer/TestEntities.vue');
 
 Vue.use(Router);
@@ -737,6 +740,24 @@ let router = new Router({
             path: '/experiments/model/design/:id',
             name: 'model-design',
             component: Design,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/visualization/design/:id',
+            name: 'visualization-design',
+            component: VisualizationDesign,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/visualization/new',
+            name: 'new-visualization',
+            component: CreateVisualization,
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]

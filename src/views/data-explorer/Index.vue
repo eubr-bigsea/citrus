@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" role="button">
+                <b-card class="clickable m-1" @click="navigate('new-visualization')" role="button">
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
@@ -53,9 +53,8 @@
                         <div class="col-md-9 mt-2">
                             <h5>Criar visualizações de dados</h5>
                             <small>
-                                Crie <em>dashboards</em> para apresentar os dados. Monte gráficos, tabelas e outras
-                                visualizações
-                                de dados. Compartilhe com outros usuários.
+                                Monte gráficos, tabelas e outras visualizações de dados.
+                                Associe-os a <em>dashboards</em> e compartilhe-os com outros usuários.
                             </small>
                         </div>
                     </div>
@@ -116,6 +115,9 @@
                             <router-link v-if="props.row.type === 'MODEL_BUILDER' "
                                 :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.id}}</router-link>
+                            <router-link v-if="props.row.type === 'VIS_BUILDER' "
+                                :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.id}}</router-link>
                         </template>
                         <template slot="type" slot-scope="props">
                             {{$t(`dataExplorer.experiments.${props.row.type}`)}}
@@ -126,6 +128,9 @@
                                 {{props.row.name}}</router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER' "
                                 :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.name}}</router-link>
+                            <router-link v-if="props.row.type === 'VIS_BUILDER' "
+                                :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
                                 {{props.row.name}}</router-link>
                         </template>
                         <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>

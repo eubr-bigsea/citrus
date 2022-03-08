@@ -109,12 +109,31 @@ class Workflow {
         dataReader.setProperty('display_sample', '0');
 
         const workflow = new Workflow({
-            $meta: {method, task_type: taskType},
+            $meta: { method, task_type: taskType },
             name: name,
             tasks: [dataReader],
             type: 'MODEL_BUILDER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             forms: { $meta: { value: { label: labelAttribute, method, taskType } } }
+        });
+        return workflow;
+    }
+    static buildVisualizationBuilder(name, ds, method, i18n) {
+        const dataReader = new Task({
+            name: i18n.$tc('dataExplorer.readData'),
+            operation: new Operation({ id: 2100 }),
+            display_order: 0,
+        });
+        dataReader.setProperty('data_source', ds);
+        dataReader.setProperty('display_sample', '0');
+
+        const workflow = new Workflow({
+            $meta: { method },
+            name: name,
+            tasks: [dataReader],
+            type: 'VIS_BUILDER',
+            platform: new Platform({ id: META_PLATFORM_ID }),
+            forms: { $meta: { value: { method } } }
         });
         return workflow;
     }
@@ -145,26 +164,49 @@ class ModelBuilderWorkflow extends Workflow {
             if (pairs.has(task.operation.slug)) {
                 this[pairs.get(task.operation.slug)] = task;
                 task.operation = operations.get(task.operation.slug);
-            } 
-            /*if (task.operation.categories.find(c => c.type === 'algorithm')){
-                this.algorithms.push(task);
-            }*/
+            }
         });
         for (let [slug, prop] of pairs.entries()) {
             // recreate the tasks
             if (this[prop] === null) {
                 this[prop] = this.addTask(operations.get(slug));
-                //console.debug(this[prop]);
             }
-            //if (this[prop] == null)
-            //    console.debug(prop, slug, this[prop]);
         }
-        /*
-        if (this.evaluator?.forms?.task_type){
-            this.evaluator.forms.task_type.value = this.forms.$meta.value.taskType;
-        } else {
+    }
+    addTask(op) {
+        return super.addTask(op, null, null);
+    }
+}
+class VisualizationBuilderWorkflow extends Workflow {
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], 
+        version = null, user = null, forms = null } = {}, operations) {
+        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+        //
+        this.readData = null;
+        this.filter = null;
+        this.group = null;
+        this.sample = null;
+        this.visualization = null;
 
-        }*/
+        const pairs = new Map([
+            ['filter', 'filter'],
+            ['group', 'group'],
+            ['read-data', 'readData'],
+            ['sample', 'sample'],
+            ['visualization', 'visualization'],
+        ]);
+        this.tasks.forEach((task) => {
+            if (pairs.has(task.operation.slug)) {
+                this[pairs.get(task.operation.slug)] = task;
+                task.operation = operations.get(task.operation.slug);
+            }
+        });
+        for (let [slug, prop] of pairs.entries()) {
+            // recreate the tasks
+            if (this[prop] === null) {
+                this[prop] = this.addTask(operations.get(slug));
+            }
+        }
     }
     addTask(op) {
         return super.addTask(op, null, null);
@@ -180,8 +222,8 @@ class Operation {
         const newForms = forms.map(f => new Form(f));
         Object.assign(this, { id, name, slug, label_format, forms: newForms, ports, categories });
         this.fieldsMap = new Map();
-        newForms.forEach(form => form.fields.forEach(field => { 
-            if (field.values){
+        newForms.forEach(form => form.fields.forEach(field => {
+            if (field.values) {
                 field.values = JSON.parse(field.values);
             }
             this.fieldsMap.set(field.name, field);
@@ -358,4 +400,5 @@ module.exports = {
     FormField,
     Constants,
     ModelBuilderWorkflow,
+    VisualizationBuilderWorkflow,
 }

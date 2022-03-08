@@ -137,12 +137,6 @@
                 get() { return this.workflowObj.tasks[0].forms.data_source.value; },
                 set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
             },
-            xlabelAttribute: {
-                get() { return this.workflowObj.forms.$meta.value.label; },
-                set(newValue) {
-                    return this.$store.dispatch('dataExplorer/setLabelAttribute', newValue)
-                }
-            },
             supervisioned() {
                 return this.taskType === 'regression' || this.taskType === 'classification';
             },

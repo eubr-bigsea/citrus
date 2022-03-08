@@ -55,7 +55,7 @@
                                 <b-form-radio-group stacked v-model="selectedAttribute.feature_type">
                                     <b-form-radio value="categorical"><span class="fa fa-font"></span>
                                         Categórico</b-form-radio>
-                                    <b-form-radio value="numerical"># Numérico</b-form-radio>
+                                    <b-form-radio value="numerical"><span class="fa fa-hashtag"></span> Numérico</b-form-radio>
                                     <b-form-radio value="textual"><span class="fa fa-italic"></span> Texto
                                     </b-form-radio>
                                     <!-- <b-form-radio value="vector">[ ] Arranjo</b-form-radio>-->

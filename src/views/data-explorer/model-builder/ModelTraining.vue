@@ -94,7 +94,7 @@
                                     </span>
                                     <h6>Especialista</h6>
                                     <small>
-                                        Você controla como o modelo será criado, podendo {{$t('common.ok')}} os
+                                        Você controla como o modelo será criado, podendo escolher os
                                         algoritmos,
                                         parâmetros, métricas e qual será
                                         o modelo a ser salvo.
@@ -236,7 +236,7 @@
     import Notifier from '../../../mixins/Notifier';
     import DataSourceMixin from '../DataSourceMixin.js';
     import { debounce } from "../../../util.js";
-    import { Workflow, Platform, Operation, OperationList, Task, Form, FormField } from '../entities.js';
+    import { Workflow } from '../entities.js';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 

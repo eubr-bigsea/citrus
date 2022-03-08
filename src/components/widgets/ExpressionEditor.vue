@@ -61,7 +61,7 @@
                                                 @keyup="onKeyUp($event, row, 'expression')" ref="expr"
                                                 @blur="elementBlur(row, $event)" v-focus
                                                 @paste="changed($event, row, 'expression')" :value="row.expression"
-                                                required @dblclick="debugExpression(row)" />
+                                                required @dblclick="debugExpression(row)"/>
                                             <ul v-show="isOpen" class="autocomplete-results">
                                                 <li v-for="(result, i) in suggestionResults" :key="i"
                                                     @click="setResult(result)" class="autocomplete-result"
@@ -304,9 +304,17 @@
                 })
             },
             remove(e, index) {
-                this.expressionList.splice(index, 1);
+                const removed = this.expressionList.splice(index, 1);
+                if (this.lastEdited && removed[0] === this.lastEdited.row) {
+                    this.lastEdited = null;
+                }
             },
             copyPasteValue(v) {
+                if (this.$refs.expr && this.$refs.expr.length > 0 && ! (this.lastEdited)){
+                    this.lastEdited = {
+                        el: this.$refs.expr[this.$refs.expr.length - 1], 
+                        row: this.expressionList[this.$refs.expr.length - 1]};
+                }
                 if (this.lastEdited && this.lastEdited.el) {
                     // console.debug(this.lastEdited.row)
                     // if (this.lastEdited.row && 

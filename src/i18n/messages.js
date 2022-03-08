@@ -268,7 +268,7 @@ export default {
             capitalizeFirst: 'Converter iniciais para maiúsculas',
             copySelected: 'Copiar etapas selecionadas',
             disableSelected: 'Desabilitar etapas selecionadas',
-            doYouWantToDeleteStep: 'Você realmente quer excluir esse(s) passo(s)?',
+            doYouWantToDeleteStep: 'Você realmente quer excluir essa(s) etapa(s)?',
             enableSelected: "Habilitar etapas selecionadas",
             experiments: {
                 DATA_EXPLORER: 'Análise de dados',
@@ -287,7 +287,7 @@ export default {
             sampleData: 'Amostrar dados',
             selectDataSource: 'Selecionar a fonte de dados',
             setupSample: 'Configurar a amostra de dados',
-            step: 'Passo | Passos',
+            step: 'Etapa | Etapas',
             tagline: 'Experimentos - o que você quer fazer hoje?',
             task: {
                 classification: 'Classificação',
