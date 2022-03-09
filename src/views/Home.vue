@@ -63,7 +63,9 @@
         mounted() {
             const self = this;
             const workflowFilters = {
-                fields: 'id,name,platform,user,updated,created'
+                fields: 'id,name,platform,user,updated,created',
+                enabled: 1,
+                types: 'WORKFLOW'
             };
             const dataSourceFilters = {
                 fields: 'id,name,description,format,updated,created'

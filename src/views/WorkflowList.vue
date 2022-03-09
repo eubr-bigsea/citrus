@@ -136,7 +136,7 @@
 
                         data.fields = 'id,name,platform,updated,user,version,is_template,description';
 
-                        let url = `${tahitiUrl}/workflows?enabled=1`;
+                        let url = `${tahitiUrl}/workflows?enabled=1&types=WORKFLOW`;
                         this.$Progress.start();
                         return axios
                             .get(url, {
