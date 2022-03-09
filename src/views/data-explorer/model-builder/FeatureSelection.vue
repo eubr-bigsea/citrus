@@ -26,7 +26,9 @@
                         </b-list-group-item>
                     </b-list-group>
                 </div>
+                <!--
                 {{selectedAttribute}}
+                -->
             </div>
             <div class="col-md-8 border p-3">
                 <div v-if="selectedAttribute">

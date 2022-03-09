@@ -37,6 +37,13 @@ export default {
                 { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
             );
         },
+        html(msg, title, timeout, bodyMaxLength) {
+            this.$snotify.html(
+                `<div class="snotifyToast__title">${title}</div>
+                 <div class="snotifyToast__body">${msg}</div>`,
+                { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
+            );
+        },
         error(e, msg, timeout, bodyMaxLength) {
             if (e) {
                 if (e.name === 'NetworkError' || e.message == 'Network Error') {

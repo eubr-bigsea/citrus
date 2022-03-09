@@ -177,9 +177,11 @@
                 if (algLookup.has(op.slug)) {
                     task = algLookup.get(op.slug);
                     task.operation = operationsLookup.get(op.slug);
+                    task.algorithm = true;
                 } else {
                     task = this.workflow.addTask(op);
                     task.enabled = false;
+                    task.algorithm = true;
                 }
                 return task;
             });

@@ -21,9 +21,11 @@
                         class="btn btn-sm btn-outline-danger ml-1 float-right"><span class="fa fa-stop"></span>
                         {{$t('actions.stop')}}</button>
 
+                    <!--
                     <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ml-1 float-right"><span
                             class="fa fa-sync"></span>
                         Reload jobs</button>
+                        -->
                 </form>
             </div>
             <div class="custom-card">
@@ -32,7 +34,7 @@
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
-                                    <SideBar :selected="selected" @edit="edit" :supervisioned="supervisioned"/>
+                                    <SideBar :selected="selected" @edit="edit" :supervisioned="supervisioned" />
                                 </div>
                             </div>
                             <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
@@ -53,8 +55,7 @@
                                     <template v-if="selected === 'adjusts'">
                                         <FeatureSelection :attributes="attributes" :features="workflowObj.features"
                                             :target="workflowObj.forms.$meta.value.target"
-                                            @update-target="handleUpdateTarget" 
-                                            :supervisioned="supervisioned"/>
+                                            @update-target="handleUpdateTarget" :supervisioned="supervisioned" />
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
@@ -64,7 +65,7 @@
                                     </template>
                                     <template v-if="selected === 'algorithms'">
                                         <Algorithms :operations="algorithmOperation" :workflow="workflowObj"
-                                            :operation-map="operationsMap" />
+                                            :operation-map="operationsMap" ref="algorithms"/>
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <Grid :grid="workflowObj.grid" />
@@ -73,15 +74,14 @@
                                         <Weighting />
                                     </template>
                                     <template v-if="selected === 'runtime'">
-                                        <Runtime :clusters="clusters" />
+                                        <Runtime :clusters="clusters" :workflow="workflowObj"/>
                                     </template>
                                 </form>
                             </div>
                         </div>
                     </b-tab>
                     <b-tab title="Resultados" class="pt-2" ref="tabResults">
-                        <Result :jobs="jobs" ref="results"
-                            :number-of-features="numberOfFeatures"
+                        <Result :jobs="jobs" ref="results" :number-of-features="numberOfFeatures"
                             @delete-job="handleDeleteJob" />
                     </b-tab>
                 </b-tabs>
@@ -146,7 +146,7 @@
                     return this.$store.dispatch('dataExplorer/setTaskName', newValue)
                 }
             },
-            numberOfFeatures(){
+            numberOfFeatures() {
                 return this.workflowObj?.features?.forms?.features?.value?.length || 0;
             }
         },
@@ -234,9 +234,58 @@
                     self.changeRoom(self.job.id);
                 }
             },
-            async handleTraining() {
-                this.$refs.tabResults.activate();
+            validate(){
                 const self = this;
+                const errors = [];
+                if (this.dataSourceId === null) {
+                    errors.push("Fonte de dados inválida.");
+                }
+
+                const features = self.workflowObj.features.forms.features.value;
+                let hasLabel = false;
+                let hasFeature = false;
+                features.forEach(f => {
+                    if (f.usage === 'label') {
+                        hasLabel = true;
+                    } else if (f.usage === 'feature') {
+                        hasFeature = true;
+                    }
+                });
+                
+                if (! hasLabel) {
+                    errors.push('Nenhum atributo alvo (rótulo) foi especificado.');
+                }
+                if (! hasFeature) {
+                    errors.push('Nenhum atributo preditor foi especificado.');
+                }
+                const atLeastOneAlgorithm = self.workflowObj.tasks.find(a => {
+                    return a.enabled 
+                        && self.operationsMap.has(a.operation.slug) 
+                        && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm')
+                });
+                if (! atLeastOneAlgorithm) {
+                    errors.push('É necessário habilitar pelo menos um algoritmo.');
+                }
+                if (self.workflowObj.preferred_cluster_id === null){
+                    errors.push("Você deve escolher um ambiente de processamento para a execução.")
+                }
+                if (errors.length > 0) {
+                    this.html(
+                        'Existe ao menos uma  inconsistência no fluxo que precisa ser resolvida antes de iniciar o treino: <br/><ul>' +
+                        errors.map(e => `<li>${e}</li>`).join("") + '</ul>',
+                        'Inconsistência(s) detectada(s)', 10000)
+                    return false;
+                }
+                return true;
+            },
+            async handleTraining() {
+                const self = this;
+                // Validation
+                if (! this.validate()){
+                    return;
+                }
+
+                this.$refs.tabResults.activate();
                 const cloned = JSON.parse(JSON.stringify(this.workflowObj));
                 cloned.platform_id = cloned.platform.id; //FIXME: review
                 cloned.preferred_cluster_id = self.workflowObj.preferred_cluster_id;
@@ -294,7 +343,7 @@
                     await this.loadDataSource(this.dataSourceId);
                     this.labelAttribute = this.workflowObj.forms.$meta.value.label;
                     const evaluator = this.workflowObj.tasks.find(t => t.operation.slug === 'evaluator');
-                    if (evaluator && ! evaluator?.forms?.task_type?.value){
+                    if (evaluator && !evaluator?.forms?.task_type?.value) {
                         evaluator.forms.task_type.value = this.workflowObj.forms.$meta.value.taskType;
                     }
 
@@ -343,9 +392,9 @@
                         const isLargerBetter = Boolean(result0.content.metric && result0.content.metric.isLargerBetter);
                         let best = result0.content.metric ? result0.content.metric.value : 0;
                         results.forEach(r => {
-                            if (r.content.metric && 
-                                    (isLargerBetter && r.content.metric.value > best 
-                                        || !isLargerBetter && r.content.metric.value < best)) {
+                            if (r.content.metric &&
+                                (isLargerBetter && r.content.metric.value > best
+                                    || !isLargerBetter && r.content.metric.value < best)) {
                                 best = r.content.metric.value;
                             }
                         });
@@ -433,8 +482,13 @@
                 this.selectedAlgorithm = algo;
             },
             handleRetrieveAttributes(ds) {
-                this.dataSourceId = ds.id;
-                this.loadDataSource(ds.id);
+                if (ds) {
+                    this.dataSourceId = ds.id;
+                    this.loadDataSource(ds.id);
+                } else {
+                    this.dataSourceId = null;
+                    this.warning('É necessário selecionar uma fonte de dados ou o fluxo não funcionará!');
+                }
             },
             handleUpdateTarget(target) {
                 this.workflowObj.forms.$meta.value.target = target;

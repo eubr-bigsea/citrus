@@ -70,10 +70,16 @@
                                 </template>
                             </b-card>
                         </div>
+                        <!-- Chart -->
                         <div class="col-9 mt-2">
                             <b-card border-variant="primary">
-                                <Plotly ref="plotly" :data="scatterData" :layout="scatterLayout" :display-mode-bar="true"
-                                    :auto-resize="true" :options="{displayModeBar: false}" />
+                                <Plotly ref="plotly" :data="scatterData" :layout="scatterLayout"  v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' "
+                                    :display-mode-bar="true" :auto-resize="true" :options="{displayModeBar: false}" />
+                                <div v-else>
+                                    {{selectedJob.status_text}}
+                                    <pre><code>{{selectedJob.exception_stack}}</code></pre>
+
+                                </div>
                             </b-card>
                         </div>
                         <div class="col-3 mt-2 text-center" v-if="finalReport">
@@ -309,7 +315,6 @@
             scatterData() {
                 const series = []
                 if (this.selectedJob && this.selectedJob.groupedResults) {
-                    console.debug(this.selectedJob.groupedResults)
                     Object.entries(this.selectedJob.groupedResults).forEach(([k, results]) => {
                         let x = [];
                         let y = [];

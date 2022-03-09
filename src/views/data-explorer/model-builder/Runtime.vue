@@ -3,8 +3,8 @@
         <div>
             <h5>Ambiente de processamento</h5>
             <hr />
-            <label class="font-weight-bold">{{$tc('deployment.target')}}:</label>
-            <v-select :options="clusters" v-model="target" label="name" :reduce="option => option.id" class="w-25" />
+            <label class="font-weight-bold">Cluster de processamento:</label>
+            <v-select :options="clusters" v-model="workflow.preferred_cluster_id" label="name" :reduce="option => option.id" class="w-25" />
             <small class="form-text text-muted">
                 Escolha em qual conjunto de máquinas você vai executar a construção dos modelos.
             </small>
@@ -16,13 +16,8 @@
     export default {
         components: { 'v-select': VueSelect, },
         props: {
-            clusters: { type: Array }
+            clusters: { type: Array, required: true },
+            workflow: {type: Object, required: true}
         },
-        data() {
-            return {
-                target: 1
-            }
-        }
-
     }
 </script>
