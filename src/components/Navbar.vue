@@ -101,12 +101,12 @@
             <b-navbar-nav>
                 <b-nav-item-dropdown right ref="dropdown">
                     <template slot="button-content">
-                        <v-gravatar :email="user.email" class="avatar" />
+                        <span class="fa fa-user"></span>
                         {{ user.name ? user.name.split(' ')[0]: '' }}
                     </template>
 
                     <b-dropdown-form style="width: 300px" class="text-center">
-                        <v-gravatar :email="user.email" class="large-avatar" />
+                        <span class="fa fa-user"></span>
                         <p>
                             <strong>{{user.name}}</strong>
                             <br />
