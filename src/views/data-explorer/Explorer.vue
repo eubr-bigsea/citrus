@@ -46,10 +46,10 @@
                         @click="saveWorkflow"><span class="fa fa-save"></span> {{$t('actions.save')}}
                     </b-button>
                     <b-button :disabled="false && loadingData" size="sm" variant="outline-secondary"
-                    class="float-right mt-2 mr-1" @click="loadData">
-                    <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
-                </b-button>
-                <!--
+                        class="float-right mt-2 mr-1" @click="loadData">
+                        <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
+                    </b-button>
+                    <!--
                     <b-button @click="loadingData = !loadingData" class="btn btn-sm">OK</b-button>
                 -->
                 </div>
@@ -64,7 +64,8 @@
                                     class="list-group-item steps clearfix p-0" :title="task.name"
                                     :style="{'border-left': '4px solid ' + task.backgroundColor}">
                                     <step :step="task" :language="language" :attributes="tableData.attributes"
-                                        :index="inx" @toggle="task.enabled = !task.enabled; isDirty=true" :protected="inx <=1 "
+                                        :index="inx" @toggle="task.enabled = !task.enabled; isDirty=true"
+                                        :protected="inx <=1 "
                                         :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
                                         @delete="workflowObj.deleteTask(task)" @update="updateStep"
                                         @previewUntilHere="previewUntilHere(task)" @duplicate="duplicate"
@@ -181,14 +182,14 @@
         },
         async mounted() {
             this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
-            
+
             const job_id = WORKFLOW_OFFSET + parseInt(this.internalWorkflowId);
-            this.job = {id: job_id}
+            this.job = { id: job_id }
 
             await this.loadClusters();
             await this.loadOperations();
             await this.loadWorkflow();
-            
+
             this.connectWebSocket();
             await this.loadData();
         },
@@ -307,7 +308,7 @@
                     persist: false, // do not save the job in db.
                     app_configs: { verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1, target_platform: 'scikit-learn' },
                 }
-                //self.disconnectWebSocket();
+                //console.debug(new Date());
 
                 try {
                     const response = await axios.post(`${standUrl}/jobs`, body,
@@ -462,6 +463,8 @@
             },
             getSuggestions(taskId) {
                 const extendedSuggestions = this.getExtendedSuggestions(taskId);
+                return extendedSuggestions;
+                /*
                 if (extendedSuggestions && extendedSuggestions.inputs?.length) {
                     return this._unique(Array.prototype.concat.apply([],
                         extendedSuggestions.inputs.map(
@@ -469,19 +472,31 @@
                 } else {
                     return [];
                 }
+                */
             },
             getExtendedSuggestions(taskId) {
+                const allSuggestions = new Set();
+                const self = this;
                 if (window.hasOwnProperty('TahitiAttributeSuggester')) {
                     if (window.TahitiAttributeSuggester.processed === undefined
                         || this.attributeSuggestion[taskId] === undefined
                         || this.attributeSuggestion[taskId].length === 0) {
                         this.updateAttributeSuggestion();
                     }
-                    if (this.attributeSuggestion[taskId]) {
+                    Object.keys(this.attributeSuggestion).forEach(key => {
+                        self.attributeSuggestion[key] && 
+                            self.attributeSuggestion[key].output.forEach(v => allSuggestions.add(v));
+                    });
+                    Object.keys(this.schemas).forEach(key => {
+                        self.schemas[key] && 
+                            self.schemas[key].forEach(v => allSuggestions.add(v.name));
+                    });
+                    /*if (this.attributeSuggestion[taskId]) {
                         return this.attributeSuggestion[taskId];
                     } else {
                         return [];
-                    }
+                    }*/
+                    return Array.from(allSuggestions).sort(this._caseInsensitiveComparator);
                 }
             },
             /* Trigged by the step action */
@@ -513,6 +528,7 @@
                     Object.assign(task.forms, step.forms);
                 }
                 this.updateAttributeSuggestion();
+                this.loadData();
             },
 
             resetMenuData() {
@@ -597,6 +613,7 @@
                     this.workflowObj.addTask(this.operationLookup.get(options.params[0].id),
                         options.selected, options.fields);
                     this.isDirty = true;
+                    this.loadData();
                 } else {
                     console.log(`Unknown action: ${options.action}`);
                 }
@@ -647,13 +664,14 @@
                     }
                 })
                 this.isDirty = true;
-                this.previewUntilHere(elem)
+                this.previewUntilHere(elem);
+                this.loadData();
             },
             handleExport({ newName, exportDisabled, platform }) {
-                
+
                 const cloned = JSON.parse(JSON.stringify(this.workflowObj));
                 cloned.platform_id = META_PLATFORM_ID;
-                
+
                 if (!exportDisabled) {
                     cloned.tasks = cloned.tasks.filter((t) => t.enabled);
                 }
@@ -665,14 +683,14 @@
                 });
                 const workflow_id = this.workflowObj.id;
                 const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
-                
+
                 this.socket.emit("export", {
-                    workflow_id, job_id, room: `${job_id}`, 
+                    workflow_id, job_id, room: `${job_id}`,
                     app_id: workflow_id,
                     format: 'JSON',
                     ticket: new Date().getTime(),
                     target_platform: platform, name: newName,
-                    app_configs: {persist: false},
+                    app_configs: { persist: false },
                     workflow: cloned,
                     type: "export",
                 });
@@ -700,6 +718,7 @@
 
                         if (msg.type === 'OBJECT') {
                             if (msg.meaning === 'sample') {
+                                //console.debug(new Date());
                                 // Update must be done before assigning to observable self.tableData!
                                 const messageJson = msg.message;
                                 const truncated = messageJson.truncated || [];
@@ -732,6 +751,7 @@
                                 } else {
                                     self.loadingData = false;
                                 }
+                                //console.debug(new Date());
                             } else if (msg.meaning === 'schema') {
                                 self.schemas[msg.id] = msg.message;
                                 /*
