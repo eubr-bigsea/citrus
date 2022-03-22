@@ -107,7 +107,7 @@
 
 
                     <v-server-table v-show="totalRecords > 0" :columns="columns" :options="options" ref="workflowList"
-                        name="workflowListDataExplorer">
+                        name="workflowListDataExperiments">
                         <template slot="id" slot-scope="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER' "
                                 :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
@@ -120,6 +120,7 @@
                                 {{props.row.id}}</router-link>
                         </template>
                         <template slot="type" slot-scope="props">
+                            <span class="fas" :class="getIcon(props.row)"></span>
                             {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
                         <template slot="name" slot-scope="props">
@@ -161,6 +162,13 @@
                 this.$refs.workflowList.setFilter('');
                 this.$refs.workflowList.customQueries = {};
             },
+            getIcon(row) {
+                return {
+                    'DATA_EXPLORER': 'fa-table',
+                    'MODEL_BUILDER': 'fa-robot',
+                    'VIS_BUILDER': 'fa-chart-bar',
+                }[row.type];
+            }
         },
         data() {
             const self = this;
@@ -177,8 +185,11 @@
                 ],
                 options: {
                     hidePerPageSelect: true,
+                    perPage: 5,
+                    perPageValues: [5, 10],
                     debounce: 800,
                     skin: 'table-sm table table-hover',
+                    
                     dateColumns: ['updated'],
                     headings: {
                         id: 'ID',
