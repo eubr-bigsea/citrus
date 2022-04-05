@@ -32,7 +32,7 @@
                         <td style="width:20%">
                             <select class="form-control form-control-sm" :value="row.type"
                                 @change="updated($event, row, 'type')" size="sm">
-                                <option v-for="v in JSON.parse(field.values)" :value="v.key">{{v.value}}</option>
+                                <option v-for="v in field.values" :value="v.key">{{v.value}}</option>
                             </select>
                         </td>
                         <td style="width:10%" class="text-center">
@@ -70,7 +70,11 @@
         mixins: [Widget],
         computed: {
             parameters() {
-                return JSON.parse(this.field.values);
+                if (this.field.values.constructor === Object || this.field.values.constructor === Array) {
+                    return this.field.values;
+                } else {
+                    return JSON.parse(this.field.values);
+                }
             },
         },
         components: {

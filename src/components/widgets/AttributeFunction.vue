@@ -78,8 +78,8 @@
                                         :title="$t('actions.moveUp')">
                                         <span class="fa fa-chevron-circle-up"></span>
                                     </a>
-                                    <a href="#" @click.pervent="moveDown($event, index)" v-if="index !== (valueList.length-1)"
-                                        :title="$t('actions.moveDown')">
+                                    <a href="#" @click.pervent="moveDown($event, index)"
+                                        v-if="index !== (valueList.length-1)" :title="$t('actions.moveDown')">
                                         <span class="fa fa-chevron-circle-down"></span>
                                     </a>
                                 </td>
@@ -107,7 +107,15 @@
         mixins: [Widget],
         computed: {
             parameters() {
-                return JSON.parse(this.field.values);
+                try {
+                    if (this.field.values.constructor === Object) {
+                        return this.field.values;
+                    } else {
+                        return JSON.parse(this.field.values);
+                    }
+                } catch (ex) {
+                    return { options: [] };
+                }
             },
         },
         components: {

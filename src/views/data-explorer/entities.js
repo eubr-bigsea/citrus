@@ -55,7 +55,17 @@ class Workflow {
         if (fields) {
             Object.assign(forms, fields);
         }
-        const newTask = op.createTask({ name: op.name, forms })
+        const newTask = op.createTask({ name: op.name, forms });
+        op.forms.find(f => f.category === 'execution').fields.forEach(opField => {
+            if (opField.default) {
+                if (opField.type === 'INTEGER') {
+                    newTask.forms[opField.name] = { 'value': parseInt(opField.default) };
+                } else {
+                    newTask.forms[opField.name] = { 'value': opField.default };
+                }
+            }
+        });
+
         this.tasks.push(newTask);
         this._tasksLookup.set(newTask.id, newTask);
 
@@ -178,7 +188,7 @@ class ModelBuilderWorkflow extends Workflow {
     }
 }
 class VisualizationBuilderWorkflow extends Workflow {
-    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], 
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
         version = null, user = null, forms = null } = {}, operations) {
         super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
         //
@@ -300,6 +310,7 @@ class Task {
         this.selected = false;
         this.top = top;
         this.error = null;
+        this.editing = false;
 
         //Initialize form fields
         if (operation.form) {
@@ -369,6 +380,14 @@ class Task {
             source_id: other.id,
             target_id: this.id,
         });
+    }
+    hasProblems(){
+        const self = this;
+        const result = this.operation.forms.find(f => f.category === 'execution')
+        .fields.find(field => {
+            return (field.required && (!self.forms[field.name] || !self.forms[field.name].value))
+        }) !== undefined;
+        return result;
     }
     operation = null;
     forms = {}

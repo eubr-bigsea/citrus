@@ -45,7 +45,7 @@
                     <b-button :disabled="loadingData" variant="primary" size="sm" class="float-right mt-2"
                         @click="saveWorkflow"><span class="fa fa-save"></span> {{$t('actions.save')}}
                     </b-button>
-                    <b-button :disabled="false && loadingData" size="sm" variant="outline-secondary"
+                    <b-button :disabled="pendingSteps || loadingData" size="sm" variant="outline-secondary"
                         class="float-right mt-2 mr-1" @click="loadData">
                         <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
                     </b-button>
@@ -64,12 +64,12 @@
                                     class="list-group-item steps clearfix p-0" :title="task.name"
                                     :style="{'border-left': '4px solid ' + task.backgroundColor}">
                                     <step :step="task" :language="language" :attributes="tableData.attributes"
-                                        :index="inx" @toggle="task.enabled = !task.enabled; isDirty=true"
-                                        :protected="inx <=1 "
+                                        :index="inx" @toggle="handleToggleStep(task)" :protected="inx <=1 "
                                         :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
-                                        @delete="workflowObj.deleteTask(task)" @update="updateStep"
+                                        @delete="handleDeleteTask(task)" @update="updateStep"
                                         @previewUntilHere="previewUntilHere(task)" @duplicate="duplicate"
-                                        :suggestionEvent="() => getSuggestions(task.id)" />
+                                        :suggestionEvent="() => getSuggestions(task.id)" 
+                                        ref="steps"/>
                                 </div>
                             </draggable>
                         </div>
@@ -143,6 +143,14 @@
             //attributes: { type: Array, default: () => [] },
             //items: { type: Array },
             //workflowId: { type: Number },
+        },
+        computed: {
+            pendingSteps() {
+                const self = this;
+                return (this.workflowObj && this.workflowObj.tasks &&
+                    this.workflowObj.tasks.find(t => t.editing) !== undefined)
+                    || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
+            }
         },
         data() {
             return {
@@ -285,6 +293,10 @@
             },
             async loadData() {
                 const self = this;
+                if (self.pendingSteps) {
+                    self.warning("Existe(m) etapa(s) com pendências. Faça as correções antes de executar o experimento.", 5000)
+                    return;
+                }
                 self.loadingData = true;
                 const cloned = JSON.parse(JSON.stringify(this.workflowObj));
                 cloned.platform_id = cloned.platform.id; //FIXME: review
@@ -373,7 +385,11 @@
                 }
 
             },
-
+            handleToggleStep(task) {
+                task.enabled = !task.enabled;
+                this.isDirty = true;
+                this.loadData();
+            },
             handleStepDrag(e) {
                 // Disable some steps to be dragged
                 return (e?.relatedContext?.element?.display_order > 1);
@@ -484,11 +500,11 @@
                         this.updateAttributeSuggestion();
                     }
                     Object.keys(this.attributeSuggestion).forEach(key => {
-                        self.attributeSuggestion[key] && 
+                        self.attributeSuggestion[key] &&
                             self.attributeSuggestion[key].output.forEach(v => allSuggestions.add(v));
                     });
                     Object.keys(this.schemas).forEach(key => {
-                        self.schemas[key] && 
+                        self.schemas[key] &&
                             self.schemas[key].forEach(v => allSuggestions.add(v.name));
                     });
                     /*if (this.attributeSuggestion[taskId]) {
@@ -521,6 +537,7 @@
                     }
                 });
                 this.isDirty = true;
+                this.loadData();
             },
             updateStep(step) {
                 const task = this.workflowObj.tasks.find(t => t.id === step.id);
@@ -610,10 +627,15 @@
                 if (options.action === 'export') {
                     this.$refs.modalExport.show();
                 } else if (options.action === 'menu') {
-                    this.workflowObj.addTask(this.operationLookup.get(options.params[0].id),
+                    const newTask = this.workflowObj.addTask(
+                        this.operationLookup.get(options.params[0].id),
                         options.selected, options.fields);
                     this.isDirty = true;
-                    this.loadData();
+                    Vue.nextTick(() => {
+                        newTask.editing = true;
+                    });
+
+                    //this.loadData();
                 } else {
                     console.log(`Unknown action: ${options.action}`);
                 }
@@ -666,6 +688,12 @@
                 this.isDirty = true;
                 this.previewUntilHere(elem);
                 this.loadData();
+            },
+            handleDeleteTask(task) {
+                this.workflowObj.deleteTask(task);
+                if (task.previewable) {
+                    this.loadData();
+                }
             },
             handleExport({ newName, exportDisabled, platform }) {
 
@@ -839,6 +867,6 @@
 
     .step-scroll-area {
         width: 300px;
-        height: 64vh;
+        height: 60vh;
     }
 </style>

@@ -12,6 +12,9 @@
             </div>
             -->
         </div>
+        <div v-if="hasProblems" class="pulse-item">
+            <Pulse title="Existem problemas na configuração. Edite para corrigir." />
+        </div>
         <div class="float-left step" style="width: calc(100% - 25px)" ref="step">
             <div class="step-description">
                 <input type="checkbox" v-model="step.selected" v-if="!protected" />&nbsp;
@@ -22,9 +25,10 @@
                 <span v-else v-html="step.getLabel()"></span>
             </div>
             <div>
-                <span v-if="step.error" class="fa fa-exclamation-circle text-danger" v-b-tooltip.html :title="step.error"></span>
-    
-                <b-button-group v-if="!editing" class="zoom-buttom float-right">
+                <span v-if="step.error" class="fa fa-exclamation-circle text-danger" v-b-tooltip.html
+                    :title="step.error"></span>
+
+                <b-button-group v-if="!step.editing" class="zoom-buttom float-right">
                     <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
                         @click="edit('execution')" :title="$t('actions.edit')">
                         <span class="fa fa-edit"></span>
@@ -62,10 +66,10 @@
                 </b-button-group>
                 <div v-else class="border-top" style="width: 100%; padding: 2px; zoom:90%">
                     <div class="mb-3">
-                        <template v-for="form in step.operation.forms" v-if="form.category == displayFormCategory">
+                        <template v-for="form in step.operation.forms" v-if="form.category === displayFormCategory">
                             <div v-for="field in form.fields" v-if="field.editable" :key="`${step.id}:${field.name}`"
                                 class="mb-2 step-properties">
-                                <component v-if="field.enabled" :is="getWidget(field)" :field="field"
+                                <component v-if="field.enabled !== false" :is="getWidget(field)" :field="field"
                                     :value="getValue(field.name)" :language="language" :type="field.suggested_widget"
                                     :read-only="!field.editable" context="context" @update="updateField"
                                     :suggestionEvent="suggestionEvent">
@@ -87,10 +91,10 @@
     </div>
 </template>
 <script>
-    //import Pulse from '../Pulse';
+    import Pulse from '../../components/Pulse';
     import Vue from 'vue';
     export default {
-        //components: {Pulse, },
+        components: { Pulse, },
         props: {
             attributes: { type: Array, required: true },
             inputAttributes: { type: String, default: 'single' },
@@ -105,14 +109,20 @@
         },
         data() {
             return {
-                editing: false,
                 displayFormCategory: 'execution', //what kind of form to display and edit
                 functionName: '',
                 keepAttribute: true,
-                editableStep: null
+                editableStep: null,
             }
         },
         computed: {
+            hasProblems() {
+                const self = this;
+                return this.step.operation.forms.find(f => f.category === 'execution')
+                    .fields.find(field => {
+                        return (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value))
+                    }) !== undefined;
+            },
             // attributes that may be selected based on their type
             validAttributes() {
                 switch (this.functionName) {
@@ -124,7 +134,7 @@
             },
             suggestedAttributes() {
                 return this.attributes.map(a => a.key);
-            }
+            },
         },
         mounted() {
             this.functionName = this.step.functionName;
@@ -194,14 +204,14 @@
                 }
             },
             cancelEdit() {
-                this.editing = false;
+                this.step.editing = false;
                 this.editableStep = JSON.parse(JSON.stringify(this.step));
             },
             edit(category) {
                 const self = this;
                 this.enableDisableFields();
                 this.displayFormCategory = category;
-                this.editing = true;
+                this.step.editing = true;
                 Vue.nextTick(() => {
                     try {
                         //self.$refs.step.scrollIntoView();
@@ -217,8 +227,8 @@
                 if (this.step?.forms?.callbacks?.out) {
                     this.step?.forms?.callbacks?.out(this.step, this.step.editableStep.forms['$meta']?.value);
                 }*/
+                this.step.editing = false;
                 this.$emit('update', this.editableStep);
-                this.editing = false;
             },
             getStepClass(step) {
                 if (step === undefined) { return ''; }
@@ -314,5 +324,11 @@
 
     .hard-disabled {
         background-color: rgb(248, 249, 250);
+    }
+
+    .pulse-item {
+        position: absolute;
+        left: 5px;
+        bottom: 10px;
     }
 </style>
