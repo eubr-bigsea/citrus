@@ -83,6 +83,7 @@ const widgets = new Map([
     ['rich-text-component', MarkdownEditorComponent],
     ['sample-lookup-component', SampleLookupComponent],
     ['select2-component', Select2Component],
+    ['single-tag-component', Select2Component],
     ['tag-component', Select2Component],
     ['tag2-component', TagComponent],
     ['text-component', TextComponent],

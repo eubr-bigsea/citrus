@@ -291,7 +291,8 @@
     }
 
     .zoom-buttom>>>.btn {
-        font-size: 8pt;
+        font-size: 9pt;
+        padding: 2px;
     }
 
     .zoom-buttom>>>.dropdown-menu {

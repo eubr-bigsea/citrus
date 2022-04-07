@@ -2,12 +2,12 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div>
-            <v-select v-if="type !== 'tag'" :options="suggestions" :multiple="true || (!params || params.multiple)"
+            <v-select v-if="type !== 'tag' && type !== 'single-tag' " :options="suggestions" :multiple="true || (!params || params.multiple)"
                 :value.sync="values" :on-change="updated" label="value" :taggable="false" :closeOnSelect="false">
                 <div slot="no-options"></div>
             </v-select>
-            <v-select v-else :multiple="true" v-model="values" @input="updated" :on-change="updated" label="value" :taggable="true"
-                :closeOnSelect="false">
+            <v-select v-else :multiple="type !== 'single-tag'" :options="suggestions" v-model="values" @input="updated"
+                :on-change="updated" label="value" :taggable="true" :closeOnSelect="type === 'single-tag'">
                 <div slot="no-options"></div>
             </v-select>
         </div>
@@ -25,7 +25,7 @@
         },
         computed: {
             suggestions() {
-                const obj = (typeof(this.field.values) === 'object')? this.field.values : JSON.parse(this.field.values);
+                const obj = (typeof (this.field.values) === 'object') ? this.field.values : JSON.parse(this.field.values);
                 if (obj) {
                     return obj.sort((a, b) => a.value < b.value ? -1 : (a.value === b.value ? 0 : 1));
                 } else {

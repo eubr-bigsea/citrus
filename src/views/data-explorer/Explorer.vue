@@ -56,7 +56,7 @@
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <div id="step-container">
-                        <div class="step-scroll-area scroll-area" style="overflow-y: auto;">
+                        <div class="step-scroll-area scroll-area" style="overflow-y: scroll;">
                             <draggable @start="drag=true" @end="endSortSteps" class="list-group" ghost-class="ghost"
                                 handle=".step-drag-handle" :list="workflowObj.tasks" :move="handleStepDrag">
                                 <div v-for="task, inx in workflowObj.tasks" :key="task.id"
@@ -821,6 +821,7 @@
 
     .steps {
         border-radius: 0 !important;
+        padding-bottom: 100px;
     }
 
     .steps .list-group-item {
@@ -849,12 +850,12 @@
     #step-container {
         position: relative;
     }
-
+    /*
     #step-scroll {
         position: relative;
         margin: auto;
         height: 60vh;
-    }
+    }*/
 
     .fill-height {
         height: 75vh
@@ -868,5 +869,6 @@
     .step-scroll-area {
         width: 300px;
         height: 60vh;
+        
     }
 </style>

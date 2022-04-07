@@ -383,10 +383,11 @@ class Task {
     }
     hasProblems(){
         const self = this;
-        const result = this.operation.forms.find(f => f.category === 'execution')
-        .fields.find(field => {
-            return (field.required && (!self.forms[field.name] || !self.forms[field.name].value))
-        }) !== undefined;
+        const result = this.enabled && this.previewable && 
+            (this.operation.forms.find(f => f.category === 'execution')
+            .fields.find(field => {
+                return (field.required && (!self.forms[field.name] || !self.forms[field.name].value))
+                }) !== undefined);
         return result;
     }
     operation = null;
