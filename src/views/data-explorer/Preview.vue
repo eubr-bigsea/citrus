@@ -468,6 +468,11 @@
         background-color: #fffdeb;
     }
 
+    .table-preview>>>td:hover {
+        background-color: #666;
+        color: #fff;
+    }
+
     .no-wrap {
         overflow: auto;
         white-space: nowrap;
