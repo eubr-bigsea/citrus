@@ -20,7 +20,9 @@
         mixins: [Widget],
         components: { LabelComponent },
         methods: {
-            updated: debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
+            updated: debounce(function (e) { 
+                this.triggerUpdateEvent(this.message, this.field, e.target.value);
+            }, 500)
         },
     }
 </script>

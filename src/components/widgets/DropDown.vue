@@ -14,6 +14,7 @@
                 </option>
             </select>
             <a v-if="help" :href="help" target="_blank">{{$tc('titles.reference')}} <span class="fa fa-external-link-alt"></span></a>
+            <small v-if="optionHelp">{{optionHelp[0]}}</small>
         </div>
         <b-form-tags v-else-if="field.multiplicity === 2 || field.multiplicity === 3" v-model="selected"
             @input="updatedTag" add-on-change no-outer-focus :name="field.name">
@@ -82,7 +83,10 @@
                     }
                 },
                 set(value) {
+                    const self = this;
                     this.internalSelected = value;
+                    this.optionHelp = this.pairOptionValueList.filter(opt => opt.help && opt.help[self.language] && opt.key === value)
+                         .map(opt => opt.help[self.language]);
                 }
             }
         },
@@ -94,6 +98,9 @@
             },
             updated(e) {
                 this.selected = e.target ? e.target.value : e;
+                const self = this;
+                this.optionHelp = this.pairOptionValueList.filter(opt => opt.help && opt.help[self.language] && opt.key === this.selected)
+                    .map(opt => opt.help[self.language]);
                 this.triggerUpdateEvent(this.message, this.field, this.internalSelected,
                     e.target.options[e.target.selectedIndex].text);
             }
@@ -106,7 +113,8 @@
         data() {
             return { tags: [],
                 internalSelected: null,
-                helpLink: null
+                helpLink: null,
+                optionHelp: null
            }
         }
 
