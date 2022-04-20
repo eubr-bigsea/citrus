@@ -43,7 +43,6 @@
             }
         },
         mounted() {
-            console.debug(this.name)
             this.newName = this.name;
         },
         methods: {

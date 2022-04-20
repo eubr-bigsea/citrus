@@ -56,7 +56,7 @@
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <div id="step-container">
-                        <div class="step-scroll-area scroll-area" style="overflow-y: scroll;">
+                        <div class="step-scroll-area scroll-area" style="overflow-y: scroll;" ref="stepsArea">
                             <draggable @start="drag=true" @end="endSortSteps" class="list-group" ghost-class="ghost"
                                 handle=".step-drag-handle" :list="workflowObj.tasks" :move="handleStepDrag">
                                 <div v-for="task, inx in workflowObj.tasks" :key="task.id"
@@ -68,8 +68,7 @@
                                         :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
                                         @delete="handleDeleteTask(task)" @update="updateStep"
                                         @previewUntilHere="previewUntilHere(task)" @duplicate="duplicate"
-                                        :suggestionEvent="() => getSuggestions(task.id)" 
-                                        ref="steps"/>
+                                        :suggestionEvent="() => getSuggestions(task.id)" ref="steps" />
                                 </div>
                             </draggable>
                         </div>
@@ -87,7 +86,7 @@
             </div>
             <!-- Preview area -->
             <div class="col border-left fill-height mt-3">
-                <PreviewMenu :selected="selected" @select="performAction" :menus="menus" />
+                <PreviewMenu :selected="selected" @select="performAction" :menus="menus" @analyse="handleAnalyse" />
                 <preview :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
                     :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total" @select="select"
                     @drop="performAction" @context-menu="handleContextMenu" ref="preview" @scroll="handleScroll" />
@@ -95,6 +94,79 @@
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
+            <b-modal ref="statsModal" button-size="sm" size="xl" :okOnly="true" :title="stats && stats.attribute">
+                <table v-if="stats && stats.attribute === null"
+                    class="table table-bordered table-stats table-striped table-sm">
+                    <thead>
+                        <tr v-if="stats.message && stats.message.index" class="text-center">
+                            <th></th>
+                            <th v-for="k in stats.message.columns">
+                                {{k}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(attr, inx) in stats.message.index">
+                            <th class="text-center">{{attr}}</th>
+                            <td v-for="data in stats.message.data[inx]">
+                                {{data === null ? '-': data}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-else>
+                    <div class="row" v-if="stats && stats.message">
+                        <!--
+                        <div class="col-2 text-center">
+                            <img :src="'data:image/png;base64, ' + stats.message.box_plot" alt="box" title="Box plot"/>
+                        </div>
+                        -->
+                        <div class="col-10" v-if="stats && stats.message.histogram">
+                            <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
+                                :layout="{height: 120, hoverlabel: {font: {size: 8}}, autosize: true, margin: {l: 0,r: 50, b: 30, t: 10, pad: 0} }"
+                                :data="[{marker: {opacity: 0.4, color: 'rgb(49,130,189)'}, 'orientation': 'h', 'min': -232, 'x': [[stats.message.stats.min, stats.message.stats.max,] ], 'type': 'box', 'lowerfence': [stats.message.fence_low], 'mean': [stats.message.stats.mean], 'median': [stats.message.stats.median], 'notchspan': [2], 'q1': [stats.message.stats['25%']], 'q3': [stats.message.stats['75%']], 'sd': [stats.message.stats.std], 'upperfence': [stats.message.fence_high]}]"
+                                :height="200" :options="{displayModeBar: false}" />
+                            <Plotly v-if="stats" ref="plotly" :auto-resize="true"
+                                :layout="{height: 140, autosize: true, margin: {l: 50,r: 50, b: 30, t: 10, pad: 4} }"
+                                :data="getStatData()" :height="200" :options="{displayModeBar: false}" />
+                        </div>
+                        <div class="col-4">
+                            <strong>Estatísticas (exclui nulos)</strong>
+                            <table class="table table-sm table-stats">
+                                <tr v-for="value, stat in stats.message.stats">
+                                    <th>{{stat}}</th>
+                                    <td>{{value}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div :class="{'col-4': stats.message.outliers, 'col-8': !stats.message.outliers}">
+                            <strong>Top valores *</strong>
+                            <table class="table table-sm table-stats">
+                                <tr v-for="t in stats.message.top20.slice(0, 10)">
+                                    <th class="col-8">
+                                        {{t[0]}}
+                                        <div class="top-bar"
+                                            :style="{width: (100*t[1]/stats.message.stats.rows) + '%'}">
+                                        </div>
+                                    </th>
+                                    <td class="col-4 text-right">{{t[1]}} ({{(100*t[1]/stats.message.stats.rows).toFixed(2)}})%</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-4" v-if="stats.message.outliers">
+                            <strong>Valores atípicos (outliers)*</strong>
+                            <table class="table table-sm table-stats">
+                                <tr v-for="t in stats.message.outliers">
+                                    <td>{{t}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-12 text-right">
+                            <small><em>*limitados a 10</em></small>
+                        </div>
+                    </div>
+                </div>
+            </b-modal>
         </div>
     </div>
 </template>
@@ -112,6 +184,7 @@
     import contextMenu from 'vue-context-menu';
     import { Workflow, Platform, Operation, OperationList, Task, Constants } from './entities.js'
     import ModalExport from './ModalExport.vue';
+    import Plotly from '../../components/visualization/Plotly.vue';
 
     jsep.addBinaryOp(">=", 1);
     jsep.removeBinaryOp('^');
@@ -128,6 +201,7 @@
         name: "DataExplorer",
         mixins: [Notifier],
         components: {
+            Plotly,
             Preview, draggable,
             contextMenu, Step, PreviewMenu, ModalExport,
             TahitiSuggester: () => {
@@ -180,7 +254,9 @@
                 loadedDataSize: 0,
                 page: 1,
                 pageSize: PAGE_SIZE,
-                rows: []
+                rows: [],
+                dummyDataOffset: 0,
+                stats: null,
             }
         },
         beforeRouteLeave(to, from, next) {
@@ -205,21 +281,43 @@
             this.disconnectWebSocket();
         },
         methods: {
+            addDummyData() {
+                /* not working as expected */
+                return
+                if (this.rows.length > 0) {
+                    this.dummyDataOffset = this.rows.length;
+
+                    const dummy = Object.getOwnPropertyNames(this.rows[0])
+                        .reduce((o, key) => ({ ...o, [key]: '?' }), {})
+                    this.rows = this.rows.concat(Array(50).fill(dummy));
+                }
+            },
+            removeDummyData() {
+                if (this.dummyDataOffset > 0) {
+                    this.rows = this.rows.slice(0, this.dummyDataOffset);
+                    this.dummyDataOffset = 0;
+                }
+            },
             /**/
             handleScroll: debounce(function (el) {
                 if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) >= el.srcElement.scrollHeight) {
                     if (this.loadedDataSize < this.tableData?.total) {
                         if (this.socket) {
-                            const workflow_id = this.workflowObj.id;
-                            const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
-                            // Get the last visible and enabled task
-                            const task_id = [... this.workflowObj.tasks].reverse().find(
-                                task => task.enabled && task.previewable)['id'];
-                            this.socket.emit("more data", {
-                                workflow_id, job_id, room: `${job_id}`, task_id,
-                                size: PAGE_SIZE, page: this.page + 1, type: "more data",
+                            Vue.nextTick(() => {
+                                // Fill data with dummy values while waits for real ones.
+                                this.addDummyData();
+
+                                const workflow_id = this.workflowObj.id;
+                                const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
+                                // Get the last visible and enabled task
+                                const task_id = [... this.workflowObj.tasks].reverse().find(
+                                    task => task.enabled && task.previewable)['id'];
+                                this.socket.emit("more data", {
+                                    workflow_id, job_id, room: `${job_id}`, task_id,
+                                    size: PAGE_SIZE, page: this.page + 1, type: "more data",
+                                });
+                                this.loadingData = true;
                             });
-                            this.loadingData = true;
                         }
                     }
                 }
@@ -325,6 +423,9 @@
                 try {
                     const response = await axios.post(`${standUrl}/jobs`, body,
                         { headers: { 'Locale': self.$root.$i18n.locale, } })
+                    self.$refs.preview && self.$refs.preview.scroll({
+                        top: 0,
+                    });
                     self.job = response.data.data;
                     self.page = 1;
                     self.connectWebSocket();
@@ -526,6 +627,11 @@
                     (task) => task.display_order++);
                 this.isDirty = true;
             },
+            scrollToStep(stepOrder) {
+                const el = this.$refs.stepsArea;
+                el.scrollTo({ top: el.scrollHeight + 200, behavior: 'smooth' });
+                const self = this; //this.$refs.steps
+            },
             previewUntilHere(step) {
                 this.workflowObj.tasks.forEach((task) => {
                     const previewable = (task.display_order <= step.display_order);
@@ -633,8 +739,10 @@
                     this.isDirty = true;
                     Vue.nextTick(() => {
                         newTask.editing = true;
+                        Vue.nextTick(() => {
+                            this.scrollToStep(this.workflowObj.tasks.length - 1);
+                        });
                     });
-
                     //this.loadData();
                 } else {
                     console.log(`Unknown action: ${options.action}`);
@@ -695,6 +803,17 @@
                     this.loadData();
                 }
             },
+            handleAnalyse(selected) {
+                const workflow_id = this.workflowObj.id;
+                const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
+                const task_id = [... this.workflowObj.tasks].reverse().find(
+                    task => task.enabled && task.previewable)['id'];
+
+                this.socket.emit("analyse attribute", {
+                    workflow_id, job_id, room: `${job_id}`, task_id,
+                    type: "analyse attribute", attribute: selected?.field?.key,
+                });
+            },
             handleExport({ newName, exportDisabled, platform }) {
 
                 const cloned = JSON.parse(JSON.stringify(this.workflowObj));
@@ -724,6 +843,21 @@
                 });
                 this.info('Exportando o fluxo de trabalho. Quando a exportação terminar, você será notificado.', 10000);
             },
+            getStatData() {
+                const x = this.stats.message.histogram[1];
+                const customdata = x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`);
+                return [{
+                    type: 'bar',
+                    hovertemplate: `%{customdata}: %{y} ${this.$tc("common.records", 2)}<extra></extra>`,
+                    customdata,
+                    x,
+                    y: this.stats.message.histogram[0],
+                    marker: {
+                        color: 'rgb(49,130,189)',
+                        opacity: 0.4,
+                    }
+                }];
+            },
             /* WebSocket Handling */
             connectWebSocket() {
                 const self = this;
@@ -736,6 +870,10 @@
                     socket.on('exported result', (msg) => {
                         console.debug(msg)
                     });
+                    socket.on('analysis', (msg, callback) => {
+                        self.stats = msg;
+                        self.$refs.statsModal.show();
+                    });
                     socket.on('update task', (msg, callback) => {
 
                         // Meta add a suffix to task id when converting tasks to other platform.
@@ -746,39 +884,42 @@
 
                         if (msg.type === 'OBJECT') {
                             if (msg.meaning === 'sample') {
-                                //console.debug(new Date());
-                                // Update must be done before assigning to observable self.tableData!
-                                const messageJson = msg.message;
-                                const truncated = messageJson.truncated || [];
-                                messageJson.attributes.forEach((attr, index) => {
-                                    attr['selected'] = true;
-                                    attr['truncated'] = truncated.indexOf(attr.key) > -1;
-                                    attr['position'] = index;
-                                });
+                                Vue.nextTick(() => {
+                                    self.removeDummyData();
+                                    //console.debug(new Date());
+                                    // Update must be done before assigning to observable self.tableData!
+                                    const messageJson = msg.message;
+                                    const truncated = messageJson.truncated || [];
+                                    messageJson.attributes.forEach((attr, index) => {
+                                        attr['selected'] = true;
+                                        attr['truncated'] = truncated.indexOf(attr.key) > -1;
+                                        attr['position'] = index;
+                                    });
 
-                                const attributeIds = messageJson.attributes.map(attr => attr.key);
-                                const mapped = messageJson.rows.map(
-                                    row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
+                                    const attributeIds = messageJson.attributes.map(attr => attr.key);
+                                    const mapped = messageJson.rows.map(
+                                        row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
 
 
-                                if (messageJson.page === 1) {
-                                    self.tableData = messageJson;
-                                    // Update selected attribute (may have its time changed during processing)
-                                    const selected = self.tableData.attributes.find(t => t?.key === self.selected.column)
-                                    if (selected) {
-                                        self.select({ field: selected, column: selected.key, label: selected.key })
+                                    if (messageJson.page === 1) {
+                                        self.tableData = messageJson;
+                                        // Update selected attribute (may have its time changed during processing)
+                                        const selected = self.tableData.attributes.find(t => t?.key === self.selected.column)
+                                        if (selected) {
+                                            self.select({ field: selected, column: selected.key, label: selected.key })
+                                        }
+                                        self.rows = mapped;
+                                        self.page = 1;
+                                        self.loadedDataSize = messageJson.size;
+                                    } else if (messageJson.page === self.page + 1 && mapped.length > 0) {
+                                        self.rows.push.apply(self.rows, mapped);
+                                        self.page = messageJson.page;
+                                        self.loadedDataSize += Math.min(self.tableData.size, mapped.length);
+                                        self.loadingData = false;
+                                    } else {
+                                        self.loadingData = false;
                                     }
-                                    self.rows = mapped;
-                                    self.page = 1;
-                                    self.loadedDataSize = messageJson.size;
-                                } else if (messageJson.page === self.page + 1 && mapped.length > 0) {
-                                    self.rows.push.apply(self.rows, mapped);
-                                    self.page = messageJson.page;
-                                    self.loadedDataSize += Math.min(self.tableData.size, mapped.length);
-                                    self.loadingData = false;
-                                } else {
-                                    self.loadingData = false;
-                                }
+                                })
                                 //console.debug(new Date());
                             } else if (msg.meaning === 'schema') {
                                 self.schemas[msg.id] = msg.message;
@@ -850,6 +991,7 @@
     #step-container {
         position: relative;
     }
+
     /*
     #step-scroll {
         position: relative;
@@ -869,6 +1011,15 @@
     .step-scroll-area {
         width: 300px;
         height: 60vh;
-        
+        padding-bottom: 100px;
+    }
+
+    .table-stats {
+        font-size: .8em;
+    }
+
+    .top-bar {
+        height: 4px;
+        background: rgb(49, 130, 189)
     }
 </style>

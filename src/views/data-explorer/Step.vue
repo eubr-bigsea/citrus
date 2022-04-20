@@ -28,6 +28,7 @@
                 <span v-if="step.error" class="fa fa-exclamation-circle text-danger" v-b-tooltip.html
                     :title="step.error"></span>
 
+                <small v-if="step.forms.comment.value" class="text-secondary">{{step.forms.comment.value}}</small>
                 <b-button-group v-if="!step.editing" class="zoom-buttom float-right">
                     <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
                         @click="edit('execution')" :title="$t('actions.edit')">
@@ -77,6 +78,7 @@
                             </div>
                         </template>
                     </div>
+                    
                     <b-button-group class="float-right mb-2">
                         <b-button variant="light text-primary" size="sm" @click="save" :title="$t('actions.save')">
                             <span class="fa fa-save"></span>

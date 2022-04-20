@@ -297,7 +297,9 @@
                 //this.$refs.dataTypeCtxMenu.ctxVisible = false;
                 this.$emit('scroll', ev);
             },
-
+            scroll(opts){
+                this.$refs.table && this.$refs.table.$el.scroll(opts);
+            },
             customOpen(event, data, index) {
                 let th;
                 if (index !== undefined) {

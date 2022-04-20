@@ -4,6 +4,14 @@
             <b-nav v-if="menus">
                 <b-nav-item-dropdown toggle-class="nav-link-custom">
                     <template slot="button-content">
+                        <span class="fa fa-lightbulb text-warning"></span> {{$tc('actions.analyse')}}
+                    </template>
+                    <b-dropdown-item @click="$emit('analyse', null)"> Estatísticas do resultado </b-dropdown-item>
+                    <b-dropdown-item @click="$emit('analyse', selected)"v-if="selected.label !== undefined"> Estatísticas do atributo <strong>{{selected.label}}</strong>
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+                <b-nav-item-dropdown toggle-class="nav-link-custom">
+                    <template slot="button-content">
                         <span class="fa fa-cog"></span> {{$tc('actions.export')}}
                     </template>
                     <b-dropdown-item @click="trigger('export', null)">

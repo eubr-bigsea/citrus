@@ -19,7 +19,8 @@
                                 <option value="all">Todas</option>
                                 <option v-for="f in treeData" :key="f.key" :value="f.key">{{f.name}}</option>
                             </select>
-                            <select class="form-control shadow-none" size="10" @change="displayFunctionHelp($event)" @dblclick="copyPasteValue">
+                            <select class="form-control shadow-none" size="10" @change="displayFunctionHelp($event)"
+                                @dblclick="copyPasteValue">
                                 <option v-for="f in displayFunctions" :key="f" :value="f">{{f}}</option>
                             </select>
                             <div class="function-help" v-html="currentFunctionHelp"> </div>
@@ -61,7 +62,7 @@
                                                 @keyup="onKeyUp($event, row, 'expression')" ref="expr"
                                                 @blur="elementBlur(row, $event)" v-focus
                                                 @paste="changed($event, row, 'expression')" :value="row.expression"
-                                                required @dblclick="debugExpression(row)"/>
+                                                required @dblclick="debugExpression(row)" />
                                             <ul v-show="isOpen" class="autocomplete-results">
                                                 <li v-for="(result, i) in suggestionResults" :key="i"
                                                     @click="setResult(result)" class="autocomplete-result"
@@ -115,11 +116,12 @@
                 {{$t('property.expression.explanation')}}
                 <span v-html="$t('property.expression.tip')"></span> &nbsp;
                 <span v-html="$t('property.expression.validExpressions')"></span>
-                
+
             </small>
             <div slot="modal-footer" class="w-100 text-right">
                 <b-btn @click.prevent="okClicked" variant="primary" class="btn-sm mr-1">{{$t('common.ok')}}</b-btn>
-                <b-btn @click.prevent="cancelClicked" variant="secondary" class="btn-sm ">{{$t('actions.cancel')}}</b-btn>
+                <b-btn @click.prevent="cancelClicked" variant="secondary" class="btn-sm ">{{$t('actions.cancel')}}
+                </b-btn>
             </div>
         </b-modal>
     </div>
@@ -150,7 +152,13 @@
                 }
             },
             values() {
-                return this.field.values ? JSON.parse(this.field.values) : {}
+                if (this.field.values) {
+                    if (typeof this.field.values === 'string' || this.field.values instanceof String) {
+                        return JSON.parse(this.field.values);
+                    } else {
+                        return this.field.values;
+                    }
+                }
             },
         },
         components: { LabelComponent, TreeItemComponent },
@@ -235,7 +243,7 @@
                     this.triggerUpdateEvent(this.message, this.field,
                         this.expressionList);
 
-                        this.triggerUpdateEvent(this.message, this.field, this.expressionList);
+                    this.triggerUpdateEvent(this.message, this.field, this.expressionList);
 
                     this.$refs.modal.hide();
                 } else {
@@ -310,10 +318,11 @@
                 }
             },
             copyPasteValue(v) {
-                if (this.$refs.expr && this.$refs.expr.length > 0 && ! (this.lastEdited)){
+                if (this.$refs.expr && this.$refs.expr.length > 0 && !(this.lastEdited)) {
                     this.lastEdited = {
-                        el: this.$refs.expr[this.$refs.expr.length - 1], 
-                        row: this.expressionList[this.$refs.expr.length - 1]};
+                        el: this.$refs.expr[this.$refs.expr.length - 1],
+                        row: this.expressionList[this.$refs.expr.length - 1]
+                    };
                 }
                 if (this.lastEdited && this.lastEdited.el) {
                     // console.debug(this.lastEdited.row)
@@ -370,7 +379,7 @@
             this.treeData = resources.tree.functions.sort((a, b) => a.name.localeCompare(b.name));
             this.operators = resources.operators;
             this.updateDisplayedFunctions('all');
-            this.lastEdited =  this.expressionList && this.expressionList.length > 0 ? this.expressionList.length - 1: {};
+            this.lastEdited = this.expressionList && this.expressionList.length > 0 ? this.expressionList.length - 1 : {};
         }
     }
 </script>
@@ -380,10 +389,12 @@
         position: relative;
     }
 
-    .expression-editor-area textarea{
+    .expression-editor-area textarea {
         font-size: 9pt;
     }
-    table.operators-table td, table.operators-table th {
+
+    table.operators-table td,
+    table.operators-table th {
         font-size: 9pt;
         padding: 1px 4px;
     }

@@ -17,7 +17,11 @@
         components: { LabelComponent },
         computed: {
             pairOptionValueList() {
-                return JSON.parse(this.field.values);
+                if (typeof this.field.values === 'string' || this.field.values instanceof String) {
+                    return JSON.parse(this.field.values);
+                } else {
+                    return this.field.values;
+                }
             }
         },
         methods: {
