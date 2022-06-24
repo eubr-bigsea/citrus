@@ -16,7 +16,7 @@
 <script>
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
-    import { debounce } from '../../../util.js';
+    import { debounce } from '../../util.js';
     export default {
         components: { LabelComponent },
         mixins: [Widget],

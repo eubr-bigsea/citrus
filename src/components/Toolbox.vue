@@ -97,7 +97,7 @@
 <script>
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import ToolboxMixin from '../mixins/Toolbox';
-    import { debounce } from '../../util.js';
+    import { debounce } from '../util.js';
 
     const groupBy = function (xs, keySelector) {
         return xs.reduce(function (rv, x) {

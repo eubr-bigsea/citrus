@@ -51,10 +51,15 @@ import TagComponent from './components/widgets/Tag.vue'
 import TextComponent from './components/widgets/Text.vue'
 import TextAreaComponent from './components/widgets/TextArea.vue'
 import UrlComponent from './components/widgets/Url.vue'
+import Plotly from './components/visualization/Plotly.vue';
 
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
+import VueGridLayout from 'vue-grid-layout';
+
 Vue.component('v-select', vSelect)
+Vue.component('grid-item', VueGridLayout.GridItem);
+Vue.component('grid-layout', VueGridLayout.GridLayout);
 
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
@@ -93,6 +98,7 @@ const widgets = new Map([
 
 widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
+Vue.component('Plotly', Plotly.default || Plotly);
 import './assets/main.scss';
 
 // Snotify
