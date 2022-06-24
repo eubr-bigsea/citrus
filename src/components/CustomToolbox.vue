@@ -30,7 +30,7 @@
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import ToolboxMixin from '../mixins/Toolbox';
     import Notifier from '../mixins/Notifier';
-    import { debounce } from '../../util.js';
+    import { debounce } from '../util.js';
     import axios from 'axios';
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;

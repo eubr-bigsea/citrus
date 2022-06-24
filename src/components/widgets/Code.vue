@@ -39,7 +39,7 @@
 </template>
 <script>
 
-    import {Prism} from "prismjs";
+    import Prism from "prismjs";
     import "prismjs/themes/prism.css";
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';

@@ -59,7 +59,7 @@
         },
         props: {
             type: {type: String, default: () => null}, 
-            items: {type: Object, default: () => null}, 
+            items: {type: Array, default: () => null}, 
             total: {type: Number, default: () => 0}, 
             icon: {type: String, default: () => null}
         }

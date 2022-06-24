@@ -406,7 +406,7 @@
     import VueSelect from 'vue-select';
     import Notifier from '../mixins/Notifier';
     import ModalPreviewDataSource from './modal/ModalPreviewDataSource';
-    import { debounce } from '../../util.js';
+    import { debounce } from '../util.js';
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const standUrl = process.env.VUE_APP_STAND_URL;

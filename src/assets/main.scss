@@ -413,11 +413,15 @@ h2.title {
 .modal-dialog {
   margin: 8vh auto 0px auto;
 }
-
+footer {
+    padding-top: 5px;
+    background-color: #aaa;
+}
 h1 {
   font-size: 30px;
   font-weight: 300;
   margin-bottom: 0;
+  color: #558420;
 }
 
 .header-pretitle {

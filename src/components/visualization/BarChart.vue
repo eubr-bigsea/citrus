@@ -70,8 +70,6 @@
                     colors.push(dataSerie.color);
                 });
                 series.forEach((serie, inx) => { serie.marker = { color: colors[inx] } });
-                console.debug(series)
-                console.debug(colors)
                 return series;
             }
         },

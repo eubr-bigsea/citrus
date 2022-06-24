@@ -158,9 +158,10 @@
         },
         computed: {
             displayValue() {
+                const self = this;
                 if (this.value && this.value.map) {
                     return this.value.map((v) => {
-                        if (this.values.alias !== false) {
+                        if (self.values && self.values.alias !== false) {
                             return `${v.alias} = ${v.expression}`
                         } else {
                             return v.expression;
@@ -178,7 +179,7 @@
                         return this.field.values;
                     }
                 }
-                return null;
+                return {};
             },
         },
         mounted() {

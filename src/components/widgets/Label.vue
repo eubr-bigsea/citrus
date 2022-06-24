@@ -16,7 +16,7 @@
         mixins: [Widget],
         props: {
             field: { required: true, type: Object },
-            value: {type: Object, default: () => null},
+            value: {type: [Array, String, Number, Object], default: () => null},
             showHelp: {type: Boolean, default: () => true},
         },
         computed: {

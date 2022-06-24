@@ -16,8 +16,6 @@ import VueAxios from 'vue-axios';
 import VueTheMask from 'vue-the-mask'
 
 import { ClientTable, ServerTable } from 'vue-tables-2';
-import Gravatar from 'vue-gravatar';
-
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons';
 
@@ -51,10 +49,15 @@ import TagComponent from './components/widgets/Tag.vue'
 import TextComponent from './components/widgets/Text.vue'
 import TextAreaComponent from './components/widgets/TextArea.vue'
 import UrlComponent from './components/widgets/Url.vue'
+import Plotly from './components/visualization/Plotly.vue';
 
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
+import VueGridLayout from 'vue-grid-layout';
+
 Vue.component('v-select', vSelect)
+Vue.component('grid-item', VueGridLayout.GridItem);
+Vue.component('grid-layout', VueGridLayout.GridLayout);
 
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
@@ -93,6 +96,7 @@ const widgets = new Map([
 
 widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
+Vue.component('Plotly', Plotly.default || Plotly);
 import './assets/main.scss';
 
 // Snotify
@@ -124,7 +128,6 @@ Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('font-awesome-layers', FontAwesomeLayers);
-Vue.component('v-gravatar', Gravatar);
 
 Vue.config.productionTip = false;
 

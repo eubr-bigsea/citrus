@@ -17,7 +17,7 @@
     // From https://github.com/rafaelpimpa/vue-checkbox-switch
     export default {
         props: {
-            disabled: {type: Boolean, default: () => true},
+            disabled: {type: Boolean, default: () => false},
             classes: {type: String, default: () => null},
             checked: {type: Boolean, default: () => false},
             name: {type: String, default: () => null},

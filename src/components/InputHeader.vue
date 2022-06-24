@@ -22,7 +22,7 @@
 export default {
     name: 'InputHeader',
     props: {
-        value: {type: Object, default: () => null}
+        value: {type: String, default: null}
     },
     computed: {
         titleSize() {
