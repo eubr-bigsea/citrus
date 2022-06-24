@@ -1,10 +1,10 @@
 <template>
-    <div class="chart-builder-options" v-if="workflow.visualization">
+    <div v-if="workflow.visualization" class="chart-builder-options">
         <b-form class="chart-properties">
             <b-card sub-title="Opções da visualização">
                 <b-form-group id="title" label="Tipo do gráfico:" label-for="title">
-                    <v-select :options="chartTypes" label="label" :reduce="(opt) => opt.name"
-                        v-model="workflow.visualization.forms.type.value">
+                    <v-select v-model="workflow.visualization.forms.type.value" :options="chartTypes" label="label"
+                        :reduce="(opt) => opt.name">
                         <template #option="{ label, name}">
                             <div class="bg-chart" :class="`bg-${name}`">{{label}}</div>
                         </template>
@@ -19,8 +19,8 @@
             </b-card>
             <b-card sub-title="Eixo X" class="mt-1">
                 <b-form-group label="Atributo:">
-                    <v-select :options="attributes" label="name" :reduce="(opt) => opt.name" :multiple="true"
-                        v-model="workflow.group.forms.attributes.value">
+                    <v-select v-model="workflow.group.forms.attributes.value" :options="attributes" label="name" :reduce="(opt) => opt.name"
+                        :multiple="true">
                         <template #option="{name, type}">
                             <font-awesome-icon class="mr-2" prefix="fa" :icon="getIcon({type})" />{{name}}
                         </template>
@@ -35,8 +35,8 @@
             </b-card>
             <b-card sub-title="Eixo Y" class="mt-1" style="z-index:10">
                 <b-form-group label="Atributo(s):">
-                    <v-select :options="attributes" label="name" :reduce="reduceYAxis" :multiple="multipleY"
-                        ref="vueSelect" v-model="workflow.group.forms.function.value">
+                    <v-select ref="vueSelect" v-model="workflow.group.forms.function.value" :options="attributes" label="name"
+                        :reduce="reduceYAxis" :multiple="multipleY">
                         <template #option="{name, type}">
                             <font-awesome-icon class="mr-2" prefix="fa" :icon="getIcon({type})" />{{name}}
                         </template>
@@ -92,8 +92,8 @@
                     </b-form-group>
 
                     <b-form-group label="Tipo de Linha:" label-for="line-width">
-                        <select class="form-control form-control-sm"
-                            v-model="workflow.visualization.forms.line_type.value">
+                        <select v-model="workflow.visualization.forms.line_type.value"
+                            class="form-control form-control-sm">
                             <option value="solid">Sólida</option>
                             <option value="dot">Ponto</option>
                             <option value="dashdot">Tracejada</option>
@@ -101,7 +101,7 @@
                     </b-form-group>
 
                     <b-form-group label="Modo para as séries:">
-                        <select class="form-control form-control-sm" v-model="workflow.visualization.forms.mode.value">
+                        <select v-model="workflow.visualization.forms.mode.value" class="form-control form-control-sm">
                             <option value="lines">Somente linhas</option>
                             <option value="marks">Somente pontos</option>
                             <option value="lines+marks">Linhas e pontos</option>
@@ -207,17 +207,17 @@
                 palette: { label: 'Paleta de cores' }
             }
         },
+        computed: {
+            palettes: () => palettes.map(v => v[0]).reduce((prev, cur, i) => [...prev, { value: i, text: cur }], []),
+            multipleY() {
+                return this.chartType !== 'pie';
+            }
+        },
         watch: {
             workflow() {
                 if (this.workflow.visualization.forms.hole.value === null) {
                     this.$nextTick(() => this.workflow.visualization.forms.hole.value = 100);
                 }
-            }
-        },
-        computed: {
-            palettes: () => palettes.map(v => v[0]).reduce((prev, cur, i) => [...prev, { value: i, text: cur }], []),
-            multipleY() {
-                return this.chartType !== 'pie';
             }
         },
         mounted() {
@@ -273,7 +273,7 @@
             handleUpdatePalette(field, value) {
                 this.workflow.visualization.forms.palette.value = value;
             },
-            handleSelect(name) {
+            handleSelect(name) { // eslint-disable-line no-unused-vars
                 /*const item = this.yAxis.find((v) => v.attribute === name);
                 console.debug(item)*/
 

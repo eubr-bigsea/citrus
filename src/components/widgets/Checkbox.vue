@@ -24,24 +24,22 @@
     </div>
 </template>
 <script>
-    import LabelComponent from './Label.vue'
     import SwitchComponent from './Switch.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
+        name: 'CheckboxComponent',
+        components: { SwitchComponent },
         mixins: [Widget],
-        name: 'checkbox-component',
-        components: { LabelComponent, SwitchComponent },
-        methods: {
-            changed(newValue) {
-                this.triggerUpdateEvent(this.message, this.field, newValue ? '1' : '0',
-                    newValue ? this.$t('common.yes') : this.$t('common.no'));
-            }
-        },
         data() {
             return {
                 id: '',
                 checked: false,
             };
+        },
+        watch: {
+            value: function () {
+                this.checked = this.value === 1 || this.value === '1';
+            }
         },
         mounted() {
             let input = this.$refs.fieldElement //this.$el.querySelector('input[type="checkbox"]');
@@ -53,9 +51,10 @@
             }
             this.id = `check_${this._uid}`;
         },
-        watch: {
-            value: function () {
-                this.checked = this.value === 1 || this.value === '1';
+        methods: {
+            changed(newValue) {
+                this.triggerUpdateEvent(this.message, this.field, newValue ? '1' : '0',
+                    newValue ? this.$t('common.yes') : this.$t('common.no'));
             }
         }
     }

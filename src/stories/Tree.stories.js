@@ -1,6 +1,5 @@
 import TreeviewComponent from '../components/Tree.vue';
 import { action } from '@storybook/addon-actions';
-import { addDecorator } from '@storybook/vue';
 import functionsHelp from '../i18n/functions.js';
 const treeData = {
     name: "My Tree 1", selected: false,

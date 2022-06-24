@@ -9,7 +9,6 @@
 <script>
 
     import Plotly from 'plotly.js-dist-min'
-    import palettes from '../widgets/util/palettes';
 
     export default {
         components: {},
@@ -31,14 +30,14 @@
                 }
             }
         },
+        computed: {
+        },
         mounted() {
             this.$root.$on('chartBuilderUpdateChart', this.updateChart)
             //Plotly.newPlot('chartViewer', this.getFormatedData(), this.getFormatedLayout(), {responsive: true});
         },
         beforeDestroy() {
             this.$root.$off('chartBuilderUpdateChart');
-        },
-        computed: {
         },
         methods: {
             updateChart(updatedData) {

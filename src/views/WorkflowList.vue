@@ -7,8 +7,8 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h1>{{$tc('titles.workflow', 2)}}</h1>
                             <div>
-                                <button @click.prevent="showImportWorkflow"
-                                    class="btn btn-outline-info float-left"><span class="fa fa-download" />
+                                <button class="btn btn-outline-info float-left"
+                                    @click.prevent="showImportWorkflow"><span class="fa fa-download" />
                                     {{$t('actions.import')}}</button>
                                 <router-link :to="{name: 'addWorkflow'}"
                                     class="btn btn-primary btn-lemonade-primary float-left ml-2">
@@ -18,7 +18,7 @@
                             </div>
                         </div>
                     </div>
-                    <v-server-table :columns="columns" :options="options" ref="workflowList" name="workflowList">
+                    <v-server-table ref="workflowList" :columns="columns" :options="options" name="workflowList">
                         <template slot="id" slot-scope="props">
                             <router-link
                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
@@ -38,9 +38,9 @@
                         <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
                         <div slot="afterFilter" class="ml-2">
                             <label>{{$tc('common.platform')}}</label>
-                            <select class="form-control" v-model="platform">
+                            <select v-model="platform" class="form-control">
                                 <option></option>
-                                <option v-for="p in platforms" v-bind:value="p.slug" v-bind:key="p.id">
+                                <option v-for="p in platforms" :key="p.id" :value="p.slug">
                                     {{p.name}}</option>
                             </select>
                             <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
@@ -55,8 +55,8 @@
                 </div>
             </div>
         </div>
-        <b-modal id="importModal" size="lg" :title="$t('actions.import') + ' ' + $tc('titles.workflow', 1)" ok-disabled
-            ref="importModal">
+        <b-modal id="importModal" ref="importModal" size="lg" :title="$t('actions.import') + ' ' + $tc('titles.workflow', 1)"
+            ok-disabled>
             <b-form-radio-group>
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -66,7 +66,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
-                        <input type="file" ref="importFile" />
+                        <input ref="importFile" type="file" />
                     </div>
                 </div>
             </b-form-radio-group>
@@ -167,6 +167,19 @@
                 }
             };
         },
+        watch: {
+            platform(v) {
+                // This is not working
+                // Event.$emit('vue-tables.workflowList.filter::platform', v);
+                // Event.$emit('vue-tables.filter::platform', v);
+
+                // This works, but it uses internal details of component
+                const table = this.$refs.workflowList;
+                table.customQueries['platform'] = v;
+                table.updateState('customQueries', table.customQueries);
+                table.getData();
+            }
+        },
         async mounted() {
             let url = `${tahitiUrl}/platforms`;
             this.$Progress.start();
@@ -196,7 +209,7 @@
                         const url = `${tahitiUrl}/workflows/${workflowId}`;
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(self.$t('messages.successDeletion',
                                     { what: this.$tc('titles.workflow', 1) }));
                                 self.$refs.workflowList.refresh();
@@ -238,19 +251,6 @@
             },
             showImportWorkflow() {
                 this.$refs.importModal.show();
-            }
-        },
-        watch: {
-            platform(v) {
-                // This is not working
-                // Event.$emit('vue-tables.workflowList.filter::platform', v);
-                // Event.$emit('vue-tables.filter::platform', v);
-
-                // This works, but it uses internal details of component
-                const table = this.$refs.workflowList;
-                table.customQueries['platform'] = v;
-                table.updateState('customQueries', table.customQueries);
-                table.getData();
             }
         }
     };

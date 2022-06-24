@@ -12,7 +12,6 @@
     export default {
         mixins: [VisualizationMixin],
         data() {
-            const data = this.visualizationData;
             return {
                 data: [this.getData()],
                 layout: {

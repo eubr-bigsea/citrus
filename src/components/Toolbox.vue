@@ -91,12 +91,14 @@
                 </ul>
             </div> -->
         </VuePerfectScrollbar>
-        <div class="drag-template" ref="opDrag"></div>
+        <div ref="opDrag" class="drag-template"></div>
     </div>
 </template>
 <script>
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import ToolboxMixin from '../mixins/Toolbox';
+    import { debounce } from '../../util.js';
+
     const groupBy = function (xs, keySelector) {
         return xs.reduce(function (rv, x) {
             var key = keySelector(x);
@@ -107,11 +109,11 @@
     };
 
     export default {
-        mixins: [ToolboxMixin],
         name: 'Toolbox',
         components: {
             VuePerfectScrollbar
         },
+        mixins: [ToolboxMixin],
         props: {
             loading: {
                 type: Boolean,
@@ -225,8 +227,8 @@
             }
         },
         methods: {
-            toggle(e) { },
-            searchOperation: _.debounce(function () {
+            toggle() { },
+            searchOperation: debounce(function () {
                 let search = this.search
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')

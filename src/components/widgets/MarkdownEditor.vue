@@ -19,8 +19,8 @@
                 </div>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
-                <b-btn @click="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
+                <b-btn variant="primary" class="mr-1" @click="okClicked">{{$t('common.ok')}}</b-btn>
+                <b-btn variant="secondary" @click="cancelClicked">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -28,26 +28,12 @@
 <script>
     import LabelComponent from './Label.vue';
     import Markdown from './Markdown.vue';
-    import prismjs from "prismjs";
     import "prismjs/themes/prism.css";
-    import PrismEditor from 'vue-prism-editor'
     import Widget from '../../mixins/Widget.js';
 
-    function debounce (fn, delay) {
-      var timeoutID = null
-      return function () {
-        //clearTimeout(timeoutID)
-        var args = arguments
-        var that = this
-        timeoutID = setTimeout(function () {
-          fn.apply(that, args)
-        }, delay)
-      }
-    }
-
     export default {
+        components: { LabelComponent, Markdown},
         mixins: [Widget],
-        components: { LabelComponent, Markdown, PrismEditor},
         data(){
             return {
                 displayValue: '',
@@ -59,11 +45,11 @@
 				this.code = this.value;
                 this.$refs.modal.show();
             },
-            okClicked(ev) {
+            okClicked() {
                 this.$root.$emit(this.message, this.field, this.code);
                 this.$refs.modal.hide();
             },
-            cancelClicked(ev) {
+            cancelClicked() {
                 this.$refs.modal.hide();
             }
         },

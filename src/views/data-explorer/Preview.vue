@@ -14,10 +14,10 @@
                 <div ref="colOverlay" class="col-overlay" @click="resetMenuData">
                     <div></div>
                 </div>
-                <b-table :no-border-collapse="false" :items="items" :fields="['#'].concat(attributes)"
-                    tbody-class="body" sticky-header="80vh" table-class="table-preview"
-                    class="border scroll-area table-preview" @row-contextmenu="tableContextMenu" outlined small hover
-                    bordered responsive ref="table" @row-clicked="tableClick">
+                <b-table ref="table" :no-border-collapse="false" :items="items"
+                    :fields="['#'].concat(attributes)" tbody-class="body" sticky-header="80vh"
+                    table-class="table-preview" class="border scroll-area table-preview" outlined small hover
+                    bordered responsive @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
 
                     <!-- A custom formatted column -->
                     <template #cell(#)="data">
@@ -25,12 +25,12 @@
                     </template>
 
                     <template #head()="scope">
-                        <div @click.prevent="customOpen($event, scope)" class="grabbable" draggable="true"
-                            v-on:dragstart="dragStart(scope.field, $event)"
-                            v-on:dragend.prevent="dragEnd(scope.field, $event)"
-                            v-on:dragenter="dragEnter(scope.field, $event)"
-                            v-on:dragleave="dragLeave(scope.field, $event)"
-                            v-on:dragover.prevent="dragOver(scope.field, $event)" v-on:drop="drop(scope.field, $event)">
+                        <div class="grabbable" draggable="true" @click.prevent="customOpen($event, scope)"
+                            @dragstart="dragStart(scope.field, $event)"
+                            @dragend.prevent="dragEnd(scope.field, $event)"
+                            @dragenter="dragEnter(scope.field, $event)"
+                            @dragleave="dragLeave(scope.field, $event)"
+                            @dragover.prevent="dragOver(scope.field, $event)" @drop="drop(scope.field, $event)">
                             <div style="pointer-events: none;">
                                 <div class="clearfix no-wrap">
                                     <div class="attribute-name mr-2">{{scope.label}} </div>
@@ -121,22 +121,29 @@
 
                 <li class="ctx-item"><span class="fa fa-search"></span>
                     <b>Localizar</b> <code>{{cellMenuData.value}}</code> on
-                    <code>{{cellMenuData.name}}</code> e substituir ...</code>
+                    <code>{{cellMenuData.name}}</code> e substituir ...
                 </li>
             </template>
         </context-menu>
     </div>
 </template>
 <script>
-    import { debounce } from '../../util.js';
-    import Vue from 'vue';
     import contextMenu from 'vue-context-menu';
     import Notifier from '../../mixins/Notifier.js';
-    import PreviewMenu from './PreviewMenu.vue';
 
     export default {
+        components: { contextMenu},
         mixins: [Notifier],
-        components: { contextMenu, PreviewMenu },
+        props: {
+            attributes: { type: Array, default: () => [''] },
+            invalid: { type: Object, default: () => null},
+            items: { type: Array, default: () => [] },
+            loading: { type: Boolean, default: () => false },
+            missing: { type: Object, default: () => null },
+            store: { type: Object, default: () => null },
+            serviceBus: { type: Object, default: () => null },
+            total: { type: Number, default: () => 0},
+        },
         data() {
             return {
                 menuData: { field: { label: '', position: -1 } },
@@ -148,19 +155,9 @@
                 dragTimeout: null,
             }
         },
-        props: {
-            attributes: { type: Array, default: () => [''] },
-            invalid: { type: Object },
-            items: { type: Array },
-            loading: { type: Boolean },
-            missing: { type: Object },
-            store: { type: Object },
-            serviceBus: { type: Object },
-            total: { type: Number },
-        },
         watch: {
             attributes() {
-                const self = this;
+                //const self = this;
                 const rightAlignedTypes = new Set(['integer', 'date', 'decimal', 'boolean', 'time']);
                 const rightAlignedAttributes = [];
 
@@ -235,7 +232,7 @@
                     'scroll', this.handleTableScrollEvent);
         },
         methods: {
-            resize(ev) {
+            resize() {
                 const th = this.lastHeader;
                 if (th) {
                     const clipRec = th.getBoundingClientRect();
@@ -245,13 +242,14 @@
                     this.$refs.colOverlay.style.height = `${this.$refs.table.$el.offsetHeight}px`;
                 }
             },
-            tableClick(item, rowIndex, event) {
+            tableClick(item, rowIndex, event) { // eslint-disable-line no-unused-vars
 
                 this.$refs.colOverlay.style.left = -10;
                 this.$refs.colOverlay.style.width = 0;
                 this.$refs.colOverlay.style.display = 'none';
                 this.resetMenuData();
                 return;
+                /*
                 const cell = event.target.closest('td');
                 const index = parseInt(cell.getAttribute('aria-colindex')) - 1;
 
@@ -274,6 +272,7 @@
                     this.$refs.colOverlay.style.display = 'none';
                     this.resetMenuData();
                 }
+                */
             },
             resetMenuData() {
                 this.menuData = { field: { label: '', position: -1 } };
@@ -348,7 +347,7 @@
                     this.$refs.colOverlay.style.display = '';
                 }
             },
-            resetCellCtxLocals(data) {
+            resetCellCtxLocals() {
                 this.cellMenuData = { row: 0, attribute: 0, value: null, name: null };
             },
             _eventModifier(evt, obj) {
@@ -393,13 +392,13 @@
                 e.dataTransfer.effectAllowed = 'move'
                 this.resetMenuData();
             },
-            dragEnd(item, e) {
+            dragEnd(item, e) { // eslint-disable-line no-unused-vars
                 this.resetMenuData();
             },
-            dragOver(item, e) {
+            dragOver(item, e) {// eslint-disable-line no-unused-vars
                 return true;
             },
-            dragEnter(item, e) {
+            dragEnter(item, e) {// eslint-disable-line no-unused-vars
                 event.dataTransfer.dropEffect = 'move';
                 if (this.dragTimeout) {
                     clearTimeout(this.dragTimeout);

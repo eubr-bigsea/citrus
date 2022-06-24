@@ -7,9 +7,9 @@
             </span>
             <small v-if="!editing && !publicRoute" class="d-print-none">
 
-                <a href="#" @click.prevent="edit" :title="$t('actions.edit')"> <span class="fa fa-edit"></span></a>
+                <a href="#" :title="$t('actions.edit')" @click.prevent="edit"> <span class="fa fa-edit"></span></a>
                 &nbsp;
-                <a href="#" @click.prevent="deleteText" :title="$t('actions.delete')"> <span
+                <a href="#" :title="$t('actions.delete')" @click.prevent="deleteText"> <span
                         class="fa fa-trash"></span></a>
             </small>
         </div>
@@ -29,20 +29,18 @@
 <script>
     import snarkdown from 'snarkdown';
     import DOMPurify from 'dompurify';
-    import axios from 'axios';
     
     import Notifier from '../../mixins/Notifier';
-    const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
     function sanitizeMarkdown(markdownCode) {
         return DOMPurify.sanitize(snarkdown(markdownCode));
     }
     export default {
+        name: "CaipirinhaVisualizationMarkdown",
         mixins: [Notifier],
-        name: "caipirinha-visualization-markdown",
         props: {
-            visualizationData: {},
-            publicRoute: { default: true }
+            visualizationData: {type: Object, default: () => null},
+            publicRoute: { default: true, type: Boolean }
         },
         data: function () {
             return {

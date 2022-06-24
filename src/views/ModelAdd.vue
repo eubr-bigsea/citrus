@@ -85,7 +85,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="fileInfo in resumableList" :class="fileStatus(fileInfo)">
+                                            <tr v-for="fileInfo in resumableList" :key="fileInfo.file.fileName" :class="fileStatus(fileInfo)">
                                                 <td :ref="fileInfo.file.uniqueIdentifier">{{fileInfo.file.fileName}}
                                                 </td>
                                                 <td>{{fileInfo.message.message}}</td>
@@ -200,7 +200,7 @@
                     this.$snotify.error(e.message, this.$t('titles.error'));
                 }
             },
-            choose(method) {
+            choose() {
                 this.step = 2;
                 this.model.storage_id = this.fsStorage;
                 /* Setup resumable */
@@ -258,7 +258,7 @@
                     self.showResume = true;
                     self.showPause = false;
                 });
-                resumable.on('complete', file => {
+                resumable.on('complete', file => {// eslint-disable-line no-unused-vars
                     // Hide pause/resume when the upload has completed
                     self.showPause = false;
                     self.showResume = false;

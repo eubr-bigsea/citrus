@@ -63,25 +63,25 @@
                                         </label>
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" maxlength="50" v-model="subsetName">
+                                        <input v-model="subsetName" type="text" class="form-control" maxlength="50">
                                     </div>
                                     <div class="col-md-2">
-                                        <button class="btn btn-secondary" @click="addSubset"
-                                            :disabled="this.subsetName.trim() === ''">{{$t('common.ok')}}</button>
+                                        <button class="btn btn-secondary" :disabled="subsetName.trim() === ''"
+                                            @click="addSubset">{{$t('common.ok')}}</button>
                                     </div>
                                 </div>
                                 <div>
                                     <table class="table table-bordered table-striped">
-                                        <tr v-for="subset in platform.subsets" class="row">
+                                        <tr v-for="subset in platform.subsets" :key="subset.id" class="row">
                                             <td style="width: 80%">
-                                                <input type="text" v-model="subset.name" maxlength="50"
+                                                <input v-model="subset.name" type="text" maxlength="50"
                                                     class="form-control" />
                                             </td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm mr-1" @click="saveSubset(subset)"
-                                                    :title="$t('actions.save')">{{$t('actions.save')}}</button>
-                                                <button class="btn btn-danger btn-sm" @click="removeSubset(subset)"
-                                                    :title="$t('actions.delete')">{{$t('actions.delete')}}</button>
+                                                <button class="btn btn-primary btn-sm mr-1" :title="$t('actions.save')"
+                                                    @click="saveSubset(subset)">{{$t('actions.save')}}</button>
+                                                <button class="btn btn-danger btn-sm" :title="$t('actions.delete')"
+                                                    @click="removeSubset(subset)">{{$t('actions.delete')}}</button>
                                             </td>
                                         </tr>
                                     </table>
@@ -185,19 +185,15 @@
 <script>
     import Vue from 'vue';
     import axios from 'axios';
-    import VueSelect from 'vue-select';
-    import SwitchComponent from '../../components/widgets/Switch.vue';
     import Notifier from '../../mixins/Notifier';
     import View from '../../mixins/View';
 
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
     export default {
-        mixins: [Notifier, View],
         components: {
-            'v-select': VueSelect,
-            SwitchComponent
         },
+        mixins: [Notifier, View],
         data() {
             return {
                 isDirty: false,
@@ -214,7 +210,7 @@
         },
         computed: {},
         watch: {
-            '$route.params.id': function (id) {
+            '$route.params.id': function () {
                 this.load().then(() => {
                     Vue.nextTick(() => {
                         this.isDirty = false;
@@ -222,7 +218,7 @@
                 });
             },
             platform: {
-                handler(newVal, oldVal) {
+                handler() {
                     this.isDirty = true;
                 },
                 deep: true
@@ -245,7 +241,7 @@
                     this.$t('messages.doYouWantToDelete'),
                     () => {
                         axios.delete(`${tahitiUrl}/subsets/${subset.id}`)
-                            .then(resp => {
+                            .then(() => {
                                 this.load();
                                 this.success(
                                     this.$t('messages.successDeletion', {
@@ -262,7 +258,7 @@
                 const self = this;
                 const payload = { name: subset.name };
                 axios.patch(`${tahitiUrl}/subsets/${subset.id}`, payload)
-                    .then(resp => {
+                    .then(()=> {
                         this.load();
                         this.success(
                             this.$t('messages.savedWithSuccess', {
@@ -282,7 +278,7 @@
                         platform: { id: this.platform.id }
                     };
                     axios.post(`${tahitiUrl}/subsets`, payload)
-                        .then(resp => {
+                        .then(()=> {
                             this.load();
                             self.success(
                                 this.$t('messages.savedWithSuccess', {
@@ -299,7 +295,7 @@
                 const self = this;
                 const currentValue = operation.enabled;
                 axios.delete(`${tahitiUrl}/operations/${operation.id}`)
-                    .then(resp => {
+                    .then(()=> {
                         // operation.enabled = ! operation.enabled;
                     })
                     .catch(function (e) {
@@ -315,7 +311,7 @@
                     axiosMethod = axios.delete;
                 }
                 axiosMethod(`${tahitiUrl}/subsets/${subset.id}/${operation.id}`)
-                    .then(resp => { })
+                    .then(() => { })
                     .catch(function (e) {
                         operation.enabled = currentValue;
                         self.error(e);

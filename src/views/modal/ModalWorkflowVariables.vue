@@ -5,13 +5,13 @@
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
-                            <div v-for="(row, index) in items" class="clear-fix item-list"
-                                @click.prevent="select(row, index)"
-                                :class="{selected: selected && selected.index === row.index }">
+                            <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
+                                :class="{selected: selected && selected.index === row.index }"
+                                @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
                                     <span v-if="row.label">({{row.label}})</span></small>
                                 <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
-                                    @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')">
+                                    :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                                     <span class="fa fa-minus-circle text-danger"></span>
                                 </a>
                             </div>
@@ -24,7 +24,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label>{{$t('variables.name')}}:</label>
-                                    <input v-model="selected.name" maxlength="40" autocomplete="off" v-focus
+                                    <input v-model="selected.name" v-focus maxlength="40" autocomplete="off"
                                         class="form-control" />
                                 </div>
                                 <div class="col-md-4">
@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.type')}}:</label>
-                                    <select class="form-control" v-model="selected.type">
+                                    <select v-model="selected.type" class="form-control">
                                         <option></option>
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                             {{$t('dataTypes.' + dt)}}
@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.multiplicity')}}:</label>
-                                    <select class="form-control" v-model="selected.multiplicity" tabindex="0">
+                                    <select v-model="selected.multiplicity" class="form-control" tabindex="0">
                                         <option value="0">Opcional</option>
                                         <option value="2">0 ou mais</option>
                                         <option value="1">Exatamente 1</option>
@@ -100,7 +100,7 @@
             <b-tab :title="$tc('titles.systemVariables', 2)">
                 <div class="col-md-12 mt-1">
                     <table class="table table-sm table-bordered" style="font-size:.8em">
-                        <tr v-for="v in variables">
+                        <tr v-for="v in variables" :key="v">
                             <td style="width:20%">
                                 <code v-html="'${' + v +  '}'"></code>
                             </td>
@@ -125,13 +125,16 @@
             use a representação <code>${nome-variável}</code> por exemplo nas propriedades das tarefas.
         </p>
         <div slot="modal-footer" class="w-100 text-right">
-            <b-btn @click="okClicked" variant="primary" size="sm" class="mr-1 pl-5 pr-5">{{$t('common.ok')}}</b-btn>
+            <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">{{$t('common.ok')}}</b-btn>
         </div>
 
     </b-modal>
 </template>
 <script>
     export default {
+        props: {
+            items: { type: Array, default: () => [], required: true }
+        },
         data() {
             return {
                 variables: [
@@ -149,11 +152,8 @@
 
             };
         },
-        props: {
-            items: { type: Array, default: () => [], required: true }
-        },
         methods: {
-            add(e) {
+            add() {
                 if (this.items === null) {
                     this.items = [];
                 }
@@ -184,7 +184,7 @@
                 this.selected = null;
                 this.$refs.modal.show();
             },
-            okClicked(ev) {
+            okClicked() {
                 this.$refs.modal.hide();
             },
         }

@@ -1,5 +1,5 @@
 <template>
-    <div class="table node noselect" ref="table" :style="{left: table.left + 'px', top: table.top + 'px'}">
+    <div ref="table" class="table node noselect" :style="{left: table.left + 'px', top: table.top + 'px'}">
         <div class="name">
             <div class="delete" title="Click to delete">
                 <i class="fa fa-trash" />
@@ -7,9 +7,9 @@
             <span>{{table.name}}</span>
             {{table.left}} {{table.top}}
         </div>
-        <ul class="table-columns" ref="attributes">
+        <ul ref="attributes" class="table-columns">
             <template v-for="attr in table.attributes">
-                <table-attribute :jsplumbInstance="jsplumbInstance" :key="attr.name" :attribute="attr" />
+                <table-attribute :key="attr.name" :jsplumb-instance="jsplumbInstance" :attribute="attr" />
             </template>
         </ul>
     </div>
@@ -21,9 +21,9 @@
             tableAttribute: TableAttribute,
         },
         props: {
-            draggable: { default: true },
-            jsplumbInstance: { default: null },
-            table: null,
+            draggable: { default: true, type: Boolean},
+            jsplumbInstance: { default: null, type: Object },
+            table: {default: ()=> null, type: Object},
         },
         watch: {
             jsplumbInstance(instance) {
@@ -61,6 +61,7 @@
                                 }
                             }
                         };*/
+                        /*
                         const endpointOptions = {
                             isSource: true,
                             isTarget: true,
@@ -68,6 +69,7 @@
                             maxConnections: -1,
                             endpoint: ["Dot", { radius: 5 }],
                         }
+                        */
                         //instance.addEndpoint(elem, { anchor: "Top" }, endpointOptions);
                         const attributesElem = this.$refs.attributes;
                         const options2 = {
@@ -82,8 +84,8 @@
                             connectorPaintStyle:{ stroke:"blue", strokeWidth:10 }
 
                         }
-                        const endpoint1 = instance.makeSource(attributesElem, options2);
-                        const endpoint2 = instance.makeTarget(attributesElem, options2);
+                        instance.makeSource(attributesElem, options2);
+                        instance.makeTarget(attributesElem, options2);
 
 
                     }

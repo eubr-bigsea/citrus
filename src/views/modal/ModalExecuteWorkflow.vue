@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="lg" ref="modal" :title="$t('workflow.execute')">
+    <b-modal ref="modal" size="lg" :title="$t('workflow.execute')">
         <template v-if="clusters && clusters.length">
             <em v-if="validationErrors.length === 0">
                 {{$t('workflow.required')}}:
@@ -28,7 +28,7 @@
                             <label>{{$tc('titles.cluster')}}:</label>
                             <select v-model="clusterInfo.id" class="form-control-sm form-control"
                                 @change="changeCluster">
-                                <option v-for="option in clusters" v-bind:key="option.id" v-bind:value="option.id">
+                                <option v-for="option in clusters" :key="option.id" :value="option.id">
                                     {{ option.name }}
                                 </option>
                             </select>
@@ -36,7 +36,7 @@
                         <div class="col-md-8">
                             <label>{{$t('workflow.jobName')}}
                                 ({{$t('common.optional')}}):</label>
-                            <input type="text" class="form-control form-control-sm" v-model="clusterInfo.jobName"
+                            <input v-model="clusterInfo.jobName" type="text" class="form-control form-control-sm"
                                 maxlength="50" />
                         </div>
                         <div class="col-md-12">
@@ -49,15 +49,9 @@
         <div v-else class="alert alert-danger">
             <span class="fa fa-exclamation-circle"></span> {{$t("workflow.errorNoCluster")}}
         </div>
-        <!--
-        <div class="mt-2 p-2 border atmosphere" v-if="atmosphereExtension">
-            <PerformanceEstimation :platform="workflow.platform" :clusterId="clusterInfo.id" :cluster="clusterInfo"
-                :cores="performanceModel.cores" :setup="performanceModel.setup" ref="performanceModel" />
-        </div>
-        -->
         <div slot="modal-footer" class="w-100 text-right">
-            <button v-if="clusters && clusters.length" class="btn btn-sm btn-outline-success" @click="execute($event)" id="mdl-execute-wf"
-                ref="executeBtn">
+            <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn" class="btn btn-sm btn-outline-success"
+                @click="execute($event)">
                 <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
             <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">{{$t('actions.cancel')}}</button>
         </div>
@@ -66,10 +60,10 @@
 <script>
     export default {
         props: {
-            clusterInfo: {},
-            clusters: { type: Array },
-            validationErrors: { type: Array },
-            workflow: {},
+            clusterInfo: {type: Object, default: ()=> null},
+            clusters: { type: Array, default: ()=> null},
+            validationErrors: { type: Array, default: () => null },
+            workflow: {type: Object, default: ()=> {}},
         },
         methods: {
             changeCluster() {

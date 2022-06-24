@@ -5,7 +5,7 @@
 
             <div class="palette clearfix">
                 <template v-if="displayValue && displayValue.length > 0">
-                    <div v-for="color in displayValue">
+                    <div v-for="color in displayValue" :key="color">
                         <div class="color" :style="{'background-color': color}"></div>
                     </div>
                 </template>
@@ -25,21 +25,21 @@
             </p>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal id="lookupModal" size="lg" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" no-fade ref="modal">
+        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label"
+            :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade>
             <p>
                 {{field.label || field.name}}
             </p>
             <div class="color-select">
                 <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix" @click="select(inx)">
                     <div class="palette-name">{{palette[0]}}</div>
-                    <div v-for="color in palette[1]">
+                    <div v-for="color in palette[1]" :key="color">
                         <div class="color" :style="{'background-color': color}"></div>
                     </div>
                 </div>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click="cancelClicked" variant="secondary" class="btn-sm ">{{$t('actions.cancel')}}</b-btn>
+                <b-btn variant="secondary" class="btn-sm " @click="cancelClicked">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -47,7 +47,6 @@
 <script>
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
-    import Plotly from 'plotly.js-dist-min'
 
     // Colors from plotly in Python. Is there a method to retrieve them in JS?
     const palettes = [
@@ -91,8 +90,31 @@
         ["Vivid_r", ["rgb(165, 170, 153)", "rgb(237, 100, 90)", "rgb(118, 78, 159)", "rgb(47, 138, 196)", "rgb(218, 165, 27)", "rgb(36, 121, 108)", "rgb(204, 97, 176)", "rgb(153, 201, 69)", "rgb(82, 188, 163)", "rgb(93, 105, 177)", "rgb(229, 134, 6)"]]
     ]
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
+        props: {
+            value: {type: String, default: () => null},
+            field: {type: Object, default: () => null},
+            message: {
+                type: String,
+                default: () => 'update-form-field-value'
+            }
+        },
+        data() {
+            return {
+                displayValue: '',
+                internalValue: null,
+                palettes
+            }
+        },
+        mounted() {
+            this.displayValue = this.value;
+            if (this.value === null || this.value === undefined){
+                this.internalValue = this.palettes[6][1]; // D3
+                this.triggerUpdateEvent(this.message, this.field, this.internalValue);
+                this.displayValue = this.internalValue;
+            }
+        },
         methods: {
             clear() {
                 this.$root.$emit(this.message, this.field, null);
@@ -109,30 +131,8 @@
                 this.$refs.modal.hide();
                 this.displayValue = this.palettes[inx][1];
             },
-            cancelClicked(ev) {
+            cancelClicked() {
                 this.$refs.modal.hide();
-            }
-        },
-        mounted() {
-            this.displayValue = this.value;
-            if (this.value === null || this.value === undefined){
-                this.internalValue = this.palettes[6][1]; // D3
-                this.triggerUpdateEvent(this.message, this.field, this.internalValue);
-                this.displayValue = this.internalValue;
-            }
-        },
-        data() {
-            return {
-                displayValue: '',
-                internalValue: null,
-                palettes
-            }
-        },
-        props: {
-            value: '', field: {},
-            message: {
-                type: String,
-                default: 'update-form-field-value'
             }
         },
     }

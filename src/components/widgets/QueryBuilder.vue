@@ -6,28 +6,27 @@
             {{$t('property.editValue')}}
         </b-link>
 
-        <b-modal id="queryBuilderModal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')" ref="modal">
+        <b-modal id="queryBuilderModal" ref="modal" size="lg" :title="field.label" :cancel-title="$t('actions.cancel')">
             <p>
                 {{$t('property.queryBuilder.explanation')}}
             </p>
-            <textarea class="form-control" v-model="sql" rows="10"></textarea>
+            <textarea v-model="sql" class="form-control" rows="10"></textarea>
 
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click.prevent="okClicked" variant="primary" class="mr-1">{{$t('common.ok')}}</b-btn>
-                <b-btn @click.prevent="cancelClicked" variant="secondary">{{$t('actions.cancel')}}</b-btn>
+                <b-btn variant="primary" class="mr-1" @click.prevent="okClicked">{{$t('common.ok')}}</b-btn>
+                <b-btn variant="secondary" @click.prevent="cancelClicked">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
 </template>
 <script>
     import LabelComponent from './Label.vue';
-    import jsep from 'jsep';
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: {
             LabelComponent
         },
+        mixins: [Widget],
         data() {
             return {
                 sql: ''
@@ -37,12 +36,12 @@
             this.sql = this.field.value;
         },
         methods: {
-            okClicked(e) {
+            okClicked() {
                 this.$root.$emit(this.message, this.field,
                     this.sql);
                 this.$refs.modal.hide();
             },
-            cancelClicked(e) {
+            cancelClicked() {
                 this.$refs.modal.hide();
             },
         },

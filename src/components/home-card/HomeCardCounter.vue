@@ -1,8 +1,8 @@
 <template>
   <span class="home-card-counter float-right" title="Total">
-    <animated-number
+    <AnimatedNumber
       :value="value"
-      :formatValue="formatValue"
+      :format-value="formatValue"
       :duration="4000"
       :easing="'easeOutCirc'"
     />
@@ -28,10 +28,14 @@ import AnimatedNumber from "animated-number-vue";
 import Humanize from "humanize-plus";
 
 export default {
-  name: "home-card-counter",
-  props: ["value"],
+  name: "HomeCardCounter",
   components: {
     AnimatedNumber
+  },
+  props: {
+      value: {
+          type: Number, default: () => 0
+      }
   },
   methods: {
     formatValue(value) {

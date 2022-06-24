@@ -10,13 +10,13 @@
                 <form class="clearfix visualization-form">
                     <b-card sub-title="Dados básicos">
                         <label>{{$tc('common.title')}}:</label>
-                        <input type="text" class="form-control form-control-sm" :placeholder="$tc('common.name')"
-                            v-model="workflowObj.name" maxlength="100">
+                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
+                            :placeholder="$tc('common.name')" maxlength="100">
 
                         <label for="">Fonte de dados:</label> &nbsp;
-                        <vue-select v-if="workflowObj && workflowObj.readData" @search="loadDataSourceList"
+                        <vue-select v-if="workflowObj && workflowObj.readData" v-model="workflowObj.readData.forms.data_source.value"
                             :filterable="false" :options="dataSourceList" :reduce="(opt) => opt.id" label="name"
-                            v-model="workflowObj.readData.forms.data_source.value" @input="retrieveAttributes">
+                            @search="loadDataSourceList" @input="retrieveAttributes">
 
                             <template v-slot:no-options="{ search, searching }">
                                 <small>Digite parte do nome pesquisar ...</small>
@@ -35,7 +35,7 @@
                         </vue-select>
 
                         <label>{{$tc('titles.cluster')}}: </label>
-                        <v-select :options="clusters" v-model="workflowObj.preferred_cluster_id" label="name"
+                        <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
                             :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, id, name, type }">
                                 {{ name }}<br />
@@ -43,13 +43,13 @@
                             </template>
                         </v-select>
                     </b-card>
-                    <b-card class="mt-1" sub-title="Consulta (opcional)" v-if="loaded">
+                    <b-card v-if="loaded" class="mt-1" sub-title="Consulta (opcional)">
                         <label>Limitar quantidade de registros:</label>
-                        <input type="number" class="form-control form-control-sm w-50" maxlength="10"
-                            v-model.numeric="workflowObj.sample.forms.value.value" step="100" />
+                        <input v-model.numeric="workflowObj.sample.forms.value.value" type="number" class="form-control form-control-sm w-50"
+                            maxlength="10" step="100" />
 
                         <ExpressionEditor :field="filterField" :value="workflowObj.filter.forms.formula.value"
-                            :suggestionEvent="() => attributes.map(a=>a.name)" @update="handleUpdateFilter" />
+                            :suggestion-event="() => attributes.map(a=>a.name)" @update="handleUpdateFilter" />
 
                         <!--
                         <template>
@@ -89,19 +89,15 @@
         </div>
         <div class="options-main">
             <div class="chart">
-                <chart-builder-visualization />
+                <ChartBuilderVisualization />
             </div>
         </div>
         <div class="options-visualization">
             <div>
-                <chart-builder-options :attributes="attributes" :workflow="workflowObj" />
+                <ChartBuilderOptions :attributes="attributes" :workflow="workflowObj" />
             </div>
         </div>
     </div>
-
-
-    </div>
-
 </template>
 
 <script>
@@ -109,37 +105,26 @@
     import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
 
     import Vue from 'vue';
-    import io from 'socket.io-client';
-
-    import InputHeader from '../../../components/InputHeader.vue';
     import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
     import DataSourceMixin from '../DataSourceMixin.js';
-    import { debounce } from "../../../util.js";
     import Notifier from '../../../mixins/Notifier.js';
 
-    import { Workflow, Operation, VisualizationBuilderWorkflow } from '../entities.js';
+    import { Operation, VisualizationBuilderWorkflow } from '../entities.js';
     import axios from 'axios';
     import vSelect from 'vue-select';
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
     const standUrl = process.env.VUE_APP_STAND_URL;
-    const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
     const META_PLATFORM_ID = 1000;
 
     export default {
-        mixins: [DataSourceMixin, Notifier],
         components: {
             'vue-select': vSelect,
             ChartBuilderVisualization,
             ChartBuilderOptions,
             ExpressionEditor
         },
-        computed: {
-            dataSourceId: {
-                get() { return this.workflowObj.readData.forms.data_source.value; },
-                set(newValue) { this.workflowObj.readData.forms.data_source.value = newValue }
-            },
-        },
+        mixins: [DataSourceMixin, Notifier],
         data() {
             return {
                 attributes: [],
@@ -162,6 +147,12 @@
                 targetPlatform: 1,
                 workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
             }
+        },
+        computed: {
+            dataSourceId: {
+                get() { return this.workflowObj.readData.forms.data_source.value; },
+                set(newValue) { this.workflowObj.readData.forms.data_source.value = newValue }
+            },
         },
         async created() {
             this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
@@ -252,7 +243,7 @@
                 });
 
                 try {
-                    const resp = await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
+                    await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                     this.isDirty = false;
                     this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
                 } catch (e) {

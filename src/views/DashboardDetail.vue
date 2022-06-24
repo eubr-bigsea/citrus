@@ -14,13 +14,13 @@
                                 <button class="btn btn-sm btn-outline-dark" @click.stop="save">
                                     <span class="fa fa-save"></span> {{$t('actions.save')}}
                                 </button>
-                                <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties"
-                                    :title="$t('actions.showProperties')">
+                                <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
+                                @click.prevent="showProperties">
                                     <span class="fa fa-cogs"></span>
                                 </button>
                             </div>
-                            <button v-if="!publicRoute" class="btn btn-sm btn-success mr-2" @click.prevent="addText"
-                                :title="$t('actions.showProperties')">
+                            <button v-if="!publicRoute" class="btn btn-sm btn-success mr-2" :title="$t('actions.showProperties')"
+                            @click.prevent="addText" >
                                 <span class="fa fa-plus"></span> {{$t('dashboard.markupVisualization')}}
                             </button>
                         </div>
@@ -33,10 +33,10 @@
                                     <grid-layout :layout.sync="layout" :col-num="12" :row-height="30"
                                         :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
                                         :is-responsive="true" :vertical-compact="true" :margin="[10, 10]"
-                                        :use-css-transforms="true" @layout-updated="layoutUpdatedEvent"
-                                        :prevent-collision="false">
-                                        <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w"
-                                            :h="item.h" :i="item.i" :key="item.i">
+                                        :use-css-transforms="true" :prevent-collision="false"
+                                        @layout-updated="layoutUpdatedEvent">
+                                        <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
+                                            :w="item.w" :h="item.h" :i="item.i">
                                             <caipirinha-visualization :url="item.url" :public-route="publicRoute">
                                             </caipirinha-visualization>
                                         </grid-item>
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <b-modal id="dashboardProperties" size="md" button-size="sm" ref="dashboardProperties" :title="$tc('titles.property', 2)"
+        <b-modal id="dashboardProperties" ref="dashboardProperties" size="md" button-size="sm" :title="$tc('titles.property', 2)"
             :ok-only="true">
             <b-form @submit="save">
                 <b-form-group :label="$tc('common.title', 1) + ':'">
@@ -83,15 +83,10 @@
 </style>
 
 <script>
-    import Vue from 'vue';
-
     import Notifier from '../mixins/Notifier';
     import axios from 'axios';
-    import io from 'socket.io-client';
-
     import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
     import InputHeader from '../components/InputHeader.vue';
-    import VueGridLayout from 'vue-grid-layout';
 
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
@@ -99,14 +94,6 @@
         components: {
             'caipirinha-visualization': CapirinhaVisualization,
             InputHeader
-        },
-        computed: {
-            isLoggedIn() {
-                return this.$store.getters.isLoggedIn;
-            },
-            publicRoute() {
-                return this.$route.name === 'publicDashboard';
-            }
         },
         mixins: [Notifier],
         data() {
@@ -116,6 +103,14 @@
                 dashboard: { title: '', is_public: false, hash: '' },
                 layout: []
             };
+        },
+        computed: {
+            isLoggedIn() {
+                return this.$store.getters.isLoggedIn;
+            },
+            publicRoute() {
+                return this.$route.name === 'publicDashboard';
+            }
         },
         beforeDestroy() {
             this.$root.$off('ondelete-visualization');
@@ -130,7 +125,7 @@
                     () => {
                         axios
                             .delete(`${caipirinhaUrl}/visualizations/0/0/${visId}`)
-                            .then(response => {
+                            .then(()=> {
                                 this.success(
                                     this.$t('messages.successDeletion', {
                                         what: this.$tc('titles.visualization')
@@ -236,7 +231,7 @@
                 this.dashboard.configuration = this.configuration;
                 axios
                     .patch(`${caipirinhaUrl}/dashboards/${this.$route.params.id}`, this.dashboard)
-                    .then(response => {
+                    .then(()=> {
                         if (! hideMessage){
                             this.success(
                                 this.$t('messages.savedWithSuccess', {
@@ -253,7 +248,7 @@
             getLayout: function () {
                 const allVisIds = new Set();
                 this.dashboard.visualizations.forEach(vis => {
-                    if (!this.configuration.hasOwnProperty(vis.id)) {
+                    if (!Object.hasOwnProperty.call(this.configuration, vis.id)) {
                         this.configuration[vis.id] = {
                             height: 8,
                             id: vis.id,

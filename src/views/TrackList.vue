@@ -14,7 +14,7 @@
                             </div>
                         </div>
                     </div>
-                    <v-server-table :columns="columns" :options="options" ref="workflowList" name="workflowList">
+                    <v-server-table ref="workflowList" :columns="columns" :options="options" name="workflowList">
                         <template slot="id" slot-scope="props">
                             <router-link
                                 :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">

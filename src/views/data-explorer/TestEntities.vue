@@ -12,7 +12,7 @@
 </template>
 <script>
     import axios from 'axios';
-    import { Workflow, Platform, Task, Operation, OperationList } from "./entities";
+    import { Workflow, Platform, OperationList } from "./entities";
     import Notifier from '../../mixins/Notifier';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
@@ -35,7 +35,7 @@
         methods: {
             async save() {
                 try {
-                    const resp = await axios.patch(`${tahitiUrl}/workflows/35`,
+                    await axios.patch(`${tahitiUrl}/workflows/35`,
                         this.workflow);
                 } catch (e) {
                     this.error(e);
@@ -129,7 +129,7 @@
                 //    .createTask();
 
                 if (categoricalFeatures.length > 0) {
-                    const dummyEncoding = this.operations.getOperationBySlug('feature-indexer')
+                    let dummyEncoding = this.operations.getOperationBySlug('feature-indexer')
                         .createTask({ name: 'Indexar categóricos' });
                     dummyEncoding.setProperty('attributes', categoricalFeatures);
                     dummyEncoding.setProperty('alias', categoricalFeatures.map(c => c + '_inx'));
@@ -137,7 +137,7 @@
                     tasks.push(dummyEncoding);
                     flows.push(dummyEncoding.inputFrom(next, 'input data', nextPort));
 
-                    dummyEncoding = missingNumeric;
+                    //dummyEncoding = missingNumeric;
                     next = dummyEncoding;
                     nextPort = 'output data';
                 }
@@ -265,7 +265,6 @@
                     tasks.push(saveLogisticRegression);
                     flows.push(saveLogisticRegression.inputFrom(logisticRegression, 'models', 'model'));
                 }
-                let start = 50;
                 tasks.forEach((task, i) => {
                     let top = 50 + Math.floor(i / 3) * 150;
                     let left = 50 + (i % 3) * 250;

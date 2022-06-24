@@ -64,7 +64,7 @@
             const self = this;
             if (q?.code) {
                 this.query = q;
-                const mgr = new UserManager({
+                new UserManager({
                     response_mode: 'query',
                     userStore: new WebStorageStateStore()
                 }).signinRedirectCallback().then(function (user) {

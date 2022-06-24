@@ -1,6 +1,6 @@
 <template>
     <div class="text-center">
-        <div class="border main-div" ref="mainDiv">
+        <div ref="mainDiv" class="border main-div">
             <h1>Teste</h1>
             <b-link v-if="!inFullScreen" @click="fullScreen">
                 Full screen
@@ -20,7 +20,7 @@
 </template>
 <script>
     import VisualizationMixin from "./VisualizationMixin";
-    import ForceGraph from 'force-graph';
+    //import ForceGraph from 'force-graph';
     export default {
         mixins: [VisualizationMixin],
         data() {
@@ -29,6 +29,7 @@
             };
         },
         mounted() {
+            /*
             const N = 100;
             const GROUPS = 12;
             const gData = {
@@ -48,6 +49,7 @@
                 // .nodeRelSize(1)
                 .centerAt(400, 120)
                 .graphData(gData);
+            */
 
         },
         methods: {

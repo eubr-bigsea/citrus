@@ -1,5 +1,5 @@
 <template>
-    <home-card-item-base>
+    <HomeCardItemBase>
         <template slot="head">
             <router-link :to="{name: 'jobDetail', params: {platform: item.workflow.platform.id, id: item.id}}" :title="`${item.id} - ${item.workflow.name}`">
                 {{item.id}} - {{item.workflow.name}}
@@ -10,9 +10,9 @@
         </template>
         <template slot="footer">
             <small class="text-muted">{{(item.finished || item.created) | timeFromNow(this.$locale)}}</small>
-            <span :class="['badge', getStatusBadgeColor()]">{{this.item.status}}</span>
+            <span :class="['badge', getStatusBadgeColor()]">{{item.status}}</span>
         </template>
-    </home-card-item-base>
+    </HomeCardItemBase>
 </template>
 
 <script>
@@ -20,10 +20,10 @@ import HomeCardMixin from '../../../mixins/HomeCard'
 import HomeCardItemBase from './HomeCardItemBase.vue'
 
 export default {
-    name: 'home-card-item-job',
-    mixins: [HomeCardMixin],
+    name: 'HomeCardItemJob',
     components: {
         HomeCardItemBase
-    }
+    },
+    mixins: [HomeCardMixin]
 }
 </script>

@@ -10,7 +10,7 @@
         components: { TreeItem },
         props: {
             tree: { type: Object, default: () => { } },
-            opened: false,
+            opened: {default: ()=> false, type: Boolean},
         },
         data(){
             return {bus: new Vue()}

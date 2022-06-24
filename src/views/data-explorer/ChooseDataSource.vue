@@ -14,7 +14,6 @@
     </main>
 </template>
 <script>
-    let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     export default {
         methods: {
         }

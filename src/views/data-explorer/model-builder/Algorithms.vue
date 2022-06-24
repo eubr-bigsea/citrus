@@ -9,8 +9,8 @@
                 <b-list-group>
                     <b-list-group-item v-for="alg in algorithms" :key="alg.id" class="p-0 pl-2"
                         :class="{'bg-light': selectedAlgorithm === alg }">
-                        <div class="d-flex w-100 p-1" @click="handleSelectAlgorithm(alg)" role="button">
-                            <b-form-checkbox switch v-model="alg.enabled">
+                        <div class="d-flex w-100 p-1" role="button" @click="handleSelectAlgorithm(alg)">
+                            <b-form-checkbox v-model="alg.enabled" switch>
                             </b-form-checkbox>
                             {{alg.operation.name}}
                         </div>
@@ -26,7 +26,7 @@
                     <h6>{{selectedAlgorithm.operation.name}}</h6>
                     <hr />
                     <template v-for="form in selectedAlgorithm.operation.forms">
-                        <div v-for="field in form.fields" class="mb-2 property clearfix" v-bind:key="field.name"
+                        <div v-for="field in form.fields" :key="field.name" class="mb-2 property clearfix"
                             :data-name="field.name">
                             <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}-->
                             <keep-alive>
@@ -36,18 +36,18 @@
                                         :read-only="!field.editable" context="context" @update="handleUpdateField" />
                                 </div>
                                 <component
-                                    v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled"
-                                    visual-style="explorer" :is="getWidget(field)" :field="field"
+                                    :is="getWidget(field)"
+                                    v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled" visual-style="explorer" :field="field"
                                     :value="getFieldValue(field.name)" :language="$root.$i18n.locale"
                                     :type="field.suggested_widget" :small="true" :read-only="!field.editable"
-                                    context="context" @update="handleUpdateField"
-                                    :show-quantity="workflow.grid.forms.strategy.value === 'grid' ">
+                                    context="context" :show-quantity="workflow.grid.forms.strategy.value === 'grid' "
+                                    @update="handleUpdateField">
                                 </component>
                                 <div v-else>
                                 </div>
                             </keep-alive>
                         </div>
-                        <button class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">Limpar
+                        <button :key="form.id" class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">Limpar
                             parâmetros</button>
                     </template>
                 </div>
@@ -61,7 +61,6 @@
 </template>
 <script>
     import Vue from 'vue';
-    import { Task } from '../entities.js';
     import Checkboxes from '../../../components/widgets/Checkboxes.vue';
     import InputTag from '../../../components/widgets/InputTag.vue';
     import NumericRangeOrSet from '../../../components/widgets/NumericRangeOrSet.vue';
@@ -84,6 +83,31 @@
                 selectedAlgorithm: {},
             }
         },
+        mounted() {
+            const algLookup = new Map((this.workflow.tasks || []).map((alg) => [alg.operation.slug, alg]));
+            const operationsLookup = new Map(this.operations.map(op => [op.slug, op]));
+
+            /* Initialization
+            if (!this.algorithms.forms) {
+                this.algorithms.forms = { algorithms: { value: [] } };
+            } else if (!this.algorithms.forms.algorithms) {
+                this.algorithms.forms.algorithms = { value: [] };
+            } */
+            this.algorithms = this.operations.map((op) => {
+                let task;
+                if (algLookup.has(op.slug)) {
+                    task = algLookup.get(op.slug);
+                    task.operation = operationsLookup.get(op.slug);
+                    task.algorithm = true;
+                } else {
+                    task = this.workflow.addTask(op);
+                    task.enabled = false;
+                    task.algorithm = true;
+                }
+                return task;
+            });
+
+        },
         methods: {
             evalInContext(js, context) {
                 return new Function("return `" + js + "`;").call(context);
@@ -97,7 +121,7 @@
                 });
                 const self = this;
                 alg.operation.forms.forEach((f) => {
-                    f.fields.forEach((field, j) => {
+                    f.fields.forEach((field) => {
                         Vue.set(alg.forms[field.name], "enabled", true);
                         if (field.enable_conditions) {
                             if (field.enable_conditions === 'false') {
@@ -155,37 +179,12 @@
                     });
                 }*/
             },
-            handleCleanAll(form) {
-                Object.entries(this.selectedAlgorithm.forms).forEach(([name, value], inx) => {
+            handleCleanAll() {
+                Object.entries(this.selectedAlgorithm.forms).forEach(([name, value], inx) => { // eslint-disable-line no-unused-vars
                     value.value = null;
                     value.internalValue = { type: 'list', list: [] };
                 });
             }
-        },
-        mounted() {
-            const algLookup = new Map((this.workflow.tasks || []).map((alg) => [alg.operation.slug, alg]));
-            const operationsLookup = new Map(this.operations.map(op => [op.slug, op]));
-
-            /* Initialization
-            if (!this.algorithms.forms) {
-                this.algorithms.forms = { algorithms: { value: [] } };
-            } else if (!this.algorithms.forms.algorithms) {
-                this.algorithms.forms.algorithms = { value: [] };
-            } */
-            this.algorithms = this.operations.map((op) => {
-                let task;
-                if (algLookup.has(op.slug)) {
-                    task = algLookup.get(op.slug);
-                    task.operation = operationsLookup.get(op.slug);
-                    task.algorithm = true;
-                } else {
-                    task = this.workflow.addTask(op);
-                    task.enabled = false;
-                    task.algorithm = true;
-                }
-                return task;
-            });
-
         },
     }
 </script>

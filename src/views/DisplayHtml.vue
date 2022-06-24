@@ -6,7 +6,6 @@
 <script>
     import axios from "axios";
     import Notifier from '../mixins/Notifier';
-    const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
     export default {
         mixins: [Notifier],

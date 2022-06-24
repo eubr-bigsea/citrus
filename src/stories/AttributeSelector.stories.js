@@ -50,7 +50,7 @@ Single.args = {
 };
 
 export const SingleReadOnly = Template.bind({});
-Single2.args = {
+SingleReadOnly.args = {
     field: field1,
     readOnly: false,
     value: "",

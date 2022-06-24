@@ -1,8 +1,8 @@
 <template>
     <div :class="'platform-' + platform" class="diagram" oncontextmenu="return false;">
-        <diagram-toolbar class="diagram-toolbar" v-if="showToolbar" :selected="selectedElements" 
+        <diagram-toolbar v-if="showToolbar" class="diagram-toolbar" :selected="selectedElements" 
             :copied-tasks="copiedTasks"  
-            :useDataSource="useDataSource"/>
+            :use-data-source="useDataSource"/>
         <div id="lemonade-container" :class="{ 'with-grid': showGrid, 'dark-mode': darkMode }" class="lemonade-container not-selectable"
             @click="diagramClick">
             <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
@@ -75,8 +75,7 @@
 
     import TaskComponent from './Task.vue';
     import DiagramToolbar from './DiagramToolbar.vue';
-    // eslint-disable-next-line
-    import jsplumb from 'jsplumb';
+    import {jsPlumb} from 'jsplumb';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const standUrl = process.env.VUE_APP_STAND_URL
@@ -281,7 +280,7 @@
                 });
             });
 
-            this.$root.$on('onstop-flow', interfaceName => {
+            this.$root.$on('onstop-flow', interfaceName => { // eslint-disable-line no-unused-vars
                 this.instance.selectEndpoints().each(endPoint => {
                     if (endPoint.isTarget) {
                         endPoint.element.classList.remove('selected');
@@ -545,7 +544,7 @@
                 });
             },
             clearWorkflow() {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                     let oldInstance = this.instance;
                     oldInstance.deleteEveryEndpoint();
                     oldInstance.deleteEveryConnection();
@@ -574,7 +573,7 @@
             changeWorkflowName(name) {
                 this.$root.$emit('changeWorkflowName', name);
             },
-            changeWorkflowId(id) {
+            changeWorkflowId(id) { // eslint-disable-line no-unused-vars
                 //@FIXME
                 //this.$store.dispatch('changeWorkflowId', id);
             },
@@ -604,11 +603,11 @@
                 self.instance = self.getJsPlumbInstance();
                 self._bindJsPlumbEvents();
                 //self.instance.setRenderMode(jsPlumb.CANVAS);
-                window.addEventListener('resize', e => {
+                window.addEventListener('resize', () => {
                     self.instance.repaintEverything();
                 });
             },
-            selectElements(ev) {
+            selectElements() {
                 if (this.multipleSelectionEnabled) {
                     //$("#score>span").text('0');
                     let self = this;
@@ -880,7 +879,7 @@
                     self.$root.$emit('onremove-task', task);
                 })
 
-                self.selectedElements = self.selectedElements.filter((v, i, arr) => {
+                self.selectedElements = self.selectedElements.filter((v, i, arr) => { // eslint-disable-line no-unused-vars
                     return !tasks_ids.includes(v)
                 })
             },
@@ -1085,18 +1084,18 @@
                 if (selectedTasks.length) {
                     if (fn === 'center') {
                         let centerPos = selectedTasks.map((v)=>v[pos]).reduce((prev, cur)=>cur+prev)/selectedTasks.length;
-                        selectedTasks.forEach((task, inx) => {
+                        selectedTasks.forEach((task, inx) => { // eslint-disable-line no-unused-vars
                             task[pos] = centerPos;
                         });
                     } else {
-                        let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => {
+                        let minPosTask = selectedTasks.reduce((prev, cur, inx, arr) => { // eslint-disable-line no-unused-vars
                             if (fn === 'min') {
                                 return prev[pos] < cur[pos] ? prev : cur;
                             } else {
                                 return prev[pos] > cur[pos] ? prev : cur;
                             }
                         });
-                        selectedTasks.forEach((task, inx) => {
+                        selectedTasks.forEach((task, inx) => { // eslint-disable-line no-unused-vars
                             task[pos] = minPosTask[pos];
                         });
                     }
@@ -1235,7 +1234,7 @@
                     });
                 };
             },
-            _customUpdateConnectionsForGroup(_jsPlumb) {
+            _customUpdateConnectionsForGroup(_jsPlumb) {// eslint-disable-line no-unused-vars
                 // return function (group) {
                 //     var members = group.getMembers();
                 //     var c1 = _jsPlumb.getConnections({ source: members, scope: '*' }, true);
@@ -1283,7 +1282,7 @@
                     console.log('Group', p.group.id, 'added', p.el.id);
                     self._fixGroupConnections(self, p);
                 });
-                self.instance.bind('connectionDetached', (info, originalEvent) => {
+                self.instance.bind('connectionDetached', (info, originalEvent) => {// eslint-disable-line no-unused-vars
                     let source = info.sourceEndpoint.getUuid();
                     let target = info.targetEndpoint.getUuid();
                     this.removeFlow(`${source}-${target}`);
@@ -1291,7 +1290,7 @@
                 // self.instance.bind('contextmenu', (component, originalEvent) => {
                 //     console.debug(component);
                 // });
-                self.instance.bind('connectionMoved', (info, originalEvent) => {
+                self.instance.bind('connectionMoved', (info, originalEvent) => {// eslint-disable-line no-unused-vars
                     let source = info.originalSourceEndpoint.getUuid();
                     let target = info.originalTargetEndpoint.getUuid();
                     self.removeFlow(`${source}-${target}`);

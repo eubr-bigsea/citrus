@@ -7,26 +7,9 @@ import { setDatetimeOptions } from './CaipirinhaVisualizationUtils.js';
 
 
 export default {
-  name: "caipirinha-visualization-scatter",
-  props: ["visualizationData"],
-  methods: {
-    getType() {
-      let sample;
-      
-      try {
-        sample = this.visualizationData.data[0].values[0].x;
-      } catch(e) {
-        return 'linear';
-      }  
-      
-      if (isNaN(sample) && !isNaN(Date.parse(sample)))
-        return 'datetime';
-      
-      if (typeof sample == 'string')
-        return 'category';
-
-      return 'linear';
-    }
+  name: "CaipirinhaVisualizationScatter",
+  props: {
+      visualizationData: {type: Object, default: () => null},
   },
   data: function() {
     let options = {
@@ -59,6 +42,25 @@ export default {
       options = setDatetimeOptions(options);
 
     return { options };
+  },
+  methods: {
+    getType() {
+      let sample;
+      
+      try {
+        sample = this.visualizationData.data[0].values[0].x;
+      } catch(e) {
+        return 'linear';
+      }  
+      
+      if (isNaN(sample) && !isNaN(Date.parse(sample)))
+        return 'datetime';
+      
+      if (typeof sample == 'string')
+        return 'category';
+
+      return 'linear';
+    }
   }
 };
 </script>

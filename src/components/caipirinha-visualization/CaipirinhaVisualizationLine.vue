@@ -7,8 +7,10 @@ import { setDatetimeOptions } from './CaipirinhaVisualizationUtils.js';
 
 
 export default {
-  name: "caipirinha-visualization-line",
-  props: ["visualizationData"],
+  name: "CaipirinhaVisualizationLine",
+  props: {
+      "visualizationData": {type: Object, default: () => null},
+  },
   data: function() {
     let options = {
       chart: {

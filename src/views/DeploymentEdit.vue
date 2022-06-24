@@ -10,26 +10,26 @@
                     <hr>
                     <div class="row">
                         <div class="col-12 col-xg-12 mx-auto">
-                            <div class="card" v-if="ready">
+                            <div v-if="ready" class="card">
                                 <div class="card-body">
                                     <form>
                                         <div class="row">
                                             <div class="col-4">
                                                 <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                                <input v-model="deployment.name" type="text" class="form-control"
-                                                    maxlength="100" v-focus required>
+                                                <input v-model="deployment.name" v-focus type="text"
+                                                    class="form-control" maxlength="100" required>
                                             </div>
                                             <div class="col-1">
                                                 <label class="font-weight-bold">{{$tc('deployment.replica',2)}}:</label>
-                                                <input type="number" class="form-control" v-model="deployment.replicas"
+                                                <input v-model="deployment.replicas" type="number" class="form-control"
                                                     max="4" min="1" step="1" />
                                             </div>
                                             <div class="col-3">
                                                 <label class="font-weight-bold">{{$tc('deployment.model')}}:</label>
-                                                <v-select :options="models" :taggable="false" label="name"
-                                                    @search="fetchModels" :reduce="(opt) => opt.id" 
-                                                    v-model="deployment.model_id" :close-on-select="true"
-                                                    :filterable="false">
+                                                <v-select v-model="deployment.model_id" :options="models" :taggable="false"
+                                                    label="name" :reduce="(opt) => opt.id" 
+                                                    :close-on-select="true" :filterable="false"
+                                                    @search="fetchModels">
                                                     <template #no-options="{ search, searching, loading }">
                                                         <small>{{$t('common.noResultsInformSearch')}}</small>
                                                     </template>
@@ -37,8 +37,8 @@
                                             </div>
                                             <div class="col-4">
                                                 <label class="font-weight-bold">{{$tc('deployment.target')}}:</label>
-                                                <v-select :options="targets" 
-                                                    v-model="deployment.target" label="name">
+                                                <v-select v-model="deployment.target" 
+                                                    :options="targets" label="name">
                                                     <template #option="{ description, id, name, target_type }">
                                                         {{ name }}<br />
                                                         <small><em>{{ description }} ({{ target_type }})</em></small>
@@ -49,8 +49,8 @@
                                         <div class="row mt-3">
                                             <div class="col-4">
                                                 <label class="font-weight-bold">{{$tc('deployment.image')}}:</label>
-                                                <v-select :options="images" 
-                                                    v-model="deployment.image" label="description">
+                                                <v-select v-model="deployment.image" 
+                                                    :options="images" label="description">
                                                     <template #option="{ description, id, name, tag }">
                                                         {{ description }}<br />
                                                         <small><em>{{ name }}:{{ tag }}</em></small>
@@ -59,7 +59,7 @@
                                             </div>
                                             <div class="col-1">
                                                 <label>{{$tc('deployment.port',1)}}:</label>
-                                                <input type="number" class="form-control" v-model="deployment.port" max="99999" min="1025"/>
+                                                <input v-model="deployment.port" type="number" class="form-control" max="99999" min="1025"/>
                                             </div>
                                             <div class="col-7">
                                                 <label>{{$tc('common.description')}}:</label>
@@ -70,31 +70,31 @@
                                         <div class="row mt-4">
                                             <div class="col-3">
                                                 <label>{{$t('deployment.limitCpu')}}:</label>
-                                                <input type="number" class="form-control" v-model="deployment.limit_cpu"
+                                                <input v-model="deployment.limit_cpu" type="number" class="form-control"
                                                     max="32000" min="0" step="500" />
                                             </div>
                                             <div class="col-3">
                                                 <label>{{$t('deployment.requestCpu')}}:</label>
-                                                <input type="number" class="form-control"
-                                                    v-model="deployment.request_cpu" max="32000" min="500" step="500" />
+                                                <input v-model="deployment.request_cpu" type="number"
+                                                    class="form-control" max="32000" min="500" step="500" />
                                             </div>
 
                                             <div class="col-3">
                                                 <label>{{$t('deployment.limitMemory')}}:</label>
-                                                <input type="number" class="form-control"
-                                                    v-model="deployment.limit_memory" max="64000" min="0" step="512" />
+                                                <input v-model="deployment.limit_memory" type="number"
+                                                    class="form-control" max="64000" min="0" step="512" />
                                             </div>
                                             <div class="col-3">
                                                 <label>{{$t('deployment.requestMemory')}}:</label>
-                                                <input type="number" class="form-control"
-                                                    v-model="deployment.request_memory" max="64000" min="0"
+                                                <input v-model="deployment.request_memory" type="number"
+                                                    class="form-control" max="64000" min="0"
                                                     step="512" />
                                             </div>
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-12">
                                                 <label>{{$t('deployment.extraParameters')}}:</label>
-                                                <textarea rows="3" v-model="deployment.extra_parameters"
+                                                <textarea v-model="deployment.extra_parameters" rows="3"
                                                     class="form-control"></textarea>
                                             </div>
                                         </div>
@@ -137,19 +137,22 @@
     import Vue from 'vue';
     import axios from 'axios';
     import VueSelect from 'vue-select';
-    import SwitchComponent from '../components/widgets/Switch.vue';
     import Notifier from '../mixins/Notifier';
     import { debounce } from '../util.js';
 
     let seedUrl = process.env.VUE_APP_SEED_URL;
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
-    let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
     export default {
-        mixins: [Notifier],
         components: {
             'v-select': VueSelect,
-            SwitchComponent
+        },
+        mixins: [Notifier],
+        props: {
+            add: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -162,15 +165,9 @@
                 targets: []
             };
         },
-        props: {
-            add: {
-                type: Boolean,
-                default: false
-            }
-        },
         computed: {},
         watch: {
-            '$route.params.id': function (id) {
+            '$route.params.id': function () {
                 this.load().then(() => {
                     Vue.nextTick(() => {
                         this.isDirty = false;
@@ -178,7 +175,7 @@
                 });
             },
             deployment: {
-                handler(newVal, oldVal) {
+                handler() {
                     this.isDirty = true;
                 },
                 deep: true

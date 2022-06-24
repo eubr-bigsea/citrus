@@ -4,8 +4,10 @@
 
 <script>
 export default {
-  name: "caipirinha-visualization-html",
-  props: ["visualizationData"],
+  name: "CaipirinhaVisualizationHtml",
+  props: {
+     "visualizationData": {type: Object, default: () => null}
+  },
   data: function() {
     return {
       html: this.visualizationData.html

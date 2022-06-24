@@ -2,13 +2,13 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <textarea disabled :value="displayValue" class="form-control code" rows="4"></textarea>
-        <b-link v-if="!readOnly" @click.prevent="openModal" variant="sm">
+        <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
             {{$t('property.editValue')}}
         </b-link>
-        <b-modal id="expressionModal" size="xl" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" ref="modal">
-            <div class="context-help" :class="{'d-none': !help}" v-html="help"
-                :style="{top: positionTop + 'px', left: positionLeft + 'px'}">
+        <b-modal id="expressionModal" ref="modal" size="xl" :title="field.label"
+            :hide-header="true" :cancel-title="$t('actions.cancel')">
+            <div class="context-help" :class="{'d-none': !help}" :style="{top: positionTop + 'px', left: positionLeft + 'px'}"
+                v-html="help">
             </div>
             <div class="row" @click="closeTooltip">
                 <div class="col-md-4 reference">
@@ -27,27 +27,27 @@
                         </b-tab>
                         <b-tab title="Atributos">
                             <select class="form-control shadow-none" size="18" @dblclick="copyPasteValue">
-                                <option v-for="sg in suggestions">{{sg}}</option>
+                                <option v-for="sg in suggestions" :key="sg">{{sg}}</option>
                             </select>
                         </b-tab>
                         <b-tab title="Operadores" class="p-0">
-                            <table class="table operators-table table-sm table-borderless" v-if="operators">
-                                <template v-for="(group, groupName) in operators">
+                            <table v-if="operators" class="table operators-table table-sm table-borderless">
+                                <div v-for="(group, groupName) in operators" :key="groupName" style="display: contents">
                                     <tr>
                                         <th colspan="2">{{groupName}}</th>
                                     </tr>
-                                    <tr v-for="(description, op) in group">
+                                    <tr v-for="(description, op) in group" :key="op">
                                         <td style="width:20px" class="text-center">{{op}}</td>
                                         <td>{{description}}</td>
                                     </tr>
-                                </template>
+                                </div>
                             </table>
                         </b-tab>
                     </b-tabs>
                     <small>{{$t('property.copyAttributeName')}}</small>
                 </div>
                 <div class="col-md-8">
-                    <form v-if="expressionList && expressionList.length" onsubmit="return false" ref="form" action="">
+                    <form v-if="expressionList && expressionList.length" ref="form" onsubmit="return false" action="">
                         <table class="table table-sm expression-table">
                             <thead>
                                 <th> {{$t('property.expression.title')}}</th>
@@ -55,38 +55,35 @@
                                 <th style="width:12%"></th>
                             </thead>
                             <tbody>
-                                <template v-for="(row, index) in expressionList">
-                                    <tr>
-                                        <td class="expression-editor-area autocomplete">
-                                            <input type="text" class="form-control" :class="{'text-danger': row.error}"
-                                                @keyup="onKeyUp($event, row, 'expression')" ref="expr"
-                                                @blur="elementBlur(row, $event)" v-focus
-                                                @paste="changed($event, row, 'expression')" :value="row.expression"
-                                                required @dblclick="debugExpression(row)" />
-                                            <ul v-show="isOpen" class="autocomplete-results">
-                                                <li v-for="(result, i) in suggestionResults" :key="i"
-                                                    @click="setResult(result)" class="autocomplete-result"
-                                                    :class="{ 'is-active': i === arrowCounter }">
-                                                    {{ result }}
-                                                </li>
-                                            </ul>
-                                            <small class="label text-danger" v-html="row.error"></small>
-                                            <!-- <small>{{row}}</small> -->
-                                        </td>
-                                        <td v-if="values.alias !== false" style="width: 20%">
-                                            <input class="form-control" :value="row.alias" required
-                                                @change="updated($event, row, 'alias')" />
-                                        </td>
-                                        <td style="width:2%" class="text-center">
-                                            <a href="#" @click.prevent="remove($event, index)"
-                                                class="btn btn-danger btn-sm">
-                                                <!-- <span class="fa fa-minus-circle text-danger"></span> -->
-                                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                                            </a>
-                                        </td>
-                                    </tr>
-
-                                </template>
+                                <tr v-for="(row, index) in expressionList" :key="index">
+                                    <td class="expression-editor-area autocomplete">
+                                        <input ref="expr" v-focus type="text"
+                                            class="form-control" :class="{'text-danger': row.error}"
+                                            :value="row.expression" required
+                                            @keyup="onKeyUp($event, row, 'expression')" @blur="elementBlur(row, $event)"
+                                            @paste="changed($event, row, 'expression')" @dblclick="debugExpression(row)" />
+                                        <ul v-show="isOpen" class="autocomplete-results">
+                                            <li v-for="(result, i) in suggestionResults" :key="i"
+                                                class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }"
+                                                @click="setResult(result)">
+                                                {{ result }}
+                                            </li>
+                                        </ul>
+                                        <small class="label text-danger" v-html="row.error"></small>
+                                        <!-- <small>{{row}}</small> -->
+                                    </td>
+                                    <td v-if="values.alias !== false" style="width: 20%">
+                                        <input class="form-control" :value="row.alias" required
+                                            @change="updated($event, row, 'alias')" />
+                                    </td>
+                                    <td style="width:2%" class="text-center">
+                                        <a href="#" class="btn btn-danger btn-sm"
+                                            @click.prevent="remove($event, index)">
+                                            <!-- <span class="fa fa-minus-circle text-danger"></span> -->
+                                            <font-awesome-icon icon="trash"></font-awesome-icon>
+                                        </a>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </form>
@@ -119,8 +116,8 @@
 
             </small>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click.prevent="okClicked" variant="primary" class="btn-sm mr-1">{{$t('common.ok')}}</b-btn>
-                <b-btn @click.prevent="cancelClicked" variant="secondary" class="btn-sm ">{{$t('actions.cancel')}}
+                <b-btn variant="primary" class="btn-sm mr-1" @click.prevent="okClicked">{{$t('common.ok')}}</b-btn>
+                <b-btn variant="secondary" class="btn-sm " @click.prevent="cancelClicked">{{$t('actions.cancel')}}
                 </b-btn>
             </div>
         </b-modal>
@@ -132,11 +129,33 @@
     import Widget from '../../mixins/Widget.js';
     import { debounce } from '../../util.js';
     import functionsHelp from '../../i18n/functions.js';
-    import TreeItemComponent from '../TreeItem.vue';
     import Notifier from '../../mixins/Notifier';
 
     export default {
+        components: { LabelComponent},
         mixins: [Widget, Notifier],
+        props: {
+            addOperators: {type: Function, default: () => null},
+            removeOperators: {type: Function, default: () => null},
+        },
+        data() {
+            return {
+                expressionValue: '',
+                expressionList: null,
+                help: null,
+                lastEdited: {},
+                positionLeft: 0,
+                positionTop: 0,
+                suggestions: [],
+                suggestionResults: ['abs', 'acos', 'asin'],
+                isOpen: false,
+                arrowCounter: 0,
+                treeData: [],
+                operators: [],
+                displayFunctions: [],
+                currentFunctionHelp: null,
+            }
+        },
         computed: {
             displayValue() {
                 if (this.value && this.value.map) {
@@ -159,26 +178,15 @@
                         return this.field.values;
                     }
                 }
+                return null;
             },
         },
-        components: { LabelComponent, TreeItemComponent },
-        data() {
-            return {
-                expressionValue: '',
-                expressionList: null,
-                help: null,
-                lastEdited: {},
-                positionLeft: 0,
-                positionTop: 0,
-                suggestions: [],
-                suggestionResults: ['abs', 'acos', 'asin'],
-                isOpen: false,
-                arrowCounter: 0,
-                treeData: [],
-                operators: [],
-                displayFunctions: [],
-                currentFunctionHelp: null,
-            }
+        mounted() {
+            const resources = functionsHelp[this.$i18n.locale];
+            this.treeData = resources.tree.functions.sort((a, b) => a.name.localeCompare(b.name));
+            this.operators = resources.operators;
+            this.updateDisplayedFunctions('all');
+            this.lastEdited = this.expressionList && this.expressionList.length > 0 ? this.expressionList.length - 1 : {};
         },
         methods: {
             openModal() {
@@ -237,7 +245,7 @@
                     return !(expr.expression && (!this.values.alias || expr.alias) && !expr.error);
                 }).length == 0;
             },
-            okClicked(e) {
+            okClicked() {
                 const result = this.$refs.form && this.$refs.form.reportValidity() & this.validate();
                 if (result) {
                     this.triggerUpdateEvent(this.message, this.field,
@@ -251,7 +259,7 @@
                 }
                 return result;
             },
-            cancelClicked(e) {
+            cancelClicked() {
                 this.expressionList = this.expressionList = this.value && this.value.map
                     ? this.value.map(a => ({ ...a })) : []; // copy values
                 this.$refs.modal.hide();
@@ -263,7 +271,7 @@
                     if (pos > 0) {
                         const parts = value.substring(0, pos).split(/\b/);
                         if (parts.length) {
-                            const triggerValue = parts.slice(-1)[0];
+                            //const triggerValue = parts.slice(-1)[0];
                             //console.debug('CTRL Space ', triggerValue);
                             this.isOpen = true;
                         }
@@ -285,7 +293,7 @@
                     if (parts.length) {
                         const functionName = parts.slice(-1)[0];
                         this.help = resources[functionName];
-                        const bodyRect = document.body.getBoundingClientRect();
+                        //const bodyRect = document.body.getBoundingClientRect();
                         const elemRect = e.target.getBoundingClientRect();
                         this.positionTop = parseInt(elemRect.top + elemRect.height - 15);
                         this.positionLeft = 10;//parseInt(elemRect.left - bodyRect.left);
@@ -296,7 +304,7 @@
                 this.updated(e, row, attr);
                 return true;
             }, 100),
-            add(e) {
+            add() {
                 if (this.expressionList === null || this.expressionList === '') {
                     this.expressionList = [];
                 }
@@ -370,17 +378,6 @@
                 console.debug(JSON.stringify(row));
             }
         },
-        props: {
-            addOperators: {},
-            removeOperators: {},
-        },
-        mounted() {
-            const resources = functionsHelp[this.$i18n.locale];
-            this.treeData = resources.tree.functions.sort((a, b) => a.name.localeCompare(b.name));
-            this.operators = resources.operators;
-            this.updateDisplayedFunctions('all');
-            this.lastEdited = this.expressionList && this.expressionList.length > 0 ? this.expressionList.length - 1 : {};
-        }
     }
 </script>
 <style>

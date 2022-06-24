@@ -3,7 +3,7 @@
         <span v-if="!readOnly">
             <LabelComponent :field="field" :value="value"></LabelComponent>
             <div class="scale clearfix">
-                <div v-if="displayValue" v-for="color in displayValue">
+                <div v-for="color in displayValue" v-if="displayValue" :key="color">
                     <div class="color" :style="{'background-color': color}"></div>
                 </div>
             </div>
@@ -14,21 +14,21 @@
             </p>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal id="lookupModal" size="lg" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" no-fade ref="modal">
+        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label"
+            :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade>
             <p>
                 <em>FIXME</em>
             </p>
             <div class="color-select">
                 <div v-for="(scale, inx) in scales" :key="scale[0]" class="scale clearfix" @click="select(inx)">
                     <div class="scale-name">{{scale[0]}}</div>
-                    <div v-for="color in scale[1]">
+                    <div v-for="color in scale[1]" :key="color">
                         <div class="color" :style="{'background-color': color}"></div>
                     </div>
                 </div>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click="cancelClicked" variant="secondary" class="btn-sm ">{{$t('actions.cancel')}}</b-btn>
+                <b-btn variant="secondary" class="btn-sm " @click="cancelClicked">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -36,7 +36,6 @@
 <script>
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
-    import Plotly from 'plotly.js-dist-min'
 
     // Colors from plotly in Python. Is there a method to retrieve them in JS?
     const scales = [
@@ -172,8 +171,25 @@
         ['turbid_r', ['#221e1b', '#392d25', '#503b2e', '#684835', '#815738', '#97673a', '#aa793c', '#ba8f42', '#c7a853', '#d1c16b', '#dcdb89', '#e8f5ab']] ,
     ]
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
+        props: {
+            value: {type: String, default: () => null},
+            field: {type: String, default: () => null},
+            message: {
+                type: String,
+                default: 'update-form-field-value'
+            }
+        },
+        data() {
+            return {
+                displayValue: '',
+                scales
+            }
+        },
+        mounted() {
+            this.displayValue = this.value;
+        },
         methods: {
             openModal() {
                 this.$refs.modal.show();
@@ -186,24 +202,8 @@
                 this.$refs.modal.hide();
                 this.displayValue = this.scales[inx][1];
             },
-            cancelClicked(ev) {
+            cancelClicked() {
                 this.$refs.modal.hide();
-            }
-        },
-        mounted() {
-            this.displayValue = this.value;
-        },
-        data() {
-            return {
-                displayValue: '',
-                scales
-            }
-        },
-        props: {
-            value: '', field: {},
-            message: {
-                type: String,
-                default: 'update-form-field-value'
             }
         },
     }

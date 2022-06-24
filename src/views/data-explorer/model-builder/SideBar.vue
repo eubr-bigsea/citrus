@@ -1,4 +1,4 @@
-<template>
+    <template>
     <div>
         <b-nav vertical class="model-builder-sidebar">
             <b-nav-text class="header">Entrada</b-nav-text>
@@ -38,7 +38,7 @@
 </template>
 <script>
     export default {
-        name: 'model-builder-side-bar',
+        name: 'ModelBuilderSideBar',
         props: {
             selected: { type: String, default: () => 'target' },
             supervisioned: {type: Boolean}

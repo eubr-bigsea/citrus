@@ -3,7 +3,7 @@
         header-text-variant="light" :hide-footer="true">
         <p>{{task.step.status}}</p>
         <div>
-            <div class="step-log" v-for="log in task.step.logs" :key="log.id">
+            <div v-for="log in task.step.logs" :key="log.id" class="step-log">
                 <div class="step-date">{{log.date | formatJsonDate}}</div>
                 <div v-if="log.type==='TEXT'">
                     <small>{{log.message}}</small>
@@ -22,7 +22,7 @@
 <script>
     export default {
         props: {
-            task: {},
+            task: {type: Object, default: () => null},
         },
         methods: {
             show() {

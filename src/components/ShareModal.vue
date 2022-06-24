@@ -108,14 +108,14 @@
                     });
                 }
             },
-            allUsers: function (users) {
+            allUsers: function (users) {// eslint-disable-line no-unused-vars
                 const isEmpty = obj => [Object, Array].includes((obj || {}).constructor) && !Object.entries((obj || {})).length;
                 let datasource = this.datasource;
                 if (!isEmpty(datasource)) {
                     this.loading = false;
                 }
             },
-            users: function (users) {
+            users: function (users) { // eslint-disable-line no-unused-vars
                 console.log(' aaa');
             }
         },
@@ -138,7 +138,7 @@
                 let self = this;
                 let url = self.mountUrl();
 
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                     axios
                         .get(url)
                         .then(resp => {
@@ -179,9 +179,9 @@
                 let method = data.permission == 'NONE' ? 'DELETE' : 'POST';
                 let resource = this.resource;
 
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                     axios({ url, method, data })
-                        .then(resp => {
+                        .then(() => {
                             self.loading = false;
                             let msg = this.$t(`${resource}.shareModal.success`);
                             this.$snotify.success(msg, this.$t('titles.success'));

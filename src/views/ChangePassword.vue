@@ -123,7 +123,7 @@ export default {
       const self = this;
       axios.get(`${thornUrl}/password/reset`, 
         {params: this.$route.params})
-      .then(resp => {
+      .then(()=> {
         self.tokenOk= 'OK';
       }).catch(err => {
           self.tokenOk = "NOK";
@@ -136,7 +136,7 @@ export default {
       let thornUrl = process.env.VUE_APP_THORN_URL;
       let password = this.password;
       let password_confirmation = this.passwordConfirmation;
-      let reset_password_token = this.$route.query.reset_password_token;
+      //let reset_password_token = this.$route.query.reset_password_token;
 
       if (password.length < 6) {
         let msg = self.$t('errors.passwordTooShort');

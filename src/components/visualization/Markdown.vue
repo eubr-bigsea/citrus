@@ -7,9 +7,9 @@
     import MarkdownWidget from "../widgets/Markdown.vue";
     import VisualizationMixin from "./VisualizationMixin";
     export default {
-        mixins: [VisualizationMixin],
         components: {
             "markdown": MarkdownWidget,
-        }
+        },
+        mixins: [VisualizationMixin]
     }
 </script>

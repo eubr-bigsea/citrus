@@ -24,7 +24,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" @click="navigate('choose-task')" role="button">
+                <b-card class="clickable m-1" role="button" @click="navigate('choose-task')">
                     <div class="row">
                         <div class="col-md-4 mt-2 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable m-1" @click="navigate('new-visualization')" role="button">
+                <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
@@ -89,24 +89,24 @@
                     <form class="form-inline">
 
                         <label class="sr-only" for="type">{{$tc('common.type')}}</label>
-                        <select class="form-control w-25 pt-0" v-model="typeFilter">
+                        <select v-model="typeFilter" class="form-control w-25 pt-0">
                             <option selected disabled>{{$tc('actions.choose')}}...</option>
                             <option value="DATA_EXPLORER">{{$t('dataExplorer.experiments.DATA_EXPLORER')}}</option>
                             <option value="MODEL_BUILDER">{{$t('dataExplorer.experiments.MODEL_BUILDER')}}</option>
                             <option value="VIS_BUILDER">{{$t('dataExplorer.experiments.VIS_BUILDER')}}</option>
                         </select>
                         <label class="sr-only" for="search">{{$tc('common.name')}}</label>
-                        <input type="text" class="form-control m-2 w-25" :placeholder="$tc('common.name')"
-                            v-model="searchFilter">
-                        <button @click.prevent="search" ref="searchBtn"
-                            class="btn btn-secondary btn-sm mb-2 btn-spinner">
+                        <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
+                            :placeholder="$tc('common.name')">
+                        <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
+                            @click.prevent="search">
                             <span class="fa fa-search default-icon"></span> {{$t('actions.search')}}
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                         </button>
                     </form>
 
 
-                    <v-server-table v-show="totalRecords > 0" :columns="columns" :options="options" ref="workflowList"
+                    <v-server-table v-show="totalRecords > 0" ref="workflowList" :columns="columns" :options="options"
                         name="workflowListDataExperiments">
                         <template slot="id" slot-scope="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER' "
@@ -145,31 +145,11 @@
 <script>
     import axios from 'axios';
     import Notifier from '../../mixins/Notifier';
-    import { Event } from 'vue-tables-2';
 
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
     const META_PLATFORM_SLUG = 'meta';
     export default {
         mixins: [Notifier],
-        methods: {
-            search(event) {
-                this.$refs.workflowList.refresh()
-            },
-            navigate(name) {
-                this.$router.push({ name })
-            },
-            clearFilters() {
-                this.$refs.workflowList.setFilter('');
-                this.$refs.workflowList.customQueries = {};
-            },
-            getIcon(row) {
-                return {
-                    'DATA_EXPLORER': 'fa-table',
-                    'MODEL_BUILDER': 'fa-robot',
-                    'VIS_BUILDER': 'fa-chart-bar',
-                }[row.type];
-            }
-        },
         data() {
             const self = this;
             return {
@@ -258,6 +238,25 @@
                     }
                 }
             };
+        },
+        methods: {
+            search() {
+                this.$refs.workflowList.refresh()
+            },
+            navigate(name) {
+                this.$router.push({ name })
+            },
+            clearFilters() {
+                this.$refs.workflowList.setFilter('');
+                this.$refs.workflowList.customQueries = {};
+            },
+            getIcon(row) {
+                return {
+                    'DATA_EXPLORER': 'fa-table',
+                    'MODEL_BUILDER': 'fa-robot',
+                    'VIS_BUILDER': 'fa-chart-bar',
+                }[row.type];
+            }
         },
     }
 </script>

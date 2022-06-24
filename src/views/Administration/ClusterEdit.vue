@@ -31,13 +31,13 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="font-weight-bold">{{$tc('cluster.executors')}}:</label>
-                                                <input type="number" v-model="cluster.executors"
+                                                <input v-model="cluster.executors" type="number"
                                                     class="form-control w-25">
                                             </div>
                                             <div class="col-md-3">
                                                 <label
                                                     class="font-weight-bold">{{$tc('cluster.executorCores')}}:</label>
-                                                <input type="number" v-model="cluster.executor_cores"
+                                                <input v-model="cluster.executor_cores" type="number"
                                                     class="form-control w-25">
                                             </div>
                                             <div class="col-md-3">
@@ -99,7 +99,6 @@
     import Vue from 'vue';
     import axios from 'axios';
     import VueSelect from 'vue-select';
-    import SwitchComponent from '../../components/widgets/Switch.vue';
 
     let standUrl = process.env.VUE_APP_STAND_URL;
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
@@ -107,7 +106,12 @@
     export default {
         components: {
             'v-select': VueSelect,
-            SwitchComponent
+        },
+        props: {
+            add: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -117,15 +121,9 @@
                 types: ['KUBERNETES', 'SPARK_LOCAL', 'MESOS', 'YARN'].sort()
             };
         },
-        props: {
-            add: {
-                type: Boolean,
-                default: false
-            }
-        },
         computed: {},
         watch: {
-            '$route.params.id': function (id) {
+            '$route.params.id': function () {
                 this.load().then(() => {
                     Vue.nextTick(() => {
                         this.isDirty = false;
@@ -133,7 +131,7 @@
                 });
             },
             cluster: {
-                handler(newVal, oldVal) {
+                handler() {
                     this.isDirty = true;
                 },
                 deep: true
@@ -180,7 +178,6 @@
             },
             save(event) {
                 const self = this;
-                const data = this.storage;
                 let url = `${standUrl}/clusters/${this.cluster.id}`;
                 let axiosCall = axios.patch;
 

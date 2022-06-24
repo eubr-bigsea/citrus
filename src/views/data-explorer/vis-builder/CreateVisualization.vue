@@ -9,11 +9,11 @@
                 <div class="col-md-3">
                     <b-card>
                         <label class="" for="name">Nome do experimento:</label>
-                        <input type="text" class="form-control" maxlength="100" id="name" v-focus v-model="name">
+                        <input id="name" v-model="name" v-focus type="text" class="form-control" maxlength="100">
 
                         <label class="mt-2">Escolha a fonte de dados:</label>
-                        <vue-select @search="loadDataSourceList" :filterable="false" :options="dataSourceList"
-                            label="name" v-model="selectedDataSource" @input="retrieveAttributes">
+                        <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList"
+                            label="name" @search="loadDataSourceList" @input="retrieveAttributes">
                             <template v-slot:no-options="{ search, searching }">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
@@ -52,7 +52,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
                                         value="custom">Configurar visualização
                                     </b-form-radio>
                                 </div>
@@ -71,7 +71,6 @@
     import vSelect from 'vue-select';
     import Notifier from '../../../mixins/Notifier';
     import DataSourceMixin from '../DataSourceMixin.js';
-    import { debounce } from "../../../util.js";
     import { Workflow } from '../entities.js';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
@@ -96,12 +95,6 @@
                 this.$router.push({ name });
             },
             async create() {
-                const params = {
-                    name: this.name,
-                    label: this.selectedAttribute,
-                    dataSource: this.selectedDataSource
-                };
-
                 try {
                     const ds = { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name };
                     const workflow = Workflow.buildVisualizationBuilder(

@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-4 offset-md-4">
-            <div v-for="(field, index2) in form.fields" class="mb-2 property" v-bind:key="index2">
+            <div v-for="(field, index2) in form.fields" :key="index2" class="mb-2 property">
                 <component
                     :is="field.suggested_widget + '-component'" :field="field" :value="getValue(field.name)" language="language"
                     context="context" message="update-workflow-form-field-value">
@@ -21,10 +21,8 @@
     import ExpressionComponent from './widgets/ExpressionEditor.vue'
     import IntegerComponent from './widgets/Integer.vue'
     import LookupComponent from './widgets/Lookup.vue'
-    import PercentageComponent from './widgets/Range.vue'
     import RangeComponent from './widgets/Range.vue'
     import Select2Component from './widgets/Select2.vue'
-    import SwitchComponent from './widgets/Switch.vue'
     import TagComponent from './widgets/Select2.vue'
     import TextComponent from './widgets/Text.vue'
     import TextAreaComponent from './widgets/TextArea.vue'
@@ -49,9 +47,11 @@
             'textarea-component': TextAreaComponent
         },
         props: {
-            form: { type: Object, default: {} },
-            workflow: { type: Object, default: {} },
-            loaded: false,
+            form: { type: Object, default: () => {} },
+            workflow: { type: Object, default: () => {} },
+            loaded: {type: Boolean, default: false},
+        },
+        mounted(){
         },
         methods: {
             getValue(name) {
@@ -60,8 +60,6 @@
                     && this.workflow.forms[name]
                     ? this.workflow.forms[name].value : null;
             },
-        },
-        mounted(){
         }
     }
 </script>

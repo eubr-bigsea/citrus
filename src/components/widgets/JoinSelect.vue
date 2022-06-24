@@ -2,36 +2,36 @@
     <div>
         <div class="text-center font-weight-bold">{{label}}</div>
         <b-form-group>
-            <b-radio value="1" v-model.number="innerSelectionType">{{$t('widgets.join.allAttributesWithPrefix')}}
+            <b-radio v-model.number="innerSelectionType" value="1">{{$t('widgets.join.allAttributesWithPrefix')}}
             </b-radio>
-            <input type="text" class="form-control" v-if="innerSelectionType === 1" v-model="selectionPrefix">
-            <b-radio class="mt-2" value="3" v-model.number="innerSelectionType">{{$t('widgets.join.noAttributes')}}
+            <input v-if="innerSelectionType === 1" v-model="selectionPrefix" type="text" class="form-control">
+            <b-radio v-model.number="innerSelectionType" class="mt-2" value="3">{{$t('widgets.join.noAttributes')}}
             </b-radio>
-            <b-radio class="mt-2" value="2" v-model.number="innerSelectionType">
+            <b-radio v-model.number="innerSelectionType" class="mt-2" value="2">
                 {{$t('widgets.join.selectAttributes')}}</b-radio>
         </b-form-group>
 
-        <table class="table table-sm table-borderless" v-if="innerSelectionType === 2">
+        <table v-if="innerSelectionType === 2" class="table table-sm table-borderless">
             <tbody>
                 <tr class="table-secondary">
                     <th style="width: 10px">
-                        <input type="checkbox" class="checkbox" @change="toggleChecks" :checked="allSelected" />
+                        <input type="checkbox" class="checkbox" :checked="allSelected" @change="toggleChecks" />
                     </th>
                     <th style="width: 100%">
-                        <input type="text" maxlength="20" class="form-control" placeholder="Rename selected"
-                            :disabled="checked.length === 0" @keyup="changePrefix($event)" ref="prefix" />
+                        <input ref="prefix" type="text" maxlength="20" class="form-control"
+                            placeholder="Rename selected" :disabled="checked.length === 0" @keyup="changePrefix($event)" />
                     </th>
                     <th style="max-width: 20px">
                         <small>Use</small>
                     </th>
                 </tr>
-                <tr v-for="(s, index) in selectList" class="inputs">
+                <tr v-for="(s, index) in selectList" :key="index" class="inputs">
                     <td>
-                        <input type="checkbox" class="checkbox" :value="index" v-model="checked"
+                        <input v-model="checked" type="checkbox" class="checkbox" :value="index"
                             :title="$t('actions.edit')" />
                     </td>
                     <td>
-                        <b-form-input required maxlength="100" class="form-control" v-model="s.alias"
+                        <b-form-input v-model="s.alias" required maxlength="100" class="form-control"
                             @keyup="uncheck(index)" />
                         <small><em>{{s.attribute}}</em></small>
                     </td>
@@ -48,10 +48,10 @@
     export default {
         props: {
             suggestions: { type: Array, default: function () { return [] } },
-            label: { type: String },
-            prefix: { type: String },
+            label: { type: String , default: () => null},
+            prefix: { type: String, default: () => null },
             selected: { type: Array, default: function () { return [] } },
-            selectionType: { type: Number, default: 1 },
+            selectionType: { type: Number, default: () => 1 },
         },
         data() {
             return {

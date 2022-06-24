@@ -4,8 +4,10 @@
 
 <script>
 export default {
-  name: "caipirinha-visualization-pie",
-  props: ["visualizationData"],
+  name: "CaipirinhaVisualizationPie",
+  props: {
+      visualizationData: {type: Object, default: () => null},
+  },
   data: function() {
     const options = {
       chart: {

@@ -6,8 +6,10 @@
 
 <script>
     export default {
-        name: "caipirinha-visualization-boxplot",
-        props: ["visualizationData"],
+        name: "CaipirinhaVisualizationBoxplot",
+        props: {
+            "visualizationData": {type: Object, default: () => null}
+        },
         computed: {
             options() {
                 const result = this.visualizationData.data[0];

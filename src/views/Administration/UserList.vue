@@ -164,7 +164,7 @@
                         const url = `${thornUrl}/users/${userId}`;
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(
                                     self.$t('messages.successDeletion', {
                                         what: this.$tc('titles.user', 1)
@@ -185,7 +185,7 @@
                         const url = `${thornUrl}/approve/${userId}`;
                         axios
                             .post(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(
                                     self.$t('messages.successConfirmation', {
                                         what: this.$tc('titles.user', 1)

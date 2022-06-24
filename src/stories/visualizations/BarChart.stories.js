@@ -108,7 +108,7 @@ horizontalChart1.data.forEach(d => {
         v['y'] = tmp;
     })
 });
-
+/*
 const chart2 = {
     "orientation": "h",
     "title": "Test Bar chart",
@@ -146,7 +146,7 @@ const chart2 = {
         "name": "2nd"
     }]
 };
-
+*/
 export const HorizontalBarWithAllElements = Template.bind({});
 HorizontalBarWithAllElements.args = {
     visualizationData: horizontalChart1,

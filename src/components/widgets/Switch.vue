@@ -3,8 +3,8 @@
         <div v-if="readOnly">
             {{value === null ? field.default: value}}
         </div>
-        <label class="switch" v-else>
-            <input :class="classes" type="checkbox" :checked="checked" :name="name" :disabled="disabled" v-model="value"
+        <label v-else class="switch">
+            <input v-model="value" :class="classes" type="checkbox" :checked="checked" :name="name" :disabled="disabled"
                 @change="changed">
             <span>
                 <slot></slot>
@@ -17,23 +17,24 @@
     // From https://github.com/rafaelpimpa/vue-checkbox-switch
     export default {
         props: {
-            disabled: null,
-            classes: String,
-            checked: null,
-            name: String,
-            onchange: null,
-            readOnly: false,
+            disabled: {type: Boolean, default: () => true},
+            classes: {type: String, default: () => null},
+            checked: {type: Boolean, default: () => false},
+            name: {type: String, default: () => null},
+            onchange: {type: Function, default: () => null},
+            readOnly: {type: Boolean, default: () => false},
         },
         data() {
             return {
                 value: null
             }
         },
-        methods: {
-            changed() {
-                if (this.onchange) {
-                    this.onchange(this.value);
-                }
+        watch: {
+            value(val) {
+                this.$emit('input', val)
+            },
+            checked(val) {
+                this.value = val
             }
         },
         beforeMount() {
@@ -42,12 +43,11 @@
         mounted() {
             this.$emit('input', this.value)
         },
-        watch: {
-            value(val) {
-                this.$emit('input', val)
-            },
-            checked(val) {
-                this.value = val
+        methods: {
+            changed() {
+                if (this.onchange) {
+                    this.onchange(this.value);
+                }
             }
         }
     }

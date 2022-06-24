@@ -1,6 +1,6 @@
 <template>
     <transition name="slide">
-        <div class="slideout" v-if="opened">
+        <div v-if="opened" class="slideout">
             <slot></slot>
         </div>
     </transition>
@@ -10,7 +10,7 @@
     export default {
         name: 'SlideOutPanel',
         props: {
-            opened: false,
+            opened: {type: Boolean, default: false},
         },
         data: () => ({
             openerText: 'Open',

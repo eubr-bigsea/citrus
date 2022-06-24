@@ -28,9 +28,7 @@ import WorkflowList from './views/WorkflowList.vue';
 import WorkflowEdit from './views/WorkflowEdit.vue';
 import WorkflowAdd from './views/WorkflowAdd.vue';
 
-import TrackList from './views/TrackList.vue';
-
-import NotebookEdit from './views/NotebookEdit.vue';
+//import TrackList from './views/TrackList.vue';
 
 import OperationList from './views/OperationList.vue';
 import Profile from './views/Profile.vue';
@@ -422,15 +420,6 @@ let router = new Router({
             meta: {
                 requiresAuth: true,
                 title: ['titles.workflow', 1]
-            }
-        },
-        {
-            path: '/notebook/:platform/:id',
-            name: 'editNotebook',
-            component: NotebookEdit,
-            meta: {
-                requiresAuth: true,
-                title: ['titles.notebook', 1]
             }
         },
         // start dashboards

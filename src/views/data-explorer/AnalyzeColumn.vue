@@ -15,7 +15,7 @@
                         <div class="row">
                             <div class="col-md-4 small-text">
                                 <strong class="text-uppercase">Sumário</strong>
-                                <quality-bar />
+                                <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
                                     <tr>
                                         <td><span class="fa fa-circle quality-ok-text"></span> Valid</td>
@@ -104,7 +104,7 @@
                         <div class="row">
                             <div class="col-md-4 small-text">
                                 <strong class="text-uppercase">Sumário</strong>
-                                <quality-bar />
+                                <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
                                     <tr>
                                         <td><span class="fa fa-circle quality-ok-text"></span> Valid</td>

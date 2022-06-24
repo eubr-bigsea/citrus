@@ -15,7 +15,7 @@
                     <div class="row">
                         <div class="col-md-8">
                             <label>{{$t('property.taskName')}}</label>
-                            <input type="text" maxlength="50" v-model="task.name" class="form-control" />
+                            <input v-model="task.name" type="text" maxlength="50" class="form-control" />
                         </div>
                         <div class="col-md-3">
                             <label type="checkbox">
@@ -29,17 +29,17 @@
                 <div>
                     <form>
                         <b-card no-body class="scrollable">
-                            <VuePerfectScrollbar ref="scrollBar" useBothWheelAxes="true">
-                            <b-tabs card v-model="tabIndex">
-                                <b-tab v-for="(form, index) in forms" v-bind:key="form.id" :active="index === 0"
+                            <VuePerfectScrollbar ref="scrollBar" use-both-wheel-axes="true">
+                            <b-tabs v-model="tabIndex" card>
+                                <b-tab v-for="(form, index) in forms" :key="form.id" :active="index === 0"
                                     :title="form.name" :title-link-class="'small-nav-link'">
-                                    <div v-for="field in form.fields" class="mb-2 property clearfix"
-                                        v-bind:key="task.id + field.name" v-if="field.enabled" :data-name="field.name">
+                                    <div v-for="field in form.fields" v-if="field.enabled"
+                                        :key="task.id + field.name" class="mb-2 property clearfix" :data-name="field.name">
                                         <keep-alive>
                                             <component :is="getWidget(field)" :field="field"
-                                                :value="getValue(field.name)" :suggestionEvent="suggestionEvent"
-                                                :extendedSuggestionEvent="extendedSuggestionEvent"
-                                                :programmingLanguage="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
+                                                :value="getValue(field.name)" :suggestion-event="suggestionEvent"
+                                                :extended-suggestion-event="extendedSuggestionEvent"
+                                                :programming-language="task.operation.slug === 'execute-python'? 'python': (task.operation.slug === 'execute-sql'? 'sql': '') "
                                                 :language="$root.$i18n.locale" :type="field.suggested_widget"
                                                 :read-only="!field.editable" :lookups-method="getLookups"
                                                 :lookups="lookups" context="context">
@@ -64,7 +64,7 @@
                         {{task.id}}
                     </div>
                 </div>
-                <b-modal size="xl" ref="publishingModal" :title="$tc('titles.publication')" :ok-only="true">
+                <b-modal ref="publishingModal" size="xl" :title="$tc('titles.publication')" :ok-only="true">
                     <div class="mt-2 p-2 border">
                         <table class="table table-sm table-bordered">
                             <thead class="thead-light">
@@ -81,9 +81,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <template v-for="(form, index) in forms">
-                                    <tr v-for="field in form.fields" :key="field.name"
-                                        v-if="form.category === 'execution' && field.enabled && task.forms[field.name]">
+                                <template v-for="(form) in forms">
+                                    <tr v-for="field in form.fields" v-if="form.category === 'execution' && field.enabled && task.forms[field.name]"
+                                        :key="field.name">
                                         <td>
                                             <b-checkbox
                                                 v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
@@ -91,8 +91,8 @@
                                         </td>
                                         <td>{{field.label}}</td>
                                         <td>
-                                            <input type="text" class="form-control form-control-sm" maxlength="100"
-                                                v-model="task.forms[field.name].new_label" />
+                                            <input v-model="task.forms[field.name].new_label" type="text" class="form-control form-control-sm"
+                                                maxlength="100" />
                                         </td>
                                         <td>
                                             <component :is="field.suggested_widget + '-component'" :field="field"
@@ -105,15 +105,15 @@
                                                 class="form-control form-control-sm" type="number" min="0" max="100"/>
                                         </td>
                                         <td>
-                                            <v-select :options="variableNames" :multiple="false"
-                                                v-model="task.forms[field.name].variable" value="name" label="name"
+                                            <v-select v-model="task.forms[field.name].variable" :options="variableNames"
+                                                :multiple="false" value="name" label="name"
                                                 :taggable="true" :close-on-select="true">
                                                 <div slot="no-options"></div>
                                             </v-select>
                                         </td>
                                         <td>
-                                            <v-select :options="lookups" :multiple="false"
-                                                v-model="task.forms[field.name].lookup"
+                                            <v-select v-model="task.forms[field.name].lookup" :options="lookups"
+                                                :multiple="false"
                                                 :create-option="ds => ({ ds, id: null })" :reduce="option => option.id"
                                                 label="name" :taggable="true" :close-on-select="true">
                                                 <div slot="no-options"></div>
@@ -140,8 +140,29 @@
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     export default {
-        mixins: [Notifier],
         name: 'PropertyWindow',
+        components: {
+            SwitchComponent,
+            VuePerfectScrollbar,
+        },
+        mixins: [Notifier],
+        props: {
+            task: { type: Object, default: () => {} },
+            suggestionEvent: {type: Function, default: () => null},
+            extendedSuggestionEvent: { type: Function, default: () => null },
+            publishingEnabled: {type: Boolean, default: () => false},
+            variables: { type: Array, default: () => [] }
+        },
+        data() {
+            return {
+                allFields: new Map(),
+                conditionalFields: new Map(),
+                forms: [],
+                filledForm: [],
+                lookups: [],
+                tabIndex: 0,
+            }
+        },
         computed: {
             docReferenceUrl() {
                 return `${referenceUrl}/${this.task.operation.slug}`;
@@ -153,19 +174,15 @@
                 return this.variables.map((v) => v.name);
             }
         },
-        components: {
-            SwitchComponent,
-            VuePerfectScrollbar,
-        },
-        data() {
-            return {
-                allFields: new Map(),
-                conditionalFields: new Map(),
-                forms: [],
-                filledForm: [],
-                lookups: [],
-                tabIndex: 0,
+        watch: {
+            task() {
+                this.update()
             }
+        },
+        mounted() {
+            const self = this;
+            this.update();
+            self.$root.$on('update-form-field-value', this.toggleFields);
         },
         methods: {
             getWidget(field) {
@@ -217,7 +234,7 @@
                     });
                     // Reverse association between field and form. Used to retrieve category
                     const conditional = /\bthis\..+?\b/g;
-                    self.forms.forEach((f, i) => {
+                    self.forms.forEach((f) => {
                         f.fields.forEach((field) => {
                             if (self.task && self.task.forms[field.name]) {
                                 Vue.set(field, "internalValue", self.task.forms[field.name].value);
@@ -236,11 +253,11 @@
                             }
                         });
                     });
-                    self.forms.forEach((f, i) => {
-                        f.fields.forEach((field, j) => {
+                    self.forms.forEach((f) => {
+                        f.fields.forEach((field) => {
                             self.allFields[field.name] = field;
                         });
-                        f.fields.forEach((field, j) => {
+                        f.fields.forEach((field) => {
                             field.category = f.category;
                             Vue.set(field, "enabled", true);
                             field.enabled = true;
@@ -277,7 +294,6 @@
                     f.internalValue = value
                 }
                 if (self.conditionalFields.has(field.name)) {
-                    const duplicatedOk = new Set();
                     const fieldsToCheck = self.conditionalFields.get(field.name);
                     //console.debug(self.allFields['validation']?.internalValue)
                     fieldsToCheck.forEach(fieldToCheck => {
@@ -293,23 +309,6 @@
                         });
                     }
                 }
-            }
-        },
-        mounted() {
-            const self = this;
-            this.update();
-            self.$root.$on('update-form-field-value', this.toggleFields);
-        },
-        props: {
-            task: { type: Object, default: {} },
-            suggestionEvent: null,
-            extendedSuggestionEvent: { type: Function },
-            publishingEnabled: false,
-            variables: { type: Array, default: () => [] }
-        },
-        watch: {
-            task() {
-                this.update()
             }
         }
     }

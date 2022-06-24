@@ -64,6 +64,12 @@
     export default {
         name: 'StorageEdit',
         mixins: [Notifier],
+        props: {
+            add: {
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
                 storage: {},
@@ -74,12 +80,6 @@
         computed: {},
         mounted() {
             this.load();
-        },
-        props: {
-            add: {
-                type: Boolean,
-                default: false
-            }
         },
         methods: {
             load() {
@@ -114,7 +114,7 @@
                 event.target.classList.remove('btn-spinner');
 
                 axiosCall(url, data)
-                    .then(resp => {
+                    .then(()=> {
                         this.success(
                             this.$t('messages.savedWithSuccess', {
                                 what: this.$tc('titles.storage', 1)

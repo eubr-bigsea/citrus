@@ -7,12 +7,12 @@
 
         <input disabled :value="label" class="form-control" />
 
-        <b-link @click.prevent="$refs.modal.show()" variant="sm">
+        <b-link variant="sm" @click.prevent="$refs.modal.show()">
             {{$t('actions.changeOption')}}
         </b-link>
         
-        <b-modal size="lg" :title="`${field.label} - ${label || ''}`" ok-disabled
-            :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+        <b-modal ref="modal" size="lg" :title="`${field.label} - ${label || ''}`"
+            ok-disabled :cancel-title="$t('actions.cancel')" no-fade>
             <small><em>{{field.help}}</em></small>
 
             <div class="row border-top mt-2 pt-2">
@@ -34,8 +34,8 @@
                 </div>
             </div>
             <div slot="modal-footer" class="w-100">
-                <b-btn @click="closeModal" variant="primary" size="sm" class="ml-1 float-right">{{$t('common.ok')}}</b-btn>
-                <b-btn @click="removeValue" variant="outline-primary" size="sm" class="float-right">{{$t('actions.removeValue')}}</b-btn>
+                <b-btn variant="primary" size="sm" class="ml-1 float-right" @click="closeModal">{{$t('common.ok')}}</b-btn>
+                <b-btn variant="outline-primary" size="sm" class="float-right" @click="removeValue">{{$t('actions.removeValue')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -44,8 +44,8 @@
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
         data() {
             return {
                 coordinates: {
@@ -56,14 +56,14 @@
                 }
             }
         },
-        mounted() {
-            if (this.value){
-                this.coordinates = this.value;
-            }
-        },
         computed: {
             label(){
                 return `(${this.coordinates.row}, ${this.coordinates.column}, ${this.coordinates.width}, ${this.coordinates.height})`;
+            }
+        },
+        mounted() {
+            if (this.value){
+                this.coordinates = this.value;
             }
         },
         methods: {

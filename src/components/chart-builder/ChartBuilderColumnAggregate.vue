@@ -1,6 +1,6 @@
 <template>
     <div class="axis-attribute">
-        <b-dropdown size="sm" variant="transparent text-left" ref="dropdown">
+        <b-dropdown ref="dropdown" size="sm" variant="transparent text-left">
             <template #button-content>
                 <span class="fa fa-chevron-down"></span> &nbsp;&nbsp;
                 <span v-if="aggregation.length">{{aggregation}}({{name}})</span>
@@ -8,7 +8,7 @@
             </template>
             <b-dropdown-form class="dd-form">
                 <b-form-group label="Agregação" label-for="dropdown-form-email" @submit.stop.prevent>
-                    <b-select size="sm" @change="handleSelect" v-model="aggregation">
+                    <b-select v-model="aggregation" size="sm" @change="handleSelect">
                         <option value="COUNT">COUNT</option>
                         <template v-if="numeric">
                             <!--
@@ -29,11 +29,11 @@
 </template>
 <script>
     export default {
-        name: 'column-aggregate',
+        name: 'ColumnAggregate',
         props: {
             name: { type: String, required: true },
             type: { type: String, required: true },
-            f: { type: String, required: false },
+            f: { type: String, required: false, default: () => null },
         },
         data() {
             return {
@@ -45,14 +45,14 @@
                 return this.type === 'INTEGER' || this.type === 'DECIMAL';
             }
         },
+        mounted() {
+            this.aggregation = this.f ? this.f : "COUNT";
+        },
         methods: {
             handleSelect() {
                 this.$refs.dropdown.hide(true);
                 this.$emit("select", this.name, this.aggregation, this.type);
             }
-        },
-        mounted() {
-            this.aggregation = this.f ? this.f : "COUNT";
         },
     }
 </script>

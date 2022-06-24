@@ -10,55 +10,20 @@
 </template>
 
 <script>
-    import Vue from 'vue';
     import palette from 'google-palette';
     import axios from "axios";
+    import L from 'leaflet';
     export default {
-        name: "caipirinha-visualization-map",
-        props: ["visualizationData"],
+        name: "CaipirinhaVisualizationMap",
+        props: {
+          "visualizationData": {type: Object, default: () => null},
+        },
         data: function () {
             const protocol = location.protocol;
             return {
                 url: `${protocol}//{s}.tile.osm.org/{z}/{x}/{y}.png`,
                 points: [],
                 mode: null,
-            }
-        },
-        methods: {
-            _addGeoJsonLegend(colors, values) {
-                const legend = L.control({ position: 'bottomright' });
-                legend.onAdd = function (map) {
-                    const div = L.DomUtil.create('div', 'info legend');
-                    div.classList.add("legend-geoj")
-                    // loop through our density intervals and generate a label with a colored square for each interval
-                    for (let i = 0; i < values.length; i++) {
-                        div.innerHTML +=
-                            '<i class="l-geoj" style="background:#' + colors[i] + '"></i> ' +
-                            values[i] + '<br>';
-                    }
-                    return div;
-                };
-                legend.addTo(this.$refs.mapRef.mapObject);
-            },
-            getBounds(points) {
-                var cornerBottomLeft = [90, 180];
-                var cornerUpperRight = [-90, -180];
-
-                points.forEach(point => {
-                    if (point.lat < cornerBottomLeft[0])
-                        cornerBottomLeft[0] = point.lat;
-                    if (point.lon < cornerBottomLeft[1])
-                        cornerBottomLeft[1] = point.lon;
-                    if (point.lat > cornerUpperRight[0])
-                        cornerUpperRight[0] = point.lat;
-                    if (point.lon > cornerUpperRight[1])
-                        cornerUpperRight[1] = point.lon;
-                })
-
-                return [
-                    cornerBottomLeft,
-                    cornerUpperRight
-                ];
             }
         },
         mounted() {
@@ -116,7 +81,6 @@
                                         feature.properties['value'] = found.value;
                                         d['fillColor'] = '#' + colors[distinctValues.indexOf(found.value)];
                                         d['fillOpacity'] = .5;
-                                        counter++;
                                     }
                                     return d;
                                 }
@@ -135,6 +99,43 @@
                         });
                 }
             })
+        },
+        methods: {
+            _addGeoJsonLegend(colors, values) {
+                const legend = L.control({ position: 'bottomright' });
+                legend.onAdd = function () {
+                    const div = L.DomUtil.create('div', 'info legend');
+                    div.classList.add("legend-geoj")
+                    // loop through our density intervals and generate a label with a colored square for each interval
+                    for (let i = 0; i < values.length; i++) {
+                        div.innerHTML +=
+                            '<i class="l-geoj" style="background:#' + colors[i] + '"></i> ' +
+                            values[i] + '<br>';
+                    }
+                    return div;
+                };
+                legend.addTo(this.$refs.mapRef.mapObject);
+            },
+            getBounds(points) {
+                var cornerBottomLeft = [90, 180];
+                var cornerUpperRight = [-90, -180];
+
+                points.forEach(point => {
+                    if (point.lat < cornerBottomLeft[0])
+                        cornerBottomLeft[0] = point.lat;
+                    if (point.lon < cornerBottomLeft[1])
+                        cornerBottomLeft[1] = point.lon;
+                    if (point.lat > cornerUpperRight[0])
+                        cornerUpperRight[0] = point.lat;
+                    if (point.lon > cornerUpperRight[1])
+                        cornerUpperRight[1] = point.lon;
+                })
+
+                return [
+                    cornerBottomLeft,
+                    cornerUpperRight
+                ];
+            }
         }
     };
 </script>

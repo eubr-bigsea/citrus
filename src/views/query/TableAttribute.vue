@@ -4,12 +4,13 @@
 <script>
     export default {
         props: {
-            jsplumbInstance: { default: null },
-            attribute: null,
+            jsplumbInstance: { default: null, type: Object },
+            attribute: {type: Object, default: ()=>{}}
         },
         watch: {
             jsplumbInstance(instance) {
                 if (instance) {
+                    /*
                     const elem = this.$refs.attribute;
                     const endpointOptions = {
                         isSource: true,
@@ -18,6 +19,7 @@
                         maxConnections: -1,
                         endpoint: ["Rectangle", { radius: 1, width: 10, height: 8 }],
                     }
+                    */
                     // this.jsplumbInstance.addEndpoint(elem, 
                     //     { anchor: [-0.02, 0.5, 0, 0.0] }, endpointOptions );
                     // instance.addEndpoint(elem,

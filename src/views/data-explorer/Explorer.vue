@@ -7,12 +7,12 @@
                     <h6>{{$t('dataExplorer.title')}}</h6>
                     <div>
                         <small>{{$tc('common.name')}}</small>
-                        <input type="text" class="form-control form-control-sm" v-model="workflowObj.name"
+                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                             maxlength="50" />
                     </div>
                     <div class="mb-">
                         <small>{{$tc('titles.cluster')}}</small>
-                        <v-select :options="clusters" v-model="clusterId" label="name" :reduce="(opt) => opt.id"
+                        <v-select v-model="clusterId" :options="clusters" label="name" :reduce="(opt) => opt.id"
                             :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, id, name, type }">
                                 {{ name }}<br />
@@ -56,19 +56,19 @@
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <div id="step-container">
-                        <div class="step-scroll-area scroll-area" style="overflow-y: scroll;" ref="stepsArea">
-                            <draggable @start="drag=true" @end="endSortSteps" class="list-group" ghost-class="ghost"
-                                handle=".step-drag-handle" :list="workflowObj.tasks" :move="handleStepDrag">
-                                <div v-for="task, inx in workflowObj.tasks" :key="task.id"
+                        <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
+                            <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflowObj.tasks"
+                                :move="handleStepDrag" @start="drag=true" @end="endSortSteps">
+                                <div v-for="(task, inx) in workflowObj.tasks" :key="task.id"
                                     xv-if="task.operation.slug !== 'read-data'"
                                     class="list-group-item steps clearfix p-0" :title="task.name"
                                     :style="{'border-left': '4px solid ' + task.backgroundColor}">
-                                    <step :step="task" :language="language" :attributes="tableData.attributes"
-                                        :index="inx" @toggle="handleToggleStep(task)" :protected="inx <=1 "
+                                    <Step ref="steps" :step="task" :language="language"
+                                        :attributes="tableData.attributes" :index="inx" :protected="inx <=1 "
                                         :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
+                                        :suggestion-event="() => getSuggestions(task.id)" @toggle="handleToggleStep(task)"
                                         @delete="handleDeleteTask(task)" @update="updateStep"
-                                        @previewUntilHere="previewUntilHere(task)" @duplicate="duplicate"
-                                        :suggestionEvent="() => getSuggestions(task.id)" ref="steps" />
+                                        @previewUntilHere="previewUntilHere(task)" @duplicate="duplicate" />
                                 </div>
                             </draggable>
                         </div>
@@ -76,7 +76,7 @@
                     <div class="text-secondary">
                         <small>{{jobStatus}} (p. {{page}})</small>
                         <br />
-                        <small class="text-info" v-if="loadedDataSize > 1">
+                        <small v-if="loadedDataSize > 1" class="text-info">
                             {{$tc('common.pagerShowing', 0,
                             {from: 1,
                             to: Math.min(pageSize * page, tableData.total), count: tableData.total
@@ -86,42 +86,42 @@
             </div>
             <!-- Preview area -->
             <div class="col border-left fill-height mt-3">
-                <PreviewMenu :selected="selected" @select="performAction" :menus="menus" @analyse="handleAnalyse" />
-                <preview :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
-                    :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total" @select="select"
-                    @drop="performAction" @context-menu="handleContextMenu" ref="preview" @scroll="handleScroll" />
+                <PreviewMenu :selected="selected" :menus="menus" @select="performAction" @analyse="handleAnalyse" />
+                <Preview ref="preview" :attributes="tableData.attributes" :items="rows"
+                    :missing="tableData.missing" :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
+                    @select="select" @drop="performAction" @context-menu="handleContextMenu" @scroll="handleScroll" />
             </div>
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="xl" :okOnly="true" :title="stats && stats.attribute">
+            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true" :title="stats && stats.attribute">
                 <table v-if="stats && stats.attribute === null"
                     class="table table-bordered table-stats table-striped table-sm">
                     <thead>
                         <tr v-if="stats.message && stats.message.index" class="text-center">
                             <th></th>
-                            <th v-for="k in stats.message.columns">
+                            <th v-for="k in stats.message.columns" :key="k">
                                 {{k}}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(attr, inx) in stats.message.index">
+                        <tr v-for="(attr, inx) in stats.message.index" :key="attr">
                             <th class="text-center">{{attr}}</th>
-                            <td v-for="data in stats.message.data[inx]">
+                            <td v-for="data in stats.message.data[inx]" :key="data">
                                 {{data === null ? '-': data}}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div v-else>
-                    <div class="row" v-if="stats && stats.message">
+                    <div v-if="stats && stats.message" class="row">
                         <!--
                         <div class="col-2 text-center">
                             <img :src="'data:image/png;base64, ' + stats.message.box_plot" alt="box" title="Box plot"/>
                         </div>
                         -->
-                        <div class="col-10" v-if="stats && stats.message.histogram">
+                        <div v-if="stats && stats.message.histogram" class="col-10">
                             <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
                                 :layout="{height: 120, hoverlabel: {font: {size: 8}}, autosize: true, margin: {l: 0,r: 50, b: 30, t: 10, pad: 0} }"
                                 :data="[{marker: {opacity: 0.4, color: 'rgb(49,130,189)'}, 'orientation': 'h', 'min': -232, 'x': [[stats.message.stats.min, stats.message.stats.max,] ], 'type': 'box', 'lowerfence': [stats.message.fence_low], 'mean': [stats.message.stats.mean], 'median': [stats.message.stats.median], 'notchspan': [2], 'q1': [stats.message.stats['25%']], 'q3': [stats.message.stats['75%']], 'sd': [stats.message.stats.std], 'upperfence': [stats.message.fence_high]}]"
@@ -133,7 +133,7 @@
                         <div class="col-4">
                             <strong>Estatísticas (exclui nulos)</strong>
                             <table class="table table-sm table-stats">
-                                <tr v-for="value, stat in stats.message.stats">
+                                <tr v-for="(value, stat) in stats.message.stats" :key="value">
                                     <th>{{stat}}</th>
                                     <td>{{value}}</td>
                                 </tr>
@@ -142,7 +142,7 @@
                         <div :class="{'col-4': stats.message.outliers, 'col-8': !stats.message.outliers}">
                             <strong>Top valores *</strong>
                             <table class="table table-sm table-stats">
-                                <tr v-for="t in stats.message.top20.slice(0, 10)">
+                                <tr v-for="(t, i) in stats.message.top20.slice(0, 10)" :key="i">
                                     <th class="col-8">
                                         {{t[0]}}
                                         <div class="top-bar"
@@ -153,10 +153,10 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="col-4" v-if="stats.message.outliers">
+                        <div v-if="stats.message.outliers" class="col-4">
                             <strong>Valores atípicos (outliers)*</strong>
                             <table class="table table-sm table-stats">
-                                <tr v-for="t in stats.message.outliers">
+                                <tr v-for="t in stats.message.outliers" :key="t">
                                     <td>{{t}}</td>
                                 </tr>
                             </table>
@@ -181,8 +181,7 @@
     import PreviewMenu from './PreviewMenu';
     import Step from './Step';
     import Notifier from '../../mixins/Notifier.js';
-    import contextMenu from 'vue-context-menu';
-    import { Workflow, Platform, Operation, OperationList, Task, Constants } from './entities.js'
+    import { Workflow, Operation, Task, Constants } from './entities.js'
     import ModalExport from './ModalExport.vue';
     import Plotly from '../../components/visualization/Plotly.vue';
 
@@ -199,13 +198,12 @@
 
     export default {
         name: "DataExplorer",
-        mixins: [Notifier],
         components: {
             Plotly,
             Preview, draggable,
-            contextMenu, Step, PreviewMenu, ModalExport,
+            Step, PreviewMenu, ModalExport,
             TahitiSuggester: () => {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                     const script = document.createElement('script');
                     script.setAttribute('id', 'tahiti-script');
                     script.async = true;
@@ -213,18 +211,11 @@
                 })
             }
         },
+        mixins: [Notifier],
         props: {
             //attributes: { type: Array, default: () => [] },
             //items: { type: Array },
             //workflowId: { type: Number },
-        },
-        computed: {
-            pendingSteps() {
-                const self = this;
-                return (this.workflowObj && this.workflowObj.tasks &&
-                    this.workflowObj.tasks.find(t => t.editing) !== undefined)
-                    || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
-            }
         },
         data() {
             return {
@@ -259,6 +250,14 @@
                 stats: null,
             }
         },
+        computed: {
+            pendingSteps() {
+                //const self = this;
+                return (this.workflowObj && this.workflowObj.tasks &&
+                    this.workflowObj.tasks.find(t => t.editing) !== undefined)
+                    || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
+            }
+        },
         beforeRouteLeave(to, from, next) {
             if (!this.isDirty || (confirm(this.$tc('warnings.dirtyCheck')))) {
                 next();
@@ -282,7 +281,7 @@
         },
         methods: {
             addDummyData() {
-                /* not working as expected */
+                /* not working as expected
                 return
                 if (this.rows.length > 0) {
                     this.dummyDataOffset = this.rows.length;
@@ -291,6 +290,7 @@
                         .reduce((o, key) => ({ ...o, [key]: '?' }), {})
                     this.rows = this.rows.concat(Array(50).fill(dummy));
                 }
+                */
             },
             removeDummyData() {
                 if (this.dummyDataOffset > 0) {
@@ -346,7 +346,7 @@
                     }
                     this.clusterId = this.workflowObj.preferred_cluster_id;
 
-                    this.workflowObj.tasks.forEach((task, inx) => {
+                    this.workflowObj.tasks.forEach((task) => {
                         task.previewable = task?.forms?.$meta?.value?.previewable != false;
                     });
 
@@ -594,7 +594,7 @@
             getExtendedSuggestions(taskId) {
                 const allSuggestions = new Set();
                 const self = this;
-                if (window.hasOwnProperty('TahitiAttributeSuggester')) {
+                if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                     if (window.TahitiAttributeSuggester.processed === undefined
                         || this.attributeSuggestion[taskId] === undefined
                         || this.attributeSuggestion[taskId].length === 0) {
@@ -627,10 +627,10 @@
                     (task) => task.display_order++);
                 this.isDirty = true;
             },
-            scrollToStep(stepOrder) {
+            scrollToStep() {
                 const el = this.$refs.stepsArea;
                 el.scrollTo({ top: el.scrollHeight + 200, behavior: 'smooth' });
-                const self = this; //this.$refs.steps
+                //const self = this; //this.$refs.steps
             },
             previewUntilHere(step) {
                 this.workflowObj.tasks.forEach((task) => {
@@ -682,7 +682,7 @@
                     delete task.status;
                 });
                 return axios[method](url, cloned, { headers: { 'Content-Type': 'application/json' } }).then(
-                    (resp) => {
+                    () => {
                         self.isDirty = false;
                         self.success(self.$t('messages.savedWithSuccess',
                             { what: self.$tc('titles.workflow') }));
@@ -784,7 +784,7 @@
                     this.socket.close();
                 }
             },
-            endSortSteps({ originalEvent }) {
+            endSortSteps({ originalEvent }) { // eslint-disable-line no-unused-vars
                 let elem = null;
                 this.workflowObj.tasks.forEach((task, i) => {
                     task.display_order = i;
@@ -870,11 +870,11 @@
                     socket.on('exported result', (msg) => {
                         console.debug(msg)
                     });
-                    socket.on('analysis', (msg, callback) => {
+                    socket.on('analysis', (msg, callback) => {// eslint-disable-line no-unused-vars
                         self.stats = msg;
                         self.$refs.statsModal.show();
                     });
-                    socket.on('update task', (msg, callback) => {
+                    socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
 
                         // Meta add a suffix to task id when converting tasks to other platform.
                         const task = self.workflowObj.getTaskById(msg.id.substring(0, 36));

@@ -3,11 +3,11 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div>
             <v-select v-if="type !== 'tag' && type !== 'single-tag' " :options="suggestions" :multiple="true || (!params || params.multiple)"
-                :value.sync="values" :on-change="updated" label="value" :taggable="false" :closeOnSelect="false">
+                :value.sync="values" :on-change="updated" label="value" :taggable="false" :close-on-select="false">
                 <div slot="no-options"></div>
             </v-select>
-            <v-select v-else :multiple="type !== 'single-tag'" :options="suggestions" v-model="values" @input="updated"
-                :on-change="updated" label="value" :taggable="true" :closeOnSelect="type === 'single-tag'">
+            <v-select v-else v-model="values" :multiple="type !== 'single-tag'" :options="suggestions" :on-change="updated"
+                label="value" :taggable="true" :close-on-select="type === 'single-tag'" @input="updated">
                 <div slot="no-options"></div>
             </v-select>
         </div>
@@ -18,10 +18,19 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
+        },
+        mixins: [Widget],
+        props: {
+            type: {type: String, default: () => null},
+            value: { default: ()=> [], type: Array },
+        },
+        data() {
+            return {
+                values: []
+            }
         },
         computed: {
             suggestions() {
@@ -33,23 +42,14 @@
                 }
             }
         },
+        mounted() {
+            this.values = this.value;
+        },
         methods: {
             updated(val) {
                 //this.$root.$emit(this.message, this.field, val);
                 this.triggerUpdateEvent(this.message, this.field, val);
             }
-        },
-        mounted() {
-            this.values = this.value;
-        },
-        data() {
-            return {
-                values: []
-            }
-        },
-        props: {
-            type: "",
-            value: { default: [] },
         },
     }
 </script>

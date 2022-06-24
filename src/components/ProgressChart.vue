@@ -1,6 +1,6 @@
 <template>
     <div class="text-center xprogress">
-        <div class="sparkline" v-for="(v, k) in progressLogs">
+        <div v-for="(v, k) in progressLogs" :key="k" class="sparkline">
             {{k}}
             <highcharts :options="options(k, v)"></highcharts>
         </div>
@@ -10,7 +10,7 @@
 <script>
     export default {
         props: {
-            logs: {}
+            logs: {type: Array, default: () => []}
         },
         computed: {
             progressLogs() {
@@ -70,9 +70,7 @@
                     credits: {
                         enabled: false
                     },
-                    tooltip: {
-                        pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>warheads in {point.x}'
-                    },
+                    /*
                     plotOptions: {
                         area: {
                             pointStart: 1940,
@@ -88,12 +86,14 @@
                             }
                         }
                     },
+                    */
                     legend: {
                         enabled: false
                     },
                     tooltip: {
                         hideDelay: 0,
                         outside: true,
+                        pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>warheads in {point.x}',
                         shared: true
                     },
                     exporting: {

@@ -35,7 +35,7 @@
                                     :value="field.value" :language="$root.$i18n.locale" :show-help="false"
                                     :type="field.type" xlookups-method="getLookups" xlookups="lookups" class="mt-2"
                                     :data-component="field.suggested_widget" :data-index="field.display_index"
-                                    @update-form-field-value="updateFieldValue" compatibility="2.1.0" />
+                                    compatibility="2.1.0" @update-form-field-value="updateFieldValue" />
                                 <!--
                                 <component v-else
                                     :is="(field.suggested_widget === null ? 'text': field.suggested_widget) + '-component'"
@@ -87,8 +87,8 @@
                             @click="execute">
                             <span class="fa fa-search"></span> {{$t('actions.execute')}}
                         </button>
-                        <button class="btn btn-sm btn-outline-info float-right" type="button" @click="showHelp"
-                            :disabled="running">
+                        <button class="btn btn-sm btn-outline-info float-right" type="button" :disabled="running"
+                            @click="showHelp">
                             <span class="fa fa-question-circle"></span> {{$t('variables.help')}}
                         </button>
                     </div>
@@ -125,8 +125,8 @@
                                 :is-resizable="true" :is-mirrored="false" :vertical-compact="true" :margin="[10, 10]"
                                 :use-css-transforms="true" @layout-updated="layoutUpdatedEvent">
 
-                                <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h"
-                                    :i="item.i" :key="item.i" class="grid-item">
+                                <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y" :w="item.w"
+                                    :h="item.h" :i="item.i" class="grid-item">
                                     <caipirinha-visualization v-if="!running" class="pl-2 pr-2"
                                         :url="getCaipirinhaLink(job.id, item.task.id, 0)" :height="100*item.h" />
                                     <div v-else class="p-5 text-center mt-5">
@@ -189,7 +189,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="h in sortedEditFields" :key="h.key" v-if="h.help">
+                    <tr v-for="h in sortedEditFields" v-if="h.help" :key="h.key">
                         <td>{{h.label}}</td>
                         <td>{{h.help}}</td>
                     </tr>
@@ -200,21 +200,17 @@
 </template>
 
 <script>
-    import Vue from 'vue';
     import axios from 'axios';
     import Notifier from '../mixins/Notifier';
     import DateComponent from '../components/widgets/Date.vue';
-    import VueGridLayout from 'vue-grid-layout';
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import io from 'socket.io-client';
     import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
 
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
-    const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     const standUrl = process.env.VUE_APP_STAND_URL;
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
-    const standSocketIOPath = process.env.VUE_APP_STAND_SOCKET_IO_PATH;
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
     class EditField {
@@ -280,12 +276,12 @@
         }
     }
     export default {
-        mixins: [Notifier],
         components: {
             'date-component': DateComponent,
             'caipirinha-visualization': CapirinhaVisualization,
             VuePerfectScrollbar
         },
+        mixins: [Notifier],
         data() {
             return {
                 configuration: {},
@@ -310,6 +306,12 @@
                 workflow: {},
             }
         },
+
+        computed: {
+            sortedEditFields() {
+                return [...this.editFields].sort((a, b) => a.display_index - b.display_index);
+            }
+        },
         beforeDestroy() {
             this.$root.$off('update-form-field-value');
             if (this.socket) {
@@ -321,14 +323,8 @@
             this.load();
             this.$root.$on('update-form-field-value', this.updateFieldValue)
         },
-
-        computed: {
-            sortedEditFields() {
-                return this.editFields.sort((a, b) => a.display_index - b.display_index);
-            }
-        },
         methods: {
-            updateFieldValue(field, value, labelValue) {
+            updateFieldValue(field, value, labelValue) { // eslint-disable-line no-unused-vars
                 if (field.sourceType === 'filter') {
                     field.filter.value = value;
                     field.value = value;
@@ -369,7 +365,7 @@
                 socket.on('disconnect', () => {
                     //self.warning({ message: self.$t('You are not connected') });
                 });
-                socket.on('response', msg => {
+                socket.on('response', msg => { // eslint-disable-line no-unused-vars
                     //console.debug('response', msg);
                 });
                 socket.on('connect', () => {
@@ -445,7 +441,7 @@
                     self.job.results.push(msg);
                 });
             },
-            async execute(ev) {
+            async execute() {
                 const self = this;
                 try {
                     if (self.$refs.form.checkValidity()) {
@@ -500,7 +496,7 @@
                 self.$Progress.start()
                 try {
                     let workflow = (await axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`)).data;
-                    const query = self.$route.query;
+                    //const query = self.$route.query;
                     //console.debug(query)
 
                     const params = {
@@ -542,11 +538,13 @@
                                 variable.values = variable.parameters.values
                             } else {
                                 variable.values = JSON.parse(variable.parameters.values);
-                                if (variable.values.length > 5 || true) {
+                                variable.suggested_widget = 'dropdown';
+                                /*if (variable.values.length > 5 || true) {
                                     variable.suggested_widget = 'dropdown';
                                 } else {
                                     variable.suggested_widget = 'radio';
-                                }
+                                }*/
+
                             }
                         } else if (['INTEGER', 'DECIMAL'].indexOf(variable.type) > -1) {
                             variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : variable.type.toLowerCase();
@@ -635,11 +633,12 @@
                                     self.executeOnStart = (!f.required || (f.value !== null && f.value !== '')) && self.executeOnStart;
                                     if (f.customList && f.customList.trim()) {
                                         f.parameters = JSON.parse(f.customList);
-                                        if (f.parameters.length > 5 || true) {
+                                        /*if (f.parameters.length > 5 || true) {
                                             f.suggested_widget = 'dropdown';
                                         } else {
                                             f.suggested_widget = 'radio';
-                                        }
+                                        }*/
+                                        f.suggested_widget = 'dropdown';
                                     } else if (['INTEGER', 'DECIMAL', 'DATE'].indexOf(f.type) > -1) {
                                         f.suggested_widget = f.type.toLowerCase();
                                     } else if (f.type === 'BINARY') {

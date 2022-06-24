@@ -1,12 +1,12 @@
 <template>
-    <b-modal size="xl" ref="modal" :title="$tc('titles.property', 2)">
+    <b-modal ref="modal" size="xl" :title="$tc('titles.property', 2)">
         <b-form v-if="loaded">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-7">
                             <label>{{$tc('common.name', 1)}}:</label>
-                            <b-form-input type="text" v-model="workflow.name" required />
+                            <b-form-input v-model="workflow.name" type="text" required />
                         </div>
                         <div class="col-md-5">
                             <label>{{$t('workflow.preferredCluster')}}:</label>
@@ -45,7 +45,7 @@
                     <small><em>{{$t('workflow.publishingEnabledExplanation')}}</em></small>
                     <div v-if="workflow.publishing_enabled" class="mt-1">
                         <label>{{$t('workflow.publishingStatus')}}:</label>
-                        <select class="form-control w-50" v-model="workflow.publishing_status">
+                        <select v-model="workflow.publishing_status" class="form-control w-50">
                             <option value="EDITING">{{$t('workflow.publisingStatusEditing')}}</option>
                             <option value="PUBLISHED">{{$t('workflow.publisingStatusPublished')}}</option>
                         </select>
@@ -54,32 +54,29 @@
             </div>
         </b-form>
         <div slot="modal-footer">
-            <b-btn variant="primary btn-sm" class="float-right mr-1" @click="okClicked"
-                :disabled="(workflow.name === '')">
+            <b-btn variant="primary btn-sm" class="float-right mr-1" :disabled="(workflow.name === '')"
+                @click="okClicked">
                 {{$t('common.ok')}}
             </b-btn>
         </div>
     </b-modal>
 </template>
 <script>
-    import SwitchComponent from '../../components/widgets/Switch.vue';
     import { mapGetters } from 'vuex';
 
     export default {
         components: {
-            SwitchComponent
-        },
-        computed: {
-            ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
         },
         props: {
-            clusters: { type: Array },
-            loaded: false,
-            submit: null,
-            workflow: {},
+            clusters: { type: Array, default: () => [] },
+            loaded: Boolean,
+            workflow: {type: Object, default: () => {}},
         },
         data() {
             return { userPermissions: {} };
+        },
+        computed: {
+            ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
         },
         mounted() {
             this.userPermissions = this.$store.getters.userPermissions;

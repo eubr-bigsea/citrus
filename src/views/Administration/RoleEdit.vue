@@ -46,11 +46,11 @@
                                                     <div>
                                                         <b-card no-body>
                                                             <b-tabs pills card vertical>
-                                                                <b-tab :title="$tc('assets.' + gp[0], 2)"
-                                                                    v-for="gp in groupedPermissions">
+                                                                <b-tab v-for="gp in groupedPermissions" :key="gp[0]"
+                                                                    :title="$tc('assets.' + gp[0], 2)">
                                                                     <b-card-text>
-                                                                        <div class="col-md-12" v-for="p in gp[1]"
-                                                                            :key="p.id" :title="p.name">
+                                                                        <div v-for="p in gp[1]" :key="p.id"
+                                                                            class="col-md-12" :title="p.name">
                                                                             <b-form-checkbox
                                                                                 v-model="selectedPermissions"
                                                                                 :value="p.id">
@@ -68,9 +68,9 @@
                                                 <h6>
                                                     {{ $tc('titles.user', 2) }}:
                                                 </h6>
-                                                <v-select style="font-size: .9em" v-model="role.users" :multiple="true"
-                                                    :options="users" @search="onSearchUsers" :taggable="false"
-                                                    :get-option-label="getUserLabel" :close-on-select="true" label="id">
+                                                <v-select v-model="role.users" style="font-size: .9em" :multiple="true"
+                                                    :options="users" :taggable="false" :get-option-label="getUserLabel"
+                                                    :close-on-select="true" label="id" @search="onSearchUsers">
                                                     <template #no-options="{ search, searching, loading }">
                                                         {{$t('common.noResults')}}
                                                     </template>
@@ -112,14 +112,19 @@
     import Vue from 'vue';
     import axios from 'axios';
     import VueSelect from 'vue-select';
-    import SwitchComponent from '../../components/widgets/Switch.vue';
+    import { debounce } from '../../util.js';
 
     let thornUrl = process.env.VUE_APP_THORN_URL;
 
     export default {
         components: {
             'v-select': VueSelect,
-            SwitchComponent
+        },
+        props: {
+            add: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -134,14 +139,8 @@
             };
         },
         computed: {},
-        props: {
-            add: {
-                type: Boolean,
-                default: false
-            }
-        },
         watch: {
-            '$route.params.id': function (id) {
+            '$route.params.id': function () {
                 this.load().then(() => {
                     Vue.nextTick(() => {
                         this.isDirty = false;
@@ -152,7 +151,7 @@
                 this.role.permissions = this.permissions.filter(
                     p => v.includes(p.id));
             },
-            selectedUsers(v) {
+            selectedUsers() {
                 this.role.users = this.selectedUsers;
             }
 
@@ -209,7 +208,7 @@
                             });
                     });
                 } else {
-                    return new Promise((resolve, reject) => {
+                    return new Promise(() => {
                         self.role = { id: '', enabled: false };
                     });
                 }
@@ -236,7 +235,7 @@
             getUserLabel(opt) {
                 return `${opt.first_name}|${opt.last_name}|${opt.email}`;
             },
-            searchUsers: _.debounce((loading, search, vm) => {
+            searchUsers: debounce((loading, search, vm) => {
                 const url = `${thornUrl}/users?fields=id,first_name,last_name,email`;
                 const params = { enabled: 1, query: search, size: 10, fields: 'id,first_name,last_name,email' };
                 axios.get(url, { params })
@@ -244,7 +243,7 @@
                         vm.users = resp.data.data;
                         loading(false);
                     })
-                    .catch(resp => {
+                    .catch(()=> {
                         vm.error(vm.data);
                     })
             }, 350),

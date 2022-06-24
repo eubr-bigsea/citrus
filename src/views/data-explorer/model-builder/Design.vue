@@ -7,18 +7,18 @@
                 </div>
                 <form class="float-right form-inline w-50 d-flex justify-content-end">
                     <label>{{$tc('common.name')}}:</label>
-                    <input type="text" class="form-control form-control-sm ml-1 w-50" :placeholder="$tc('common.name')"
-                        v-model="workflowObj.name" maxlength="100">
+                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
+                        :placeholder="$tc('common.name')" maxlength="100">
                     <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow"><span
                             class="fa fa-save"></span>
                         {{$t('actions.save')}}</button>
 
-                    <button v-if="notRunning" @click.prevent="handleTraining"
-                        class="btn btn-sm btn-outline-primary ml-1 float-right"><span class="fa fa-play"></span>
+                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ml-1 float-right"
+                        @click.prevent="handleTraining"><span class="fa fa-play"></span>
                         {{$t('actions.train')}}</button>
 
-                    <button v-else @click.prevent="handleStopTrain"
-                        class="btn btn-sm btn-outline-danger ml-1 float-right"><span class="fa fa-stop"></span>
+                    <button v-else class="btn btn-sm btn-outline-danger ml-1 float-right"
+                        @click.prevent="handleStopTrain"><span class="fa fa-stop"></span>
                         {{$t('actions.stop')}}</button>
 
                     <!--
@@ -34,13 +34,13 @@
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
-                                    <SideBar :selected="selected" @edit="edit" :supervisioned="supervisioned" />
+                                    <SideBar :selected="selected" :supervisioned="supervisioned" @edit="edit" />
                                 </div>
                             </div>
                             <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
                                 <form action="" class="form p-2">
                                     <template v-if="selected === 'target'">
-                                        <DesignData :attributes="attributes" :dataSourceList="dataSourceList"
+                                        <DesignData :attributes="attributes" :data-source-list="dataSourceList"
                                             :supervisioned="supervisioned" :label="labelAttribute"
                                             :data-source="dataSource" :sample="workflowObj.sample"
                                             @search-data-source="loadDataSourceList"
@@ -55,7 +55,7 @@
                                     <template v-if="selected === 'adjusts'">
                                         <FeatureSelection :attributes="attributes" :features="workflowObj.features"
                                             :target="workflowObj.forms.$meta.value.target"
-                                            @update-target="handleUpdateTarget" :supervisioned="supervisioned" />
+                                            :supervisioned="supervisioned" @update-target="handleUpdateTarget" />
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
@@ -64,8 +64,8 @@
                                         <FeatureReduction :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
-                                        <Algorithms :operations="algorithmOperation" :workflow="workflowObj"
-                                            :operation-map="operationsMap" ref="algorithms"/>
+                                        <Algorithms ref="algorithms" :operations="algorithmOperation"
+                                            :workflow="workflowObj" :operation-map="operationsMap"/>
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <Grid :grid="workflowObj.grid" />
@@ -80,8 +80,8 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab title="Resultados" class="pt-2" ref="tabResults">
-                        <Result :jobs="jobs" ref="results" :number-of-features="numberOfFeatures"
+                    <b-tab ref="tabResults" title="Resultados" class="pt-2">
+                        <Result ref="results" :jobs="jobs" :number-of-features="numberOfFeatures"
                             @delete-job="handleDeleteJob" />
                     </b-tab>
                 </b-tabs>
@@ -105,16 +105,12 @@
     import Result from './result/Result';
     import Weighting from './Weighting';
 
-    import InputHeader from '../../../components/InputHeader.vue';
     import DataSourceMixin from '../DataSourceMixin.js';
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar'
-    import { debounce } from "../../../util.js";
     import Notifier from '../../../mixins/Notifier.js';
 
     import { ModelBuilderWorkflow, Operation } from '../entities.js';
 
     import axios from 'axios';
-    import vSelect from 'vue-select';
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
     const standUrl = process.env.VUE_APP_STAND_URL;
@@ -123,33 +119,10 @@
 
     export default {
         components: {
-            InputHeader, 'vue-select': vSelect,
             SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
             FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result
         },
         mixins: [DataSourceMixin, Notifier],
-        computed: {
-            algorithmOperation() {
-                const taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
-                return Array.from(this.operationsMap.values()).filter((op) => op.categories.find(cat => cat.subtype === taskType));
-            },
-            dataSourceId: {
-                get() { return this.workflowObj.tasks[0].forms.data_source.value; },
-                set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
-            },
-            supervisioned() {
-                return this.taskType === 'regression' || this.taskType === 'classification';
-            },
-            taskType: {
-                get() { return this.workflowObj.forms.$meta.value.taskType; },
-                set(newValue) {
-                    return this.$store.dispatch('dataExplorer/setTaskName', newValue)
-                }
-            },
-            numberOfFeatures() {
-                return this.workflowObj?.features?.forms?.features?.value?.length || 0;
-            }
-        },
         data() {
             return {
                 attributes: [],
@@ -174,6 +147,44 @@
 
                 //FIXME: hard-coded. It'd be best defined in Tahiti
                 unsupportedParameters: new Set(['perform_cross_validation', 'cross_validation', 'one_vs_rest'])
+            }
+        },
+        computed: {
+            algorithmOperation() {
+                const taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+                return Array.from(this.operationsMap.values()).filter((op) => op.categories.find(cat => cat.subtype === taskType));
+            },
+            dataSourceId: {
+                get() { return this.workflowObj.tasks[0].forms.data_source.value; },
+                set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
+            },
+            supervisioned() {
+                return this.taskType === 'regression' || this.taskType === 'classification';
+            },
+            taskType: {
+                get() { return this.workflowObj.forms.$meta.value.taskType; },
+                set(newValue) {
+                    return this.$store.dispatch('dataExplorer/setTaskName', newValue)
+                }
+            },
+            numberOfFeatures() {
+                return this.workflowObj?.features?.forms?.features?.value?.length || 0;
+            }
+        },
+        watch: {
+            async selected() {
+                if (this.selected === 'algorithms') {
+                    const params = {
+                        enabled: 'true',
+                        platform: 1, //FIXME
+                        category: this.taskType,
+                        lang: this.$locale,
+                    }
+                    await axios.get(
+                        `${tahitiUrl}/operations`, { params });
+                    //this.algorithms = resp.data;
+                    //this.selectedAlgorithm = this.algorithms[0];
+                }
             }
         },
         async created() {
@@ -202,7 +213,7 @@
 
                     socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
 
-                    socket.on('task result', (msg, callback) => {
+                    socket.on('task result', (msg, callback) => { // eslint-disable-line no-unused-vars
                         //const task = self.workflowObj.getTaskById(msg.id);
                         this.jobs[0].results.push({
                             task_id: msg.id,
@@ -387,7 +398,7 @@
                         (rv[key] = rv[key] || []).push(x);
                         return rv;
                     }, {});
-                    Object.entries(job.groupedResults).forEach(([id, results]) => {
+                    Object.entries(job.groupedResults).forEach(([id, results]) => { // eslint-disable-line no-unused-vars
                         let result0 = results[0];
                         const isLargerBetter = Boolean(result0.content.metric && result0.content.metric.isLargerBetter);
                         let best = result0.content.metric ? result0.content.metric.value : 0;
@@ -467,14 +478,14 @@
                 }
 
                 try {
-                    const resp = await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
+                    await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                     this.isDirty = false;
                     this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
                 } catch (e) {
                     this.error(e);
                 }
             },
-            getFieldValue(field) {
+            getFieldValue(field) {// eslint-disable-line no-unused-vars
                 //FIXME
                 return null;
             },
@@ -493,12 +504,12 @@
             handleUpdateTarget(target) {
                 this.workflowObj.forms.$meta.value.target = target;
             },
-            async handleDeleteJob(job_id, selected) {
+            async handleDeleteJob(job_id) {
                 this.confirm(
                     this.$t('actions.delete'),
                     this.$tc('titles.job') + "?",
                     async () => {
-                        let resp = await axios.delete(`${standUrl}/jobs/${job_id}`);
+                        await axios.delete(`${standUrl}/jobs/${job_id}`);
                         this.loadJobs();
                         this.$refs.results.selectFirst();
                     },
@@ -520,22 +531,6 @@
                     confirm,
                 );
             },
-        },
-        watch: {
-            async selected() {
-                if (this.selected === 'algorithms') {
-                    const params = {
-                        enabled: 'true',
-                        platform: 1, //FIXME
-                        category: this.taskType,
-                        lang: this.$locale,
-                    }
-                    const resp = await axios.get(
-                        `${tahitiUrl}/operations`, { params });
-                    //this.algorithms = resp.data;
-                    //this.selectedAlgorithm = this.algorithms[0];
-                }
-            }
         }
     }
 </script>

@@ -79,7 +79,6 @@
                                         <option v-for="s in hiveStorages" :key="s.id" :value="s.id">
                                             {{s.name}}</option>
                                     </select>
-                                    </p>
                                     <button class="btn btn-success" :disabled="sqlStorage === null"
                                         @click="choose('hive')">{{$t('actions.choose')}}</button>
                                 </div>
@@ -134,7 +133,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label>{{$t('dataSource.tablesReference')}}</label>
-                                <select class="form-control tables" size="10" v-model="selectedTable"
+                                <select v-model="selectedTable" class="form-control tables" size="10"
                                     @dblclick.stop="copyTableName">
                                     <option v-for="tb in tables" :key="tb">
                                         {{tb}}
@@ -183,7 +182,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="fileInfo in resumableList" :class="fileStatus(fileInfo)">
+                            <tr v-for="fileInfo in resumableList" :key="fileInfo.file.fileName" :class="fileStatus(fileInfo)">
                                 <td :ref="fileInfo.file.uniqueIdentifier">{{fileInfo.file.fileName}}
                                 </td>
                                 <td>{{fileInfo.message.message}}</td>
@@ -196,7 +195,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-md-8 offset-md-2 mt-2" v-if="step === 2 ">
+            <div v-if="step === 2 " class="col-md-8 offset-md-2 mt-2">
                 <button class="btn btn-outline-secondary ml-1" @click="step=1">{{$t('actions.back')}}</button>
             </div>
         </div>
@@ -378,7 +377,7 @@
                     self.showResume = true;
                     self.showPause = false;
                 });
-                resumable.on('complete', file => {
+                resumable.on('complete', file => { // eslint-disable-line no-unused-vars
                     // Hide pause/resume when the upload has completed
                     self.showPause = false;
                     self.showResume = false;

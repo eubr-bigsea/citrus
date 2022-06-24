@@ -10,12 +10,12 @@
                     <h6>Passo 1</h6>
                     <hr />
                     <label class="" for="name">Nome do experimento:</label>
-                    <input type="text" class="form-control w-50 form-control-sm mb-2" maxlength="100" id="name" v-focus
-                        v-model="name">
+                    <input id="name" v-model="name" v-focus type="text" class="form-control w-50 form-control-sm mb-2"
+                        maxlength="100">
 
                     <label class="">Escolha a fonte de dados:</label>
-                    <vue-select @search="loadDataSourceList" :filterable="false" :options="dataSourceList" label="name"
-                        v-model="selectedDataSource" @input="retrieveAttributes" class="w-50">
+                    <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList" label="name"
+                        class="w-50" @search="loadDataSourceList" @input="retrieveAttributes">
                         <template v-slot:no-options="{ search, searching }">
                             <small>Digite parte do nome pesquisar ...</small>
                         </template>
@@ -46,10 +46,7 @@
     import axios from 'axios';
     import vSelect from 'vue-select';
     import Notifier from '../../mixins/Notifier';
-    import {
-        Workflow, Platform, Operation,
-        OperationList, Task, Form, FormField
-    } from './entities.js';
+    import { Workflow } from './entities.js';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
