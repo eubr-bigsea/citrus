@@ -5,9 +5,9 @@
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="multiple">
-            <textarea readonly :value="displayValue" class="form-control pointer" @click.prevent="openModal"
-                :rows="rows"></textarea>
-            <b-modal size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal"
+            <textarea readonly :value="displayValue" class="form-control pointer" :rows="rows"
+                @click.prevent="openModal"></textarea>
+            <b-modal ref="modal" size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')"
                 no-fade>
                 <div slot="default">
                     <div class="row">
@@ -22,8 +22,8 @@
                         <div class="col-md-4">
                             <small>{{$tc('property.availableAttribute', 2)}}:</small>
                             <div class="left options border mt-1 p-2">
-                                <div v-for="(suggestion, index) in available" class="border mb-1 p-1 suggested-attr"
-                                    role="button" :key="suggestion" @click="move('right', index)" :title="suggestion">
+                                <div v-for="(suggestion, index) in available" :key="suggestion"
+                                    class="border mb-1 p-1 suggested-attr" role="button" :title="suggestion" @click="move('right', index)">
                                     {{suggestion}}
                                 </div>
                             </div>
@@ -31,17 +31,17 @@
                             <b-input-group class="">
                                 <b-form-input v-model="extra" class="form-control-sm" maxlength="50" />
                                 <b-input-group-append>
-                                    <b-button size="sm" @click="add" :disabled="extra === null || extra.trim() === ''">
+                                    <b-button size="sm" :disabled="extra === null || extra.trim() === ''" @click="add">
                                         {{$t('actions.addItem')}}</b-button>
                                 </b-input-group-append>
                             </b-input-group>
                         </div>
                         <div class="text-center mt-5 text-center actions col-md-1">
                             <div v-if="!single">
-                                <b-btn @click="move('all-right', null)" class="mb-1" variant="" size="sm">&gt;&gt;
+                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-right', null)">&gt;&gt;
                                 </b-btn>
                                 <br />
-                                <b-btn @click="move('all-left', null)" class="mb-1" variant="" size="sm">&lt;&lt;
+                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-left', null)">&lt;&lt;
                                 </b-btn>
                             </div>
                         </div>
@@ -55,18 +55,16 @@
                                 <div class="col-12">
                                     <div class="options border mt-1 p-2">
                                         <div class="row">
-                                            <template v-for="(item, index) in selected">
-                                                <div class="mb-1 col-6 border-right">
-                                                    <div class="border selected-attr" role="button"
-                                                        @click="move('left', index)" :title="item.attribute">
-                                                        {{item.attribute}}
-                                                    </div>
+                                            <div v-for="(item, index) in selected" :key="index" class="mb-1 col-6 border-right">
+                                                <div class="border selected-attr" role="button"
+                                                    :title="item.attribute" @click="move('left', index)">
+                                                    {{item.attribute}}
                                                 </div>
-                                                <div class="col-5">
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        :placeholder="item.attribute" v-model="item.alias"/>
-                                                </div>
-                                            </template>
+                                            </div>
+                                            <div class="col-5">
+                                                <input v-model="item.alias" type="text"
+                                                    class="form-control form-control-sm" :placeholder="item.attribute"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -75,17 +73,17 @@
                     </div>
                 </div>
                 <div slot="modal-footer">
-                    <b-btn @click="cancelModal" variant="outline-secondary" size="sm" class="float-right">
+                    <b-btn variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
                         {{$t('actions.cancel')}}
                     </b-btn>
-                    <b-btn @click="okModal" variant="primary mr-1" size="sm" class="float-right">{{$t('common.ok')}}
+                    <b-btn variant="primary mr-1" size="sm" class="float-right" @click="okModal">{{$t('common.ok')}}
                     </b-btn>
                 </div>
             </b-modal>
         </div>
         <div v-else>
-            <v-select :options="suggestions" :multiple="false" v-model="select2Value" @input="updated" :taggable="true"
-                :closeOnSelect="true">
+            <v-select v-model="select2Value" :options="suggestions" :multiple="false" :taggable="true" :close-on-select="true"
+                @input="updated">
             </v-select>
         </div>
     </div>
@@ -96,10 +94,23 @@
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
+        },
+        mixins: [Widget],
+        props: {
+            single: { default: false, type: Boolean },
+        },
+        data() {
+            return {
+                aliases: [],
+                extra: '',
+                select2Value: '',
+                originalValue: { default: [] },
+                suggestions: [],
+                fieldParameters: {}
+            }
         },
         computed: {
             displayValue() {
@@ -127,16 +138,6 @@
                 }
             },
 
-        },
-        data() {
-            return {
-                aliases: [],
-                extra: '',
-                select2Value: '',
-                originalValue: { default: [] },
-                suggestions: [],
-                fieldParameters: {}
-            }
         },
         mounted() {
             let value = this.value || [];
@@ -220,9 +221,6 @@
                 }
                 this.$refs.modal.show();
             }
-        },
-        props: {
-            single: { default: false },
         },
     }
 </script>

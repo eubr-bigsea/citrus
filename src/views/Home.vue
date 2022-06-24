@@ -33,9 +33,6 @@
         components: {
             HomeCard
         },
-        computed: {
-            ...mapGetters(['hasFeaturePermission', 'isAdmin'])
-        },
         data() {
             return {
                 listings: new Map(),
@@ -59,6 +56,9 @@
                     workflows: 0
                 }
             };
+        },
+        computed: {
+            ...mapGetters(['hasFeaturePermission', 'isAdmin'])
         },
         mounted() {
             const self = this;
@@ -104,7 +104,7 @@
                 asc: false,
                 size: 5,
             };
-            this.listings.forEach((value, key, map) => {
+            this.listings.forEach((value, key, map) => { // eslint-disable-line no-unused-vars
                 self.loading[key] = true;
                 const params = Object.assign({}, commonFilters, value[1]);
                 axios

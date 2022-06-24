@@ -8,8 +8,10 @@
         </div>
         <label for="">Método de redução:</label>
 
-        <select class="form-control w-50 form-control-sm mb-3" v-model="reduction.forms.method.value">
-            <option v-for="opt in reduction.operation.fieldsMap.get('method').values" :value="opt.key">{{opt.pt}}
+        <select v-model="reduction.forms.method.value" class="form-control w-50 form-control-sm mb-3">
+            <option v-for="opt in reduction.operation.fieldsMap.get('method').values" 
+                :key="opt.key"
+                :value="opt.key">{{opt.pt}}
             </option>
         </select>
 
@@ -26,9 +28,7 @@
     </div>
 </template>
 <script>
-    import VueSelect from 'vue-select';
     export default {
-        components: { 'v-select': VueSelect, },
         props: {
             reduction: { type: Object, required: true },
         },

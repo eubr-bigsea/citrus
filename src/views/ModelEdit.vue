@@ -60,14 +60,10 @@
 <script>
     import Vue from 'vue';
     import axios from 'axios';
-    import VueSelect from 'vue-select';
-    import SwitchComponent from '../components/widgets/Switch.vue';
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 
     export default {
         components: {
-            'v-select': VueSelect,
-            SwitchComponent
         },
         data() {
             return {
@@ -86,7 +82,7 @@
         computed: {
         },
         xwatch: {
-            '$route.params.id': function (id) {
+            '$route.params.id': function () {
                 this.load().then(() => {
                     Vue.nextTick(() => {
                         this.isDirty = false;
@@ -95,7 +91,6 @@
             },
         },
         mounted() {
-            let self = this;
             this.load();
         },
         /* Methods */

@@ -182,7 +182,7 @@
                 const userId = this.$route.params.id;
                 const url = `${thornUrl}/users/${userId}`;
 
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, reject) => {// eslint-disable-line no-unused-vars
                     axios
                         .get(url)
                         .then(resp => {
@@ -209,7 +209,7 @@
                 this.$Progress.start();
                 return axios
                     .patch(url, user)
-                    .then(resp => {
+                    .then(() => {
                         this.$router.push({ name: 'AdministrationUserList' });
                         self.success(
                             this.$t('messages.savedWithSuccess', {

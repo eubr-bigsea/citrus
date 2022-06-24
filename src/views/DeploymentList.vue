@@ -31,17 +31,17 @@
                     <div v-if="loggedUserIsOwnerOrAdmin(props.row)">
                         <button
                             v-if="['PENDING', 'DEPLOYED_OLD', 'PENDING_UNDEPLOY', 'UNDEPLOYED', 'ERROR', 'SUSPENDED'].indexOf(props.row.current_status) > -1"
-                            class="ml-1 btn btn-sm btn-success" @click="deployOrUndeploy(props.row.id, true)"
-                            :title="$t('actions.deploy')">
+                            class="ml-1 btn btn-sm btn-success" :title="$t('actions.deploy')"
+                            @click="deployOrUndeploy(props.row.id, true)">
                             <font-awesome-icon icon="power-off" />
                         </button>
                         <button v-if="['PENDING', 'DEPLOYED', 'DEPLOYED_OLD'].indexOf(props.row.current_status) > -1"
-                            class="ml-1 btn btn-sm btn-danger" @click="deployOrUndeploy(props.row.id, false)"
-                            :title="$t('actions.undeploy')">
+                            class="ml-1 btn btn-sm btn-danger" :title="$t('actions.undeploy')"
+                            @click="deployOrUndeploy(props.row.id, false)">
                             <font-awesome-icon icon="power-off" />
                         </button>
-                        <button class="ml-1 btn btn-sm btn-outline-info" @click="showInfo(props.row)"
-                            :title="$t('actions.info')">
+                        <button class="ml-1 btn btn-sm btn-outline-info" :title="$t('actions.info')"
+                            @click="showInfo(props.row)">
                             <font-awesome-icon icon="list-alt"/>
                             {{$tc('deployment.log', 2)}}
                         </button>
@@ -51,7 +51,7 @@
                     </div>
                 </template>
             </v-server-table>
-            <b-modal v-if="currentRow" ref="modalInfo" size="xl" :title="currentRow.name" :okOnly="true">
+            <b-modal v-if="currentRow" ref="modalInfo" size="xl" :title="currentRow.name" :ok-only="true">
                 <div class="row">
                     <div class="col-12 small">
                         <strong>{{$tc('common.description')}}: </strong> {{currentRow.description}} <br />
@@ -237,7 +237,7 @@
                         const url = `${seedUrl}/deployments/${deploymentId}`;
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(self.$t('messages.successDeletion',
                                     { what: this.$tc('titles.deployment', 1) }));
                                 self.$refs.listTable.refresh();

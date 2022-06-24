@@ -43,7 +43,7 @@
                         if (!found) {
                             let serie = null;
                             if (dataSerie.orientation === 'h') {
-                                const yValues = dataSerie.values.map(value => value.y);
+                                //const yValues = dataSerie.values.map(value => value.y);
                                 serie = {
                                     x: [value.y],
                                     y: xValues,

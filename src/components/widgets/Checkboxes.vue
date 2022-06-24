@@ -5,9 +5,9 @@
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <b-form-group class="checks">
-            <b-form-checkbox-group :name="field.name" switches v-model="internalValue"
+            <b-form-checkbox-group v-model="internalValue" :name="field.name" switches
                 >
-                <b-form-checkbox class="col-3" v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key"
+                <b-form-checkbox v-for="opt in pairOptionValueList" :key="opt.key" class="col-3" :value="opt.key"
                     @input="handleCheckboxChange(opt[language] || opt.value, $event)">
                     {{opt[language] || opt.value}}
                 </b-form-checkbox>
@@ -19,8 +19,8 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
         data() {
             return {
                 internalValue: []
@@ -44,7 +44,7 @@
                         }
                         // test if it is an object, instead of a list
                         if (v && !Array.isArray(v)) {
-                            this.helpLink = v.help;
+                            //this.helpLink = v.help;
                             v = v.values;
                         }
                         return v;
@@ -56,17 +56,17 @@
             },
 
         },
-        methods: {
-            handleCheckboxChange(v, ev) {
-                this.triggerUpdateEvent(this.message, this.field, ev.filter(v => v !== null));
-            },
-        },
         mounted() {
             if (Array.isArray(this.value)) {
                 this.internalValue = this.value;
             } else {
                 this.internalValue = [this.value];
             }
+        },
+        methods: {
+            handleCheckboxChange(v, ev) {
+                this.triggerUpdateEvent(this.message, this.field, ev.filter(v => v !== null));
+            },
         }
     }
 </script>

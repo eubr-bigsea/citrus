@@ -6,16 +6,16 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="multiple">
             <textarea readonly :value="value ? value.join(', '): ''" class="form-control pointer"
-                @click.prevent="openModal" :rows="(value && value.length) ? Math.min(value.length / 3, 10) : 2"></textarea>
-            <b-modal size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal"
+                :rows="(value && value.length) ? Math.min(value.length / 3, 10) : 2" @click.prevent="openModal"></textarea>
+            <b-modal ref="modal" size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')"
                 no-fade>
                 <div slot="default">
                     <div class="row">
                         <div class="col-md-4 offset-md-1 p-0">
                             <small>{{$tc('property.availableAttribute', 2)}}:</small>
                             <div class="left options border mt-1 p-2">
-                                <div v-for="(suggestion, index) in available" class="border mb-1 p-1 suggested-attr"
-                                    :key="suggestion" @click="move('right', index)">
+                                <div v-for="(suggestion, index) in available" :key="suggestion"
+                                    class="border mb-1 p-1 suggested-attr" @click="move('right', index)">
                                     {{suggestion}}
                                 </div>
                             </div>
@@ -23,17 +23,17 @@
                             <b-input-group class="">
                                 <b-form-input v-model="extra" class="form-control-sm"></b-form-input>
                                 <b-input-group-append>
-                                    <b-button size="sm" @click="add" :disabled="extra === null || extra.trim() === ''">
+                                    <b-button size="sm" :disabled="extra === null || extra.trim() === ''" @click="add">
                                         {{$t('actions.addItem')}}</b-button>
                                 </b-input-group-append>
                             </b-input-group>
                         </div>
                         <div class="col-md-2 text-center mt-5 actions">
                             <div v-if="!single">
-                                <b-btn @click="move('all-right', null)" class="mb-1" variant="" size="sm">&gt;&gt;
+                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-right', null)">&gt;&gt;
                                 </b-btn>
                                 <br />
-                                <b-btn @click="move('all-left', null)" class="mb-1" variant="" size="sm">&lt;&lt;
+                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-left', null)">&lt;&lt;
                                 </b-btn>
                                 <br />
                                 <div class="border border-info">{{$tc('property.clickToMove', 2)}}</div>
@@ -42,8 +42,8 @@
                         <div class="col-md-4">
                             <small>{{$tc('property.selectedAttribute', 2)}}:</small>
                             <div class="options border mt-1 p-2">
-                                <div v-for="(suggestion, index) in value" class="border mb-1 p-1 selected-attr"
-                                    :key="suggestion" @click="move('left', index)">
+                                <div v-for="(suggestion, index) in value" :key="suggestion"
+                                    class="border mb-1 p-1 selected-attr" @click="move('left', index)">
                                     {{suggestion}}
                                 </div>
                             </div>
@@ -51,16 +51,16 @@
                     </div>
                 </div>
                 <div slot="modal-footer">
-                    <b-btn @click="cancelModal" variant="outline-secondary" size="sm" class="float-right">{{$t('actions.cancel')}}
+                    <b-btn variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">{{$t('actions.cancel')}}
                     </b-btn>
-                    <b-btn @click="okModal" variant="primary mr-1" size="sm" class="float-right">{{$t('common.ok')}}
+                    <b-btn variant="primary mr-1" size="sm" class="float-right" @click="okModal">{{$t('common.ok')}}
                     </b-btn>
                 </div>
             </b-modal>
         </div>
         <div v-else>
-            <v-select :options="suggestions" :multiple="false" v-model="select2Value" @input="updated" :taggable="true"
-                :closeOnSelect="true">
+            <v-select v-model="select2Value" :options="suggestions" :multiple="false" :taggable="true" :close-on-select="true"
+                @input="updated">
             </v-select>
         </div>
     </div>
@@ -71,10 +71,22 @@
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
+        },
+        mixins: [Widget],
+        props: {
+            single: { default: false, type: Boolean },
+        },
+        data() {
+            return {
+                extra: '',
+                select2Value: '',
+                originalValue: { default: [] },
+                suggestions: [],
+                fieldParameters: {}
+            }
         },
         computed: {
             multiple() {
@@ -93,15 +105,6 @@
                 set(newValue) {
                     this.value = newValue;
                 }
-            }
-        },
-        data() {
-            return {
-                extra: '',
-                select2Value: '',
-                originalValue: { default: [] },
-                suggestions: [],
-                fieldParameters: {}
             }
         },
         mounted() {
@@ -173,9 +176,6 @@
                 }
                 this.$refs.modal.show();
             }
-        },
-        props: {
-            single: { default: false },
         },
     }
 </script>

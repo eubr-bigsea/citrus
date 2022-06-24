@@ -142,7 +142,7 @@ export default {
           this.$Progress.start();
           axios
             .delete(`${tahitiUrl}/jobs/${job.id}`, {})
-            .then(resp => {
+            .then(() => {
               this.success(
                 this.$t('messages.successDeletion', {
                   what: this.$t('titles.job')

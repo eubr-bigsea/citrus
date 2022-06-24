@@ -13,9 +13,11 @@ module.exports = {
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     'no-console': 'off', // process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-unused-vars': 'off', //['error', { args: 'none', ignoreRestSiblings: false }],
+    'no-unused-vars': 'warn', //['error', { args: 'none', ignoreRestSiblings: false }],
     'prettier/prettier': 'off',
-    'vue/no-v-html': 'off'
+    'vue/no-v-html': 'off',
+    'vue/valid-v-model': 'off',  
+    'vue/no-use-v-if-with-v-for': 'off'
   },
   globals: {
     $nuxt: true,

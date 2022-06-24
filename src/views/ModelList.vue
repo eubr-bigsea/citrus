@@ -17,17 +17,17 @@
                 <template slot="created" slot-scope="props">{{props.row.created | formatJsonDate}}</template>
                 <template slot="actions" slot-scope="props">
                     <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
-                        @click="remove(props.row.id)" :title="$t('actions.delete')">
+                        :title="$t('actions.delete')" @click="remove(props.row.id)">
                         <font-awesome-icon icon="trash" />
                     </button>
                     <button
                         v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && props.row.deployment_status === 'NOT_DEPLOYED' "
-                        class="ml-1 btn btn-sm btn-success" @click="remove(props.row.id)" :title="$t('actions.deploy')">
+                        class="ml-1 btn btn-sm btn-success" :title="$t('actions.deploy')" @click="remove(props.row.id)">
                         <font-awesome-icon icon="server" />
                     </button>
                     <button
                         v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && ['DEPLOYED', 'RUNNING'].indexOf(props.row.deployment_status) > -1"
-                        class="ml-1 btn btn-sm btn-warning" @click="remove(props.row.id)" :title="$t('actions.undeploy')">
+                        class="ml-1 btn btn-sm btn-warning" :title="$t('actions.undeploy')" @click="remove(props.row.id)">
                         <font-awesome-icon icon="server" />
                     </button>
 
@@ -142,7 +142,7 @@
                         const url = `${limoneroUrl}/models/${modelId}`;
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(() => {
                                 self.success(self.$t('messages.successDeletion',
                                     { what: this.$tc('titles.model', 1) }));
                                 self.$refs.listTable.refresh();

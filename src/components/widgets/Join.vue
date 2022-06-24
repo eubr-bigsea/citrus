@@ -7,14 +7,14 @@
                 {{$t('actions.chooseOption')}}
             </b-link>
         </span>
-        <b-modal size="xl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade
-            ref="modal">
-            <form @submit.stop.prevent="submit" onsubmit="return false" ref="form" action="" class="zoom80">
+        <b-modal ref="modal" size="xl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
+            no-fade>
+            <form ref="form" onsubmit="return false" action="" class="zoom80" @submit.stop.prevent="submit">
                 <div class="row">
                     <div class="col-md-6 col-sm-12 border-right">
                         <h6>{{$t('widgets.join.type')}}:</h6>
 
-                        <select class="form-control mb-2" v-model="joinType">
+                        <select v-model="joinType" class="form-control mb-2">
                             <option value="inner">Inner</option>
                             <option value="left_outer">Left outer</option>
                             <option value="right_outer">Right outer</option>
@@ -22,8 +22,8 @@
                         </select>
                         <h6>{{$t('widgets.join.conditions')}}</h6>
                         <div class="side">
-                            <JoinCondition :suggestions1="suggestions1" :suggestions2="suggestions2"
-                                :conditions="valueObject.conditions" ref="condition" />
+                            <JoinCondition ref="condition" :suggestions1="suggestions1"
+                                :suggestions2="suggestions2" :conditions="valueObject.conditions" />
                         </div>
                         <div class="mt-2 border-top pt-2">
                             <button class="btn btn-success btn-sm" @click.prevent="add">
@@ -38,13 +38,13 @@
                         </div>
                         <div ref="selection">
                             <div class="row side">
-                                <JoinSelect class="col-md-6" :selected="valueObject.firstSelect"
-                                    :suggestions="suggestions1" :label="$tc('common.input') + ' 1'" ref="firstSelect"
-                                    :selectionType="valueObject.firstSelectionType || 1"
+                                <JoinSelect ref="firstSelect" class="col-md-6"
+                                    :selected="valueObject.firstSelect" :suggestions="suggestions1" :label="$tc('common.input') + ' 1'"
+                                    :selection-type="valueObject.firstSelectionType || 1"
                                     :prefix="valueObject.firstPrefix" />
-                                <JoinSelect class="col-md-6" :selected="valueObject.secondSelect"
-                                    :suggestions="suggestions2" :label="$tc('common.input') +' 2'" ref="secondSelect"
-                                    :selectionType="valueObject.secondSelectionType || 1"
+                                <JoinSelect ref="secondSelect" class="col-md-6"
+                                    :selected="valueObject.secondSelect" :suggestions="suggestions2" :label="$tc('common.input') +' 2'"
+                                    :selection-type="valueObject.secondSelectionType || 1"
                                     :prefix="valueObject.secondPrefix" />
                             </div>
                         </div>
@@ -52,9 +52,9 @@
                 </div>
             </form>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-button @click.prevent.stop="okClicked" variant="primary" class="mr-1" size="sm">{{$t('common.ok')}}
+                <b-button variant="primary" class="mr-1" size="sm" @click.prevent.stop="okClicked">{{$t('common.ok')}}
                 </b-button>
-                <b-btn @click="cancelClicked" variant="secondary" size="sm">{{$t('actions.cancel')}}</b-btn>
+                <b-btn variant="secondary" size="sm" @click="cancelClicked">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -67,10 +67,10 @@
     import JoinCondition from './JoinCondition';
 
     export default {
-        mixins: [Widget, Notifier],
         components: {
             LabelComponent, JoinSelect, JoinCondition
         },
+        mixins: [Widget, Notifier],
         props: {
             modalOpened: { type: Boolean, default: false },
         },
@@ -127,7 +127,7 @@
             },
             inferCondition() {
                 return;
-                let conditions = this.valueObject['conditions'];
+                /*let conditions = this.valueObject['conditions'];
                 debugger
                 if (conditions === null || conditions.length === 0) {
                     let a = this.suggestions1;
@@ -141,7 +141,7 @@
                     this.valueObject.conditions = a.filter((x) => b.includes(x)).map((x) => {
                         return { first: x, second: x }
                     });
-                }
+                }*/
             },
             openModal() {
                 this.$refs.modal.show();
@@ -181,7 +181,7 @@
                 let result = `SELECT \n\t${select} \nFROM [${firstName}] \n${this.joinType.toUpperCase().replace('_', ' ')} JOIN [${secondName}] ON \n\t${condition}`;
                 this.displayValue = result;
             },
-            okClicked(ev) {
+            okClicked() {
                 if (!this.$refs.form.reportValidity()) {
                     this.error(null, this.$t('errors.missingRequiredValue'));
                 } else {
@@ -194,7 +194,7 @@
                     }
                 }
             },
-            submit(ev) {
+            submit() {
                 //const invalid = (item) => item === null || item.trim() === '';
 
                 this.valueObject.firstSelectionType = this.$refs.firstSelect.getSelectionType();
@@ -221,7 +221,7 @@
                 this.triggerUpdateEvent(this.message, this.field, this.valueObject);
                 this.$refs.modal.hide();
             },
-            cancelClicked(ev) {
+            cancelClicked() {
                 this.$refs.modal.hide();
             }
         },

@@ -2,17 +2,19 @@
     <div>
         <h5>{{visualizationData.title}}</h5>
         <v-client-table :data="data" :columns="columns" :options="options" @row-click="onClick">
-            <template v-for="col in columns" :slot="col" slot-scope="props">
+            <div v-for="col in columns" :key="col" :slot="col" slot-scope="props">
                 <a href="javascript:void(0)">{{props.row[col]}}</a>
-            </template>
+            </div>
         </v-client-table>
     </div>
 </template>
 
 <script>
     export default {
-        name: "caipirinha-visualization-scatter",
-        props: ["visualizationData"],
+        name: "CaipirinhaVisualizationScatter",
+        props: {
+          visualizationData: {type: Object, default: () => null},
+        },
         data: function () {
             return {
                 options: {

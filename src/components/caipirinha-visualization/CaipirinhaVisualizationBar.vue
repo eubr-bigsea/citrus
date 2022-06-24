@@ -4,8 +4,10 @@
 
 <script>
 export default {
-  name: "caipirinha-visualization-bar",
-  props: ["visualizationData"],
+  name: "CaipirinhaVisualizationBar",
+  props: {
+      "visualizationData": {type: Object, default: () => null}
+  },
   data: function() {
     const getBarData = function(data) {
       const series = {};

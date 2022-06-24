@@ -30,6 +30,7 @@
     import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import ToolboxMixin from '../mixins/Toolbox';
     import Notifier from '../mixins/Notifier';
+    import { debounce } from '../../util.js';
     import axios from 'axios';
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
@@ -38,11 +39,11 @@
     const standUrl = process.env.VUE_APP_STAND_URL;
 
     export default {
-        mixins: [ToolboxMixin, Notifier],
         name: 'CustomToolbox',
         components: {
             VuePerfectScrollbar
         },
+        mixins: [ToolboxMixin, Notifier],
         props: {
             operations: {
                 type: Array,
@@ -67,8 +68,25 @@
                 alreadyLoaded: new Set(),
             };
         },
+        computed: {
+            shortcutOperations() {
+                return this.operations.filter(op => op.enabled && op.type === 'SHORTCUT');
+            },
+            searcheableOperations() {
+                let result = new Map();
+                if (this.search) {
+                    this.operations.forEach(op => {
+                        result[op.id] = op.name
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .toLowerCase();
+                    });
+                }
+                return result;
+            }
+        },
         watch: {
-            operations(v) {
+            operations() {
                 const self = this;
                 this.expandedOperations = this.operations.filter(op => op.type === 'SHORTCUT');
                 if (this.expandedOperations.length) {
@@ -113,23 +131,6 @@
                 });
             }
         },
-        computed: {
-            shortcutOperations() {
-                return this.operations.filter(op => op.enabled && op.type === 'SHORTCUT');
-            },
-            searcheableOperations() {
-                let result = new Map();
-                if (this.search) {
-                    this.operations.forEach(op => {
-                        result[op.id] = op.name
-                            .normalize('NFD')
-                            .replace(/[\u0300-\u036f]/g, '')
-                            .toLowerCase();
-                    });
-                }
-                return result;
-            }
-        },
         methods: {
             startDrag2(event){
                 const target = event.target;
@@ -144,7 +145,7 @@
             replacer(tpl, data) {
                 let re = /(\$\{(.+)\})/g;
                 let match = null;
-                while (match = re.exec(tpl)) {
+                while ((match = re.exec(tpl))) {
                     if (data[match[2]]) {
                         tpl = tpl.replace(match[1], data[match[2]])
                     }
@@ -152,7 +153,7 @@
                 }
                 return tpl;
             },
-            searchOperation: _.debounce(function () {
+            searchOperation: debounce(function () {
                 let search = this.search
                     .normalize('NFD')
                     .replace(/[\u0300-\u036f]/g, '')

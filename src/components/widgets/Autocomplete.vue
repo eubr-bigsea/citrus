@@ -1,13 +1,13 @@
 <template>
     <div class="autocomplete">
-        <input type="text" @input="onChange" v-model="search" @keyup.down="onArrowDown" @keyup.up="onArrowUp"
+        <input v-model="search" type="text" @input="onChange" @keyup.down="onArrowDown" @keyup.up="onArrowUp"
             @keyup.enter="onEnter" />
-        <ul id="autocomplete-results" v-show="isOpen" class="autocomplete-results">
-            <li class="loading" v-if="isLoading">
+        <ul v-show="isOpen" id="autocomplete-results" class="autocomplete-results">
+            <li v-if="isLoading" class="loading">
                 Loading results...
             </li>
-            <li v-else v-for="(result, i) in results" :key="i" @click="setResult(result)" class="autocomplete-result"
-                :class="{ 'is-active': i === arrowCounter }">
+            <li v-for="(result, i) in results" v-else :key="i" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }"
+                @click="setResult(result)">
                 {{ result }}
             </li>
         </ul>
@@ -18,6 +18,7 @@
     /**
      * Based on https://www.digitalocean.com/community/tutorials/vuejs-vue-autocomplete-component
     */
+    /*
     const Autocomplete = {
         name: "autocomplete",
         template: "#autocomplete",
@@ -69,7 +70,7 @@
                 this.search = result;
                 this.isOpen = false;
             },
-            onArrowDown(evt) {
+            onArrowDown() {
                 if (this.arrowCounter < this.results.length) {
                     this.arrowCounter = this.arrowCounter + 1;
                 }
@@ -107,13 +108,10 @@
             document.removeEventListener("click", this.handleClickOutside);
         }
     };
-
+    */
     new Vue({
         el: "#app",
-        name: "app",
-        components: {
-            autocomplete: Autocomplete
-        }
+        name: "App",
     });
 </script>
 <style>

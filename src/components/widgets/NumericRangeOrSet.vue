@@ -6,18 +6,18 @@
                 <div v-if="internalValue.type === 'range'" class="border p-1 pl-2 border-radius">
                     <b-form inline>
                         <label for="inline-form-input-name">Min:</label>
-                        <input type="number" v-model.number="internalValue.min"
+                        <input v-model.number="internalValue.min" type="number"
                             class="form-control form-control-sm ml-2 mr-2 small-text"
                             onKeyPress="return this.value.length < 12" />
 
                         <label for="inline-form-input-username">Max:</label>
-                        <input type="number" v-model.number="internalValue.max"
+                        <input v-model.number="internalValue.max" type="number"
                             class="form-control form-control-sm ml-2 mr-2 small-text"
                             onKeyPress="return this.value.length < 12" />
 
                         <template v-if="showQuantity">
                             <label for="inline-form-input-username">Qtde. valores:</label>
-                            <input type="number" v-model.number="internalValue.quantity" min="1"
+                            <input v-model.number="internalValue.quantity" type="number" min="1"
                                 class="form-control form-control-sm ml-2 mr-2 small-text"
                                 onKeyPress="return this.value.length < 12" />
                         </template>
@@ -34,18 +34,18 @@
                     @input="handleInput">
                     <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
                         <b-input-group class="w-25 float-left">
-                            <input v-bind="inputAttrs" :type="inputType.type" v-on="inputHandlers"
-                                onKeyPress="return this.value.length < 12"
-                                class="border-0 w-50 form-control form-control-sm " :step="inputType.step"
-                                @keyup="handleKeyUp" placeholder="Digite um valor">
+                            <input v-bind="inputAttrs" :type="inputType.type" onKeyPress="return this.value.length < 12"
+                                class="border-0 w-50 form-control form-control-sm "
+                                :step="inputType.step" placeholder="Digite um valor"
+                                v-on="inputHandlers" @keyup="handleKeyUp">
                             <b-input-group-append>
-                                <b-button @click="addTag()" variant="secondary" size="sm"><span
+                                <b-button variant="secondary" size="sm" @click="addTag()"><span
                                         class="fa fa-plus"></span>
                                 </b-button>
                             </b-input-group-append>
                         </b-input-group>
-                        <div class="pl-2 mt-2 w-75 float-left" v-if="tags && tags.length">
-                            <div class="badge text-secondary badge-light2 border mr-1" v-for="tag, i in tags" :key="i">
+                        <div v-if="tags && tags.length" class="pl-2 mt-2 w-75 float-left">
+                            <div v-for="(tag, i) in tags" :key="i" class="badge text-secondary badge-light2 border mr-1">
                                 {{tag}} <a href="#" class="text-danger" @click.prevent="removeTag(tag)">&times;</a>
                             </div>
                         </div>
@@ -63,10 +63,9 @@
 <script>
     import Widget from '../../mixins/Widget.js';
     import LabelComponent from './Label.vue';
-    import Vue from 'vue';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
         props: {
             showQuantity: { type: Boolean }
         },
@@ -112,7 +111,7 @@
                 if (this.field.suggested_widget === 'integer')
                     ev.target.value = ev.target.value.replace(/[^0-9]/g, '');
             },
-            handleInput(v) {
+            handleInput() {
                 /*
                 switch (this.inputType) {
                     case 'integer':

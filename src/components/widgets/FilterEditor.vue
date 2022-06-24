@@ -14,14 +14,14 @@
                     <div class="col-md-4 mt-4">
                         {{$tc('common.filter', 2)}}
                         <div class="values pb-1 border">
-                            <div v-for="(row, index) in valueList" class="clear-fix item-list"
+                            <div v-for="(row, index) in valueList" :key="index" class="clear-fix item-list"
                                 :class="{selected: selected && selected.index === row.index }"
                                 @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;nenhum atributo&gt;</em>
                                     <span v-if="row.label">/ {{row.label}}</span>
                                 </small>
-                                <a href="#" @click.prevent.stop="remove($event, index)" :title="$t('actions.delete')"
-                                    class="ml-1 float-right btn btn-sm py-0 btn-light text-danger">
+                                <a href="#" :title="$t('actions.delete')" class="ml-1 float-right btn btn-sm py-0 btn-light text-danger"
+                                    @click.prevent.stop="remove($event, index)">
                                     <span class="fa fa-minus-circle"></span>
                                 </a>
                             </div>
@@ -36,7 +36,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label>{{$t('variables.attribute')}}:</label>
-                                            <select v-model="selected.name" class="form-control" ref="name"
+                                            <select ref="name" v-model="selected.name" class="form-control"
                                                 @change="selectAttribute">
                                                 <option></option>
                                                 <option v-for="suggestion in suggestions" :key="suggestion">
@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label>{{$t('variables.type')}}:</label>
-                                            <select class="form-control" v-model="selected.type">
+                                            <select v-model="selected.type" class="form-control">
                                                 <option></option>
                                                 <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                                     {{$t('dataTypes.' + dt)}}
@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label>{{$tc('variables.operator', 1)}}:</label>
-                                            <select class="form-control" v-model="selected.operator" tabindex="0">
+                                            <select v-model="selected.operator" class="form-control" tabindex="0">
                                                 <option value="eq">{{$t('variables.operators.eq')}}</option>
                                                 <option value="ne">{{$t('variables.operators.ne')}}</option>
                                                 <option value="gt">{{$t('variables.operators.gt')}}</option>
@@ -84,7 +84,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label>{{$t('variables.multiplicity')}}:</label>
-                                            <select class="form-control" v-model="selected.multiplicity" tabindex="0">
+                                            <select v-model="selected.multiplicity" class="form-control" tabindex="0">
                                                 <option value="OPTIONAL">Opcional</option>
                                                 <option value="ZERO_OR_MORE">0 ou mais</option>
                                                 <option value="ONE">Exatamente 1</option>
@@ -110,7 +110,7 @@
                                 :taggable="true" :close-on-select="true">
                                 <div slot="no-options"></div>
                             </v-select> -->
-                                    <select class="w-50 form-control" v-model="selected.lookup">
+                                    <select v-model="selected.lookup" class="w-50 form-control">
                                         <option></option>
                                         <option v-for="opt in lookups" :key="opt.id" :value="opt.id">{{opt.name}}
                                         </option>
@@ -118,7 +118,7 @@
                                     <div v-if="!lookups" class="text-danger"><em>Não há tabelas de referência
                                             cadastradas</em></div>
                                     <label>Lista de valores personalizados (use JSON):</label>
-                                    <textarea class="form-control" rows="5" v-model="selected.customList"></textarea>
+                                    <textarea v-model="selected.customList" class="form-control" rows="5"></textarea>
                                     <em>Exemplo:</em>
                                     <br />
                                     <code>[
@@ -150,27 +150,25 @@
                 </div>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click="okClicked" variant="primary" size="sm" class="mr-1 pl-5 pr-5">{{$t('common.ok')}}
+                <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">{{$t('common.ok')}}
                 </b-btn>
             </div>
         </b-modal>
     </div>
 </template>
 <script>
-    import vSelect from "vue-select";
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     import Notifier from '../../mixins/Notifier';
 
     export default {
-        mixins: [Widget, Notifier],
-        computed: {
-            parameters() {
-                return JSON.parse(this.field.values);
-            },
-        },
         components: {
-            LabelComponent, 'v-select': vSelect
+            LabelComponent
+        },
+        mixins: [Widget, Notifier],
+        props: {
+            //lookups: { type: Array, default: () => [] },
+            lookupsMethod: {type: Function, default: () => null},
         },
         data() {
             return {
@@ -192,11 +190,16 @@
                 ],
             }
         },
+        computed: {
+            parameters() {
+                return JSON.parse(this.field.values);
+            },
+        },
         mounted() {
             this.updateDisplayValue(this.value);
         },
         methods: {
-            selectAttribute(row) {
+            selectAttribute() {
                 let name;
                 let counter = 0;
                 do {
@@ -241,7 +244,7 @@
                 this.selected = row;
 
             },
-            add(e) {
+            add() {
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
@@ -258,7 +261,7 @@
                 this.selected = null;
                 return false;
             },
-            okClicked(ev) {
+            okClicked() {
                 if (this.validate()) {
                     this.$root.$emit(this.message, this.field,
                         this.valueList);
@@ -276,10 +279,6 @@
                 }).length == 0;
                 return r;
             }
-        },
-        props: {
-            //lookups: { type: Array, default: () => [] },
-            lookupsMethod: null
         },
     }
 </script>

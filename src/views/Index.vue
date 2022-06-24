@@ -1,4 +1,6 @@
-<template></template>
+<template>
+    <span></span>
+</template>
 <script>
     import axios from 'axios';
     import { UserManager, WebStorageStateStore } from 'oidc-client';
@@ -9,10 +11,10 @@
             const self = this;
             if (q?.code) {
                 this.query = q;
-                const mgr = new UserManager({
+                new UserManager({
                     response_mode: 'query',
                     userStore: new WebStorageStateStore()
-                }).signinRedirectCallback().then(async function (user) {
+                }).signinRedirectCallback().then(async function (user) { // eslint-disable-line no-unused-vars
                     await self.getThornProfile();
                     self.$router.push({ name: 'home' });
                 }).catch(function (err) {
@@ -29,7 +31,7 @@
         },
         methods: {
             async getThornProfile() {
-                const user = await this.$openIdService.getProfile();
+                const user = await this.$openIdService.getProfile(); // eslint-disable-line no-unused-vars
                 const token = await this.$openIdService.getAccessToken();
                 const headers = { 'Authorization': token }
                 const resp = await axios.get('/api/v1/thorn/users/me', { headers });

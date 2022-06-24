@@ -20,8 +20,10 @@
 
 <script>
 export default {
-    name: 'input-header',
-    props: ['value'],
+    name: 'InputHeader',
+    props: {
+        value: {type: Object, default: () => null}
+    },
     computed: {
         titleSize() {
             return (this.value || '').length;

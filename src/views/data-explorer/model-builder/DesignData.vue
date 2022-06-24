@@ -3,8 +3,8 @@
         <h5>Dados</h5>
         <hr />
         <label for="">Fonte de dados:</label> &nbsp;
-        <vue-select @search="searchDataSource" :filterable="false" :options="dataSourceList" label="name"
-            v-model="dataSource_" @input="retrieveAttributes" class="w-50">
+        <vue-select v-model="dataSource_" :filterable="false" :options="dataSourceList" label="name"
+            class="w-50" @search="searchDataSource" @input="retrieveAttributes">
 
             <template v-slot:no-options="{ search, searching }">
                 <small>Digite parte do nome pesquisar ...</small>
@@ -41,9 +41,9 @@
         <h5 class="mt-4">Amostragem</h5>
         <hr />
         <label for="">Forma de amostragem:</label> &nbsp;
-        <select id="" class="form-control w-50 form-control-sm" v-model="sample.forms.type.value">
+        <select id="" v-model="sample.forms.type.value" class="form-control w-50 form-control-sm">
             <option value="">Sem amostragem, usar todos os registros</option>
-            <option v-for="opt in sample.operation.fieldsMap.get('type').values" :value="opt.key">{{opt.pt}}</option>
+            <option v-for="opt in sample.operation.fieldsMap.get('type').values" :key="opt.key" :value="opt.key">{{opt.pt}}</option>
         </select>
         <small class="form-text text-muted mb-3">
             Como gerar a amostra dos dados.
@@ -51,24 +51,24 @@
 
         <template v-if="sample.forms.type.value !== 'percent' && sample.forms.type.value !== '' ">
             <label for="">Total de registros:</label> &nbsp;
-            <input type="number" class="form-control form-control-sm w-25" min="1" max="12"
-                v-model="sample.forms.value.value">
+            <input v-model="sample.forms.value.value" type="number" class="form-control form-control-sm w-25" min="1"
+                max="12">
             <small class="form-text text-muted">
                 Total de registros a serem amostrados.
             </small>
         </template>
         <template v-if="sample.forms.type.value === 'percent'">
             <label for="">Percentual de registros:</label> &nbsp;
-            <input type="number" class="form-control form-control-sm w-25" min="0.1" max="100" step="0.1" maxlength="5"
-                v-model="sample.forms.fraction.value" />
+            <input v-model="sample.forms.fraction.value" type="number" class="form-control form-control-sm w-25" min="0.1" max="100" step="0.1"
+                maxlength="5" />
             <small class="form-text text-muted">
                 Percentual registros a serem amostrados.
             </small>
         </template>
         <template v-if="sample.forms.type.value !== 'head' && sample.forms.type.value !== '' ">
             <label for="">Semente para números aleatórios (seed):</label> &nbsp;
-            <input type="number" class="form-control form-control-sm w-25" min="0" step="1" maxlength="12"
-                v-model="sample.forms.seed.value" />
+            <input v-model="sample.forms.seed.value" type="number" class="form-control form-control-sm w-25" min="0" step="1"
+                maxlength="12" />
             <small class="form-text text-muted">
                 Semente usada para poder repetir o experimento.
             </small>
@@ -77,16 +77,15 @@
 </template>
 <script>
     import vSelect from 'vue-select';
-    import DataSourceMixin from '../DataSourceMixin.js';
     export default {
         components: { 'vue-select': vSelect, },
         props: {
-            attributes: { type: Array },
-            dataSource: { type: Object },
-            dataSourceList: { type: Array },
-            label: { type: String },
+            attributes: { type: Array, default: () => [] },
+            dataSource: { type: Object, default: () => {} },
+            dataSourceList: { type: Array, default: () => []},
+            label: { type: String, default: () => null },
             supervisioned: { type: Boolean },
-            sample: { type: Object }
+            sample: { type: Object, default: () => null }
         },
         data() {
             return {

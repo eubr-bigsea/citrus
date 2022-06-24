@@ -137,7 +137,7 @@
                         const url = `${capirinhaUrl}/dashboards/${dashboardId}`;
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(self.$t('messages.successDeletion',
                                     { what: self.$tc('titles.dashboard', 1) }));
                                 self.$refs.listTable.getData();

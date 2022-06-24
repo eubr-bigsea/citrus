@@ -1,12 +1,12 @@
 <template>
     <b-modal ref="modal" size="xl" :ok-only="true" scrollable :title="$tc('titles.job', 2)" :hide-footer="true">
 
-        <v-server-table :data="jobs" :columns="columns" :options="options" name="jobListWf" ref="jobList">
+        <v-server-table ref="jobList" :data="jobs" :columns="columns" :options="options" name="jobListWf">
             <template slot="id" slot-scope="props">
                 <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">{{props.row.id}}</router-link>
             </template>
             <template slot="actions" slot-scope="props">
-                <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
+                <button class="btn btn-sm danger" :title="$t('actions.delete')" @click="remove(props.row)">
                     <font-awesome-icon icon="trash"></font-awesome-icon>
                 </button>
             </template>
@@ -22,17 +22,17 @@
     </b-modal>
 </template>
 <script>
-    import Vue from 'vue'
     import axios from 'axios'
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar'
     import Notifier from '../mixins/Notifier'
 
-    const tahitiUrl = process.env.VUE_APP_TAHITI_URL
-    const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     const standUrl = process.env.VUE_APP_STAND_URL
 
     export default {
         mixins: [Notifier],
+        props: {
+            workflowId: {type: Number, default: null},
+
+        },
         data() {
             return {
                 jobs: [],
@@ -73,10 +73,6 @@
                     }
                 }
             }
-        },
-        props: {
-            workflowId: null,
-
         },
         methods: {
             show(){

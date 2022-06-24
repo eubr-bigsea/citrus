@@ -15,13 +15,13 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <grid-layout :layout.sync="layout" :col-num="12" :row-height="30" :is-draggable="!publicRoute"
-                    :is-resizable="!publicRoute" :is-mirrored="false" :is-responsive="true" :vertical-compact="true"
-                    :margin="[10, 10]" :use-css-transforms="true" @layout-updated="layoutUpdatedEvent"
+                <grid-layout ref="grid" :layout.sync="layout" :col-num="12" :row-height="30"
+                    :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false" :is-responsive="true"
+                    :vertical-compact="true" :margin="[10, 10]" :use-css-transforms="true"
                     :prevent-collision="false"
-                    ref="grid"
-                    class="dashboard-grid">
-                    <grid-item v-for="item in layout" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" :key="item.i">
+                    class="dashboard-grid"
+                    @layout-updated="layoutUpdatedEvent">
+                    <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i">
                         <caipirinha-visualization :url="item.url" :public-route="publicRoute" data-source-type="sql">
                         </caipirinha-visualization>
                     </grid-item>
@@ -31,19 +31,14 @@
     </div>
 </template>
 <script>
-    import Vue from 'vue';
 
     import Notifier from '../mixins/Notifier';
-    import axios from 'axios';
-    import io from 'socket.io-client';
 
     import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
-    import InputHeader from '../components/InputHeader.vue';
-    import VueGridLayout from 'vue-grid-layout';
-
-    const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
-
     export default {
+        components: {
+            'caipirinha-visualization': CapirinhaVisualization,
+        },
         mixins: [Notifier],
         data() {
             return {
@@ -56,10 +51,6 @@
                     {x: 1, y: 2, w: 2, h:3, i: 2},
                 ]
             };
-        },
-        components: {
-            'caipirinha-visualization': CapirinhaVisualization,
-            InputHeader
         },
         methods: {
             uuid() {

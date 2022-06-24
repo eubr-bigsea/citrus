@@ -6,11 +6,11 @@
                     <span v-if="icon" :class="icon"></span> 
                     {{$tc(`titles.${type}`, 2)}}
                 </div>
-                <home-card-counter :value="total"></home-card-counter>
+                <HomeCardCounter :value="total"></HomeCardCounter>
             </div>
             <div class="card-body">
                 <dl>
-                    <home-card-item v-for="item in items" :type="type" :item="item" :key="item.id"></home-card-item>
+                    <HomeCardItem v-for="item in items" :key="item.id" :type="type" :item="item"></HomeCardItem>
                     <div v-if="items.length == 0">{{ $t('common.noData')}}</div>
                 </dl>
                 <div v-if="items.length > 0" class="text-right">
@@ -52,11 +52,16 @@
     import HomeCardCounter from "./HomeCardCounter.vue";
 
     export default {
-        name: "home-card",
-        props: ["type", "items", "total", "icon"],
+        name: "HomeCard",
         components: {
             HomeCardItem,
             HomeCardCounter
+        },
+        props: {
+            type: {type: String, default: () => null}, 
+            items: {type: Object, default: () => null}, 
+            total: {type: Number, default: () => 0}, 
+            icon: {type: String, default: () => null}
         }
     };
 </script>

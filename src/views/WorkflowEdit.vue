@@ -11,7 +11,7 @@
                     </div>
 
                     <h6 class="header-pretitle">{{$tc('titles.workflow', 1)}} #{{workflow.id}}</h6>
-                    <input-header v-model="workflow.name"></input-header>
+                    <InputHeader v-model="workflow.name"></InputHeader>
 
                 </div>
 
@@ -34,17 +34,17 @@
                     </div>
                 </div>
 
-                <diagram ref="diagram" id="main-diagram" :workflow="workflow" v-if="loaded" :operations="operations"
+                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow" :operations="operations"
                     :loaded="loaded" :version="workflow.version" tabindex="0"
-                    :useDataSource="expandableOperations.length > 0">
+                    :use-data-source="expandableOperations.length > 0">
                 </diagram>
 
-                <div class="diagram-properties" v-if="showProperties">
-                    <property-window :task="selectedTask.task" v-if="selectedTask.task"
+                <div v-if="showProperties" class="diagram-properties">
+                    <property-window v-if="selectedTask.task" :task="selectedTask.task"
                         :variables="workflow.variables || []"
-                        :suggestionEvent="() => getSuggestions(selectedTask.task.id)"
-                        :extendedSuggestionEvent="() => getExtendedSuggestions(selectedTask.task.id)"
-                        :publishingEnabled="workflow && workflow.publishing_enabled" />
+                        :suggestion-event="() => getSuggestions(selectedTask.task.id)"
+                        :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
+                        :publishing-enabled="workflow && workflow.publishing_enabled" />
                 </div>
 
                 <!-- 
@@ -112,8 +112,8 @@
                 </b-tabs>
                 -->
                 <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables" />
-                <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :clusterInfo="clusterInfo"
-                    :validationErrors="validationErrors" :workflow="workflow" />
+                <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :cluster-info="clusterInfo"
+                    :validation-errors="validationErrors" :workflow="workflow" />
                 <ModalWorkflowHistory ref="historyModal" :history="history" />
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
@@ -140,15 +140,11 @@
     import ModalExecuteWorkflow from './modal/ModalExecuteWorkflow.vue'
     import PropertyWindow from '../components/PropertyWindow.vue';
     import Notifier from '../mixins/Notifier';
-    import SlideOutPanel from '../components/SlideOutPanel.vue';
     import ToolboxComponent from '../components/Toolbox.vue';
     import CustomToolboxComponent from '../components/CustomToolbox.vue';
     import Vue from 'vue';
-    import VuePerfectScrollbar from 'vue-perfect-scrollbar';
     import WorkflowExecution from '../components/WorkflowExecution.vue';
-    import WorkflowProperty from '../components/WorkflowProperty.vue';
     import WorkflowToolbar from '../components/WorkflowToolbar.vue';
-    import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL
@@ -156,14 +152,11 @@
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
     export default {
-        mixins: [Notifier],
         components: {
-            'caipirinha-visualization': CapirinhaVisualization,
             'diagram': DiagramComponent,
             'toolbox': ToolboxComponent,
             'custom-toolbox': CustomToolboxComponent,
             'workflow-toolbar': WorkflowToolbar,
-            'slideout-panel': SlideOutPanel,
             'property-window': PropertyWindow,
 
             ModalExecuteWorkflow,
@@ -174,13 +167,10 @@
             ModalWorkflowImage,
             ModalWorkflowVariables,
 
-            VuePerfectScrollbar,
-
-            WorkflowProperty,
             WorkflowExecution,
             InputHeader,
             TahitiSuggester: () => {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                     const script = document.createElement('script');
                     script.setAttribute('id', 'tahiti-script');
                     script.async = true;
@@ -189,6 +179,7 @@
                 })
             }
         },
+        mixins: [Notifier],
         data() {
             return {
                 atmosphereExtension: false,
@@ -226,6 +217,12 @@
                 },
                 expandableOperations: [],
                 exportTimeoutHandler: null,
+            }
+        },
+        watch: {
+            '$route.params.id': function (id) {
+                this.$refs.diagram.clearWorkflow();
+                this.load(id);
             }
         },
         created() {
@@ -314,7 +311,7 @@
                 if (!self.selectedTask.task.forms) {
                     self.selectedTask.task.forms = {};
                 }
-                const fieldInSelectedTask = self.selectedTask.task.forms[field.name];
+                let fieldInSelectedTask = self.selectedTask.task.forms[field.name];
                 if (fieldInSelectedTask) {
                     fieldInSelectedTask.value = value
                 } else {
@@ -388,7 +385,7 @@
                 }
                 this.isDirty = true;
             });
-            this.$root.$on('addFlow', (flow, jsPlumbConn) => {
+            this.$root.$on('addFlow', (flow, jsPlumbConn) => {// eslint-disable-line no-unused-vars
                 const sourceTask = self.workflow.tasks.find((t) => t.id === flow.source_id);
                 const targetTask = self.workflow.tasks.find((t) => t.id === flow.target_id);
                 if (targetTask.$meta === undefined){
@@ -472,12 +469,6 @@
             this.$root.$off('onshow-variables');
             window.removeEventListener('beforeunload', this.leaving)
         },
-        watch: {
-            '$route.params.id': function (id) {
-                this.$refs.diagram.clearWorkflow();
-                this.load(id);
-            }
-        },
         methods: {
             getCaipirinhaLink(jobId, taskId, visId) {
                 return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;
@@ -504,7 +495,7 @@
             toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
             removeTasks() { this.$refs.diagram.removeSelectedTasks(); },
             distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
-            updateSelectedTab(index) {
+            updateSelectedTab(index) {// eslint-disable-line no-unused-vars
                 //this.selectedTab = index;
                 this.$refs.diagram.repaint();
             },
@@ -794,7 +785,7 @@
                         self.$refs.diagram.clearWorkflow().then(() => {
                             let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
                             axios.post(url, { version })
-                                .then((resp) => {
+                                .then(() => {
                                     self.isDirty = false;
                                     self.success(self.$t('workflow.versionRestored',
                                         { version}));
@@ -816,7 +807,7 @@
                 }
             },
             getExtendedSuggestions(taskId) {
-                if (window.hasOwnProperty('TahitiAttributeSuggester')) {
+                if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                     if (window.TahitiAttributeSuggester.processed === undefined
                         || this.attributeSuggestion[taskId] === undefined
                         || this.attributeSuggestion[taskId].length === 0) {

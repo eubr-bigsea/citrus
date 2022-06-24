@@ -1,6 +1,6 @@
 <template>
     <div ref="condition">
-        <table class="table table-sm" v-if="conditionList && conditionList.length">
+        <table v-if="conditionList && conditionList.length" class="table table-sm">
             <thead>
                 <th class="text-center" style="width:40%">{{this.$tc('common.input')}} 1</th>
                 <th style="width: 10%;"></th>
@@ -8,16 +8,16 @@
                 <th class="text-center" style="width:5%"></th>
             </thead>
             <tbody>
-                <tr v-for="(row, index) in conditionList" class="inputs">
+                <tr v-for="(row, index) in conditionList" :key="index" class="inputs">
                     <td>
-                        <v-select ref="select1" :options="suggestions1" v-model="row.first" :taggable="true" required
-                            :closeOnSelect="true" pushTags selectOnTag
+                        <v-select ref="select1" v-model="row.first" :options="suggestions1" :taggable="true" required
+                            :close-on-select="true" push-tags select-on-tag
                             :clear-search-on-blur="({clearSearchOnSelect, multiple}) => handleBlurSelect(clearSearchOnSelect, multiple, 'select1', index)">
                             <div slot="no-options"></div>
                         </v-select>
                     </td>
                     <td class="text-center">
-                        <select class="form-control" @change="(v) => attrUpdated(row, 'op', v)" v-model="row.op">
+                        <select v-model="row.op" class="form-control" @change="(v) => attrUpdated(row, 'op', v)">
                             <option value="eq" selected>=</option>
                             <option value="ne">≠</option>
                             <option value="gt">&gt;</option>
@@ -28,8 +28,8 @@
                         </select>
                     </td>
                     <td>
-                        <v-select ref="select2" :options="suggestions2" v-model="row.second" :taggable="true"
-                            :closeOnSelect="true" pushTags selectOnTag
+                        <v-select ref="select2" v-model="row.second" :options="suggestions2" :taggable="true"
+                            :close-on-select="true" push-tags select-on-tag
                             :clear-search-on-blur="({clearSearchOnSelect, multiple}) => handleBlurSelect(clearSearchOnSelect, multiple, 'select2', index)">
                             <div slot="no-options"></div>
                         </v-select>
@@ -50,9 +50,9 @@
 <script>
     export default {
         props: {
-            suggestions1: { type: Array, function() { return []; } },
-            suggestions2: { type: Array, function() { return []; } },
-            conditions: { type: Array, function() { return []; } },
+            suggestions1: { type: Array, default: () =>  [] },
+            suggestions2: { type: Array, default: () =>  [] },
+            conditions: { type: Array, default: () => []},
         },
         data() {
             return {
@@ -65,7 +65,7 @@
             }
         },
         methods: {
-            add(e) {
+            add() {
                 if (this.conditionList === null) {
                     this.conditionList = [];
                 }

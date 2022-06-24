@@ -12,12 +12,12 @@
 <script>
     import Widget from '../../mixins/Widget.js';
     export default {
+        name: "PropertyLabel",
         mixins: [Widget],
-        name: "property-label",
         props: {
             field: { required: true, type: Object },
-            value: {},
-            showHelp: true,
+            value: {type: Object, default: () => null},
+            showHelp: {type: Boolean, default: () => true},
         },
         computed: {
             error() {

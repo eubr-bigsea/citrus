@@ -42,7 +42,6 @@ export default {
             duplicate: 'Duplicar',
             edit: 'Editar',
             editValue: 'Editar valor...',
-            execute: 'Executar',
             enable: 'Habilitar',
             encodeDecode: '(De)codificar',
             execute: 'Executar ...',
@@ -888,7 +887,6 @@ export default {
             duplicate: 'Duplicate',
             edit: 'Edit',
             editValue: 'Edit value...',
-            execute: 'Execute',
             enable: 'Enable',
             encodeDecode: 'Encode/Decode',
             execute: 'Execute...',
@@ -1040,7 +1038,6 @@ export default {
                 millisecond: 'Mmillisecond | Mmilliseconds',
                 weekDay: 'Weekday | Weekdays',
                 weekOfYear: 'Week number | Week number',
-                year: 'Weekday | Weekdays',
             },
             plugin: 'Plugin',
             project: {
@@ -1411,7 +1408,7 @@ export default {
                 You need to create a Git repository accessible by this server, optionally providing
                 all authentication details.</p>
                 <p>Plugins may contain malicious code that may damage the system, use resources for illicit purposes
-                 or steal important information. <strong> Make sure you only import plugins from trusted sources </strong>. 
+                or steal important information. <strong> Make sure you only import plugins from trusted sources </strong>. 
                 This action may take minutes to finish.
                 </p>
                 <p>For more details about the required code and steps to define a plugin, please visit: 

@@ -38,7 +38,6 @@
 
 <script>
     import axios from 'axios';
-    import { Event } from 'vue-tables-2';
     import Notifier from '../../mixins/Notifier';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
@@ -87,7 +86,6 @@
                         data['all'] = 'true';
 
                         let url = `${tahitiUrl}/platforms`;
-                        let headers = {};
                         this.$Progress.start();
                         try {
                             const resp = await axios.get(url, { params: data });
@@ -126,7 +124,7 @@
 
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(
                                     self.$t('messages.successDeletion', {
                                         what: this.$tc('titles.platform', 1)

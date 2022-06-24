@@ -8,22 +8,22 @@
                 {{ item.name }}
             </div>
             <ul v-show="isOpen" v-if="isFolder" class="folders">
-                <tree-item class="item" v-for="(child, index) in item.children" :key="index" :item="child"
-                    :opened="child.opened" @make-folder="$emit('make-folder', $event)" :handleClick="handleClick"
-                    :bus="bus" />
+                <tree-item v-for="(child, index) in item.children" :key="index" class="item" :item="child"
+                    :opened="child.opened" :handle-click="handleClick" :bus="bus"
+                    @make-folder="$emit('make-folder', $event)" />
             </ul>
         </li>
     </ul>
 </template>
 <script>
     export default {
-        name: "tree-item",
+        name: "TreeItem",
         props: {
-            bus: { type: Object, default: {} },
-            item: { type: Object, default: {} },
-            opened: false,
-            handleClick: { type: Function },
-            selected: false,
+            bus: { type: Object, default: () => {} },
+            item: { type: Object, default:() => {} },
+            opened: {type: Boolean, default: () => false},
+            handleClick: { type: Function, default: () => null},
+            selected: {type: Boolean, default: () => false},
         },
         data() {
             return {

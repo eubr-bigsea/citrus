@@ -18,8 +18,8 @@
         mixins: [Notifier],
         data() {
             return {
-                samples: {},
-                attributes: {}
+                samples: {type: Array, default: () => []},
+                attributes: {type: Array, default: () => []}
             }
         },
         methods: {

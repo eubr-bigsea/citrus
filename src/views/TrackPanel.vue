@@ -28,9 +28,9 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-12" v-if="display==='large'">
+                        <div v-if="display==='large'" class="col-md-12">
                             <div class=" track">
-                                <div v-for="item in items" class="track-item" :title="item.description">
+                                <div v-for="item in items" :key="item.id" class="track-item" :title="item.description">
                                     <b-dropdown variant="light" class="track-item-dropdown">
                                         <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
                                             Visualizar</b-dropdown-item>
@@ -57,13 +57,13 @@
                                 </div>
                             </div>
                             <div class="text-center">
-                                <pagination :records="records" v-model="page" :per-page="10" @paginate="paginate"
-                                    :options="options" class="pagination">
+                                <pagination v-model="page" :records="records" :per-page="10" :options="options"
+                                    class="pagination" @paginate="paginate">
                                 </pagination>
                             </div>
                         </div>
-                        <div class="col-md-12" v-else>
-                            <v-server-table :columns="columns" :options="options" ref="trackPanelList"
+                        <div v-else class="col-md-12">
+                            <v-server-table ref="trackPanelList" :columns="columns" :options="options"
                                 name="trackPanelList" @pagination="paginate">
 
                                 <div slot="beforeTable" class="ml-2">
@@ -71,8 +71,8 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><span class="fa fa-search"></span></span>
                                         </div>
-                                        <input v-focus type="text" class="form-control" :placeholder="$t('track.whichTrack')"
-                                            maxlength="60" @input="query" v-model="search">
+                                        <input v-model="search" v-focus type="text" class="form-control"
+                                            :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
                                     </div>
                                 </div>
                                 <template slot="id" slot-scope="props">
@@ -112,7 +112,6 @@
                                             <font-awesome-icon icon="pen"></font-awesome-icon>
                                         </span>
                                     </router-link>
-                                    <!--
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         <span class="btn btn-sm btn-primary"
                                             :to="{name: 'trackParameter', params: {id: props.row.id}}">
@@ -136,16 +135,14 @@
     import Notifier from '../mixins/Notifier';
     import { debounce } from '../util.js';
 
-    import VCarousel from '../components/Carousel';
     import Pagination from 'vue-pagination-2';
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
     const LIST_OF_FIELDS = 'id,name,updated,user,version,description,publishing_status,image,platform';
     export default {
-        mixins: [Notifier],
         components: {
-            'v-carousel': VCarousel,
             'pagination': Pagination,
         },
+        mixins: [Notifier],
         data() {
             return {
                 records: 0,

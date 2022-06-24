@@ -1,8 +1,8 @@
 <template>
     <div class="clear mb-4">
         <LabelComponent :field="field" :value="value"></LabelComponent>
-        <input type="range" maxlenght="10" class="slider" :value="split" min="1" max="99" @input="updated($event)"
-            @mousedown="mouseDown" @mouseup="mouseUp" :required="field.required" ref="slider" />
+        <input ref="slider" type="range" maxlenght="10" class="slider" :value="split" min="1" max="99"
+            :required="field.required" @input="updated($event)" @mousedown="mouseDown" @mouseup="mouseUp" />
         <div class="float-left">
             {{values[language] ? values[language][0] : ''}}:
             {{split || 0}}%
@@ -16,9 +16,15 @@
 <script>
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
+    import { debounce } from '../../../util.js';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
+        props: {
+            value: {
+                type: Number, default: 50,
+            },
+        },
         data() {
             return {
                 split: 50,
@@ -39,7 +45,7 @@
         },
         methods: {
             updated:
-                _.debounce(function (e) {
+                debounce(function (e) {
                     this.split = parseInt(e.target.value);
                     this.$root.$emit(this.message, this.field, parseInt(e.target.value));
                 }, 500),
@@ -51,17 +57,11 @@
                 this.isDragging = false;
                 this.$refs.slider.removeEventListener('mousemove', this.moveSlider);
             },
-            moveSlider(e) {
+            moveSlider() {
                 if (this.isDragging) {
                     this.split = this.$refs.slider.value;
                 }
             }
-        },
-
-        props: {
-            value: {
-                type: Number, default: 50,
-            },
         },
     }
 </script>

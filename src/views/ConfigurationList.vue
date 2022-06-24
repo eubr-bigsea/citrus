@@ -61,7 +61,6 @@
 
 <script>
 import axios from 'axios';
-import { Event } from 'vue-tables-2';
 import Notifier from '../mixins/Notifier';
 
 const thornUrl = process.env.VUE_APP_THORN_URL;
@@ -104,7 +103,6 @@ export default {
 			  data.fields = 'id,name,category,description,enabled,value,editor';
 	
 			  let url = `${thornUrl}/configurations`;
-			  let headers = {};
 			  this.$Progress.start();
 			  return axios
 				.get(url, { params: data })
@@ -148,7 +146,7 @@ export default {
 		event.target.classList.remove('btn-spinner');
 		axios
 		  .patch(url, [{id: self.currentRow.id, value: self.editableValue}])
-		  .then(resp => {
+		  .then(()=> {
 			self.currentRow.value = self.editableValue;
 			self.success(
 				this.$t('messages.savedWithSuccess', {
@@ -157,7 +155,7 @@ export default {
 			);
 		  })
 		  .catch(e => self.error(e))
-		  .finally(e => {
+		  .finally(() => {
 				 self.cancel();
 				 self.$Progress.finish();
 				 event.target.removeAttribute('disabled');

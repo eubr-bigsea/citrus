@@ -251,7 +251,7 @@ openIdService.loadConfig(store).then(() => {
             // If OpenId support is enabled in Thorn, use it. 
             // Otherwise, it uses internal Thorn API.
 
-            if (false && openIdService.enabled) {
+            if (openIdService.enabled) {
                 openIdService.isUserLoggedIn().then(isLoggedIn => {
                     //store.setters.isLoggedIn = isLoggedIn;
                     console.debug('Using OpenID. Status: ', isLoggedIn)
@@ -311,7 +311,7 @@ openIdService.loadConfig(store).then(() => {
         }
         return response
     }, (error) => {
-        if (false && error.response.status === 401) {
+        if (error.response.status === 401) {
             newVue.$snotify.error(i18n.tc('errors.accessDenied'));
             if (openIdService.enabled) {
                 openIdService.logout();

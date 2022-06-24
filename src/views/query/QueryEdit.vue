@@ -5,9 +5,9 @@
                 <b-tab title="Query">
                     <b-card-text>Tab contents 1</b-card-text>
                     <div>
-                        <div class="query-diagram" style="position:relative" id="query-diagram-lemonade">
+                        <div id="query-diagram-lemonade" class="query-diagram" style="position:relative">
                             <template v-for="table in tables">
-                                <db-table :table="table" :jsplumbInstance="jsplumbInstance" :key="table.id"
+                                <db-table :key="table.id" :table="table" :jsplumb-instance="jsplumbInstance"
                                     class="db-table" />
                             </template>
                         </div>
@@ -25,11 +25,11 @@
 </template>
 <script>
     import DBTable from './DBTable';
-    import jsplumb from 'jsplumb';
+    import {jsPlumb} from 'jsplumb';
 
-    const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
-    const standUrl = process.env.VUE_APP_STAND_URL;
-    const authToken = process.env.AUTH_TOKEN;
+    //const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+    //const standUrl = process.env.VUE_APP_STAND_URL;
+    //const authToken = process.env.AUTH_TOKEN;
 
     export default {
         components: {
@@ -77,7 +77,6 @@
         },
         mounted() {
             const instance = jsPlumb.getInstance({
-                Endpoints: [['Dot', { radius: 2 }], ['Dot', { radius: 1 }]],
                 EndpointHoverStyle: { fillStyle: 'orange' },
                 HoverPaintStyle: { strokeStyle: 'blue' },
 

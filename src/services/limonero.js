@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 export default {
     queryDataSource(id, callback) {
         let attributes = null;

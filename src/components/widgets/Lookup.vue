@@ -6,12 +6,12 @@
         </div>
         <div v-else class="mb-1">
             <input disabled :value="label ? (selected + ' - ' + label): ''" class="form-control form-control-sm" />
-            <b-link @click.prevent="$refs.modal.show()" variant="sm">
+            <b-link variant="sm" @click.prevent="$refs.modal.show()">
                 <span v-if="selected === '' || selected === null ">{{$t('actions.chooseOption')}}</span>
                 <span v-if="selected !== '' && selected !== null ">{{$t('actions.changeOption')}}</span>
             </b-link>
-            <b-modal size="lg" :title="field.label" ok-disabled
-                :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+            <b-modal ref="modal" size="lg" :title="field.label"
+                ok-disabled :cancel-title="$t('actions.cancel')" no-fade>
                 {{field.help}}
                 <v-client-table :data="lookupOptions" :columns="['key', 'value','tags']" class="lookupTable"
                     :options="tableOptions">
@@ -20,16 +20,16 @@
                     </template>
                     <template slot="tags" slot-scope="props">
                         <div v-show="props.row.tags.length && props.row.tags[0]">
-                            <span class="badge badge-pill badge-primary" v-for="t in props.row.tags" :key="t">
+                            <span v-for="t in props.row.tags" :key="t" class="badge badge-pill badge-primary">
                                 {{t}}
                             </span>
                         </div>
                     </template>
                 </v-client-table>
                 <div slot="modal-footer" class="w-100">
-                    <b-btn @click="closeModal" variant="secondary" size="sm" class="btn-sm ml-1 float-right">{{$t('actions.cancel')}}
+                    <b-btn variant="secondary" size="sm" class="btn-sm ml-1 float-right" @click="closeModal">{{$t('actions.cancel')}}
                     </b-btn>
-                    <b-btn @click="removeValue" variant="outline-primary" size="sm" class="btn-sm float-right">
+                    <b-btn variant="outline-primary" size="sm" class="btn-sm float-right" @click="removeValue">
                         {{$t('actions.removeValue')}}
                     </b-btn>
                 </div>
@@ -43,8 +43,8 @@
     import Widget from '../../mixins/Widget.js';
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
         data() {
             return {
                 label: '',
@@ -74,6 +74,19 @@
                         user: this.$t('common.name'),
                         tags: this.$tc('common.tag', 2)
                     },
+                }
+            }
+        },
+        computed: {
+            pairOptionValueList() {
+                return JSON.parse(this.field.values);
+            },
+            selected: {
+                get() {
+                    return this.selectedValue || this.field.default;
+                },
+                set(newValue) {
+                    this.selectedValue = newValue;
                 }
             }
         },
@@ -113,19 +126,6 @@
                 });
             }
         },
-        computed: {
-            pairOptionValueList() {
-                return JSON.parse(this.field.values);
-            },
-            selected: {
-                get() {
-                    return this.selectedValue || this.field.default;
-                },
-                set(newValue) {
-                    this.selectedValue = newValue;
-                }
-            }
-        },
         methods: {
             removeValue() {
                 this.label = '';
@@ -138,7 +138,7 @@
             replacer(tpl, data) {
                 let re = /(\$\{(.+)\})/g;
                 let match = null;
-                while (match = re.exec(tpl)) {
+                while ((match = re.exec(tpl))) {
                     if (data[match[2]]) {
                         tpl = tpl.replace(match[1], data[match[2]])
                     }

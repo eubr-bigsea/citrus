@@ -9,42 +9,42 @@
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal id="lookupModal" button-size="sm" size="lg" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" no-fade ref="modal" v-if="parameters" centered>
+        <b-modal v-if="parameters" id="lookupModal" ref="modal" button-size="sm" size="lg"
+            :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade centered>
             <p>
                 {{field.label||field.name}}
             </p>
-            <table class="table table-sm" v-if="valueList && valueList.length" ref="table">
+            <table v-if="valueList && valueList.length" ref="table" class="table table-sm">
                 <thead>
                     <th class="text-center">{{$t('property.attribute')}}</th>
                     <th class="text-center">{{$t('property.type')}}</th>
                     <th></th>
                 </thead>
                 <tbody>
-                    <tr v-for="(row, index) in valueList">
+                    <tr v-for="(row, index) in valueList" :key="index">
                         <td style="width:50%">
                             <v-select :options="suggestions" :multiple="false" :value="row.attribute"
-                                @input="(v) => attrUpdated(row, 'attribute', v)" :taggable="true" :closeOnSelect="true"
-                                size="sm" class="vue-select-small">
+                                :taggable="true" :close-on-select="true" size="sm"
+                                class="vue-select-small" @input="(v) => attrUpdated(row, 'attribute', v)">
                                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
                             </v-select>
                         </td>
                         <td style="width:20%">
                             <select class="form-control form-control-sm" :value="row.type"
-                                @change="updated($event, row, 'type')" size="sm">
-                                <option v-for="v in field.values" :value="v.key">{{v.value}}</option>
+                                size="sm" @change="updated($event, row, 'type')">
+                                <option v-for="v in field.values" :key="v.key" :value="v.key">{{v.value}}</option>
                             </select>
                         </td>
                         <td style="width:10%" class="text-center">
-                            <a href="#" @click="remove($event, index)" :title="$t('actions.delete')" class="pr-1">
+                            <a href="#" :title="$t('actions.delete')" class="pr-1" @click="remove($event, index)">
                                 <span class="fa fa-minus-circle"></span>
                             </a>
-                            <a href="#" @click="moveUp($event, index)" v-if="index !== 0" :title="$t('actions.moveUp')"
-                                class="pr-1">
+                            <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')" class="pr-1"
+                                @click="moveUp($event, index)">
                                 <span class="fa fa-chevron-circle-up"></span>
                             </a>
-                            <a href="#" @click="moveDown($event, index)" v-if="index !== (valueList.length-1)"
-                                :title="$t('actions.moveDown')">
+                            <a v-if="index !== (valueList.length-1)" href="#" :title="$t('actions.moveDown')"
+                                @click="moveDown($event, index)">
                                 <span class="fa fa-chevron-circle-down"></span>
                             </a>
                         </td>
@@ -56,8 +56,8 @@
                     <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
             </div>
             <div slot="modal-footer" class="w-100 text-right">
-                <b-btn @click="okClicked" variant="primary" size="sm" class="mr-1">{{$t('common.ok')}}</b-btn>
-                <b-btn @click="cancelClicked" variant="secondary" size="sm">{{$t('actions.cancel')}}</b-btn>
+                <b-btn variant="primary" size="sm" class="mr-1" @click="okClicked">{{$t('common.ok')}}</b-btn>
+                <b-btn variant="secondary" size="sm" @click="cancelClicked">{{$t('actions.cancel')}}</b-btn>
             </div>
         </b-modal>
     </div>
@@ -67,18 +67,12 @@
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
-        computed: {
-            parameters() {
-                if (this.field.values.constructor === Object || this.field.values.constructor === Array) {
-                    return this.field.values;
-                } else {
-                    return JSON.parse(this.field.values);
-                }
-            },
-        },
         components: {
             LabelComponent, 'v-select': vSelect
+        },
+        mixins: [Widget],
+        props: {
+            schema: { type: Object, default: null },
         },
         data() {
             return {
@@ -90,6 +84,15 @@
                 cancel: this.cancelClicked,
                 suggestions: [],
             }
+        },
+        computed: {
+            parameters() {
+                if (this.field.values.constructor === Object || this.field.values.constructor === Array) {
+                    return this.field.values;
+                } else {
+                    return JSON.parse(this.field.values);
+                }
+            },
         },
         mounted() {
             this.updateDisplayValue(this.value);
@@ -115,7 +118,7 @@
             attrUpdated(row, attr, val) {
                 row[attr] = val;
             },
-            add(e) {
+            add() {
                 if (this.valueList === null) {
                     this.valueList = [];
                 }
@@ -139,18 +142,15 @@
                 e.stopPropagation();
                 return false;
             },
-            okClicked(ev) {
+            okClicked() {
                 this.triggerUpdateEvent(this.message, this.field,
                     this.valueList);
                 this.$refs.modal.hide();
                 this.updateDisplayValue(this.valueList);
             },
-            cancelClicked(ev) {
+            cancelClicked() {
                 this.$refs.modal.hide();
             }
-        },
-        props: {
-            schema: { type: Object, default: null },
         },
     }
 </script>

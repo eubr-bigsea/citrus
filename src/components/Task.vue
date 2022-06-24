@@ -1,11 +1,11 @@
 <template>
-    <div :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')"
-        class="operation task" :data-operation-id="task.operation.id" :id="task.id" ref="task" v-bind:style="getStyle"
-        v-on:dblclick.stop="dblClick" v-on:click.stop="click" @contextmenu="openMenu" tabindex="0"
-        :title="task.forms.comment ? task.forms.comment.value: ''">
+    <div :id="task.id"
+        ref="task" :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')" class="operation task" :data-operation-id="task.operation.id" :style="getStyle"
+        tabindex="0" :title="task.forms.comment ? task.forms.comment.value: ''" @dblclick.stop="dblClick" @click.stop="click"
+        @contextmenu="openMenu">
 
-        <div class="hide circle" v-bind:style="getStyle"></div>
-        <div v-if="!isComment" v-bind:style="{borderTop: getBorder}" class="title">
+        <div class="hide circle" :style="getStyle"></div>
+        <div v-if="!isComment" :style="{borderTop: getBorder}" class="title">
             <!-- <span style="font-size:7pt">{{task.$meta}}</span> -->
             {{task.name}} 
         </div>
@@ -17,17 +17,17 @@
             <span class="fa fa-2x" :class="getDecorationClass"></span>
         </div>
         <div v-if="!isComment && task.warning " class="right-decor">
-            <span class="text-danger fa fa-2x fa-exclamation-circle" v-if="task.warning" :title="task.warning"></span>
+            <span v-if="task.warning" class="text-danger fa fa-2x fa-exclamation-circle" :title="task.warning"></span>
         </div>
         <div v-if="inGroup" class="bottom-right-decor">
             <span class="fa fa-object-group fa-2x"></span>
         </div>
-        <div class="custom-context-menu" v-if="contextMenuOpened && !isComment" ref="right">
+        <div v-if="contextMenuOpened && !isComment" ref="right" class="custom-context-menu">
             <ul>
                 <li @click.stop="remove()">{{$t('actions.delete')}}</li>
-                <li @click.stop="showResults()" v-if="task.step">{{$t('actions.showResults')}}</li>
+                <li v-if="task.step" @click.stop="showResults()">{{$t('actions.showResults')}}</li>
                 <li @click.stop="dblClick">{{$tc('titles.property', 2)}}</li>
-                <li v-for="(item, index) in contextMenuActions" @click="item.action(item.name)" :key="index">
+                <li v-for="(item, index) in contextMenuActions" :key="index" @click="item.action(item.name)">
                     {{item.label}}
                 </li>
             </ul>
@@ -38,6 +38,7 @@
 
 <script>
     import Vue from 'vue';
+    /*
     const anchorsOriginal = {
         input: [
             [
@@ -68,6 +69,7 @@
             ]
         ]
     }
+    */
     const anchors = {
         input: [
             [
@@ -157,15 +159,37 @@
         connectorStyle: connectorPaintStyle,
         fill: '#faa'
     };
-
+    /*
     const connectionOptions = {
         maxConnections: 1,
         endpoint: ['Dot', connectorPaintStyle],
         paintStyle: connectorPaintStyle,
         overlays: overlays,
     }
-
+    */
     const TaskComponent = Vue.extend({
+        props: {
+            enableContextMenu: { default: true, type: Boolean },
+            enablePositioning: {
+                default: true, type: Boolean
+            },
+            draggable: { default: true, type: Boolean },
+            instance: {type: Object, default: () => null},
+            showDecoration: {
+                default: false, type: Boolean
+            },
+            task: {
+                type: Object,
+                'default': function () { return { name: '', icon: '', status: '', forms: { color: { value: '#fff' } } }; }
+            },
+        },
+        data() {
+            return {
+                contextMenuOpened: false,
+                isComment: false,
+                contextMenuActions: [],
+            }
+        },
         computed: {
             getStyle() {
                 let result = {}
@@ -212,6 +236,134 @@
                 let elem = this.$refs.task;
                 return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
             }
+        },
+        watch: {
+            enableContextMenu: function (newVal, oldVal) {
+                console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+            },
+        },
+        mounted() {
+            this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
+
+            const self = this;
+            let operation = this.task.operation;
+            let taskId = this.task.id;
+            this.task.name = this.task.name || this.task.operation.name
+
+            let zIndex = this.task['z_index'];
+            let inputs = []
+            let outputs = []
+
+            if (operation.ports) {
+                outputs = operation.ports.filter((p) => {
+                    return p.type === 'OUTPUT';
+                }).sort((a, b) => {
+                    /* For horizontal ports*/
+                    return b.order - a.order;
+                    /* For veritical ports */
+                    // return a.order - b.order;
+                });
+                inputs = operation.ports.filter((p) => {
+                    return p.type === 'INPUT';
+                }).sort((a, b) => {
+                    /* For horizontal ports*/
+                    return b.order - a.order;
+                    /* For veritical ports */
+                    // return a.order - b.order;
+                });
+            }
+            const locations = { input: [-1.2, 0], output: [3, -1.1] }
+            var lbls = [
+                // note the cssClass and id parameters here
+                ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
+            ];
+            const cssClass = this.task.operation.css_class ||
+                this.task.operation.cssClass;
+
+            let elem = this.$refs.task;
+            if (this.task.operation.slug === 'comment') {
+                elem.classList.add('comment');
+                this.isComment = true;
+            }
+            [
+                { ports: inputs, type: 'input', options: endPointOptionsInput },
+                { ports: outputs, type: 'output', options: endPointOptionsOutput }
+            ].forEach((item) => {
+
+                let ports = item.ports;
+                let portType = item.type;
+                lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
+
+                // FIXME: hard coded layout
+                if (cssClass && cssClass.includes('circle-layout') && ports.length === 2) {
+                    anchors[portType][1][0][1] = 0.35;
+                    anchors[portType][1][1][1] = 0.65;
+                }
+
+                if (ports.length > 0) {
+                    anchors[portType][ports.length - 1].forEach((anchor, inx) => {
+                        lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
+
+                        let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
+                        lbls[0][1]['location'] = locations[item.type];
+                        options['anchors'] = anchor.slice();
+                        options['overlays'] = lbls.slice();
+                        options['uuid'] = `${taskId}/${ports[inx].id}`;
+                        options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
+
+                        if (ports[inx].interfaces.length && ports[inx].interfaces[0].color) {
+                            options['paintStyle']['fillStyle'] = ports[inx].interfaces[0].color;
+                        }
+                        if (ports[inx].multiplicity !== 'ONE') {
+                            if (portType === 'input') {
+                                // options['endpoint'] = 'Dot';
+                                options['endpoint'] = 'Rectangle';
+                                options['cssClass'] = 'multiple-input';
+                                // options['anchors'][0] = -0.06;
+                                //options['paintStyle']['fillStyle'] = 'transparent';
+                            }
+                            options['maxConnections'] = 100;
+                            // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
+                        }
+
+                        options['cssClass'] += `  ${cssClass}`;
+                        options['dragOptions'] = {
+                            start: (event, ui) => { // eslint-disable-line no-unused-vars
+                                //console.debug("dragEndpointStart")
+                                this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
+                            },
+                            stop: (event, ui) => { // eslint-disable-line no-unused-vars
+                                //console.debug("dragEndpointStop")
+                                this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
+                            }
+                        };
+                        options.paintStyle.fill = options.paintStyle.fillStyle;
+                        if (self.instance && self.instance.addEndpoint) {
+                            const endpoint = self.instance.addEndpoint(elem, options);
+                            endpoint.bind('click', self.endpointClick);
+                            endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
+                            endpoint._portId = ports[inx].id;
+                        }
+                    });
+                }
+            });
+            if (self.draggable && self.instance && self.instance.addEndpoint) {
+                self.instance.draggable(elem, {
+                    lineWidth: 3,
+                    containment: "parent",
+                    grid: [1, 1],
+                    drag() {
+                        // let elem = document.getElementById(self.task.id);
+                        let elem = self.$refs.task;
+                        self.task.left = elem.offsetLeft;
+                        self.task.top = elem.offsetTop;
+                    },
+                    stop() {
+                        self.$root.$emit('onset-isDirty', true);
+                    }
+                });
+            }
+            this.$root.$emit("ontask-ready", self.task);
         },
         methods: {
             keyboardKeyUpTrigger(ev) {
@@ -316,155 +468,6 @@
                     console.debug('Port id: ', endpoint._portId);
                 }
             }
-        },
-        props: {
-            enableContextMenu: { default: true },
-            enablePositioning: {
-                default: true
-            },
-            draggable: { default: true },
-            instance: null,
-            showDecoration: {
-                default: false
-            },
-            task: {
-                'default': function () { return { name: '', icon: '', status: '', forms: { color: { value: '#fff' } } }; }
-            },
-        },
-        data() {
-            return {
-                contextMenuOpened: false,
-                isComment: false,
-                contextMenuActions: [],
-            }
-        },
-        watch: {
-            enableContextMenu: function (newVal, oldVal) {
-                console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-            },
-        },
-        mounted() {
-            this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
-
-            const self = this;
-            let operation = this.task.operation;
-            let taskId = this.task.id;
-            this.task.name = this.task.name || this.task.operation.name
-
-            let zIndex = this.task['z_index'];
-            let inputs = []
-            let outputs = []
-
-            if (operation.ports) {
-                outputs = operation.ports.filter((p) => {
-                    return p.type === 'OUTPUT';
-                }).sort((a, b) => {
-                    /* For horizontal ports*/
-                    return b.order - a.order;
-                    /* For veritical ports */
-                    // return a.order - b.order;
-                });
-                inputs = operation.ports.filter((p) => {
-                    return p.type === 'INPUT';
-                }).sort((a, b) => {
-                    /* For horizontal ports*/
-                    return b.order - a.order;
-                    /* For veritical ports */
-                    // return a.order - b.order;
-                });
-            }
-            const locations = { input: [-1.2, 0], output: [3, -1.1] }
-            var lbls = [
-                // note the cssClass and id parameters here
-                ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
-            ];
-            const cssClass = this.task.operation.css_class ||
-                this.task.operation.cssClass;
-
-            let elem = this.$refs.task;
-            if (this.task.operation.slug === 'comment') {
-                elem.classList.add('comment');
-                this.isComment = true;
-            }
-            [
-                { ports: inputs, type: 'input', options: endPointOptionsInput },
-                { ports: outputs, type: 'output', options: endPointOptionsOutput }
-            ].forEach((item) => {
-
-                let ports = item.ports;
-                let portType = item.type;
-                lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
-
-                // FIXME: hard coded layout
-                if (cssClass && cssClass.includes('circle-layout') && ports.length === 2) {
-                    anchors[portType][1][0][1] = 0.35;
-                    anchors[portType][1][1][1] = 0.65;
-                }
-
-                if (ports.length > 0) {
-                    anchors[portType][ports.length - 1].forEach((anchor, inx) => {
-                        lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
-
-                        let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
-                        lbls[0][1]['location'] = locations[item.type];
-                        options['anchors'] = anchor.slice();
-                        options['overlays'] = lbls.slice();
-                        options['uuid'] = `${taskId}/${ports[inx].id}`;
-                        options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
-
-                        if (ports[inx].interfaces.length && ports[inx].interfaces[0].color) {
-                            options['paintStyle']['fillStyle'] = ports[inx].interfaces[0].color;
-                        }
-                        if (ports[inx].multiplicity !== 'ONE') {
-                            if (portType === 'input') {
-                                // options['endpoint'] = 'Dot';
-                                options['endpoint'] = 'Rectangle';
-                                options['cssClass'] = 'multiple-input';
-                                // options['anchors'][0] = -0.06;
-                                //options['paintStyle']['fillStyle'] = 'transparent';
-                            }
-                            options['maxConnections'] = 100;
-                            // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
-                        }
-
-                        options['cssClass'] += `  ${cssClass}`;
-                        options['dragOptions'] = {
-                            start: (event, ui) => {
-                                //console.debug("dragEndpointStart")
-                                this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
-                            },
-                            stop: (event, ui) => {
-                                //console.debug("dragEndpointStop")
-                                this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
-                            }
-                        };
-                        options.paintStyle.fill = options.paintStyle.fillStyle;
-                        if (self.instance && self.instance.addEndpoint) {
-                            const endpoint = self.instance.addEndpoint(elem, options);
-                            endpoint.bind('click', self.endpointClick);
-                            endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
-                            endpoint._portId = ports[inx].id;
-                        }
-                    });
-                }
-            });
-            if (self.draggable && self.instance && self.instance.addEndpoint) {
-                self.instance.draggable(elem, {
-                    lineWidth: 3,
-                    containment: "parent",
-                    grid: [1, 1],
-                    drag() {
-                        // let elem = document.getElementById(self.task.id);
-                        let elem = self.$refs.task;
-                        self.task.left = elem.offsetLeft;
-                        self.task.top = elem.offsetTop;
-                    },
-                    stop() {
-                        self.$root.$emit('onset-isDirty', true);
-                    }
-                });
-            }
-            this.$root.$emit("ontask-ready", self.task);
         },
     });
     export default TaskComponent;

@@ -45,7 +45,6 @@
 
 <script>
     import axios from 'axios';
-    import { Event } from 'vue-tables-2';
     import Notifier from '../../mixins/Notifier';
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
@@ -89,7 +88,6 @@
                         data.fields = 'id,name,type,enabled';
 
                         let url = `${limoneroUrl}/storages?enabled=true`;
-                        let headers = {};
                         this.$Progress.start();
                         return axios
                             .get(url, { params: data })
@@ -133,7 +131,7 @@
 
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(
                                     self.$t('messages.successDeletion', {
                                         what: this.$tc('titles.storage', 1)

@@ -6,7 +6,7 @@
             </div>
             <hr>
             <div class="card-deck">
-                <b-card class="clickable" @click="navigate('model-builder', {task: 'classification'})" role="button">
+                <b-card class="clickable" role="button" @click="navigate('model-builder', {task: 'classification'})">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -23,7 +23,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" @click="navigate('model-builder', {task: 'regression'})" role="button">
+                <b-card class="clickable" role="button" @click="navigate('model-builder', {task: 'regression'})">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -41,7 +41,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" @click="navigate('model-builder', {task: 'clustering'})" role="button">
+                <b-card class="clickable" role="button" @click="navigate('model-builder', {task: 'clustering'})">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">

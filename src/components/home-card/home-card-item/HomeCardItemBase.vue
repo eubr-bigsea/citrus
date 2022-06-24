@@ -60,6 +60,6 @@
 <script>
 
     export default {
-        name: 'home-card-item-base',
+        name: 'HomeCardItemBase',
     }
 </script>

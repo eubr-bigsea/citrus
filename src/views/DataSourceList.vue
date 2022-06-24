@@ -65,7 +65,6 @@
                     </div>
                 </div>
             </div>
-        </div>
         <ModalPreviewDataSource ref="preview"/>
     </main>
 </template>
@@ -74,23 +73,15 @@
     import { mapGetters } from 'vuex';
     import axios from 'axios';
     import Notifier from '../mixins/Notifier';
-    import { deserialize } from 'jsonapi-deserializer';
-    import SharedModal from '../components/ShareModal';
     import ModalPreviewDataSource from './modal/ModalPreviewDataSource';
 
-    let thornUrl = process.env.VUE_APP_THORN_URL;
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 
     export default {
         components: {
-        },
-        computed: {
-            ...mapGetters(['hasAnyPermission', 'isAdmin'])
-        },
-        mixins: [Notifier],
-        components: {
             ModalPreviewDataSource
         },
+        mixins: [Notifier],
         data() {
             return {
                 dataSourceId: 1,
@@ -168,6 +159,9 @@
                 }
             };
         },
+        computed: {
+            ...mapGetters(['hasAnyPermission', 'isAdmin'])
+        },
         mounted() {
         },
         /* Methods */
@@ -194,7 +188,7 @@
                 let params = {};
                 const url = `${limoneroUrl}/datasources/infer-schema/${id}`;
                 Vue.http.post(url, params, { headers }).then(
-                    response => {
+                    () => {
                         self.$root.$refs.toastr.s('Success');
                     },
                     error => {
@@ -206,6 +200,7 @@
 				window.open(
                     `${limoneroUrl}/datasources/${dataSource.id}/download?token=${dataSource.download_token}`);
 				return 
+                /*
                 axios({
                     url: `${limoneroUrl}/datasources/${dataSource.id}/download`,
                     method: 'GET',
@@ -220,7 +215,7 @@
                     );
                     document.body.appendChild(link);
                     link.click();
-                });
+                }); */
             },
 			getDownloadLink(row){
 				return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}`;
@@ -234,7 +229,7 @@
                         const url = `${limoneroUrl}/datasources/${dataSourceId}`;
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(()=> {
                                 self.success(
                                     self.$t('messages.successDeletion', {
                                         what: this.$tc('titles.dataSource', 1)

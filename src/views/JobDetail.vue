@@ -54,8 +54,8 @@
                                                         {{job.status_text}}
                                                     </div>
 
-                                                    <div class="job-step" v-for="step in job.steps"
-                                                        v-if="step.status!='PENDING'"
+                                                    <div v-for="step in job.steps" v-if="step.status!='PENDING'"
+                                                        :key="step.id" class="job-step"
                                                         :class="{'disabled': selectedTask.id && selectedTask.id !== step.task.id}">
                                                         <div class="label"
                                                             :class="step.logs[step.logs.length-1].level.toLowerCase()">
@@ -63,7 +63,7 @@
                                                         </div>
                                                         <h2>{{ getTask(step.task.id).name }}</h2>
 
-                                                        <template v-for="log in step.logs">
+                                                        <div v-for="log in step.logs" :key="log.id">
                                                             <p v-if="log.type === 'TEXT' || log.type === 'STATUS'">
                                                                 <!--
                                                                     <span class="icon fa fa-fw" :class="{
@@ -79,7 +79,7 @@
                                                                     formatJsonHourMinute}}</span>
                                                                 <span class="info">{{log.message}}</span>
                                                             </p>
-                                                        </template>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <!-- 
@@ -128,7 +128,7 @@
                                                 </dl>
                                             </b-tab>
                                             <b-tab v-if="job.workflow" :title="$tc('job.parameters', 2)">
-                                                <div v-for="ttask in job.workflow.tasks" class="card" :key="ttask.id">
+                                                <div v-for="ttask in job.workflow.tasks" :key="ttask.id" class="card">
                                                     <div class="card-body" style="overflow: auto">
                                                         {{ttask.name}} ({{ttask.operation.name}})
                                                         <table class="table table-sm table-parameters">
@@ -140,7 +140,7 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <tr v-for="(v, k, i) in ttask.forms">
+                                                                <tr v-for="(v, k, i) in ttask.forms" :key="i">
                                                                     <td>{{v.label ? v.label : k}}</td>
                                                                     <td>{{v.labelValue ? v.labelValue: v.value}}
                                                                     </td>
@@ -208,28 +208,28 @@
                                 <div class="row">
                                     <div class="col-md-3 pt-3 result-area">
                                         <b-list-group>
-                                            <b-list-group-item v-for="(results, taskId) in allResults"
-                                                @click.prevent="showResult(taskId)" button href="#">
-                                                {{results[0].value.task.name}}
-                                                <br /><em><small>{{results[0].value.task.operation.name}}</small></em>
+                                            <b-list-group-item v-for="(res, taskId) in allResults" :key="taskId"
+                                                button href="#" @click.prevent="showResult(taskId)">
+                                                {{res[0].value.task.name}}
+                                                <br /><em><small>{{res[0].value.task.operation.name}}</small></em>
                                             </b-list-group-item>
                                         </b-list-group>
                                     </div>
                                     <div class="col-md-9 border-left result-area">
-                                        <div v-for="(results, taskId) in allResults" :key="taskId" class="row">
+                                        <div v-for="(res, taskId) in allResults" :key="taskId" class="row">
                                             <div class="col-md-12">
-                                                <b-card :header="getTask(taskId).name" class="mt-2"
-                                                    header-bg-variant="light" border-variant="info"
-                                                    :id="`task-${taskId}`">
+                                                <b-card :id="`task-${taskId}`" :header="getTask(taskId).name"
+                                                    class="mt-2" header-bg-variant="light"
+                                                    border-variant="info">
 
-                                                    <template v-for="(result, inx) in results">
+                                                    <div v-for="(result, inx) in res" :key="inx">
                                                         <div v-if="result.type === 'result'" class="col-md-12 lemonade">
                                                             <div v-if="result.value.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
                                                                 :header="result.value.task.name" class="mt-2"
                                                                 header-bg-variant="light" border-variant="info">
 
-                                                                <div class="pl-5 mt-2" v-for="log in result.value.logs"
-                                                                    :key="log.id">
+                                                                <div v-for="log in result.value.logs" :key="log.id"
+                                                                    class="pl-5 mt-2">
                                                                     <span v-if="log.type === 'HTML'">
                                                                         <div class="html-div" v-html="log.message">
                                                                         </div>
@@ -244,15 +244,15 @@
                                                             <div v-if="result.value.logs.find(s => s.type === 'OBJECT')"
                                                                 :header="result.value.task.name" class="mt-2"
                                                                 header-bg-variant="light" border-variant="info">
-                                                                <div class="pl-5 mt-2" v-for="log in result.value.logs"
-                                                                    :key="log.id">
+                                                                <div v-for="log in result.value.logs" :key="log.id"
+                                                                    class="pl-5 mt-2">
                                                                     <span v-if="log.type === 'OBJECT' && log.message.attributes">
                                                                         <v-client-table ref="jobList"
                                                                             :data="log.message.rows"
                                                                             :columns="log.message.attributes.map(a=>a.label)"
                                                                             :options="sampleOptions">
-                                                                            <span :slot="`h__${header}`"
-                                                                                v-for="header in log.message.attributes.map(a=>a.label)">
+                                                                            <span v-for="header in log.message.attributes.map(a=>a.label)" :key="header"
+                                                                                :slot="`h__${header}`">
                                                                                 {{header}}
                                                                             </span>
                                                                         </v-client-table>
@@ -266,7 +266,7 @@
                                                                 :url="getCaipirinhaLink(job.id, result.value.task.id, 0)">
                                                             </caipirinha-visualization>
                                                         </div>
-                                                    </template>
+                                                    </div>
                                                 </b-card>
                                             </div>
                                         </div>
@@ -291,7 +291,6 @@
     import Vue from 'vue';
     import DiagramComponent from '../components/Diagram.vue';
     import SourceCode from '../components/SourceCode.vue';
-    import ProgressChart from '../components/ProgressChart.vue';
     import Notifier from '../mixins/Notifier';
     import axios from 'axios';
     import io from 'socket.io-client';
@@ -299,14 +298,14 @@
 
     const standUrl = process.env.VUE_APP_STAND_URL;
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
-    const standSocketIOPath = process.env.VUE_APP_STAND_SOCKET_IO_PATH;
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
+    /*
     const TaskDisplay = Vue.extend({
         props: {
-            task: {},
-            simple: { default: false }
+            task: {default: () => {}, type: Object},
+            simple: { default: false, type: Boolean }
         },
         render(createElement) {
             const color =
@@ -343,13 +342,12 @@
             });
         }
     });
+    */
     export default {
         components: {
             diagram: DiagramComponent,
             'caipirinha-visualization': CapirinhaVisualization,
             SourceCode,
-            ProgressChart,
-            TaskDisplay
         },
         mixins: [Notifier],
         data() {
@@ -532,7 +530,7 @@
                         this.$Progress.start();
                         axios
                             .post(`${standUrl}/jobs/${jobId}/stop`, {})
-                            .then(resp => {
+                            .then(()=> {
                                 this.success(
                                     this.$t('messages.successStop', {
                                         what: this.$tc('titles.job', 1)
@@ -595,7 +593,7 @@
                 socket.on('connect_error', () => {
                     console.debug('Web socket server offline');
                 });
-                socket.on('update task', (msg, callback) => {
+                socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
                     const task = self.job.workflow.tasks.find(t => {
                         return msg.task && t.id === msg.task.id;
                     });

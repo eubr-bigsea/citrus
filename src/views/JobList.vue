@@ -149,7 +149,7 @@ export default {
           this.$Progress.start();
           axios
             .post(`${standUrl}/jobs/${job.id}/stop`, {})
-            .then(resp => {
+            .then(() => {
               this.success(
                 this.$t('messages.successStop', {
                   what: this.$tc('titles.job', 1)
@@ -175,7 +175,7 @@ export default {
           this.$Progress.start();
           axios
             .delete(`${standUrl}/jobs/${job.id}`, {})
-            .then(resp => {
+            .then(() => {
               this.success(
                 this.$t('messages.successDeletion', {
                   what: this.$tc('titles.job', 1)

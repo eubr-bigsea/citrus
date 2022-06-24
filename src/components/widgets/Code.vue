@@ -5,19 +5,19 @@
         </template>
         <template v-else>
             <LabelComponent :field="field" :value="value"></LabelComponent>
-            <prism-editor :code="value === null ? field.default: value" v-model="code"
-                :language="computedProgrammingLanguage" readonly ref="prism" disabled
+            <PrismEditor ref="prism" v-model="code"
+                :code="value === null ? field.default: value" :language="computedProgrammingLanguage" readonly disabled
                 class="prism-editor-wrapper-disabled code2" />
             <b-link variant="sm" @click.prevent="showModal">
                 <span>{{$t('actions.edit')}}...</span>
             </b-link>
         </template>
-        <b-modal size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" ref="modal" no-fade>
+        <b-modal ref="modal" size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" no-fade>
             <div slot="default">
                 <div class="row">
                     <div class="col-md-8">
-                        <prism-editor :code="value === null ? field.default: value" v-model="code"
-                            :language="computedProgrammingLanguage" ref="prism" disabled class="code" />
+                        <PrismEditor ref="prism" v-model="code"
+                            :code="value === null ? field.default: value" :language="computedProgrammingLanguage" disabled class="code" />
                     </div>
 
                     <div class="col-md-4">
@@ -29,9 +29,9 @@
                 </div>
             </div>
             <div slot="modal-footer">
-                <b-btn @click="cancelModal" variant="" size="sm" class="float-right">{{$t('actions.cancel')}}
+                <b-btn variant="" size="sm" class="float-right" @click="cancelModal">{{$t('actions.cancel')}}
                 </b-btn>
-                <b-btn @click="okModal" variant="success mr-1" size="sm" class="float-right">{{$t('common.ok')}}
+                <b-btn variant="success mr-1" size="sm" class="float-right" @click="okModal">{{$t('common.ok')}}
                 </b-btn>
             </div>
         </b-modal>
@@ -39,11 +39,12 @@
 </template>
 <script>
 
-    import prismjs from "prismjs";
+    import {Prism} from "prismjs";
     import "prismjs/themes/prism.css";
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
-    import PrismEditor from 'vue-prism-editor'
+    import PrismEditor from 'vue-prism-editor';
+    import { debounce } from '../../util.js';
 
     Prism.languages.python = {
         'comment': {
@@ -96,12 +97,25 @@
         'keyword': /\b(?:ACTION|ADD|AFTER|ALGORITHM|ALL|ALTER|ANALYZE|ANY|APPLY|AS|ASC|AUTHORIZATION|AUTO_INCREMENT|BACKUP|BDB|BEGIN|BERKELEYDB|BIGINT|BINARY|BIT|BLOB|BOOL|BOOLEAN|BREAK|BROWSE|BTREE|BULK|BY|CALL|CASCADED?|CASE|CHAIN|CHAR(?:ACTER|SET)?|CHECK(?:POINT)?|CLOSE|CLUSTERED|COALESCE|COLLATE|COLUMNS?|COMMENT|COMMIT(?:TED)?|COMPUTE|CONNECT|CONSISTENT|CONSTRAINT|CONTAINS(?:TABLE)?|CONTINUE|CONVERT|CREATE|CROSS|CURRENT(?:_DATE|_TIME|_TIMESTAMP|_USER)?|CURSOR|CYCLE|DATA(?:BASES?)?|DATE(?:TIME)?|DAY|DBCC|DEALLOCATE|DEC|DECIMAL|DECLARE|DEFAULT|DEFINER|DELAYED|DELETE|DELIMITERS?|DENY|DESC|DESCRIBE|DETERMINISTIC|DISABLE|DISCARD|DISK|DISTINCT|DISTINCTROW|DISTRIBUTED|DO|DOUBLE|DROP|DUMMY|DUMP(?:FILE)?|DUPLICATE|ELSE(?:IF)?|ENABLE|ENCLOSED|END|ENGINE|ENUM|ERRLVL|ERRORS|ESCAPED?|EXCEPT|EXEC(?:UTE)?|EXISTS|EXIT|EXPLAIN|EXTENDED|FETCH|FIELDS|FILE|FILLFACTOR|FIRST|FIXED|FLOAT|FOLLOWING|FOR(?: EACH ROW)?|FORCE|FOREIGN|FREETEXT(?:TABLE)?|FROM|FULL|FUNCTION|GEOMETRY(?:COLLECTION)?|GLOBAL|GOTO|GRANT|GROUP|HANDLER|HASH|HAVING|HOLDLOCK|HOUR|IDENTITY(?:_INSERT|COL)?|IF|IGNORE|IMPORT|INDEX|INFILE|INNER|INNODB|INOUT|INSERT|INT|INTEGER|INTERSECT|INTERVAL|INTO|INVOKER|ISOLATION|ITERATE|JOIN|KEYS?|KILL|LANGUAGE|LAST|LEAVE|LEFT|LEVEL|LIMIT|LINENO|LINES|LINESTRING|LOAD|LOCAL|LOCK|LONG(?:BLOB|TEXT)|LOOP|MATCH(?:ED)?|MEDIUM(?:BLOB|INT|TEXT)|MERGE|MIDDLEINT|MINUTE|MODE|MODIFIES|MODIFY|MONTH|MULTI(?:LINESTRING|POINT|POLYGON)|NATIONAL|NATURAL|NCHAR|NEXT|NO|NONCLUSTERED|NULLIF|NUMERIC|OFF?|OFFSETS?|ON|OPEN(?:DATASOURCE|QUERY|ROWSET)?|OPTIMIZE|OPTION(?:ALLY)?|ORDER|OUT(?:ER|FILE)?|OVER|PARTIAL|PARTITION|PERCENT|PIVOT|PLAN|POINT|POLYGON|PRECEDING|PRECISION|PREPARE|PREV|PRIMARY|PRINT|PRIVILEGES|PROC(?:EDURE)?|PUBLIC|PURGE|QUICK|RAISERROR|READS?|REAL|RECONFIGURE|REFERENCES|RELEASE|RENAME|REPEAT(?:ABLE)?|REPLACE|REPLICATION|REQUIRE|RESIGNAL|RESTORE|RESTRICT|RETURNS?|REVOKE|RIGHT|ROLLBACK|ROUTINE|ROW(?:COUNT|GUIDCOL|S)?|RTREE|RULE|SAVE(?:POINT)?|SCHEMA|SECOND|SELECT|SERIAL(?:IZABLE)?|SESSION(?:_USER)?|SET(?:USER)?|SHARE|SHOW|SHUTDOWN|SIMPLE|SMALLINT|SNAPSHOT|SOME|SONAME|SQL|START(?:ING)?|STATISTICS|STATUS|STRIPED|SYSTEM_USER|TABLES?|TABLESPACE|TEMP(?:ORARY|TABLE)?|TERMINATED|TEXT(?:SIZE)?|THEN|TIME(?:STAMP)?|TINY(?:BLOB|INT|TEXT)|TOP?|TRAN(?:SACTIONS?)?|TRIGGER|TRUNCATE|TSEQUAL|TYPES?|UNBOUNDED|UNCOMMITTED|UNDEFINED|UNION|UNIQUE|UNLOCK|UNPIVOT|UNSIGNED|UPDATE(?:TEXT)?|USAGE|USE|USER|USING|VALUES?|VAR(?:BINARY|CHAR|CHARACTER|YING)|VIEW|WAITFOR|WARNINGS|WHEN|WHERE|WHILE|WITH(?: ROLLUP|IN)?|WORK|WRITE(?:TEXT)?|YEAR)\b/i,
         'boolean': /\b(?:TRUE|FALSE|NULL)\b/i,
         'number': /\b0x[\da-f]+\b|\b\d+\.?\d*|\B\.\d+\b/i,
-        'operator': /[-+*\/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?|\b(?:AND|BETWEEN|IN|LIKE|NOT|OR|IS|DIV|REGEXP|RLIKE|SOUNDS LIKE|XOR)\b/i,
+        'operator': /[-+*\/=%^~]|&&?|\|\|?|!=?|<(?:=>?|<|>)?|>[>=]?|\b(?:AND|BETWEEN|IN|LIKE|NOT|OR|IS|DIV|REGEXP|RLIKE|SOUNDS LIKE|XOR)\b/i, // eslint-disable-line no-useless-escape
         'punctuation': /[;[\]()`,.]/
     };
 
     export default {
+        components: {
+            LabelComponent, PrismEditor
+        },
         mixins: [Widget],
+        props: {
+            programmingLanguage: {type: String, default: ()=> null},
+        },
+        data() {
+            return {
+                code: '',
+                originalCode: '',
+                suggestions: []
+            }
+        },
         computed: {
             computedProgrammingLanguage() {
                 if (this.field && this.field.values) {
@@ -111,15 +125,11 @@
                 }
             }
         },
-        data() {
-            return {
-                code: '',
-                originalCode: '',
-                suggestions: []
-            }
-        },
-        components: {
-            LabelComponent, PrismEditor
+        watch: {
+            code: debounce(function () {
+                // let content = e.target.value || e.target.textContent;
+                this.$root.$emit(this.message, this.field, this.code);
+            }, 500)
         },
         mounted() {
             this.code = this.value || this.field.default || '';
@@ -129,15 +139,6 @@
             } else {
                 this.suggestions = [];
             }
-        },
-        watch: {
-            code: _.debounce(function (e) {
-                // let content = e.target.value || e.target.textContent;
-                this.$root.$emit(this.message, this.field, this.code);
-            }, 500)
-        },
-        props: {
-            programmingLanguage: null,
         },
         methods: {
             okModal() {

@@ -1,5 +1,5 @@
 <template>
-    <home-card-item-base>
+    <HomeCardItemBase>
         <template slot="head">
             <router-link :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}" :title="item.name">
                 {{item.id}} - {{item.name}}
@@ -10,9 +10,9 @@
         </template>
         <template slot="footer">
             <small class="text-muted">{{getStatus()}} · {{item.updated | timeFromNow(this.$locale)}}</small>
-            <span :class="['badge', getPlatformBadgeColor()]">{{this.item.platform.slug}}</span>
+            <span :class="['badge', getPlatformBadgeColor()]">{{item.platform.slug}}</span>
         </template>
-    </home-card-item-base>
+    </HomeCardItemBase>
 </template>
 
 <script>
@@ -20,10 +20,10 @@ import HomeCardMixin from '../../../mixins/HomeCard'
 import HomeCardItemBase from './HomeCardItemBase.vue'
 
 export default {
-    name: 'home-card-item-workflow',
-    mixins: [HomeCardMixin],
+    name: 'HomeCardItemWorkflow',
     components: {
         HomeCardItemBase
-    }
+    },
+    mixins: [HomeCardMixin]
 }
 </script>

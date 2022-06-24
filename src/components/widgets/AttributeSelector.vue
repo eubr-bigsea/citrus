@@ -3,7 +3,7 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div>
             <v-select :options="suggestions" :multiple="true || (!params || params.multiple)" :value.sync="value" :on-change="updated"
-                :taggable="true" :closeOnSelect="false">
+                :taggable="true" :close-on-select="false">
                 <slot name="no-options">{{ $t('messages.noMatching') }}</slot>
             </v-select>
         </div>
@@ -15,11 +15,11 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
         },
+        mixins: [Widget],
         computed: {
             params() {
                 let result = null;

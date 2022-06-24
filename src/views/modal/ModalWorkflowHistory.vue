@@ -1,5 +1,5 @@
 <template>
-    <b-modal size="lg" :title="$t('common.history')" ref="modal" ok-disabled>
+    <b-modal ref="modal" size="lg" :title="$t('common.history')" ok-disabled>
         <div class="historyArea">
             <table class="table table-sm table-striped text-center">
                 <tr>
@@ -28,7 +28,7 @@
 <script>
     export default {
         props: {
-            history: { type: Array },
+            history: { type: Array, default: () => [] },
         },
         methods: {
             restore(version) {

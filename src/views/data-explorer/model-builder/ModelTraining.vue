@@ -9,11 +9,11 @@
                 <div class="col-md-3">
                     <b-card>
                         <label class="" for="name">Nome do experimento:</label>
-                        <input type="text" class="form-control" maxlength="100" id="name" v-focus v-model="name">
+                        <input id="name" v-model="name" v-focus type="text" class="form-control" maxlength="100">
 
                         <label class="mt-2">Escolha a fonte de dados:</label>
-                        <vue-select @search="loadDataSourceList" :filterable="false" :options="dataSourceList"
-                            label="name" v-model="selectedDataSource" @input="retrieveAttributes">
+                        <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList"
+                            label="name" @search="loadDataSourceList" @input="retrieveAttributes">
                             <template v-slot:no-options="{ search, searching }">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
@@ -31,7 +31,7 @@
 
                         <template v-if="supervisioned">
                             <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
-                            <vue-select :options="attributes" v-model="selectedAttribute" :searchable="true" />
+                            <vue-select v-model="selectedAttribute" :options="attributes" :searchable="true" />
                         </template>
 
                         <hr />
@@ -60,21 +60,21 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="fast">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
                                         Obtenha alguns modelos genéricos rapidamente. Útil para testes.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
                                         value="performance">Desempenho</b-form-radio>
                                     <div class="description">
                                         Crie modelos com as melhores pontuações, mas tenha paciência,
                                         pois pode demorar mais.
                                     </div>
 
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
                                         value="interpretable">
                                         Crie modelos interpretáveis
                                     </b-form-radio>
@@ -101,7 +101,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 pt-5 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
                                         value="custom">
                                         Escolha os
                                         algoritmos</b-form-radio>
@@ -155,7 +155,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method" value="fast">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
@@ -187,7 +187,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio name="method" class="font-weight-bold" v-model="method"
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
                                         value="custom">
                                         Escolha os
                                         algoritmos</b-form-radio>
@@ -235,7 +235,6 @@
     import vSelect from 'vue-select';
     import Notifier from '../../../mixins/Notifier';
     import DataSourceMixin from '../DataSourceMixin.js';
-    import { debounce } from "../../../util.js";
     import { Workflow } from '../entities.js';
 
     const tahitiUrl = process.env.VUE_APP_TAHITI_URL;
@@ -272,18 +271,18 @@
                 this.$router.push({ name });
             },
             async create() {
+                /*
                 const params = {
                     name: this.name,
                     label: this.selectedAttribute,
                     dataSource: this.selectedDataSource
                 };
+                */
 
                 try {
                     const ds = { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name };
                     const workflow = Workflow.buildModelBuilder(
                         this.name, ds, this.selectedAttribute, this.method, this.taskType, this);
-                    //debugger
-                    const self = this;
                     const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
                     const workflowResp = resp.data;
                     this.$router.push({ name: 'model-design', params: { id: workflowResp.id } });

@@ -1,19 +1,19 @@
 <template>
     <div>
         <div class="btn-group mr-2" role="group">
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="showExecutions" :title="$tc('titles.job', 2)">
+            <button class="btn btn-sm btn-outline-dark" :title="$tc('titles.job', 2)" @click.prevent="showExecutions">
                 <span class="fa fa-tasks"></span> {{$tc('titles.job', 2)}}
             </button>
             <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled"
-                class="btn btn-sm btn-outline-dark" @click.prevent="showVariables" :title="$t('actions.showVariables')">
+                class="btn btn-sm btn-outline-dark" :title="$t('actions.showVariables')" @click.prevent="showVariables">
                 <span class="fa fa-dollar-sign"></span> Variáveis
             </button>
         </div>
         <div class="btn-group mr-2" role="group">
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflow" :title="$t('actions.save')">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.save')" @click.prevent="saveWorkflow">
                 <span class="fa fa-save text-success"></span> {{$t('actions.save')}}
             </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="saveWorkflowAs" :title="$t('actions.saveAs')">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.saveAs')" @click.prevent="saveWorkflowAs">
                 <span class="fa fa-copy"></span> {{$t('actions.saveAs')}}...
             </button>
         </div>
@@ -27,20 +27,20 @@
               </b-dropdown>
         </div>
         <div class="btn-group mr-2" role="group">
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="showProperties"
-                :title="$t('actions.showProperties')">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
+                @click.prevent="showProperties">
                 <span class="fa fa-cogs"></span>
             </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="selectImage" :title="$t('actions.selectImage')">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.selectImage')" @click.prevent="selectImage">
                 <span class="fa fa-image"></span>
             </button>
-            <button class="btn btn-sm btn-outline-dark" @click.prevent="showHistory" :title="$t('actions.showHistory')">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showHistory')" @click.prevent="showHistory">
                 <span class="fa fa-history"></span>
             </button>
         </div>
         <div class="btn-group" role="group">
-            <button class="btn btn-sm btn-outline-dark runBtn" @click.prevent="execute" :title="$t('actions.execute')"
-                variant="success" id="tlb-execute-wf">
+            <button id="tlb-execute-wf" class="btn btn-sm btn-outline-dark runBtn" :title="$t('actions.execute')"
+                variant="success" @click.prevent="execute">
                 <span class="fa fa-play text-primary"></span> {{$t('actions.execute')}}
             </button>
             <!--
@@ -58,11 +58,11 @@
 
     export default {
         name: 'WorkflowToolbar',
+        props: {
+            workflow: {type: Object, default: () => null}
+        },
         computed: {
             ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
-        },
-        props: {
-            workflow: {}
         },
         methods: {
             saveWorkflow() {

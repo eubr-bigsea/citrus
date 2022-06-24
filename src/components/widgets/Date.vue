@@ -5,8 +5,8 @@
             {{value === null ? field.default: value}}
         </div>
         <div v-else>
-            <input :type="this.useDatetimeLocal ? 'datetime-local' : 'date'" class="form-control" v-model="dateValue" @change="updated" max="2199-12-31"
-                :required="field.required" step="1"/>
+            <input v-model="dateValue" :type="useDatetimeLocal ? 'datetime-local' : 'date'" class="form-control" max="2199-12-31" :required="field.required"
+                step="1" @change="updated"/>
             <div class="invalid-feedback">
                 Please provide a valid date.
             </div>
@@ -20,23 +20,18 @@
     import { debounce } from '../../util.js';
 
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
-        methods: {
-            updated: debounce(function (e) { 
-                this.triggerUpdateEvent(this.message, this.field, e.target.value); 
-            }, 500)
-        },
-        computed: {
-            normalizedValue: () => {
-                return this.field.value || this.field.default;
-            }
-        },
+        mixins: [Widget],
         data() {
             return {
                 dateValue: null,
                 useDatetimeLocal: false,
             };
+        },
+        computed: {
+            normalizedValue: () => {
+                return this.field.value || this.field.default;
+            }
         },
         mounted() {
             const value = (this.field['default'] ? this.field['default'] : null)
@@ -55,6 +50,11 @@
             if (d) {
                 this.dateValue = this.useDatetimeLocal ? format(d, 'YYYY-MM-DDTHH:mm:ss') : format(d, 'YYYY-MM-DD');
             }
+        },
+        methods: {
+            updated: debounce(function (e) { 
+                this.triggerUpdateEvent(this.message, this.field, e.target.value); 
+            }, 500)
         },
     }
 </script>

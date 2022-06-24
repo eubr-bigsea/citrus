@@ -1,16 +1,16 @@
 <template>
-    <b-modal size="lg" :title="$t('actions.saveAs')" ref="saveAsModal">
+    <b-modal ref="saveAsModal" size="lg" :title="$t('actions.saveAs')">
         <b-form-radio-group v-model="saveOption">
             <div class="row">
                 <div class="col-md-12 mb-3">
-                    <b-form-radio name="saveOption" v-model="saveOption" value="new">
+                    <b-form-radio v-model="saveOption" name="saveOption" value="new">
                         {{$t('workflow.newName')}}
                     </b-form-radio>
-                    <input type="text" maxlength="40" class="form-control" :disabled="saveOption != 'new'"
-                        v-model="newName" />
+                    <input v-model="newName" type="text" maxlength="40" class="form-control"
+                        :disabled="saveOption != 'new'" />
                 </div>
                 <div class="col-md-12 mb-3">
-                    <b-form-radio name="saveOption" v-model="saveOption" value="image">
+                    <b-form-radio v-model="saveOption" name="saveOption" value="image">
                         {{$t('workflow.asImage')}}</b-form-radio>
                 </div>
                 <!--
@@ -28,7 +28,7 @@
         <div slot="modal-footer">
             <b-btn variant="secondary_sm" class="btn-outline-secondary float-right" @click="close">
                 {{$t('actions.cancel')}}</b-btn>
-            <b-btn variant="primary" class="float-right mr-1" @click="okClicked" :disabled="(newName === '')">
+            <b-btn variant="primary" class="float-right mr-1" :disabled="(newName === '')" @click="okClicked">
                 {{$t('actions.save')}}
             </b-btn>
         </div>

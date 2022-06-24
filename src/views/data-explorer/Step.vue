@@ -5,7 +5,7 @@
             class="mr-1"></div>
         -->
         <div class="float-left text-secondary step-drag-handle">
-            <span class="fa fa-grip-vertical" v-if="!protected"></span>
+            <span v-if="!locked" class="fa fa-grip-vertical"></span>
             <!--
             <div class="mt-2">
                 <span :class="getStepClass(step)"></span>
@@ -15,9 +15,9 @@
         <div v-if="hasProblems" class="pulse-item">
             <Pulse title="Existem problemas na configuração. Edite para corrigir." />
         </div>
-        <div class="float-left step" style="width: calc(100% - 25px)" ref="step">
+        <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
-                <input type="checkbox" v-model="step.selected" v-if="!protected" />&nbsp;
+                <input v-if="!locked" v-model="step.selected" type="checkbox" />&nbsp;
                 <span class="step-number">#{{index + 1}}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()"></span>
@@ -25,27 +25,27 @@
                 <span v-else v-html="step.getLabel()"></span>
             </div>
             <div>
-                <span v-if="step.error" class="fa fa-exclamation-circle text-danger" v-b-tooltip.html
+                <span v-if="step.error" v-b-tooltip.html class="fa fa-exclamation-circle text-danger"
                     :title="step.error"></span>
 
                 <small v-if="step.forms.comment.value" class="text-secondary">{{step.forms.comment.value}}</small>
                 <b-button-group v-if="!step.editing" class="zoom-buttom float-right">
                     <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
-                        @click="edit('execution')" :title="$t('actions.edit')">
+                        :title="$t('actions.edit')" @click="edit('execution')">
                         <span class="fa fa-edit"></span>
                     </b-button>
                     <b-button variant="light" size="sm" class="text-secondary"
-                        @click="$emit('previewUntilHere', step.id)" :title="$t('common.previewUntilHere')">
+                        :title="$t('common.previewUntilHere')" @click="$emit('previewUntilHere', step.id)">
                         <span class="fa"
                             :class="{'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable}"></span>
                     </b-button>
 
-                    <b-button v-if="!protected" variant="light" size="sm" class="text-secondary"
-                        @click="$emit('delete', step.id)" :title="$t('actions.delete')">
+                    <b-button v-if="!locked" variant="light" size="sm" class="text-secondary"
+                        :title="$t('actions.delete')" @click="$emit('delete', step.id)">
                         <span class="fa fa-trash"></span>
                     </b-button>
-                    <b-button v-if="index > 0" variant="light" size="sm" @click="$emit('toggle', step)"
-                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')">
+                    <b-button v-if="index > 0" variant="light" size="sm" :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
+                        @click="$emit('toggle', step)">
                         <span v-if="step.enabled" class="fa fa-toggle-on text-success"></span>
                         <span v-else class="fa fa-toggle-off text-secondary"></span>
                     </b-button>
@@ -70,20 +70,20 @@
                         <template v-for="form in step.operation.forms" v-if="form.category === displayFormCategory">
                             <div v-for="field in form.fields" v-if="field.editable" :key="`${step.id}:${field.name}`"
                                 class="mb-2 step-properties">
-                                <component v-if="field.enabled !== false" :is="getWidget(field)" :field="field"
+                                <component :is="getWidget(field)" v-if="field.enabled !== false" :field="field"
                                     :value="getValue(field.name)" :language="language" :type="field.suggested_widget"
-                                    :read-only="!field.editable" context="context" @update="updateField"
-                                    :suggestionEvent="suggestionEvent">
+                                    :read-only="!field.editable" context="context" :suggestion-event="suggestionEvent"
+                                    @update="updateField">
                                 </component>
                             </div>
                         </template>
                     </div>
                     
                     <b-button-group class="float-right mb-2">
-                        <b-button variant="light text-primary" size="sm" @click="save" :title="$t('actions.save')">
+                        <b-button variant="light text-primary" size="sm" :title="$t('actions.save')" @click="save">
                             <span class="fa fa-save"></span>
                         </b-button>
-                        <b-button variant="light" size="sm" @click="cancelEdit" :title="$t('actions.cancel')">
+                        <b-button variant="light" size="sm" :title="$t('actions.cancel')" @click="cancelEdit">
                             <span class="fa fa-undo-alt"></span>
                         </b-button>
                     </b-button-group>
@@ -103,11 +103,11 @@
             inputAlias: { type: Boolean, default: true },
             index: { type: Number, required: true },
             language: { type: String, required: true },
-            protected: { type: Boolean, default: false },
-            serviceBus: { type: Object },
+            locked: { type: Boolean, default: false },
+            serviceBus: { type: Object, default: () => null },
             showKeepAttribute: { type: Boolean, default: true },
             step: { type: Object, required: true },
-            suggestionEvent: { type: Function },
+            suggestionEvent: { type: Function, default: () => null },
         },
         data() {
             return {
@@ -148,10 +148,8 @@
             evalInContext(js, context) {
                 return new Function(`return ${js};`).call(context);
             },
-            updateField(field, value, labelValue) {
-                const self = this;
+            updateField(field, value) {
                 this.editableStep.forms[field.name] = { value };
-
                 this.enableDisableFields()
             },
             enableDisableFields() {
@@ -160,14 +158,14 @@
                 const conditional = /\bthis\..+?\b/g;
                 const allFields = {};
 
-                this.step.operation.forms.forEach((f, i) => {
-                    f.fields.forEach((field, j) => {
+                this.step.operation.forms.forEach((f) => { 
+                    f.fields.forEach((field) => {
                         if (this.editableStep.forms[field.name]) {
                             allFields[field.name] = this.editableStep.forms[field.name];
                             allFields[field.name].internalValue = allFields[field.name]?.value;
                         }
                     });
-                    f.fields.forEach((field, j) => {
+                    f.fields.forEach((field) => {
                         field.category = f.category;
                         Vue.set(field, "enabled", true);
                         //field.enabled = true;
@@ -175,7 +173,7 @@
                             if (field.enable_conditions === 'false') {
                                 field.enabled = false;
                             } else {
-                                field.enable_conditions.match(conditional).forEach(v => {
+                                field.enable_conditions.match(conditional).forEach(() => {
                                     /*const key = v.replace('this.', '');
                                     if (!self.conditionalFields.has(key)) {
                                         self.conditionalFields.set(key, []);
@@ -211,15 +209,16 @@
                 this.editableStep = JSON.parse(JSON.stringify(this.step));
             },
             edit(category) {
-                const self = this;
                 this.enableDisableFields();
                 this.displayFormCategory = category;
                 this.step.editing = true;
+                /*
                 Vue.nextTick(() => {
                     try {
                         //self.$refs.step.scrollIntoView();
                     } catch (ignore) { }
                 });
+                */
             },
             save() {
                 //Cloned object doesn't carry function

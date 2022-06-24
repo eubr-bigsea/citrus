@@ -3,7 +3,7 @@
         <div v-if="jobs" class="row">
             <div class="col-md-4 col-lg-3 pl-4">
                 <b-list-group v-if="jobs.length > 0">
-                    <b-list-group-item v-for="(job, i) in jobs" :key="job.id" class="flex-column align-items-start p-0"
+                    <b-list-group-item v-for="job in jobs" :key="job.id" class="flex-column align-items-start p-0"
                         @click="handleClick(job)">
                         <div class="d-flex w-100 justify-content-between p-1"
                             :class="(selectedJob && (selectedJob.id === job.id)) ? 'bg-secondary text-white': 'bg-light' ">
@@ -21,10 +21,10 @@
                             </small>
                         </div>
                         <div class="result">
-                            <div v-for="result, i in job.groupedResults" :key="i" role="button"
-                                v-if="result[0].type !== 'OTHER'">
+                            <div v-for="(result, inx) in job.groupedResults" v-if="result[0].type !== 'OTHER'" :key="inx"
+                                role="button">
                                 {{result[0].title}}
-                                <div class="float-right" v-if="result[0] && result[0].best">
+                                <div v-if="result[0] && result[0].best" class="float-right">
                                     {{result[0].best.toFixed(4)}}</div>
                                 <!--
                                 {{result.title}}
@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div class="col-md-8 col-lg-9">
-                <b-card variant="primary" v-if="selectedJob">
+                <b-card v-if="selectedJob" variant="primary">
                     <template #header>
                         <b>{{$tc('titles.job')}} #{{selectedJob.id}}</b>
                         <span class="pull-right float-right">
@@ -51,7 +51,7 @@
                         </span>
                     </template>
                     <div class="row pt-1 pb-4">
-                        <div class="col-4 text-center" v-if="finalReport">
+                        <div v-if="finalReport" class="col-4 text-center">
                             <b-card border-variant="primary">
                                 <strong>Resultado: </strong>
                                 {{finalReport.content.task_name}}<br />
@@ -62,18 +62,18 @@
                                 <small v-else>(menor é melhor)</small>
                             </b-card>
                         </div>
-                        <div class="col-8 text-center" v-if="finalReport">
+                        <div v-if="finalReport" class="col-8 text-center">
                             <b-card border-variant="primary">
                                 <strong>Parâmetros</strong><br />
-                                <template v-for="(v, k) in finalReport.content.best">
-                                    <small>{{k}} = {{v}}</small><br />
-                                </template>
+                                <small v-for="(v, k) in finalReport.content.best" :key="k">
+                                    <span>{{k}} = {{v}}</span><br />
+                                </small>
                             </b-card>
                         </div>
                         <!-- Chart -->
                         <div class="col-9 mt-2">
                             <b-card border-variant="primary">
-                                <Plotly ref="plotly" :data="scatterData" :layout="scatterLayout"  v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' "
+                                <Plotly v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' " ref="plotly" :data="scatterData"  :layout="scatterLayout"
                                     :display-mode-bar="true" :auto-resize="true" :options="{displayModeBar: false}" />
                                 <div v-else>
                                     {{selectedJob.status_text}}
@@ -82,7 +82,7 @@
                                 </div>
                             </b-card>
                         </div>
-                        <div class="col-3 mt-2 text-center" v-if="finalReport">
+                        <div v-if="finalReport" class="col-3 mt-2 text-center">
                             <b-card border-variant="primary">
                                 <small>Treino/teste</small>
                                 <Plotly ref="plotly" :data="pieData" :layout="pieLayout" :display-mode-bar="true"
@@ -98,9 +98,8 @@
                             </div>
                             -->
                     </div>
-                    <div class="row" v-for="(results, key) in selectedJob.groupedResults"
-                        v-if="results.length && results[0].type !== 'OTHER'">
-                        <div class="col-12" v-if="results && results.length > 0">
+                    <div v-for="(results, key) in selectedJob.groupedResults" v-if="results.length && results[0].type !== 'OTHER'" :key="key" class="row">
+                        <div v-if="results && results.length > 0" class="col-12">
                             <h6 class="result">
                                 <font-awesome-icon v-if="results.find(r => r.winner)" icon="trophy" class="best"
                                     title="Este é o melhor modelo segundo a métrica escolhida" />
@@ -120,9 +119,9 @@
                                     <td :data-index="result.content.index">{{counter + 1}}</td>
                                     <td>
                                         <span v-if="result.winner" class="fa fa-trophy best"></span>
-                                        <template v-for="(value, param) in result.content.params">
+                                        <span v-for="(value, param) in result.content.params" :key="param">
                                             {{param}} = {{value}}<br />
-                                        </template>
+                                        </span>
                                     </td>
                                     <td>
                                         <span v-if="result.content.metric">
@@ -229,7 +228,7 @@
         components: { Plotly },
         props: {
             jobs: { required: true, type: Array },
-            numberOfFeatures: { type: Number }
+            numberOfFeatures: { type: Number, default: () => 0}
         },
         data() {
             return {
@@ -299,9 +298,6 @@
                 }
             }
         },
-        mounted() {
-            this.selectedJob = (this.jobs.length) ? this.jobs[0] : null;
-        },
         computed: {
             pieData() {
                 return this.finalReport ?
@@ -315,11 +311,11 @@
             scatterData() {
                 const series = []
                 if (this.selectedJob && this.selectedJob.groupedResults) {
-                    Object.entries(this.selectedJob.groupedResults).forEach(([k, results]) => {
+                    Object.entries(this.selectedJob.groupedResults).forEach(([k, results]) => { // eslint-disable-line no-unused-vars
                         let x = [];
                         let y = [];
                         let text = [];
-                        results.forEach((result, inx) => {
+                        results.forEach((result, inx) => {// eslint-disable-line no-unused-vars
                             const content = result.content;
                             if (!content.error && content.metric) {
                                 x.push(content.t);
@@ -335,6 +331,21 @@
                 }
                 return series;
             }
+        },
+        watch: {
+            selectedJob(newValue) {
+                const finalReport = newValue.results.find(r => r.type === 'OTHER');
+                if (finalReport) {
+                    const best = newValue.results.find(r => r.content?.index === finalReport.content.index);
+                    if (best) {
+                        best.winner = true;
+                    }
+                }
+                this.finalReport = finalReport;
+            }
+        },
+        mounted() {
+            this.selectedJob = (this.jobs.length) ? this.jobs[0] : null;
         },
         methods: {
             selectFirst() {
@@ -373,18 +384,6 @@
                 result.push(value.toLowerCase());
                 return result.join(' ');
             },
-        },
-        watch: {
-            selectedJob(newValue) {
-                const finalReport = newValue.results.find(r => r.type === 'OTHER');
-                if (finalReport) {
-                    const best = newValue.results.find(r => r.content?.index === finalReport.content.index);
-                    if (best) {
-                        best.winner = true;
-                    }
-                }
-                this.finalReport = finalReport;
-            }
         }
     }
 </script>

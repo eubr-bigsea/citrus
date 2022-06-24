@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <font-awesome-icon icon="spinner" pulse class="icon" size="3x" v-if="loading" />
+            <font-awesome-icon v-if="loading" icon="spinner" pulse class="icon" size="3x" />
             <div v-if="content.type.name === 'html'">
                 <p v-html="content.html"></p>
             </div>
@@ -22,6 +22,9 @@
     import axios from 'axios'
     export default {
         mixins: [Notifier],
+        props: {
+            url: {type: String, default: ''},
+        },
         data() {
             return {
                 content: { type: {} },
@@ -29,9 +32,6 @@
                 errorState: false,
                 errorMessage: ''
             }
-        },
-        props: {
-            url: '',
         },
         mounted() {
             const self = this

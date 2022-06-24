@@ -92,27 +92,23 @@
     </main>
 </template>
 <script>
-    import SlideOutPanel from '../components/SlideOutPanel.vue';
     import axios from 'axios';
     import Notifier from '../mixins/Notifier'
 
     export default {
         name: 'Profile',
-        components: {
-            'slideout-panel': SlideOutPanel
-        },
-        computed: {
-            isPasswordChangeable(){
-                return this.user.authentication_type !== 'LDAP' 
-                    && this.user.authentication_type !== 'OPENID' 
-            },
-        },
         mixins: [Notifier],
         data() {
             return {
                 changePassword: false,
                 user: {}
             }
+        },
+        computed: {
+            isPasswordChangeable(){
+                return this.user.authentication_type !== 'LDAP' 
+                    && this.user.authentication_type !== 'OPENID' 
+            },
         },
         mounted() {
             let thornUrl = process.env.VUE_APP_THORN_URL;
@@ -124,7 +120,7 @@
                     self.user = resp.data.data[0];
                 })
                 .catch(
-                    function (e) {
+                    function () {
                         self.error(
                             self.$t('errors.sendingData'),
                             self.$t('titles.error')
@@ -148,7 +144,6 @@
                         this.$router.push('/');
                     })
                     .catch(e => {
-                        var err = e
                         if (e.response) {
                             self.$Progress.finish();
                             self.error({ message: e.response.data.message });

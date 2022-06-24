@@ -2,68 +2,68 @@
 
     <div class="toolbar">
         <div class="toolbar-group">
-            <button type="button" @click.prevent="toggleTasksPanel" :title="$t('actions.toggleTasks')">
+            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasksPanel">
                 <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.operation').toLowerCase()})}}
             </button>
         </div>
-        <div class="toolbar-group" v-if="useDataSource">
-            <button type="button" @click.prevent="toggleDataSourcesPanel" :title="$t('actions.toggleTasks')">
+        <div v-if="useDataSource" class="toolbar-group">
+            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleDataSourcesPanel">
                 <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.dataSource2').toLowerCase()})}}
             </button>
         </div>
         <div class="toolbar-group">
-            <button type="button" @click.prevent="toggleTasks" :title="$t('actions.toggleTasks')">
+            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasks">
                 <span class="fa fa-toggle-on"></span>
             </button>
-            <button type="button" @click.prevent="removeSelected" :title="$t('actions.removeSelected')">
+            <button type="button" :title="$t('actions.removeSelected')" @click.prevent="removeSelected">
                 <span class="fa fa-trash"></span>
             </button>
         </div>
 
         <div class="toolbar-group">
-            <button variant="secondary" @click.prevent="copy" :title="$t('actions.copy')" :disabled="!taskSelected">
+            <button variant="secondary" :title="$t('actions.copy')" :disabled="!taskSelected" @click.prevent="copy">
                 <span class="fa fa-copy"></span>
             </button>
-            <button variant="secondary" @click.prevent="paste" :title="$t('actions.paste')" :disabled="copiedTasks === null || copiedTasks.length === 0">
+            <button variant="secondary" :title="$t('actions.paste')" :disabled="copiedTasks === null || copiedTasks.length === 0" @click.prevent="paste">
                 <span class="fa fa-paste"></span>
             </button>
         </div>
     
         <div class="toolbar-group">
-            <button type="button" @click.prevent="align('left', 'min')" :title="$t('actions.alignLeft')">
+            <button type="button" :title="$t('actions.alignLeft')" @click.prevent="align('left', 'min')">
                 <span class="object-align-left"></span>
             </button>
-            <button type="button" @click.prevent="align('left', 'center')" :title="$t('actions.centerHorizontal')">
+            <button type="button" :title="$t('actions.centerHorizontal')" @click.prevent="align('left', 'center')">
                 <span class="object-align-center"></span>
             </button>
-            <button type="button" @click.prevent="align('left', 'max')" :title="$t('actions.alignRight')">
+            <button type="button" :title="$t('actions.alignRight')" @click.prevent="align('left', 'max')">
                 <span class="object-align-right"></span>
             </button>
-            <button type="button" @click.prevent="distribute('horizontal', 'left')"
-                :title="$t('actions.distributeHorizontally')">
+            <button type="button" :title="$t('actions.distributeHorizontally')"
+                @click.prevent="distribute('horizontal', 'left')">
                 <span class="object-align-distribute"></span>
             </button>
         </div>
     
         <div class="toolbar-group">
-            <button type="button" @click.prevent="align('top', 'min')" :title="$t('actions.alignTop')">
+            <button type="button" :title="$t('actions.alignTop')" @click.prevent="align('top', 'min')">
                 <span class="object-align-top"></span>
             </button>
-            <button type="button" @click.prevent="align('top', 'center')" :title="$t('actions.centerVertical')">
+            <button type="button" :title="$t('actions.centerVertical')" @click.prevent="align('top', 'center')">
                 <span class="object-align-center-v"></span>
             </button>
-            <button type="button" @click.prevent="align('top', 'max')" :title="$t('actions.alignBottom')">
+            <button type="button" :title="$t('actions.alignBottom')" @click.prevent="align('top', 'max')">
                 <span class="object-align-bottom"></span>
             </button>
-            <button type="button" @click.prevent="distribute('vertical', 'top')"
-                :title="$t('actions.distributeVertically')">
+            <button type="button" :title="$t('actions.distributeVertically')"
+                @click.prevent="distribute('vertical', 'top')">
                 <span class="object-align-distribute-v"></span>
             </button>
         </div>
         
         <div class="toolbar-group">
 
-            <button type="button" @click.prevent="changeZoom(-.1)" :title="$t('actions.toggleTasks')">
+            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(-.1)">
                 <span class="fa fa-search"></span>
             </button>
 
@@ -82,7 +82,7 @@
                 </b-form-select>
             </b-input-group>
             
-            <button type="button" @click.prevent="changeZoom(.1)" :title="$t('actions.toggleTasks')">
+            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(.1)">
                 <span class="fa fa-search"></span>
             </button>
 
@@ -151,19 +151,19 @@
 <script>
     export default {
         name: 'DiagramToolbar',
+        props: {
+            selected: {type: Array, default: () => null},
+            copiedTasks: {type: Array, default: () => null},
+            useDataSource: {
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
                 zoomPercent: '100%',
                 zoom: 1,
                 darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') : false,
-            }
-        },
-        props: {
-            selected: Array,
-            copiedTasks: Array,
-            useDataSource: {
-                type: Boolean,
-                default: false
             }
         },
         computed: {
@@ -173,6 +173,11 @@
             tasksSelected(){
                 return this.selected && this.selected.length > 1;
             },
+        },
+        watch: {
+            zoom() {
+                this.$root.$emit('onzoom', this.zoom);
+            }
         },
         methods: {
             copy(){
@@ -222,11 +227,6 @@
                 this.zoom += value;
                 this.zoomPercent = this.zoom*100+"%";
             },
-        },
-        watch: {
-            zoom() {
-                this.$root.$emit('onzoom', this.zoom);
-            }
         }
     }
 </script>

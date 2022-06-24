@@ -23,7 +23,7 @@
                 <div class="row border-bottom pb-3 mt-3">
                     <div class="col-md-4">
                         <label class="font-weight-bold">{{$tc('common.userLogin')}}:</label>
-                        <input type="text" class="form-control" v-model="login">
+                        <input v-model="login" type="text" class="form-control">
                     </div>
                     <div class="col-md-2">
                         <label class="font-weight-bold">{{$t('common.password')}}:</label>
@@ -43,7 +43,6 @@
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </main>
 </template>
@@ -73,7 +72,7 @@
                 };
                 axios
                     .post(`${tahitiUrl}/platforms/import`, data)
-                    .then(resp => {
+                    .then(() => {
                         this.$router.push({
                             name: 'platforms'
                         });

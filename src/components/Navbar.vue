@@ -7,22 +7,22 @@
         </b-navbar-brand>
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="pt-1">
-                <b-nav-item :to="{ name: 'dataSources' }" v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin">
+                <b-nav-item v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'dataSources' }">
                     <span class="fa fa-database"></span> {{ $tc('titles.dataSource', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'workflows' }" v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin">
+                <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
                     <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'index-explorer' }" v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
+                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }">
                     <span class="fa fa-vial text-success"></span> {{ $tc('titles.dataExplorer', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'tracks' }" v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin">
+                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'tracks' }">
                     <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'jobs' }" v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin">
+                <b-nav-item v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" :to="{ name: 'jobs' }">
                     <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
-                <b-nav-item :to="{ name: 'dashboards' }" v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin">
+                <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
                     <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
 
@@ -99,7 +99,7 @@
             -->
             </b-navbar-nav>
             <b-navbar-nav>
-                <b-nav-item-dropdown right ref="dropdown">
+                <b-nav-item-dropdown ref="dropdown" right>
                     <template slot="button-content">
                         <span class="fa fa-user"></span>
                         {{ user.name ? user.name.split(' ')[0]: '' }}
@@ -115,7 +115,7 @@
                         <div class="text-center">
                             <strong>{{$tc('titles.role', 2)}}</strong><br />
                             <div class="mt-2">
-                                <span class="badge badge-info mr-1 p-1" v-for="role in user.roles" :key="role.id">
+                                <span v-for="role in user.roles" :key="role.id" class="badge badge-info mr-1 p-1">
                                     {{role.label}}
                                 </span>
                             </div>
@@ -135,18 +135,13 @@
 <script>
     import { mapGetters } from 'vuex';
 
-    import io from 'socket.io-client';
     import axios from 'axios';
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
-    const standUrl = process.env.VUE_APP_STAND_URL;
     const thornUrl = process.env.VUE_APP_THORN_URL;
 
     export default {
         name: 'LNavbar',
         components: {},
-        computed: {
-            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
-        },
         data() {
             return {
                 namespace: standNamespace,
@@ -169,6 +164,9 @@
                     'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
 
             }
+        },
+        computed: {
+            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
         },
         mounted() {
             this.room = `user:${this.user.id}`;
@@ -204,6 +202,12 @@
                 });
             */
         },
+        beforeDestroy() {
+            if (this.socket) {
+                this.socket.emit('leave', { room: this.room });
+                this.socket.close();
+            }
+        },
         methods: {
             logout() {
                 if (this.$openIdService.enabled){
@@ -212,7 +216,7 @@
                     this.$router.push({ name: 'logout' });
                 }
             },
-            profile(evt) {
+            profile() {
                 this.$refs.dropdown.hide(true);
                 this.$router.push({ name: 'profile' });
             },
@@ -227,12 +231,6 @@
                     .then(resp => {
                         this.notifications = resp.data.data;
                     });
-            }
-        },
-        beforeDestroy() {
-            if (this.socket) {
-                this.socket.emit('leave', { room: this.room });
-                this.socket.close();
             }
         },
 

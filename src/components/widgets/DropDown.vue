@@ -6,10 +6,10 @@
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div v-if="!field.multiplicity || field.multiplicity === 1 || field.multiplicity === 0">
             <select 
-                class="form-control input-sm " v-bind:data-field="field.name" v-model="selected"
-                @change="updated" :required="field.required">
+                v-model="selected" class="form-control input-sm " :data-field="field.name"
+                :required="field.required" @change="updated">
                 <!--<option v-if="!field.default"></option>-->
-                <option v-for="opt in pairOptionValueList" :value="opt.key" :key="opt.key">
+                <option v-for="opt in pairOptionValueList" :key="opt.key" :value="opt.key">
                     {{opt[language] || opt.value}}
                 </option>
             </select>
@@ -17,10 +17,10 @@
             <small v-if="optionHelp">{{optionHelp[0]}}</small>
         </div>
         <b-form-tags v-else-if="field.multiplicity === 2 || field.multiplicity === 3" v-model="selected"
-            @input="updatedTag" add-on-change no-outer-focus :name="field.name">
+            add-on-change no-outer-focus :name="field.name" @input="updatedTag">
             <template v-slot="{ tags, inputAttrs, inputHandlers, disabled, removeTag }">
-                <b-form-select v-bind="inputAttrs" v-on="inputHandlers" :disabled="pairOptionValueList.length === 0"
-                    :options="pairOptionValueList" value-field="key" text-field="value" size="sm">
+                <b-form-select v-bind="inputAttrs" :disabled="pairOptionValueList.length === 0" :options="pairOptionValueList"
+                    value-field="key" text-field="value" size="sm" v-on="inputHandlers">
                     <template #first>
                         <!-- This is required to prevent bugs with Safari -->
                         <option disabled value="">{{$t('actions.chooseOneOrMoreOption')}}</option>
@@ -28,7 +28,7 @@
                 </b-form-select>
                 <ul v-if="tags.length > 0" class="list-inline d-inline-block mt-3">
                     <li v-for="tag in tags" :key="tag" class="list-inline-item xsmall">
-                        <b-form-tag @remove="removeTag(tag)" :title="tag" :disabled="disabled" variant="secondary">{{
+                        <b-form-tag :title="tag" :disabled="disabled" variant="secondary" @remove="removeTag(tag)">{{
                             tag }} </b-form-tag>
                     </li>
                 </ul>
@@ -40,11 +40,14 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
-        mounted() {
-            this.$root.$emit(this.message,
-                this.field, this.value || this.field['default']);
+        mixins: [Widget],
+        data() {
+            return { tags: [],
+                internalSelected: null,
+                helpLink: null,
+                optionHelp: null
+           }
         },
         computed: {
             help(){
@@ -61,7 +64,7 @@
                     }
                     // test if it is an object, instead of a list
                     if (v && !Array.isArray(v)) {
-                        this.helpLink = v.help;
+                        //this.helpLink = v.help;
                         v = v.values;
                     }
                     v.forEach(opt => {
@@ -76,8 +79,8 @@
             selected: {
                 get() {
                     if (this.field.multiplicity > 1 && (typeof this.value === 'string' || this.value instanceof String)) {
-                        this.tags = JSON.parse(this.value);
-                        return this.tags;
+                        //this.tags = JSON.parse(this.value);
+                        return JSON.parse(this.value);
                     } else {
                         return this.internalSelected || this.value || this.field.default;
                     }
@@ -89,6 +92,10 @@
                          .map(opt => opt.help[self.language]);
                 }
             }
+        },
+        mounted() {
+            this.$root.$emit(this.message,
+                this.field, this.value || this.field['default']);
         },
         methods: {
             updatedTag(values) {
@@ -109,13 +116,6 @@
             if (this.field['default'] && (this.value === null || this.value === '')) {
                 this.value = this.field['default'];
             }
-        },
-        data() {
-            return { tags: [],
-                internalSelected: null,
-                helpLink: null,
-                optionHelp: null
-           }
         }
 
     }

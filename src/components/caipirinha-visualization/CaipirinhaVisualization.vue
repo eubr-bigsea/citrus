@@ -9,7 +9,7 @@
             {{$t('visualization.tryRefresh')}}
         </div>
 
-        <component class="myview" v-bind:is="visualizationComponent" :visualization-data="visualizationData"
+        <component :is="visualizationComponent" class="myview" :visualization-data="visualizationData"
             :public-route="publicRoute" :height="height"></component>
     </div>
 </template>
@@ -29,11 +29,8 @@
     import CaipirinhaVisualizationHtml from "./CaipirinhaVisualizationHtml"
     import CaipirinhaVisualizationMarkdown from "./CaipirinhaVisualizationMarkdown"
     import CaipirinhaVisualizationTable from "./CaipirinhaVisualizationTable"
-    import CaipirinhaVisualizationLine from "./CaipirinhaVisualizationLine"
-    import CaipirinhaVisualizationBar from "./CaipirinhaVisualizationBar"
     import CaipirinhaVisualizationBoxPlot from "./CaipirinhaVisualizationBoxPlot"
     import CaipirinhaVisualizationHistogram from "./CaipirinhaVisualizationHistogram"
-    import CaipirinhaVisualizationPie from "./CaipirinhaVisualizationPie"
     import CaipirinhaVisualizationArea from "./CaipirinhaVisualizationArea"
     import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter"
     import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap"
@@ -92,14 +89,7 @@
     }
 
     export default {
-        name: "caipirinha-visualization",
-        props: {
-            dataSourceType: { default: 'caipirinha' },
-            publicRoute: { default: true },
-            task: null,
-            url: {},
-            height: { default: 450 }
-        },
+        name: "CaipirinhaVisualization",
         components: {
             CaipirinhaVisualizationHtml,
             CaipirinhaVisualizationMarkdown,
@@ -125,6 +115,13 @@
             'treemap': Treemap,
             'html-display': Html
         },
+        props: {
+            dataSourceType: { default: () => 'caipirinha', type: String },
+            publicRoute: { default: () => true , type: Boolean },
+            task: {default: () => null, type: Object},
+            url: {default: () => null, type: String},
+            height: { default: 450, type: Number}
+        },
         data() {
             return {
                 loading: true,
@@ -133,6 +130,28 @@
                 visualizationData: null,
                 visualizationComponent: null
             };
+        },
+        created() {
+            this.loading = true;
+            this.error = false;
+
+            this.setLang();
+            if (this.dataSourceType === 'caipirinha') {
+                axios
+                    .get(this.url)
+                    .then(response => {
+                        this.visualizationComponent = this.getVisualizationComponent(
+                            response.data.type.id
+                        );
+                        this.visualizationData = getVisualizationData(response.data);
+                        this.loading = false;
+                    })
+                    .catch(response => {
+                        this.error = true;
+                        this.errorMessage = response.message;
+                        this.loading = false;
+                    });
+            }
         },
         methods: {
             getVisualizationComponent(typeId) {
@@ -193,28 +212,6 @@
                 else
                     Highcharts.setOptions({
                         lang: highchartsDefaultLang
-                    });
-            }
-        },
-        created() {
-            this.loading = true;
-            this.error = false;
-
-            this.setLang();
-            if (this.dataSourceType === 'caipirinha') {
-                axios
-                    .get(this.url)
-                    .then(response => {
-                        this.visualizationComponent = this.getVisualizationComponent(
-                            response.data.type.id
-                        );
-                        this.visualizationData = getVisualizationData(response.data);
-                        this.loading = false;
-                    })
-                    .catch(response => {
-                        this.error = true;
-                        this.errorMessage = response.message;
-                        this.loading = false;
                     });
             }
         }

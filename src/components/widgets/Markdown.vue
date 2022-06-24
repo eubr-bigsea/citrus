@@ -1,5 +1,5 @@
 <template>
-    <div v-html="markdown" class="markdown-area" v-bind:style="cssStyle">
+    <div class="markdown-area" :style="cssStyle" v-html="markdown">
     </div>
 </template>
 
@@ -7,8 +7,8 @@
     import snarkdown from 'snarkdown';
     export default {
         props: {
-            text: "",
-            cssStyle: {},
+            text: {type: String, default: () => null},
+            cssStyle: {type: String, default: () => null},
         },
         computed: {
             markdown() {

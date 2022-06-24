@@ -1,9 +1,9 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <button @click="addElement" class="btn btn-secondary btn-sm mr-1">Add element</button>
-            <button @click="addGroup" class="btn btn-secondary btn-sm mr-1">Add group</button>
-            <button @click="addSample" class="btn btn-secondary btn-sm mr-1">Add sample</button>
+            <button class="btn btn-secondary btn-sm mr-1" @click="addElement">Add element</button>
+            <button class="btn btn-secondary btn-sm mr-1" @click="addGroup">Add group</button>
+            <button class="btn btn-secondary btn-sm mr-1" @click="addSample">Add sample</button>
         </div>
         <div class="col-md-12">
             <div id="diagram" ref="diagram" class="border"></div>
@@ -11,7 +11,7 @@
     </div>
 </template>
 <script>
-import jsplumb from 'jsplumb';
+import {jsPlumb} from 'jsplumb';
 //getBoundingClientRect
 const endpointSource = { 
       anchor:"Right", 

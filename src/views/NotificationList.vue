@@ -132,7 +132,7 @@
                 const url = `${thornUrl}/notifications/${notificationId}`;
                 axios
                     .patch(url, { status: 'READ' })
-                    .then(resp => {
+                    .then(() => {
                         self.$refs.listTable.refresh();
                     })
                     .catch(e => self.error(e));
@@ -147,7 +147,7 @@
                         const url = `${thornUrl}/notifications/${notificationId}`;
                         axios
                             .delete(url, {})
-                            .then(resp => {
+                            .then(() => {
                                 self.success(self.$t('messages.successDeletion',
                                     { what: this.$tc('titles.notification', 1) }));
                                 self.$refs.listTable.refresh();

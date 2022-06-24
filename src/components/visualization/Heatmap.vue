@@ -4,13 +4,15 @@
 		<small v-if="visualizationData.data.footer">
 			{{visualizationData.data.footer}}
 		</small>
-        <div v-for="c in colorScale" style="height: 20px; widht:20px; float: left" :style="{background: c[1]}">
+        <div v-for="c in colorScale" :key="c" 
+                style="height: 20px; widht:20px; float: left" :style="{background: c[1]}">
             {{c}}
         </div>
     </div>
 </template>
 <script>
     import VisualizationMixin from "./VisualizationMixin";
+    import { debounce } from '../../util.js';
     export default {
         mixins: [VisualizationMixin],
         data() {
@@ -35,7 +37,7 @@
         },
         mounted(){
             const self = this;
-            this.__resizeListener = _.debounce(() => {
+            this.__resizeListener = debounce(() => {
                 self.$refs.plotly.relayout({
                     width: self.$el.clientWidth,
                     height: self.$el.parentElement.parentElement.clientHeight - 50,
@@ -60,8 +62,6 @@
             },
             getData() {
                 const colorScale = this._getColorScale();
-
-				const data = this.visualizationData.data;
                 const result = { 
 					type: 'heatmap', 
                     hoverongaps: false,

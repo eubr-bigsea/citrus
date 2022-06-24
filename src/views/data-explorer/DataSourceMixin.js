@@ -20,9 +20,11 @@ export default {
         async retrieveAttributes() {
             if (this.selectedDataSource) {
                 this.$Progress.start();
+                /*
                 const params = {
                     fields: 'id,name,attributes'
                 };
+                */
                 try {
                     const dataSourceList = await axios.get(
                         `${limoneroUrl}/datasources/${this.selectedDataSource.id}`);

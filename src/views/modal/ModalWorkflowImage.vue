@@ -1,17 +1,17 @@
 <template>
-    <b-modal size="lg" ref="modal" :title="$tc('workflow.setImage', 2)">
+    <b-modal ref="modal" size="lg" :title="$tc('workflow.setImage', 2)">
         <b-form>
             <div class="card">
                 <div class="card-body">
                     <label>{{$t('common.text')}}</label>
-                    <input type="text" maxleght="20" v-model="query" class="form-control" ref="query" v-focus />
+                    <input ref="query" v-model="query" v-focus type="text" maxleght="20" class="form-control" />
                     <hr />
                     <button class="btn btn-sm btn-success" @click.stop.prevent="search">
                         <span class="fa fa-search" :title="$t('actions.search')"></span>
                         {{$t('actions.search')}}
                     </button>
                     <div v-if="results && results.length" class="thumb mt-4">
-                        <div v-for="(r, inx) in results">
+                        <div v-for="(r, inx) in results" :key="r.urls.thumb">
                             <img :src="r.urls.thumb" class="" @click="select(inx)" />
                         </div>
                     </div>
@@ -19,8 +19,8 @@
             </div>
         </b-form>
         <div slot="modal-footer">
-            <b-btn variant="primary btn-sm" class="float-right mr-1" @click="okClicked"
-                :disabled="(workflow.name === '')">
+            <b-btn variant="primary btn-sm" class="float-right mr-1" :disabled="(workflow.name === '')"
+                @click="okClicked">
                 {{$t('common.ok')}}
             </b-btn>
         </div>
@@ -33,7 +33,7 @@
         components: {
         },
         props: {
-            workflow: {},
+            workflow: {type: Object, default: () => {}},
         },
         data() {
             return {

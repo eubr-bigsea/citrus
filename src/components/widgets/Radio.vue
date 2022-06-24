@@ -5,8 +5,8 @@
     <div v-else>
         <LabelComponent :field="field" :value="value" :show-help="showHelp"></LabelComponent>
         <b-form-group>
-            <b-form-radio v-for="opt in pairOptionValueList" class="item" :value="opt.key" @input="updated(opt)"
-                :name="field.name" :key="opt.key" size="">{{opt[language] || opt.value}}
+            <b-form-radio v-for="opt in pairOptionValueList" :key="opt.key" class="item" :value="opt.key"
+                :name="field.name" size="" @input="updated(opt)">{{opt[language] || opt.value}}
             </b-form-radio>
         </b-form-group>
     </div>
@@ -15,12 +15,8 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
-        mounted() {
-            this.$root.$emit(this.message,
-                this.field, this.value || this.field['default']);
-        },
+        mixins: [Widget],
         computed: {
             pairOptionValueList() {
                 try {
@@ -38,9 +34,13 @@
                 get() {
                     return this.value || this.field.default;
                 },
-                set(value) {
+                set(value) { // eslint-disable-line no-unused-vars
                 }
             }
+        },
+        mounted() {
+            this.$root.$emit(this.message,
+                this.field, this.value || this.field['default']);
         },
         methods: {
             updated(value) {

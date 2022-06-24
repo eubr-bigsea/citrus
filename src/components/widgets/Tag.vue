@@ -4,43 +4,43 @@
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value"></LabelComponent>aa
-        <b-form-tags @input="updatedTag" v-model="selected" name="field.name" class="lemonade-tag-input pt-3"
-            placeholder="" add-button-text="+" :input-type="inputType" />
+        <b-form-tags v-model="selected" name="field.name" class="lemonade-tag-input pt-3" placeholder=""
+            add-button-text="+" :input-type="inputType" @input="updatedTag" />
     </div>
 </template>
 <script>
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
-        mounted() {
-            this.$root.$emit(this.message,
-                this.field, this.value || this.field['default']);
-        },
+        mixins: [Widget],
         computed: {
             selected: {
                 get() {
                     if (this.field.multiplicity === 2 || this.field.multiplicity === 3) {
-                        this.tags = [];
+                        /*this.tags = [];
                         if (this.value) {
                             try {
                                 this.tags = JSON.parse(this.value);
                             } catch (e) {
                                 console.log(e);
                             }
-                        }
+                        }*/
                         return this.tags;
                     } else {
                         return this.value || this.field.default;
                     }
                 },
-                set(value) {
+                set(value) {// eslint-disable-line no-unused-vars
                 }
             },
             inputType() {
                 return this.field.data_type || 'text';
             }
+        },
+        mounted() {
+            this.$root.$emit(this.message,
+                this.field, this.value || this.field['default']);
         },
         methods: {
             updatedTag(values) {

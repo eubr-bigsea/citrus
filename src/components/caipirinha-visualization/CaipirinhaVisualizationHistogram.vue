@@ -8,8 +8,10 @@
 
 <script>
     export default {
-        name: "caipirinha-visualization-histogram",
-        props: ["visualizationData"],
+        name: "CaipirinhaVisualizationHistogram",
+        props: {
+            "visualizationData": {type: Object, default: () => null}
+        },
         computed: {
             options() {
                 this.visualizationData.data.forEach((result, index) => {

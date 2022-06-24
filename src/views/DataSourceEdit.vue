@@ -55,8 +55,8 @@
                                                     </div>
                                                     <div v-if="dataSource.storage.type === 'HIVE'" class="col-md-4">
                                                         <label>{{$t('dataSource.tablesReference')}}</label>
-                                                        <select class="form-control" size="10" v-model="selectedTable"
-                                                            @dblclick.stop="copyTableName" style="font-size:.7em">
+                                                        <select v-model="selectedTable" class="form-control" size="10"
+                                                            style="font-size:.7em" @dblclick.stop="copyTableName">
                                                             <option v-for="tb in tables" :key="tb">
                                                                 {{tb}}
                                                             </option>
@@ -248,10 +248,10 @@
                                             <div v-if="loggedUserIsOwnerOrAdmin" class="col-md-4 border-right">
                                                 <div>
                                                     <label>{{$tc('titles.user', 1)}}:</label>
-                                                    <v-select style="font-size: .9em" v-model="userPermission"
-                                                        :options="users" @search="onSearchUsers" :taggable="false"
-                                                        :get-option-label="getUserLabel" :close-on-select="true"
-                                                        label="id">
+                                                    <v-select v-model="userPermission" style="font-size: .9em"
+                                                        :options="users" :taggable="false" :get-option-label="getUserLabel"
+                                                        :close-on-select="true" label="id"
+                                                        @search="onSearchUsers">
                                                         <template #no-options="{ search, searching, loading }">
                                                             {{$t('common.noResults')}}
                                                         </template>
@@ -267,7 +267,7 @@
                                                 </div>
                                                 <div>
                                                     <label>{{$tc('common.permission', 1)}}:</label>
-                                                    <select class="form-control" v-model="permission">
+                                                    <select v-model="permission" class="form-control">
                                                         <option value="MANAGE">{{$t('permissions.MANAGE')}}</option>
                                                         <option value="READ">{{$t('permissions.READ')}}</option>
                                                         <option value="WRITE">{{$t('permissions.WRITE')}}</option>
@@ -276,7 +276,7 @@
                                                 <div>
                                                     <button :disabled="userPermission === null || permission === null"
                                                         class="btn btn-sm btn-outline-secondary mt-2"
-                                                        @click="addPermission"></span> {{$t('actions.share')}}</button>
+                                                        @click="addPermission">{{$t('actions.share')}}</button>
                                                 </div>
                                             </div>
                                             <div class="col-md-8">
@@ -406,17 +406,18 @@
     import VueSelect from 'vue-select';
     import Notifier from '../mixins/Notifier';
     import ModalPreviewDataSource from './modal/ModalPreviewDataSource';
+    import { debounce } from '../../util.js';
 
     const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
     const standUrl = process.env.VUE_APP_STAND_URL;
     const thornUrl = process.env.VUE_APP_THORN_URL;
 
     export default {
-        mixins: [Notifier],
         components: {
             'v-select': VueSelect,
             ModalPreviewDataSource,
         },
+        mixins: [Notifier],
         data() {
             return {
                 copyingStep: 0,
@@ -488,7 +489,7 @@
             }
         },
         watch: {
-            '$route.params.id': function (id) {
+            '$route.params.id': function () { 
                 this.load().then(() => {
                     Vue.nextTick(() => {
                         this.isDirty = false;
@@ -496,7 +497,7 @@
                 });
             },
             dataSource: {
-                handler(newVal, oldVal) {
+                handler() {
                     this.isDirty = true;
                 },
                 deep: true
@@ -636,7 +637,7 @@
             },
             load() {
                 let self = this;
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, reject) => {// eslint-disable-line no-unused-vars
                     axios
                         .get(`${limoneroUrl}/datasources/${this.$route.params.id}`)
                         .then(resp => {
@@ -707,7 +708,7 @@
                 loading(true);
                 this.searchUsers(loading, search, this);
             },
-            searchUsers: _.debounce((loading, search, vm) => {
+            searchUsers: debounce((loading, search, vm) => {// eslint-disable-line no-unused-vars
                 const url = `${thornUrl}/users`;
                 const params = { enabled: 1, query: search, size: 10, fields: 'id,first_name,last_name,email,login' };
                 axios.get(url, { params })
@@ -715,7 +716,7 @@
                         vm.users = resp.data.data.filter((u) => !vm.dataSource.permissions.find(u2 => u2.user_id === u.id));
                         loading(false);
                     })
-                    .catch(resp => {
+                    .catch(()=> {
                         vm.error(vm.data);
                     })
             }, 350),
@@ -731,7 +732,7 @@
                     }`;
                 axios
                     .post(url, {})
-                    .then(resp => {
+                    .then(()=> {
                         self.success(this.$t('dataSource.inferSuccess'));
                         this.load();
                     })

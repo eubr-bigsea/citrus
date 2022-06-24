@@ -2,9 +2,9 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div class="color-items">
-            <div v-for="(opt, index) in pairOptionValueList" @click="doUpdate(opt)"
-             :key="index" class="color-item" :class="{active: value && opt && opt.background === value.background && opt.foreground == value.foreground && opt.foreground == value.foreground}"
-                :style="{background: opt.background}" :title="opt.background">
+            <div v-for="(opt, index) in pairOptionValueList" :key="index"
+             class="color-item" :class="{active: value && opt && opt.background === value.background && opt.foreground == value.foreground && opt.foreground == value.foreground}" :style="{background: opt.background}"
+                :title="opt.background" @click="doUpdate(opt)">
             </div>
         </div>
     </div>
@@ -13,8 +13,16 @@
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: { LabelComponent },
+        mixins: [Widget],
+        props: {
+            value: {type: String, default: () => null},
+            field: {type: Object, default: () => null},
+            message: {
+                type: String,
+                default: () => 'update-form-field-value'
+            }
+        },
         computed: {
             pairOptionValueList() {
                 if (typeof this.field.values === 'string' || this.field.values instanceof String) {
@@ -27,13 +35,6 @@
         methods: {
             doUpdate(value) {
                 this.triggerUpdateEvent(this.message, this.field, value)
-            }
-        },
-        props: {
-            value: '', field: {},
-            message: {
-                type: String,
-                default: 'update-form-field-value'
             }
         },
     }

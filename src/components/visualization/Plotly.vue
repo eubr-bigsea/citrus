@@ -41,15 +41,14 @@ const methods = functions.reduce((all, funcName) => {
 export default {
   props: {
     autoResize: Boolean,
-    watchShallow: false,
     options: {
-      type: Object
+      type: Object, default: () => null
     },
     data: {
-      type: Array
+      type: Array, default: () => []
     },
     layout: {
-      type: Object
+      type: Object, default: () => null
     }
   },
   data() {

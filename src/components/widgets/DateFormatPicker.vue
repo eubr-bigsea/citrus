@@ -2,8 +2,8 @@
     <div>
         <LabelComponent :field="field" :value="value"></LabelComponent>
         <div>
-            <v-select :multiple="multiple" v-model="values" @input="updated" label="value"
-                :taggable="true" :closeOnSelect="true" :options="formats">
+            <v-select v-model="values" :multiple="multiple" label="value"
+                :taggable="true" :close-on-select="true" :options="formats" @input="updated">
                 <div slot="no-options"></div>
             </v-select>
             <small>Você pode personalizar o formato, digitando-o conforme a sintaxe da linguagem Java (<a href="https://bit.ly/3tbPJTK">https://bit.ly/3tbPJTK</a>)</small>
@@ -15,19 +15,15 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
-        mixins: [Widget],
         components: {
             'v-select': vSelect,
             LabelComponent
         },
-        methods: {
-            updated(val) {
-                this.$root.$emit(this.message, this.field, val);
-                this.$emit('updated', this.field, val);
-            }
-        },
-        mounted() {
-            this.values = this.value;
+        mixins: [Widget],
+        props: {
+            multiple: {type: Boolean, default: () => false},
+            type: {type: String, default: () => null},
+            value: { type: Array, default: () => [] },
         },
         data() {
             return {
@@ -49,10 +45,14 @@
                 ]
             }
         },
-        props: {
-            multiple: {type: Boolean, default: false},
-            type: "",
-            value: { default: [] },
+        mounted() {
+            this.values = this.value;
+        },
+        methods: {
+            updated(val) {
+                this.$root.$emit(this.message, this.field, val);
+                this.$emit('updated', this.field, val);
+            }
         },
     }
 </script>

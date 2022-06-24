@@ -45,7 +45,7 @@
                         data: { data: { id: self.user.id } },
                         method: 'POST',
                         headers
-                    }).catch(err => {
+                    }).catch(() => {
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
                         axios.defaults.headers.common['Authorization'] = null;

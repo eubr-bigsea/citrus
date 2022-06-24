@@ -11,18 +11,18 @@
             <div class="row">
               <div class="col-md-4">
                 <label>{{$tc('common.name')}}:</label>
-                <input class="form-control mb-1" v-model="name" v-focus>
+                <input v-model="name" v-focus class="form-control mb-1">
               </div>
               <div class="col-md-12">
-                <b-tabs @input="changeTab" class="mt-2" nav-class="custom-tab">
+                <b-tabs class="mt-2" nav-class="custom-tab" @input="changeTab">
                   <b-tab :title="$t('workflow.forPlatform')" active>
                     <div class="col-md-12 mt-2">
                       <b-form-radio-group id="radios2" v-model="selectedPlatform" name="platform" @change="selectOptions(false)">
                         <table class="table table-striped">
-                          <template v-for="platform in platforms">
+                          <div v-for="platform in platforms" :key="platform.id" style="display: contents">
                           <tr class="d-flex">
                             <td class="col-3">
-                              <b-form-radio v-if="platform.subsets && platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)" :value="platform.id" name="platform" v-model="selectedPlatform" >
+                              <b-form-radio v-if="platform.subsets && platform.subsets.length == 0 || !(hasAnyPermission(['APP_EDIT']) || isAdmin)" v-model="selectedPlatform" :value="platform.id" name="platform" >
                                 {{platform.name}}
                               </b-form-radio>
                               <div v-else>
@@ -33,23 +33,23 @@
                               <small>{{platform.description}}.</small>
                             </td>
                           </tr>
-                          <tr v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && platform.subsets" v-for="subset in platform.subsets" :key="subset.id" class="d-flex">
+                          <tr v-for="subset in platform.subsets" v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && platform.subsets" :key="subset.id" class="d-flex">
                             <td class="col-12">
-                              <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" @change="selectOptions(true, platform.id)" class="pl-4">
-                                  <b-form-radio :value="subset.id" name="subset" v-model="selectedSubset">
+                              <b-form-radio-group id="radios2" v-model="selectedSubset" name="subset" class="pl-4" @change="selectOptions(true, platform.id)">
+                                  <b-form-radio v-model="selectedSubset" :value="subset.id" name="subset">
                                    {{subset.name}}
                                   </b-form-radio>
                               </b-form-radio-group>
                             </td>
                           </tr>
-                          </template>
+                          </div>
                         </table>
                       </b-form-radio-group>
                     </div>
                   </b-tab>
                   <b-tab :title="$t('workflow.fromTemplate')">
                     <div class="col-md-12 mt-2">
-                      <table class="table" v-if="templates && templates.length">
+                      <table v-if="templates && templates.length" class="table">
                         <tr class="d-flex">
                           <th class="col-3">{{$tc('common.name')}}</th>
                           <th class="col-6">{{$tc('common.description')}}</th>
@@ -58,9 +58,9 @@
                         <tr v-for="template in templates" :key="template.id" class="d-flex">
                           <td class="col-3">
                             <b-form-radio
+                              v-model="selectedTemplate"
                               :value="template.id"
                               name="templateCheck"
-                              v-model="selectedTemplate"
                               @change="selectOne"
                             >{{template.name}}</b-form-radio>
                           </td>
@@ -78,7 +78,7 @@
                 </b-tabs>
               </div>
               <div class="col-md-12 mt-3 border-top pt-1">
-                <button class="btn float-right" :class="{'btn-success': true }" @click="choose($event)" :disabled="!canCreate">
+                <button class="btn float-right" :class="{'btn-success': true }" :disabled="!canCreate" @click="choose($event)">
                     {{$t('actions.confirm')}}
                 </button>
               </div>
@@ -97,8 +97,8 @@ import { mapGetters } from 'vuex';
 let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
 
 export default {
-  mixins: [Notifier],
   name: 'WorkflowAdd',
+  mixins: [Notifier],
   data() {
     return {
       name: '',
@@ -109,6 +109,18 @@ export default {
       platforms: [],
       templates: []
     };
+  },
+  computed: {
+    ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
+    canCreate() {
+      return (
+        this.name !== null &&
+        this.name.trim() != '' &&
+        ((this.selectedTab === 0 && this.selectedPlatform !== null) ||
+          (this.selectedTab === 1 && this.selectedTemplate !== null) ||
+          (this.selectedTab === 2 && false))
+      );
+    }
   },
   mounted() {
     axios
@@ -135,18 +147,6 @@ export default {
         }.bind(this)
       );
   },
-  computed: {
-    ...mapGetters(['hasAnyPermission', 'isAdmin','user']),
-    canCreate() {
-      return (
-        this.name !== null &&
-        this.name.trim() != '' &&
-        ((this.selectedTab === 0 && this.selectedPlatform !== null) ||
-          (this.selectedTab === 1 && this.selectedTemplate !== null) ||
-          (this.selectedTab === 2 && false))
-      );
-    }
-  },
   methods: {
     selectOptions(subsetSelected, platformId){
         if (subsetSelected) {
@@ -162,7 +162,7 @@ export default {
     changeTab(index) {
       this.selectedTab = index;
     },
-    choose(event) {
+    choose() {
       if (this.canCreate) {
         const data = {
           name: this.name,
