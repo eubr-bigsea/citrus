@@ -2,9 +2,11 @@
     <div>
         <h5>{{visualizationData.title}}</h5>
         <v-client-table :data="data" :columns="columns" :options="options" @row-click="onClick">
-            <div v-for="col in columns" :key="col" :slot="col" slot-scope="props">
+            <!-- eslint-disable -->
+            <template v-for="col in columns" :slot="col" slot-scope="props">
                 <a href="javascript:void(0)">{{props.row[col]}}</a>
-            </div>
+            </template>
+            <!-- eslint-enable -->
         </v-client-table>
     </div>
 </template>

@@ -16,7 +16,7 @@
         components: { LabelComponent },
         mixins: [Widget],
         props: {
-            value: {type: String, default: () => null},
+            value: {type: [String, Object], default: () => null},
             field: {type: Object, default: () => null},
             message: {
                 type: String,

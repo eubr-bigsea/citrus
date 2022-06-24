@@ -127,8 +127,8 @@
         display: flex;
         flex-wrap: wrap;
         flex-direction: row;
-        justify-content: start;
+        justify-content: flex-start;
         align-items: auto;
-        align-content: start
+        align-content: flex-start
     }
 </style>
