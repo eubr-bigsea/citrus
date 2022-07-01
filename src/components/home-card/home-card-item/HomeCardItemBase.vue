@@ -29,11 +29,13 @@
 
     .home-card-item a {
         color: black;
+        color: #77a640;
     }
 
     .home-card-item a:hover {
         text-decoration: none;
         color: #007bff;
+        color: #558420;
     }
 
     .home-card-item b {

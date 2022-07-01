@@ -1,8 +1,8 @@
 <template>
-    <footer class="footer-page fixed-bottom bg-secondary d-print-none">
+    <footer class="footer-page fixed-bottom d-print-none">
         <ul class="footer-list">
             <li>
-                © 2017-2021 Lemonade Project {{$t('common.version')}} {{version}} |
+                © 2017-2022 Lemonade Project {{$t('common.version')}} {{version}} |
             </li>
             <li>
                 <a href="https://docs.lemonade.org.br/" target="_blank">
@@ -22,8 +22,8 @@
             <li v-if="instance">
                 {{instance}}
             </li>
-        </ul>  
-        
+        </ul>
+
     </footer>
 </template>
 
@@ -52,10 +52,10 @@
     export default {
         name: 'LFooter',
         computed: {
-            version(){
+            version() {
                 return process.env.VUE_APP_VERSION || '2.0.0';
             },
-            instance(){
+            instance() {
                 return process.env.VUE_APP_INSTANCE;
             }
         }

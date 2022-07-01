@@ -98,7 +98,7 @@
                 </b-nav-item-dropdown>
             -->
             </b-navbar-nav>
-            <b-navbar-nav>
+            <b-navbar-nav class="pt-1">
                 <b-nav-item-dropdown ref="dropdown" right>
                     <template slot="button-content">
                         <span class="fa fa-user"></span>
@@ -210,7 +210,7 @@
         },
         methods: {
             logout() {
-                if (this.$openIdService.enabled){
+                if (this.$openIdService.enabled) {
                     this.$openIdService.logout();
                 } else {
                     this.$router.push({ name: 'logout' });
@@ -248,8 +248,7 @@
     }
 
     .navbar-brand {
-        margin-right: 3rem !important;
-
+        text-align: center;
         .full_logo {
             display: block;
         }
@@ -258,9 +257,9 @@
             display: none;
         }
 
+        margin-right: 0 !important;
         @media (max-width: 1140px) {
 
-            margin-right: 1.5rem !important;
 
             .full_logo {
                 display: none;

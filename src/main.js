@@ -16,8 +16,6 @@ import VueAxios from 'vue-axios';
 import VueTheMask from 'vue-the-mask'
 
 import { ClientTable, ServerTable } from 'vue-tables-2';
-import Gravatar from 'vue-gravatar';
-
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons';
 
@@ -130,7 +128,6 @@ Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('font-awesome-layers', FontAwesomeLayers);
-Vue.component('v-gravatar', Gravatar);
 
 Vue.config.productionTip = false;
 
