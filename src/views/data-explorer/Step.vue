@@ -142,6 +142,7 @@
             this.functionName = this.step.functionName;
             this.editableStep = JSON.parse(JSON.stringify(this.step));
             const op = this.step.operation;
+            this.enableDisableFields();
         },
         methods: {
             evalInContext(js, context) {

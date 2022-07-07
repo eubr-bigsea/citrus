@@ -115,56 +115,104 @@
                     </tbody>
                 </table>
                 <div v-else>
-                    <div class="row" v-if="stats && stats.message">
-                        <!--
+                    <b-tabs>
+                        <b-tab title="Análise" :title-link-class="'small-nav-link'">
+                            <div class="row" v-if="stats && stats.message">
+                                <!--
                         <div class="col-2 text-center">
                             <img :src="'data:image/png;base64, ' + stats.message.box_plot" alt="box" title="Box plot"/>
                         </div>
                         -->
-                        <div class="col-10" v-if="stats && stats.message.histogram">
-                            <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
-                                :layout="{height: 120, hoverlabel: {font: {size: 8}}, autosize: true, margin: {l: 0,r: 50, b: 30, t: 10, pad: 0} }"
-                                :data="[{marker: {opacity: 0.4, color: 'rgb(49,130,189)'}, 'orientation': 'h', 'min': -232, 'x': [[stats.message.stats.min, stats.message.stats.max,] ], 'type': 'box', 'lowerfence': [stats.message.fence_low], 'mean': [stats.message.stats.mean], 'median': [stats.message.stats.median], 'notchspan': [2], 'q1': [stats.message.stats['25%']], 'q3': [stats.message.stats['75%']], 'sd': [stats.message.stats.std], 'upperfence': [stats.message.fence_high]}]"
-                                :height="200" :options="{displayModeBar: false}" />
-                            <Plotly v-if="stats" ref="plotly" :auto-resize="true"
-                                :layout="{height: 140, autosize: true, margin: {l: 50,r: 50, b: 30, t: 10, pad: 4} }"
-                                :data="getStatData()" :height="200" :options="{displayModeBar: false}" />
-                        </div>
-                        <div class="col-4">
-                            <strong>Estatísticas (exclui nulos)</strong>
-                            <table class="table table-sm table-stats">
-                                <tr v-for="value, stat in stats.message.stats">
-                                    <th>{{stat}}</th>
-                                    <td>{{value}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div :class="{'col-4': stats.message.outliers, 'col-8': !stats.message.outliers}">
-                            <strong>Top valores *</strong>
-                            <table class="table table-sm table-stats">
-                                <tr v-for="t in stats.message.top20.slice(0, 10)">
-                                    <th class="col-8">
-                                        {{t[0]}}
-                                        <div class="top-bar"
-                                            :style="{width: (100*t[1]/stats.message.stats.rows) + '%'}">
-                                        </div>
-                                    </th>
-                                    <td class="col-4 text-right">{{t[1]}} ({{(100*t[1]/stats.message.stats.rows).toFixed(2)}})%</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-4" v-if="stats.message.outliers">
-                            <strong>Valores atípicos (outliers)*</strong>
-                            <table class="table table-sm table-stats">
-                                <tr v-for="t in stats.message.outliers">
-                                    <td>{{t}}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-12 text-right">
-                            <small><em>*limitados a 10</em></small>
-                        </div>
-                    </div>
+                                <div class="col-10" v-if="stats && stats.message.histogram">
+                                    <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
+                                        :layout="{height: 120, hoverlabel: {font: {size: 9}}, autosize: true, margin: {l: 0,r: 50, b: 30, t: 10, pad: 0} }"
+                                        :data="[{opacity: 0.6, marker: {color: 'rgb(49,130,189)'}, 'orientation': 'h', 'type': 'box', 'lowerfence': [stats.message.fence_low], 'mean': [stats.message.stats.mean], 'median': [stats.message.stats.median], 'q1': [stats.message.stats['25%']], 'q3': [stats.message.stats['75%']], 'sd': [stats.message.stats.std], 'upperfence': [stats.message.fence_high]}]"
+                                        :height="200" :options="{displayModeBar: false}" />
+                                    <Plotly v-if="stats" ref="plotly" :auto-resize="true"
+                                        :layout="{height: 140, autosize: true, margin: {l: 50,r: 50, b: 30, t: 10, pad: 4} }"
+                                        :data="getStatData()" :height="200" :options="{displayModeBar: false}" />
+                                </div>
+                                <div class="col-4">
+                                    <strong>Estatísticas (exclui nulos)</strong>
+                                    <table class="table table-sm table-stats">
+                                        <tr v-for="value, stat in stats.message.stats">
+                                            <th>{{stat}}</th>
+                                            <td>{{value}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div :class="{'col-4': stats.message.outliers, 'col-8': !stats.message.outliers}">
+                                    <strong>Top valores *</strong>
+                                    <table class="table table-sm table-stats">
+                                        <tr v-for="t in stats.message.top20.slice(0, 10)">
+                                            <th class="col-8">
+                                                {{t[0]}}
+                                                <div class="top-bar"
+                                                    :style="{width: (100*t[1]/stats.message.stats.rows) + '%'}">
+                                                </div>
+                                            </th>
+                                            <td class="col-4 text-right">{{t[1]}}
+                                                ({{(100*t[1]/stats.message.stats.rows).toFixed(2)}})%</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-4" v-if="stats.message.outliers">
+                                    <strong>Valores atípicos (outliers)*</strong>
+                                    <table class="table table-sm table-stats">
+                                        <tr v-for="t in stats.message.outliers">
+                                            <td>{{t}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-12 text-right">
+                                    <small><em>*limitados a 10</em></small>
+                                </div>
+                            </div>
+                        </b-tab>
+                        <b-tab v-if="selected.field.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
+                            :title-link-class="'small-nav-link'">
+                            <form action="" class="form-inline">
+                                <div class="form-group mb-2">
+                                    <label for="similarity">Similaridade:</label> &nbsp;
+                                    <select name="similarity" class="form-control-sm ml-3 mr-3"
+                                        v-model.number="similarity">
+                                        <option value="0.5">0.5 (menos semelhantes)</option>
+                                        <option>0.6</option>
+                                        <option>0.7</option>
+                                        <option>0.8</option>
+                                        <option value="0.9">0.9 (mais semelhantes)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <button class="btn btn-secondary btn-sm"
+                                        @click.prevent="handleComputeCluster">Computar grupos</button>
+                                    <button class="btn btn-success btn-sm ml-2"
+                                        @click.prevent="handleComputeCluster">Mesclar selecionados</button>
+                                </div>
+                            </form>
+                            <div style="height: 500px; overflow-y:auto">
+                                <table v-if="valuesClusters && valuesClusters.length > 0"
+                                    class="table table-sm table-smallest mt-4">
+                                    <tr>
+                                        <th></th>
+                                        <th class="col-6">Grupo</th>
+                                        <th class="col-6">Substituir por</th>
+                                    </tr>
+                                    <tr v-for="values in valuesClusters">
+                                        <td><input type="checkbox" class="checkbox"></td>
+                                        <td>
+                                            <span style="white-space: pre" :class="{'text-secondary': k !== 0}"
+                                                v-for="v, k in values">{{v}} <br /></span>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control form-control-sm w-100"
+                                                :value="values[0]">
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </b-tab>
+                    </b-tabs>
                 </div>
             </b-modal>
         </div>
@@ -257,6 +305,8 @@
                 rows: [],
                 dummyDataOffset: 0,
                 stats: null,
+                valuesClusters: [],
+                similarity: 0.8,
             }
         },
         beforeRouteLeave(to, from, next) {
@@ -416,7 +466,8 @@
                     name: `## explorer ${self.workflowObj.id} ##`,
                     user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                     persist: false, // do not save the job in db.
-                    app_configs: { verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1, target_platform: 'scikit-learn' },
+                    app_configs: { verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1, 
+                        target_platform: 'spark', sample_style: 'DATA_EXPLORER' },
                 }
                 //console.debug(new Date());
 
@@ -660,6 +711,7 @@
             },
             select(attr) {
                 this.selected = attr;
+                this.valuesClusters = [];
             },
 
             //
@@ -814,6 +866,18 @@
                     type: "analyse attribute", attribute: selected?.field?.key,
                 });
             },
+            handleComputeCluster() {
+                const workflow_id = this.workflowObj.id;
+                const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
+                const task_id = [... this.workflowObj.tasks].reverse().find(
+                    task => task.enabled && task.previewable)['id'];
+
+                this.socket.emit("analyse attribute", {
+                    cluster: true, similarity: this.similarity,
+                    workflow_id, job_id, room: `${job_id}`, task_id,
+                    type: "analyse attribute", attribute: this.selected?.field?.key,
+                });
+            },
             handleExport({ newName, exportDisabled, platform }) {
 
                 const cloned = JSON.parse(JSON.stringify(this.workflowObj));
@@ -843,6 +907,7 @@
                 });
                 this.info('Exportando o fluxo de trabalho. Quando a exportação terminar, você será notificado.', 10000);
             },
+
             getStatData() {
                 const x = this.stats.message.histogram[1];
                 const customdata = x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`);
@@ -858,6 +923,7 @@
                     }
                 }];
             },
+
             /* WebSocket Handling */
             connectWebSocket() {
                 const self = this;
@@ -871,8 +937,12 @@
                         console.debug(msg)
                     });
                     socket.on('analysis', (msg, callback) => {
-                        self.stats = msg;
-                        self.$refs.statsModal.show();
+                        if (msg.analysis_type !== 'cluster') {
+                            self.stats = msg;
+                            self.$refs.statsModal.show();
+                        } else {
+                            self.valuesClusters = msg.message;
+                        }
                     });
                     socket.on('update task', (msg, callback) => {
 
@@ -1015,7 +1085,12 @@
     }
 
     .table-stats {
-        font-size: .8em;
+        font-size: 9pt;
+    }
+
+    .table-stats td,
+    .table-stats th {
+        padding: 0
     }
 
     .top-bar {

@@ -15,7 +15,7 @@
                         <b-list-group-item v-for="attr in features.forms.features.value" :key="attr.name" class="p-0"
                             role="button" @click="handleSelectAttribute(attr)">
                             <div class="w-100 p-1" v-if="attr.usage !== 'label' "
-                                :class="{'bg-light': selectedAttribute === attr }">
+                                :class="{'bg-light font-weight-bold': selectedAttribute === attr }">
                                 <b-form-checkbox switch v-model="attr.usage" value="feature">
                                     {{attr.name}}
                                 </b-form-checkbox>
@@ -57,8 +57,11 @@
                                 <b-form-radio-group stacked v-model="selectedAttribute.feature_type">
                                     <b-form-radio value="categorical"><span class="fa fa-font"></span>
                                         Categórico</b-form-radio>
-                                    <b-form-radio value="numerical"><span class="fa fa-hashtag"></span> Numérico</b-form-radio>
+                                    <b-form-radio value="numerical"><span class="fa fa-hashtag"></span> Numérico
+                                    </b-form-radio>
                                     <b-form-radio value="textual"><span class="fa fa-italic"></span> Texto
+                                    </b-form-radio>
+                                    <b-form-radio value="vector"><em>[ ]</em> Vetor
                                     </b-form-radio>
                                     <!-- <b-form-radio value="vector">[ ] Arranjo</b-form-radio>-->
                                 </b-form-radio-group>
@@ -96,9 +99,9 @@
                                     <label>Mudar a escala do número:</label>
                                     <select class="form-control form-control-sm mb-3" v-model="selectedAttribute.scale">
                                         <option></option>
-                                        <option value="no_scale">Não alterar a escala</option>
+                                        <option value="standard">Usar escalador padrão (z-score)</option>
+                                        <option value="max_abs">Usar escalador Max/Abs</option>
                                         <option value="min_max">Usar escalador Min/Máx</option>
-                                        <option value="standard">Usar escalador padrão (standard)</option>
                                     </select>
                                 </template>
                                 <template v-if="selectedAttribute.transform === 'binarize'">
@@ -113,9 +116,15 @@
                                 </template>
                                 <template v-if="selectedAttribute.transform === 'buckets'">
                                     <label>Definição dos buckets:</label>
-                                    FIXME
-                                    <input type="number" class="form-control form-control-sm mb-3 w-25" maxlength="10"
-                                        step="1" v-model="selectedAttribute.quantis" />
+                                    <b-form-tags v-model="selectedAttribute.buckets" no-outer-focus class="mb-2 p-2"
+                                        placeholder="Informe um limite para o bucket"
+                                        duplicate-tag-text="Valor já informado"
+                                        add-button-text="+"
+                                        input-type="number">
+                                    </b-form-tags>
+                                    <p v-if="selectedAttribute.buckets">
+                                        -∞ ... {{[...selectedAttribute.buckets].sort().join(' ... ')}} ... +∞
+                                    </p>
                                 </template>
 
                                 <label for="">Tratamento para valores ausentes:</label>
@@ -208,6 +217,11 @@
                 } else {
                     this.selectedAttribute.usage = enabled ? 'feature' : 'unused';
                 }
+            },
+            handleBuckets(value){
+                //debugger
+                //this.selectedAttribute.buckets.sort();
+                return true;
             }
         },
         mounted() {

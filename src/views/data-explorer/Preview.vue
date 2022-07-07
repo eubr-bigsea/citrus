@@ -117,12 +117,13 @@
                     <span class="fa fa-eraser text-warning"></span> <b>Limpar</b> dados do atributo
                     onde <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
+                <!--
                 <li class="ctx-divider"></li>
-
-                <li class="ctx-item"><span class="fa fa-search"></span>
+                <li class="ctx-item" @click="onCellContextMenuAction('findReplace', cellMenuData.name, '==', cellMenuData.value)"><span class="fa fa-search"></span>
                     <b>Localizar</b> <code>{{cellMenuData.value}}</code> on
                     <code>{{cellMenuData.name}}</code> e substituir ...</code>
                 </li>
+            -->
             </template>
         </context-menu>
     </div>
