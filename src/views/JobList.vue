@@ -1,64 +1,64 @@
 <template>
-	<main role="main">
-		<div class="row">
-			<div class="col">
-				<div class="title">
-					<h1>{{$tc('titles.jobs', 2)}}</h1>
-				</div>
-				<v-server-table
-				ref="jobList"
-				:data="tableData"
-				:columns="columns"
-				:options="options"
-				name="jobList"
-				>
-				<template slot="id" slot-scope="props">
-					<router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-					:to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
-					>{{props.row.id}}</router-link>
+    <main role="main">
+        <div class="row">
+            <div class="col">
+                <div class="title">
+                    <h1>{{$tc('titles.jobs', 2)}}</h1>
+                </div>
+                <v-server-table
+                ref="jobList"
+                :data="tableData"
+                :columns="columns"
+                :options="options"
+                name="jobList"
+                >
+                <template slot="id" slot-scope="props">
+                    <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
+                    :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
+                    >{{props.row.id}}</router-link>
                     <span v-else>{{props.row.id}}</span>
-				</template>
-				<template slot="name" slot-scope="props">
-					<router-link  v-if="props.row.type !== 'MODEL_BUILDER'"
-					:to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
-					>{{props.row.name}}</router-link>
+                </template>
+                <template slot="name" slot-scope="props">
+                    <router-link  v-if="props.row.type !== 'MODEL_BUILDER'"
+                    :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}"
+                    >{{props.row.name}}</router-link>
                     <span v-else>{{props.row.name}}</span>
-				</template>
-				<template slot="actions" slot-scope="props">
-					<button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING'  " class="btn btn-sm btn-outline-danger mr-1"
-    					:title="$t('actions.stop')"
-	    				@click="stop(props.row)">
-    					<font-awesome-icon icon="stop"></font-awesome-icon>
-					</button>
+                </template>
+                <template slot="actions" slot-scope="props">
+                    <button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING'  " class="btn btn-sm btn-outline-danger mr-1"
+                        :title="$t('actions.stop')"
+                        @click="stop(props.row)">
+                        <font-awesome-icon icon="stop"></font-awesome-icon>
+                    </button>
 
-					<button class="btn btn-sm btn-danger"
-    					:title="$t('actions.delete')"
-	    				@click="remove(props.row)">
-    					<font-awesome-icon icon="trash"></font-awesome-icon>
-					</button>
-				</template>
-				<template slot="status" slot-scope="props">
-					<div
-					class="lemonade-job"
-					:class="props.row.status.toLowerCase()"
-					>{{props.row.status}}</div>
-				</template>
-				<template
-					slot="created"
-					slot-scope="props"
-				>{{props.row.created | formatJsonDate}}</template>
-				<template slot="workflow" slot-scope="props">
-					<router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-					:to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}"
-					>{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
+                    <button class="btn btn-sm btn-danger"
+                        :title="$t('actions.delete')"
+                        @click="remove(props.row)">
+                        <font-awesome-icon icon="trash"></font-awesome-icon>
+                    </button>
+                </template>
+                <template slot="status" slot-scope="props">
+                    <div
+                    class="lemonade-job"
+                    :class="props.row.status.toLowerCase()"
+                    >{{props.row.status}}</div>
+                </template>
+                <template
+                    slot="created"
+                    slot-scope="props"
+                >{{props.row.created | formatJsonDate}}</template>
+                <template slot="workflow" slot-scope="props">
+                    <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
+                    :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}"
+                    >{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
                     <router-link v-else
-					:to="{name: 'model-design', params: {'id': props.row.workflow.id}}"
-					>{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
-				</template>
-				</v-server-table>
-			</div>
-		</div>
-	</main>
+                    :to="{name: 'model-design', params: {'id': props.row.workflow.id}}"
+                    >{{props.row.workflow.id}} - {{props.row.workflow.name}}</router-link>
+                </template>
+                </v-server-table>
+            </div>
+        </div>
+    </main>
 </template>
 
 <script>

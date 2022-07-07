@@ -12,7 +12,7 @@ import messages from './i18n/messages';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import axios from 'axios';
-import VueAxios from 'vue-axios';
+//import VueAxios from 'vue-axios';
 import VueTheMask from 'vue-the-mask'
 
 import { ClientTable, ServerTable } from 'vue-tables-2';
@@ -124,7 +124,7 @@ Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 Vue.use(VueTheMask)
 
-Vue.use(VueAxios, axios);
+//Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('font-awesome-layers', FontAwesomeLayers);
@@ -148,24 +148,30 @@ Vue.use(VueI18n);
 Vue.use(VueProgressBar, options);
 
 // Date-fns
-import { distanceInWordsStrict, format, parse } from 'date-fns';
+import { formatDistanceStrict, format, parseISO } from 'date-fns';
+import { en, pt } from 'date-fns/locale'
 
+const locales = {en, pt};
+/*
 const locales = {
-    en: require('date-fns/locale/en'),
+    en: require('date-fns/locale/en-US'),
     pt: require('date-fns/locale/pt')
 };
+*/
 
 Vue.filter('formatJsonDate', v => {
     if (v) {
-        return format(parse(v + '.000Z'), 'DD/MM/YYYY HH:mm');
+        return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
     }
 });
-Vue.filter('timeFromNow', (v, l) =>
-    distanceInWordsStrict(new Date(), (v + '.000Z'), { addSuffix: true, locale: locales[l] })
+Vue.filter('timeFromNow', (v, l) =>{ 
+    return formatDistanceStrict(parseISO(v + '.000Z'), new Date(), 
+        { addSuffix: true, locale: locales[l] })
+}
 );
 Vue.filter('formatJsonHourMinute', v => {
     if (v) {
-        return format(parse(v + '.000Z'), 'HH:mm:ss');
+        return format(parseISO(v + '.000Z'), 'HH:mm:ss');
     }
 });
 Vue.component('v-style', {
@@ -190,7 +196,8 @@ highchartsMore(Highcharts);
 Vue.use(HighchartsVue);
 
 // Leaflet
-import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+//import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
 
@@ -198,13 +205,14 @@ Vue.component('l-map', LMap);
 Vue.component('l-tile-layer', LTileLayer);
 Vue.component('l-marker', LMarker);
 
-delete L.Icon.Default.prototype._getIconUrl;
+/*delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
     iconUrl: require('leaflet/dist/images/marker-icon.png'),
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
+*/
 Vue.prototype.$openIdService = openIdService;
 openIdService.loadConfig(store).then(() => {
     // Auth
@@ -238,7 +246,7 @@ openIdService.loadConfig(store).then(() => {
             i18n.locale = locale;
         }
     });
-
+    
     router.beforeEach((to, from, next) => {
         if (to.meta.title) {
             let title = i18n.tc('titles.lemonade') + ' :: ' +

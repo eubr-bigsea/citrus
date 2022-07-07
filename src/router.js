@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Router from 'vue-router';
+import VueRouter from 'vue-router';
 
 import Administration from './views/Administration.vue';
 
@@ -99,9 +99,9 @@ const CreateVisualization  = () => import ('./views/data-explorer/vis-builder/Cr
 
 const TestEntities = () => import ('./views/data-explorer/TestEntities.vue');
 
-Vue.use(Router);
+Vue.use(VueRouter);
 
-let router = new Router({
+let router = new VueRouter({
     //mode: 'hash',
     mode: 'history',
     routes: [

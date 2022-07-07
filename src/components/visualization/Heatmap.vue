@@ -1,9 +1,9 @@
 <template>
     <div class="text-center">
         <Plotly ref="plotly" :data="data" :layout="layout" :display-mode-bar="true" :auto-resize="true"></Plotly>
-		<small v-if="visualizationData.data.footer">
-			{{visualizationData.data.footer}}
-		</small>
+        <small v-if="visualizationData.data.footer">
+            {{visualizationData.data.footer}}
+        </small>
         <div v-for="c in colorScale" :key="c" 
                 style="height: 20px; widht:20px; float: left" :style="{background: c[1]}">
             {{c}}
@@ -21,18 +21,18 @@
                 data: this.getData(),
                 layout: {
                     autosize:true,
-					title: this.visualizationData.title,
-					xaxis: {
-					    title: {
-					      text: this.visualizationData.data.column_title,
-		                },
-					},
-					yaxis: {
-					    title: {
-					      text: this.visualizationData.data.row_title,
-		                },
-					}
-				}
+                    title: this.visualizationData.title,
+                    xaxis: {
+                        title: {
+                          text: this.visualizationData.data.column_title,
+                        },
+                    },
+                    yaxis: {
+                        title: {
+                          text: this.visualizationData.data.row_title,
+                        },
+                    }
+                }
             };
         },
         mounted(){
@@ -63,14 +63,14 @@
             getData() {
                 const colorScale = this._getColorScale();
                 const result = { 
-					type: 'heatmap', 
+                    type: 'heatmap', 
                     hoverongaps: false,
                     colorscale: colorScale,
-					x: this.visualizationData.data.cols,
-					y: this.visualizationData.data.rows,
-					z: this.visualizationData.data.values,
-				};
-				return [result];
+                    x: this.visualizationData.data.cols,
+                    y: this.visualizationData.data.rows,
+                    z: this.visualizationData.data.values,
+                };
+                return [result];
             }
         },
     }

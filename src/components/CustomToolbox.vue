@@ -125,7 +125,7 @@
                                 this.alreadyLoaded.add(op.id);
                             }).catch(function (e) {
                                 this.$root.$emit('on-error', e);
-                            }.bind(this));;
+                            }.bind(this));
                         }
                     }
                 });

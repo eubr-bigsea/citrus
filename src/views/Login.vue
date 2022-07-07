@@ -91,7 +91,7 @@
     import Notifier from '../mixins/Notifier';
 
     export default {
-        name: 'Login',
+        name: 'LoginView',
         mixins: [Notifier],
         data() {
             return {

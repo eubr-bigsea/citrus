@@ -17,8 +17,8 @@
                             <!-- https://github.com/bootstrap-vue/bootstrap-vue/issues/5352 -->
                             <b-button v-b-toggle="'submenu' + index" draggable="false" data-parent="submenus"
                                 class="list-group-item truncate list-group-item-action flex-column align-items-start">
-                                <span class="when-closed"><span class="fa fa-angle-right"></span></span>
-                                <span class="when-opened"><span class="fa fa-angle-down"></span></span>
+                                <span class="when-closed"><font-awesome-icon icon="fa fa-angle-right" /></span>
+                                <span class="when-opened"><font-awesome-icon icon="fa fa-angle-down" /></span>
                                 <strong>
                                     {{ group.group }}
                                 </strong>
@@ -34,7 +34,7 @@
                                             @dragend="stopDrag">
                                             <span :data-id="op.operation.id" :title="op.operation.name"
                                                 v-text="op.operation.name"></span>
-                                            <span class="fa fa-bars fa-1x float-right"></span>
+                                            <font-awesome-icon icon="fa fa-bars fa-1x" class="float-right" />
                                         </a>
                                     </span>
                                 </div>
@@ -42,8 +42,8 @@
                                     <div v-for="(subGroup, index2) in group.subGroups" :key="subGroup.subGroup">
                                         <b-button v-b-toggle="`subsubmenu_${index}+${index2}`" draggable="false"
                                             class="list-group-item truncate list-group-item-action flex-column align-items-start">
-                                            <span class="when-closed fa fa-angle-right"></span>
-                                            <span class="when-opened fa fa-angle-down"></span>
+                                            <font-awesome-icon icon="fa fa-angle-right" class="when-closed " />
+                                            <font-awesome-icon icon="fa fa-angle-down" class="when-opened" />
                                             <span class="menu-collapsed pl-2">
                                                 <strong> {{ subGroup.subGroup }}</strong>
                                             </span>
@@ -56,7 +56,7 @@
                                                 @dblclick="dbClickAddTask" @dragstart="startDrag" @dragend="stopDrag">
                                                 <span :data-id="op.operation.id" class="ml-3"
                                                     v-text="op.operation.name"></span>
-                                                <span class="fa fa-bars fa-1x float-right"></span>
+                                                <font-awesome-icon icon="fa fa-bars fa-1x" class="float-right" />
                                             </a>
                                         </b-collapse>
                                     </div>
@@ -71,7 +71,7 @@
                                 draggable="true" :data-id="op.id" @dblclick="dbClickAddTask" @dragstart="startDrag"
                                 @dragend="stopDrag">
                                 {{ op.name }}
-                                <span class="fa fa-bars fa-1x float-right"></span>
+                                <font-awesome-icon icon="fa fa-bars fa-1x" class="float-right" />
                             </b-link>
                         </span>
                     </div>
@@ -85,7 +85,7 @@
                     </li>
                     <li class="list-group-item">
                         <span class="news">
-                            <span class="fa fa-lightbulb text-warning"></span>
+                            <font-awesome-icon icon="fa fa-lightbulb text-warning" />
                             {{ $t('diagram.showProperties') }}</span>
                     </li>
                 </ul>

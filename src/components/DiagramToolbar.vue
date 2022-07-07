@@ -3,29 +3,29 @@
     <div class="toolbar">
         <div class="toolbar-group">
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasksPanel">
-                <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.operation').toLowerCase()})}}
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {type: $tc('titles.operation').toLowerCase()})}}
             </button>
         </div>
         <div v-if="useDataSource" class="toolbar-group">
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleDataSourcesPanel">
-                <span class="fa fa-plus"></span> {{$t('actions.add', {type: $tc('titles.dataSource2').toLowerCase()})}}
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {type: $tc('titles.dataSource2').toLowerCase()})}}
             </button>
         </div>
         <div class="toolbar-group">
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasks">
-                <span class="fa fa-toggle-on"></span>
+                <font-awesome-icon icon="fa fa-toggle-on" />
             </button>
             <button type="button" :title="$t('actions.removeSelected')" @click.prevent="removeSelected">
-                <span class="fa fa-trash"></span>
+                <font-awesome-icon icon="fa fa-trash" />
             </button>
         </div>
 
         <div class="toolbar-group">
             <button variant="secondary" :title="$t('actions.copy')" :disabled="!taskSelected" @click.prevent="copy">
-                <span class="fa fa-copy"></span>
+                <font-awesome-icon icon="fa fa-copy" />
             </button>
             <button variant="secondary" :title="$t('actions.paste')" :disabled="copiedTasks === null || copiedTasks.length === 0" @click.prevent="paste">
-                <span class="fa fa-paste"></span>
+                <font-awesome-icon icon="fa fa-paste" />
             </button>
         </div>
     
@@ -64,7 +64,7 @@
         <div class="toolbar-group">
 
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(-.1)">
-                <span class="fa fa-search"></span>
+                <font-awesome-icon icon="fa fa-search" />
             </button>
 
             <b-input-group size="sm" class="mx-1 zoom">
@@ -83,7 +83,7 @@
             </b-input-group>
             
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(.1)">
-                <span class="fa fa-search"></span>
+                <font-awesome-icon icon="fa fa-search" />
             </button>
 
         </div>

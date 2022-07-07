@@ -59,7 +59,7 @@
             </div>
             <div slot="footer">
                 <button class="btn btn-primary" @click="execute">
-                    <span class="fa fa-play" /> Execute
+                    <font-awesome-icon icon="fa fa-play" /> Execute
                 </button>
                 <button class="btn btn-danger" @click="cancelExecute">Cancel</button>
             </div>

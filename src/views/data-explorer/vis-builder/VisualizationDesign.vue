@@ -18,7 +18,7 @@
                             :filterable="false" :options="dataSourceList" :reduce="(opt) => opt.id" label="name"
                             @search="loadDataSourceList" @input="retrieveAttributes">
 
-                            <template v-slot:no-options="{ search, searching }">
+                            <template v-slot:no-options="{ }">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template slot="option" slot-scope="option">
@@ -37,7 +37,7 @@
                         <label>{{$tc('titles.cluster')}}: </label>
                         <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
                             :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
-                            <template #option="{ description, id, name, type }">
+                            <template #option="{ description, name }">
                                 {{ name }}<br />
                                 <small><em>{{ description }}</em></small>
                             </template>
@@ -45,7 +45,7 @@
                     </b-card>
                     <b-card v-if="loaded" class="mt-1" sub-title="Consulta (opcional)">
                         <label>Limitar quantidade de registros:</label>
-                        <input v-model.numeric="workflowObj.sample.forms.value.value" type="number" class="form-control form-control-sm w-50"
+                        <input v-model.number="workflowObj.sample.forms.value.value" type="number" class="form-control form-control-sm w-50"
                             maxlength="10" step="100" />
 
                         <ExpressionEditor :field="filterField" :value="workflowObj.filter.forms.formula.value"

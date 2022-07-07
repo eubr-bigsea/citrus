@@ -96,7 +96,7 @@
     import Notifier from '../mixins/Notifier'
 
     export default {
-        name: 'Profile',
+        name: 'ProfileView',
         mixins: [Notifier],
         data() {
             return {

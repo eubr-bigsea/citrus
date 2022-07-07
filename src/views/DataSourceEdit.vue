@@ -173,10 +173,10 @@
                                                         style="width:5%">
                                                         {{$tc('dataSource.privacy')}}</th>
                                                     <!--
-    		                                    <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
-    		                                    <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
-    		                                    <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
-    		                                    <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
                           -->
                                                 </tr>
                                             </thead>
@@ -199,18 +199,18 @@
                                                             class="form-control-sm form-control" maxlenght="50">
                                                     </td>
                                                     <!--
-    		                                    <td class="text-center">
-    		                                        <SwitchComponent v-model="attr.nullable" :checked="attr.nullable"></SwitchComponent>
-    		                                    </td>
-    		                                    <td class="col-xs-1">
-    		                                        <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.size" min="0" />
-    		                                    </td>
-    		                                    <td class="col-xs-1">
-    		                                        <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.precision" min="0" />
-    		                                    </td>
-    		                                    <td class="col-xs-1">
-    		                                        <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.scale" min="0" />
-    		                                    </td>
+                                                <td class="text-center">
+                                                    <SwitchComponent v-model="attr.nullable" :checked="attr.nullable"></SwitchComponent>
+                                                </td>
+                                                <td class="col-xs-1">
+                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.size" min="0" />
+                                                </td>
+                                                <td class="col-xs-1">
+                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.precision" min="0" />
+                                                </td>
+                                                <td class="col-xs-1">
+                                                    <input type="number" class="form-control-sm form-control" maxlenght="2" v-model="attr.scale" min="0" />
+                                                </td>
                           -->
                                                     <td>
                                                         <input v-model="attr.missing_representation"

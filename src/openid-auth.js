@@ -72,7 +72,6 @@ class AuthService {
         this.userManager.signoutRedirect()
             .then(() => {
                 console.log('User logged out');
-                debugger
                 this.vueStore && this.vueStore.dispatch('logout');
             }).catch(error => {
                 console.log(error);

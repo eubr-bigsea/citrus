@@ -276,6 +276,7 @@
         }
     }
     export default {
+        name: 'TrackView',
         components: {
             'date-component': DateComponent,
             'caipirinha-visualization': CapirinhaVisualization,
@@ -486,7 +487,7 @@
                         self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                     }
                     self.running = false;
-                };
+                }
             },
             getCaipirinhaLink(jobId, taskId, visId) {
                 return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;

@@ -97,6 +97,7 @@
 </template>
 <script>
 export default {
+  name: 'RegisterView',
   data() {
     return {
       firstName: '',

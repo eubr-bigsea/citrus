@@ -1,4 +1,4 @@
-import { library } from '@fortawesome/fontawesome-svg-core';
+import { library, dom } from '@fortawesome/fontawesome-svg-core';
 import {
     faAngleDoubleRight,
     faAngleDown,
@@ -127,13 +127,6 @@ import {
     faVial,
     faVials,
 } from '@fortawesome/free-solid-svg-icons';
-
-/**
- * Allows DOM to change <i> tags to SVG for more features like layering
- * https://fontawesome.com/how-to-use/on-the-web/styling/layering
- */
-import { dom } from '@fortawesome/fontawesome-svg-core';
-dom.watch();
 
 library.add(
     faAngleDoubleRight,
@@ -264,3 +257,9 @@ library.add(
     faVials,
     
 );
+/**
+ * Allows DOM to change <i> tags to SVG for more features like layering
+ * https://fontawesome.com/how-to-use/on-the-web/styling/layering
+ */
+ dom.watch();
+ 

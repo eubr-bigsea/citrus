@@ -8,4 +8,4 @@ export function debounce(fn, delay) {
             fn.apply(that, args)
         }, delay)
     };
-};
+}

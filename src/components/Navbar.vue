@@ -8,27 +8,27 @@
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="pt-1">
                 <b-nav-item v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'dataSources' }">
-                    <span class="fa fa-database"></span> {{ $tc('titles.dataSource', 2) }}
+                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{ $tc('titles.dataSource', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
-                    <span class="fa fa-flask"></span> {{ $tc('titles.workflow', 2) }}
+                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }">
-                    <span class="fa fa-vial text-success"></span> {{ $tc('titles.dataExplorer', 2) }}
+                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $tc('titles.dataExplorer', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'tracks' }">
-                    <span class="fa fa-microscope"></span> {{ $tc('titles.track', 2) }}
+                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{ $tc('titles.track', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" :to="{ name: 'jobs' }">
-                    <span class="fa fa-tasks"></span> {{ $tc('titles.jobs', 2) }}
+                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{ $tc('titles.jobs', 2) }}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
-                    <span class="fa fa-chart-line"></span> {{ $tc('titles.dashboard', 2) }}
+                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
 
                 <b-nav-item-dropdown v-if="isAdmin" right>
                     <template v-slot:button-content>
-                        <span class="fa fa-user-lock"></span>
+                        <font-awesome-icon icon="fa fa-user-lock" class="text-success" />
                         {{$tc('titles.administration', 2)}}
                     </template>
                     <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
@@ -67,7 +67,7 @@
                 <!--
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
                     <template slot="button-content">
-                        <span class="fa fa-bell"></span>
+                        <font-awesome-icon icon="fa fa-bell" />
 
                         <span class="badge badge-pill"
                             :class="unreadNotifications > 0 ? 'badge-danger': 'badge-success'">
@@ -93,7 +93,7 @@
                     </div>
                     <b-dropdown-item :to="{ name: 'notifications' }" class="border-top pt-2">
                         {{ $t('titles.allNotifications') }}
-                        <span class="fa fa-angle-right"></span>
+                        <font-awesome-icon icon="fa fa-angle-right" />
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             -->
@@ -101,12 +101,12 @@
             <b-navbar-nav class="pt-1">
                 <b-nav-item-dropdown ref="dropdown" right>
                     <template slot="button-content">
-                        <span class="fa fa-user"></span>
+                        <font-awesome-icon icon="fa fa-user"  class="text-success"/>
                         {{ user.name ? user.name.split(' ')[0]: '' }}
                     </template>
 
                     <b-dropdown-form style="width: 300px" class="text-center">
-                        <span class="fa fa-user"></span>
+                        <font-awesome-icon icon="fa fa-user" />
                         <p>
                             <strong>{{user.name}}</strong>
                             <br />
@@ -249,6 +249,7 @@
 
     .navbar-brand {
         text-align: center;
+
         .full_logo {
             display: block;
         }
@@ -258,6 +259,7 @@
         }
 
         margin-right: 0 !important;
+
         @media (max-width: 1140px) {
 
 
