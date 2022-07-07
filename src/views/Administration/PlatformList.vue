@@ -5,7 +5,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1>{{$tc('titles.platform', 2)}}</h1>
                 <router-link :to="{name: 'addPlatform'}" class="btn btn-primary btn-lemonade-primary">
-                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}
+                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </router-link>
             </div>
         </div>

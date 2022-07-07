@@ -27,13 +27,13 @@
                         </div>
                         <div class="mt-2 border-top pt-2">
                             <button class="btn btn-success btn-sm" @click.prevent="add">
-                                <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
+                                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}</button>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <h6>Seleção de atributos</h6>
                         <div v-if="hasNameCollision">
-                            <span class="fa fa-exclamation-circle text-danger"></span>
+                            <font-awesome-icon icon="fa fa-exclamation-circle" class="text-danger" />
                             {{$t('widgets.join.nameCollision')}}
                         </div>
                         <div ref="selection">

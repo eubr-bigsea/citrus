@@ -8,11 +8,11 @@
                             <h1>{{$tc('titles.workflow', 2)}}</h1>
                             <div>
                                 <button class="btn btn-outline-info float-left"
-                                    @click.prevent="showImportWorkflow"><span class="fa fa-download" />
+                                    @click.prevent="showImportWorkflow"><font-awesome-icon icon="fa fa-download" />
                                     {{$t('actions.import')}}</button>
                                 <router-link :to="{name: 'addWorkflow'}"
                                     class="btn btn-primary btn-lemonade-primary float-left ml-2">
-                                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}
+                                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                                 </router-link>
 
                             </div>

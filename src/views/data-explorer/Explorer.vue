@@ -35,7 +35,7 @@
                     <b-dropdown :disabled="false && loadingData" variant="secondary" size="sm"
                         class="float-right mt-2 ml-1" @click="saveWorkflow">
                         <template #button-content>
-                            <span class="fa fa-cog"></span>
+                            <font-awesome-icon icon="fa fa-cog" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="handleExport">
                             {{$tc('actions.export')}} ...
@@ -43,11 +43,11 @@
                     </b-dropdown>
                     -->
                     <b-button :disabled="loadingData" variant="primary" size="sm" class="float-right mt-2"
-                        @click="saveWorkflow"><span class="fa fa-save"></span> {{$t('actions.save')}}
+                        @click="saveWorkflow"><font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                     </b-button>
                     <b-button :disabled="pendingSteps || loadingData" size="sm" variant="outline-secondary"
                         class="float-right mt-2 mr-1" @click="loadData">
-                        <span class="fa fa-redo"></span> {{$t('actions.refresh')}}
+                        <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                     </b-button>
                     <!--
                     <b-button @click="loadingData = !loadingData" class="btn btn-sm">OK</b-button>

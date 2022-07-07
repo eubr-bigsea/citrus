@@ -103,12 +103,12 @@
                                         <div class="col-12 mt-4 border-top pt-2">
                                             <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save($event, false)">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
-                                                <span class="fa fa-save"></span>
+                                                <font-awesome-icon icon="fa fa-save" />
                                                 {{$tc('actions.save')}}
                                             </button>
                                             <button class="btn btn-outline-primary mr-1 btn-spinner" @click.stop="save($event, true)">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
-                                                <span class="fa fa-server"></span>
+                                                <font-awesome-icon icon="fa fa-server" />
                                                 {{$tc('deployment.saveAndRedeploy')}}
                                             </button>
                                             <router-link :to="{name: 'deployments'}"

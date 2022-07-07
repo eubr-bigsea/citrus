@@ -2,8 +2,8 @@
     <div>
         <b-modal ref="modal" size="lg" body-class="analyze-modal">
             <template #modal-title>
-                <b-button size="sm" variant="link"><span class="fa fa-chevron-left"></span></b-button>
-                <b-button size="sm" variant="link"><span class="fa fa-chevron-right"></span></b-button>
+                <b-button size="sm" variant="link"><font-awesome-icon icon="fa fa-chevron-left" /></b-button>
+                <b-button size="sm" variant="link"><font-awesome-icon icon="fa fa-chevron-right" /></b-button>
                 COLUMN_NAME (999 distinct values)
             </template>
             <template #modal-footer>
@@ -18,17 +18,17 @@
                                 <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
                                     <tr>
-                                        <td><span class="fa fa-circle quality-ok-text"></span> Valid</td>
+                                        <td><font-awesome-icon icon="fa fa-circle" class="quality-ok-text" /> Valid</td>
                                         <td class="text-right">21</td>
                                         <td class="text-right">10%</td>
                                     </tr>
                                     <tr>
-                                        <td><span class="fa fa-circle quality-nok-text"></span> Invalid</td>
+                                        <td><font-awesome-icon icon="fa fa-circle" class="quality-nok-text" /> Invalid</td>
                                         <td class="text-right">221</td>
                                         <td class="text-right">80%</td>
                                     </tr>
                                     <tr>
-                                        <td><span class="fa fa-circle quality-missing-text"></span> Missing</td>
+                                        <td><font-awesome-icon icon="fa fa-circle" class="quality-missing-text" /> Missing</td>
                                         <td class="text-right">1</td>
                                         <td class="text-right">1%</td>
                                     </tr>
@@ -107,17 +107,17 @@
                                 <QualityBar />
                                 <table class="table table-condensed table-sm table-borderless">
                                     <tr>
-                                        <td><span class="fa fa-circle quality-ok-text"></span> Valid</td>
+                                        <td><font-awesome-icon icon="fa fa-circle" class="quality-ok-text" /> Valid</td>
                                         <td class="text-right">21</td>
                                         <td class="text-right">10%</td>
                                     </tr>
                                     <tr>
-                                        <td><span class="fa fa-circle quality-nok-text"></span> Invalid</td>
+                                        <td><font-awesome-icon icon="fa fa-circle" class="quality-nok-text" /> Invalid</td>
                                         <td class="text-right">221</td>
                                         <td class="text-right">80%</td>
                                     </tr>
                                     <tr>
-                                        <td><span class="fa fa-circle quality-missing-text"></span> Missing</td>
+                                        <td><font-awesome-icon icon="fa fa-circle" class="quality-missing-text" /> Missing</td>
                                         <td class="text-right">1</td>
                                         <td class="text-right">1%</td>
                                     </tr>

@@ -7,7 +7,7 @@
                     <input ref="query" v-model="query" v-focus type="text" maxleght="20" class="form-control" />
                     <hr />
                     <button class="btn btn-sm btn-success" @click.stop.prevent="search">
-                        <span class="fa fa-search" :title="$t('actions.search')"></span>
+                        <font-awesome-icon icon="fa fa-search" :title="$t('actions.search')" />
                         {{$t('actions.search')}}
                     </button>
                     <div v-if="results && results.length" class="thumb mt-4">

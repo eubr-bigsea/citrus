@@ -16,7 +16,7 @@
                                 @dblclick="dbClickAddTask" @dragstart="startDrag2"
                                 @dragend="stopDrag">
                                 {{ item.name }}
-                                <span class="fa fa-bars fa-1x float-right"></span>
+                                <font-awesome-icon icon="fa fa-bars fa-1x" class="float-right" />
                             </b-link>
                         </span>
                     </div>

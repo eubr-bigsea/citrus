@@ -12,7 +12,7 @@
                 <div slot="default">
                     <div class="row">
                         <div class="col-12">
-                            <div class="alert alert-info"><span class="fa fa-info-circle"></span>
+                            <div class="alert alert-info"><font-awesome-icon icon="fa fa-info-circle" />
                                 <small>
                                 {{$tc('property.clickToMove', 2)}}.
                                 {{$tc('property.multipleTimes')}}

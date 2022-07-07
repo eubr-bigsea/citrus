@@ -7,10 +7,10 @@
             </span>
             <small v-if="!editing && !publicRoute" class="d-print-none">
 
-                <a href="#" :title="$t('actions.edit')" @click.prevent="edit"> <span class="fa fa-edit"></span></a>
+                <a href="#" :title="$t('actions.edit')" @click.prevent="edit"> <font-awesome-icon icon="fa fa-edit" /></a>
                 &nbsp;
-                <a href="#" :title="$t('actions.delete')" @click.prevent="deleteText"> <span
-                        class="fa fa-trash"></span></a>
+                <a href="#" :title="$t('actions.delete')" @click.prevent="deleteText"> 
+                    <font-awesome-icon icon="fa fa-trash" /></a>
             </small>
         </div>
         <div v-if="editing" class="ml-2 float-left">

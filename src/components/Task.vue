@@ -14,13 +14,13 @@
         </div>
         <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor"
             :class="task.step? task.step.status.toLowerCase(): ''">
-            <span class="fa fa-2x" :class="getDecorationClass"></span>
+            <font-awesome-icon icon="fa fa-2x" :class="getDecorationClass" />
         </div>
         <div v-if="!isComment && task.warning " class="right-decor">
             <span v-if="task.warning" class="text-danger fa fa-2x fa-exclamation-circle" :title="task.warning"></span>
         </div>
         <div v-if="inGroup" class="bottom-right-decor">
-            <span class="fa fa-object-group fa-2x"></span>
+            <font-awesome-icon icon="fa fa-object-group fa-2x" />
         </div>
         <div v-if="contextMenuOpened && !isComment" ref="right" class="custom-context-menu">
             <ul>
@@ -132,7 +132,7 @@
     }
     const overlays = [
         ["Arrow", { location: .85, width: 10, length: 15 }],
-        //["Label", { padding: 10, location: .5, label: '[ <span class="fa fa-dot-circle-o"></span> ]', cssClass: "labelClass" }]
+        //["Label", { padding: 10, location: .5, label: '[ <font-awesome-icon icon="fa fa-dot-circle-o" /> ]', cssClass: "labelClass" }]
     ];
 
 

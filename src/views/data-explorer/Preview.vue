@@ -67,46 +67,46 @@
             <template v-if="cellMenuData">
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('filter', cellMenuData.name, '!=', cellMenuData.value)">
-                    <span class="fa fa-times text-danger"></span> <b>Remover</b> registros onde
+                    <font-awesome-icon icon="fa fa-times" class="text-danger" /> <b>Remover</b> registros onde
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '!', null)">
-                    <span class="fa fa-times text-secondary"></span> <b>Remover</b> registros onde
+                    <font-awesome-icon icon="fa fa-times" class="text-secondary" /> <b>Remover</b> registros onde
                     <b><code>{{cellMenuData.name}} é nulo</code></b>
                 </li>
                 <li class="ctx-divider"></li>
 
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('filter', cellMenuData.name, '==', cellMenuData.value)">
-                    <span class="fa fa-check text-success"></span> <b>Manter</b> apenas registros onde
+                    <font-awesome-icon icon="fa fa-check" class="text-success" /> <b>Manter</b> apenas registros onde
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '', null)">
-                    <span class="fa fa-check text-secondary"></span> <b>Manter</b> apenas registros onde
+                    <font-awesome-icon icon="fa fa-check text-secondary" /> <b>Manter</b> apenas registros onde
                     <b><code>{{cellMenuData.name}} é nulo</code></b>
                 </li>
 
                 <li class="ctx-divider"></li>
 
                 <li class="ctx-item"
-                    @click="onCellContextMenuAction('flag', cellMenuData.name, '==', cellMenuData.value)"><span
-                        class="fa fa-flag text-primary"></span>
+                    @click="onCellContextMenuAction('flag', cellMenuData.name, '==', cellMenuData.value)">
+                    <font-awesome-icon icon="fa fa-flag text-primary" />
                     <b>Sinalizar</b> quando
                     <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-item"
-                    @click="onCellContextMenuAction('flag', cellMenuData.name, '!=', cellMenuData.value)"><span
-                        class="fa fa-flag text-danger"></span>
+                    @click="onCellContextMenuAction('flag', cellMenuData.name, '!=', cellMenuData.value)">
+                    <font-awesome-icon icon="fa fa-flag text-danger" />
                     <b>Sinalizar</b> quando
                     <b><code>{{cellMenuData.name}} 	&#8800; {{cellMenuData.value}}</code></b>
                 </li>
-                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '', null)"><span
-                        class="fa fa-flag text-warning"></span>
+                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '', null)">
+                    <font-awesome-icon icon="fa fa-flag" calss="text-warning" />
                     <b>Sinalizar</b> quando
                     <b><code>{{cellMenuData.name}} é nulo</code></b>
                 </li>
-                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '!', null)"><span
-                        class="fa fa-flag text-secondary"></span>
+                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '!', null)">
+                    <font-awesome-icon icon="fa fa-flag" class="text-secondary" />
                     <b>Sinalizar </b> quando
                     <b><code>{{cellMenuData.name}} não é nulo</code></b>
                 </li>
@@ -114,12 +114,12 @@
 
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('clean', cellMenuData.name, '==', cellMenuData.value)">
-                    <span class="fa fa-eraser text-warning"></span> <b>Limpar</b> dados do atributo
+                    <font-awesome-icon icon="fa fa-eraser" class="text-warning" /> <b>Limpar</b> dados do atributo
                     onde <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <!--
                 <li class="ctx-divider"></li>
-                <li class="ctx-item" @click="onCellContextMenuAction('findReplace', cellMenuData.name, '==', cellMenuData.value)"><span class="fa fa-search"></span>
+                <li class="ctx-item"><font-awesome-icon icon="fa fa-search" />
                     <b>Localizar</b> <code>{{cellMenuData.value}}</code> on
                     <code>{{cellMenuData.name}}</code> e substituir ...
                 </li>

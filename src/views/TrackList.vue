@@ -9,7 +9,7 @@
                             <div>
                                 <router-link :to="{name: 'addTrack'}"
                                     class="btn btn-primary btn-lemonade-primary float-left ml-2">
-                                    <span class="fa fa-plus" /> {{$t('actions.addItem')}}  </router-link>
+                                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}  </router-link>
 
                             </div>
                         </div>

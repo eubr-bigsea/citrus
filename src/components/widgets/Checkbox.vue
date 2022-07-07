@@ -12,7 +12,7 @@
                 </SwitchComponent>
             </div>
             <span v-if="(showHelp === undefined || showHelp) && field.help" class="data-help">
-                <span class="fa fa-question-circle float-right" :title="field.help"></span>
+                <font-awesome-icon icon="fa fa-question-circle float-right" :title="field.help" />
             </span>
             <!-- <div style="clear: both">
                 <b-form-checkbox v-model="checked" value="true" switch @change="changed"

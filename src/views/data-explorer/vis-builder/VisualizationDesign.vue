@@ -75,11 +75,11 @@
             </div>
             <div class="mt-2 ">
                 <button class="btn btn-sm btn-primary ml-1 mr-5" @click.prevent="loadData">
-                    <span class="fa fa-search"></span>
+                    <font-awesome-icon icon="fa fa-search" />
                     {{$t('actions.search')}}</button>
 
-                <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow"><span
-                        class="fa fa-save"></span>
+                <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
+                    <font-awesome-icon icon="fa fa-save" />
                     {{$t('actions.save')}}</button>
 
                 <router-link class="btn btn-sm btn-outline-secondary ml-1 float-right" :to="{name: 'index-explorer'}"

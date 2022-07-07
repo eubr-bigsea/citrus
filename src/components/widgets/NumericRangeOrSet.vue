@@ -39,8 +39,8 @@
                                 :step="inputType.step" placeholder="Digite um valor"
                                 v-on="inputHandlers" @keyup="handleKeyUp">
                             <b-input-group-append>
-                                <b-button variant="secondary" size="sm" @click="addTag()"><span
-                                        class="fa fa-plus"></span>
+                                <b-button variant="secondary" size="sm" @click="addTag()">
+                                    <font-awesome-icon icon="fa fa-plus" />
                                 </b-button>
                             </b-input-group-append>
                         </b-input-group>

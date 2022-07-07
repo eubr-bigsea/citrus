@@ -22,12 +22,12 @@
                                 </small>
                                 <a href="#" :title="$t('actions.delete')" class="ml-1 float-right btn btn-sm py-0 btn-light text-danger"
                                     @click.prevent.stop="remove($event, index)">
-                                    <span class="fa fa-minus-circle"></span>
+                                    <font-awesome-icon icon="fa fa-minus-circle" />
                                 </a>
                             </div>
                         </div>
                         <button class="btn btn-success btn-sm mt-2" @click.prevent="add">
-                            <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
+                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}</button>
                     </div>
                     <div class="col-md-8">
                         <div v-if="selected" class="form-filter ">

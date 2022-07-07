@@ -13,7 +13,7 @@
                     {{opt[language] || opt.value}}
                 </option>
             </select>
-            <a v-if="help" :href="help" target="_blank">{{$tc('titles.reference')}} <span class="fa fa-external-link-alt"></span></a>
+            <a v-if="help" :href="help" target="_blank">{{$tc('titles.reference')}} <font-awesome-icon icon="fa fa-external-link-alt" /></a>
             <small v-if="optionHelp">{{optionHelp[0]}}</small>
         </div>
         <b-form-tags v-else-if="field.multiplicity === 2 || field.multiplicity === 3" v-model="selected"

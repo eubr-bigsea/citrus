@@ -70,7 +70,7 @@
                     <b-tab v-for="form of workflow.platform.forms" :title-item-class="'tab-order-' + form.order"
                         :key="form.id" :active="form.order === minFormOrder">
                         <template slot="title">
-                            <span class="fa fa-cogs"></span> {{form.name}}
+                            <font-awesome-icon icon="fa fa-cogs" /> {{form.name}}
                         </template>
                         <div class="card mt-1" style="min-height: 90vh">
                             <div class="card-body">

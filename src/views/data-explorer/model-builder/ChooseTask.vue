@@ -10,8 +10,8 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-secondary xtext-primary fa-stack-2x"></span>
-                                <span class="fas fa-project-diagram fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-primary fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-project-diagram fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 text-center">
@@ -27,8 +27,8 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-secondary xtext-warning fa-stack-2x"></span>
-                                <span class="fas fa-prescription-bottle fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-warning fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-prescription-bottle fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 text-center">
@@ -45,8 +45,8 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-secondary xtext-success fa-stack-2x"></span>
-                                <span class="fas fa-layer-group fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-success fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-layer-group fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 text-center">
@@ -66,8 +66,8 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-secondary xtext-danger fa-stack-2x"></span>
-                                <span class="fas fa-bug fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-danger fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-bug fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 text-center">
@@ -87,8 +87,8 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-secondary xtext-info fa-stack-2x"></span>
-                                <span class="fas fa-cart-plus fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-info fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-cart-plus fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 text-center">
@@ -104,8 +104,8 @@
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-secondary xtext-secondary fa-stack-2x"></span>
-                                <span class="fas fa-crop-alt fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-secondary fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-crop-alt fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 text-center">
@@ -136,7 +136,7 @@
                     <div class="row">
                         <div class="col-md-4 text-secondary xtext-center">
                             <b-card title="Predição">
-                                <span class="fa fa-chart-line fa-8x"></span>
+                                <font-awesome-icon icon="fa fa-chart-line fa-8x" />
                                 <b-card-text class="task-card-text">
                                     <br/>
                                     <small></small>
@@ -146,7 +146,7 @@
                         </div>
                         <div class="col-md-4 text-secondary xtext-center">
                             <b-card title="Agrupamento">
-                                <span class="fa fa-code-branch fa-8x fa-rotate-90"></span>
+                                <font-awesome-icon icon="fa fa-code-branch fa-8x fa-rotate-90" />
                                 <br/>
                                 <b-card-text class="task-card-text">
                                     <small>
@@ -156,7 +156,7 @@
                         </div>
                         <div class="col-md-4 text-secondary xtext-center">
                             <b-card title="Padrões frequentes">
-                                <span class="fa fa-cart-plus fa-8x"></span>
+                                <font-awesome-icon icon="fa fa-cart-plus fa-8x" />
                                 <br/>
                                 <b-card-text class="task-card-text">
                                     <small></small>
@@ -186,7 +186,7 @@
                                     </small>
 
                                 </b-card-text>
-                                <span class="fa fa-robot fa-8x"></span>
+                                <font-awesome-icon icon="fa fa-robot fa-8x" />
                             </b-card>
                         </div>
                         <div class="col-md-4 text-secondary xtext-center">
@@ -198,7 +198,7 @@
                                         o modelo a ser salvo.
                                     </small>
                                 </b-card-text>
-                                <span class="fa fa-rocket fa-8x"></span>
+                                <font-awesome-icon icon="fa fa-rocket fa-8x" />
                             </b-card>
                         </div>
                     </div>

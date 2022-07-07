@@ -79,7 +79,7 @@
                                     <td style="width:2%" class="text-center">
                                         <a href="#" class="btn btn-danger btn-sm"
                                             @click.prevent="remove($event, index)">
-                                            <!-- <span class="fa fa-minus-circle text-danger"></span> -->
+                                            <!-- <font-awesome-icon icon="fa fa-minus-circle text-danger" /> -->
                                             <font-awesome-icon icon="trash"></font-awesome-icon>
                                         </a>
                                     </td>
@@ -94,7 +94,7 @@
                 </div>
                 <div class="col-md-12">
                     <button class="btn btn-success btn-sm float-right" @click.prevent="add">
-                        <span class="fa fa-plus"></span> {{$t('actions.simpleAdd')}}</button>
+                        <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.simpleAdd')}}</button>
                 </div>
                 <!-- <div class="col-md-4 border-left">
                     <strong>{{$tc('property.expression.availableAttribute', 2)}}:</strong>

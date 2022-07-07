@@ -40,13 +40,13 @@
                                 <b-form-radio-group name="radio-usage" :checked="selectedAttribute.usage"
                                     stacked @input="changeUsage($event)">
                                     <b-form-radio name="usage" value="unused">
-                                        <span class="fa text-danger fa-times"></span> Não usar
+                                        <font-awesome-icon icon="fa fa-times" class="text-danger"/> Não usar
                                     </b-form-radio>
                                     <b-form-radio v-if="supervisioned" name="usage" value="label">
-                                        <span class="fa text-primary fa-bullseye"></span> Alvo (rótulo)
+                                        <font-awesome-icon icon="fa fa-bullseye" class="text-primary"/> Alvo (rótulo)
                                     </b-form-radio>
                                     <b-form-radio name="usage" value="feature">
-                                        <span class="fa text-success fa-check"></span>
+                                        <font-awesome-icon icon="fa fa-check" class="text-success"/>
                                         Atributo preditor
                                     </b-form-radio>
                                 </b-form-radio-group>
@@ -55,11 +55,10 @@
                             <template v-if="selectedAttributeUsed">
                                 <label for="">{{$tc('common.type')}}:</label>
                                 <b-form-radio-group v-model="selectedAttribute.feature_type" stacked>
-                                    <b-form-radio value="categorical"><span class="fa fa-font"></span>
+                                    <b-form-radio value="categorical"><font-awesome-icon icon="fa fa-font" />
                                         Categórico</b-form-radio>
-                                    <b-form-radio value="numerical"><span class="fa fa-hashtag"></span> Numérico
-                                    </b-form-radio>
-                                    <b-form-radio value="textual"><span class="fa fa-italic"></span> Texto
+                                    <b-form-radio value="numerical"><font-awesome-icon icon="fa fa-hashtag" /> Numérico</b-form-radio>
+                                    <b-form-radio value="textual"><font-awesome-icon icon="fa fa-italic" /> Texto
                                     </b-form-radio>
                                     <b-form-radio value="vector"><em>[ ]</em> Vetor
                                     </b-form-radio>

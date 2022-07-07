@@ -1,6 +1,6 @@
 <template>
     <div>
-        <a v-if="isFullHtml" :href="link" target="_blank">{{$t('actions.show')}} <span class="fa fa-external-link-alt"></span></a>
+        <a v-if="isFullHtml" :href="link" target="_blank">{{$t('actions.show')}} <font-awesome-icon icon="fa fa-external-link-alt" /></a>
         <div v-else :html="data"></div>
     </div>
 </template>

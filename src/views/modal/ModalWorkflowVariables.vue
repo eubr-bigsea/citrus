@@ -12,12 +12,12 @@
                                     <span v-if="row.label">({{row.label}})</span></small>
                                 <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
                                     :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
-                                    <span class="fa fa-minus-circle text-danger"></span>
+                                    <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                                 </a>
                             </div>
                         </div>
                         <button class="btn btn-success btn-sm mt-2" @click.prevent="add">
-                            <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
+                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}</button>
                     </div>
                     <div class="col-md-8">
                         <div v-if="selected" class="form-filter ">

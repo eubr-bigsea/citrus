@@ -12,16 +12,16 @@
                         <div class="d-print-none">
                             <div v-if="isLoggedIn" class="btn-group float-right" role="group">
                                 <button class="btn btn-sm btn-outline-dark" @click.stop="save">
-                                    <span class="fa fa-save"></span> {{$t('actions.save')}}
+                                    <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                                 </button>
                                 <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
                                 @click.prevent="showProperties">
-                                    <span class="fa fa-cogs"></span>
+                                    <font-awesome-icon icon="fa fa-cogs" />
                                 </button>
                             </div>
                             <button v-if="!publicRoute" class="btn btn-sm btn-success mr-2" :title="$t('actions.showProperties')"
                             @click.prevent="addText" >
-                                <span class="fa fa-plus"></span> {{$t('dashboard.markupVisualization')}}
+                                <font-awesome-icon icon="fa fa-plus" /> {{$t('dashboard.markupVisualization')}}
                             </button>
                         </div>
                     </div>

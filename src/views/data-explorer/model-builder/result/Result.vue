@@ -13,7 +13,7 @@
                                 <span :class="getClassesForDecor(job.status)"></span>
                                 <b-dropdown variant="link" size="sm" no-caret class="text-white">
                                     <template #button-content>
-                                        <span class="fa fa-ellipsis-v"></span>
+                                        <font-awesome-icon icon="fa fa-ellipsis-v" />
                                     </template>
                                     <b-dropdown-item @click="$emit('delete-job', job.id, job === selectedJob)">Excluir
                                         execução</b-dropdown-item>
@@ -91,7 +91,7 @@
                         </div>
                         <!--
                             <div class="row">
-                                <div class="col-3">Métrica <span class="fa fa-trophy text-secondary"></span> R2</div>
+                                <div class="col-3">Métrica <font-awesome-icon icon="fa fa-trophy text-secondary" /> R2</div>
                                 <div class="col-3">{{selectedJob.results.length}} modelos para treino</div>
                                 <div class="col-3">20 features, registros para treino, para teste</div>
                                 <div class="col-3">Link para parte de transparency e fairness?</div>
@@ -118,7 +118,7 @@
                                 <tr v-for="(result, counter) in results" :key="counter">
                                     <td :data-index="result.content.index">{{counter + 1}}</td>
                                     <td>
-                                        <span v-if="result.winner" class="fa fa-trophy best"></span>
+                                        <font-awesome-icon v-if="result.winner" icon="fa fa-trophy best"/>
                                         <span v-for="(value, param) in result.content.params" :key="param">
                                             {{param}} = {{value}}<br />
                                         </span>
@@ -147,8 +147,8 @@
                                     <div class="d-flex w-100 justify-content-between bg-light p-1">
                                         <b class="mb-1">{{run.name}}</b>
                                         <small>
-                                            <button class="btn btn-sm btn-danger"><span
-                                                    class="fa fa-times-circle "></span> </button>
+                                            <button class="btn btn-sm btn-danger">
+                                                <font-awesome-icon icon="fa fa-times-circle " /> </button>
                                         </small>
                                     </div>
                                     <div class="row">

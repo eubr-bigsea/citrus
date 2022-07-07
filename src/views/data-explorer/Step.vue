@@ -5,7 +5,7 @@
             class="mr-1"></div>
         -->
         <div class="float-left text-secondary step-drag-handle">
-            <span v-if="!locked" class="fa fa-grip-vertical"></span>
+            <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
             <!--
             <div class="mt-2">
                 <span :class="getStepClass(step)"></span>
@@ -25,14 +25,13 @@
                 <span v-else v-html="step.getLabel()"></span>
             </div>
             <div>
-                <span v-if="step.error" v-b-tooltip.html class="fa fa-exclamation-circle text-danger"
-                    :title="step.error"></span>
+                <font-awesome-icon v-if="step.error" icon="fa fa-exclamation-circle text-danger" v-b-tooltip.html :title="step.error" />
 
                 <small v-if="step.forms.comment.value" class="text-secondary">{{step.forms.comment.value}}</small>
                 <b-button-group v-if="!step.editing" class="zoom-buttom float-right">
                     <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
                         :title="$t('actions.edit')" @click="edit('execution')">
-                        <span class="fa fa-edit"></span>
+                        <font-awesome-icon icon="fa fa-edit" />
                     </b-button>
                     <b-button variant="light" size="sm" class="text-secondary"
                         :title="$t('common.previewUntilHere')" @click="$emit('previewUntilHere', step.id)">
@@ -42,16 +41,16 @@
 
                     <b-button v-if="!locked" variant="light" size="sm" class="text-secondary"
                         :title="$t('actions.delete')" @click="$emit('delete', step.id)">
-                        <span class="fa fa-trash"></span>
+                        <font-awesome-icon icon="fa fa-trash" />
                     </b-button>
                     <b-button v-if="index > 0" variant="light" size="sm" :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
                         @click="$emit('toggle', step)">
-                        <span v-if="step.enabled" class="fa fa-toggle-on text-success"></span>
-                        <span v-else class="fa fa-toggle-off text-secondary"></span>
+                        <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success"/>
+                        <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
                     </b-button>
                     <b-dropdown size="lg" variant="light" class="zoom-buttom" no-caret>
                         <template #button-content>
-                            <span class="fa fa-ellipsis-h"></span>
+                            <font-awesome-icon icon="fa fa-ellipsis-h" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="edit('appearance')">{{$tc('titles.comment')}} &amp;
                             {{$tc('titles.color').toLowerCase()}} </b-dropdown-item>
@@ -61,7 +60,7 @@
                     <!--
                     <b-button variant="light" size="sm" class="text-secondary"
                         @click.prevent="$emit('customOpen', $event, step)">
-                        <span class="fa fa-ellipsis-h"></span>
+                        <font-awesome-icon icon="fa fa-ellipsis-h" />
                     </b-button>
                     -->
                 </b-button-group>
@@ -81,10 +80,10 @@
                     
                     <b-button-group class="float-right mb-2">
                         <b-button variant="light text-primary" size="sm" :title="$t('actions.save')" @click="save">
-                            <span class="fa fa-save"></span>
+                            <font-awesome-icon icon="fa fa-save" />
                         </b-button>
                         <b-button variant="light" size="sm" :title="$t('actions.cancel')" @click="cancelEdit">
-                            <span class="fa fa-undo-alt"></span>
+                            <font-awesome-icon icon="fa fa-undo-alt" />
                         </b-button>
                     </b-button-group>
                 </div>

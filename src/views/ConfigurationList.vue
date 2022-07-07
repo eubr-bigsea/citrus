@@ -50,7 +50,7 @@
         </div>
         <div slot="modal-footer" class="w-100 text-right">
             <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
-                <span class="fa fa-save"></span> {{$t('actions.save')}}</button>
+                <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}</button>
             <button class="ml-1 btn btn-sm btn-outline-dark"
                 @click="cancel">{{$t('actions.cancel')}}</button>
         </div>

@@ -36,7 +36,7 @@
                                             </button>
                                             <a v-if="props.row.link" :href="props.row.link"
                                                 class="btn btn-sm btn-light ml-1 border">
-                                                <span class="fa fa-external-link-alt"></span>
+                                                <font-awesome-icon icon="fa fa-external-link-alt" />
                                             </a>
                                         </template>
                                     </v-server-table>

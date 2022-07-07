@@ -3,7 +3,7 @@
         <h5>Redução de features</h5>
         <hr />
         <div class="alert alert-info">
-            <span class="fa fa-exclamation-circle"></span> A redução usando PCA aplica-se somente a atributos marcados
+            <font-awesome-icon icon="fa fa-exclamation-circle" /> A redução usando PCA aplica-se somente a atributos marcados
             como numéricos.
         </div>
         <label for="">Método de redução:</label>

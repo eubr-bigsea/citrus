@@ -4,7 +4,7 @@
             :class="{'text-danger': error, required: field.required}" :title="error">{{field.label || field.name}}</span>
         <span v-show="field.required">*</span>:
         <span v-if="(showHelp === undefined || showHelp) && field.help" class="data-help">
-            <span class="fa fa-question-circle float-right" :title="field.help"></span>
+            <font-awesome-icon icon="fa fa-question-circle float-right" :title="field.help" />
         </span>
     </span>
 </template>

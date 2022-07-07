@@ -77,7 +77,7 @@
                                         <div class="col-md-12 mt-4 border-top pt-2">
                                             <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
-                                                <span class="fa fa-save"></span>
+                                                <font-awesome-icon icon="fa fa-save" />
                                                 {{$tc('actions.save')}}
                                             </button>
                                             <router-link :to="{name: 'clusters'}"

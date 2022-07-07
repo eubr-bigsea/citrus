@@ -10,18 +10,18 @@
                             <!--
                             <router-link :to="{name: 'addTrack'}" v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
                                 class="btn btn-primary btn-lemonade-primary float-left mr-1">
-                                <span class="fa fa-plus" /> {{$t('actions.addItem')}}
+                                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                             </router-link>
                             -->
                             <!--
                             <button class="btn btn-outline-secondary mr-1" :disabled="display === 'large'"
                                 @click="show('large')">
-                                <span class="fa fa-th"></span>
+                                <font-awesome-icon icon="fa fa-th" />
                             </button>
 
                             <button class="btn btn-outline-secondary" :disabled="display === 'small'"
                                 @click="show('small')">
-                                <span class="fa fa-list"></span>
+                                <font-awesome-icon icon="fa fa-list" />
                             </button>
                         -->
                         </div>
@@ -69,7 +69,7 @@
                                 <div slot="beforeTable" class="ml-2">
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
-                                            <span class="input-group-text"><span class="fa fa-search"></span></span>
+                                            <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
                                         </div>
                                         <input v-model="search" v-focus type="text" class="form-control"
                                             :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">

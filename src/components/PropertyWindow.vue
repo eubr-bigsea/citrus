@@ -7,7 +7,7 @@
                     <br />
                     <small>
                         <div class="property-description">{{task.operation.description}}</div>
-                        <a class="property-help" :href="docReferenceUrl"><span class="fa fa-question-circle"></span>
+                        <a class="property-help" :href="docReferenceUrl"><font-awesome-icon icon="fa fa-question-circle" />
                             {{$t('property.help')}}</a>
                     </small>
                 </div>

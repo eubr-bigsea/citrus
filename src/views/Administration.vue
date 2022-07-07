@@ -7,7 +7,7 @@
             <b-tabs>
               <b-tab active>
                 <template slot="title">
-                  <span class="fa fa-user"></span>
+                  <font-awesome-icon icon="fa fa-user" />
                   {{$tc('titles.user', 2)}}
                 </template>
                 <br>I'm the first fading tab

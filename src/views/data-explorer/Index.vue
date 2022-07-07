@@ -2,17 +2,17 @@
     <main role="main">
         <div>
             <div class="d-flex justify-content-between align-items-center">
-                <h1><span class="fa fa-vial"></span> {{$tc('dataExplorer.tagline', 1)}}</h1>
+                <h1><font-awesome-icon icon="fa fa-vial" /> {{$tc('dataExplorer.tagline', 1)}}</h1>
             </div>
             <hr>
             <div class="card-deck ">
                 <b-card class="clickable m-1" role="button">
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
-                            <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-primary fa-stack-2x"></span>
-                                <span class="fas fa-table fa-stack-1x fa-inverse"></span>
-                            </span>
+                            <font-awesome-layers>
+                                <font-awesome-icon icon="fa fa-circle" size="2x" class="text-primary"/>
+                                <font-awesome-icon icon="fa fa-table" size="1x" inverse/>
+                            </font-awesome-layers>
                         </div>
                         <div class="col-md-9 mt-2" @click="navigate('data-explorer')">
                             <h5>Analisar, tratar e transformar dados</h5>
@@ -28,8 +28,8 @@
                     <div class="row">
                         <div class="col-md-4 mt-2 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-success fa-stack-2x"></span>
-                                <span class="fas fa-robot fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fa fa-circle text-success fa-stack-2x" />
+                                <font-awesome-icon icon="fa fa-robot fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 mt-2">
@@ -46,8 +46,8 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-danger fa-stack-2x"></span>
-                                <span class="fas fa-chart-bar fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-danger fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-chart-bar fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 mt-2">
@@ -64,8 +64,8 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
-                                <span class="fas fa-circle text-warning fa-stack-2x"></span>
-                                <span class="fas fa-trophy fa-stack-1x fa-inverse"></span>
+                                <font-awesome-icon icon="fas fa-circle text-warning fa-stack-2x" />
+                                <font-awesome-icon icon="fas fa-trophy fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 mt-2">
@@ -100,7 +100,7 @@
                             :placeholder="$tc('common.name')">
                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
                             @click.prevent="search">
-                            <span class="fa fa-search default-icon"></span> {{$t('actions.search')}}
+                            <font-awesome-icon icon="fa fa-search default-icon" /> {{$t('actions.search')}}
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                         </button>
                     </form>
@@ -120,7 +120,7 @@
                                 {{props.row.id}}</router-link>
                         </template>
                         <template slot="type" slot-scope="props">
-                            <span class="fas" :class="getIcon(props.row)"></span>
+                            <font-awesome-icon icon="fas" :class="getIcon(props.row)" />
                             {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
                         <template slot="name" slot-scope="props">

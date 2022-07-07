@@ -9,21 +9,21 @@
                     <label>{{$tc('common.name')}}:</label>
                     <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
                         :placeholder="$tc('common.name')" maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow"><span
-                            class="fa fa-save"></span>
+                    <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
+                        <font-awesome-icon icon="fa fa-save" />
                         {{$t('actions.save')}}</button>
 
                     <button v-if="notRunning" class="btn btn-sm btn-outline-primary ml-1 float-right"
-                        @click.prevent="handleTraining"><span class="fa fa-play"></span>
+                        @click.prevent="handleTraining"><font-awesome-icon icon="fa fa-play" />
                         {{$t('actions.train')}}</button>
 
                     <button v-else class="btn btn-sm btn-outline-danger ml-1 float-right"
-                        @click.prevent="handleStopTrain"><span class="fa fa-stop"></span>
+                        @click.prevent="handleStopTrain"><font-awesome-icon icon="fa fa-stop" />
                         {{$t('actions.stop')}}</button>
 
                     <!--
-                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ml-1 float-right"><span
-                            class="fa fa-sync"></span>
+                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ml-1 float-right">
+                        <font-awesome-icon icon="fa fa-sync" />
                         Reload jobs</button>
                         -->
                 </form>

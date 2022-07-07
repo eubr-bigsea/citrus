@@ -8,7 +8,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h1>{{ $tc('titles.dataSource', 2) }}</h1>
                             <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" :to="{ name: 'addDataSource' }" class="btn btn-primary btn-lemonade-primary">
-                                <span class="fa fa-plus" /> {{ $t('actions.addItem') }}
+                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
                             </router-link>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                                     <!-- 
                                     <button class="btn btn-sm btn-info" :title="$t('actions.download')"
                                         @click="download(props.row)">
-                                        <span class="fa fa-download" />
+                                        <font-awesome-icon icon="fa fa-download" />
                                     </button>
                                     -->
                                     <button v-if="loggedUserIsOwnerOrAdmin(props.row)"

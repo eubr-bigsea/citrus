@@ -49,8 +49,8 @@
                 >{{props.row.platforms.map(plat => plat.name).join(", ")}}</template>
                 <template slot="enabled" slot-scope="props">
                   <div class="xtext-center">
-                    <span v-if="props.row.enabled" class="fa fa-check-square"></span>
-                    <span v-if="!props.row.enabled" class="fa fa-square"></span>
+                    <font-awesome-icon v-if="props.row.enabled" icon="fa fa-check-square" />
+                    <font-awesome-icon v-if="!props.row.enabled" icon="fa fa-square" />
                   </div>
                 </template>
               </v-server-table>

@@ -7,7 +7,7 @@
                     <input v-bind="inputAttrs" :type="inputType.type" onKeyPress="return this.value.length < 12" class="w-50 form-control form-control-sm"
                         :step="inputType.step" v-on="inputHandlers" @keyup="handleKeyUp">
                     <b-input-group-append>
-                        <b-button variant="secondary" size="sm" @click="addTag()"><span class="fa fa-plus"></span>
+                        <b-button variant="secondary" size="sm" @click="addTag()"><font-awesome-icon icon="fa fa-plus" />
                         </b-button>
                     </b-input-group-append>
                 </b-input-group>

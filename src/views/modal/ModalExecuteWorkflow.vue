@@ -47,12 +47,12 @@
             </div>
         </template>
         <div v-else class="alert alert-danger">
-            <span class="fa fa-exclamation-circle"></span> {{$t("workflow.errorNoCluster")}}
+            <font-awesome-icon icon="fa fa-exclamation-circle" /> {{$t("workflow.errorNoCluster")}}
         </div>
         <div slot="modal-footer" class="w-100 text-right">
             <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn" class="btn btn-sm btn-outline-success"
                 @click="execute($event)">
-                <span class="fa fa-play"></span> {{$t('actions.execute')}}</button>
+                <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}</button>
             <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">{{$t('actions.cancel')}}</button>
         </div>
     </b-modal>

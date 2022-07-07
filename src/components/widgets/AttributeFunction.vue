@@ -72,15 +72,15 @@
                                 </td>
                                 <td style="width:10%" class="text-center">
                                     <a href="#" :title="$t('actions.delete')" @click.prevent="remove($event, index)">
-                                        <span class="fa fa-minus-circle"></span>
+                                        <font-awesome-icon icon="fa fa-minus-circle" />
                                     </a>
                                     <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')"
                                         @click.prevent="moveUp($event, index)">
-                                        <span class="fa fa-chevron-circle-up"></span>
+                                        <font-awesome-icon icon="fa fa-chevron-circle-up" />
                                     </a>
                                     <a v-if="index !== (valueList.length-1)" href="#"
                                         :title="$t('actions.moveDown')" @click.prevent="moveDown($event, index)">
-                                        <span class="fa fa-chevron-circle-down"></span>
+                                        <font-awesome-icon icon="fa fa-chevron-circle-down" />
                                     </a>
                                 </td>
                             </tr>
@@ -88,7 +88,7 @@
                     </table>
                     <div class="mt-2 border-top pt-2">
                         <button class="btn btn-success btn-sm" @click.prevent="add">
-                            <span class="fa fa-plus"></span> {{$t('actions.addItem')}}</button>
+                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}</button>
                     </div>
                 </div>
             </div>

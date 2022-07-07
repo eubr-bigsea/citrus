@@ -18,7 +18,7 @@
             <div class="col-md-4 col-lg-3 border-right">
                 <div class="mb-4 text-secondary">
                     <p class="border-bottom">
-                        <!--span v-if="executeOnStart" class="fa fa-bolt text-warning"></span--> {{workflow.name}}
+                        {{workflow.name}}
                     </p>
                     <!--
                     <VuePerfectScrollbar v-if="loaded" ref="scrollBar" useBothWheelAxes="true" class="scroll-area"
@@ -81,15 +81,15 @@
                     <div class="buttons mt-5 pt-2 text-center border-top">
                         <button class="btn btn-sm btn-outline-secondary float-right ml-1 mb-2"
                             @click="showWorkflowInfo">
-                            <span class="fas fa-info-circle"></span>
+                            <font-awesome-icon icon="fas fa-info-circle" />
                         </button>
                         <button class="btn btn-sm btn-primary float-right ml-1 mb-2" type="submit" :disabled="running"
                             @click="execute">
-                            <span class="fa fa-search"></span> {{$t('actions.execute')}}
+                            <font-awesome-icon icon="fa fa-search" /> {{$t('actions.execute')}}
                         </button>
                         <button class="btn btn-sm btn-outline-info float-right" type="button" :disabled="running"
                             @click="showHelp">
-                            <span class="fa fa-question-circle"></span> {{$t('variables.help')}}
+                            <font-awesome-icon icon="fa fa-question-circle" /> {{$t('variables.help')}}
                         </button>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
             <div class="col-md-8 col-lg-9 p-2 bg-white" style="min-height: 85vh;">
                 <div v-if="empty" class="empty-state text-center justify-content-between mt-4 pt-4">
                     <h4>
-                        <span class="fa fa-flask fa-3x"></span>
+                        <font-awesome-icon icon="fa fa-flask fa-3x" />
                     </h4>
                     <h4>Execução da trilha "{{workflow.name}}"</h4>
                     <p class="font-italic">{{workflow.description}}</p>
@@ -109,7 +109,7 @@
                 <div v-else-if="statusError && !running"
                     class="empty-state text-center justify-content-between mt-4 pt-4">
                     <h4>
-                        <span class="fa fa-flask fa-3x"></span>
+                        <font-awesome-icon icon="fa fa-flask fa-3x" />
                     </h4>
                     <h4>Execução da trilha "{{workflow.name}}"</h4>
                     <p class="font-italic">{{workflow.description}}</p>

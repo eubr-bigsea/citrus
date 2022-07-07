@@ -161,10 +161,10 @@
                             <td class="progress-text" nowrap="nowrap"></td>
                             <td class="progress-pause" nowrap="nowrap">
                                 <a v-if="showResume" href="#" class="progress-resume-link" @click.prevent="resume">
-                                    <span class="fa fa-2x fa-play"></span>
+                                    <font-awesome-icon icon="fa fa-2x fa-play" />
                                 </a>
                                 <a v-if="showPause" href="#" class="progress-pause-link" @click.prevent="pause">
-                                    <span class="fa fa-2x fa-pause"></span>
+                                    <font-awesome-icon icon="fa fa-2x fa-pause" />
                                 </a>
                             </td>
                         </tr>

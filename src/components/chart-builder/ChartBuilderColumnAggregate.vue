@@ -2,7 +2,7 @@
     <div class="axis-attribute">
         <b-dropdown ref="dropdown" size="sm" variant="transparent text-left">
             <template #button-content>
-                <span class="fa fa-chevron-down"></span> &nbsp;&nbsp;
+                <font-awesome-icon icon="fa fa-chevron-down" /> &nbsp;&nbsp;
                 <span v-if="aggregation.length">{{aggregation}}({{name}})</span>
                 <span v-else>{{name}}</span>
             </template>

@@ -231,18 +231,18 @@
                                     </b-tab>
                                     <b-tab v-if="loggedUserIsOwnerOrAdmin">
                                         <template slot="title">
-                                            <span class="fa fa-link"></span> {{$tc('dataSource.relationship', 2)}}
+                                            <font-awesome-icon icon="fa fa-link" /> {{$tc('dataSource.relationship', 2)}}
                                         </template>
                                         <p class="pb-1 border-bottom text-right">
                                             <button :disabled="userPermission === null || permission === null"
-                                                class="btn btn-sm btn-primary" @click="addPermission"><span
-                                                    class="fa fa-link"></span>
+                                                class="btn btn-sm btn-primary" @click="addPermission">
+                                                <font-awesome-icon icon="fa fa-link" />
                                                 {{$t('actions.add', {type: $tc('common.sharing', 1)})}}</button>
                                         </p>
                                     </b-tab>
                                     <b-tab v-if="loggedUserIsOwnerOrAdmin">
                                         <template slot="title">
-                                            <span class="fa fa-share-alt"></span> {{$tc('common.sharing', 2)}}
+                                            <font-awesome-icon icon="fa fa-share-alt" /> {{$tc('common.sharing', 2)}}
                                         </template>
                                         <div class="row mb-3 mt-3">
                                             <div v-if="loggedUserIsOwnerOrAdmin" class="col-md-4 border-right">
@@ -318,7 +318,7 @@
                                     <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-success btn-spinner"
                                         @click.stop="save">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
-                                        <span class="fa fa-save"></span>
+                                        <font-awesome-icon icon="fa fa-save" />
                                         {{$tc('actions.save')}}
                                     </button>
                                     <button v-if="canInfer && loggedUserIsOwnerOrAdmin"
@@ -329,7 +329,7 @@
                                     <button class="btn btn-spinner ml-1 btn-outline-info" :disabled="isDirty"
                                         @click.stop="preview">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
-                                        <span class="fa fa-eye"></span>
+                                        <font-awesome-icon icon="fa fa-eye" />
                                         &nbsp;
                                         <span
                                             v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')"></span>
