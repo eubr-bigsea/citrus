@@ -28,7 +28,7 @@
                     </div>
                     <div>
                         <b-tabs nav-class="custom-tab mb-0">
-                            <b-tab active :title="$tc('titles.job')">
+                            <b-tab active :title="$tc('titles.job')" :title-link-class="'small-nav-link'">
                                 <div>
                                     <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
                                         :operations="operations" :version="job.id" :show-toolbar="false"
@@ -204,7 +204,7 @@
                                 </div>
                             </b-tab>
                             -->
-                            <b-tab :title="$tc('job.results', 2)">
+                            <b-tab :title="$tc('job.results', 2)" :title-link-class="'small-nav-link'">
                                 <div class="row">
                                     <div class="col-md-3 pt-3 result-area">
                                         <b-list-group>
@@ -274,7 +274,7 @@
                                 </div>
                             </b-tab>
 
-                            <b-tab :title="$tc('job.sourceCode')" @click="showSourceCode = 1">
+                            <b-tab :title="$tc('job.sourceCode')" @click="showSourceCode = 1" :title-link-class="'small-nav-link'">
                                 <b-card class="mt-3">
                                     <SourceCode v-if="showSourceCode" :job="job.id" />
                                 </b-card>

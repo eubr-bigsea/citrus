@@ -21,6 +21,7 @@ label {
 }
 body {
   background-color: var(--background-color);
+  font-family: 'Roboto', sans-serif;
 }
 .btn:focus {
     box-shadow: none;
@@ -137,9 +138,6 @@ div.openid-logo {
   width: calc(100% - 0px);
 }
 
-* {
-  font-family: 'Roboto', sans-serif;
-}
 
 main {
     margin-bottom: 50px;

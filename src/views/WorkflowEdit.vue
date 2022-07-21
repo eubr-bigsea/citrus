@@ -129,7 +129,8 @@
 <script>
     import axios from 'axios';
     import DiagramComponent from '../components/Diagram.vue';
-    import html2canvas from 'html2canvas';
+    //import html2canvas from 'html2canvas';
+    import { toPng } from 'html-to-image';
     import InputHeader from '../components/InputHeader.vue';
     import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
     import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
@@ -353,7 +354,7 @@
             })
             /* Task related */
             this.$root.$on('addTask', (task) => {
-                this.maxDisplayOrder ++;
+                this.maxDisplayOrder++;
                 task.step = null;
                 task.display_order = this.maxDisplayOrder;
 
@@ -388,11 +389,11 @@
             this.$root.$on('addFlow', (flow, jsPlumbConn) => {// eslint-disable-line no-unused-vars
                 const sourceTask = self.workflow.tasks.find((t) => t.id === flow.source_id);
                 const targetTask = self.workflow.tasks.find((t) => t.id === flow.target_id);
-                if (targetTask.$meta === undefined){
+                if (targetTask.$meta === undefined) {
                     targetTask.$meta = {}
                 }
                 const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
-                targetTask.$meta[inputPort.slug] = {sourceOperationSlug: sourceTask.operation.slug};
+                targetTask.$meta[inputPort.slug] = { sourceOperationSlug: sourceTask.operation.slug };
 
                 flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
                 this.workflow.flows.push(flow);
@@ -406,12 +407,12 @@
                 if (inx > -1) {
                     const flow = this.workflow.flows[inx];
                     this.workflow.flows.splice(inx, 1);
-                    
+
                     this.isDirty = true;
 
                     const targetTask = self.workflow.tasks.find((t) => t.id === flow.target_id);
                     const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
-                    if (targetTask.$meta && targetTask.$meta[inputPort.slug]){
+                    if (targetTask.$meta && targetTask.$meta[inputPort.slug]) {
                         delete targetTask.$meta[inputPort.slug];
                     }
                 }
@@ -607,6 +608,17 @@
             saveAsImage() {
                 let self = this
                 let $elem = this.$refs.diagram.$el.querySelector('#lemonade-container')
+
+                toPng($elem)
+                    .then(function (dataUrl) {
+                        const link = document.createElement('a');
+                        link.setAttribute('download', `workflow_${self.workflow.id}.png`);
+                        link.setAttribute('href', dataUrl);
+                        document.getElementsByTagName("body")[0].appendChild(link)
+                        link.click();
+                        link.remove();
+                    });
+                return;/*
                 html2canvas($elem, {
                     width: 3000, height: 3000, logging: false, allowTaint: false,
                     onclone(clone) {
@@ -663,7 +675,7 @@
                             link.remove();
                             //link.text = "Click"
                         }, 1000);
-                    });
+                    });*/
             },
             _generateId() {
                 return this.$refs.diagram.generateId();
@@ -788,7 +800,7 @@
                                 .then(() => {
                                     self.isDirty = false;
                                     self.success(self.$t('workflow.versionRestored',
-                                        { version}));
+                                        { version }));
                                     //self.$router.go(self.$router.currentRoute);
                                     self.closeHistory();
                                     self.load();

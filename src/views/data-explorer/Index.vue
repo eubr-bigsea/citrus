@@ -2,19 +2,18 @@
     <main role="main">
         <div>
             <div class="d-flex justify-content-between align-items-center">
-                <h1><font-awesome-icon icon="fa fa-vial" /> {{$tc('dataExplorer.tagline', 1)}}</h1>
+                <h1>
+                    <font-awesome-icon icon="fa fa-vial" /> {{$tc('dataExplorer.tagline', 1)}}
+                </h1>
             </div>
             <hr>
             <div class="card-deck ">
                 <b-card class="clickable m-1" role="button">
                     <div class="row">
-                        <div class="col-md-4 col-sm-12 col-lg-3">
-                            <font-awesome-layers>
-                                <font-awesome-icon icon="fa fa-circle" size="2x" class="text-primary"/>
-                                <font-awesome-icon icon="fa fa-table" size="1x" inverse/>
-                            </font-awesome-layers>
+                        <div class="rounded-option bg-primary">
+                            <font-awesome-icon icon="fa fa-table" size="3x" inverse />
                         </div>
-                        <div class="col-md-9 mt-2" @click="navigate('data-explorer')">
+                        <div class="col mt-2" @click="navigate('data-explorer')">
                             <h5>Analisar, tratar e transformar dados</h5>
                             <small>
                                 Utilize uma interface amigável e responsiva para tratar os dados. Você poderá
@@ -26,13 +25,10 @@
                 </b-card>
                 <b-card class="clickable m-1" role="button" @click="navigate('choose-task')">
                     <div class="row">
-                        <div class="col-md-4 mt-2 col-sm-12 col-lg-3">
-                            <span class="fa-stack fa-2x">
-                                <font-awesome-icon icon="fa fa-circle text-success fa-stack-2x" />
-                                <font-awesome-icon icon="fa fa-robot fa-stack-1x fa-inverse" />
-                            </span>
+                        <div class="rounded-option bg-success">
+                            <font-awesome-icon icon="fa fa-robot" size="3x" inverse />
                         </div>
-                        <div class="col-md-9 mt-2">
+                        <div class="col">
                             <h5>Criar modelo de aprendizado de máquina</h5>
                             <small>
                                 Crie modelos de aprendizado de máquina, definindo qual tarefa e algoritmos aplicar,
@@ -44,13 +40,10 @@
                 </b-card>
                 <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
                     <div class="row">
-                        <div class="col-md-4 col-sm-12 col-lg-3">
-                            <span class="fa-stack fa-2x">
-                                <font-awesome-icon icon="fas fa-circle text-danger fa-stack-2x" />
-                                <font-awesome-icon icon="fas fa-chart-bar fa-stack-1x fa-inverse" />
-                            </span>
+                        <div class="rounded-option bg-danger">
+                            <font-awesome-icon icon="fa fa-chart-bar" size="3x" inverse />
                         </div>
-                        <div class="col-md-9 mt-2">
+                        <div class="col mt-2">
                             <h5>Criar visualizações de dados</h5>
                             <small>
                                 Monte gráficos, tabelas e outras visualizações de dados.
@@ -64,8 +57,8 @@
                     <div class="row">
                         <div class="col-md-4 col-sm-12 col-lg-3">
                             <span class="fa-stack fa-2x">
-                                <font-awesome-icon icon="fas fa-circle text-warning fa-stack-2x" />
-                                <font-awesome-icon icon="fas fa-trophy fa-stack-1x fa-inverse" />
+                                <font-awesome-icon icon="fa fa-circle text-warning fa-stack-2x" />
+                                <font-awesome-icon icon="fa fa-trophy fa-stack-1x fa-inverse" />
                             </span>
                         </div>
                         <div class="col-md-9 mt-2">
@@ -120,7 +113,7 @@
                                 {{props.row.id}}</router-link>
                         </template>
                         <template slot="type" slot-scope="props">
-                            <font-awesome-icon icon="fas" :class="getIcon(props.row)" />
+                            <font-awesome-icon :icon="getIcon(props.row)" />
                             {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
                         <template slot="name" slot-scope="props">
@@ -166,10 +159,10 @@
                 options: {
                     hidePerPageSelect: true,
                     perPage: 5,
-                    perPageValues: [5, 10],
+                    perPageValues: [],
                     debounce: 800,
                     skin: 'table-sm table table-hover',
-                    
+
                     dateColumns: ['updated'],
                     headings: {
                         id: 'ID',
@@ -180,7 +173,7 @@
                     },
                     sortable: ['name', 'id', 'updated'],
                     //filterable: ['name', 'id'],
-                    filterable: [],
+                    filterable: false,
                     sortIcon: {
                         base: 'fa fas',
                         is: 'fa-sort ml-10',
@@ -265,5 +258,15 @@
         margin: initial !important;
         background-color: white;
         padding-top: 0;
+    }
+
+    .rounded-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 10px;
+        width: 80px;
+        height: 80px;
+        border-radius: 40px;
     }
 </style>

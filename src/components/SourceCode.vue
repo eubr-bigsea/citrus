@@ -1,15 +1,18 @@
 <template>
 
-    <PrismEditor ref="prism" :code="sourceCode.source || ''" :settings="{maxScrollbarLength: 30}" :language="sourceCode.lang"
-        :auto-style-line-numbers="true" :line-numbers="true" readonly
-        style="height:80vh;font-size:.9em; overflow-x:hidden" />
+    <prism-editor ref="prism" v-model="sourceCode.source"
+        line-numbers :highlight="highlighter"
+        style="height:70vh;overflow-x:hidden;;" class="source-editor" />
 
 </template>
 <script>
-    import axios from 'axios';
-    import "prismjs/themes/prism.css";
-    import PrismEditor from 'vue-prism-editor'
     import 'vue-prism-editor/dist/prismeditor.min.css'
+    import axios from 'axios';
+    
+    import { PrismEditor } from 'vue-prism-editor'
+    import { highlight, languages } from 'prismjs/components/prism-core';
+    import 'prismjs/components/prism-python';
+    import 'prismjs/themes/prism.css';
     //import "vue-prism-editor/dist/VuePrismEditor.css";
 
     const standUrl = process.env.VUE_APP_STAND_URL;
@@ -18,29 +21,35 @@
             PrismEditor,
         },
         props: {
-            job: {type: Number, default: 0},
-            visualizationId: {type: Number, default: 0}
+            job: { type: Number, default: 0 },
+            visualizationId: { type: Number, default: 0 }
         },
         data() {
             return {
                 sourceCode: ''
             };
         },
-        mounted: function () {
-            const self = this;
+        async mounted() {
             const url = `${standUrl}/jobs/${this.job}/source-code`;
-            axios.get(url).then(resp => {
-                self.sourceCode = resp.data;
-            });
+            this.sourceCode = (await axios.get(url)).data;
         },
+        methods: {
+            highlighter() {
+                return highlight(this?.sourceCode?.source || '', languages.py, 'py');
+            },
+        }
     }
 </script>
 <style>
-    .prism-editor__code {
-        background: #fff !important;
-        border: none;
+    .prism-editor__editor > span, .prism-editor-wrapper .prism-editor__editor {
+        font-family: "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", Monaco, "Lucida Console", monospace;
     }
-    .prism-editor__line-numbers {
-        background: #fff !important;
+    div.source-editor .prism-editor__container {
+        /* we dont use `language-` classes anymore so thats why we need to add background and text color manually */
+        color: #222;
+        /* you must provide font-family font-size line-height. Example: */
+        font-size: 12px;
+        line-height: 1.4;
+        padding: 2px;
     }
 </style>

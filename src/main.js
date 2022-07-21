@@ -149,9 +149,9 @@ Vue.use(VueProgressBar, options);
 
 // Date-fns
 import { formatDistanceStrict, format, parseISO } from 'date-fns';
-import { en, pt } from 'date-fns/locale'
+import { enUS, ptBR } from 'date-fns/locale'
 
-const locales = {en, pt};
+const locales = {en: enUS, pt: ptBR};
 /*
 const locales = {
     en: require('date-fns/locale/en-US'),

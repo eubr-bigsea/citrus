@@ -249,7 +249,7 @@
                 this.type = obj.type;
                 this.value = obj.property?.value;
                 this.taskId = obj.taskId;
-                this.values = JSON.parse(obj.values); //FIXME
+                this.values = obj.values? JSON.parse(obj.values) : []; //FIXME
             } else if (sourceType === 'filter') {
                 this.data_type = obj.data_type;
                 this.default_value = obj.value;
