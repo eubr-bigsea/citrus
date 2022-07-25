@@ -11,7 +11,7 @@
                     {{opt.pt}}</option>
             </select>
             <small class="form-text text-muted mb-3">
-                Como dividir os dados de entrada entre treino e teste. 
+                Como dividir os dados de entrada entre treino e teste.
             </small>
 
             <template v-if="split.forms.strategy.value === 'split'">
@@ -43,19 +43,18 @@
             </template>
         </div>
         <div class="col-6">
-            <div v-if="split.forms.strategy.value === 'cross_validation' && folds >= 1 && folds <= 20" 
-                    class="ml-5 mb-1" data-test="example">
+            <div v-if="split.forms.strategy.value === 'cross_validation' && folds >= 1 && folds <= 20" class="ml-5 mb-1"
+                data-test="example">
                 <label>Como ficará a divisão</label>
-                <div v-for="row in folds" :key="row"
-                    class="row">
+                <div v-for="row in folds" :key="row" class="row">
                     <div v-if="row === (folds - 1) && folds > 3" class="w-100 text-center">
                         ...
                     </div>
-                    <div v-for="col in folds" :key="col" 
-                        v-if="row < 4 || row > folds - 2"
-                        class="text-center border"
-                        :class="row === col ? 'bg-success text-white': 'bg-light'"
-                        :style="{width: 'calc(100% / ' + folds + ')'}">{{col}}</div>
+                    <template v-for="col in folds">
+                        <div v-if="row < 4 || row > folds - 2" :key="col" class="text-center border"
+                            :class="row === col ? 'bg-success text-white': 'bg-light'"
+                            :style="{width: 'calc(100% / ' + folds + ')'}">{{col}}</div>
+                    </template>
                 </div>
                 <div class="mt-3">
                     <div class="badge p-1 mt-2 mr-1 badge-light border text-dark">treino</div>
@@ -81,7 +80,7 @@
         computed: {
             folds() {
                 return parseInt(this.split.forms.folds.value || 0);
-            }
+            },
         }
     }
 </script>

@@ -109,7 +109,7 @@
     };
 
     export default {
-        name: 'Toolbox',
+        name: 'ToolboxComponent',
         components: {
             VuePerfectScrollbar
         },

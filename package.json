@@ -64,7 +64,6 @@
     "babel-jest": "^27.0.6",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "hard-source-webpack-plugin": "^0.13.1",
     "jest": "^27.0.5",
     "vue-template-compiler": "^2.6.14"
   },

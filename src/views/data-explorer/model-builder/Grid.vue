@@ -125,6 +125,7 @@
 </template>
 <script>
     export default {
+        name: 'GridComponent',
         props: {
             grid: { type: Object, required: true }
         },

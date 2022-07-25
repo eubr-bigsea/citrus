@@ -67,6 +67,7 @@
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     export default {
+        name: 'CastComponent',
         components: {
             LabelComponent, 'v-select': vSelect
         },

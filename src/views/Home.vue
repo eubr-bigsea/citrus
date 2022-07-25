@@ -29,7 +29,7 @@
     const caipirinhaUrl = process.env.VUE_APP_CAIPIRINHA_URL;
 
     export default {
-        name: 'Home',
+        name: 'HomeView',
         components: {
             HomeCard
         },

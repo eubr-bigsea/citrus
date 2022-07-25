@@ -67,6 +67,7 @@
     import JoinCondition from './JoinCondition';
 
     export default {
+        name: 'JoinComponent',
         components: {
             LabelComponent, JoinSelect, JoinCondition
         },

@@ -14,7 +14,7 @@
                         <small>{{$tc('titles.cluster')}}</small>
                         <v-select v-model="clusterId" :options="clusters" label="name" :reduce="(opt) => opt.id"
                             :taggable="false" :close-on-select="true" :filterable="false">
-                            <template #option="{ description, id, name, type }">
+                            <template #option="{ description, name }">
                                 {{ name }}<br />
                                 <small><em>{{ description }}</em></small>
                             </template>

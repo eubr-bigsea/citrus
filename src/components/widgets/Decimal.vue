@@ -17,6 +17,7 @@
     import Widget from '../../mixins/Widget.js';
     import { debounce } from '../../util.js';
     export default {
+        name: 'DecimalComponent',
         components: { LabelComponent },
         mixins: [Widget],
         methods: {

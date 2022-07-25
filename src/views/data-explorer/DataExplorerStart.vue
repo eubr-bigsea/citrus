@@ -16,7 +16,7 @@
                     <label class="">Escolha a fonte de dados:</label>
                     <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList" label="name"
                         class="w-50" @search="loadDataSourceList" @input="retrieveAttributes">
-                        <template v-slot:no-options="{ search, searching }">
+                        <template v-slot:no-options="{  }">
                             <small>Digite parte do nome pesquisar ...</small>
                         </template>
                         <template slot="option" slot-scope="option">

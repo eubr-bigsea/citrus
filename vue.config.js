@@ -1,19 +1,22 @@
 /*const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
     .BundleAnalyzerPlugin;*/
-
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');    
-
+const path = require('path');
 module.exports = {
     configureWebpack: {
         devtool: 'source-map',
         plugins: [
             //new BundleAnalyzerPlugin(),
-            //new HardSourceWebpackPlugin(),
-            
         ],
         optimization: {
             minimize: false
-        }
+        },
+        cache: {
+            type: 'filesystem',
+            buildDependencies: {
+                config: [__filename]
+            },
+            cacheDirectory: path.resolve(__dirname, '.temp_cache'),
+        },
     },
     publicPath: './',
     pluginOptions: {

@@ -39,6 +39,7 @@
 </template>
 <script>
     export default {
+        name: 'MetricComponent',
         props: {
             evaluator: { type: Object, default: () => null }
         }

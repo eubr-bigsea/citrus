@@ -32,7 +32,7 @@
                                                         <label
                                                             class="font-weight-bold">{{$t('dataSource.storage')}}:</label>
                                                         <input
-                                                            v-model="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
+                                                            :value="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
                                                             disabled class="form-control">
                                                     </div>
                                                     <div class="col-md-6">
@@ -252,7 +252,7 @@
                                                         :options="users" :taggable="false" :get-option-label="getUserLabel"
                                                         :close-on-select="true" label="id"
                                                         @search="onSearchUsers">
-                                                        <template #no-options="{ search, searching, loading }">
+                                                        <template #no-options="{  }">
                                                             {{$t('common.noResults')}}
                                                         </template>
                                                         <template slot="selected-option" slot-scope="option">

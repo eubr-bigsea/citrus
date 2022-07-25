@@ -15,6 +15,7 @@
     import Widget from '../../mixins/Widget.js';
     import { debounce } from '../../util.js';
     export default {
+        name: 'MaskComponent',
         components: { LabelComponent },
         mixins: [Widget],
         props: {

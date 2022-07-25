@@ -16,6 +16,7 @@
     import Widget from '../../mixins/Widget.js';
     import { debounce } from '../../util.js';
     export default {
+        name: 'PercentageComponent',
         components: { LabelComponent },
         mixins: [Widget],
         methods: {

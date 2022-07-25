@@ -2,8 +2,8 @@
     <div>
         <span v-if="!readOnly">
             <LabelComponent :field="field" :value="value"></LabelComponent>
-            <div class="scale clearfix">
-                <div v-for="color in displayValue" v-if="displayValue" :key="color">
+            <div v-if="displayValue" class="scale clearfix">
+                <div v-for="color in displayValue" :key="color">
                     <div class="color" :style="{'background-color': color}"></div>
                 </div>
             </div>

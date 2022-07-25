@@ -21,6 +21,7 @@
     import Notifier from '../mixins/Notifier'
     import axios from 'axios'
     export default {
+        name: 'VisualizationComponent',
         mixins: [Notifier],
         props: {
             url: {type: String, default: ''},

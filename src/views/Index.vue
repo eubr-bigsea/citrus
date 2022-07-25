@@ -6,6 +6,7 @@
     import { UserManager, WebStorageStateStore } from 'oidc-client';
 
     export default {
+        name: 'IndexView',
         mounted() {
             const q = this.$route.query;
             const self = this;

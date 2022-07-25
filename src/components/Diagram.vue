@@ -90,6 +90,7 @@
     };
 
     const DiagramComponent = Vue.extend({
+        name: 'DiagramComponent',
         components: {
             'task-component': TaskComponent,
             'diagram-toolbar': DiagramToolbar,

@@ -17,6 +17,7 @@
     import Widget from '../../mixins/Widget.js';
     import { debounce } from '../../util.js';
     export default {
+        name: 'IntegerComponent',
         components: { LabelComponent },
         mixins: [Widget],
         mounted() {

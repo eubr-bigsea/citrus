@@ -133,6 +133,7 @@
     import Notifier from '../../mixins/Notifier.js';
 
     export default {
+        name: 'PreviewComponent',
         components: { contextMenu},
         mixins: [Notifier],
         props: {

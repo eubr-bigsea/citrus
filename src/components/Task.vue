@@ -168,6 +168,7 @@
     }
     */
     const TaskComponent = Vue.extend({
+        name: 'TaskComponent',
         props: {
             enableContextMenu: { default: true, type: Boolean },
             enablePositioning: {

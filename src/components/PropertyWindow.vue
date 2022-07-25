@@ -85,8 +85,8 @@
                                     <tr v-for="field in form.fields" v-if="form.category === 'execution' && field.enabled && task.forms[field.name]"
                                         :key="field.name">
                                         <td>
-                                            <b-checkbox
-                                                v-model="task.forms[field.name] && task.forms[field.name].publishing_enabled">
+                                            <b-checkbox v-if="task.forms[field.name]"
+                                                v-model="task.forms[field.name].publishing_enabled">
                                             </b-checkbox>
                                         </td>
                                         <td>{{field.label}}</td>

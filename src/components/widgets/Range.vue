@@ -18,6 +18,7 @@
     import Widget from '../../mixins/Widget.js';
     import { debounce } from '../../util.js';
     export default {
+        name: 'RangeComponent',
         components: { LabelComponent },
         mixins: [Widget],
         props: {

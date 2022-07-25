@@ -6,7 +6,7 @@
         <vue-select v-model="dataSource_" :filterable="false" :options="dataSourceList" label="name"
             class="w-50" @search="searchDataSource" @input="retrieveAttributes">
 
-            <template v-slot:no-options="{ search, searching }">
+            <template v-slot:no-options="{ }">
                 <small>Digite parte do nome pesquisar ...</small>
             </template>
             <template slot="option" slot-scope="option">

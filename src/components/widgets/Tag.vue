@@ -12,6 +12,7 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
+        name: 'TagComponent',
         components: { LabelComponent },
         mixins: [Widget],
         computed: {

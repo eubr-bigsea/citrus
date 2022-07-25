@@ -33,7 +33,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="font-weight-bold">{{$tc('model.storage')}}:</label>
-                                        <input v-model="model.storage.name + ' (' + model.storage.type + ')'" disabled
+                                        <input :value="model.storage.name + ' (' + model.storage.type + ')'" disabled
                                             class="form-control" />
                                     </div>
                                 </div>

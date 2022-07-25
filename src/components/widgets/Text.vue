@@ -13,6 +13,7 @@
     import Widget from '../../mixins/Widget.js';
     import { debounce } from '../../util.js';
     export default {
+        name: 'TextComponent',
         components: { LabelComponent },
         mixins: [Widget],
         computed: {

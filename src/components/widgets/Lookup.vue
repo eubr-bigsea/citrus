@@ -43,6 +43,7 @@
     import Widget from '../../mixins/Widget.js';
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL
     export default {
+        name: 'LookupComponent',
         components: { LabelComponent },
         mixins: [Widget],
         data() {

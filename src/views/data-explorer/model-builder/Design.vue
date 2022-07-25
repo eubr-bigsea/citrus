@@ -118,6 +118,7 @@
     const META_PLATFORM_ID = 1000;
 
     export default {
+        name: 'DesignComponent',
         components: {
             SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
             FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result

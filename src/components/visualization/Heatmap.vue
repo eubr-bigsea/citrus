@@ -14,6 +14,7 @@
     import VisualizationMixin from "./VisualizationMixin";
     import { debounce } from '../../util.js';
     export default {
+        name: 'HeatmapVisualization',
         mixins: [VisualizationMixin],
         data() {
             return {

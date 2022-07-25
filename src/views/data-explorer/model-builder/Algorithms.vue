@@ -66,6 +66,7 @@
     import NumericRangeOrSet from '../../../components/widgets/NumericRangeOrSet.vue';
     const conditional = /\bthis\..+?\b/g;
     export default {
+        name: 'AlgorithmsComponent',
         components: {
             'checkboxes-component': Checkboxes,
             'input-tag-component': InputTag,

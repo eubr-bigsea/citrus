@@ -7,6 +7,7 @@
 <script>
     import VisualizationMixin from "./VisualizationMixin";
     export default {
+        name: 'HtmlVisualization',
         mixins: [VisualizationMixin],
         data() {
             return {

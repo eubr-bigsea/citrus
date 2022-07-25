@@ -142,6 +142,7 @@
     let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
     const META_PLATFORM_SLUG = 'meta';
     export default {
+        name: 'IndexComponent',
         mixins: [Notifier],
         data() {
             const self = this;

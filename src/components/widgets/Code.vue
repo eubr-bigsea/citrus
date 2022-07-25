@@ -53,6 +53,7 @@
     //import { debounce } from '../../util.js';
 
     export default {
+        name: 'CodeComponent',
         components: {
             LabelComponent, PrismEditor
         },

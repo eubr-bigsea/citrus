@@ -11,6 +11,7 @@
     import {debounce} from "../../util.js";
 
     export default {
+        name: 'IndicatorVisualization',
         mixins: [VisualizationMixin],
         data() {
             return {

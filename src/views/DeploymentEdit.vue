@@ -30,7 +30,7 @@
                                                     label="name" :reduce="(opt) => opt.id" 
                                                     :close-on-select="true" :filterable="false"
                                                     @search="fetchModels">
-                                                    <template #no-options="{ search, searching, loading }">
+                                                    <template #no-options="{  }">
                                                         <small>{{$t('common.noResultsInformSearch')}}</small>
                                                     </template>
                                                 </v-select>
@@ -39,7 +39,7 @@
                                                 <label class="font-weight-bold">{{$tc('deployment.target')}}:</label>
                                                 <v-select v-model="deployment.target" 
                                                     :options="targets" label="name">
-                                                    <template #option="{ description, id, name, target_type }">
+                                                    <template #option="{ description, name, target_type }">
                                                         {{ name }}<br />
                                                         <small><em>{{ description }} ({{ target_type }})</em></small>
                                                     </template>
@@ -51,7 +51,7 @@
                                                 <label class="font-weight-bold">{{$tc('deployment.image')}}:</label>
                                                 <v-select v-model="deployment.image" 
                                                     :options="images" label="description">
-                                                    <template #option="{ description, id, name, tag }">
+                                                    <template #option="{ description, name, tag }">
                                                         {{ description }}<br />
                                                         <small><em>{{ name }}:{{ tag }}</em></small>
                                                     </template>

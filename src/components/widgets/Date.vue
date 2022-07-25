@@ -20,6 +20,7 @@
     import { debounce } from '../../util.js';
 
     export default {
+        name: 'DateComponent',
         components: { LabelComponent },
         mixins: [Widget],
         data() {

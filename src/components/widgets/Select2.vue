@@ -18,6 +18,7 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
+        name: 'Select2Component',
         components: {
             'v-select': vSelect,
             LabelComponent

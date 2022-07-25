@@ -23,4 +23,5 @@
 </template>
 <script>
 export default {
+    name: 'WelcomeComponent'
 }

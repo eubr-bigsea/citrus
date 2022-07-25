@@ -95,6 +95,7 @@
     import Pulse from '../../components/Pulse';
     import Vue from 'vue';
     export default {
+        name: 'StepComponent',
         components: { Pulse, },
         props: {
             attributes: { type: Array, required: true },

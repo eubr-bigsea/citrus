@@ -71,7 +71,7 @@
                                                 <v-select v-model="role.users" style="font-size: .9em" :multiple="true"
                                                     :options="users" :taggable="false" :get-option-label="getUserLabel"
                                                     :close-on-select="true" label="id" @search="onSearchUsers">
-                                                    <template #no-options="{ search, searching, loading }">
+                                                    <template #no-options="{ }">
                                                         {{$t('common.noResults')}}
                                                     </template>
                                                     <template slot="selected-option" slot-scope="option">

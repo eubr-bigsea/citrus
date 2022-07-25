@@ -10,6 +10,7 @@
     import { debounce } from "../../util.js";
     import VisualizationMixin from "./VisualizationMixin";
     export default {
+        name: 'TreemapVisualization',
         mixins: [VisualizationMixin],
         data() {
             return {

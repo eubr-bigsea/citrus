@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import Administration from './views/Administration.vue';
-
 // import ProjectList from './views/Administration/ProjectList.vue';
 // import ProjectAdd from './views/Administration/ProjectAdd.vue';
 // import ProjectShow from './views/Administration/ProjectShow.vue';
@@ -133,16 +131,6 @@ let router = new VueRouter({
             }
         },
 
-        {
-            path: '/administration',
-            name: 'administration',
-            component: Administration,
-            meta: {
-                requiresAuth: true,
-                requiresRole: true,
-                title: ['titles.administration', 1]
-            }
-        },
         {
             path: '/administration/roles',
             name: 'AdministrationRoleList',

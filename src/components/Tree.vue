@@ -7,6 +7,7 @@
     import Vue from "vue";
     import TreeItem from './TreeItem';
     export default {
+        name: 'TreeComponent',
         components: { TreeItem },
         props: {
             tree: { type: Object, default: () => { } },

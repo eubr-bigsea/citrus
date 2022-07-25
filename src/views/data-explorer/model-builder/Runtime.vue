@@ -14,6 +14,7 @@
 <script>
     import VueSelect from 'vue-select';
     export default {
+        name: 'RuntimeComponent',
         components: { 'v-select': VueSelect, },
         props: {
             clusters: { type: Array, required: true },

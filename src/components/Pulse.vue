@@ -3,7 +3,7 @@
 </template>
 <script>
     export default {
-
+        name: 'PulseComponent'
     }
 </script>
 <style scoped>

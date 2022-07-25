@@ -6,6 +6,7 @@
 <script>
     import snarkdown from 'snarkdown';
     export default {
+        name: 'MarkdownComponent',
         props: {
             text: {type: String, default: () => null},
             cssStyle: {type: String, default: () => null},

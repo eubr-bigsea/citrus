@@ -19,6 +19,7 @@
     import LabelComponent from './Label.vue'
     import Widget from '../../mixins/Widget.js';
     export default {
+        name: 'CheckboxesComponent',
         components: { LabelComponent },
         mixins: [Widget],
         data() {

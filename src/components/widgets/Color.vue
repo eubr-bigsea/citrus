@@ -13,6 +13,7 @@
     import LabelComponent from './Label.vue';
     import Widget from '../../mixins/Widget.js';
     export default {
+        name: 'ColorComponent',
         components: { LabelComponent },
         mixins: [Widget],
         props: {
