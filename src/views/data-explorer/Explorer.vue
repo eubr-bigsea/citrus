@@ -130,7 +130,7 @@
                                 <div class="col-4">
                                     <strong>Estatísticas (exclui nulos)</strong>
                                     <table class="table table-sm table-stats">
-                                        <tr v-for="value, stat in stats.message.stats">
+                                        <tr v-for="value, stat in stats.message.stats" :key="stat">
                                             <th>{{stat}}</th>
                                             <td>{{value}}</td>
                                         </tr>
@@ -139,7 +139,7 @@
                                 <div :class="{'col-4': stats.message.outliers, 'col-8': !stats.message.outliers}">
                                     <strong>Top valores *</strong>
                                     <table class="table table-sm table-stats">
-                                        <tr v-for="t in stats.message.top20.slice(0, 10)">
+                                        <tr v-for="t in stats.message.top20.slice(0, 10)" :key="t">
                                             <th class="col-8">
                                                 {{t[0]}}
                                                 <div class="top-bar"
@@ -154,7 +154,7 @@
                                 <div class="col-4" v-if="stats.message.outliers">
                                     <strong>Valores atípicos (outliers)*</strong>
                                     <table class="table table-sm table-stats">
-                                        <tr v-for="t in stats.message.outliers">
+                                        <tr v-for="t in stats.message.outliers" :key="t">
                                             <td>{{t}}</td>
                                         </tr>
                                     </table>
@@ -193,11 +193,11 @@
                                         <th class="col-6">Grupo</th>
                                         <th class="col-6">Substituir por</th>
                                     </tr>
-                                    <tr v-for="values in valuesClusters">
+                                    <tr v-for="values in valuesClusters" :key="values[0]">
                                         <td><input type="checkbox" class="checkbox"></td>
                                         <td>
                                             <span style="white-space: pre" :class="{'text-secondary': k !== 0}"
-                                                v-for="v, k in values">{{v}} <br /></span>
+                                                v-for="v, k in values" :key="k">{{v}} <br /></span>
                                         </td>
                                         <td>
                                             <input type="text" class="form-control form-control-sm w-100"
@@ -931,7 +931,7 @@
                     socket.on('exported result', (msg) => {
                         console.debug(msg)
                     });
-                    socket.on('analysis', (msg, callback) => {
+                    socket.on('analysis', (msg, callback) => { // eslint-disable-line no-unused-vars
                         if (msg.analysis_type !== 'cluster') {
                             self.stats = msg;
                             self.$refs.statsModal.show();

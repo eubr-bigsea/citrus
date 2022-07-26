@@ -141,7 +141,7 @@
         mounted() {
             this.functionName = this.step.functionName;
             this.editableStep = JSON.parse(JSON.stringify(this.step));
-            const op = this.step.operation;
+            //const op = this.step.operation;
             this.enableDisableFields();
         },
         methods: {
