@@ -89,7 +89,7 @@
           </div>
         </div>
         <div class="footer text-center">
-          Copyright © 2016-2022 — Lemonade Project
+          Copyright © 2016-2022  — Lemonade Project
         </div>
       </div>
     </div>
@@ -131,7 +131,8 @@ export default {
         first_name: self.firstName,
         last_name: self.lastName,
         email: this.email,
-        password: this.password
+        password: this.password,
+        notes: this.notes,
       };
       this.$store
         .dispatch('register', { thornUrl, data })

@@ -153,7 +153,8 @@
                 this.$refs.userList.customQueries = {};
             },
             isConfirmedUser(confirmed_at) {
-                return confirmed_at !== null;
+                return confirmed_at !== undefined && 
+                    confirmed_at !== null && confirmed_at !== '';
             },
             remove(userId) {
                 const self = this;
