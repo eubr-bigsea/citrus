@@ -89,7 +89,7 @@
           </div>
         </div>
         <div class="footer text-center">
-          Copyright © 2016-2020 — Lemonade Project
+          Copyright © 2016-2022 — Lemonade Project
         </div>
       </div>
     </div>

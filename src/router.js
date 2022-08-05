@@ -9,32 +9,30 @@ import VueRouter from 'vue-router';
 // import TeamList from './views/Administration/TeamList.vue';
 // import TeamShow from './views/Administration/TeamShow.vue';
 
-import ChangePassword from './views/ChangePassword.vue';
-import Login from './views/Login.vue';
-import Logout from './views/Logout.vue';
-import Register from './views/Register.vue';
-import ResetPassword from './views/ResetPassword.vue';
-
-import DataSourceList from './views/DataSourceList.vue';
-import DataSourceEdit from './views/DataSourceEdit.vue';
-import DataSourceAdd from './views/DataSourceAdd.vue';
-
-import JobList from './views/JobList.vue';
-import JobDetail from './views/JobDetail.vue';
-
-import WorkflowList from './views/WorkflowList.vue';
-import WorkflowEdit from './views/WorkflowEdit.vue';
-import WorkflowAdd from './views/WorkflowAdd.vue';
-
 //import TrackList from './views/TrackList.vue';
 
-import OperationList from './views/OperationList.vue';
-import Profile from './views/Profile.vue';
-import About from './views/About.vue';
-
-import PageNotFound from './views/PageNotFound.vue';
-
 // Lazy routes
+
+const ChangePassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ChangePassword.vue');
+const Login = () => import(/* webpackChunkName: "group-user-profile" */  './views/Login.vue');
+const Logout = () => import(/* webpackChunkName: "group-user-profile" */  './views/Logout.vue');
+const Register = () => import(/* webpackChunkName: "group-user-profile" */  './views/Register.vue');
+const ResetPassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ResetPassword.vue');
+const Profile = () => import(/* webpackChunkName: "group-user-profile" */  './views/Profile.vue');
+
+const DataSourceList = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceList.vue');
+const DataSourceEdit = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceEdit.vue');
+const DataSourceAdd = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceAdd.vue');
+
+const JobList = () => import(/* webpackChunkName: "group-job" */ './views/JobList.vue');
+const JobDetail = () => import(/* webpackChunkName: "group-job" */ './views/JobDetail.vue');
+
+const WorkflowList = () => import(/* webpackChunkName: "group-workflow" */ './views/WorkflowList.vue');
+const WorkflowEdit = () => import(/* webpackChunkName: "group-workflow" */ './views/WorkflowEdit.vue');
+const WorkflowAdd = () => import(/* webpackChunkName: "group-workflow" */ './views/WorkflowAdd.vue');
+
+const About = () => import(/* webpackChunkName: "group-global" */ './views/About.vue');
+const PageNotFound = () => import(/* webpackChunkName: "group-global" */ './views/PageNotFound.vue');
 const Home =  () => import(/* webpackChunkName: "group-global" */ './views/Home.vue');
 const Index =  () => import(/* webpackChunkName: "group-global" */ './views/Index.vue');
 const TermsOfService = () => import(/* webpackChunkName: "group-global" */ './views/TermsOfService.vue');
@@ -82,6 +80,7 @@ const DisplayHtml = () => import(/* webpackChunkName: "group-app" */'./views/Dis
 const DeploymentList = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentList.vue');
 const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ './views/DeploymentEdit.vue');
 
+const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
 /* Experiments */
 const Explorer = () => import ('./views/data-explorer/Explorer.vue');
@@ -483,7 +482,8 @@ let router = new VueRouter({
             name: 'register',
             component: Register,
             meta: {
-                title: ['titles.register', 1]
+                title: ['titles.register', 1],
+                requiresAuth: false,
             }
         },
         {
