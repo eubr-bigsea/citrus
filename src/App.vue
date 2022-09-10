@@ -1,26 +1,35 @@
 <template>
     <div>
         <vue-snotify />
+        <!--
         <l-navbar v-if="isLoggedIn" />
-        <div class="container-fluid main-container">
-            <router-view />
+        -->
+        <div id="wrapper">
+            <side-bar ref="sidebar" />
+            <div id="page-content-wrapper">
+                <div class="container-fluid main-container">
+                    <router-view />
 
-            <vue-progress-bar />
-            <l-footer v-if="isLoggedIn" />
+                    <vue-progress-bar />
+                    <l-footer v-if="isLoggedIn" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-    import Navbar from './components/Navbar.vue';
+    //import Navbar from './components/Navbar.vue';
     import Footer from './components/Footer.vue';
     import axios from 'axios';
+    import SideBar from './components/SideBar.vue';
 
     export default {
         name: 'App',
         components: {
-            'l-navbar': Navbar,
-            'l-footer': Footer
+            //'l-navbar': Navbar,
+            'l-footer': Footer,
+            SideBar,
         },
         computed: {
             isLoggedIn() {
@@ -58,4 +67,3 @@
         }
     };
 </script>
-

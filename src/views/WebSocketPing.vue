@@ -1,33 +1,48 @@
 <template>
     <div>
-        <h3 class="border-bottom mb-3">Test web socket (namespace {{namespace}})</h3>
-        <div class="row">
-            <div class="col-md-3">
-                <label>Room</label>
-                <input v-model="newRoom" class="form-control form-control-sm" />
-                <button class="mt-2 btn btn-sm btn-primary" @click="change">Change</button>
-                <button class="ml-1 mt-2 btn btn-sm btn-danger" @click="disconnect">Disconnect</button>
+        <div id="wrapperx">
+            <!-- Sidebar -->
+            <SideBar ref="sidebar"/>
+            <!-- /#sidebar-wrapper -->
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <h3 class="border-bottom mb-3">Test web socket (namespace {{namespace}})</h3>
+                <button type="button" class="navbar-toggle collapsed btn btn-sm btn-success" @click="$refs.sidebar.toggle()">
+                    <font-awesome-icon icon="fa fa-bars" />
+                </button>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Room</label>
+                        <input v-model="newRoom" class="form-control form-control-sm" />
+                        <button class="mt-2 btn btn-sm btn-primary" @click="change">Change</button>
+                        <button class="ml-1 mt-2 btn btn-sm btn-danger" @click="disconnect">Disconnect</button>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Message</label>
+                        <textarea v-model="message" class="form-control form-control-sm"></textarea>
+                        <button class="mt-2 btn btn-success btn-sm" @click="send(false)">Send</button>
+                        <button class="mt-2 btn btn-success btn-sm ml-1" @click="send(true)">Send as object</button>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="">Type</label>
+                        <input v-model="type" type="text" class="form-control form-control-sm">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-sm btn-warning mt-3" @click="responses=[]">Clear messages</button>
+                        <pre class="pre-code"><code v-for="m in responses" :key="m">{{m}} <br/></code></pre>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6">
-                <label>Message</label>
-                <textarea v-model="message" class="form-control form-control-sm"></textarea>
-                <button class="mt-2 btn btn-success btn-sm" @click="send(false)">Send</button>
-                <button class="mt-2 btn btn-success btn-sm ml-1" @click="send(true)">Send as object</button>
-            </div>
-            <div class="col-md-3">
-                <label for="">Type</label>
-                <input v-model="type" type="text" class="form-control form-control-sm">
-            </div>
+            <!-- /#page-content-wrapper -->
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <button class="btn btn-sm btn-warning mt-3" @click="responses=[]">Clear messages</button>
-                <pre class="pre-code"><code v-for="m in responses" :key="m">{{m}} <br/></code></pre>
-            </div>
-        </div>
+
     </div>
 </template>
 <script>
+
+    import SideBar from '../components/SideBar.vue';
     import io from 'socket.io-client';
     const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
     export default {
@@ -41,6 +56,9 @@
                 socket: null,
                 namespace: standNamespace,
             }
+        },
+        components: {
+            SideBar
         },
         mounted() {
             const self = this;
@@ -79,7 +97,6 @@
             socket.on('response', (msg) => {
                 this.responses.push(msg.message)
             });
-
         },
         beforeDestroy() {
             if (this.socket) {
@@ -89,7 +106,7 @@
         },
 
         methods: {
-            disconnect(){
+            disconnect() {
                 this.socket.disconnect();
             },
             change() {
@@ -98,7 +115,7 @@
                 this.socket.emit('join', { room: this.room });
             },
             send(asObject) {
-                this.socket.emit(this.type, asObject? JSON.parse(this.message) : this.message);
+                this.socket.emit(this.type, asObject ? JSON.parse(this.message) : this.message);
             }
         }
     }

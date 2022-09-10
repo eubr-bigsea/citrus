@@ -61,6 +61,9 @@
                     <b-dropdown-item :to="{ name: 'admin-openid' }">
                         OpenId Sandbox
                     </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'webSocketPing' }">
+                        Test Websocket 
+                    </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">

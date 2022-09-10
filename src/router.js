@@ -87,6 +87,7 @@ const Explorer = () => import ('./views/data-explorer/Explorer.vue');
 const DataExplorerStart = () => import ('./views/data-explorer/DataExplorerStart.vue');
 const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
 
+
 const ChooseTask = () => import ('./views/data-explorer/model-builder/ChooseTask.vue');
 const ModelTraining = () => import ('./views/data-explorer/model-builder/ModelTraining.vue');
 const Design = () => import ('./views/data-explorer/model-builder/Design.vue');
@@ -94,7 +95,13 @@ const Design = () => import ('./views/data-explorer/model-builder/Design.vue');
 const VisualizationDesign = () => import ('./views/data-explorer/vis-builder/VisualizationDesign.vue');
 const CreateVisualization  = () => import ('./views/data-explorer/vis-builder/CreateVisualization.vue');
 
+
 const TestEntities = () => import ('./views/data-explorer/TestEntities.vue');
+
+/* Projects */
+const ProjectsView = () => import ('./views/project/ProjectsView.vue');
+const ProjectDetail = () => import ('./views/project/ProjectDetail.vue');
+
 
 Vue.use(VueRouter);
 
@@ -326,6 +333,24 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.notification', 2]
+            }
+        },
+        {
+            path: '/projects',
+            name: 'projects',
+            component: ProjectsView,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.project', 2]
+            }
+        },
+        {
+            path: '/projects/:id',
+            name: 'projectDetail',
+            component: ProjectDetail,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.project', 2]
             }
         },
         {

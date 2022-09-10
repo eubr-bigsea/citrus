@@ -2,6 +2,7 @@
     .BundleAnalyzerPlugin;*/
 const path = require('path');
 module.exports = {
+    productionSourceMap: false,
     configureWebpack: {
         devtool: 'source-map',
         plugins: [
@@ -18,7 +19,7 @@ module.exports = {
             cacheDirectory: path.resolve(__dirname, '.temp_cache'),
         },
     },
-    publicPath: './',
+    publicPath: process.env.PUBLIC_URL || "/",
     pluginOptions: {
         webpackBundleAnalyzer: {
             openAnalyzer: false,

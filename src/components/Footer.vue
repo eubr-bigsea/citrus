@@ -2,7 +2,7 @@
     <footer class="footer-page fixed-bottom d-print-none">
         <ul class="footer-list">
             <li>
-                © 2017-2022 Lemonade Project {{$t('common.version')}} {{version}} |
+                © 2017-2022 Lemonade Project {{$t('common.version')}} {{version}}
             </li>
             <li>
                 <a href="https://docs.lemonade.org.br/" target="_blank">
@@ -30,7 +30,9 @@
 <style>
     .footer-page a,
     .footer-page {
-        color: #fff;
+        color: var(--forecolor-nav);
+        background-color: var(--color-nav);
+        padding-left: 50px;
     }
 
     .footer-list {
