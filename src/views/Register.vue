@@ -70,7 +70,9 @@
               <div class="form-group no-margin text-center">
                 <label>
                   <b-check v-model="accepted">
-                  <span v-html="$t('messages.acceptTerms', {link: '#/conditions'})"></span>
+                    <i18n path="messages.acceptTerms" tag="span">
+                        <router-link to="/conditions">{{ $t('messages.acceptTerms0') }}</router-link>
+                    </i18n>
                   </b-check>
                 </label>
               </div>
