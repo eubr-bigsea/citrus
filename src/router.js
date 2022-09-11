@@ -33,8 +33,8 @@ const WorkflowAdd = () => import(/* webpackChunkName: "group-workflow" */ './vie
 
 const About = () => import(/* webpackChunkName: "group-global" */ './views/About.vue');
 const PageNotFound = () => import(/* webpackChunkName: "group-global" */ './views/PageNotFound.vue');
-const Home =  () => import(/* webpackChunkName: "group-global" */ './views/Home.vue');
-const Index =  () => import(/* webpackChunkName: "group-global" */ './views/Index.vue');
+const Home = () => import(/* webpackChunkName: "group-global" */ './views/Home.vue');
+const Index = () => import(/* webpackChunkName: "group-global" */ './views/Index.vue');
 const TermsOfService = () => import(/* webpackChunkName: "group-global" */ './views/TermsOfService.vue');
 const Welcome = () => import(/* webpackChunkName: "group-global" */ './views/Welcome.vue');
 
@@ -83,24 +83,24 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
 /* Experiments */
-const Explorer = () => import ('./views/data-explorer/Explorer.vue');
-const DataExplorerStart = () => import ('./views/data-explorer/DataExplorerStart.vue');
-const ExplorerIndex = () => import ('./views/data-explorer/Index.vue');
+const Explorer = () => import('./views/data-explorer/Explorer.vue');
+const DataExplorerStart = () => import('./views/data-explorer/DataExplorerStart.vue');
+const ExplorerIndex = () => import('./views/data-explorer/Index.vue');
 
 
-const ChooseTask = () => import ('./views/data-explorer/model-builder/ChooseTask.vue');
-const ModelTraining = () => import ('./views/data-explorer/model-builder/ModelTraining.vue');
-const Design = () => import ('./views/data-explorer/model-builder/Design.vue');
+const ChooseTask = () => import('./views/data-explorer/model-builder/ChooseTask.vue');
+const ModelTraining = () => import('./views/data-explorer/model-builder/ModelTraining.vue');
+const Design = () => import('./views/data-explorer/model-builder/Design.vue');
 
-const VisualizationDesign = () => import ('./views/data-explorer/vis-builder/VisualizationDesign.vue');
-const CreateVisualization  = () => import ('./views/data-explorer/vis-builder/CreateVisualization.vue');
+const VisualizationDesign = () => import('./views/data-explorer/vis-builder/VisualizationDesign.vue');
+const CreateVisualization = () => import('./views/data-explorer/vis-builder/CreateVisualization.vue');
 
 
-const TestEntities = () => import ('./views/data-explorer/TestEntities.vue');
+const TestEntities = () => import('./views/data-explorer/TestEntities.vue');
 
 /* Projects */
-const ProjectsView = () => import ('./views/project/ProjectsView.vue');
-const ProjectDetail = () => import ('./views/project/ProjectDetail.vue');
+const ProjectsView = () => import('./views/project/ProjectsView.vue');
+const ProjectDetail = () => import('./views/project/ProjectDetail.vue');
 
 
 Vue.use(VueRouter);
@@ -516,6 +516,7 @@ let router = new VueRouter({
             name: 'welcome',
             component: Welcome,
             meta: {
+                requiresAuth: false,
                 title: ['titles.welcome', 1]
             }
         },
@@ -525,6 +526,7 @@ let router = new VueRouter({
             name: 'reset_password',
             component: ResetPassword,
             meta: {
+                requiresAuth: false,
                 title: ['titles.resetPassword', 2]
             }
         },
@@ -663,6 +665,7 @@ let router = new VueRouter({
             name: 'conditions',
             component: TermsOfService,
             meta: {
+                requiresAuth: false,
                 title: ['titles.termsOfService', 2]
             }
         },
@@ -782,7 +785,7 @@ let router = new VueRouter({
                 title: ['titles.notFound']
             }
         },
-        
+
     ]
 });
 router.onError(error => {

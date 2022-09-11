@@ -179,7 +179,7 @@ export default {
             or: 'Ou',
             owner: 'Proprietário',
             pagerShowing:
-                'Exibindo registros de {from} até {to}, para um total de {count} registros|{count} registros|Um registro',
+                "Exibindo registros de {'{'}from{'}'} até {'{'}to{'}'} , para um total de {'{'}count{'}'} registros{'|'}{'{'}count{'}'} registros{'|'}Um registro",
             parameters: 'Parâmetro | Parâmetros',
             password: 'Senha',
             path: 'Caminho|Caminhos',
@@ -451,7 +451,8 @@ export default {
             }
         },
         messages: {
-            acceptTerms: 'Concordo com os <a href="{link}">termos de uso</a>.',
+            acceptTerms: 'Concordo com os {}.',
+            acceptTerms0: 'termos de uso',
             doYouWantToDelete: 'Tem certeza que você quer excluir esse registro?',
             doYouWantToConfirm: 'Tem certeza que você quer confirmar esse usuário?',
             doYouWantToStop: 'Tem certeza que quer parar esta execução? Os dados armazenados na memória serão descartados e os recursos da infraestrutura serão liberados.',
@@ -461,10 +462,10 @@ export default {
             successDeletion: '{what} foi removido com sucesso',
             successStop: 'Execução parada com sucesso',
             successImport: 'Fluxo de trabalho foi importado com o id={what}.',
-            resetPasswordInstructions: '<p>Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.</p>' +
-                '<p>Se você não receber esse e-mail, ' +
+            resetPasswordInstructions: 'Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.' +
+                'Se você não receber esse e-mail, ' +
                 'verifique suas pastas de spam ou de lixo eletrônico e também ' +
-                'adicione o endereço <strong>{email}</strong> ao seu catálogo de endereços. Você pode tentar redefinir sua senha a qualquer momento.</p>',
+                'adicione o endereço {email} ao seu catálogo de endereços. Você pode tentar redefinir sua senha a qualquer momento.',
             registeredWithSuccess:
                 'Você foi registrado com sucesso. Por favor, autentique-se novamente.',
             savedWithSuccess: '{what} foi salvo(a) com sucesso!',
@@ -472,9 +473,10 @@ export default {
             notesDescription: 'Essa descrição opcional é usada pelos administradores para aprovar novos usuários.',
             usingDisabledOperation:
                 'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.',
-            welcome: '<p>A autorização para uso do Lemonade está depende da análise do seu registro por um administrador. </p>' +
-                '<p>Uma notificação já foi enviada para os administradores e em breve você receberá um e-email com a confirmação de seu registro.</p>' +
-                'Enquanto isto, você pode iniciar a leitura da documentação disponível em <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.',
+            welcome: 'A autorização para uso do Lemonade está depende da análise do seu registro por um administrador. ' +
+                'Uma notificação já foi enviada para os administradores e em breve você receberá um e-email com a confirmação de seu registro.' +
+                'Enquanto isto, você pode iniciar a leitura da documentação disponível em {0}.',
+            welcome0: 'http://docs.lemonade.org.br',
             tokenNotFound: 'Token para reiniciar senha não foi encontrado. Tente iniciar o processo novamente ou veja se você recebeu um novo link em outro e-mail.',
             validatingToken: 'Validando o token, por favor, aguarde...',
         },
@@ -625,6 +627,7 @@ export default {
             lemonade: 'Lemonade',
             lemonadePlatform: 'Plataforma Lemonade',
             login: 'Entrar',
+            list: 'Lista de {what}',
             model: 'Modelo | Modelos',
             news: 'Novidades e Dicas',
             notebook: 'Notebook | Notebooks',
@@ -1024,7 +1027,7 @@ export default {
             or: 'Or',
             owner: 'Owner',
             pagerShowing:
-                'Showing {from} to {to} of {count} records|{count} records|One record',
+                "Showing {'{'}from{'}'} to {'{'}to{'}'}, of {'{'}count{'}'} records{'|'}{'{'}count{'}'} records{'|'}One record",
             parameters: 'Parameter | Parameters',
             password: 'Password',
             path: 'Path | Paths',
@@ -1233,7 +1236,8 @@ export default {
                 'This workflow has modifications that has not been saved. Do you want to leave anyway?'
         },
         messages: {
-            acceptTerms: 'I agree to the <a href="{link}">terms of service</a>.',
+            acceptTerms: 'I agree to the {0}.',
+            acceptTerms0: 'terms of service',
             doYouWantToDelete: 'Do you want to delete this record?',
             doYouWantToConfirm: 'Do you want to confirm this user?',
             doYouWantToStop: 'Do you want to stop the execution? Data stored in memory will be discarded and infrastructure resources will be released.',
@@ -1245,9 +1249,9 @@ export default {
             successImport: 'Workflow was imported as id={what}.',
             registeredWithSuccess:
                 'You were registered with success. Please, sign in again.',
-            resetPasswordInstructions: '<p>An email has been sent to your address. Follow the instructions to reset your password.</p>' +
-                '<p>If you do not receive this email, check your spam or junk folders and also ' +
-                'add <strong>{email}</strong> to your address book. You can try to reset your password at any time.',
+            resetPasswordInstructions: 'An email has been sent to your address. Follow the instructions to reset your password.' +
+                'If you do not receive this email, check your spam or junk folders and also ' +
+                'add {email} to your address book. You can try to reset your password at any time.',
             savedWithSuccess: '{what} saved with success.',
             noMatching: 'Sorry, no matching options',
             notesDescription: 'This optional description is used by administrators to approve new users.',
@@ -1321,6 +1325,7 @@ export default {
             jobs: 'Jobs',
             lemonade: 'Lemonade',
             lemonadePlatform: 'Lemonade Platform',
+            list: '{what} list',
             model: 'Model | Models',
             news: 'News & Tips',
             notebook: 'Notebook | Notebooks',

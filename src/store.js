@@ -276,7 +276,7 @@ export default new Vuex.Store({
         userPermissions: state => state.user.roles?.flatMap(r => r.permissions.map(p => p.name)) || {},
         token: state => state.token,
         hasAnyPermission: state => permissionList => {
-            const permissions = state.user.roles.flatMap(r => r.permissions.map(p => p.name));
+            const permissions = state?.user?.roles?.flatMap(r => r.permissions.map(p => p.name)) || [];
             return permissionList.some(r => permissions.includes(r));
         },
         hasFeaturePermission: state => feature => {

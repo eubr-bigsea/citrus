@@ -7,6 +7,8 @@ import store from './store';
 import { openIdService } from './openid-auth';
 
 import VueI18n from 'vue-i18n';
+import { createI18n } from 'vue-i18n-bridge'
+
 import messages from './i18n/messages';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -101,6 +103,7 @@ import './assets/main.scss';
 
 // Snotify
 import Snotify from 'vue-snotify';
+window.Vue = Vue; // Force Snotify to be installed in window
 Vue.use(Snotify, {
     toast: {
         titleMaxLength: 100,
@@ -144,7 +147,7 @@ const options = {
     location: 'top',
     inverse: false
 };
-Vue.use(VueI18n);
+Vue.use(VueI18n, { bridge: true });
 Vue.use(VueProgressBar, options);
 
 // Date-fns
@@ -237,6 +240,15 @@ openIdService.loadConfig(store).then(() => {
         fallbackLocale: 'en',
         messages
     });
+    const i18nComposition = createI18n({
+        allowComposition: true,
+        globalInjection: true,
+        legacy: false,
+        locale: user ? user.locale : 'pt',
+        fallbackLocale: 'en',
+        messages
+    }, VueI18n);
+    Vue.use(i18nComposition);
 
     Object.defineProperty(Vue.prototype, '$locale', {
         get: function () {
@@ -294,6 +306,7 @@ openIdService.loadConfig(store).then(() => {
     let newVue = new Vue({
         el: '#app',
         i18n,
+        i18nComposition,
         router,
         store,
         render: h => h(App)
