@@ -1,9 +1,9 @@
 <template>
   <span class="home-card-counter float-right" title="Total">
-    <AnimatedNumber
+    <animated-number
       :value="value"
       :format-value="formatValue"
-      :duration="4000"
+      :duration="1000"
       :easing="'easeOutCirc'"
     />
   </span>
@@ -16,7 +16,6 @@ span.home-card-counter {
   color: #FFF;
   background-color: var(--primary-color);
   border-radius: 4px;
-  padding: .1rem .25rem;
   min-width: 30px;
   text-align: center;
   margin-left: auto;

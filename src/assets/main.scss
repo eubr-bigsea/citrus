@@ -821,3 +821,8 @@ h1 {
 .scroll-area::-webkit-scrollbar-thumb {
     background: #bbb;
 }
+
+.VueTables .form-inline label {
+    display: block !important;
+    font-weight: bold;
+}

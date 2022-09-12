@@ -6,14 +6,15 @@
         </div>
 
         <div class="home-card-container">
-            <HomeCard v-if="listings.has('dataSources')" :type="'dataSource'" :items="dataSources" icon="fa fa-database"
-                :total="total.dataSources"></HomeCard>
-            <HomeCard v-if="listings.has('workflows')" :type="'workflow'" :items="workflows" :total="total.workflows" icon="fa fa-flask">
-            </HomeCard>
-            <HomeCard v-if="listings.has('jobs')" :type="'job'" :items="jobs" :total="total.jobs" icon="fa fa-tasks"></HomeCard>
-            <HomeCard v-if="listings.has('apps')" :type="'app'" :items="apps" :total="total.apps" icon="fa fa-microscope"></HomeCard>
-            <HomeCard v-if="listings.has('dashboards')" :type="'dashboard'" :items="dashboards"
-                :total="total.dashboards" icon="fa fa-chart-line"></HomeCard>
+            <home-card v-if="listings.has('dataSources')" :type="'dataSource'" :items="dataSources" icon="fa fa-database"
+                :total="total.dataSources" />
+            <home-card v-if="listings.has('workflows')" :type="'workflow'" :items="workflows" :total="total.workflows"
+                icon="fa fa-diagram-project" />
+            <home-card v-if="listings.has('jobs')" :type="'job'" :items="jobs" :total="total.jobs" icon="fa fa-tasks" />
+            <home-card v-if="listings.has('apps')" :type="'app'" :items="apps" :total="total.apps"
+                icon="fa fa-microscope" />
+            <home-card v-if="listings.has('dashboards')" :type="'dashboard'" :items="dashboards"
+                :total="total.dashboards" icon="fa fa-chart-line" />
         </div>
     </main>
 </template>
@@ -30,9 +31,7 @@
 
     export default {
         name: 'HomeView',
-        components: {
-            HomeCard
-        },
+        components: { HomeCard },
         data() {
             return {
                 listings: new Map(),
@@ -41,13 +40,6 @@
                 dataSources: [],
                 dashboards: [],
                 jobs: [],
-                loading: {
-                    apps: true,
-                    dashboards: true,
-                    dataSources: true,
-                    jobs: true,
-                    workflows: true
-                },
                 total: {
                     apps: 0,
                     dashboards: 0,
@@ -104,20 +96,15 @@
                 asc: false,
                 size: 5,
             };
-            this.listings.forEach((value, key, map) => { // eslint-disable-line no-unused-vars
-                self.loading[key] = true;
+            this.listings.forEach(async (value, key, map) => { // eslint-disable-line no-unused-vars
                 const params = Object.assign({}, commonFilters, value[1]);
-                axios
-                    .get(value[0], { params })
-                    .then(resp => {
-                        self[key] = resp.data.data;
-                        self.loading[key] = false;
-                        self.total[key] = resp.data.pagination.total;
-                    })
-                    .catch(e => {
-                        console.debug(e);
-                        self.loading[key] = false;
-                    });
+                try {
+                    const resp = await axios.get(value[0], { params });
+                    self[key] = resp.data.data;
+                    self.total[key] = resp.data.pagination.total;
+                } catch (e) {
+                    console.debug(e);
+                }
             });
         }
     };
