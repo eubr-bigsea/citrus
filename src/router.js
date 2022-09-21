@@ -506,7 +506,8 @@ let router = new Router({
             name: 'register',
             component: Register,
             meta: {
-                title: ['titles.register', 1]
+                title: ['titles.register', 1],
+                requiresAuth: false,
             }
         },
         {
