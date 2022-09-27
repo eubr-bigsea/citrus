@@ -214,11 +214,13 @@
                 let result = new Map();
                 if (this.search) {
                     this.operations.forEach(op => {
-                        result[op.id] = op.name
-                            .replace('ı́', 'i')
-                            .normalize('NFD')
-                            .replace(/[\u0300-\u036f]/g, '')
-                            .toLowerCase();
+                        if (op.enabled && op.name){
+                            result[op.id] = op.name
+                                .replace('ı́', 'i')
+                                .normalize('NFD')
+                                .replace(/[\u0300-\u036f]/g, '')
+                                .toLowerCase();
+                        }
                     });
                 }
                 return result;
