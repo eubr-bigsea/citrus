@@ -40,6 +40,7 @@ const Welcome = () => import(/* webpackChunkName: "group-global" */ './views/Wel
 
 const ConfigurationList = () => import(/* webpackChunkName: "group-configuration" */ './views/ConfigurationList.vue');
 
+const AdministrationStart = () => import(/* webpackChunkName: "admin-role" */ './views/Administration/Start.vue');
 const RoleList = () => import(/* webpackChunkName: "group-role" */ './views/Administration/RoleList.vue');
 const RoleEdit = () => import(/* webpackChunkName: "group-app" */ './views/Administration/RoleEdit.vue');
 
@@ -136,7 +137,16 @@ let router = new VueRouter({
                 title: ['titles.query', 1]
             }
         },
-
+        {
+            path: '/administration',
+            name: 'admin-start',
+            component: AdministrationStart,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.role', 2]
+            }
+        },
         {
             path: '/administration/roles',
             name: 'AdministrationRoleList',

@@ -355,6 +355,7 @@ export default {
             missingRepresentation: 'Representação para dados ausentes',
             noPermissions: 'Nenhuma permissão definida',
             noAttributes: 'Nenhum atributo definido.',
+            performance: 'Desempenho',
             permission: 'Permissão | Permissões',
             previewExplanation: 'Esta é uma amostra com {amount} registros (max).',
             privacy: 'Privacidade',
@@ -384,9 +385,9 @@ export default {
                 'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
             
             whatTypeOfDataSourceToAdd:
-                'Que tipo de base de dados você quer adicionar?',
+                'Que tipo de fonte de dados você quer adicionar?',
             youCanUploadYourFiles:
-                'Você pdoe carregar seus próprios arquivos para o servidor',
+                'Você pode carregar seus próprios arquivos para o servidor',
             youCanUseSQL: 'Você pode usar comandos SELECT SQL para recuperar os dados'
         },
         diagram: {
@@ -1171,6 +1172,7 @@ export default {
             missingRepresentation: 'Missing representation',
             noPermissions: 'No permissions defined',
             noAttributes: 'No attributes defined.',
+            performance: 'Performance',
             permission: 'Permission | Permissions',
             previewExplanation: 'This is a sample of {amount} rows (max).',
             privacy: 'Privacy',

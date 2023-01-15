@@ -1,80 +1,71 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div class>
-                    
-                    <div class="title">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h1>{{ $tc('titles.dataSource', 2) }}</h1>
-                            <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" :to="{ name: 'addDataSource' }" class="btn btn-primary btn-lemonade-primary">
-                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
-                            </router-link>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $tc('titles.dataSource', 2) }}</h1>
+            <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" :to="{ name: 'addDataSource' }"
+                class="btn btn-primary btn-lemonade-primary">
+                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+            </router-link>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList">
+                    <template slot="id" slot-scope="props">
+                        <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                            {{ props.row.id }}
+                        </router-link>
+                    </template>
+                    <template slot="name" slot-scope="props">
+                        <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                            {{ props.row.name }}
+                        </router-link>
+                    </template>
+                    <template slot="actions" slot-scope="props">
+                        <div class="btn-group" role="group">
+                            <button v-if="visualizable(props.row)" :title="$t('common.preview')"
+                                class="btn btn-spinner btn-primary btn-sm" @click.stop="handlePreview(props.row.id)">
+                                <font-awesome-icon icon="spinner" pulse class="icon" />
+                                <font-awesome-icon icon="fa-eye" />
+                            </button>
+                            <a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info"
+                                :title="$t('actions.download')" target="_blank">
+                                <font-awesome-icon icon="download" />
+                            </a>
+                            <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
+                                @click="remove(props.row.id)">
+                                <font-awesome-icon icon="trash" />
+                            </button>
                         </div>
-                    </div>
+                    </template>
+                    <template slot="created" slot-scope="props">
+                        {{ props.row.created | formatJsonDate }}
+                    </template>
+                    <template slot="tags" slot-scope="props">
+                        <div v-if="props.row.tags">
+                            <div v-for="tag in (props.row.tags || '').split(',')" :key="tag"
+                                class="badge badge-info mr-1">
+                                {{ tag }}
+                            </div>
+                        </div>
+                    </template>
+                </v-server-table>
+                <modal-preview-data-source ref="previewWindow" />
 
-                        <v-server-table ref="dataSourceList" :data="tableData" :columns="columns"
-                            :options="options" name="dataSourceList">
-                            <template slot="id" slot-scope="props">
-                                <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
-                                    {{ props.row.id }}
-                                </router-link>
-                            </template>
-                            <template slot="name" slot-scope="props">
-                                <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
-                                    {{ props.row.name }}
-                                </router-link>
-                            </template>
-                            <template slot="actions" slot-scope="props">
-                                <div class="btn-group" role="group">
-                                    <button v-if="visualizable(props.row)" :title="$t('common.preview')"
-                                        class="btn btn-spinner btn-primary btn-sm"
-                                        @click.stop="preview(props.row.id)">
-                                        <font-awesome-icon icon="spinner" pulse class="icon" />
-                                        <font-awesome-icon icon="fa-eye"/>
-                                    </button>
-                                    <a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info" 
-                                            :title="$t('actions.download')" target="_blank">
-                                        <font-awesome-icon icon="download"/>
-                                    </a>
-                                    <!-- 
-                                    <button class="btn btn-sm btn-info" :title="$t('actions.download')"
-                                        @click="download(props.row)">
-                                        <font-awesome-icon icon="fa fa-download" />
-                                    </button>
-                                    -->
-                                    <button v-if="loggedUserIsOwnerOrAdmin(props.row)"
-                                        class="btn btn-sm btn-danger" @click="remove(props.row.id)">
-                                        <font-awesome-icon icon="trash" />
-                                    </button>
-                                </div>
-                            </template>
-                            <template slot="created" slot-scope="props">
-                                {{ props.row.created | formatJsonDate }}
-                            </template>
-                            <template slot="tags" slot-scope="props">
-                                <div v-if="props.row.tags">
-                                    <div v-for="tag in (props.row.tags || '').split(',')" :key="tag"
-                                        class="badge badge-info mr-1">
-                                        {{ tag }}
-                                    </div>
-                                </div>
-                            </template>
-                        </v-server-table>
-                               
-                    </div>
-                </div>
             </div>
-        <ModalPreviewDataSource ref="preview"/>
+        </div>
     </main>
 </template>
 
 <script>
-    import Vue from 'vue';
+    import { ref } from 'vue';
+    import { useI18n } from 'vue-i18n-bridge';
     import { mapGetters } from 'vuex';
+
+    import Vue from 'vue';
     import axios from 'axios';
-    import Notifier from '../mixins/Notifier';
+    import Notifier from '../notifier.js';
     import ModalPreviewDataSource from './modal/ModalPreviewDataSource';
+    import DataTableBuilder from '../data-table-builder.js';
 
     let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
 
@@ -82,188 +73,117 @@
         components: {
             ModalPreviewDataSource
         },
-        mixins: [Notifier],
-        data() {
-            return {
-                dataSourceId: 1,
-                dataSourceName: '',
-                columns: [
-                    'id',
-                    'name',
-                    'description',
-                    'format',
-                    'created',
-                    'user_name',
-                    'tags',
-                    'actions'
-                ],
-                tableData: [],
-                showSideBar: false,
-                options: {
-                    skin: 'table-sm table table-hover',
-                    columnsClasses: {
-                        name: 'th-20',
-                        description: 'th-20',
-                        actions: 'th-15'
-                    },
-                    texts: {
-                        filter: this.$tc('common.filter'),
-                        count: this.$t('common.pagerShowing'),
-                        limit: this.$t('common.limit'),
-                        noResults: this.$t('common.noData'),
-                        loading: this.$t('common.loading'),
-                        filterPlaceholder: this.$t('common.filterPlaceholder')
-                    },
-                    headings: {
-                        actions: this.$tc('common.action', 2),
-                        id: 'ID',
-                        name: this.$tc('common.name', 1),
-                        description: this.$tc('common.description', 1),
-                        format: this.$tc('dataSource.format', 1),
-                        created: this.$t('common.created'),
-                        tags: this.$t('common.tags'),
-                        user_name: this.$t('common.user.name')
-                    },
-                    sortable: ['name', 'id', 'created'],
-                    sortIcon: {
-                        base: 'fa fas',
-                        is: 'fa-sort ml-10',
-                        up: 'fa-sort-amount-up',
-                        down: 'fa-sort-amount-down'
-                    },
-                    preserveState: true,
-                    saveState: true,
-                    filterable: ['name', 'album'],
-                    requestFunction: function (data) {
-                        data.sort = data.orderBy;
-                        data.asc = data.ascending === 1 ? 'true' : 'false';
-                        data.size = data.limit;
-                        this.$Progress.start();
-                        return axios
-                            .get(`${limoneroUrl}/datasources?enabled=true&simple=true`, {
-                                params: data
-                            })
-                            .then(resp => {
-                                this.$Progress.finish();
-                                return {
-                                    data: resp.data.data,
-                                    count: resp.data.pagination.total
-                                };
-                            })
-                            .catch(
-                                function (e) {
-                                    this.$Progress.finish();
-                                    this.dispatch('error', e);
-                                }.bind(this)
-                            );
-                    }
+        setup() {
+            const { t } = useI18n();
+            const store = Vue.prototype.$legacyStore;
+            const user = store.getters.user;
+            const isAdmin = user.roles.indexOf('admin') >= 0;
+            const notifier = new Notifier(Vue.prototype.$snotify, t);
+
+            //#region Listing
+            const reqFn = async (data) => {
+                data.sort = data.orderBy;
+                data.asc = data.ascending === 1 ? 'true' : 'false';
+                data.size = data.limit;
+                try {
+                    const resp = await axios
+                        .get(`${limoneroUrl}/datasources?enabled=true&simple=true`, {
+                            params: data
+                        });
+
+                    return {
+                        data: resp.data.data,
+                        count: resp.data.pagination.total
+                    };
+                } catch (e) {
+                    Vue.prototype.$snotify.error(e);
                 }
+            }
+
+            const columns = [
+                'id',
+                'name',
+                'description',
+                'format',
+                'created',
+                'user_name',
+                'tags',
+                'actions'
+            ];
+            const dtBuilder = new DataTableBuilder(t)
+                .columns(...columns)
+                .headings({
+                    actions: t('common.action', 2),
+                    id: 'ID',
+                    name: t('common.name', 1),
+                    description: t('common.description', 1),
+                    format: t('dataSource.format', 1),
+                    created: t('common.created'),
+                    tags: t('common.tags'),
+                    user_name: t('common.user.name')
+                })
+                .sortable('name', 'id', 'created')
+                .filterable('name')
+                .requestFunction(reqFn);
+            //#endregion
+            //#region Preview
+
+            const previewWindow = ref(null);
+            const handlePreview = (dataSource) => {
+                /**/
+                previewWindow.value.show(dataSource);
+            }
+            //#endregion
+            const loggedUserIsOwnerOrAdmin = (dataSource) => {
+                return dataSource.user_id === user.id || isAdmin;
+            }
+            const getPermissions = (permissions) => {
+                return (
+                    (permissions || []).map(p => { return p.permission; }).join(', ') || 'ALL');
+            }
+
+            const dataSourceList = ref(null);
+            const remove = (dataSourceId) => {
+                notifier.confirm(
+                    t('actions.delete'),
+                    t('messages.doYouWantToDelete'),
+                    async () => {
+                        const url = `${limoneroUrl}/datasources/${dataSourceId}`;
+                        try {
+                            await axios.delete(url);
+                            notifier.success(
+                                t('messages.successDeletion', {
+                                    what: t('titles.dataSource', 1)
+                                })
+                            );
+                            dataSourceList.value.refresh();
+                        } catch (e) {
+                            notifier.error(e);
+                        }
+                    }
+                );
+            }
+            const getDownloadLink = (row) => {
+                return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}`;
+            }
+            const visualizable = (ds) => {
+                return ['JDBC', 'CSV', 'HIVE'].includes(ds.format);
+            }
+
+            return {
+                ...dtBuilder.build(),
+                previewWindow,
+                dataSourceList,
+                handlePreview,
+                loggedUserIsOwnerOrAdmin,
+                getPermissions,
+                getDownloadLink,
+                remove,
+                visualizable
             };
         },
         computed: {
             ...mapGetters(['hasAnyPermission', 'isAdmin'])
         },
-        mounted() {
-        },
-        /* Methods */
-        methods: {
-            preview(dataSource){
-                this.$refs.preview.show(dataSource);
-            },
-            loggedUserIsOwnerOrAdmin(dataSource) {
-                const user = this.$store.getters.user;
-                return dataSource.user_id === user.id || user.roles.indexOf('admin') >= 0;
-            },
-            getPermissions(permissions) {
-                return (
-                    (permissions || [])
-                        .map(p => {
-                            return p.permission;
-                        })
-                        .join(', ') || 'ALL'
-                );
-            },
-            infer(id) {
-                let self = this;
-                let headers = {};
-                let params = {};
-                const url = `${limoneroUrl}/datasources/infer-schema/${id}`;
-                Vue.http.post(url, params, { headers }).then(
-                    () => {
-                        self.$root.$refs.toastr.s('Success');
-                    },
-                    error => {
-                        self.$root.$refs.toastr.e(error.body.message);
-                    }
-                );
-            },
-            download(dataSource) {
-                window.open(
-                    `${limoneroUrl}/datasources/${dataSource.id}/download?token=${dataSource.download_token}`);
-                return 
-                /*
-                axios({
-                    url: `${limoneroUrl}/datasources/${dataSource.id}/download`,
-                    method: 'GET',
-                    responseType: 'blob' // important
-                }).then(response => {
-                    const url = window.URL.createObjectURL(new Blob([response.data]));
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.setAttribute(
-                        'download',
-                        `${dataSource.name}.${dataSource.format.toLowerCase()}`
-                    );
-                    document.body.appendChild(link);
-                    link.click();
-                }); */
-            },
-            getDownloadLink(row){
-                return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}`;
-            },
-            remove(dataSourceId) {
-                const self = this;
-                this.confirm(
-                    this.$t('actions.delete'),
-                    this.$t('messages.doYouWantToDelete'),
-                    () => {
-                        const url = `${limoneroUrl}/datasources/${dataSourceId}`;
-                        axios
-                            .delete(url, {})
-                            .then(()=> {
-                                self.success(
-                                    self.$t('messages.successDeletion', {
-                                        what: this.$tc('titles.dataSource', 1)
-                                    })
-                                );
-                                self.$refs.dataSourceList.refresh();
-                            })
-                            .catch(e => self.error(e));
-                    }
-                );
-            },
-            visualizable(ds) {
-                return ['JDBC', 'CSV', 'HIVE'].includes(ds.format);
-            }
-        }
     };
 </script>
-<style>
-    .VueTables .form-inline label {
-        display: block !important;
-        font-weight: bold;
-    }
-
-    /* issue: Search and Limit Fields not inline when using latest Bootstrap4
-    https://github.com/matfish2/vue-tables-2/issues/486
-    The code below solve the problem.
-    TODO: Remove the code When the problem is resolved.
-*/
-    .VueTables__search {
-        width: auto !important;
-    }
-
-    .VueTables__limit {
-        width: auto !important;
-    }
-</style>

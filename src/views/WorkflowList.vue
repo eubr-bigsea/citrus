@@ -1,62 +1,60 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="title">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h1>{{$tc('titles.workflow', 2)}}</h1>
-                            <div>
-                                <button class="btn btn-outline-info float-left"
-                                    @click.prevent="showImportWorkflow"><font-awesome-icon icon="fa fa-download" />
-                                    {{$t('actions.import')}}</button>
-                                <router-link :to="{name: 'addWorkflow'}"
-                                    class="btn btn-primary btn-lemonade-primary float-left ml-2">
-                                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
-                                </router-link>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{$tc('titles.workflow', 2)}}</h1>
+            <div>
+                <button class="btn btn-outline-info float-left" @click.prevent="showImportWorkflow">
+                    <font-awesome-icon icon="fa fa-download" />
+                    {{$t('actions.import')}}
+                </button>
+                <router-link :to="{name: 'addWorkflow'}"
+                    class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+                </router-link>
 
-                            </div>
-                        </div>
-                    </div>
-                    <v-server-table ref="workflowList" :columns="columns" :options="options" name="workflowList">
-                        <template slot="id" slot-scope="props">
-                            <router-link
-                                :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.id}}</router-link>
-                        </template>
-                        <template slot="name" slot-scope="props">
-                            <router-link
-                                :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.name}}</router-link>
-                            <small v-if="props.row.description"
-                                class="break-word"><br />{{props.row.description}}</small>
-                        </template>
-                        <template slot="platform" slot-scope="props">{{props.row.platform.name}}</template>
-                        <template slot="is_template" slot-scope="props">{{$tc(props.row.is_template ? 'common.yes':
-                            'common.no')}}</template>
-                        <template slot="user_name" slot-scope="props">{{props.row.user.name}}</template>
-                        <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
-                        <div slot="afterFilter" class="ml-2">
-                            <label>{{$tc('common.platform')}}</label>
-                            <select v-model="platform" class="form-control">
-                                <option></option>
-                                <option v-for="p in platforms" :key="p.id" :value="p.slug">
-                                    {{p.name}}</option>
-                            </select>
-                            <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
-                                @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
-                        </div>
-                        <template slot="actions" slot-scope="props">
-                            <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
-                                <font-awesome-icon icon="trash"></font-awesome-icon>
-                            </button>
-                        </template>
-                    </v-server-table>
-                </div>
             </div>
         </div>
-        <b-modal id="importModal" ref="importModal" size="lg" :title="$t('actions.import') + ' ' + $tc('titles.workflow', 1)"
-            ok-disabled>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="workflowList" :columns="columns" :options="options" name="workflowList">
+                    <template slot="id" slot-scope="props">
+                        <router-link
+                            :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                            {{props.row.id}}</router-link>
+                    </template>
+                    <template slot="name" slot-scope="props">
+                        <router-link
+                            :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                            {{props.row.name}}</router-link>
+                        <small v-if="props.row.description" class="break-word"><br />{{props.row.description}}</small>
+                    </template>
+                    <template slot="platform" slot-scope="props">{{props.row.platform.name}}</template>
+                    <template slot="is_template" slot-scope="props">{{$tc(props.row.is_template ?
+                        'common.yes':
+                        'common.no')}}</template>
+                    <template slot="user_name" slot-scope="props">{{props.row.user.name}}</template>
+                    <template slot="updated" slot-scope="props">{{props.row.updated |
+                        formatJsonDate}}</template>
+                    <div slot="afterFilter" class="ml-2">
+                        <label>{{$tc('common.platform')}}</label>
+                        <select v-model="platform" class="form-control">
+                            <option></option>
+                            <option v-for="p in platforms" :key="p.id" :value="p.slug">
+                                {{p.name}}</option>
+                        </select>
+                        <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
+                            @click="clearFilters">{{$tc('actions.clearFilters')}}</button>
+                    </div>
+                    <template slot="actions" slot-scope="props">
+                        <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash"></font-awesome-icon>
+                        </button>
+                    </template>
+                </v-server-table>
+            </div>
+        </div>
+        <b-modal id="importModal" ref="importModal" size="lg"
+            :title="$t('actions.import') + ' ' + $tc('titles.workflow', 1)" ok-disabled>
             <b-form-radio-group>
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -176,7 +174,7 @@
                 // This works, but it uses internal details of component
                 const table = this.$refs.workflowList;
                 table.customQueries['platform'] = v;
-                table.updateState('customQueries', table.customQueries);
+                //table.updateState('customQueries', table.customQueries);
                 table.getData();
             }
         },
@@ -209,7 +207,7 @@
                         const url = `${tahitiUrl}/workflows/${workflowId}`;
                         axios
                             .delete(url, {})
-                            .then(()=> {
+                            .then(() => {
                                 self.success(self.$t('messages.successDeletion',
                                     { what: this.$tc('titles.workflow', 1) }));
                                 self.$refs.workflowList.refresh();

@@ -217,6 +217,8 @@ L.Icon.Default.mergeOptions({
 });
 */
 Vue.prototype.$openIdService = openIdService;
+Vue.prototype.$legacyStore = store;
+Vue.prototype.$legacyRouter = router;
 openIdService.loadConfig(store).then(() => {
     // Auth
     const token = localStorage.getItem('token');

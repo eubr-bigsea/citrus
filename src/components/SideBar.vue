@@ -2,7 +2,7 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav nav-pills nav-stacked" id="menu">
             <li class="sidebar-brand">
-                <button type="button" class="navbar-toggle collapsed btn btn-sm btn-success mr-2" @click="toggle">
+                <button type="button" class="navbar-toggle collapsed btn btn-sm mr-2" @click="toggle" id="btn-nav">
                     <font-awesome-icon :icon="'fa ' + icon" fixed-width />
                 </button>
                 <img class="full_logo" src="../assets/lemonade_logo_white.svg" width="157" height="32" alt="Lemonade">
@@ -64,7 +64,7 @@
             </li>
 
             <li :class="{active: path === '/admin'}">
-                <b-link v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }"
+                <b-link v-if="isAdmin" :to="{ name: 'admin-start' }"
                     class="text-success-2">
                     <font-awesome-icon icon="fa fa-user-lock" size="lg" fixed-width /> {{$tc('titles.administration',
                     2)}}
@@ -127,9 +127,13 @@
 </script>
 <style>
     :root {
-        --color-nav: #064f32;
-        --forecolor-nav: #c4ddd4;
+        --color-nav: #3D9970;
+        --forecolor-nav: #fff;
         
+    }
+    #btn-nav {
+        color: var(--color-nav);
+        background-color: #fff;
     }
     .nav-pills>li>a {
         border-radius: 0;
@@ -224,9 +228,11 @@
         list-style: none;
         margin-top: 2px;
     }
-
+    .sidebar-nav li.sidebar-brand {
+        text-indent: 7px;
+    }
     .sidebar-nav li {
-        text-indent: 9px;
+        text-indent: 4px;
         line-height: 35px;
     }
 
