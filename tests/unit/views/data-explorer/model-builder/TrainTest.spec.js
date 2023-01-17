@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-import TrainTest from '@/views/data-explorer/model-builder/TrainTest.vue'
+import TrainTest from '$SRC/views/data-explorer/model-builder/TrainTest.vue'
 import Vue from 'vue';
 
 describe('TrainTest.vue', () => {
@@ -28,7 +28,7 @@ describe('TrainTest.vue', () => {
         return selectValues;
     }
 
-    it('renders train/test form', () => {
+    test('renders train/test form', () => {
         const wrapper = shallowMount(TrainTest, {
             propsData: {
                 split: {
@@ -43,7 +43,7 @@ describe('TrainTest.vue', () => {
         expect(wrapper.find("[data-test='ratio']").exists()).toBe(false);
         expect(wrapper.find("[data-test='seed']").exists()).toBe(false);
     });
-    it('renders train/test form with "split" value selected', () => {
+    test('renders train/test form with "split" value selected', () => {
         const wrapper = shallowMount(TrainTest, {
             propsData: {
                 split: {
@@ -63,7 +63,7 @@ describe('TrainTest.vue', () => {
         expect(wrapper.find("[data-test='ratio']").exists()).toBe(true);
         expect(wrapper.find("[data-test='seed']").exists()).toBe(true);
     });
-    it('renders train/test form with "cross_validation" value selected', () => {
+    test('renders train/test form with "cross_validation" value selected', () => {
         const wrapper = shallowMount(TrainTest, {
             propsData: {
                 split: {
@@ -82,7 +82,7 @@ describe('TrainTest.vue', () => {
         expect(wrapper.find("[data-test='folds']").exists()).toBe(true);
         expect(wrapper.find("[data-test='seed']").exists()).toBe(true);
     });
-    it('renders train/test form with "cross_validation" value selected and shows/hides example', async () => {
+    test('renders train/test form with "cross_validation" value selected and shows/hides example', async () => {
         const propsData = {
             split: {
                 forms: {

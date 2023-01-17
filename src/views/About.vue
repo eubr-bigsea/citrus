@@ -1,16 +1,16 @@
 <template>
-  <main role="main">
-    <div class="row">
-      <div class="col">
-        <div class="about">
-          <h1>This is an about page</h1>
+    <main role="main">
+        <div class="row">
+            <div class="col">
+                <div class="about">
+                    <h1>This is an about page</h1>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </main>
+    </main>
 </template>
 <script>
-    export default {
-        name: 'AboutView',
-    }
+export default {
+    name: 'AboutView',
+}
 </script>

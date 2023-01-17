@@ -1,135 +1,162 @@
 <template>
     <div id="sidebar-wrapper">
-        <ul class="sidebar-nav nav-pills nav-stacked" id="menu">
+        <ul id="menu" class="sidebar-nav nav-pills nav-stacked">
             <li class="sidebar-brand">
-                <button type="button" class="navbar-toggle collapsed btn btn-sm mr-2" @click="toggle" id="btn-nav">
-                    <font-awesome-icon :icon="'fa ' + icon" fixed-width />
+                <button v-if="icon" id="btn-nav" type="button" class="navbar-toggle collapsed btn btn-sm mr-2"
+                        @click="toggle">
+                    <font-awesome-icon :icon="'fa ' + icon"
+                                       fixed-width />
                 </button>
-                <img class="full_logo" src="../assets/lemonade_logo_white.svg" width="157" height="32" alt="Lemonade">
+                <img class="full_logo" src="../assets/lemonade_logo_white.svg" width="157" height="32"
+                     alt="Lemonade">
                 <!--img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32" alt="Lemonade" -->
             </li>
             <li :class="{active: path === '/home'}">
-                <b-link :to="{ name: 'home' }" class="text-success-2">
-                    <font-awesome-icon icon="fa fa-home" size="lg" fixed-width /> {{
-                    $tc('titles.start', 2) }}
+                <b-link :to="{ name: 'home' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-home" size="lg" fixed-width /> {{$tc('titles.start', 2)}}
                 </b-link>
             </li>
-            <li class="mb-1">&nbsp;</li>
+            <li class="mb-1" />
             <li :class="{active: path === '/projects'}">
-                <b-link v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'projects' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-shapes" size="lg" fixed-width /> {{
-                    $tc('titles.project', 2) }}
+                <b-link v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'projects' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-shapes"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.project', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/data-sources'}">
-                <b-link v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'dataSources' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-database" size="lg" fixed-width /> {{
-                    $tc('titles.dataSource', 2) }}
+                <b-link v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'dataSources' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-database"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.dataSource', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/workflows'}">
-                <b-link v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-project-diagram" size="lg" fixed-width /> {{ $tc('titles.workflow',
-                    2) }}
+                <b-link v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'workflows' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-project-diagram"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.workflow',
+                                                            2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/experiments'}">
-                <b-link v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-vial" size="lg" fixed-width /> {{ $tc('titles.dataExplorer', 2) }}
+                <b-link v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'index-explorer' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-vial"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.dataExplorer', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/apps'}">
-                <b-link v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'tracks' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-microscope" size="lg" fixed-width /> {{ $tc('titles.track', 2) }}
+                <b-link v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'tracks' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-microscope"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.track', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/jobs'}">
-                <b-link v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" :to="{ name: 'jobs' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-tasks" size="lg" fixed-width /> {{ $tc('titles.jobs', 2) }}
+                <b-link v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'jobs' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-tasks"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.jobs', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/dashboards'}">
-                <b-link v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-chart-line" size="lg" fixed-width /> {{ $tc('titles.dashboard', 2) }}
+                <b-link v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'dashboards' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-chart-line"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.dashboard', 2)}}
                 </b-link>
             </li>
-            <li class="mt-5">&nbsp;
-            </li>
+            <li class="mt-5" />
 
             <li :class="{active: path === '/admin'}">
-                <b-link v-if="isAdmin" :to="{ name: 'admin-start' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-user-lock" size="lg" fixed-width /> {{$tc('titles.administration',
-                    2)}}
+                <b-link v-if="isAdmin"
+                        :to="{ name: 'admin-start' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-user-lock"
+                                       size="lg"
+                                       fixed-width /> {{$tc('titles.administration',
+                                                            2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/me'}">
-                <b-link v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }"
-                    class="text-success-2">
-                    <font-awesome-icon icon="fa fa-user" size="lg" fixed-width />
-                    {{ user.name ? user.name.split(' ')[0]: '' }}
+                <b-link v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin"
+                        :to="{ name: 'dashboards' }"
+                        class="text-success-2">
+                    <font-awesome-icon icon="fa fa-user"
+                                       size="lg"
+                                       fixed-width />
+                    {{user.name ? user.name.split(' ')[0]: ''}}
                 </b-link>
             </li>
         </ul>
     </div>
 </template>
 <script>
-    import { mapGetters } from 'vuex';
-    export default {
-        data() {
-            return {
-                path: '',
-                icon: '',
-                APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
-                DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
-                    'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
-                DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
-                    'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
-                    'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
-                DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
-                JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
-                SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
-                USER_PERMISSIONS: ['USER_MANAGE'],
-                WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
-                    'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
-                    'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
+import { mapGetters } from 'vuex';
+export default {
+    data() {
+        return {
+            path: '',
+            icon: '',
+            APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
+            DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
+                'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
+            DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
+                'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
+                'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
+            DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
+            JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
+            SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
+            USER_PERMISSIONS: ['USER_MANAGE'],
+            WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
+                'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
+                'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
 
-            }
-        },
-        computed: {
-            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
-        },
+        }
+    },
+    computed: {
+        ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
+    },
+    watch: {
+        '$route'(to) {
+            this.path = to.path;
+            //console.debug(this.path)
+        }
+    },
+    mounted() {
+        this.toggle()
+        this.icon = 'fa-bars';
+    },
 
-        methods: {
-            toggle() {
-                document.getElementById("wrapper").classList.toggle("toggled-2");
-                this.icon = this.icon === 'fa-bars' ? 'fa-times' : 'fa-bars';
-            }
-        },
-        mounted() {
-            this.toggle()
-            this.icon = 'fa-bars';
-        },
-        watch: {
-            '$route'(to) {
-                this.path = to.path;
-                console.debug(this.path)
-            }
+    methods: {
+        toggle() {
+            document.getElementById("wrapper").classList.toggle("toggled-2");
+            this.icon = this.icon === 'fa-bars' ? 'fa-times' : 'fa-bars';
         }
     }
+}
 </script>
 <style>
     :root {
         --color-nav: #3D9970;
         --forecolor-nav: #fff;
-        
+
     }
     #btn-nav {
         color: var(--color-nav);
@@ -202,7 +229,7 @@
 
     #page-content-wrapper {
         position: absolute;
-        xpadding: 15px;
+        min-height: 100vh;
         width: 100%;
         overflow-x: hidden;
     }

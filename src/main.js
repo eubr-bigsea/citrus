@@ -2,14 +2,15 @@ import Vue from 'vue';
 import VueProgressBar from 'vue-progressbar';
 import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
-import router from './router';
-import store from './store';
-import { openIdService } from './openid-auth';
+import router from './router.js';
+import store from './store.js';
+import { openIdService } from './openid-auth.js';
 
+import 'vue-select/dist/vue-select.css';
 import VueI18n from 'vue-i18n';
 import { createI18n } from 'vue-i18n-bridge'
 
-import messages from './i18n/messages';
+import messages from './i18n/messages.js';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
@@ -19,9 +20,10 @@ import VueTheMask from 'vue-the-mask'
 
 import { ClientTable, ServerTable } from 'vue-tables-2';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
-import './fa-icons';
+import './fa-icons.js';
 
 /* Widgets */
+
 import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
 import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue'
 import AttributeAliasSelectorComponent from './components/widgets/AttributeAliasSelector.vue'
@@ -53,13 +55,14 @@ import TextAreaComponent from './components/widgets/TextArea.vue'
 import UrlComponent from './components/widgets/Url.vue'
 import Plotly from './components/visualization/Plotly.vue';
 
+
 import vSelect from 'vue-select'
-import 'vue-select/dist/vue-select.css';
 import VueGridLayout from 'vue-grid-layout';
 
-Vue.component('v-select', vSelect)
-Vue.component('grid-item', VueGridLayout.GridItem);
-Vue.component('grid-layout', VueGridLayout.GridLayout);
+
+Vue.component('VSelect', vSelect)
+Vue.component('GridItem', VueGridLayout.GridItem);
+Vue.component('GridLayout', VueGridLayout.GridLayout);
 
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
@@ -98,7 +101,7 @@ const widgets = new Map([
 
 widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
-Vue.component('Plotly', Plotly.default || Plotly);
+//Vue.component('Plotly', Plotly.default || Plotly);
 import './assets/main.scss';
 
 // Snotify
@@ -125,12 +128,12 @@ config.autoReplaceSvg = 'nest';
 
 Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
-Vue.use(VueTheMask)
+//Vue.use(VueTheMask)
 
 //Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
-Vue.component('font-awesome-icon', FontAwesomeIcon);
-Vue.component('font-awesome-layers', FontAwesomeLayers);
+Vue.component('FontAwesomeIcon', FontAwesomeIcon);
+Vue.component('FontAwesomeLayers', FontAwesomeLayers);
 
 Vue.config.productionTip = false;
 
@@ -154,21 +157,31 @@ Vue.use(VueProgressBar, options);
 import { formatDistanceStrict, format, parseISO } from 'date-fns';
 import { enUS, ptBR } from 'date-fns/locale'
 
-const locales = {en: enUS, pt: ptBR};
+const locales = { en: enUS, pt: ptBR };
 /*
 const locales = {
     en: require('date-fns/locale/en-US'),
     pt: require('date-fns/locale/pt')
 };
 */
-
+Vue.prototype.$filters = {
+    formatJsonDate(v) {
+        if (v) {
+            return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
+        }
+    },
+    timeFromNow(v, l) {
+        return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
+            { addSuffix: true, locale: locales[l] })
+    },
+}
 Vue.filter('formatJsonDate', v => {
     if (v) {
         return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
     }
 });
-Vue.filter('timeFromNow', (v, l) =>{ 
-    return formatDistanceStrict(parseISO(v + '.000Z'), new Date(), 
+Vue.filter('timeFromNow', (v, l) => {
+    return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
         { addSuffix: true, locale: locales[l] })
 }
 );
@@ -177,13 +190,14 @@ Vue.filter('formatJsonHourMinute', v => {
         return format(parseISO(v + '.000Z'), 'HH:mm:ss');
     }
 });
-Vue.component('v-style', {
+Vue.component('VStyle', {
     render: function (createElement) {
         return createElement('style', this.$slots.default)
     }
 });
 
 // Highcharts
+
 import Highcharts from 'highcharts';
 import HighchartsVue from 'highcharts-vue';
 import exporting from 'highcharts/modules/exporting';
@@ -198,18 +212,21 @@ highchartsMore(Highcharts);
 
 Vue.use(HighchartsVue);
 
+
 // Leaflet
 //import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
+
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
 
-Vue.component('l-map', LMap);
-Vue.component('l-tile-layer', LTileLayer);
-Vue.component('l-marker', LMarker);
+Vue.component('LMap', LMap);
+Vue.component('LTileLayer', LTileLayer);
+Vue.component('LMarker', LMarker);
 
-/*delete L.Icon.Default.prototype._getIconUrl;
 
+delete L.Icon.Default.prototype._getIconUrl;
+/*
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
     iconUrl: require('leaflet/dist/images/marker-icon.png'),
@@ -260,7 +277,7 @@ openIdService.loadConfig(store).then(() => {
             i18n.locale = locale;
         }
     });
-    
+
     router.beforeEach((to, from, next) => {
         if (to.meta.title) {
             let title = i18n.tc('titles.lemonade') + ' :: ' +
@@ -273,7 +290,7 @@ openIdService.loadConfig(store).then(() => {
             document.title = i18n.tc('titles.lemonade', 2)
         }
         if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
-            // If OpenId support is enabled in Thorn, use it. 
+            // If OpenId support is enabled in Thorn, use it.
             // Otherwise, it uses internal Thorn API.
 
             if (openIdService.enabled) {
@@ -320,7 +337,7 @@ openIdService.loadConfig(store).then(() => {
             newVue.$Progress.start()
         }
         const token = localStorage.getItem('token');
-        if (token){
+        if (token) {
             config.headers['Authorization'] = token
             config.headers['X-THORN-ID'] = 'true'
         } else {

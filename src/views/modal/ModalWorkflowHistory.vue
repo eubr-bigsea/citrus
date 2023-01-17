@@ -13,33 +13,35 @@
                     <td>{{h.date}}</td>
                     <td>{{h.user_name}}</td>
                     <td>
-                        <button class="btn btn-sm btn-danger"
-                            @click="restore(h.version)">{{$t('actions.restore')}}</button>
+                        <button class="btn btn-sm btn-danger" @click="restore(h.version)">
+                            {{$t('actions.restore')}}
+                        </button>
                     </td>
                 </tr>
             </table>
         </div>
         <div slot="modal-footer" class="w-100">
             <b-btn variant="secondary_sm" class="float-right btn-outline-secondary" @click="close">
-                {{$t('actions.cancel')}}</b-btn>
+                {{$t('actions.cancel')}}
+            </b-btn>
         </div>
     </b-modal>
 </template>
 <script>
-    export default {
-        props: {
-            history: { type: Array, default: () => [] },
+export default {
+    props: {
+        history: { type: Array, default: () => [] },
+    },
+    methods: {
+        restore(version) {
+            this.$root.$emit('onrestore-workflow', version);
         },
-        methods: {
-            restore(version) {
-                this.$root.$emit('onrestore-workflow', version);
-            },
-            show() {
-                this.$refs.modal.show();
-            },
-            close(){
-                this.$refs.modal.hide();
-            }
+        show() {
+            this.$refs.modal.show();
+        },
+        close() {
+            this.$refs.modal.hide();
         }
     }
+}
 </script>

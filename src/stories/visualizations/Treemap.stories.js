@@ -1,5 +1,5 @@
 
-import Treemap from '../../components/visualization/Treemap';
+import Treemap from '../../components/visualization/Treemap.vue';
 
 const chart1 = {
     "data": {

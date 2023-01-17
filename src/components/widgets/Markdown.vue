@@ -1,22 +1,23 @@
 <template>
-    <div class="markdown-area" :style="cssStyle" v-html="markdown">
-    </div>
+    <div class="markdown-area"
+         :style="cssStyle"
+         v-html="markdown" />
 </template>
 
 <script>
-    import snarkdown from 'snarkdown';
-    export default {
-        name: 'MarkdownComponent',
-        props: {
-            text: {type: String, default: () => null},
-            cssStyle: {type: String, default: () => null},
+import snarkdown from 'snarkdown';
+export default {
+    name: 'MarkdownComponent',
+    props: {
+        text: {type: String, default: () => null},
+        cssStyle: {type: String, default: () => null},
+    },
+    computed: {
+        markdown() {
+            return snarkdown(this.text || '');
         },
-        computed: {
-            markdown() {
-                return snarkdown(this.text || '');
-            },
-        }
     }
+}
 </script>
 <style lang="scss" scoped>
     .markdown-area {

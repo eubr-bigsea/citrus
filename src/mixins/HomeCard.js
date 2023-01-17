@@ -3,25 +3,25 @@ export default {
     methods: {
         getPlatformBadgeColor() {
             switch (this.item.platform.slug) {
-                case 'spark': return "badge-danger";
-                case 'keras': return "badge-success";
-                case 'compss': return "badge-secondary";
-                case 'scikit-learn': return "badge-info";
-                default: return '';
+            case 'spark': return "badge-danger";
+            case 'keras': return "badge-success";
+            case 'compss': return "badge-secondary";
+            case 'scikit-learn': return "badge-info";
+            default: return '';
             }
         },
         getFormatBadgeColor() {
             switch (this.item.format) {
-                case 'CSV': return "badge-primary";
-                default: return 'badge-secondary';
+            case 'CSV': return "badge-primary";
+            default: return 'badge-secondary';
             }
         },
         getStatusBadgeColor() {
             switch (this.item.status) {
-                case 'COMPLETED': return "badge-success";
-                case 'ERROR': return "badge-danger";
-                case 'WAITING': return "badge-warning";
-                default: return 'badge-secondary';
+            case 'COMPLETED': return "badge-success";
+            case 'ERROR': return "badge-danger";
+            case 'WAITING': return "badge-warning";
+            default: return 'badge-secondary';
             }
         },
         getUserAvatar() {

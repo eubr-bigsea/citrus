@@ -1,10 +1,10 @@
 <template>
-    <div ref="base" class="base"> </div>
+    <div ref="base" class="base" />
 </template>
 <script>
-    export default {
-        name: 'PulseComponent'
-    }
+export default {
+    name: 'PulseComponent'
+}
 </script>
 <style scoped>
     .base {

@@ -15,21 +15,21 @@
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <label class="font-weight-bold">{{$tc('common.name')}}:</label>
-                                                <br />
+                                                <br>
                                                 {{platform.name}}
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="font-weight-bold">{{$tc('common.slug')}}:</label>
-                                                <br />{{platform.slug}}
+                                                <br>{{platform.slug}}
                                             </div>
                                             <div class="col-md-3">
                                                 <b-form-checkbox v-model="platform.enabled">
-                                                    {{ $t('common.enabled') }}
+                                                    {{$t('common.enabled')}}
                                                 </b-form-checkbox>
                                             </div>
                                             <div class="col-md-12 mt-4">
                                                 <label class="font-weight-bold">{{$tc('common.description')}}:</label>
-                                                <br />{{platform.description}}
+                                                <br>{{platform.description}}
                                             </div>
                                             <template v-if="platform.plugin">
                                                 <div class="col-md-12 mt-4">
@@ -38,7 +38,7 @@
                                                 </div>
                                                 <div class="col-md-12">
                                                     <label class="font-weight-bold">{{$tc('common.url')}}:</label>
-                                                    <br />{{platform.description}}
+                                                    <br>{{platform.description}}
                                                 </div>
                                             </template>
                                         </div>
@@ -50,7 +50,8 @@
                                                     {{$tc('actions.save')}}
                                                 </button>
                                                 <router-link :to="{name: 'platforms'}" class="btn btn-secondary mr-1">
-                                                    {{$tc('actions.cancel')}}</router-link>
+                                                    {{$tc('actions.cancel')}}
+                                                </router-link>
                                             </div>
                                         </div>
                                     </div>
@@ -67,7 +68,9 @@
                                     </div>
                                     <div class="col-md-2">
                                         <button class="btn btn-secondary" :disabled="subsetName.trim() === ''"
-                                            @click="addSubset">{{$t('common.ok')}}</button>
+                                                @click="addSubset">
+                                            {{$t('common.ok')}}
+                                        </button>
                                     </div>
                                 </div>
                                 <div>
@@ -75,13 +78,17 @@
                                         <tr v-for="subset in platform.subsets" :key="subset.id" class="row">
                                             <td style="width: 80%">
                                                 <input v-model="subset.name" type="text" maxlength="50"
-                                                    class="form-control" />
+                                                       class="form-control">
                                             </td>
                                             <td>
                                                 <button class="btn btn-primary btn-sm mr-1" :title="$t('actions.save')"
-                                                    @click="saveSubset(subset)">{{$t('actions.save')}}</button>
+                                                        @click="saveSubset(subset)">
+                                                    {{$t('actions.save')}}
+                                                </button>
                                                 <button class="btn btn-danger btn-sm" :title="$t('actions.delete')"
-                                                    @click="removeSubset(subset)">{{$t('actions.delete')}}</button>
+                                                        @click="removeSubset(subset)">
+                                                    {{$t('actions.delete')}}
+                                                </button>
                                             </td>
                                         </tr>
                                     </table>
@@ -110,47 +117,49 @@
                                     </div>
                                     <div class="md-10">
                                         <div v-if="loadingOperations" class="loading">
-                                            <div class="spinner-grow">
-                                            </div>
+                                            <div class="spinner-grow" />
                                             <p>{{$t('common.loading')}}</p>
                                         </div>
                                         <div class="oplist">
-                                        <table class="table table-sm table-smallest table-bordered table-stripped">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th class="text-center" style="width: 80px">{{$tc('common.enabled',
-                                                        1)}}
-                                                    </th>
-                                                    <th class="text-center" style="width: 80px">{{$tc('common.id', 1)}}
-                                                    </th>
-                                                    <th class="text-center">{{$tc('common.name', 1)}}</th>
-                                                    <th v-for="subset in platform.subsets" :key="subset.id"
+                                            <table class="table table-sm table-smallest table-bordered table-stripped">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th class="text-center" style="width: 80px">
+                                                            {{$tc('common.enabled',
+                                                                  1)}}
+                                                        </th>
+                                                        <th class="text-center" style="width: 80px">
+                                                            {{$tc('common.id', 1)}}
+                                                        </th>
+                                                        <th class="text-center">
+                                                            {{$tc('common.name', 1)}}
+                                                        </th>
+                                                        <th v-for="subset in platform.subsets" :key="subset.id"
+                                                            class="subset text-center">
+                                                            {{subset.name}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tr v-for="op in operations" :key="op.id" class="child">
+                                                    <td style="width: 50px" class="text-center">
+                                                        <b-form-checkbox v-model="op.enabled"
+                                                                         @change="toggleOperation(op)" />
+                                                    </td>
+                                                    <td style="width: 50px" class="text-center">
+                                                        {{op.id}}
+                                                    </td>
+                                                    <td style="width: 120px" :title="op.description" class="pt-2">
+                                                        {{op.name}}
+                                                        <br><em>{{getCategory(op)}}</em>
+                                                    </td>
+                                                    <td v-for="subset in platform.subsets" :key="subset.id"
                                                         class="subset text-center">
-                                                        {{subset.name}}
-                                                    </th>
+                                                        <b-form-checkbox v-model="op.subsetIds" :value="subset.id"
+                                                                         @change="toggleSubsetOperation(subset, op)" />
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tr v-for="op in operations" :key="op.id" class="child">
-                                                <td style="width: 50px" class="text-center">
-                                                    <b-form-checkbox v-model="op.enabled" @change="toggleOperation(op)">
-                                                    </b-form-checkbox>
-                                                </td>
-                                                <td style="width: 50px" class="text-center">
-                                                    {{op.id}}
-                                                </td>
-                                                <td style="width: 120px" :title="op.description" class="pt-2">
-                                                    {{op.name}}
-                                                    <br /><em>{{getCategory(op)}}</em>
-                                                </td>
-                                                <td v-for="subset in platform.subsets" :key="subset.id"
-                                                    class="subset text-center">
-                                                    <b-form-checkbox v-model="op.subsetIds" :value="subset.id"
-                                                        @change="toggleSubsetOperation(subset, op)">
-                                                    </b-form-checkbox>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </b-tab>
@@ -183,229 +192,229 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-    import axios from 'axios';
-    import Notifier from '../../mixins/Notifier';
-    import View from '../../mixins/View';
+import Vue from 'vue';
+import axios from 'axios';
+import Notifier from '../../mixins/Notifier.js';
+import View from '../../mixins/View.vue';
 
-    let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
-    export default {
-        components: {
-        },
-        mixins: [Notifier, View],
-        data() {
-            return {
-                isDirty: false,
-                loadingOperations: false,
-                operations: [],
-                loadingSubsetOperations: false,
-                subsetOperations: [],
-                subsetId: null,
-                platform: {},
-                types: ['KUBERNETES', 'SPARK_LOCAL', 'MESOS', 'YARN'].sort(),
-                currentSubset: {},
-                subsetName: "",
-            };
-        },
-        computed: {},
-        watch: {
-            '$route.params.id': function () {
-                this.load().then(() => {
-                    Vue.nextTick(() => {
-                        this.isDirty = false;
-                    });
-                });
-            },
-            platform: {
-                handler() {
-                    this.isDirty = true;
-                },
-                deep: true
-            }
-        },
-        mounted() {
-            let self = this;
+export default {
+    components: {
+    },
+    mixins: [Notifier, View],
+    data(){
+        return {
+            isDirty: false,
+            loadingOperations: false,
+            operations: [],
+            loadingSubsetOperations: false,
+            subsetOperations: [],
+            subsetId: null,
+            platform: {},
+            types: ['KUBERNETES', 'SPARK_LOCAL', 'MESOS', 'YARN'].sort(),
+            currentSubset: {},
+            subsetName: "",
+        };
+    },
+    computed: {},
+    watch: {
+        '$route.params.id': function (){
             this.load().then(() => {
                 Vue.nextTick(() => {
-                    self.isDirty = false;
+                    this.isDirty = false;
                 });
             });
         },
-        /* Methods */
-        methods: {
-            removeSubset(subset) {
-                const self = this;
-                this.confirm(
-                    this.$t('actions.delete'),
-                    this.$t('messages.doYouWantToDelete'),
-                    () => {
-                        axios.delete(`${tahitiUrl}/subsets/${subset.id}`)
-                            .then(() => {
-                                this.load();
-                                this.success(
-                                    this.$t('messages.successDeletion', {
-                                        what: this.$tc('platform.subset', 1)
-                                    })
-                                );
-                            })
-                            .catch(function (e) {
-                                self.error(e);
-                            })
-                    });
+        platform: {
+            handler(){
+                this.isDirty = true;
             },
-            saveSubset(subset) {
-                const self = this;
-                const payload = { name: subset.name };
-                axios.patch(`${tahitiUrl}/subsets/${subset.id}`, payload)
-                    .then(()=> {
+            deep: true
+        }
+    },
+    mounted(){
+        let self = this;
+        this.load().then(() => {
+            Vue.nextTick(() => {
+                self.isDirty = false;
+            });
+        });
+    },
+    /* Methods */
+    methods: {
+        removeSubset(subset){
+            const self = this;
+            this.confirm(
+                this.$t('actions.delete'),
+                this.$t('messages.doYouWantToDelete'),
+                () => {
+                    axios.delete(`${tahitiUrl}/subsets/${subset.id}`)
+                        .then(() => {
+                            this.load();
+                            this.success(
+                                this.$t('messages.successDeletion', {
+                                    what: this.$tc('platform.subset', 1)
+                                })
+                            );
+                        })
+                        .catch(function (e){
+                            self.error(e);
+                        })
+                });
+        },
+        saveSubset(subset){
+            const self = this;
+            const payload = {name: subset.name};
+            axios.patch(`${tahitiUrl}/subsets/${subset.id}`, payload)
+                .then(() => {
+                    this.load();
+                    this.success(
+                        this.$t('messages.savedWithSuccess', {
+                            what: this.$tc('platform.subset', 1)
+                        })
+                    );
+                })
+                .catch(function (e){
+                    self.error(e);
+                });
+        },
+        addSubset(){
+            const self = this;
+            if (this.subsetName.trim()){
+                const payload = {
+                    name: this.subsetName.trim(),
+                    platform: {id: this.platform.id}
+                };
+                axios.post(`${tahitiUrl}/subsets`, payload)
+                    .then(() => {
                         this.load();
-                        this.success(
+                        self.success(
                             this.$t('messages.savedWithSuccess', {
                                 what: this.$tc('platform.subset', 1)
                             })
                         );
                     })
-                    .catch(function (e) {
+                    .catch(function (e){
                         self.error(e);
-                    });
-            },
-            addSubset() {
-                const self = this;
-                if (this.subsetName.trim()) {
-                    const payload = {
-                        name: this.subsetName.trim(),
-                        platform: { id: this.platform.id }
-                    };
-                    axios.post(`${tahitiUrl}/subsets`, payload)
-                        .then(()=> {
-                            this.load();
-                            self.success(
-                                this.$t('messages.savedWithSuccess', {
-                                    what: this.$tc('platform.subset', 1)
-                                })
-                            );
-                        })
-                        .catch(function (e) {
-                            self.error(e);
-                        });
-                }
-            },
-            toggleOperation(operation) {
-                const self = this;
-                const currentValue = operation.enabled;
-                axios.delete(`${tahitiUrl}/operations/${operation.id}`)
-                    .then(()=> {
-                        // operation.enabled = ! operation.enabled;
-                    })
-                    .catch(function (e) {
-                        operation.enabled = currentValue;
-                        self.error(e);
-                    });
-            },
-            toggleSubsetOperation(subset, operation) {
-                const self = this;
-                const currentValue = operation.subsetIds.includes(subset.id);
-                let axiosMethod = axios.post;
-                if (currentValue) {
-                    axiosMethod = axios.delete;
-                }
-                axiosMethod(`${tahitiUrl}/subsets/${subset.id}/${operation.id}`)
-                    .then(() => { })
-                    .catch(function (e) {
-                        operation.enabled = currentValue;
-                        self.error(e);
-                    });
-            },
-            getCategory(op) {
-                const categ = op.categories.find(c => c.type === 'group');
-                return categ ? categ.name : '-'
-            },
-            load() {
-                let self = this;
-                return new Promise((resolve, reject) => {
-                    axios
-                        .get(`${tahitiUrl}/platforms/${this.$route.params.id}`)
-                        .then(resp => {
-                            self.platform = resp.data.data[0];
-                            resolve();
-                        })
-                        .catch(function (e) {
-                            self.error(e);
-                            reject();
-                        });
-                });
-            },
-            success(msg) {
-                this.$snotify.success(msg, this.$t('titles.success'));
-            },
-            error(e) {
-                if (e.name === 'NetworkError') {
-                    this.$snotify.error(
-                        this.$t('errors.disconnected'),
-                        this.$t('titles.error')
-                    );
-                } else if (e.response && e.response.data) {
-                    this.$snotify.error(e.response.data.message, this.$t('titles.error'));
-                } else {
-                    this.$snotify.error(e.message, this.$t('titles.error'));
-                }
-            },
-            loadOperations() {
-                this._loadOperations(null, 'operations', 'loadingOperations');
-            },
-            _loadOperations(subsetId, target, loading) {
-                const self = this;
-                const url = `${tahitiUrl}/operations`;
-                const params = {
-                    lang: this.$root.$i18n.locale,
-                    platform: this.platform.id,
-                    partial: 1,
-                    disabled: true,
-                    ts: new Date().getTime(), // disable cache
-                }
-                self[loading] = true;
-                return axios
-                    .get(url, { params })
-                    .then(resp => {
-                        self[target] = resp.data.data;
-                        resp.data.data.forEach(op =>  {
-                            if (op.subsets){
-                                op.subsetIds = op.subsets.map(s => s.id)
-                            } else {
-                                op.subset = [];
-                            }
-                        });
-                    }).catch(self.error)
-                    .finally(() => { self[loading] = false; });
-            },
-            save(event) {
-                const self = this;
-                const url = `${tahitiUrl}/platforms/${this.platform.id}`;
-                self.toggleLoading(event.target);
-                return axios
-                    .patch(url, this.platform)
-                    .then(resp => {
-                        self.platform = resp.data;
-                        Vue.nextTick(() => {
-                            self.isDirty = false;
-                        });
-                        self.success(
-                            this.$t('messages.savedWithSuccess', {
-                                what: this.$tc('titles.platform', 1)
-                            })
-                        );
-                        this.$router.push({ name: 'platforms' });
-                    })
-                    .catch(e => {
-                        self.error(e);
-                    })
-                    .finally(() => {
-                        self.toggleLoading(event.target);
                     });
             }
+        },
+        toggleOperation(operation){
+            const self = this;
+            const currentValue = operation.enabled;
+            axios.delete(`${tahitiUrl}/operations/${operation.id}`)
+                .then(() => {
+                    // operation.enabled = ! operation.enabled;
+                })
+                .catch(function (e){
+                    operation.enabled = currentValue;
+                    self.error(e);
+                });
+        },
+        toggleSubsetOperation(subset, operation){
+            const self = this;
+            const currentValue = operation.subsetIds.includes(subset.id);
+            let axiosMethod = axios.post;
+            if (currentValue){
+                axiosMethod = axios.delete;
+            }
+            axiosMethod(`${tahitiUrl}/subsets/${subset.id}/${operation.id}`)
+                .then(() => { })
+                .catch(function (e){
+                    operation.enabled = currentValue;
+                    self.error(e);
+                });
+        },
+        getCategory(op){
+            const categ = op.categories.find(c => c.type === 'group');
+            return categ ? categ.name : '-'
+        },
+        load(){
+            let self = this;
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(`${tahitiUrl}/platforms/${this.$route.params.id}`)
+                    .then(resp => {
+                        self.platform = resp.data.data[0];
+                        resolve();
+                    })
+                    .catch(function (e){
+                        self.error(e);
+                        reject();
+                    });
+            });
+        },
+        success(msg){
+            this.$snotify.success(msg, this.$t('titles.success'));
+        },
+        error(e){
+            if (e.name === 'NetworkError'){
+                this.$snotify.error(
+                    this.$t('errors.disconnected'),
+                    this.$t('titles.error')
+                );
+            } else if (e.response && e.response.data){
+                this.$snotify.error(e.response.data.message, this.$t('titles.error'));
+            } else {
+                this.$snotify.error(e.message, this.$t('titles.error'));
+            }
+        },
+        loadOperations(){
+            this._loadOperations(null, 'operations', 'loadingOperations');
+        },
+        _loadOperations(subsetId, target, loading){
+            const self = this;
+            const url = `${tahitiUrl}/operations`;
+            const params = {
+                lang: this.$root.$i18n.locale,
+                platform: this.platform.id,
+                partial: 1,
+                disabled: true,
+                ts: new Date().getTime(), // disable cache
+            }
+            self[loading] = true;
+            return axios
+                .get(url, {params})
+                .then(resp => {
+                    self[target] = resp.data.data;
+                    resp.data.data.forEach(op => {
+                        if (op.subsets){
+                            op.subsetIds = op.subsets.map(s => s.id)
+                        } else {
+                            op.subset = [];
+                        }
+                    });
+                }).catch(self.error)
+                .finally(() => { self[loading] = false; });
+        },
+        save(event){
+            const self = this;
+            const url = `${tahitiUrl}/platforms/${this.platform.id}`;
+            self.toggleLoading(event.target);
+            return axios
+                .patch(url, this.platform)
+                .then(resp => {
+                    self.platform = resp.data;
+                    Vue.nextTick(() => {
+                        self.isDirty = false;
+                    });
+                    self.success(
+                        this.$t('messages.savedWithSuccess', {
+                            what: this.$tc('titles.platform', 1)
+                        })
+                    );
+                    this.$router.push({name: 'platforms'});
+                })
+                .catch(e => {
+                    self.error(e);
+                })
+                .finally(() => {
+                    self.toggleLoading(event.target);
+                });
         }
-    };
+    }
+};
 </script>
 <style>
     .v-select .dropdown-toggle::after {
@@ -425,6 +434,7 @@
     .rotate {
         transform: rotate(90deg);
     }
+
     .oplist {
         height: 60vh;
         overflow: auto;

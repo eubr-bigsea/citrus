@@ -12,7 +12,8 @@
                             <label>{{$t('workflow.preferredCluster')}}:</label>
                             <select v-model="workflow.preferred_cluster_id" class="form-control w-75">
                                 <option v-for="cluster in clusters" :key="cluster.id" :value="cluster.id">
-                                    {{cluster.name}}</option>
+                                    {{cluster.name}}
+                                </option>
                             </select>
                         </div>
                         <div class="col-md-12">
@@ -46,8 +47,12 @@
                     <div v-if="workflow.publishing_enabled" class="mt-1">
                         <label>{{$t('workflow.publishingStatus')}}:</label>
                         <select v-model="workflow.publishing_status" class="form-control w-50">
-                            <option value="EDITING">{{$t('workflow.publisingStatusEditing')}}</option>
-                            <option value="PUBLISHED">{{$t('workflow.publisingStatusPublished')}}</option>
+                            <option value="EDITING">
+                                {{$t('workflow.publisingStatusEditing')}}
+                            </option>
+                            <option value="PUBLISHED">
+                                {{$t('workflow.publisingStatusPublished')}}
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -55,44 +60,44 @@
         </b-form>
         <div slot="modal-footer">
             <b-btn variant="primary btn-sm" class="float-right mr-1" :disabled="(workflow.name === '')"
-                @click="okClicked">
+                   @click="okClicked">
                 {{$t('common.ok')}}
             </b-btn>
         </div>
     </b-modal>
 </template>
 <script>
-    import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
-    export default {
-        components: {
-        },
-        props: {
-            clusters: { type: Array, default: () => [] },
-            loaded: Boolean,
-            workflow: {type: Object, default: () => {}},
-        },
-        data() {
-            return { userPermissions: {} };
-        },
-        computed: {
-            ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
-        },
-        mounted() {
-            this.userPermissions = this.$store.getters.userPermissions;
-        },
-        methods: {
-            okClicked() {
-                if (this.workflow.name && this.workflow.name.trim()) {
-                    this.$root.$emit('onupdate-workflow-properties');
-                    this.$refs.modal.hide();
-                } else {
-                    this.warning(this.$tc('titles.validationErrors', 2));
-                }
-            },
-            show() {
-                this.$refs.modal.show();
+export default {
+    components: {
+    },
+    props: {
+        clusters: { type: Array, default: () => [] },
+        loaded: Boolean,
+        workflow: { type: Object, default: () => { } },
+    },
+    data() {
+        return { userPermissions: {} };
+    },
+    computed: {
+        ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
+    },
+    mounted() {
+        this.userPermissions = this.$store.getters.userPermissions;
+    },
+    methods: {
+        okClicked() {
+            if (this.workflow.name && this.workflow.name.trim()) {
+                this.$root.$emit('onupdate-workflow-properties');
+                this.$refs.modal.hide();
+            } else {
+                this.warning(this.$tc('titles.validationErrors', 2));
             }
+        },
+        show() {
+            this.$refs.modal.show();
         }
     }
+}
 </script>

@@ -1,5 +1,5 @@
 
-import BubbleChart from '../../components/visualization/BubbleChart';
+import BubbleChart from '../../components/visualization/BubbleChart.vue';
 
 const chart1 = {
     data: {

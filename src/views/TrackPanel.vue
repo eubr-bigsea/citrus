@@ -6,7 +6,6 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>{{$tc('titles.track', 2)}}</h1>
                         <div class="float-right">
-
                             <!--
                             <router-link :to="{name: 'addTrack'}" v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
                                 class="btn btn-primary btn-lemonade-primary float-left mr-1">
@@ -33,19 +32,22 @@
                                 <div v-for="item in items" :key="item.id" class="track-item" :title="item.description">
                                     <b-dropdown variant="light" class="track-item-dropdown">
                                         <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
-                                            Visualizar</b-dropdown-item>
+                                            Visualizar
+                                        </b-dropdown-item>
                                         <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
-                                            :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}">
+                                                         :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}">
                                             {{$t('actions.edit')}}
                                         </b-dropdown-item>
                                         <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
-                                            Execuções anteriores</b-dropdown-item>
+                                            Execuções anteriores
+                                        </b-dropdown-item>
                                     </b-dropdown>
                                     <div class="img text-center">
                                         <router-link :to="{name: 'trackParameter', params: {id: item.id}}">
                                             <img v-if="item.image" class="circle-image" :src="item.image"
-                                                :alt="item.name" />
-                                            <div v-else class="big-letter">{{item.name.substring(0, 1).toUpperCase()}}
+                                                 :alt="item.name">
+                                            <div v-else class="big-letter">
+                                                {{item.name.substring(0, 1).toUpperCase()}}
                                             </div>
                                         </router-link>
                                     </div>
@@ -58,47 +60,46 @@
                             </div>
                             <div class="text-center">
                                 <pagination v-model="page" :records="records" :per-page="10" :options="options"
-                                    class="pagination" @paginate="paginate">
-                                </pagination>
+                                            class="pagination" @paginate="paginate" />
                             </div>
                         </div>
                         <div v-else class="col-md-12">
                             <v-server-table ref="trackPanelList" :columns="columns" :options="options"
-                                name="trackPanelList" @pagination="paginate">
-
+                                            name="trackPanelList" @pagination="paginate">
                                 <div slot="beforeTable" class="ml-2">
                                     <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
                                         </div>
                                         <input v-model="search" v-focus type="text" class="form-control"
-                                            :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
+                                               :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
                                     </div>
                                 </div>
-                                <template slot="id" slot-scope="props">
+                                <template #id="props">
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         {{props.row.id}}
                                     </router-link>
                                 </template>
-                                <template slot="image" slot-scope="props">
+                                <template #image="props">
                                     <img v-if="props.row.image" :src="props.row.image" alt="props.row.name"
-                                        class="circle-image" />
+                                         class="circle-image">
                                     <div v-else class="big-letter">
                                         {{props.row.name.substring(0, 1).toUpperCase()}}
                                     </div>
                                 </template>
-                                <template slot="name" slot-scope="props">
+                                <template #name="props">
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         {{props.row.name}}
                                     </router-link>
-                                    <small v-if="props.row.description"
-                                        class="break-word"><br />{{props.row.description}}</small>
+                                    <small v-if="props.row.description" class="break-word"><br>{{props.row.description}}</small>
                                 </template>
-                                <template slot="updated" slot-scope="props">{{props.row.updated |
-                                    formatJsonDate}}</template>
+                                <template #updated="props">
+                                    {{props.row.updated |
+                                        formatJsonDate}}
+                                </template>
                                 <!--
                                 <template slot="actions" slot-scope="props">
-                                    
+
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         <span class="btn btn-sm btn-info mr-1" :title="$t('actions.view')">
                                             <font-awesome-icon icon="eye"></font-awesome-icon>
@@ -130,149 +131,149 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex';
-    import axios from 'axios';
-    import Notifier from '../mixins/Notifier';
-    import { debounce } from '../util.js';
+import { mapGetters } from 'vuex';
+import axios from 'axios';
+import Notifier from '../mixins/Notifier.js';
+import { debounce } from '../util.js';
 
-    import Pagination from 'vue-pagination-2';
-    let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
-    const LIST_OF_FIELDS = 'id,name,updated,user,version,description,publishing_status,image,platform';
-    export default {
-        components: {
-            'pagination': Pagination,
-        },
-        mixins: [Notifier],
-        data() {
+import Pagination from 'vue-pagination-2';
+let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const LIST_OF_FIELDS = 'id,name,updated,user,version,description,publishing_status,image,platform';
+export default {
+    components: {
+        'pagination': Pagination,
+    },
+    mixins: [Notifier],
+    data() {
+        return {
+            records: 0,
+            display: 'small',
+            search: '',
+            items: [],
+            page: 1,
+            columns: [
+                //'image',
+                'name',
+                'updated',
+                //'actions'
+            ],
+            customQueries: {}
+
+        };
+    },
+    computed: {
+        ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user']),
+        options() {
+            const self = this;
             return {
-                records: 0,
-                display: 'small',
-                search: '',
-                items: [],
-                page: 1,
-                columns: [
-                    //'image',
-                    'name',
-                    'updated',
-                    //'actions'
-                ],
-                customQueries: {}
+                initialPage: this.page,
+                skin: 'table-sm table table-hover',
+                dateColumns: ['updated'],
+                headings: {
+                    image: this.$tc('common.image'),
+                    name: this.$tc('common.name'),
+                    updated: this.$tc('common.updated'),
+                    actions: this.$tc('common.action', 2)
+                },
+                sortIcon: {
+                    base: 'fa fas',
+                    is: 'fa-sort ml-10',
+                    up: 'fa-sort-amount-up',
+                    down: 'fa-sort-amount-down'
+                },
+                sortable: ['name', 'updated'],
+                preserveState: false,
+                saveState: true,
+                filterable: false,
+                filterByColumn: false,
+                hidePerPageSelect: true,
+                requestFunction: function (data) {
+                    data.sort = data.orderBy;
+                    data.asc = data.ascending === 1 ? 'true' : 'false';
+                    data.size = data.limit;
+                    data.name = self.customQueries['name'];
+                    self.page = data.page;
+                    data.fields = LIST_OF_FIELDS;
 
-            };
-        },
-        computed: {
-            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user']),
-            options() {
-                const self = this;
-                return {
-                    initialPage: this.page,
-                    skin: 'table-sm table table-hover',
-                    dateColumns: ['updated'],
-                    headings: {
-                        image: this.$tc('common.image'),
-                        name: this.$tc('common.name'),
-                        updated: this.$tc('common.updated'),
-                        actions: this.$tc('common.action', 2)
-                    },
-                    sortIcon: {
-                        base: 'fa fas',
-                        is: 'fa-sort ml-10',
-                        up: 'fa-sort-amount-up',
-                        down: 'fa-sort-amount-down'
-                    },
-                    sortable: ['name', 'updated'],
-                    preserveState: false,
-                    saveState: true,
-                    filterable: false,
-                    filterByColumn: false,
-                    hidePerPageSelect: true,
-                    requestFunction: function (data) {
-                        data.sort = data.orderBy;
-                        data.asc = data.ascending === 1 ? 'true' : 'false';
-                        data.size = data.limit;
-                        data.name = self.customQueries['name'];
-                        self.page = data.page;
-                        data.fields = LIST_OF_FIELDS;
-
-                        let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
-                        self.$Progress.start();
-                        return axios
-                            .get(url, {
-                                params: data
-                            })
-                            .then(resp => {
-                                self.items = resp.data.data;
-                                self.records = resp.data.pagination.total;
+                    let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
+                    self.$Progress.start();
+                    return axios
+                        .get(url, {
+                            params: data
+                        })
+                        .then(resp => {
+                            self.items = resp.data.data;
+                            self.records = resp.data.pagination.total;
+                            self.$Progress.finish();
+                            return {
+                                data: resp.data.data,
+                                count: resp.data.pagination.total
+                            };
+                        })
+                        .catch(
+                            function (e) {
                                 self.$Progress.finish();
-                                return {
-                                    data: resp.data.data,
-                                    count: resp.data.pagination.total
-                                };
-                            })
-                            .catch(
-                                function (e) {
-                                    self.$Progress.finish();
-                                    self.error(e);
-                                }.bind(self)
-                            );
-                    },
-                    texts: {
-                        filter: this.$tc('common.filter'),
-                        count: this.$t('common.pagerShowing'),
-                        limit: this.$t('common.limit'),
-                        noResults: this.$t('common.noData'),
-                        loading: this.$t('common.loading'),
-                        filterPlaceholder: this.$t('common.filterPlaceholder')
-                    }
+                                self.error(e);
+                            }.bind(self)
+                        );
+                },
+                texts: {
+                    filter: this.$tc('common.filter'),
+                    count: this.$t('common.pagerShowing'),
+                    limit: this.$t('common.limit'),
+                    noResults: this.$t('common.noData'),
+                    loading: this.$t('common.loading'),
+                    filterPlaceholder: this.$t('common.filterPlaceholder')
                 }
             }
+        }
+    },
+    mounted() {
+        this.search = this.$refs.trackPanelList.customQueries['name'];
+        //this.init();
+    },
+    /* Methods */
+    methods: {
+        getPage() {
+            return this.page;
         },
-        mounted() {
-            this.search = this.$refs.trackPanelList.customQueries['name'];
-            //this.init();
+        paginate(page) {
+            this.page = page;
+            if (this.display === 'large') {
+                this.init();
+            }
         },
-        /* Methods */
-        methods: {
-            getPage() {
-                return this.page;
-            },
-            paginate(page) {
-                this.page = page;
-                if (this.display === 'large') {
-                    this.init();
-                }
-            },
-            show(how) {
-                this.display = how;
-                if (how === 'large') {
-                    this.init();
-                }
-            },
-            query: debounce(function () {
-                if (this.display === 'large') {
-                    this.init();
-                } else {
-                    // This is not working
-                    // Event.$emit('vue-tables.workflowList.filter::platform', v);
-                    // Event.$emit('vue-tables.filter::platform', v);
+        show(how) {
+            this.display = how;
+            if (how === 'large') {
+                this.init();
+            }
+        },
+        query: debounce(function () {
+            if (this.display === 'large') {
+                this.init();
+            } else {
+                // This is not working
+                // Event.$emit('vue-tables.workflowList.filter::platform', v);
+                // Event.$emit('vue-tables.filter::platform', v);
 
-                    // This works, but it uses internal details of component
-                    const table = this.$refs.trackPanelList;
-                    table.customQueries['name'] = this.search;
-                    table.updateState('customQueries', table.customQueries);
-                    table.getData();
+                // This works, but it uses internal details of component
+                const table = this.$refs.trackPanelList;
+                table.customQueries['name'] = this.search;
+                table.updateState('customQueries', table.customQueries);
+                table.getData();
 
-                    this.$refs.trackPanelList.refresh();
-                }
-            }, 800),
-            init() {
-            },
-            clearFilters() {
-                this.$refs.workflowList.setFilter('');
-                this.$refs.workflowList.customQueries = {};
-            },
+                this.$refs.trackPanelList.refresh();
+            }
+        }, 800),
+        init() {
         },
-    };
+        clearFilters() {
+            this.$refs.workflowList.setFilter('');
+            this.$refs.workflowList.customQueries = {};
+        },
+    },
+};
 </script>
 <style lang="scss">
     .track {

@@ -1,5 +1,5 @@
 
-import JoinSelectComponent from '../components/widgets/JoinSelect';
+import JoinSelectComponent from '../components/widgets/JoinSelect.vue';
 
 const suggestions1 = ['id', 'name', 'state', 'field_with_long_name', 'c5'];
 

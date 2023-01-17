@@ -1,40 +1,41 @@
 <template>
     <transition name="slide">
-        <div v-if="opened" class="slideout">
-            <slot></slot>
+        <div v-if="opened"
+             class="slideout">
+            <slot />
         </div>
     </transition>
 </template>
 
 <script>
-    export default {
-        name: 'SlideOutPanel',
-        props: {
-            opened: {type: Boolean, default: false},
+export default {
+    name: 'SlideOutPanel',
+    props: {
+        opened: {type: Boolean, default: false},
+    },
+    data: () => ({
+        openerText: 'Open',
+        menu: ['Home', 'Work', 'Contact'],
+        smallMenu: ['Tips', 'Resources', 'Shenanigans']
+    }),
+    methods: {
+        open() {
+            this.openerText = 'Close';
+            this.isOpen = true;
         },
-        data: () => ({
-            openerText: 'Open',
-            menu: ['Home', 'Work', 'Contact'],
-            smallMenu: ['Tips', 'Resources', 'Shenanigans']
-        }),
-        methods: {
-            open() {
-                this.openerText = 'Close';
-                this.isOpen = true;
-            },
-            close() {
-                this.openerText = 'Open';
-                this.isOpen = false;
-            },
-            toggle() {
-                if (this.isOpen) {
-                    this.close();
-                } else {
-                    this.open();
-                }
+        close() {
+            this.openerText = 'Open';
+            this.isOpen = false;
+        },
+        toggle() {
+            if (this.isOpen) {
+                this.close();
+            } else {
+                this.open();
             }
         }
     }
+}
 </script>
 <style scoped>
     .slideout {

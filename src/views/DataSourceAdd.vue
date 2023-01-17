@@ -7,16 +7,19 @@
                         <h4>{{$t('dataSource.whatTypeOfDataSourceToAdd')}}</h4>
                     </div>
                     <div class="row">
-                        <div v-for="option in options" class="col" :key="option.value">
+                        <div v-for="option in options" :key="option.value" class="col">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="card-title">{{option.title}}</h5>
+                                    <h5 class="card-title">
+                                        {{option.title}}
+                                    </h5>
                                 </div>
                                 <div class="card-body data-source-option">
                                     {{$t('dataSource.characteristics')}}:
                                     <ul>
-                                        <li v-for="(feature, i) in option.features" :key="i">{{feature}}{{(i ==
-                                            option.features.length - 1 )? (feature.slice(-1) !== '.' ? '.':''): ';'}}
+                                        <li v-for="(feature, i) in option.features" :key="i">
+                                            {{feature}}{{(i ==
+                                                option.features.length - 1 )? (feature.slice(-1) !== '.' ? '.':''): ';'}}
                                         </li>
                                     </ul>
                                 </div>
@@ -24,11 +27,14 @@
                                     <p>
                                         <select v-model="storage[option.prop]" class="form-control">
                                             <option v-for="s in storages[option.items]" :key="s.id" :value="s.id">
-                                                {{s.name}}</option>
+                                                {{s.name}}
+                                            </option>
                                         </select>
                                     </p>
                                     <button class="btn btn-success" :disabled="storage[option.prop] === null"
-                                        @click="handleChoose(option.value)">{{$t('actions.choose')}}</button>
+                                            @click="handleChoose(option.value)">
+                                        {{$t('actions.choose')}}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -36,11 +42,13 @@
                 </div>
                 <div v-if="step === 2" class="card animated">
                     <div class="card-body">
-                        <h4 class="card-title">{{$t('dataSource.distributedFileSystem')}}</h4>
+                        <h4 class="card-title">
+                            {{$t('dataSource.distributedFileSystem')}}
+                        </h4>
                         <div class="col-md-12">
                             <div ref="dropElem" class="jumbotron">
                                 <div class="resumable-drop"
-                                    :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
+                                     :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
                                     {{$t('dataSource.dropFilesHere')}}
                                     <a ref="browseElem" class="resumable-browse">
                                         <u>{{$t('dataSource.selectFromComputer')}}</u>
@@ -54,36 +62,43 @@
                 </div>
                 <div v-if="step === 3 && storageType === 'SQL' " class="card animated">
                     <div class="card-body">
-                        <h4 class="card-title">{{$t('dataSource.databaseStorage')}}</h4>
+                        <h4 class="card-title">
+                            {{$t('dataSource.databaseStorage')}}
+                        </h4>
                         <label>{{$tc('common.name', 1)}}:</label>
-                        <input v-model="dataSource.name" type="text" class="form-control" v-focus>
+                        <input v-model="dataSource.name" v-focus type="text" class="form-control">
 
                         <label>{{$t('dataSource.selectCommand')}}:</label>
-                        <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                        <textarea v-model="dataSource.command" class="form-control" rows="4" />
 
                         <div class="border-top mt-5 pt-4">
                             <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
-                            <button class="btn btn-success" @click="handleSave">{{$t('actions.save')}}</button>
-                            <button class="btn ml-1 btn-outline-secondary"
-                                @click="step=1">{{$t('actions.back')}}</button>
+                            <button class="btn btn-success" @click="handleSave">
+                                {{$t('actions.save')}}
+                            </button>
+                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                                {{$t('actions.back')}}
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div v-if="step === 3 && storageType === 'HIVE'" class="card animated">
                     <div class="card-body">
-                        <h4 class="card-title">{{$t('dataSource.hive')}}</h4>
+                        <h4 class="card-title">
+                            {{$t('dataSource.hive')}}
+                        </h4>
                         <div class="row">
                             <div class="col-md-8">
                                 <label>{{$tc('common.name', 1)}}:</label>
                                 <input v-model="dataSource.name" type="text" class="form-control">
 
                                 <label>{{$t('dataSource.selectCommand')}}:</label>
-                                <textarea v-model="dataSource.command" class="form-control" rows="4"></textarea>
+                                <textarea v-model="dataSource.command" class="form-control" rows="4" />
                             </div>
                             <div class="col-md-4">
                                 <label>{{$t('dataSource.tablesReference')}}</label>
                                 <select v-model="selectedTable" class="form-control tables" size="10"
-                                    @dblclick.stop="copyTableName">
+                                        @dblclick.stop="copyTableName">
                                     <option v-for="tb in tables" :key="tb">
                                         {{tb}}
                                     </option>
@@ -92,9 +107,12 @@
                         </div>
 
                         <div class="border-top mt-5 pt-4">
-                            <button class="btn btn-success" @click="handleSave">{{$t('actions.save')}}</button>
-                            <button class="btn ml-1 btn-outline-secondary"
-                                @click="step=1">{{$t('actions.back')}}</button>
+                            <button class="btn btn-success" @click="handleSave">
+                                {{$t('actions.save')}}
+                            </button>
+                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                                {{$t('actions.back')}}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -133,12 +151,12 @@
                         <tbody>
                             <tr v-for="fileInfo in resumableList" :key="fileInfo.file.fileName"
                                 :class="fileStatus(fileInfo)">
-                                <td :ref="fileInfo.file.uniqueIdentifier">{{fileInfo.file.fileName}}
+                                <td :ref="fileInfo.file.uniqueIdentifier">
+                                    {{fileInfo.file.fileName}}
                                 </td>
                                 <td>{{fileInfo.message.message}}</td>
                                 <td>
-                                    <span class="resumable-file-progress">{{Math.floor(100*fileInfo.file.progress())
-                                        }}%</span>
+                                    <span class="resumable-file-progress">{{Math.floor(100*fileInfo.file.progress())}}%</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -146,70 +164,70 @@
                 </div>
             </div>
             <div v-if="step === 2 " class="col">
-                <button class="btn btn-outline-secondary mt-2 ml- float-right"
-                    @click="step=1">{{$t('actions.back')}}</button>
+                <button class="btn btn-outline-secondary mt-2 ml- float-right" @click="step=1">
+                    {{$t('actions.back')}}
+                </button>
             </div>
         </div>
-
     </main>
 </template>
 <script>
-    import { ref } from 'vue';
-    import { useI18n } from 'vue-i18n-bridge';
-    import { onMounted } from 'vue';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n-bridge';
+import { onMounted } from 'vue';
 
-    import Notifier from '../notifier.js';
-    import axios from 'axios';
-    import Vue from 'vue';
-    let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
-    import Resumable from 'resumablejs';
-    export default {
-        setup() {
-            const router = Vue.prototype.$legacyRouter; //FIXME
-            const { t } = useI18n();
-            const notifier = new Notifier(Vue.prototype.$snotify, t, router);
+import Notifier from '../notifier.js';
+import axios from 'axios';
+import Vue from 'vue';
+let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
+import Resumable from 'resumablejs';
+export default {
+    setup() {
+        const router = Vue.prototype.$legacyRouter; //FIXME
+        const { t } = useI18n();
+        const notifier = new Notifier(Vue.prototype.$snotify, t, router);
 
-            const step = ref(1);
-            const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder' });
-            const storage = ref({
-                fsStorage: null,
-                sqlStorage: null,
-                hiveStorage: null,
-            });
-            const storageType = ref(null);
+        const step = ref(1);
+        const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder' });
+        const storage = ref({
+            fsStorage: null,
+            sqlStorage: null,
+            hiveStorage: null,
+        });
+        const storageType = ref(null);
 
-            const fileStatus = (fileInfo) => {
-                return fileInfo.message.status !== undefined &&
+        const fileStatus = (fileInfo) => {
+            return fileInfo.message.status !== undefined &&
                     fileInfo.message.status.toLowerCase() === 'error'
-                    ? 'danger'
-                    : 'success';
-            }
+                ? 'danger'
+                : 'success';
+        }
 
-            const handleChoose = (method) => {
-                if (method === 'sql') {
-                    step.value = 3;
-                    dataSource.value.format = 'JDBC';
-                    dataSource.value.storage_id = storage.value.sqlStorage;
-                    dataSource.value.url = 'placeholder';
-                    storageType.value = 'SQL';
-                } else if (method === 'hive') {
-                    step.value = 3;
-                    dataSource.value.format = 'HIVE';
-                    dataSource.value.storage_id = storage.value.hiveStorage;
-                    storageType.value = 'HIVE';
-                    //this.retrieveTables()
-                } else {
-                    step.value = 2;
-                    dataSource.value.format = 'UNKNOWN';
-                    dataSource.value.storage_id = storage.value.fsStorage;
-                    storageType.value = 'FS'
-                    /* Setup resumable */
-                    Vue.nextTick(() => {
-                        setupResumable();
-                    });
-                }
+        const handleChoose = (method) => {
+            if (method === 'sql') {
+                step.value = 3;
+                dataSource.value.format = 'JDBC';
+                dataSource.value.storage_id = storage.value.sqlStorage;
+                dataSource.value.url = 'placeholder';
+                storageType.value = 'SQL';
+            } else if (method === 'hive') {
+                step.value = 3;
+                dataSource.value.format = 'HIVE';
+                dataSource.value.storage_id = storage.value.hiveStorage;
+                storageType.value = 'HIVE';
+                //this.retrieveTables()
+            } else {
+                step.value = 2;
+                dataSource.value.format = 'UNKNOWN';
+                dataSource.value.storage_id = storage.value.fsStorage;
+                storageType.value = 'FS'
+                /* Setup resumable */
+                Vue.nextTick(() => {
+                    setupResumable();
+                });
             }
-            /*
+        }
+        /*
             const copyTableName = () => {
                 this.dataSource.command = (this.dataSource.command ? this.dataSource.command + ' ' : '') + this.selectedTable;
             }
@@ -226,65 +244,65 @@
                     });
 
             }*/
-            const resumableList = ref([]);
-            const getFileRef = (file) => {
-                return resumableList.value.find(
-                    f => f.file.uniqueIdentifier === file.uniqueIdentifier
-                );
-            };
-            const showPause = ref(false);
-            const showProgress = ref(false);
-            const showResume = ref(false);
-            let resumable = null;
-            const dropElem = ref(null);
-            const browseElem = ref(null);
-            const progressElem = ref(null);
-            const isDirty = ref(false);
+        const resumableList = ref([]);
+        const getFileRef = (file) => {
+            return resumableList.value.find(
+                f => f.file.uniqueIdentifier === file.uniqueIdentifier
+            );
+        };
+        const showPause = ref(false);
+        const showProgress = ref(false);
+        const showResume = ref(false);
+        let resumable = null;
+        const dropElem = ref(null);
+        const browseElem = ref(null);
+        const progressElem = ref(null);
+        const isDirty = ref(false);
 
-            const setupResumable = () => {
-                resumable = new Resumable({
-                    target: `${limoneroUrl}/datasources/upload`,
-                    chunkSize: 10 * 1024 * 1024,
-                    simultaneousUploads: 1,
-                    testChunks: true,
-                    throttleProgressCallbacks: 1,
-                    method: 'octet',
-                    query: { storage_id: storage.value.fsStorage },
-                    permanentErrors: [400, 401, 404, 415, 500, 501],
-                    chunkRetryInterval: 5000,
-                    headers: axios.defaults.headers.common // < same auth headers
-                });
-                if (resumable.support) {
-                    resumable.assignDrop(dropElem.value);
-                    resumable.assignBrowse(browseElem.value);
-                }
+        const setupResumable = () => {
+            resumable = new Resumable({
+                target: `${limoneroUrl}/datasources/upload`,
+                chunkSize: 10 * 1024 * 1024,
+                simultaneousUploads: 1,
+                testChunks: true,
+                throttleProgressCallbacks: 1,
+                method: 'octet',
+                query: { storage_id: storage.value.fsStorage },
+                permanentErrors: [400, 401, 404, 415, 500, 501],
+                chunkRetryInterval: 5000,
+                headers: axios.defaults.headers.common // < same auth headers
+            });
+            if (resumable.support) {
+                resumable.assignDrop(dropElem.value);
+                resumable.assignBrowse(browseElem.value);
+            }
 
-                resumable.on('fileAdded', file => {
-                    showProgress.value = true;
-                    showPause.value = true;
-                    showResume.value = false;
-                    resumableList.value.splice(0, 0, {
-                        file,
-                        done: false,
-                        progress: '0',
-                        message: ''
-                    });
-                    // Actually start the upload
-                    resumable.upload();
+            resumable.on('fileAdded', file => {
+                showProgress.value = true;
+                showPause.value = true;
+                showResume.value = false;
+                resumableList.value.splice(0, 0, {
+                    file,
+                    done: false,
+                    progress: '0',
+                    message: ''
                 });
-                resumable.on('pause', () => {
-                    showResume.value = true;
-                    showPause.value = false;
-                });
-                resumable.on('complete', file => { // eslint-disable-line no-unused-vars
-                    showPause.value = false;
-                    showResume.value = false;
-                    showProgress.value = false;
-                });
-                resumable.on('fileSuccess', (file, message) => {
-                    const m = JSON.parse(message);
-                    // Reflect that the file upload has completed
-                    /*
+                // Actually start the upload
+                resumable.upload();
+            });
+            resumable.on('pause', () => {
+                showResume.value = true;
+                showPause.value = false;
+            });
+            resumable.on('complete', file => { // eslint-disable-line no-unused-vars
+                showPause.value = false;
+                showResume.value = false;
+                showProgress.value = false;
+            });
+            resumable.on('fileSuccess', (file, message) => {
+                const m = JSON.parse(message);
+                // Reflect that the file upload has completed
+                /*
                     const fileRef = getFileRef(file);
                     const link = router.resolve({
                         name: 'editDataSource',
@@ -294,135 +312,135 @@
                         }">${self.$t('actions.edit')} ${fileRef.file.fileName}`;
                     fileRef.done = true;
                     */
-                    notifier.success(
-                        t('messages.savedWithSuccess', {
-                            what: t('titles.dataSource', 1)
-                        })
-                    );
-                    setTimeout(() =>
-                        router.push(
-                            {
-                                name: 'editDataSource',
-                                params: { id: m.data.id }
-                            }
-                        ),
-                        1000
-                    );
-                });
-                const handleError = (file, message) => {
-                    const fileRef = getFileRef(file);
-                    fileRef.message = JSON.parse(message);
-                    showPause.value = false;
-                    showProgress.value = false;
-                }
-                resumable.on('error', handleError);
-                resumable.on('fileError', handleError);
+                notifier.success(
+                    t('messages.savedWithSuccess', {
+                        what: t('titles.dataSource', 1)
+                    })
+                );
+                setTimeout(() =>
+                    router.push(
+                        {
+                            name: 'editDataSource',
+                            params: { id: m.data.id }
+                        }
+                    ),
+                1000
+                );
+            });
+            const handleError = (file, message) => {
+                const fileRef = getFileRef(file);
+                fileRef.message = JSON.parse(message);
+                showPause.value = false;
+                showProgress.value = false;
+            }
+            resumable.on('error', handleError);
+            resumable.on('fileError', handleError);
 
-                resumable.on('fileProgress', file => {
-                    // Handle progress for both the file and the overall upload
-                    const fileRef = getFileRef(file);
-                    fileRef.progress = Math.floor(file.progress() * 100) + '%';
-                    showProgress.value = true;
-                    if (progressElem.value) {
-                        progressElem.value.style.width =
+            resumable.on('fileProgress', file => {
+                // Handle progress for both the file and the overall upload
+                const fileRef = getFileRef(file);
+                fileRef.progress = Math.floor(file.progress() * 100) + '%';
+                showProgress.value = true;
+                if (progressElem.value) {
+                    progressElem.value.style.width =
                             Math.floor(resumable.progress() * 100) + '%';
+                }
+            });
+        }
+        const handleSave = async (event) => {
+            const url = `${limoneroUrl}/datasources`
+            event.target.setAttribute('disabled', 'disabled')
+            event.target.classList.add('btn-spinner')
+            try {
+                const resp = await axios.post(url, dataSource.value);
+                isDirty.value = false;
+                notifier.success(
+                    t('messages.savedWithSuccess',
+                        { what: t('titles.dataSource', 1) }))
+                router.push({
+                    name: 'editDataSource', params: { 'id': resp.data.data.id }
+                })
+            } catch (e) {
+                notifier.error(e);
+            } finally {
+                event.target.removeAttribute('disabled')
+                event.target.classList.remove('btn-spinner')
+            }
+        }
+
+        const storages = ref({
+            fsStorages: [],
+            sqlStorages: [],
+            hiveStorages: [],
+        });
+            /* Lifecycle*/
+        onMounted(async () => {
+            try {
+                const resp = await axios.get(`${limoneroUrl}/storages?enabled=true&fields=id,name,type`);
+                resp.data.data.forEach(st => {
+                    if (st.type === 'HDFS') {
+                        storages.value.fsStorages.push(st);
+                    } else if (st.type === 'JDBC') {
+                        storages.value.sqlStorages.push(st);
+                    } else if (st.type === 'HIVE' || st.type === 'HIVE_WAREHOUSE') {
+                        storages.value.hiveStorages.push(st);
                     }
                 });
+
+                storage.value.fsStorage = storages.value.fsStorages.length ? storages.value.fsStorages[0].id : '';
+                storage.value.sqlStorage = storages.value.sqlStorages.length ? storages.value.sqlStorages[0].id : '';
+                storage.value.hiveStorage = storages.value.hiveStorages.length ? storages.value.hiveStorages[0].id : '';
+
+            } catch (e) {
+                notifier.error(e);
             }
-            const handleSave = async (event) => {
-                const url = `${limoneroUrl}/datasources`
-                event.target.setAttribute('disabled', 'disabled')
-                event.target.classList.add('btn-spinner')
-                try {
-                    const resp = await axios.post(url, dataSource.value);
-                    isDirty.value = false;
-                    notifier.success(
-                        t('messages.savedWithSuccess',
-                            { what: t('titles.dataSource', 1) }))
-                    router.push({
-                        name: 'editDataSource', params: { 'id': resp.data.data.id }
-                    })
-                } catch (e) {
-                    notifier.error(e);
-                } finally {
-                    event.target.removeAttribute('disabled')
-                    event.target.classList.remove('btn-spinner')
-                }
-            }
-
-            const storages = ref({
-                fsStorages: [],
-                sqlStorages: [],
-                hiveStorages: [],
-            });
-            /* Lifecycle*/
-            onMounted(async () => {
-                try {
-                    const resp = await axios.get(`${limoneroUrl}/storages?enabled=true&fields=id,name,type`);
-                    resp.data.data.forEach(st => {
-                        if (st.type === 'HDFS') {
-                            storages.value.fsStorages.push(st);
-                        } else if (st.type === 'JDBC') {
-                            storages.value.sqlStorages.push(st);
-                        } else if (st.type === 'HIVE' || st.type === 'HIVE_WAREHOUSE') {
-                            storages.value.hiveStorages.push(st);
-                        }
-                    });
-
-                    storage.value.fsStorage = storages.value.fsStorages.length ? storages.value.fsStorages[0].id : '';
-                    storage.value.sqlStorage = storages.value.sqlStorages.length ? storages.value.sqlStorages[0].id : '';
-                    storage.value.hiveStorage = storages.value.hiveStorages.length ? storages.value.hiveStorages[0].id : '';
-
-                } catch (e) {
-                    notifier.error(e);
-                }
-            });
-            return {
-                /* Methods */
-                handleChoose, handleSave, fileStatus,
-                /* Elements */
-                dropElem, browseElem,
-                /* Control */
-                storage, storages, storageType,
-                showProgress, showPause, showResume,
-                step, resumableList, dataSource,
-                options: [
-                    {
-                        title: t('dataSource.distributedFileSystem'),
-                        features: [
-                            t('dataSource.scalability'),
-                            t('dataSource.youCanUploadYourFiles'),
-                            t('dataSource.differentFormatsSupported'),
-                            t('dataSource.suggestedOption')
-                        ],
-                        prop: 'fsStorage',
-                        items: 'fsStorages',
-                        value: 'fs'
-                    },
-                    {
-                        title: t('dataSource.databaseStorage'),
-                        features: [
-                            t('dataSource.youCanUseSQL'),
-                            t('dataSource.databaseConnectionPreviouslyConfigured')
-                        ],
-                        items: 'sqlStorages',
-                        prop: 'sqlStorage',
-                        value: 'sql'
-                    },
-                    {
-                        title: t('dataSource.hive'),
-                        features: [
-                            t('dataSource.youCanUseSQL'),
-                            t('dataSource.performance')
-                        ],
-                        prop: 'hiveStorage',
-                        items: 'hiveStorages',
-                        value: 'hive'
-                    },
-                ],
-            };
-        }
-    };
+        });
+        return {
+            /* Methods */
+            handleChoose, handleSave, fileStatus,
+            /* Elements */
+            dropElem, browseElem,
+            /* Control */
+            storage, storages, storageType,
+            showProgress, showPause, showResume,
+            step, resumableList, dataSource,
+            options: [
+                {
+                    title: t('dataSource.distributedFileSystem'),
+                    features: [
+                        t('dataSource.scalability'),
+                        t('dataSource.youCanUploadYourFiles'),
+                        t('dataSource.differentFormatsSupported'),
+                        t('dataSource.suggestedOption')
+                    ],
+                    prop: 'fsStorage',
+                    items: 'fsStorages',
+                    value: 'fs'
+                },
+                {
+                    title: t('dataSource.databaseStorage'),
+                    features: [
+                        t('dataSource.youCanUseSQL'),
+                        t('dataSource.databaseConnectionPreviouslyConfigured')
+                    ],
+                    items: 'sqlStorages',
+                    prop: 'sqlStorage',
+                    value: 'sql'
+                },
+                {
+                    title: t('dataSource.hive'),
+                    features: [
+                        t('dataSource.youCanUseSQL'),
+                        t('dataSource.performance')
+                    ],
+                    prop: 'hiveStorage',
+                    items: 'hiveStorages',
+                    value: 'hive'
+                },
+            ],
+        };
+    }
+};
 </script>
 <style scoped>
     .data-source-option {

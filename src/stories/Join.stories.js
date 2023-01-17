@@ -1,5 +1,5 @@
 
-import JoinComponent from '../components/widgets/Join';
+import JoinComponent from '../components/widgets/Join.vue';
 
 const field = { label: 'Join', order: 1, name: 'attribute', required: true };
 const suggestions1 = ['id', 'name', 'state', 'field_with_long_name', 'c5'];

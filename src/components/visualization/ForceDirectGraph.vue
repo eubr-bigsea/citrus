@@ -1,13 +1,15 @@
 <template>
     <div class="text-center">
-        <div ref="mainDiv" class="border main-div">
+        <div ref="mainDiv"
+             class="border main-div">
             <h1>Teste</h1>
-            <b-link v-if="!inFullScreen" @click="fullScreen">
+            <b-link v-if="!inFullScreen"
+                    @click="fullScreen">
                 Full screen
             </b-link>
             <div style="width: 100%;">
                 <div style="margin: 0px auto; width: 100%; border: 1px solid; height: 100vh;overflow:hidden">
-                    <div ref="graphDiv"></div>
+                    <div ref="graphDiv" />
                 </div>
             </div>
             <!--
@@ -19,17 +21,17 @@
     </div>
 </template>
 <script>
-    import VisualizationMixin from "./VisualizationMixin";
-    //import ForceGraph from 'force-graph';
-    export default {
-        mixins: [VisualizationMixin],
-        data() {
-            return {
-                inFullScreen: false
-            };
-        },
-        mounted() {
-            /*
+import VisualizationMixin from "./VisualizationMixin.vue";
+//import ForceGraph from 'force-graph';
+export default {
+    mixins: [VisualizationMixin],
+    data() {
+        return {
+            inFullScreen: false
+        };
+    },
+    mounted() {
+        /*
             const N = 100;
             const GROUPS = 12;
             const gData = {
@@ -51,25 +53,25 @@
                 .graphData(gData);
             */
 
-        },
-        methods: {
-            fullScreen() {
-                const elem = this.$refs.mainDiv;
+    },
+    methods: {
+        fullScreen() {
+            const elem = this.$refs.mainDiv;
 
-                const tests = ['requestFullscreen', 'msRequestFullscreen',
-                    'mozRequestFullScreen', 'webkitRequestFullscreen'];
-                tests.forEach(test => {
-                    if (elem[test]) {
-                        elem[test]();
-                    }
-                });
-            },
-            getData() {
-                const result = this.visualizationData.data;
-                return result;
-            }
+            const tests = ['requestFullscreen', 'msRequestFullscreen',
+                'mozRequestFullScreen', 'webkitRequestFullscreen'];
+            tests.forEach(test => {
+                if (elem[test]) {
+                    elem[test]();
+                }
+            });
         },
-    }
+        getData() {
+            const result = this.visualizationData.data;
+            return result;
+        }
+    },
+}
 </script>
 <style>
     .main-div {

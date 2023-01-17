@@ -52,37 +52,37 @@ export default {
                         { timeout: timeout || 20000, bodyMaxLength: bodyMaxLength || 150 }
                     );
                 } else if (e.response && e.response.data){
-                        let responseData = e.response.data;
-                        if (responseData.message === 'Invalid data') {
-                            let errorMessage = `<strong>${this.$t('errors.validation')}</strong><br/>`
+                    let responseData = e.response.data;
+                    if (responseData.message === 'Invalid data') {
+                        let errorMessage = `<strong>${this.$t('errors.validation')}</strong><br/>`
                                     + JSON.stringify(responseData.errors);
-                                this.$snotify.html( errorMessage,
-                                { timeout: timeout || 15000, bodyMaxLength: bodyMaxLength || 150 }
-                            );
-                        } else if (e.response.status === 404) {
-                            this.$snotify.error(
-                                this.$t('errors.notFound'), this.$t('titles.error'),
-                                { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
-                            );
-                            this.$router.push({name: 'home'});
-                        } else if (e.response.status === 401) {
-                                this.$snotify.error(
-                                    this.$t('errors.accessDenied'), this.$t('titles.error'),
-                                    { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
-                                );
-                                this.$router.push({name: 'home'});
-                        } else if (e.response.status === 502) {
-                                this.$snotify.error(
-                                    this.$t('errors.badGateway'), this.$t('titles.error'),
-                                    { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
-                                );
-                                this.$router.push({name: 'home'});
-                        } else {
-                            this.$snotify.error(
-                                e.response.data.message, this.$t('titles.error'),
-                                { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
-                            );
-                        }
+                        this.$snotify.html( errorMessage,
+                            { timeout: timeout || 15000, bodyMaxLength: bodyMaxLength || 150 }
+                        );
+                    } else if (e.response.status === 404) {
+                        this.$snotify.error(
+                            this.$t('errors.notFound'), this.$t('titles.error'),
+                            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
+                        );
+                        this.$router.push({name: 'home'});
+                    } else if (e.response.status === 401) {
+                        this.$snotify.error(
+                            this.$t('errors.accessDenied'), this.$t('titles.error'),
+                            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
+                        );
+                        this.$router.push({name: 'home'});
+                    } else if (e.response.status === 502) {
+                        this.$snotify.error(
+                            this.$t('errors.badGateway'), this.$t('titles.error'),
+                            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
+                        );
+                        this.$router.push({name: 'home'});
+                    } else {
+                        this.$snotify.error(
+                            e.response.data.message, this.$t('titles.error'),
+                            { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
+                        );
+                    }
                 } else {
                     this.$snotify.error(
                         e.message, this.$t('titles.error'),

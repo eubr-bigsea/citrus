@@ -1,15 +1,18 @@
 <template>
-    <b-modal ref="modal" size="xl" :ok-only="true" scrollable :title="task.name" header-bg-variant="dark"
-        header-text-variant="light" :hide-footer="true">
+    <b-modal ref="modal" size="xl" :ok-only="true" scrollable
+             :title="task.name" header-bg-variant="dark"
+             header-text-variant="light" :hide-footer="true">
         <p>{{task.step.status}}</p>
         <div>
             <div v-for="log in task.step.logs" :key="log.id" class="step-log">
-                <div class="step-date">{{log.date | formatJsonDate}}</div>
+                <div class="step-date">
+                    {{log.date | formatJsonDate}}
+                </div>
                 <div v-if="log.type==='TEXT'">
                     <small>{{log.message}}</small>
                 </div>
                 <div v-if="log.type === 'HTML'">
-                    <div class="html-div" v-html="log.message"></div>
+                    <div class="html-div" v-html="log.message" />
                 </div>
                 <div v-if="log.type === 'IMAGE'">
                     <img class="image" :src="'data:image/png;base64,' + log.message">
@@ -20,14 +23,14 @@
     </b-modal>
 </template>
 <script>
-    export default {
-        props: {
-            task: {type: Object, default: () => null},
-        },
-        methods: {
-            show() {
-                this.$refs.modal.show();
-            }
+export default {
+    props: {
+        task: { type: Object, default: () => null },
+    },
+    methods: {
+        show() {
+            this.$refs.modal.show();
         }
     }
+}
 </script>

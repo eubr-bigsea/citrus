@@ -72,7 +72,7 @@ export const ReadOnly = Template.bind({});
 ReadOnly.args = {
     tree: treeData,
 };
- 
+
 export const Functions = Template.bind({});
 Functions.args = {
     tree: functionsTree,

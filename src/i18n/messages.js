@@ -81,7 +81,7 @@ export default {
             showHistory: 'Exibir histórico',
             showProperties: 'Exibir propriedades',
             showResults: 'Exibir resultados',
-			showVariables: 'Exibir variáveis',
+            showVariables: 'Exibir variáveis',
             simpleAdd: 'Adicionar',
             sort: 'Ordenar',
             stop: 'Parar',
@@ -254,7 +254,7 @@ export default {
                 name: 'Nome do usuário',
                 login: 'Login do usuário',
                 notes: 'Nota | Notas',
-                
+
             },
             version: 'Versão',
             wait: 'Por favor, aguarde...',
@@ -383,7 +383,7 @@ export default {
             uploadingLog: 'Registro de envio',
             uploadExplanation:
                 'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
-            
+
             whatTypeOfDataSourceToAdd:
                 'Que tipo de fonte de dados você quer adicionar?',
             youCanUploadYourFiles:
@@ -476,7 +476,7 @@ export default {
                 'O fluxo de trabalho usa operações que não estão mais habilitadas no Lemonade. A execução não funcionará. Remova ou substitua as tarefas associadas a essas operações antes de executar o fluxo.',
             welcome: 'A autorização para uso do Lemonade está depende da análise do seu registro por um administrador. ' +
                 'Uma notificação já foi enviada para os administradores e em breve você receberá um e-email com a confirmação de seu registro.' +
-                'Enquanto isto, você pode iniciar a leitura da documentação disponível em {0}.',
+                'Enquanto isto, você pode iniciar a leitura da documentação disponível em {link}.',
             welcome0: 'http://docs.lemonade.org.br',
             tokenNotFound: 'Token para reiniciar senha não foi encontrado. Tente iniciar o processo novamente ou veja se você recebeu um novo link em outro e-mail.',
             validatingToken: 'Validando o token, por favor, aguarde...',
@@ -532,17 +532,17 @@ export default {
             gitUrl: 'URL para clonar o repositório Git',
             pluginDetailExplanation: 'Esta plataforma é um plugin. Ela foi instalada a partir de um código fonte de fora do Lemonade ' +
                 'e é usada como uma extensão.',
-            pluginExplanation: `<p>Apenas platformas definidas como plugins podem ser adicionadas ao sistema.
+            /*pluginExplanation: `<p>Apenas platformas definidas como plugins podem ser adicionadas ao sistema.
                 Você precisa criar um repositório Git acessível por este servidor, opcionalmente fornecendo
                 todos os detalhes de autenticação necessários.</p>
-                <p>Plugins podem conter códigos maliciosos que poderão danificar o sistema, usar recursos para fins ilícitos 
+                <p>Plugins podem conter códigos maliciosos que poderão danificar o sistema, usar recursos para fins ilícitos
                 ou roubar informações importantes. <strong>Certifique-se de importar plugins somente de fontes confiáveis</strong>.
                 Esta ação poderá demorar alguns minutos para terminar.
                 </p>
                 <p>
-                Para mais detalhes sobre a estrutura de código necessária e os passos para definir um plugin, visite: 
+                Para mais detalhes sobre a estrutura de código necessária e os passos para definir um plugin, visite:
                 <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
-            `,
+            `,*/
             subset: 'Subconjunto de operações | Subconjuntos de operações',
         },
         notebook: {
@@ -576,11 +576,10 @@ export default {
                 explanation:
                     'Adicione uma ou mais expressões. Novos atributos serão criados para as expressões informadas aqui, portanto, é necessário informar um nome (alias) para eles.',
                 tip: `Para usar um atributo existente, basta informar seu nome. Para constantes do tipo texto (string), delimite-as com aspas ou apóstrofos (' ou ").
-                Exemplos: <strong><code>substring(atributo, instr(atributo, " "))</code><strong>.`,
+                Exemplos:`,
                 title: 'Expressão',
                 validExpressions: `Expressões válidas incluem expressões matemáticas
-                (ex. <strong><code>atributo * 10 - 4 </code></strong>) e chamadas a funções
-                (ex. <strong><code>split(atributo, ' ')</code></strong>). Para mais informações,
+                (ex. {ex1}) e chamadas a funções (ex. {ex2}). Para mais informações, 
                 consulte o Guia de referência do Lemonade ou as funções existentes na plataforma Apache Spark. `
             },
             function: 'Função',
@@ -727,7 +726,7 @@ export default {
                 'Você quer realmente restaurar o fluxo de trabalho para uma versão antiga?',
             versionRestored:
                 'Versão {version} restaurada com sucesso.',
-			setImage: 'Definir imagem para o workflow',
+            setImage: 'Definir imagem para o workflow',
             useAsTemplate: 'Disponibilizar este fluxo de trabalho como modelo',
             useAsTemplateExplanation:
                 'Você poderá criar outros fluxos de trabalho a partir deste. Na tela de novo fluxo de trabalho, escolha a opção "A partir de um modelo".',
@@ -741,7 +740,7 @@ export default {
             variables: 'Variável | Variáveis',
         },
         variables: {
-            addOrEdit: 'Adicione um ou mais itens <br /> ou clique um dos filtros à direita para editá-lo.',
+            addOrEdit: 'Adicione um ou mais itens ou clique um dos filtros à direita para editá-lo.',
             attribute: 'Atributo',
             associateTo: 'Associar a variável',
             associateToLookup: 'Associar a tabela de referência',
@@ -821,7 +820,7 @@ export default {
                 unclosedParenthesis: '( não foi fechado',
                 unsupportedCompounded: 'Expressão não-suportada',
             },
-            
+
         },
 
         permissions: {
@@ -931,7 +930,7 @@ export default {
             showHistory: 'Show history',
             showProperties: 'Show properties',
             showResults: 'Show results',
-			showVariables: 'Show variables',
+            showVariables: 'Show variables',
             simpleAdd: 'Add',
             sort: 'Sort',
             stop: 'Stop',
@@ -1066,7 +1065,7 @@ export default {
             platform: 'Platform',
             precision: 'Precision',
             preview: 'Preview',
-            previewUntilHere: 'Preview until here',            
+            previewUntilHere: 'Preview until here',
             records: 'Record | Records',
             rememberMe: 'Remember me',
             resetPassword: 'Reset',
@@ -1259,9 +1258,9 @@ export default {
             notesDescription: 'This optional description is used by administrators to approve new users.',
             usingDisabledOperation:
                 'The workflow uses some operations not avaialable in Lemonade anymore. Workflow will not run. Remove or replace tasks associated to those operations before running the flow.',
-            welcome: '<p>Approval for use of Lemonade depends on an administrator reviewing your registration.</p>' +
-                '<p>A notification has already been sent to administrators and you will soon receive an email with confirmation of your registration.</p>' +
-                '<p>In the meantime, you can start reading the documentation available at <a href="http://docs.lemonade.org.br">http://docs.lemonade.org.br</a>.',
+            welcome: 'Approval for use of Lemonade depends on an administrator reviewing your registration.' +
+                'A notification has already been sent to administrators and you will soon receive an email with confirmation of your registration.' +
+                'In the meantime, you can start reading the documentation available at {link}.',
             tokenNotFound: 'Reset password token not found. Try to do the reset password action and check if you received another email with a new link.',
             validatingToken: 'Validating token, please wait...',
         },
@@ -1353,7 +1352,7 @@ export default {
             template: 'Template | Templates',
             toolboxCategory: 'Toolbox disposition',
             tool: 'Tool | Tools',
-            track: 'Track | Tracks', 
+            track: 'Track | Tracks',
             undefined: 'Not set',
             user: 'User | Users',
             validationErrors: 'Validation error | Validation errors',
@@ -1413,16 +1412,16 @@ export default {
             gitUrl: 'Git repository URL used to clone the plugin',
             pluginDetailExplanation: 'This platform is a plugin. It was installed from code provided by others ' +
                 'and it is used as an extension.',
-            pluginExplanation: `<p>Only platforms defined as a plugin can be added to the system.
+            /*pluginExplanation: `<p>Only platforms defined as a plugin can be added to the system.
                 You need to create a Git repository accessible by this server, optionally providing
                 all authentication details.</p>
                 <p>Plugins may contain malicious code that may damage the system, use resources for illicit purposes
-                or steal important information. <strong> Make sure you only import plugins from trusted sources </strong>. 
+                or steal important information. <strong> Make sure you only import plugins from trusted sources </strong>.
                 This action may take minutes to finish.
                 </p>
-                <p>For more details about the required code and steps to define a plugin, please visit: 
+                <p>For more details about the required code and steps to define a plugin, please visit:
                 <a href="https://github.com/dccspeed/demo-plugin">https://github.com/dccspeed/demo-plugin</a>.</p>
-            `,
+            `,*/
             subset: 'Operations subset | Operations subsets',
         },
         privacy: {
@@ -1451,12 +1450,11 @@ export default {
                 alias: 'New attribute name (alias)',
                 explanation:
                     'Add one or more expresssions. New attributes will be created from the expressions informed here and you need to inform a name (alias) for them.',
-                tip: `To use an attribute, just inform its name. For string constants, delimit them with quotes (single or double).
-                Examples: <code>substring(name, instr(name, " "))</code>.`,
+                tip: `To use an attribute, just inform its name. For string constants, delimit them with quotes (single or double).Examples: `,
                 title: 'Expression',
                 validExpressions: `Valid expressions include math expressions
-                (e.g. <strong><code>attr * 10 - 4 </code></strong>) and function calls
-                (e.g. <strong><code>split(attr, ' ') </code></strong>). For more informations,
+                (e.g. {ex1}) and function calls
+                (e.g. {ex2}). For more informations,
                 see Lemonade Reference Guide or Apache Spark SQL functions. `
             },
             queryBuilder: {
@@ -1518,7 +1516,7 @@ export default {
             restoreHistory: 'Do you really want to restore this workflow version?',
             versionRestored:
                 'Version {version} restored with success.',
-			setImage: 'Set workflow\'s image',
+            setImage: 'Set workflow\'s image',
             useAsTemplate: 'This workflow is a template',
             useAsTemplateExplanation:
                 'You will be able to create a new workflow from it. When adding a new workflow, choose the option  "From template".',
@@ -1532,7 +1530,7 @@ export default {
             variables: 'Variable | Variables',
         },
         variables: {
-            addOrEdit: 'Add one or more items <br /> or click one of them at the right side to edit it.',
+            addOrEdit: 'Add one or more items or click one of them at the right side to edit it.',
             attribute: 'Attribute',
             associateTo: 'Associate to variable',
             associateToLookup: 'Associate to lookup table',

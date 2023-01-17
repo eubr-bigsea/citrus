@@ -1,5 +1,4 @@
 <template>
-
     <div class="toolbar">
         <div class="toolbar-group">
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasksPanel">
@@ -28,64 +27,61 @@
                 <font-awesome-icon icon="fa fa-paste" />
             </button>
         </div>
-    
+
         <div class="toolbar-group">
             <button type="button" :title="$t('actions.alignLeft')" @click.prevent="align('left', 'min')">
-                <span class="object-align-left"></span>
+                <span class="object-align-left" />
             </button>
             <button type="button" :title="$t('actions.centerHorizontal')" @click.prevent="align('left', 'center')">
-                <span class="object-align-center"></span>
+                <span class="object-align-center" />
             </button>
             <button type="button" :title="$t('actions.alignRight')" @click.prevent="align('left', 'max')">
-                <span class="object-align-right"></span>
+                <span class="object-align-right" />
             </button>
-            <button type="button" :title="$t('actions.distributeHorizontally')"
-                @click.prevent="distribute('horizontal', 'left')">
-                <span class="object-align-distribute"></span>
+            <button type="button" :title="$t('actions.distributeHorizontally')" @click.prevent="distribute('horizontal', 'left')">
+                <span class="object-align-distribute" />
             </button>
         </div>
-    
+
         <div class="toolbar-group">
             <button type="button" :title="$t('actions.alignTop')" @click.prevent="align('top', 'min')">
-                <span class="object-align-top"></span>
+                <span class="object-align-top" />
             </button>
             <button type="button" :title="$t('actions.centerVertical')" @click.prevent="align('top', 'center')">
-                <span class="object-align-center-v"></span>
+                <span class="object-align-center-v" />
             </button>
             <button type="button" :title="$t('actions.alignBottom')" @click.prevent="align('top', 'max')">
-                <span class="object-align-bottom"></span>
+                <span class="object-align-bottom" />
             </button>
             <button type="button" :title="$t('actions.distributeVertically')"
-                @click.prevent="distribute('vertical', 'top')">
-                <span class="object-align-distribute-v"></span>
+                    @click.prevent="distribute('vertical', 'top')">
+                <span class="object-align-distribute-v" />
             </button>
         </div>
-        
-        <div class="toolbar-group">
 
+        <div class="toolbar-group">
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(-.1)">
                 <font-awesome-icon icon="fa fa-search" />
             </button>
 
             <b-input-group size="sm" class="mx-1 zoom">
-                <b-form-select v-model="zoom" :options="[
-                        {value: .6, text: '60%'},
-                        {value: .7, text: '70%'},
-                        {value: .8, text: '80%'},
-                        {value: .9, text: '90%'},
-                        {value: 1, text: '100%'},
-                        {value: 1.1, text: '110%'},
-                        {value: 1.2, text: '120%'},
-                        {value: 1.3, text: '130%'},
-                        {value: 1.4, text: '140%'}
-                    ]">
-                </b-form-select>
+                <b-form-select v-model="zoom"
+                               :options="[
+                                   {value: .6, text: '60%'},
+                                   {value: .7, text: '70%'},
+                                   {value: .8, text: '80%'},
+                                   {value: .9, text: '90%'},
+                                   {value: 1, text: '100%'},
+                                   {value: 1.1, text: '110%'},
+                                   {value: 1.2, text: '120%'},
+                                   {value: 1.3, text: '130%'},
+                                   {value: 1.4, text: '140%'}
+                               ]" />
             </b-input-group>
-            
+
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(.1)">
                 <font-awesome-icon icon="fa fa-search" />
             </button>
-
         </div>
 
         <div class="toolbar-group toolbar-group-padding" @change="toggleDarkMode()">
@@ -93,10 +89,91 @@
                 {{$t('titles.darkMode')}}
             </b-form-checkbox>
         </div>
-
     </div>
-
 </template>
+
+<script>
+export default {
+    name: 'DiagramToolbar',
+    props: {
+        selected: {type: Array, default: () => null},
+        copiedTasks: {type: Array, default: () => null},
+        useDataSource: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data() {
+        return {
+            zoomPercent: '100%',
+            zoom: 1,
+            darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') : false,
+        }
+    },
+    computed: {
+        taskSelected(){
+            return this.selected && this.selected.length > 0;
+        },
+        tasksSelected(){
+            return this.selected && this.selected.length > 1;
+        },
+    },
+    watch: {
+        zoom() {
+            this.$root.$emit('onzoom', this.zoom);
+        }
+    },
+    methods: {
+        copy(){
+            this.$root.$emit('oncopy-tasks');
+        },
+        paste(){
+            this.$root.$emit('onpaste-tasks');
+        },
+        removeSelected(){
+            this.$root.$emit('onremove-tasks');
+        },
+        toggleTasksPanel() {
+            this.$root.$emit('ontoggle-tasksPanel')
+        },
+        toggleDataSourcesPanel() {
+            this.$root.$emit('ontoggle-dataSourcesPanel')
+        },
+        toggleTasks() {
+            this.$root.$emit('ontoggle-tasks')
+        },
+        toggleDarkMode() {
+            localStorage.setItem('darkMode', this.darkMode);
+            this.$root.$emit('ontoggle-darkMode')
+        },
+        addGroup() {
+
+        },
+        distribute(mode, prop) {
+            this.$root.$emit('ondistribute-tasks', mode, prop)
+        },
+        align(prop, fn) {
+            this.$root.$emit('onalign-tasks', prop, fn)
+        },
+        saveWorkflow() {
+            this.$root.$emit('onsave-workflow')
+        },
+        saveWorkflowAs() {
+            this.$root.$emit('onsaveas-workflow')
+        },
+        showHistory() {
+            this.$root.$emit('onshow-history');
+        },
+        execute() {
+            this.$root.$emit('onclick-execute');
+        },
+        changeZoom(value) {
+            this.zoom += value;
+            this.zoomPercent = this.zoom*100+"%";
+        },
+    }
+}
+</script>
 
 <style scoped lang="scss">
     /* .toolbar {
@@ -147,86 +224,3 @@
     }
 
 </style>
-
-<script>
-    export default {
-        name: 'DiagramToolbar',
-        props: {
-            selected: {type: Array, default: () => null},
-            copiedTasks: {type: Array, default: () => null},
-            useDataSource: {
-                type: Boolean,
-                default: false
-            }
-        },
-        data() {
-            return {
-                zoomPercent: '100%',
-                zoom: 1,
-                darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') : false,
-            }
-        },
-        computed: {
-            taskSelected(){
-                return this.selected && this.selected.length > 0;
-            },
-            tasksSelected(){
-                return this.selected && this.selected.length > 1;
-            },
-        },
-        watch: {
-            zoom() {
-                this.$root.$emit('onzoom', this.zoom);
-            }
-        },
-        methods: {
-            copy(){
-                this.$root.$emit('oncopy-tasks');
-            },
-            paste(){
-                this.$root.$emit('onpaste-tasks');
-            },
-            removeSelected(){
-                this.$root.$emit('onremove-tasks');
-            },
-            toggleTasksPanel() {
-                this.$root.$emit('ontoggle-tasksPanel')
-            },
-            toggleDataSourcesPanel() {
-                this.$root.$emit('ontoggle-dataSourcesPanel')
-            },
-            toggleTasks() {
-                this.$root.$emit('ontoggle-tasks')
-            },
-            toggleDarkMode() {
-                localStorage.setItem('darkMode', this.darkMode);
-                this.$root.$emit('ontoggle-darkMode')
-            },
-            addGroup() {
-
-            },
-            distribute(mode, prop) {
-                this.$root.$emit('ondistribute-tasks', mode, prop)
-            },
-            align(prop, fn) {
-                this.$root.$emit('onalign-tasks', prop, fn)
-            },
-            saveWorkflow() {
-                this.$root.$emit('onsave-workflow')
-            },
-            saveWorkflowAs() {
-                this.$root.$emit('onsaveas-workflow')
-            },
-            showHistory() {
-                this.$root.$emit('onshow-history');
-            },
-            execute() {
-                this.$root.$emit('onclick-execute');
-            },
-            changeZoom(value) {
-                this.zoom += value;
-                this.zoomPercent = this.zoom*100+"%";
-            },
-        }
-    }
-</script>

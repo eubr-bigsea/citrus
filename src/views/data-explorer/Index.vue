@@ -80,19 +80,26 @@
                     <h5>Ou você quer editar algo existente?</h5>
 
                     <form class="form-inline">
-
                         <label class="sr-only" for="type">{{$tc('common.type')}}</label>
                         <select v-model="typeFilter" class="form-control w-25 pt-0">
-                            <option selected disabled>{{$tc('actions.choose')}}...</option>
-                            <option value="DATA_EXPLORER">{{$t('dataExplorer.experiments.DATA_EXPLORER')}}</option>
-                            <option value="MODEL_BUILDER">{{$t('dataExplorer.experiments.MODEL_BUILDER')}}</option>
-                            <option value="VIS_BUILDER">{{$t('dataExplorer.experiments.VIS_BUILDER')}}</option>
+                            <option selected disabled>
+                                {{$tc('actions.choose')}}...
+                            </option>
+                            <option value="DATA_EXPLORER">
+                                {{$t('dataExplorer.experiments.DATA_EXPLORER')}}
+                            </option>
+                            <option value="MODEL_BUILDER">
+                                {{$t('dataExplorer.experiments.MODEL_BUILDER')}}
+                            </option>
+                            <option value="VIS_BUILDER">
+                                {{$t('dataExplorer.experiments.VIS_BUILDER')}}
+                            </option>
                         </select>
                         <label class="sr-only" for="search">{{$tc('common.name')}}</label>
                         <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
-                            :placeholder="$tc('common.name')">
+                               :placeholder="$tc('common.name')">
                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
-                            @click.prevent="search">
+                                @click.prevent="search">
                             <font-awesome-icon icon="fa fa-search default-icon" /> {{$t('actions.search')}}
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                         </button>
@@ -100,159 +107,169 @@
 
 
                     <v-server-table v-show="totalRecords > 0" ref="workflowList" :columns="columns" :options="options"
-                        name="workflowListDataExperiments">
-                        <template slot="id" slot-scope="props">
+                                    name="workflowListDataExperiments">
+                        <template #id="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER' "
-                                :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.id}}</router-link>
+                                         :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.id}}
+                            </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER' "
-                                :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.id}}</router-link>
+                                         :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.id}}
+                            </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER' "
-                                :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.id}}</router-link>
+                                         :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.id}}
+                            </router-link>
                         </template>
-                        <template slot="type" slot-scope="props">
+                        <template #type="props">
                             <font-awesome-icon :icon="getIcon(props.row)" />
                             {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
-                        <template slot="name" slot-scope="props">
+                        <template #name="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER' "
-                                :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.name}}</router-link>
+                                         :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.name}}
+                            </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER' "
-                                :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.name}}</router-link>
+                                         :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.name}}
+                            </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER' "
-                                :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                {{props.row.name}}</router-link>
+                                         :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                {{props.row.name}}
+                            </router-link>
                         </template>
-                        <template slot="updated" slot-scope="props">{{props.row.updated | formatJsonDate}}</template>
+                        <template #updated="props">
+                            {{props.row.updated | formatJsonDate}}
+                        </template>
                     </v-server-table>
-                    <div v-show="totalRecords === 0">{{$t('common.noData')}}</div>
+                    <div v-show="totalRecords === 0">
+                        {{$t('common.noData')}}
+                    </div>
                 </b-card>
             </div>
         </div>
     </main>
 </template>
 <script>
-    import axios from 'axios';
-    import Notifier from '../../mixins/Notifier';
+import axios from 'axios';
+import Notifier from '../../mixins/Notifier.js';
 
-    let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
-    const META_PLATFORM_SLUG = 'meta';
-    export default {
-        name: 'IndexComponent',
-        mixins: [Notifier],
-        data() {
-            const self = this;
-            return {
-                totalRecords: 0,
-                searchFilter: null,
-                typeFilter: null,
-                columns: [
-                    'id',
-                    'name',
-                    'type',
-                    'updated',
-                    'version',
-                ],
-                options: {
-                    hidePerPageSelect: true,
-                    perPage: 5,
-                    perPageValues: [],
-                    debounce: 800,
-                    skin: 'table-sm table table-hover',
+let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const META_PLATFORM_SLUG = 'meta';
+export default {
+    name: 'IndexComponent',
+    mixins: [Notifier],
+    data() {
+        const self = this;
+        return {
+            totalRecords: 0,
+            searchFilter: null,
+            typeFilter: null,
+            columns: [
+                'id',
+                'name',
+                'type',
+                'updated',
+                'version',
+            ],
+            options: {
+                hidePerPageSelect: true,
+                perPage: 5,
+                perPageValues: [],
+                debounce: 800,
+                skin: 'table-sm table table-hover',
 
-                    dateColumns: ['updated'],
-                    headings: {
-                        id: 'ID',
-                        name: this.$tc('common.name'),
-                        type: this.$tc('common.type'),
-                        updated: this.$tc('common.updated'),
-                        version: this.$tc('common.version'),
-                    },
-                    sortable: ['name', 'id', 'updated'],
-                    //filterable: ['name', 'id'],
-                    filterable: false,
-                    sortIcon: {
-                        base: 'fa fas',
-                        is: 'fa-sort ml-10',
-                        up: 'fa-sort-amount-up',
-                        down: 'fa-sort-amount-down'
-                    },
-                    preserveState: true,
-                    saveState: true,
-                    filterByColumn: false,
+                dateColumns: ['updated'],
+                headings: {
+                    id: 'ID',
+                    name: this.$tc('common.name'),
+                    type: this.$tc('common.type'),
+                    updated: this.$tc('common.updated'),
+                    version: this.$tc('common.version'),
+                },
+                sortable: ['name', 'id', 'updated'],
+                //filterable: ['name', 'id'],
+                filterable: false,
+                sortIcon: {
+                    base: 'fa fas',
+                    is: 'fa-sort ml-10',
+                    up: 'fa-sort-amount-up',
+                    down: 'fa-sort-amount-down'
+                },
+                preserveState: true,
+                saveState: true,
+                filterByColumn: false,
 
-                    requestFunction: function (data) {
-                        self.$refs.searchBtn.classList.remove('btn-spinner');
-                        data.sort = data.orderBy;
-                        data.asc = data.ascending === 1 ? 'true' : 'false';
-                        data.size = 5;
-                        data.name = self.searchFilter //data.query;
-                        data.platform = META_PLATFORM_SLUG;
-                        if (self.typeFilter) {
-                            data.types = self.typeFilter;
-                        } else {
-                            data.types = 'experiment';
-                        }
-
-                        data.fields = 'id,name,platform,updated,user,version,description,type';
-                        data.enabled = 1;
-
-                        let url = `${tahitiUrl}/workflows`;
-                        self.$Progress.start();
-                        return axios
-                            .get(url, {
-                                params: data
-                            })
-                            .then(resp => {
-                                self.$Progress.finish();
-                                self.totalRecords = resp.data.pagination.total;
-                                return {
-                                    data: resp.data.data,
-                                    count: resp.data.pagination.total
-                                };
-                            })
-                            .catch(
-                                function (e) {
-                                    self.$Progress.finish();
-                                    self.error(e);
-                                }.bind(this)
-                            ).finally(() => self.$refs.searchBtn.classList.add('btn-spinner'));
-                    },
-                    texts: {
-                        filter: this.$tc('common.filter'),
-                        count: this.$t('common.pagerShowing'),
-                        limit: this.$t('common.limit'),
-                        noResults: this.$t('common.noData'),
-                        loading: this.$t('common.loading'),
-                        filterPlaceholder: this.$t('common.filterPlaceholder')
+                requestFunction: function (data) {
+                    self.$refs.searchBtn.classList.remove('btn-spinner');
+                    data.sort = data.orderBy;
+                    data.asc = data.ascending === 1 ? 'true' : 'false';
+                    data.size = 5;
+                    data.name = self.searchFilter //data.query;
+                    data.platform = META_PLATFORM_SLUG;
+                    if (self.typeFilter) {
+                        data.types = self.typeFilter;
+                    } else {
+                        data.types = 'experiment';
                     }
+
+                    data.fields = 'id,name,platform,updated,user,version,description,type';
+                    data.enabled = 1;
+
+                    let url = `${tahitiUrl}/workflows`;
+                    self.$Progress.start();
+                    return axios
+                        .get(url, {
+                            params: data
+                        })
+                        .then(resp => {
+                            self.$Progress.finish();
+                            self.totalRecords = resp.data.pagination.total;
+                            return {
+                                data: resp.data.data,
+                                count: resp.data.pagination.total
+                            };
+                        })
+                        .catch(
+                            function (e) {
+                                self.$Progress.finish();
+                                self.error(e);
+                            }.bind(this)
+                        ).finally(() => self.$refs.searchBtn.classList.add('btn-spinner'));
+                },
+                texts: {
+                    filter: this.$tc('common.filter'),
+                    count: this.$t('common.pagerShowing'),
+                    limit: this.$t('common.limit'),
+                    noResults: this.$t('common.noData'),
+                    loading: this.$t('common.loading'),
+                    filterPlaceholder: this.$t('common.filterPlaceholder')
                 }
-            };
-        },
-        methods: {
-            search() {
-                this.$refs.workflowList.refresh()
-            },
-            navigate(name) {
-                this.$router.push({ name })
-            },
-            clearFilters() {
-                this.$refs.workflowList.setFilter('');
-                this.$refs.workflowList.customQueries = {};
-            },
-            getIcon(row) {
-                return {
-                    'DATA_EXPLORER': 'fa-table',
-                    'MODEL_BUILDER': 'fa-robot',
-                    'VIS_BUILDER': 'fa-chart-bar',
-                }[row.type];
             }
+        };
+    },
+    methods: {
+        search() {
+            this.$refs.workflowList.refresh()
         },
-    }
+        navigate(name) {
+            this.$router.push({ name })
+        },
+        clearFilters() {
+            this.$refs.workflowList.setFilter('');
+            this.$refs.workflowList.customQueries = {};
+        },
+        getIcon(row) {
+            return {
+                'DATA_EXPLORER': 'fa-table',
+                'MODEL_BUILDER': 'fa-robot',
+                'VIS_BUILDER': 'fa-chart-bar',
+            }[row.type];
+        }
+    },
+}
 </script>
 <style scoped>
     .custom-table>>>.VueTables .row:first-child {

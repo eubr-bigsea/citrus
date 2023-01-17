@@ -27,9 +27,9 @@
                         <div class="col-md-4">
                             <label>{{$tc('titles.cluster')}}:</label>
                             <select v-model="clusterInfo.id" class="form-control-sm form-control"
-                                @change="changeCluster">
+                                    @change="changeCluster">
                                 <option v-for="option in clusters" :key="option.id" :value="option.id">
-                                    {{ option.name }}
+                                    {{option.name}}
                                 </option>
                             </select>
                         </div>
@@ -37,7 +37,7 @@
                             <label>{{$t('workflow.jobName')}}
                                 ({{$t('common.optional')}}):</label>
                             <input v-model="clusterInfo.jobName" type="text" class="form-control form-control-sm"
-                                maxlength="50" />
+                                   maxlength="50">
                         </div>
                         <div class="col-md-12">
                             <small>{{clusterInfo.description}}</small>
@@ -50,36 +50,39 @@
             <font-awesome-icon icon="fa fa-exclamation-circle" /> {{$t("workflow.errorNoCluster")}}
         </div>
         <div slot="modal-footer" class="w-100 text-right">
-            <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn" class="btn btn-sm btn-outline-success"
-                @click="execute($event)">
-                <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}</button>
-            <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">{{$t('actions.cancel')}}</button>
+            <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn"
+                    class="btn btn-sm btn-outline-success" @click="execute($event)">
+                <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}
+            </button>
+            <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">
+                {{$t('actions.cancel')}}
+            </button>
         </div>
     </b-modal>
 </template>
 <script>
-    export default {
-        props: {
-            clusterInfo: {type: Object, default: ()=> null},
-            clusters: { type: Array, default: ()=> null},
-            validationErrors: { type: Array, default: () => null },
-            workflow: {type: Object, default: ()=> {}},
+export default {
+    props: {
+        clusterInfo: { type: Object, default: () => null },
+        clusters: { type: Array, default: () => null },
+        validationErrors: { type: Array, default: () => null },
+        workflow: { type: Object, default: () => { } },
+    },
+    methods: {
+        changeCluster() {
+            const cluster = this.clusters.find((c) => c.id === this.clusterInfo.id);
+            this.$root.$emit("onchange-cluster", cluster);
         },
-        methods: {
-            changeCluster() {
-                const cluster = this.clusters.find((c) => c.id === this.clusterInfo.id);
-                this.$root.$emit("onchange-cluster", cluster);
-            },
-            close() {
-                this.$refs.modal.hide();
-            },
-            execute(event) {
-                event.target.disabled = true;
-                this.$root.$emit("onexecute-workflow");
-            },
-            show() {
-                this.$refs.modal.show();
-            },
-        }
+        close() {
+            this.$refs.modal.hide();
+        },
+        execute(event) {
+            event.target.disabled = true;
+            this.$root.$emit("onexecute-workflow");
+        },
+        show() {
+            this.$refs.modal.show();
+        },
     }
+}
 </script>

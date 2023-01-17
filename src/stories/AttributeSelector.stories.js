@@ -1,11 +1,11 @@
-import AttributeSelectorComponent from '../components/widgets/AttributeSelector2';
+import AttributeSelectorComponent from '../components/widgets/AttributeSelector2.vue';
 import { action } from '@storybook/addon-actions';
 import "vue-select/dist/vue-select.css";
 
 const field1 = {
     label: 'Select an attribute, please',
     name: 'attribute',
-    required: true, 
+    required: true,
     values: '{"multiple": false}'
 };
 

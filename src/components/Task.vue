@@ -1,33 +1,60 @@
 <template>
     <div :id="task.id"
-        ref="task" :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')" class="operation task" :data-operation-id="task.operation.id" :style="getStyle"
-        tabindex="0" :title="task.forms.comment ? task.forms.comment.value: ''" @dblclick.stop="dblClick" @click.stop="click"
-        @contextmenu="openMenu">
-
-        <div class="hide circle" :style="getStyle"></div>
-        <div v-if="!isComment" :style="{borderTop: getBorder}" class="title">
+         ref="task"
+         :class="classes + (task.enabled !== false ? '': ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')"
+         class="operation task"
+         :data-operation-id="task.operation.id"
+         :style="getStyle"
+         tabindex="0"
+         :title="task.forms.comment ? task.forms.comment.value: ''"
+         @dblclick.stop="dblClick"
+         @click.stop="click"
+         @contextmenu="openMenu">
+        <div class="hide circle"
+             :style="getStyle" />
+        <div v-if="!isComment"
+             :style="{borderTop: getBorder}"
+             class="title">
             <!-- <span style="font-size:7pt">{{task.$meta}}</span> -->
-            {{task.name}} 
+            {{task.name}}
         </div>
         <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value: ''}}</em>
-        <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
+        <div v-if="!isComment && showDecoration"
+             class="right-decor"
+             :class="getDecorationClass" />
+        <div v-if="!isComment && task.step && task.step.status && !task.warning "
+             class="right-decor"
+             :class="task.step? task.step.status.toLowerCase(): ''">
+            <font-awesome-icon icon="fa fa-2x"
+                               :class="getDecorationClass" />
         </div>
-        <div v-if="!isComment && task.step && task.step.status && !task.warning " class="right-decor"
-            :class="task.step? task.step.status.toLowerCase(): ''">
-            <font-awesome-icon icon="fa fa-2x" :class="getDecorationClass" />
+        <div v-if="!isComment && task.warning "
+             class="right-decor">
+            <span v-if="task.warning"
+                  class="text-danger fa fa-2x fa-exclamation-circle"
+                  :title="task.warning" />
         </div>
-        <div v-if="!isComment && task.warning " class="right-decor">
-            <span v-if="task.warning" class="text-danger fa fa-2x fa-exclamation-circle" :title="task.warning"></span>
-        </div>
-        <div v-if="inGroup" class="bottom-right-decor">
+        <div v-if="inGroup"
+             class="bottom-right-decor">
             <font-awesome-icon icon="fa fa-object-group fa-2x" />
         </div>
-        <div v-if="contextMenuOpened && !isComment" ref="right" class="custom-context-menu">
+        <div v-if="contextMenuOpened && !isComment"
+             ref="right"
+             class="custom-context-menu">
             <ul>
-                <li @click.stop="remove()">{{$t('actions.delete')}}</li>
-                <li v-if="task.step" @click.stop="showResults()">{{$t('actions.showResults')}}</li>
-                <li @click.stop="dblClick">{{$tc('titles.property', 2)}}</li>
-                <li v-for="(item, index) in contextMenuActions" :key="index" @click="item.action(item.name)">
+                <li @click.stop="remove()">
+                    {{$t('actions.delete')}}
+                </li>
+                <li v-if="task.step"
+                    @click.stop="showResults()">
+                    {{$t('actions.showResults')}}
+                </li>
+                <li @click.stop="dblClick">
+                    {{$tc('titles.property', 2)}}
+                </li>
+                <li v-for="(item, index) in contextMenuActions"
+                    :key="index"
+                    @click="item.action(item.name)">
                     {{item.label}}
                 </li>
             </ul>
@@ -37,8 +64,8 @@
 
 
 <script>
-    import Vue from 'vue';
-    /*
+import Vue from 'vue';
+/*
     const anchorsOriginal = {
         input: [
             [
@@ -70,95 +97,95 @@
         ]
     }
     */
-    const anchors = {
-        input: [
-            [
-                [0, 0.5, -1, 0],
-            ],
-            [
-                [0, 0.2, -1, 0],
-                [0, 0.8, -1, 0]
-            ],
-            [
-                [0, 0.1, -1, 0],
-                [0, 0.5, -1, 0],
-                [0, 0.9, -1, 0]
-            ]
-            ,
-            [
-                [0, .1, -1, 0],
-                [0, 0.39, -1, 0],
-                [0, 0.65, -1, 0],
-                [0, .9, -1, 0]
-            ],
+const anchors = {
+    input: [
+        [
+            [0, 0.5, -1, 0],
         ],
-        output: [
-            [
-                [1, 0.5, 1, 0],
-            ],
-            [
-                [1, 0.2, 1, 0],
-                [1, 0.8, 1, 0]
-            ],
-            [
-                [1, 0.1, 1, 0],
-                [1, 0.5, 1, 0],
-                [1, 0.9, 1, 0]
-            ],
-            [
-                [1, .1, 1, 0],
-                [1, 0.39, 1, 0],
-                [1, 0.65, 1, 0],
-                [1, .9, 1, 0]
-            ],
+        [
+            [0, 0.2, -1, 0],
+            [0, 0.8, -1, 0]
+        ],
+        [
+            [0, 0.1, -1, 0],
+            [0, 0.5, -1, 0],
+            [0, 0.9, -1, 0]
         ]
-    }
-    const connectorType = ['Flowchart', 'Bezier', 'StateMachine'][0];
-    const connectorPaintStyle = {
-        lineWidth: 1,
-        radius: 8,
-        strokeStyle: "#111",
-        stroke: "#111",
-        outlineColor: 'white',
-        outlineWidth: 2,
-    };
+        ,
+        [
+            [0, .1, -1, 0],
+            [0, 0.39, -1, 0],
+            [0, 0.65, -1, 0],
+            [0, .9, -1, 0]
+        ],
+    ],
+    output: [
+        [
+            [1, 0.5, 1, 0],
+        ],
+        [
+            [1, 0.2, 1, 0],
+            [1, 0.8, 1, 0]
+        ],
+        [
+            [1, 0.1, 1, 0],
+            [1, 0.5, 1, 0],
+            [1, 0.9, 1, 0]
+        ],
+        [
+            [1, .1, 1, 0],
+            [1, 0.39, 1, 0],
+            [1, 0.65, 1, 0],
+            [1, .9, 1, 0]
+        ],
+    ]
+}
+const connectorType = ['Flowchart', 'Bezier', 'StateMachine'][0];
+const connectorPaintStyle = {
+    lineWidth: 1,
+    radius: 8,
+    strokeStyle: "#111",
+    stroke: "#111",
+    outlineColor: 'white',
+    outlineWidth: 2,
+};
 
-    const endPointPaintStyle = {
-        fillStyle: 'rgba(102, 155, 188, 1)',
-        radius: 8,
-        height: 15,
-        width: 15,
-        zIndex: 99,
-    }
-    const overlays = [
-        ["Arrow", { location: .85, width: 10, length: 15 }],
-        //["Label", { padding: 10, location: .5, label: '[ <font-awesome-icon icon="fa fa-dot-circle-o" /> ]', cssClass: "labelClass" }]
-    ];
+const endPointPaintStyle = {
+    fillStyle: 'rgba(102, 155, 188, 1)',
+    radius: 8,
+    height: 15,
+    width: 15,
+    zIndex: 99,
+}
+const overlays = [
+    ["Arrow", { location: .85, width: 10, length: 15 }],
+    //["Label", { padding: 10, location: .5, label: '[ <font-awesome-icon icon="fa fa-dot-circle-o" /> ]', cssClass: "labelClass" }]
+];
 
 
-    const endPointOptionsInput = {
-        isSource: false,
-        isTarget: true,
-        cssClass: 'endpoint',
-        paintStyle: endPointPaintStyle,
-        connectorOverlays: overlays,
-        endpoint: "Dot",
-        maxConnections: 1,
-        fill: '#222'
-    };
+const endPointOptionsInput = {
+    isSource: false,
+    isTarget: true,
+    cssClass: 'endpoint',
+    paintStyle: endPointPaintStyle,
+    connectorOverlays: overlays,
+    endpoint: "Dot",
+    maxConnections: 1,
+    fill: '#222'
+};
 
-    const endPointOptionsOutput = {
-        connector: [connectorType, { gap: 0, xproximityLimit: 100, curviness: 75, xmargin: 10, cornerRadius: 5, stub: [20, 20], midpoint: .5 },],
-        isSource: true,
-        isTarget: false,
-        cssClass: 'endpoint',
-        paintStyle: endPointPaintStyle,
-        connectorOverlays: overlays,
-        endpoint: "Rectangle",
-        maxConnections: 1,
-        connectorStyle: connectorPaintStyle,
-        fill: '#faa'
-    };
+const endPointOptionsOutput = {
+    connector: [connectorType, { gap: 0, xproximityLimit: 100, curviness: 75, xmargin: 10, cornerRadius: 5, stub: [20, 20], midpoint: .5 },],
+    isSource: true,
+    isTarget: false,
+    cssClass: 'endpoint',
+    paintStyle: endPointPaintStyle,
+    connectorOverlays: overlays,
+    endpoint: "Rectangle",
+    maxConnections: 1,
+    connectorStyle: connectorPaintStyle,
+    fill: '#faa'
+};
     /*
     const connectionOptions = {
         maxConnections: 1,
@@ -167,311 +194,311 @@
         overlays: overlays,
     }
     */
-    const TaskComponent = Vue.extend({
-        name: 'TaskComponent',
-        props: {
-            enableContextMenu: { default: true, type: Boolean },
-            enablePositioning: {
-                default: true, type: Boolean
-            },
-            draggable: { default: true, type: Boolean },
-            instance: {type: Object, default: () => null},
-            showDecoration: {
-                default: false, type: Boolean
-            },
-            task: {
-                type: Object,
-                'default': function () { return { name: '', icon: '', status: '', forms: { color: { value: '#fff' } } }; }
-            },
+const TaskComponent = Vue.extend({
+    name: 'TaskComponent',
+    props: {
+        enableContextMenu: { default: true, type: Boolean },
+        enablePositioning: {
+            default: true, type: Boolean
         },
-        data() {
-            return {
-                contextMenuOpened: false,
-                isComment: false,
-                contextMenuActions: [],
-            }
+        draggable: { default: true, type: Boolean },
+        instance: {type: Object, default: () => null},
+        showDecoration: {
+            default: false, type: Boolean
         },
-        computed: {
-            getStyle() {
-                let result = {}
-                let task = this.task
-                if (this.enablePositioning) {
-                    result = {
-                        zIndex: task.z_index < 99 ? 100 : task.z_index,
-                        top: task.top + 'px',
-                        left: task.left + 'px',
-                    }
+        task: {
+            type: Object,
+            'default': function () { return { name: '', icon: '', status: '', forms: { color: { value: '#fff' } } }; }
+        },
+    },
+    data() {
+        return {
+            contextMenuOpened: false,
+            isComment: false,
+            contextMenuActions: [],
+        }
+    },
+    computed: {
+        getStyle() {
+            let result = {}
+            let task = this.task
+            if (this.enablePositioning) {
+                result = {
+                    zIndex: task.z_index < 99 ? 100 : task.z_index,
+                    top: task.top + 'px',
+                    left: task.left + 'px',
                 }
-                result['background'] = task.forms && task.forms.color && task.forms.color.value
-                    ? task.forms.color.value.background : '#fff';
-                return result
-            },
-            'classes': function () {
-                if (this.task.operation) {
-                    const cssClass = this.task.operation.css_class ||
+            }
+            result['background'] = task.forms && task.forms.color && task.forms.color.value
+                ? task.forms.color.value.background : '#fff';
+            return result
+        },
+        'classes': function () {
+            if (this.task.operation) {
+                const cssClass = this.task.operation.css_class ||
                         this.task.operation.cssClass;
-                    return [
-                        (cssClass ? cssClass : ''),
-                        (this.task.status ? this.task.status.toLowerCase() : ''),
-                        (this.isComment ? ' comment ' : '') + 'test'].join(' ');
-                } else {
-                    return '';
-                }
+                return [
+                    (cssClass ? cssClass : ''),
+                    (this.task.status ? this.task.status.toLowerCase() : ''),
+                    (this.isComment ? ' comment ' : '') + 'test'].join(' ');
+            } else {
+                return '';
+            }
 
-            },
-            getDecorationClass() {
-                if (this.task.step && this.task.step.status) {
-                    return this.getClassesForDecor(this.task.step.status);
-                } else {
-                    return this.getClassesForDecor(this.task.status || '')
-                }
-            },
-            getBorder() {
-                let color = '#fff'
-                if (this.task.forms && this.task.forms.color && this.task.forms.color.value) {
-                    color = this.task.forms.color.value.background
-                }
-                return `0px solid ${color}`
-            },
-            inGroup: function () {
-                let elem = this.$refs.task;
-                return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
+        },
+        getDecorationClass() {
+            if (this.task.step && this.task.step.status) {
+                return this.getClassesForDecor(this.task.step.status);
+            } else {
+                return this.getClassesForDecor(this.task.status || '')
             }
         },
-        watch: {
-            enableContextMenu: function (newVal, oldVal) {
-                console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-            },
-        },
-        mounted() {
-            this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
-
-            const self = this;
-            let operation = this.task.operation;
-            let taskId = this.task.id;
-            this.task.name = this.task.name || this.task.operation.name
-
-            let zIndex = this.task['z_index'];
-            let inputs = []
-            let outputs = []
-
-            if (operation.ports) {
-                outputs = operation.ports.filter((p) => {
-                    return p.type === 'OUTPUT';
-                }).sort((a, b) => {
-                    /* For horizontal ports*/
-                    return b.order - a.order;
-                    /* For veritical ports */
-                    // return a.order - b.order;
-                });
-                inputs = operation.ports.filter((p) => {
-                    return p.type === 'INPUT';
-                }).sort((a, b) => {
-                    /* For horizontal ports*/
-                    return b.order - a.order;
-                    /* For veritical ports */
-                    // return a.order - b.order;
-                });
+        getBorder() {
+            let color = '#fff'
+            if (this.task.forms && this.task.forms.color && this.task.forms.color.value) {
+                color = this.task.forms.color.value.background
             }
-            const locations = { input: [-1.2, 0], output: [3, -1.1] }
-            var lbls = [
-                // note the cssClass and id parameters here
-                ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
-            ];
-            const cssClass = this.task.operation.css_class ||
+            return `0px solid ${color}`
+        },
+        inGroup: function () {
+            let elem = this.$refs.task;
+            return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
+        }
+    },
+    watch: {
+        enableContextMenu: function (newVal, oldVal) {
+            console.log('Prop changed: ', newVal, ' | was: ', oldVal)
+        },
+    },
+    mounted() {
+        this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
+
+        const self = this;
+        let operation = this.task.operation;
+        let taskId = this.task.id;
+        this.task.name = this.task.name || this.task.operation.name
+
+        let zIndex = this.task['z_index'];
+        let inputs = []
+        let outputs = []
+
+        if (operation.ports) {
+            outputs = operation.ports.filter((p) => {
+                return p.type === 'OUTPUT';
+            }).sort((a, b) => {
+                /* For horizontal ports*/
+                return b.order - a.order;
+                /* For veritical ports */
+                // return a.order - b.order;
+            });
+            inputs = operation.ports.filter((p) => {
+                return p.type === 'INPUT';
+            }).sort((a, b) => {
+                /* For horizontal ports*/
+                return b.order - a.order;
+                /* For veritical ports */
+                // return a.order - b.order;
+            });
+        }
+        const locations = { input: [-1.2, 0], output: [3, -1.1] }
+        var lbls = [
+            // note the cssClass and id parameters here
+            ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
+        ];
+        const cssClass = this.task.operation.css_class ||
                 this.task.operation.cssClass;
 
-            let elem = this.$refs.task;
-            if (this.task.operation.slug === 'comment') {
-                elem.classList.add('comment');
-                this.isComment = true;
+        let elem = this.$refs.task;
+        if (this.task.operation.slug === 'comment') {
+            elem.classList.add('comment');
+            this.isComment = true;
+        }
+        [
+            { ports: inputs, type: 'input', options: endPointOptionsInput },
+            { ports: outputs, type: 'output', options: endPointOptionsOutput }
+        ].forEach((item) => {
+
+            let ports = item.ports;
+            let portType = item.type;
+            lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
+
+            // FIXME: hard coded layout
+            if (cssClass && cssClass.includes('circle-layout') && ports.length === 2) {
+                anchors[portType][1][0][1] = 0.35;
+                anchors[portType][1][1][1] = 0.65;
             }
-            [
-                { ports: inputs, type: 'input', options: endPointOptionsInput },
-                { ports: outputs, type: 'output', options: endPointOptionsOutput }
-            ].forEach((item) => {
 
-                let ports = item.ports;
-                let portType = item.type;
-                lbls[0][1]['cssClass'] = `endpoint-label ${portType}`;
+            if (ports.length > 0) {
+                anchors[portType][ports.length - 1].forEach((anchor, inx) => {
+                    lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
 
-                // FIXME: hard coded layout
-                if (cssClass && cssClass.includes('circle-layout') && ports.length === 2) {
-                    anchors[portType][1][0][1] = 0.35;
-                    anchors[portType][1][1][1] = 0.65;
-                }
+                    let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
+                    lbls[0][1]['location'] = locations[item.type];
+                    options['anchors'] = anchor.slice();
+                    options['overlays'] = lbls.slice();
+                    options['uuid'] = `${taskId}/${ports[inx].id}`;
+                    options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
 
-                if (ports.length > 0) {
-                    anchors[portType][ports.length - 1].forEach((anchor, inx) => {
-                        lbls[0][1]['label'] = `<div class="has-${ports.length}-ports">${ports[inx].name}</div>`;
-
-                        let options = JSON.parse(JSON.stringify(item.options)); // clone in order to modify
-                        lbls[0][1]['location'] = locations[item.type];
-                        options['anchors'] = anchor.slice();
-                        options['overlays'] = lbls.slice();
-                        options['uuid'] = `${taskId}/${ports[inx].id}`;
-                        options['scope'] = ports[inx].interfaces.map((i) => i.name).join(' ');
-
-                        if (ports[inx].interfaces.length && ports[inx].interfaces[0].color) {
-                            options['paintStyle']['fillStyle'] = ports[inx].interfaces[0].color;
+                    if (ports[inx].interfaces.length && ports[inx].interfaces[0].color) {
+                        options['paintStyle']['fillStyle'] = ports[inx].interfaces[0].color;
+                    }
+                    if (ports[inx].multiplicity !== 'ONE') {
+                        if (portType === 'input') {
+                            // options['endpoint'] = 'Dot';
+                            options['endpoint'] = 'Rectangle';
+                            options['cssClass'] = 'multiple-input';
+                            // options['anchors'][0] = -0.06;
+                            //options['paintStyle']['fillStyle'] = 'transparent';
                         }
-                        if (ports[inx].multiplicity !== 'ONE') {
-                            if (portType === 'input') {
-                                // options['endpoint'] = 'Dot';
-                                options['endpoint'] = 'Rectangle';
-                                options['cssClass'] = 'multiple-input';
-                                // options['anchors'][0] = -0.06;
-                                //options['paintStyle']['fillStyle'] = 'transparent';
-                            }
-                            options['maxConnections'] = 100;
-                            // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
-                        }
+                        options['maxConnections'] = 100;
+                        // options['paintStyle']['fillStyle'] = 'rgba(228, 87, 46, 1)';
+                    }
 
-                        options['cssClass'] += `  ${cssClass}`;
-                        options['dragOptions'] = {
-                            start: (event, ui) => { // eslint-disable-line no-unused-vars
-                                //console.debug("dragEndpointStart")
-                                this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
-                            },
-                            stop: (event, ui) => { // eslint-disable-line no-unused-vars
-                                //console.debug("dragEndpointStop")
-                                this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
-                            }
-                        };
-                        options.paintStyle.fill = options.paintStyle.fillStyle;
-                        if (self.instance && self.instance.addEndpoint) {
-                            const endpoint = self.instance.addEndpoint(elem, options);
-                            endpoint.bind('click', self.endpointClick);
-                            endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
-                            endpoint._portId = ports[inx].id;
+                    options['cssClass'] += `  ${cssClass}`;
+                    options['dragOptions'] = {
+                        start: (event, ui) => { // eslint-disable-line no-unused-vars
+                            //console.debug("dragEndpointStart")
+                            this.$root.$emit('onstart-flow', event.el._jsPlumb.scope);
+                        },
+                        stop: (event, ui) => { // eslint-disable-line no-unused-vars
+                            //console.debug("dragEndpointStop")
+                            this.$root.$emit('onstop-flow', event.el._jsPlumb.scope);
                         }
-                    });
-                }
-            });
-            if (self.draggable && self.instance && self.instance.addEndpoint) {
-                self.instance.draggable(elem, {
-                    lineWidth: 3,
-                    containment: "parent",
-                    grid: [1, 1],
-                    drag() {
-                        // let elem = document.getElementById(self.task.id);
-                        let elem = self.$refs.task;
-                        self.task.left = elem.offsetLeft;
-                        self.task.top = elem.offsetTop;
-                    },
-                    stop() {
-                        self.$root.$emit('onset-isDirty', true);
+                    };
+                    options.paintStyle.fill = options.paintStyle.fillStyle;
+                    if (self.instance && self.instance.addEndpoint) {
+                        const endpoint = self.instance.addEndpoint(elem, options);
+                        endpoint.bind('click', self.endpointClick);
+                        endpoint.canvas.style.zIndex = zIndex > 0 ? zIndex - 1 : 1;
+                        endpoint._portId = ports[inx].id;
                     }
                 });
             }
-            this.$root.$emit("ontask-ready", self.task);
+        });
+        if (self.draggable && self.instance && self.instance.addEndpoint) {
+            self.instance.draggable(elem, {
+                lineWidth: 3,
+                containment: "parent",
+                grid: [1, 1],
+                drag() {
+                    // let elem = document.getElementById(self.task.id);
+                    let elem = self.$refs.task;
+                    self.task.left = elem.offsetLeft;
+                    self.task.top = elem.offsetTop;
+                },
+                stop() {
+                    self.$root.$emit('onset-isDirty', true);
+                }
+            });
+        }
+        this.$root.$emit("ontask-ready", self.task);
+    },
+    methods: {
+        keyboardKeyUpTrigger(ev) {
+            this.$root.$emit('onkeyboard-keyup', ev);
         },
-        methods: {
-            keyboardKeyUpTrigger(ev) {
-                this.$root.$emit('onkeyboard-keyup', ev);
-            },
-            getClassesForDecor(value) {
-                let result = [];
-                switch (value) {
-                    case 'ERROR':
-                        result.push("fa fa-times-circle fa-2x");
-                        break;
-                    case 'PENDING':
-                        result.push("fa fa-pause-circle fa-2x");
-                        break;
-                    case 'CANCELED':
-                        result.push("fa fa-stop-circle fa-2x");
-                        break;
-                    case 'RUNNING':
-                        result.push("fa fa-sync fa-spin fa-2x");
-                        break;
-                    case 'COMPLETED':
-                        result.push("fa fa-check-circle fa-2x");
-                        break;
-                    default:
-                }
-                result.push(value.toLowerCase());
-                return result.join(' ');
-            },
-            openMenu(e) {
-                if (!this.isComment && this.enableContextMenu) {
-                    this.contextMenuOpened = true;
-                    const self = this;
-                    Vue.nextTick(function () {
-                        self.$refs.right.focus();
-                        //self.$refs.right.style.left = e.offsetX;
-                        //self.$refs.right.style.top = e.offsetY;
-                        self.setMenu(e.offsetY, e.offsetX)
-                    }.bind(this));
-                    // Force close previously opened menus
-                    document.dispatchEvent(new Event('click'));
-                    document.addEventListener('click', this.hideMenu);
-                    this.zIndex = this.$el.style.zIndex;
-                    this.$el.style.zIndex = 100000;
-                    e.preventDefault()
-                }
-            },
-            hideMenu() {
-                this.contextMenuOpened = false;
-                this.$el.style.zIndex = this.zIndex;
-                document.removeEventListener('click', this.hideMenu);
-            },
-            setMenu: function (top, left) {
-
-                let largestHeight = window.innerHeight - this.$refs.right.offsetHeight - 25;
-                let largestWidth = window.innerWidth - this.$refs.right.offsetWidth - 25;
-
-                if (top > largestHeight) top = largestHeight;
-
-                if (left > largestWidth) left = largestWidth;
-
-                this.$refs.right.style.top = top + 'px';
-                this.$refs.right.style.left = left + 'px';
-            },
-            _click(ev, showProperties) {
+        getClassesForDecor(value) {
+            let result = [];
+            switch (value) {
+            case 'ERROR':
+                result.push("fa fa-times-circle fa-2x");
+                break;
+            case 'PENDING':
+                result.push("fa fa-pause-circle fa-2x");
+                break;
+            case 'CANCELED':
+                result.push("fa fa-stop-circle fa-2x");
+                break;
+            case 'RUNNING':
+                result.push("fa fa-sync fa-spin fa-2x");
+                break;
+            case 'COMPLETED':
+                result.push("fa fa-check-circle fa-2x");
+                break;
+            default:
+            }
+            result.push(value.toLowerCase());
+            return result.join(' ');
+        },
+        openMenu(e) {
+            if (!this.isComment && this.enableContextMenu) {
+                this.contextMenuOpened = true;
                 const self = this;
-                let elem = ev.target.classList.contains('task') ? ev.target : ev.target.parentElement;
-
-                Array.prototype.slice.call(document.querySelectorAll(".task.selected"), 0).forEach((e) => {
-                    e.classList.remove('selected');
-                });
-                if (ev.ctrlKey) {
-                    self.instance.addToDragSelection(this);
-                } else if (elem.classList.contains('jsplumb-drag-selected')) {
-                    //nothing
-                } else {
-                    this.$el.classList.add('selected');
-                    self.selectedTask = this;
-                }
-                self.instance.repaintEverything()
-
-                // Raise the click event to upper components
-                this.$root.$emit('onclick-task', self, showProperties);
-                this.hideMenu();
-            },
-            dblClick(ev) {
-                this._click(ev, true);
-            },
-            click(ev) {
-                this.$el.focus()
-                this._click(ev, false);
-            },
-            showResults() {
-                this.contextMenuOpened = false;
-                this.$root.$emit('onshow-result', this.task);
-            },
-            remove() {
-                this.contextMenuOpened = false;
-                this.$root.$emit('onremove-task', this.task);
-            },
-            endpointClick(endpoint, e) {
-                if (e.ctrlKey) {
-                    console.debug('Port id: ', endpoint._portId);
-                }
+                Vue.nextTick(function () {
+                    self.$refs.right.focus();
+                    //self.$refs.right.style.left = e.offsetX;
+                    //self.$refs.right.style.top = e.offsetY;
+                    self.setMenu(e.offsetY, e.offsetX)
+                }.bind(this));
+                // Force close previously opened menus
+                document.dispatchEvent(new Event('click'));
+                document.addEventListener('click', this.hideMenu);
+                this.zIndex = this.$el.style.zIndex;
+                this.$el.style.zIndex = 100000;
+                e.preventDefault()
             }
         },
-    });
-    export default TaskComponent;
+        hideMenu() {
+            this.contextMenuOpened = false;
+            this.$el.style.zIndex = this.zIndex;
+            document.removeEventListener('click', this.hideMenu);
+        },
+        setMenu: function (top, left) {
+
+            let largestHeight = window.innerHeight - this.$refs.right.offsetHeight - 25;
+            let largestWidth = window.innerWidth - this.$refs.right.offsetWidth - 25;
+
+            if (top > largestHeight) top = largestHeight;
+
+            if (left > largestWidth) left = largestWidth;
+
+            this.$refs.right.style.top = top + 'px';
+            this.$refs.right.style.left = left + 'px';
+        },
+        _click(ev, showProperties) {
+            const self = this;
+            let elem = ev.target.classList.contains('task') ? ev.target : ev.target.parentElement;
+
+            Array.prototype.slice.call(document.querySelectorAll(".task.selected"), 0).forEach((e) => {
+                e.classList.remove('selected');
+            });
+            if (ev.ctrlKey) {
+                self.instance.addToDragSelection(this);
+            } else if (elem.classList.contains('jsplumb-drag-selected')) {
+                //nothing
+            } else {
+                this.$el.classList.add('selected');
+                self.selectedTask = this;
+            }
+            self.instance.repaintEverything()
+
+            // Raise the click event to upper components
+            this.$root.$emit('onclick-task', self, showProperties);
+            this.hideMenu();
+        },
+        dblClick(ev) {
+            this._click(ev, true);
+        },
+        click(ev) {
+            this.$el.focus()
+            this._click(ev, false);
+        },
+        showResults() {
+            this.contextMenuOpened = false;
+            this.$root.$emit('onshow-result', this.task);
+        },
+        remove() {
+            this.contextMenuOpened = false;
+            this.$root.$emit('onremove-task', this.task);
+        },
+        endpointClick(endpoint, e) {
+            if (e.ctrlKey) {
+                console.debug('Port id: ', endpoint._portId);
+            }
+        }
+    },
+});
+export default TaskComponent;
 </script>
 
 <style scoped lang="scss">
@@ -1059,7 +1086,7 @@
             background: transparent !important;
         }
     }
-     
+
     .parallelogram:after {
         border: 1px solid #aaa;
         background: white;
@@ -1070,15 +1097,15 @@
         top: 0;
         left: 0;
         -webkit-transform: skew(-30deg);
-        -moz-transform: skew(-30deg); 
-        -o-transform: skew(-30deg); 
+        -moz-transform: skew(-30deg);
+        -o-transform: skew(-30deg);
         z-index: -1;
     }
     .parallelogram.selected:after {
         webkit-box-shadow: 0px 6px 10px rgba(dodgerblue, .5);
         box-shadow: 0px 4px 8px rgba(dodgerblue, .5);
     }
-    
+
     div.double-layout {
         border: #29335c 3px double !important;
     }
@@ -1099,7 +1126,7 @@
                 box-shadow: 6px 4px 6px 0px #020f57;
                 border: 1px dashed #222;
             }
-            
+
         }
 
         .circle {

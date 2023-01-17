@@ -1,9 +1,9 @@
 <template>
-    <div ref="visualItem" class="item node noselect" :style="{left: item.left + 'px', top: item.top + 'px'}"
-        :id="`lemonade-${item.type}-${item.id}`" @click="handleClick">
+    <div :id="`lemonade-${item.type}-${item.id}`" ref="visualItem" class="item node noselect"
+         :style="{left: item.left + 'px', top: item.top + 'px'}" @click="handleClick">
         <template v-if="item">
             <div v-if="item.entity" :class="`item-icon item-${item.icon}`">
-                <span v-html="item.entity" style="font-size:20pt" />
+                <span style="font-size:20pt" v-html="item.entity" />
             </div>
             <div v-else :class="`item-icon item-${item.icon}`">
                 <font-awesome-icon :icon="'fa fa-' + (item.icon || 'database')" size="3x" fixed-width />
@@ -15,43 +15,44 @@
     </div>
 </template>
 <script>
-    import { ref, /*onBeforeUnmount, onMounted*/ } from 'vue';
+import { ref, /*onBeforeUnmount, onMounted*/ } from 'vue';
 
-    export default {
-        props: {
-            draggable: { default: true, type: Boolean },
-            jsplumbInstance: { default: null, type: Object },
-            item: { default: () => null, type: Object },
-        },
-        setup(props, {emit, expose}) {
-            const visualItem = ref(null);
+export default {
+    props: {
+        draggable: { default: true, type: Boolean },
+        jsplumbInstance: { default: null, type: Object },
+        item: { default: () => null, type: Object },
+    },
+    emits: ['click'],
+    setup(props, { emit, expose }) {
+        const visualItem = ref(null);
 
-            const addClass = (className) => {
-                visualItem.value.classList.add(className);
-            }
-            const removeClass = (className) => {
-                visualItem.value.classList.remove(className);
-            }
-            const handleClick = () => {
-                emit('click', {addClass, removeClass});
-            }
-            expose({addClass, removeClass});
-            return {
-                visualItem,
-                handleClick,
-                addClass,
-                removeClass
-            }
-        },
-        
-        xwatch: {
-            jsplumbInstance(instance) {
-                //console.debug('item', instance)
-                if (instance !== null) {
-                    //console.debug('item ' + this.item.name)
-                    const self = this;
-                    if (self.draggable && instance && instance.addEndpoint) {
-                        /*
+        const addClass = (className) => {
+            visualItem.value.classList.add(className);
+        }
+        const removeClass = (className) => {
+            visualItem.value.classList.remove(className);
+        }
+        const handleClick = () => {
+            emit('click', { addClass, removeClass });
+        }
+        expose({ addClass, removeClass });
+        return {
+            visualItem,
+            handleClick,
+            addClass,
+            removeClass
+        }
+    },
+
+    xwatch: {
+        jsplumbInstance(instance) {
+            //console.debug('item', instance)
+            if (instance !== null) {
+                //console.debug('item ' + this.item.name)
+                const self = this;
+                if (self.draggable && instance && instance.addEndpoint) {
+                    /*
                         const elem = self.$refs.item;
                         instance.draggable(elem, {
                             lineWidth: 3,
@@ -80,7 +81,7 @@
                                 }
                             }
                         };*/
-                        /*
+                    /*
                         const endpointOptions = {
                             isSource: true,
                             isTarget: true,
@@ -89,8 +90,8 @@
                             endpoint: ["Dot", { radius: 5 }],
                         }
                         */
-                        //instance.addEndpoint(elem, { anchor: "Top" }, endpointOptions);
-                        /*
+                    //instance.addEndpoint(elem, { anchor: "Top" }, endpointOptions);
+                    /*
                         const options2 = {
                             anchor: "Continuous",
                             paintStyle: {
@@ -103,15 +104,15 @@
                             connectorPaintStyle: { stroke: "blue", strokeWidth: 10 }
 
                         }*/
-                        //instance.makeSource(this.$refs.item, options2);
-                        //instance.makeTarget(this.$refs.item, options2);
+                    //instance.makeSource(this.$refs.item, options2);
+                    //instance.makeTarget(this.$refs.item, options2);
 
 
-                    }
                 }
             }
         }
     }
+}
 </script>
 <style scoped>
     /* ----------------------------------------------------------------------------------------------------- */

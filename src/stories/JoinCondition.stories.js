@@ -1,5 +1,5 @@
 
-import JoinConditionComponent from '../components/widgets/JoinCondition';
+import JoinConditionComponent from '../components/widgets/JoinCondition.vue';
 
 const suggestions1 = ['id', 'name', 'state', 'field_with_long_name', 'c5'];
 const suggestions2 = ['id', 'age', 'name', 'gender', 'fair', 'incoming', 'destination', 'home town', 'siblings'];

@@ -1,25 +1,35 @@
 <template>
     <div class="autocomplete">
-        <input v-model="search" type="text" @input="onChange" @keyup.down="onArrowDown" @keyup.up="onArrowUp"
-            @keyup.enter="onEnter" />
-        <ul v-show="isOpen" id="autocomplete-results" class="autocomplete-results">
-            <li v-if="isLoading" class="loading">
+        <input v-model="search"
+               type="text"
+               @input="onChange"
+               @keyup.down="onArrowDown"
+               @keyup.up="onArrowUp"
+               @keyup.enter="onEnter">
+        <ul v-show="isOpen"
+            id="autocomplete-results"
+            class="autocomplete-results">
+            <li v-if="isLoading"
+                class="loading">
                 Loading results...
             </li>
-            <li v-for="(result, i) in results" v-else :key="i" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }"
+            <li v-for="(result, i) in results"
+                v-else
+                :key="i"
+                class="autocomplete-result"
+                :class="{ 'is-active': i === arrowCounter }"
                 @click="setResult(result)">
-                {{ result }}
+                {{result}}
             </li>
         </ul>
-
     </div>
 </template>
 <script>
-    import Vue from 'vue';
-    /**
+import Vue from 'vue';
+/**
      * Based on https://www.digitalocean.com/community/tutorials/vuejs-vue-autocomplete-component
     */
-    /*
+/*
     const Autocomplete = {
         name: "autocomplete",
         template: "#autocomplete",
@@ -110,10 +120,10 @@
         }
     };
     */
-    new Vue({
-        el: "#app",
-        name: "App",
-    });
+new Vue({
+    el: "#app",
+    name: "App",
+});
 </script>
 <style>
     #app {

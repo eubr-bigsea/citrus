@@ -23,7 +23,7 @@ export default {
             type: Object
         },
         readOnly: { default: false, type: Boolean },
-        visualStyle: {type: String },
+        visualStyle: { type: String },
         suggestionEvent: {
             type: Function,
         },
@@ -37,8 +37,8 @@ export default {
         },
     },
     methods: {
-        triggerUpdateEvent(message, field, value, labelValue){
-            this.$root.$emit(message, field, value, labelValue); 
+        triggerUpdateEvent(message, field, value, labelValue) {
+            this.$root.$emit(message, field, value, labelValue);
             this.$emit('update', field, value, labelValue);
         }
     },

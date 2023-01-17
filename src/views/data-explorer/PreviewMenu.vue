@@ -3,15 +3,18 @@
         <div class="border preview-menu">
             <b-nav v-if="menus">
                 <b-nav-item-dropdown toggle-class="nav-link-custom">
-                    <template slot="button-content">
-                        <font-awesome-icon icon="fa fa-lightbulb"  class="text-warning" /> {{$tc('actions.analyse')}}
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-lightbulb" class="text-warning" /> {{$tc('actions.analyse')}}
                     </template>
-                    <b-dropdown-item @click="$emit('analyse', null)"> Estatísticas do resultado </b-dropdown-item>
-                    <b-dropdown-item v-if="selected.label !== undefined" @click="$emit('analyse', selected)"> Estatísticas do atributo <strong>{{selected.label}}</strong>
+                    <b-dropdown-item @click="$emit('analyse', null)">
+                        Estatísticas do resultado
+                    </b-dropdown-item>
+                    <b-dropdown-item v-if="selected.label !== undefined" @click="$emit('analyse', selected)">
+                        Estatísticas do atributo <strong>{{selected.label}}</strong>
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown toggle-class="nav-link-custom">
-                    <template slot="button-content">
+                    <template #button-content>
                         <font-awesome-icon icon="fa fa-cog" /> {{$tc('actions.export')}}
                     </template>
                     <b-dropdown-item @click="trigger('export', null)">
@@ -19,20 +22,19 @@
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown v-for="menu in menus" :key="menu.menu.id" toggle-class="nav-link-custom"
-                    :disabled="'always' !== menu.enableCondition && selected.label === undefined">
-                    <template slot="button-content">
-                        <span :class="menu.icon"></span> {{menu.menu.name}}
+                                     :disabled="'always' !== menu.enableCondition && selected.label === undefined">
+                    <template #button-content>
+                        <span :class="menu.icon" /> {{menu.menu.name}}
                     </template>
 
                     <template v-for="op in menu.operations">
-                        <div
-                            v-if="op.css_class === 'separator' || op.css_class === '' || (selected.field.type && op.css_class.toLowerCase().includes(selected.field.type.toLowerCase()))" :key="op.name">
+                        <div v-if="op.css_class === 'separator' || op.css_class === '' || (selected.field.type && op.css_class.toLowerCase().includes(selected.field.type.toLowerCase()))"
+                             :key="op.name">
                             <b-dropdown-item @click="trigger('menu', op)">
-                                <span :class="op.icon"></span> {{op.name}}
+                                <span :class="op.icon" /> {{op.name}}
                                 <!-- |{{op.css_class}}| -->
                             </b-dropdown-item>
-                            <b-dropdown-item v-if="op.css_class.includes('separator')" class="ctx-divider">
-                            </b-dropdown-item>
+                            <b-dropdown-item v-if="op.css_class.includes('separator')" class="ctx-divider" />
                         </div>
                     </template>
                 </b-nav-item-dropdown>
@@ -41,20 +43,20 @@
     </div>
 </template>
 <script>
-    /*
+/*
      * Menu for Data Explorer
      */
-    export default {
-        props: {
-            selected: { type: Object, default: () => ({}) },
-            menus: {type: Object, default: () => null}
-        },
-        methods: {
-            trigger(action, ...params) {
-                this.$emit('select', { action, params, 'selected': this.selected })
-            }
+export default {
+    props: {
+        selected: { type: Object, default: () => ({}) },
+        menus: { type: Object, default: () => null }
+    },
+    methods: {
+        trigger(action, ...params) {
+            this.$emit('select', { action, params, 'selected': this.selected })
         }
     }
+}
 </script>
 <style scoped>
     .preview-menu>>>.nav-pills a.dropdown-toggle {

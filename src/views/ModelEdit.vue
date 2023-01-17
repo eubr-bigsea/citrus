@@ -17,11 +17,11 @@
                                     </div>
                                     <div class="col-md-3">
                                         <label class="font-weight-bold">{{$tc('common.class')}}:</label>
-                                        <input v-model="model.class_name" disabled class="form-control" />
+                                        <input v-model="model.class_name" disabled class="form-control">
                                     </div>
                                     <div class="col-md-2">
                                         <label class="font-weight-bold">{{$tc('common.created')}}:</label>
-                                        <input v-model="model.created" disabled class="form-control" />
+                                        <input v-model="model.created" disabled class="form-control">
                                     </div>
                                     <div class="col-md-2">
                                         <label class="font-weight-bold">{{$tc('common.type')}}:</label>
@@ -34,22 +34,25 @@
                                     <div class="col-md-2">
                                         <label class="font-weight-bold">{{$tc('model.storage')}}:</label>
                                         <input :value="model.storage.name + ' (' + model.storage.type + ')'" disabled
-                                            class="form-control" />
+                                               class="form-control">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label class="font-weight-bold">{{$tc('common.path')}}:</label>
-                                        <input v-model="model.path" disabled class="form-control" />
+                                        <input v-model="model.path" disabled class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-5 mb-4 border-top pt-2">
                                     <router-link :to="{name: 'models'}" class="btn btn-secondary mr-1">
-                                        {{$tc('actions.cancel')}}</router-link>
+                                        {{$tc('actions.cancel')}}
+                                    </router-link>
                                 </div>
                             </b-card>
                         </div>
-                        <div v-else class="col-md-12 mx-auto border-top mt-3 pt-3">{{$t('common.noData')}}</div>
+                        <div v-else class="col-md-12 mx-auto border-top mt-3 pt-3">
+                            {{$t('common.noData')}}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,82 +61,82 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-    import axios from 'axios';
-    let limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
+import Vue from 'vue';
+import axios from 'axios';
+let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
-    export default {
-        components: {
-        },
-        data() {
-            return {
-                model: {},
-                types: [
-                    'KERAS',
-                    'PERFORMANCE_SPARK',
-                    'PERFORMANCE_KERAS',
-                    'SPARK_ML_CLASSIFICATION',
-                    'SPARK_ML_REGRESSION',
-                    'SPARK_MLLIB_CLASSIFICATION',
-                    'UNSPECIFIED'
-                ]
-            }
-        },
-        computed: {
-        },
-        xwatch: {
-            '$route.params.id': function () {
-                this.load().then(() => {
-                    Vue.nextTick(() => {
-                        this.isDirty = false;
-                    });
+export default {
+    components: {
+    },
+    data() {
+        return {
+            model: {},
+            types: [
+                'KERAS',
+                'PERFORMANCE_SPARK',
+                'PERFORMANCE_KERAS',
+                'SPARK_ML_CLASSIFICATION',
+                'SPARK_ML_REGRESSION',
+                'SPARK_MLLIB_CLASSIFICATION',
+                'UNSPECIFIED'
+            ]
+        }
+    },
+    computed: {
+    },
+    xwatch: {
+        '$route.params.id': function () {
+            this.load().then(() => {
+                Vue.nextTick(() => {
+                    this.isDirty = false;
                 });
-            },
+            });
         },
-        mounted() {
-            this.load();
-        },
-        /* Methods */
-        methods: {
-            getPreviewColumns() {
-                if (
-                    this.model &&
+    },
+    mounted() {
+        this.load();
+    },
+    /* Methods */
+    methods: {
+        getPreviewColumns() {
+            if (
+                this.model &&
                     this.model.attributes &&
                     this.model.attributes.length
-                ) {
-                    return this.model.attributes.map(a => a.name);
-                } else if (this.samples.length) {
-                    return Object.keys(this.samples[0]);
-                } else {
-                    return [];
-                }
-            },
-            async load() {
-                try {
-                    const resp = await axios.get(`${limoneroUrl}/models/${this.$route.params.id}`);
-                    this.model = resp.data
-                } catch (e) {
-                    this.error(e);
-                }
+            ) {
+                return this.model.attributes.map(a => a.name);
+            } else if (this.samples.length) {
+                return Object.keys(this.samples[0]);
+            } else {
+                return [];
+            }
+        },
+        async load() {
+            try {
+                const resp = await axios.get(`${limoneroUrl}/models/${this.$route.params.id}`);
+                this.model = resp.data
+            } catch (e) {
+                this.error(e);
+            }
 
-            },
-            success(msg) {
-                this.$snotify.success(msg, this.$t('titles.success'));
-            },
-            error(e) {
-                if (e.name === 'NetworkError') {
-                    this.$snotify.error(
-                        this.$t('errors.disconnected'),
-                        this.$t('titles.error')
-                    );
-                } else if (e.response && e.response.data) {
-                    this.$snotify.error(e.response.data.message, this.$t('titles.error'));
-                } else {
-                    this.$snotify.error(e.message, this.$t('titles.error'));
-                }
-            },
-        }
-    };
+        },
+        success(msg) {
+            this.$snotify.success(msg, this.$t('titles.success'));
+        },
+        error(e) {
+            if (e.name === 'NetworkError') {
+                this.$snotify.error(
+                    this.$t('errors.disconnected'),
+                    this.$t('titles.error')
+                );
+            } else if (e.response && e.response.data) {
+                this.$snotify.error(e.response.data.message, this.$t('titles.error'));
+            } else {
+                this.$snotify.error(e.message, this.$t('titles.error'));
+            }
+        },
+    }
+};
 </script>
 <style>
     .v-select .dropdown-toggle::after {

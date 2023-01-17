@@ -2,67 +2,84 @@
     <b-navbar id="l-navbar" toggleable="md" sticky>
         <b-navbar-toggle target="nav_collapse" />
         <b-navbar-brand :to="{ name: 'home' }">
-            <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
-            <img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32" alt="Lemonade">
+            <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32"
+                 alt="Lemonade">
+            <img class="icon_logo" src="../assets/lemonade_icon.svg" width="25" height="32"
+                 alt="Lemonade">
         </b-navbar-brand>
-        <b-collapse id="nav_collapse" is-nav>
+        <b-collapse id="nav_collapse"
+                    is-nav>
             <b-navbar-nav class="pt-1">
-                <b-nav-item v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'dataSources' }">
-                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{ $tc('titles.dataSource', 2) }}
+                <b-nav-item v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin"
+                            :to="{ name: 'dataSources' }">
+                    <font-awesome-icon icon="fa fa-database"
+                                       class="text-success" /> {{$tc('titles.dataSource', 2)}}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
-                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $tc('titles.workflow', 2) }}
+                <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin"
+                            :to="{ name: 'workflows' }">
+                    <font-awesome-icon icon="fa fa-flask"
+                                       class="text-success" /> {{$tc('titles.workflow', 2)}}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }">
-                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $tc('titles.dataExplorer', 2) }}
+                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin"
+                            :to="{ name: 'index-explorer' }">
+                    <font-awesome-icon icon="fa fa-vial"
+                                       class="text-success" /> {{$tc('titles.dataExplorer', 2)}}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'tracks' }">
-                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{ $tc('titles.track', 2) }}
+                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin"
+                            :to="{ name: 'tracks' }">
+                    <font-awesome-icon icon="fa fa-microscope"
+                                       class="text-success" /> {{$tc('titles.track', 2)}}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" :to="{ name: 'jobs' }">
-                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{ $tc('titles.jobs', 2) }}
+                <b-nav-item v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin"
+                            :to="{ name: 'jobs' }">
+                    <font-awesome-icon icon="fa fa-tasks"
+                                       class="text-success" /> {{$tc('titles.jobs', 2)}}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
-                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
+                <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin"
+                            :to="{ name: 'dashboards' }">
+                    <font-awesome-icon icon="fa fa-chart-line"
+                                       class="text-success" /> {{$tc('titles.dashboard', 2)}}
                 </b-nav-item>
 
-                <b-nav-item-dropdown v-if="isAdmin" right>
-                    <template v-slot:button-content>
-                        <font-awesome-icon icon="fa fa-user-lock" class="text-success" />
+                <b-nav-item-dropdown v-if="isAdmin"
+                                     right>
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-user-lock"
+                                           class="text-success" />
                         {{$tc('titles.administration', 2)}}
                     </template>
                     <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
-                        {{ $tc('titles.user', 2) }}
+                        {{$tc('titles.user', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'AdministrationRoleList' }">
-                        {{ $tc('titles.role', 2) }}
+                        {{$tc('titles.role', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'configuration' }">
-                        {{ $tc('titles.configuration', 2) }}
+                        {{$tc('titles.configuration', 2)}}
                     </b-dropdown-item>
-                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'clusters' }">
-                        {{ $tc('titles.cluster', 2) }}
+                        {{$tc('titles.cluster', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'storages' }">
-                        {{ $tc('titles.storage', 2) }}
+                        {{$tc('titles.storage', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'platforms' }">
-                        {{ $tc('titles.platform', 2) }}
+                        {{$tc('titles.platform', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
-                        {{ $tc('titles.model', 2) }}
+                        {{$tc('titles.model', 2)}}
                     </b-dropdown-item>
-                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'deployments' }">
-                        {{ $tc('titles.deployment', 2) }}
+                        {{$tc('titles.deployment', 2)}}
                     </b-dropdown-item>
-                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'admin-openid' }">
                         OpenId Sandbox
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'webSocketPing' }">
-                        Test Websocket 
+                        Test Websocket
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
@@ -103,30 +120,40 @@
             </b-navbar-nav>
             <b-navbar-nav class="pt-1">
                 <b-nav-item-dropdown ref="dropdown" right>
-                    <template slot="button-content">
-                        <font-awesome-icon icon="fa fa-user"  class="text-success"/>
-                        {{ user.name ? user.name.split(' ')[0]: '' }}
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-user" class="text-success" />
+                        {{user.name ? user.name.split(' ')[0]: ''}}
                     </template>
 
                     <b-dropdown-form style="width: 300px" class="text-center">
                         <font-awesome-icon icon="fa fa-user" />
                         <p>
                             <strong>{{user.name}}</strong>
-                            <br />
+                            <br>
                             <small>{{user.email}}</small>
                         </p>
                         <div class="text-center">
-                            <strong>{{$tc('titles.role', 2)}}</strong><br />
+                            <strong>{{$tc('titles.role', 2)}}</strong><br>
                             <div class="mt-2">
-                                <span v-for="role in user.roles" :key="role.id" class="badge badge-info mr-1 p-1">
+                                <span v-for="role in user.roles"
+                                      :key="role.id"
+                                      class="badge badge-info mr-1 p-1">
                                     {{role.label}}
                                 </span>
                             </div>
                         </div>
                         <p class="border-top pt-2">
-                            <b-button variant="primary" size="sm" @click="profile">{{ $t('titles.profile') }}</b-button>
-                            <b-button variant="danger" size="sm" class="ml-2" @click="logout">
-                                {{ $t('common.logout') }}</b-button>
+                            <b-button variant="primary"
+                                      size="sm"
+                                      @click="profile">
+                                {{$t('titles.profile')}}
+                            </b-button>
+                            <b-button variant="danger"
+                                      size="sm"
+                                      class="ml-2"
+                                      @click="logout">
+                                {{$t('common.logout')}}
+                            </b-button>
                         </p>
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
@@ -136,45 +163,45 @@
 </template>
 
 <script>
-    import { mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 
-    import axios from 'axios';
-    const standNamespace = process.env.VUE_APP_STAND_NAMESPACE;
-    const thornUrl = process.env.VUE_APP_THORN_URL;
+import axios from 'axios';
+const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const thornUrl = import.meta.env.VITE_THORN_URL;
 
-    export default {
-        name: 'LNavbar',
-        components: {},
-        data() {
-            return {
-                namespace: standNamespace,
-                unreadNotifications: 0,
-                notifications: [],
-                socket: null,
-                room: null,
-                APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
-                DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
-                    'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
-                DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
-                    'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
-                    'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
-                DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
-                JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
-                SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
-                USER_PERMISSIONS: ['USER_MANAGE'],
-                WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
-                    'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
-                    'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
+export default {
+    name: 'LNavbar',
+    components: {},
+    data() {
+        return {
+            namespace: standNamespace,
+            unreadNotifications: 0,
+            notifications: [],
+            socket: null,
+            room: null,
+            APP_PERMISSIONS: ['APP_EDIT', 'APP_USE'],
+            DASHBOARD_PERMISSIONS: ['DASHBOARD_EDIT', 'DASHBOARD_EDIT_ANY',
+                'DASHBOARD_VIEW', 'DASHBOARD_VIEW_ANY'],
+            DATA_SOURCE_PERMISSIONS: ['DATA_SOURCE_EDIT', 'DATA_SOURCE_LIST',
+                'DATA_SOURCE_VIEW', 'DATA_SOURCE_EDIT_ANY', 'DATA_SOURCE_VIEW_ANY',
+                'DATA_SOURCE_USE', 'DATA_SOURCE_USE_ANY'],
+            DEPLOYMENT_PERMISSIONS: ['DEPLOYMENT_MANAGE'],
+            JOB_PERMISSIONS: ['JOB_EDIT_ANY', 'RUN_WORKFLOW_API', 'JOB_VIEW_ANY'],
+            SYSTEM_PERMISSIONS: ['ADMINISTRATOR', 'STORAGE_MANAGE', 'CLUSTER_MANAGE'],
+            USER_PERMISSIONS: ['USER_MANAGE'],
+            WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
+                'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
+                'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
 
-            }
-        },
-        computed: {
-            ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
-        },
-        mounted() {
-            this.room = `user:${this.user.id}`;
-            this.room = "user:1"
-            /*
+        }
+    },
+    computed: {
+        ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
+    },
+    mounted() {
+        this.room = `user:${this.user.id}`;
+        this.room = "user:1"
+        /*
             const socket = io(this.namespace, {
                 upgrade: true,
             });
@@ -204,40 +231,40 @@
                     this.unreadNotifications = resp.data.unread;
                 });
             */
-        },
-        beforeDestroy() {
-            if (this.socket) {
-                this.socket.emit('leave', { room: this.room });
-                this.socket.close();
+    },
+    beforeUnmount() {
+        if (this.socket) {
+            this.socket.emit('leave', { room: this.room });
+            this.socket.close();
+        }
+    },
+    methods: {
+        logout() {
+            if (this.$openIdService.enabled) {
+                this.$openIdService.logout();
+            } else {
+                this.$router.push({ name: 'logout' });
             }
         },
-        methods: {
-            logout() {
-                if (this.$openIdService.enabled) {
-                    this.$openIdService.logout();
-                } else {
-                    this.$router.push({ name: 'logout' });
-                }
-            },
-            profile() {
-                this.$refs.dropdown.hide(true);
-                this.$router.push({ name: 'profile' });
-            },
-            loadNotifications() {
-                const params = {
-                    page: 1,
-                    size: 10,
-                    sort: 'created',
-                    asc: 'false',
-                };
-                axios.get(`${thornUrl}/notifications`, { params })
-                    .then(resp => {
-                        this.notifications = resp.data.data;
-                    });
-            }
+        profile() {
+            this.$refs.dropdown.hide(true);
+            this.$router.push({ name: 'profile' });
         },
+        loadNotifications() {
+            const params = {
+                page: 1,
+                size: 10,
+                sort: 'created',
+                asc: 'false',
+            };
+            axios.get(`${thornUrl}/notifications`, { params })
+                .then(resp => {
+                    this.notifications = resp.data.data;
+                });
+        }
+    },
 
-    };
+};
 </script>
 
 <style lang="scss">

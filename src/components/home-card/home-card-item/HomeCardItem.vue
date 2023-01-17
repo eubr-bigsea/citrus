@@ -1,9 +1,14 @@
 <template>
-    <HomeCardItemDashboard v-if="type == 'dashboard'" :item="item"></HomeCardItemDashboard>
-    <HomeCardItemDataSource v-else-if="type == 'dataSource'" :item="item"></HomeCardItemDataSource>
-    <HomeCardItemJob v-else-if="type == 'job'" :item="item"></HomeCardItemJob>
-    <HomeCardItemWorkflow v-else-if="type == 'workflow'" :item="item"></HomeCardItemWorkflow>
-    <HomeCardItemApp v-else-if="type == 'app'" :item="item"></HomeCardItemApp>
+    <HomeCardItemDashboard v-if="type == 'dashboard'"
+                           :item="item" />
+    <HomeCardItemDataSource v-else-if="type == 'dataSource'"
+                            :item="item" />
+    <HomeCardItemJob v-else-if="type == 'job'"
+                     :item="item" />
+    <HomeCardItemWorkflow v-else-if="type == 'workflow'"
+                          :item="item" />
+    <HomeCardItemApp v-else-if="type == 'app'"
+                     :item="item" />
 </template>
 
 <script>
@@ -23,7 +28,7 @@ export default {
         HomeCardItemApp,
     },
     props: {
-        type: {type: String, default: ()=> null}, 
+        type: {type: String, default: ()=> null},
         item: {type: Object, default: ()=> null}
     }
 }

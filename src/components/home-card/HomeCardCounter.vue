@@ -1,13 +1,34 @@
 <template>
-  <span class="home-card-counter float-right" title="Total">
-    <animated-number
-      :value="value"
-      :format-value="formatValue"
-      :duration="1000"
-      :easing="'easeOutCirc'"
-    />
-  </span>
+    <span class="home-card-counter float-right"
+          title="Total">
+        <animated-number :value="value"
+                         :format-value="formatValue"
+                         :duration="1000"
+                         :easing="'easeOutCirc'" />
+    </span>
 </template>
+
+<script>
+import AnimatedNumber from "animated-number-vue";
+import Humanize from "humanize-plus";
+
+export default {
+    name: "HomeCardCounter",
+    components: {
+        AnimatedNumber
+    },
+    props: {
+        value: {
+            type: Number, default: () => 0
+        }
+    },
+    methods: {
+        formatValue(value) {
+            return Humanize.compactInteger(value);
+        }
+    }
+};
+</script>
 
 <style scoped>
 span.home-card-counter {
@@ -21,25 +42,3 @@ span.home-card-counter {
   margin-left: auto;
 }
 </style>
-
-<script>
-import AnimatedNumber from "animated-number-vue";
-import Humanize from "humanize-plus";
-
-export default {
-  name: "HomeCardCounter",
-  components: {
-    AnimatedNumber
-  },
-  props: {
-      value: {
-          type: Number, default: () => 0
-      }
-  },
-  methods: {
-    formatValue(value) {
-      return Humanize.compactInteger(value);
-    }
-  }
-};
-</script>

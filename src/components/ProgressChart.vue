@@ -2,75 +2,75 @@
     <div class="text-center xprogress">
         <div v-for="(v, k) in progressLogs" :key="k" class="sparkline">
             {{k}}
-            <highcharts :options="options(k, v)"></highcharts>
+            <highcharts :options="options(k, v)" />
         </div>
     </div>
 </template>
 
 <script>
-    export default {
-        props: {
-            logs: {type: Array, default: () => []}
+export default {
+    props: {
+        logs: {type: Array, default: () => []}
+    },
+    computed: {
+        progressLogs() {
+            const logs = this.logs.filter(l => l.type === 'PROGRESS')
+                .map(l => JSON.parse(l.message))
+                .sort((a, b) => a.x - b.x);
+            const series = {}
+            if (logs && logs.length) {
+                const keys = Object.keys(logs[0])
+                logs.forEach((l) => {
+                    keys.forEach((k) => {
+                        if (!series[k])
+                            series[k] = []
+                        series[k].push(l[k])
+                    });
+                })
+            }
+            if (series['x'])
+                delete series['x']
+            return series;
         },
-        computed: {
-            progressLogs() {
-                const logs = this.logs.filter(l => l.type === 'PROGRESS')
-                    .map(l => JSON.parse(l.message))
-                    .sort((a, b) => a.x - b.x);
-                const series = {}
-                if (logs && logs.length) {
-                    const keys = Object.keys(logs[0])
-                    logs.forEach((l) => {
-                        keys.forEach((k) => {
-                            if (!series[k])
-                                series[k] = []
-                            series[k].push(l[k])
-                        });
-                    })
-                }
-                if (series['x'])
-                    delete series['x']
-                return series;
-            },
-        },
-        methods: {
-            options(k, v) {
-                return {
-                    chart: {
-                        backgroundColor: null,
-                        borderWidth: 0,
-                        className: 'sparkline-container',
-                        type: 'area',
-                        margin: [2, 0, 2, 0],
-                        width: 200,
-                        height: 60,
-                        style: {
-                            overflow: 'visible'
-                        },
-
-                        // small optimalization, saves 1-2 ms each sparkline
-                        skipClone: true
+    },
+    methods: {
+        options(k, v) {
+            return {
+                chart: {
+                    backgroundColor: null,
+                    borderWidth: 0,
+                    className: 'sparkline-container',
+                    type: 'area',
+                    margin: [2, 0, 2, 0],
+                    width: 200,
+                    height: 60,
+                    style: {
+                        overflow: 'visible'
                     },
+
+                    // small optimalization, saves 1-2 ms each sparkline
+                    skipClone: true
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    allowDecimals: false,
+                    labels: {
+                        formatter: function () {
+                            return this.value; // clean, unformatted number for year
+                        }
+                    }
+                },
+                yAxis: {
                     title: {
                         text: ''
-                    },
-                    xAxis: {
-                        allowDecimals: false,
-                        labels: {
-                            formatter: function () {
-                                return this.value; // clean, unformatted number for year
-                            }
-                        }
-                    },
-                    yAxis: {
-                        title: {
-                            text: ''
-                        }
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    /*
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                /*
                     plotOptions: {
                         area: {
                             pointStart: 1940,
@@ -87,51 +87,51 @@
                         }
                     },
                     */
-                    legend: {
-                        enabled: false
-                    },
-                    tooltip: {
-                        hideDelay: 0,
-                        outside: true,
-                        pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>warheads in {point.x}',
-                        shared: true
-                    },
-                    exporting: {
-                        enabled: false
-                    },
-                    plotOptions: {
-                        series: {
-                            animation: false,
-                            lineWidth: 1,
-                            shadow: false,
+                legend: {
+                    enabled: false
+                },
+                tooltip: {
+                    hideDelay: 0,
+                    outside: true,
+                    pointFormat: '{series.name} had stockpiled <b>{point.y:,.0f}</b><br/>warheads in {point.x}',
+                    shared: true
+                },
+                exporting: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        animation: false,
+                        lineWidth: 1,
+                        shadow: false,
+                        states: {
+                            hover: {
+                                lineWidth: 1
+                            }
+                        },
+                        marker: {
+                            radius: 1,
                             states: {
                                 hover: {
-                                    lineWidth: 1
+                                    radius: 2
                                 }
-                            },
-                            marker: {
-                                radius: 1,
-                                states: {
-                                    hover: {
-                                        radius: 2
-                                    }
-                                }
-                            },
-                            fillOpacity: 0.25
+                            }
                         },
-                        column: {
-                            negativeColor: '#910000',
-                            borderColor: 'silver'
-                        }
+                        fillOpacity: 0.25
                     },
-                    series: [{
-                        name: k,
-                        data: v
-                    }]
-                }
+                    column: {
+                        negativeColor: '#910000',
+                        borderColor: 'silver'
+                    }
+                },
+                series: [{
+                    name: k,
+                    data: v
+                }]
             }
         }
     }
+}
 </script>
 <style>
     .sparkline {

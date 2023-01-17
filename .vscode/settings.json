@@ -17,7 +17,7 @@
     "editor.tabSize": 4,
     // Controls if the editor will insert spaces for tabs. Accepted values:  "auto", true, false. If set to "auto", the value will be guessed when a file is opened.
     "files.associations": {
-        "*.vue": "html"
+        "*.vue": "vue"
     },
     "importCost.javascriptExtensions": [
         "\\.jsx?$",
@@ -29,12 +29,16 @@
     ],
     "window.zoomLevel": 0,
     "files.autoSave": "off",
-    "vetur.format.defaultFormatter.html": "prettyhtml",
-    "vetur.format.defaultFormatter.js": "prettier",
+    //"vetur.format.defaultFormatter.html": "prettyhtml",
+    //"vetur.format.defaultFormatter.js": "prettier",
     "[javascript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
+    "eslint.format.enable": true,
+    // "editor.codeActionsOnSave": {
+    //     "source.fixAll.eslint": true
+    // }
 }

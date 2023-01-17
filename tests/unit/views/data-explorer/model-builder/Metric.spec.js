@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-import Metric from '@/views/data-explorer/model-builder/Metric.vue'
+import Metric from '$SRC/views/data-explorer/model-builder/Metric.vue'
 
 describe('Metric.vue', () => {
     const fieldsMap = new Map();
@@ -21,7 +21,7 @@ describe('Metric.vue', () => {
     setFieldMapValues(fieldsMap, 'bin_metric', binClassMetrics);
     setFieldMapValues(fieldsMap, 'reg_metric', regressionMetrics);
     setFieldMapValues(fieldsMap, 'clust_metric', clusteringMetrics);
-    
+
     const getSelectOptionValues = (select) => {
         const options = select.findAll('option');
         const selectValues = [];
@@ -32,7 +32,7 @@ describe('Metric.vue', () => {
         return selectValues;
     }
 
-    it('renders task', () => {
+    test('renders task', () => {
         const wrapper = shallowMount(Metric, {
             propsData: {
                 evaluator: {
@@ -48,7 +48,7 @@ describe('Metric.vue', () => {
         expect(selectValues).toEqual(tasks);
         expect(wrapper.find("[data-test='metric']").exists()).toBe(false);
     });
-    it('renders binary classification metric', () => {
+    test('renders binary classification metric', () => {
         const wrapper = shallowMount(Metric, {
             propsData: {
                 evaluator: {
@@ -64,7 +64,7 @@ describe('Metric.vue', () => {
             wrapper.find("[data-test='bin-classification']"));
         expect(selectValues).toEqual(binClassMetrics);
     });
-    it('renders multiclass classification metric', () => {
+    test('renders multiclass classification metric', () => {
         const wrapper = shallowMount(Metric, {
             propsData: {
                 evaluator: {
@@ -76,12 +76,12 @@ describe('Metric.vue', () => {
                 }
             }
         });
-        
+
         const selectValues = getSelectOptionValues(
             wrapper.find("[data-test='multiclass-classification']"));
         expect(selectValues).toEqual(multiClassMetrics);
     });
-    it('renders clustering metric', () => {
+    test('renders clustering metric', () => {
         const wrapper = shallowMount(Metric, {
             propsData: {
                 evaluator: {
@@ -97,7 +97,7 @@ describe('Metric.vue', () => {
             wrapper.find("[data-test='clustering']"));
         expect(selectValues).toEqual(clusteringMetrics);
     });
-    it('renders regression metric', () => {
+    test('renders regression metric', () => {
         const wrapper = shallowMount(Metric, {
             propsData: {
                 evaluator: {

@@ -3,55 +3,62 @@
         <div v-if="readOnly">
             {{value === null ? field.default: value}}
         </div>
-        <label v-else class="switch">
-            <input v-model="value" :class="classes" type="checkbox" :checked="checked" :name="name" :disabled="disabled"
-                @change="changed">
+        <label v-else
+               class="switch">
+            <input v-model="value"
+                   :class="classes"
+                   type="checkbox"
+                   :checked="checked"
+                   :name="name"
+                   :disabled="disabled"
+                   @change="changed">
             <span>
-                <slot></slot>
+                <slot />
             </span>
         </label>
     </div>
 </template>
 
 <script>
-    // From https://github.com/rafaelpimpa/vue-checkbox-switch
-    export default {
-        name: 'SwitchComponent',
-        props: {
-            disabled: {type: Boolean, default: () => false},
-            classes: {type: String, default: () => null},
-            checked: {type: Boolean, default: () => false},
-            name: {type: String, default: () => null},
-            onchange: {type: Function, default: () => null},
-            readOnly: {type: Boolean, default: () => false},
+// From https://github.com/rafaelpimpa/vue-checkbox-switch
+export default {
+    name: 'SwitchComponent',
+    props: {
+        disabled: {type: Boolean, default: () => false},
+        classes: {type: String, default: () => null},
+        checked: {type: Boolean, default: () => false},
+        name: {type: String, default: () => null},
+        onchange: {type: Function, default: () => null},
+        readOnly: {type: Boolean, default: () => false},
+    },
+    emits: ['input'],
+    data() {
+        return {
+            value: null
+        };
+    },
+    watch: {
+        value(val) {
+            this.$emit('input', val);
         },
-        data() {
-            return {
-                value: null
-            }
-        },
-        watch: {
-            value(val) {
-                this.$emit('input', val)
-            },
-            checked(val) {
-                this.value = val
-            }
-        },
-        beforeMount() {
-            this.value = this.checked
-        },
-        mounted() {
-            this.$emit('input', this.value)
-        },
-        methods: {
-            changed() {
-                if (this.onchange) {
-                    this.onchange(this.value);
-                }
+        checked(val) {
+            this.value = val;
+        }
+    },
+    beforeMount() {
+        this.value = this.checked;
+    },
+    mounted() {
+        this.$emit('input', this.value);
+    },
+    methods: {
+        changed() {
+            if (this.onchange) {
+                this.onchange(this.value);
             }
         }
     }
+};
 </script>
 
 <style lang="scss">

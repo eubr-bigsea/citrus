@@ -257,11 +257,10 @@ library.add(
     faUserLock,
     faVial,
     faVials,
-    
+
 );
 /**
  * Allows DOM to change <i> tags to SVG for more features like layering
  * https://fontawesome.com/how-to-use/on-the-web/styling/layering
  */
- dom.watch();
- 
+dom.watch();

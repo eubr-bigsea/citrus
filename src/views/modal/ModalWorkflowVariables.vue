@@ -6,18 +6,19 @@
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
                             <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
-                                :class="{selected: selected && selected.index === row.index }"
-                                @click.prevent="select(row, index)">
+                                 :class="{selected: selected && selected.index === row.index }"
+                                 @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
                                     <span v-if="row.label">({{row.label}})</span></small>
                                 <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
-                                    :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
+                                   :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                                 </a>
                             </div>
                         </div>
                         <button class="btn btn-success btn-sm mt-2" @click.prevent="add">
-                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}</button>
+                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+                        </button>
                     </div>
                     <div class="col-md-8">
                         <div v-if="selected" class="form-filter ">
@@ -25,17 +26,17 @@
                                 <div class="col-md-4">
                                     <label>{{$t('variables.name')}}:</label>
                                     <input v-model="selected.name" v-focus maxlength="40" autocomplete="off"
-                                        class="form-control" />
+                                           class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.label')}}:</label>
                                     <input v-model="selected.label" maxlength="40" autocomplete="off"
-                                        class="form-control" />
+                                           class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.type')}}:</label>
                                     <select v-model="selected.type" class="form-control">
-                                        <option></option>
+                                        <option />
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                             {{$t('dataTypes.' + dt)}}
                                         </option>
@@ -44,26 +45,34 @@
                                 <div class="col-md-4">
                                     <label>{{$t('variables.defaultValue')}}:</label>
                                     <input v-model="selected.default_value" maxlength="40" autocomplete="off"
-                                        class="form-control" />
+                                           class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.multiplicity')}}:</label>
                                     <select v-model="selected.multiplicity" class="form-control" tabindex="0">
-                                        <option value="0">Opcional</option>
-                                        <option value="2">0 ou mais</option>
-                                        <option value="1">Exatamente 1</option>
-                                        <option value="3">1 ou mais</option>
+                                        <option value="0">
+                                            Opcional
+                                        </option>
+                                        <option value="2">
+                                            0 ou mais
+                                        </option>
+                                        <option value="1">
+                                            Exatamente 1
+                                        </option>
+                                        <option value="3">
+                                            1 ou mais
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.index')}}:</label>
                                     <input v-model="selected.parameters.display_index" maxlength="4" autocomplete="off"
-                                        class="form-control w-50" type="number" min="0" max="100"/>
+                                           class="form-control w-50" type="number" min="0" max="100">
                                 </div>
                                 <div class="col-md-12">
                                     <label>{{$t('variables.description')}}:</label>
                                     <textarea v-model="selected.description" autocomplete="off"
-                                        class="form-control form-control-sm" rows="3"/>
+                                              class="form-control form-control-sm" rows="3" />
                                 </div>
                                 <!--
                                 <div class="col-md-12">
@@ -75,23 +84,24 @@
                                 <div class="col-md-12">
                                     <label>Lista de valores personalizados (use JSON):</label>
                                     <textarea v-model="selected.parameters.values" maxlength="300" autocomplete="off"
-                                        class="form-control form-control-sm" rows="3"></textarea>
+                                              class="form-control form-control-sm" rows="3" />
                                     <em>Exemplo:</em>
-                                    <br />
+                                    <br>
                                     <code>[
                                         {"key": 1, "value": "Primeira escolha"},
                                         {"key": 2, "value": "Segunda escolha"}
                                         ]</code>
-                                        <br/>
-                                    O valor de <code>key</code> será atribuído à variável e <code>value</code> é exibido.
+                                    <br>
+                                    O valor de <code>key</code> será atribuído à variável e <code>value</code> é
+                                    exibido.
                                 </div>
                             </div>
                         </div>
                         <div v-else>
                             <h5 class="text-secondary text-center mt-5">
-                                <span class="text-warning fa fa-2x fa-exclamation-triangle"></span>
-                                <br />
-                                <span v-html="$t('variables.addOrEdit')"></span>
+                                <span class="text-warning fa fa-2x fa-exclamation-triangle" />
+                                <br>
+                                <span v-html="$t('variables.addOrEdit')" />
                             </h5>
                         </div>
                     </div>
@@ -102,7 +112,7 @@
                     <table class="table table-sm table-bordered" style="font-size:.8em">
                         <tr v-for="v in variables" :key="v">
                             <td style="width:20%">
-                                <code v-html="'${' + v +  '}'"></code>
+                                <code v-html="'${' + v + '}'" />
                             </td>
                             <td>
                                 {{$tc('variables.names.' + v)}}
@@ -121,74 +131,75 @@
             </b-tab>
         </b-tabs>
         <p class="lead mark small bg-light p-3 m-2">
-            Variáveis podem ser usadas como parâmetros na construção do fluxo de trabalho. Para usar uma variável, 
+            Variáveis podem ser usadas como parâmetros na construção do fluxo de trabalho. Para usar uma variável,
             use a representação <code>${nome-variável}</code> por exemplo nas propriedades das tarefas.
         </p>
         <div slot="modal-footer" class="w-100 text-right">
-            <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">{{$t('common.ok')}}</b-btn>
+            <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
+                {{$t('common.ok')}}
+            </b-btn>
         </div>
-
     </b-modal>
 </template>
 <script>
-    export default {
-        props: {
-            items: { type: Array, default: () => [], required: true }
-        },
-        data() {
-            return {
-                variables: [
-                    'date', 'date_at_min', 'date_at_max', 'now', 'user_id',
-                    'user_login', 'user_name', 'workflow_id', 'workflow_name'
-                ],
-                dataTypes: [
-                    'DATE',
-                    'DECIMAL',
-                    'INTEGER',
-                    'CHARACTER',
-                    'BINARY',
-                ],
-                selected: null,
+export default {
+    props: {
+        items: { type: Array, default: () => [], required: true }
+    },
+    data() {
+        return {
+            variables: [
+                'date', 'date_at_min', 'date_at_max', 'now', 'user_id',
+                'user_login', 'user_name', 'workflow_id', 'workflow_name'
+            ],
+            dataTypes: [
+                'DATE',
+                'DECIMAL',
+                'INTEGER',
+                'CHARACTER',
+                'BINARY',
+            ],
+            selected: null,
 
+        };
+    },
+    methods: {
+        add() {
+            if (this.items === null) {
+                this.items = [];
+            }
+            const value = {
+                name: '', description: '', help: '',
+                type: '', label: '', default_value: '',
+                parameters: { values: [], display_index: null }, index: 0,
             };
+            this.selected = value;
+            value.index = this.items.length;
+            this.items.push(value);
         },
-        methods: {
-            add() {
-                if (this.items === null) {
-                    this.items = [];
-                }
-                const value = {
-                    name: '', description: '', help: '',
-                    type: '', label: '', default_value: '', 
-                    parameters: {values: [], display_index: null}, index: 0,
-                };
-                this.selected = value;
-                value.index = this.items.length;
-                this.items.push(value);
-            },
-            remove(e, index) {
-                this.items.splice(index, 1);
-            },
-            select(row, index) {
-                row.index = index;
-                this.selected = row;
-            },
-            isNameValid(evt) {
-                //only allow a-z, A-Z and digits 0-9
-                const value = evt.target.value;
-                if (!evt.key.match(/[\w\d,]/) || (value.length == 0 && evt.key.match(/\d/))) {
-                    evt.preventDefault();
-                }
-            },
-            show() {
-                this.selected = null;
-                this.$refs.modal.show();
-            },
-            okClicked() {
-                this.$refs.modal.hide();
-            },
-        }
+        remove(e, index) {
+            this.items.splice(index, 1);
+        },
+        select(row, index) {
+            row.index = index;
+            this.selected = row;
+        },
+        isNameValid(evt) {
+            //only allow a-z, A-Z and digits 0-9
+            const value = evt.target.value;
+            if (!evt.key.match(/[\w\d,]/) || (value.length == 0 && evt.key.match(/\d/))) {
+                evt.preventDefault();
+            }
+        },
+        show() {
+            this.selected = null;
+            this.$refs.modal.show();
+        },
+        okClicked() {
+            this.$refs.modal.hide();
+        },
     }
+}
 </script>
 <style>
     div.values {

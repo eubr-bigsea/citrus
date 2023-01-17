@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { debounce } from "../../util.js";
 
-const limoneroUrl = process.env.VUE_APP_LIMONERO_URL;
+const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 export default {
     data() {
         return {

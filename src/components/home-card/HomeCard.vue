@@ -3,25 +3,54 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <span v-if="icon" :class="icon"></span> 
+                    <span v-if="icon"
+                          :class="icon" />
                     {{$tc(`titles.${type}`, 2)}}
                 </div>
-                <HomeCardCounter :value="total"></HomeCardCounter>
+                <HomeCardCounter :value="total" />
             </div>
             <div class="card-body">
                 <dl>
-                    <HomeCardItem v-for="item in items" :key="item.id" :type="type" :item="item"></HomeCardItem>
-                    <div v-if="items.length == 0">{{ $t('common.noData')}}</div>
+                    <HomeCardItem v-for="item in items"
+                                  :key="item.id"
+                                  :type="type"
+                                  :item="item" />
+                    <div v-if="items.length == 0">
+                        {{$t('common.noData')}}
+                    </div>
                 </dl>
-                <div v-if="items.length > 0" class="text-right">
-                    <b-button size="sm" :to="{name: `${type}s`}" variant="link" class="bottom-right">
-                        {{$t('common.moreRecords')}} ...</b-button>
+                <div v-if="items.length > 0"
+                     class="text-right">
+                    <b-button size="sm"
+                              :to="{name: `${type}s`}"
+                              variant="link"
+                              class="bottom-right">
+                        {{$t('common.moreRecords')}} ...
+                    </b-button>
                 </div>
-
             </div>
         </div>
     </div>
 </template>
+
+<script>
+import HomeCardItem from "./home-card-item/HomeCardItem.vue";
+import HomeCardCounter from "./HomeCardCounter.vue";
+
+export default {
+    name: "HomeCard",
+    components: {
+        HomeCardItem,
+        HomeCardCounter
+    },
+    props: {
+        type: {type: String, default: () => null},
+        items: {type: Array, default: () => null},
+        total: {type: Number, default: () => 0},
+        icon: {type: String, default: () => null}
+    }
+};
+</script>
 
 <style>
     .home-card {
@@ -46,22 +75,3 @@
         bottom: 18px;
     }
 </style>
-
-<script>
-    import HomeCardItem from "./home-card-item/HomeCardItem.vue";
-    import HomeCardCounter from "./HomeCardCounter.vue";
-
-    export default {
-        name: "HomeCard",
-        components: {
-            HomeCardItem,
-            HomeCardCounter
-        },
-        props: {
-            type: {type: String, default: () => null}, 
-            items: {type: Array, default: () => null}, 
-            total: {type: Number, default: () => 0}, 
-            icon: {type: String, default: () => null}
-        }
-    };
-</script>

@@ -2,20 +2,27 @@
     <div class="home-card-item">
         <dd>
             <b>
-                <slot name="head"></slot>
+                <slot name="head" />
             </b>
         </dd>
         <dd>
             <small>
-                <slot name="body"></slot>
+                <slot name="body" />
             </small>
         </dd>
         <dd>
-            <slot name="footer"></slot>
+            <slot name="footer" />
         </dd>
         <hr>
     </div>
 </template>
+
+<script>
+
+export default {
+    name: 'HomeCardItemBase',
+}
+</script>
 
 <style scoped>
     .home-card-item img {
@@ -58,10 +65,3 @@
         text-transform: uppercase;
     }
 </style>
-
-<script>
-
-    export default {
-        name: 'HomeCardItemBase',
-    }
-</script>

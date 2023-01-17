@@ -1,4 +1,4 @@
-import FilterEditorComponent from '../components/widgets/FilterEditor';
+import FilterEditorComponent from '../components/widgets/FilterEditor.vue';
 import { action } from '@storybook/addon-actions';
 
 const field1 = {

@@ -1,11 +1,11 @@
 <template>
     <div>
         <h5>Estratégia de ponderação</h5>
-        <hr />
+        <hr>
     </div>
 </template>
 <script>
-    export default {
-        name: 'WeightingComponent'
-    }
+export default {
+    name: 'WeightingComponent'
+}
 </script>

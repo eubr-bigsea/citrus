@@ -1,5 +1,5 @@
 
-import PieChart from '../../components/visualization/PieChart';
+import PieChart from '../../components/visualization/PieChart.vue';
 
 const chart1 = {
     "title": "Pie Chart",

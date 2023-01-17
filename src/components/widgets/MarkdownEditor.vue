@@ -1,59 +1,76 @@
 <template>
     <div class="function-editor">
         <span v-if="!readOnly">
-            <LabelComponent :field="field" :value="value"></LabelComponent>
+            <LabelComponent :field="field"
+                            :value="value" />
 
-            <Markdown :text="value" class="border p-1"/>
-            <b-link variant="sm" @click.prevent="openModal">
+            <Markdown :text="value"
+                      class="border p-1" />
+            <b-link variant="sm"
+                    @click.prevent="openModal">
                 {{$t('actions.edit')}}
             </b-link>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal ref="modal" size="xl" :title="field.label||field.name" centered>
+        <b-modal ref="modal"
+                 size="xl"
+                 :title="field.label||field.name"
+                 centered>
             <div class="row">
                 <div class="col-md-6 border-left editor border">
-                    <textarea v-model="code" class="code" rows="20" maxlength="500"></textarea>
+                    <textarea v-model="code"
+                              class="code"
+                              rows="20"
+                              maxlength="500" />
                 </div>
                 <div class="col-md-6 markdown-area">
-                     <Markdown :text="code" />
+                    <Markdown :text="code" />
                 </div>
             </div>
-            <div slot="modal-footer" class="w-100 text-right">
-                <b-btn variant="primary" class="mr-1" @click="okClicked">{{$t('common.ok')}}</b-btn>
-                <b-btn variant="secondary" @click="cancelClicked">{{$t('actions.cancel')}}</b-btn>
+            <div slot="modal-footer"
+                 class="w-100 text-right">
+                <b-btn variant="primary"
+                       class="mr-1"
+                       @click="okClicked">
+                    {{$t('common.ok')}}
+                </b-btn>
+                <b-btn variant="secondary"
+                       @click="cancelClicked">
+                    {{$t('actions.cancel')}}
+                </b-btn>
             </div>
         </b-modal>
     </div>
 </template>
 <script>
-    import LabelComponent from './Label.vue';
-    import Markdown from './Markdown.vue';
-    import "prismjs/themes/prism.css";
-    import Widget from '../../mixins/Widget.js';
+import LabelComponent from './Label.vue';
+import Markdown from './Markdown.vue';
+import "prismjs/themes/prism.css";
+import Widget from '../../mixins/Widget.js';
 
-    export default {
-        components: { LabelComponent, Markdown},
-        mixins: [Widget],
-        data(){
-            return {
-                displayValue: '',
-                code: '',
-            }
+export default {
+    components: { LabelComponent, Markdown},
+    mixins: [Widget],
+    data(){
+        return {
+            displayValue: '',
+            code: '',
+        }
+    },
+    methods: {
+        openModal() {
+            this.code = this.value;
+            this.$refs.modal.show();
         },
-        methods: {
-            openModal() {
-				this.code = this.value;
-                this.$refs.modal.show();
-            },
-            okClicked() {
-                this.$root.$emit(this.message, this.field, this.code);
-                this.$refs.modal.hide();
-            },
-            cancelClicked() {
-                this.$refs.modal.hide();
-            }
+        okClicked() {
+            this.$root.$emit(this.message, this.field, this.code);
+            this.$refs.modal.hide();
         },
-    }
+        cancelClicked() {
+            this.$refs.modal.hide();
+        }
+    },
+}
 </script>
 <style scoped>
     .editor {
@@ -66,7 +83,7 @@
 		border: none;
 	}
 </style>
-<style lang="scss" >
+<style lang="scss">
     .markdown-area {
         h1 {
             font-size: 2.5em;

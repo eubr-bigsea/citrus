@@ -2,7 +2,7 @@
     <footer class="footer-page fixed-bottom d-print-none">
         <ul class="footer-list">
             <li>
-                © 2017-2022 Lemonade Project {{$t('common.version')}} {{version}}
+                © 2017-2023 Lemonade Project {{$t('common.version')}} {{version}}
             </li>
             <li>
                 <a href="https://docs.lemonade.org.br/" target="_blank">
@@ -23,9 +23,22 @@
                 {{instance}}
             </li>
         </ul>
-
     </footer>
 </template>
+
+<script>
+export default {
+    name: 'LFooter',
+    computed: {
+        version() {
+            return import.meta.env.VITE_VERSION || '2.0.0';
+        },
+        instance() {
+            return import.meta.env.VITE_INSTANCE;
+        }
+    }
+};
+</script>
 
 <style>
     .footer-page a,
@@ -49,17 +62,3 @@
         margin-right: 16px;
     }
 </style>
-
-<script>
-    export default {
-        name: 'LFooter',
-        computed: {
-            version() {
-                return process.env.VUE_APP_VERSION || '2.0.0';
-            },
-            instance() {
-                return process.env.VUE_APP_INSTANCE;
-            }
-        }
-    };
-</script>

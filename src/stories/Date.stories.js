@@ -1,5 +1,5 @@
 
-import DateComponent from '../components/widgets/Date';
+import DateComponent from '../components/widgets/Date.vue';
 
 const field1 = { label: 'Date', order: 1, name: 'attribute', required: true };
 

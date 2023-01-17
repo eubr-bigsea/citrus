@@ -374,7 +374,7 @@ export default {
             //   row_number:
             //     '<i>row_number(x)</i>: Window function: returns a sequential number starting at 1 within a window partition.',
 
-            
+
             // "when": "<i>when(x)</i>: Evaluates a list of conditions and returns one of multiple possible result expressions. If :func:`Column.otherwise</i> is not invoked, None is returned for unmatched conditions. :param condition: a boolean :class:`Column</i> expression. :param value: a literal value, or a :class:`Column</i> expression. >>> df.select(when(df['age'] == 2, 3).otherwise(4).alias(\"age\")).collect() [Row(age=3), Row(age=4)] >>> df.select(when(df.age == 2, df.age + 1).alias(\"age\")).collect() [Row(age=3), Row(age=None)] .. ",
             // "window": "<i>window(x)</i>: Bucketize rows into one or more time windows given a timestamp specifying column. Window starts are inclusive but the window ends are exclusive, e.g. 12:05 will be in the window [12:05,12:10) but not in [12:00,12:05). Windows can support microsecond precision. Windows in the order of months are not supported. The time column must be of :class:`pyspark.sql.types.TimestampType`. Durations are provided as strings, e.g. '1 second', '1 day 12 hours', '2 minutes'. Valid interval strings are 'week', 'day', 'hour', 'minute', 'second', 'millisecond', 'microsecond'. If the <i>`slideDuration`</i> is not provided, the windows will be tumbling windows. The startTime is the offset with respect to 1970-01-01 00:00:00 UTC with which to start window intervals. For example, in order to have hourly tumbling windows that start 15 minutes past the hour, e.g. 12:15-13:15, 13:15-14:15.provide <i>startTime</i> as <i>15 minutes`. The output column will be a struct called 'window' by default with the nested columns 'start' and 'end', where 'start' and 'end' will be of :class:`pyspark.sql.types.TimestampType`. >>> df = spark.createDataFrame([(\"2016-03-11 09:00:07\", 1)]).toDF(\"date\", \"val\") >>> w = df.groupBy(window(\"date\", \"5 seconds\")).agg(sum(\"val\").alias(\"sum\")) >>> w.select(w.window.start.cast(\"string\").alias(\"start\"), .w.window.end.cast(\"string\").alias(\"end\"), \"sum\").collect() [Row(start='2016-03-11 09:00:05', end='2016-03-11 09:00:10', sum=1)] .. versionadded:: 2.0",
             // cume_dist:
@@ -383,7 +383,7 @@ export default {
             //   '<i>dense_rank(x)</i>: Window function: returns the rank of rows within a window partition, without any gaps. The difference between rank and dense_rank is that dense_rank leaves no gaps in ranking sequence when there are ties. That is, if you were ranking a competition using dense_rank and had three people tie for second place, you would say that all three were in second place and that the next person came in third. Rank would give me sequential numbers, making the person that came in third place (after the ties) would register as coming in fifth. This is equivalent to the DENSE_RANK function in SQL. .. ',
             // ntile:
             //   '<i>ntile(x)</i>: Window function: returns the ntile group id (from 1 to <i>n</i> inclusive) in an ordered window partition. For example, if <i>n</i> is 4, the first quarter of the rows will get value 1, the second quarter will get 2, the third quarter will get 3, and the last quarter will get 4. This is equivalent to the NTILE function in SQL. :param n: an integer .. ',
-            
+
         },
         operators: {
             'Lógicos': {

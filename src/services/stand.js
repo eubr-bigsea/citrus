@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const standUrl = process.env.VUE_APP_STAND_URL
+const standUrl = import.meta.env.VITE_STAND_URL
 export default {
     async getLatestJob(workflowId) {
         return await axios.get(`${standUrl}/jobs/latest`,

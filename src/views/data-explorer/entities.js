@@ -1,6 +1,8 @@
 class Constants {
-    static DATA_TYPES = [
-        'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'Text', 'Time',]
+    static get DATA_TYPES() {
+        return [
+            'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'Text', 'Time',]
+    }
 }
 const META_PLATFORM_ID = 1000;
 class Workflow {
@@ -311,6 +313,8 @@ class Task {
         this.top = top;
         this.error = null;
         this.editing = false;
+        this.operation = null;
+        this.forms = {}
 
         //Initialize form fields
         if (operation.form) {
@@ -381,17 +385,16 @@ class Task {
             target_id: this.id,
         });
     }
-    hasProblems(){
+    hasProblems() {
         const self = this;
-        const result = this.enabled && this.previewable && 
+        const result = this.enabled && this.previewable &&
             (this.operation.forms.find(f => f.category === 'execution')
-            .fields.find(field => {
-                return (field.required && (!self.forms[field.name] || !self.forms[field.name].value))
+                .fields.find(field => {
+                    return (field.required && (!self.forms[field.name] || !self.forms[field.name].value))
                 }) !== undefined);
         return result;
     }
-    operation = null;
-    forms = {}
+
 }
 class Flow {
     constructor({ source_port = null, target_port = null,
@@ -410,7 +413,20 @@ class Flow {
         }
     }
 }
+/*
 module.exports = {
+    Workflow,
+    Platform,
+    Operation,
+    OperationList,
+    Task,
+    Form,
+    FormField,
+    Constants,
+    ModelBuilderWorkflow,
+    VisualizationBuilderWorkflow,
+}*/
+export {
     Workflow,
     Platform,
     Operation,

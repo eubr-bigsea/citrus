@@ -1,5 +1,5 @@
 
-import Markdown from '../../components/visualization/Markdown';
+import Markdown from '../../components/visualization/Markdown.vue';
 
 export default {
     title: 'Visualization/Markdown',

@@ -1,13 +1,13 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client';
 import axios from 'axios';
-const thornUrl = process.env.VUE_APP_THORN_URL;
+const thornUrl = import.meta.env.VITE_THORN_URL;
 
 /**
 * Class to encapsulate all authentication related logic.
 */
 class AuthService {
     constructor() {
-        
+
     }
     async loadConfig(vueStore){
         this.vueStore = vueStore;
@@ -38,9 +38,9 @@ class AuthService {
         const resp = await axios.get(`${thornUrl}/public/configurations/OPENID_CONFIG`);
         this.enabled = resp?.data?.data?.enabled;
         //if (this.enabled){
-            let merged = {...settings, ...resp['data']['data']};
-            //merged.scope = 'profile, email'
-            /*
+        let merged = {...settings, ...resp['data']['data']};
+        //merged.scope = 'profile, email'
+        /*
             merged.authority = "dummy"
             merged.userinfo_endpoint = "https://localhost:9443/oauth2/userinfo";
             merged.metadata = {
@@ -49,13 +49,13 @@ class AuthService {
             }
             */
 
-            /*merged.loadUserInfo = false
+        /*merged.loadUserInfo = false
             merged.userinfo_endpoint = "https://sso.gsi.mpmg.mp.br/oauth2/userinfo";
             merged.metadata = {
                 issuer: 'https://ssogsi.mpmg.mp.br/oauth2/token',
                 authorization_endpoint: 'https://sso.gsi.mpmg.mp.br/oauth2/authorize',
             }*/
-            this.userManager = new UserManager(merged);
+        this.userManager = new UserManager(merged);
         //}
     }
     /**
@@ -63,7 +63,7 @@ class AuthService {
      */
     login() {
         return this.userManager.signinRedirect()
-            //.catch(error => console.log(error))
+        //.catch(error => console.log(error))
     }
 
     logout() {

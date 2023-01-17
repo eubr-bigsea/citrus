@@ -5,6 +5,6 @@ const setDatetimeOptions =  function(options) {
     return options;
 }
 
-export { 
+export {
     setDatetimeOptions
 };

@@ -1,54 +1,59 @@
 <template>
-  <button type="button" :class="classes" :style="style" @click="onClick">{{ label }}</button>
+    <button type="button"
+            :class="classes"
+            :style="style"
+            @click="onClick">
+        {{label}}
+    </button>
 </template>
 
 <script>
 import './button.css';
 
 export default {
-  name: 'MyButton',
+    name: 'MyButton',
 
-  props: {
-    label: {
-      type: String,
-      required: true,
+    props: {
+        label: {
+            type: String,
+            required: true,
+        },
+        primary: {
+            type: Boolean,
+            default: false,
+        },
+        size: {
+            type: String,
+            default: 'medium',
+            validator: function (value) {
+                return ['small', 'medium', 'large'].indexOf(value) !== -1;
+            },
+        },
+        backgroundColor: {
+            type: String, default: () => "red"
+        },
     },
-    primary: {
-      type: Boolean,
-      default: false,
-    },
-    size: {
-      type: String,
-      default: 'medium',
-      validator: function (value) {
-        return ['small', 'medium', 'large'].indexOf(value) !== -1;
-      },
-    },
-    backgroundColor: {
-      type: String, default: () => "red"
-    },
-  },
 
-  computed: {
-    classes() {
-      return {
-        'storybook-button': true,
-        'storybook-button--primary': this.primary,
-        'storybook-button--secondary': !this.primary,
-        [`storybook-button--${this.size}`]: true,
-      };
+    computed: {
+        classes() {
+            return {
+                'storybook-button': true,
+                'storybook-button--primary': this.primary,
+                'storybook-button--secondary': !this.primary,
+                [`storybook-button--${this.size}`]: true,
+            };
+        },
+        style() {
+            return {
+                backgroundColor: this.backgroundColor,
+            };
+        },
     },
-    style() {
-      return {
-        backgroundColor: this.backgroundColor,
-      };
-    },
-  },
 
-  methods: {
-    onClick() {
-      this.$emit('onClick');
+    methods: {
+        onClick() {
+            this.$emit('onClick');
+        },
     },
-  },
 };
 </script>

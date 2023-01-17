@@ -6,7 +6,9 @@
             </div>
             <hr>
             <div class="card-deck">
-                <b-card class="clickable" role="button" @click="navigate('model-builder', {task: 'classification'})">
+                <b-card class="clickable"
+                        role="button"
+                        @click="navigate('model-builder', {task: 'classification'})">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -23,7 +25,9 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" role="button" @click="navigate('model-builder', {task: 'regression'})">
+                <b-card class="clickable"
+                        role="button"
+                        @click="navigate('model-builder', {task: 'regression'})">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -41,7 +45,9 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" role="button" @click="navigate('model-builder', {task: 'clustering'})">
+                <b-card class="clickable"
+                        role="button"
+                        @click="navigate('model-builder', {task: 'clustering'})">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -59,10 +65,11 @@
                         </div>
                     </div>
                 </b-card>
-
             </div>
-            <div v-if="false" class="card-deck mt-4">
-                <b-card class="clickable" @click="navigate('model-builderl-training')">
+            <div v-if="false"
+                 class="card-deck mt-4">
+                <b-card class="clickable"
+                        @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -79,11 +86,11 @@
                             </small>
                         </div>
                     </div>
-
                 </b-card>
 
 
-                <b-card class="clickable" @click="navigate('model-builderl-training')">
+                <b-card class="clickable"
+                        @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -100,7 +107,8 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable" @click="navigate('model-builderl-training')">
+                <b-card class="clickable"
+                        @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -116,13 +124,12 @@
                                 Detecção de fraudes, retenção de clientes, chance de venda, etc.
                             </small>
                         </div>
-
                     </div>
                 </b-card>
-
             </div>
         </div>
-        <router-link :to="{name: 'index-explorer'}" class="btn btn-sm btn-secondary mt-4 pl-4 pr-4">
+        <router-link :to="{name: 'index-explorer'}"
+                     class="btn btn-sm btn-secondary mt-4 pl-4 pr-4">
             {{$t('actions.back')}}
         </router-link>
     </main>
@@ -215,11 +222,11 @@
 </template>
 -->
 <script>
-    export default {
-        methods: {
-            navigate(name, params) {
-                this.$router.push({ name, params });
-            }
+export default {
+    methods: {
+        navigate(name, params) {
+            this.$router.push({ name, params });
         }
     }
+}
 </script>
