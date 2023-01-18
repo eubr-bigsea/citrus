@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { addDecorator } from '@storybook/vue';
 import BootstrapVue from "bootstrap-vue"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap-vue/dist/bootstrap-vue.css"
@@ -9,12 +8,14 @@ import messages from '../src/i18n/messages';
 import '../src/assets/main.scss'
 import VueProgressBar from 'vue-progressbar';
 
-
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import Snotify from 'vue-snotify';
 import vSelect from 'vue-select'
 
+
+Vue.use(VueI18n)
 Vue.use(VueTheMask);
+
 Vue.use(Snotify, {
     toast: {
         titleMaxLength: 100,
@@ -52,19 +53,27 @@ import '../src/fa-icons';
 Vue.use(VueI18n);
 Vue.use(BootstrapVue)
 
+
 export const i18n = new VueI18n({
     locale: 'pt',
     messages
 });
+Vue.extend({ i18n });
 
+export const decorators = [(story) => ({
+  components: { story },
+  i18n, // this is the essential part to have t() and Co. in your components
+  template: '<story />'
+})];
 // Internationalisation
-addDecorator(() => ({
+/*addDecorator(() => ({
     i18n,
     beforeCreate: function () {
         this.$root._i18n = this.$i18n;
     },
     template: "<story/>"
 }));
+*/
 
 export const parameters = {
     actions: { argTypesRegex: "^on[A-Z].*" },

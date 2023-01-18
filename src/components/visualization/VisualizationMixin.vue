@@ -2,8 +2,11 @@
     <div />
 </template>
 <script>
+import Plotly from './Plotly.vue';
 export default {
     components: {
+        // eslint-disable-next-line vue/no-unused-components
+        Plotly,
     },
     props: {
         height: { type: Number, default: 450 },
@@ -13,7 +16,7 @@ export default {
     data() {
         return {
             resizeListener: null,
-        }
+        };
     },
-}
+};
 </script>

@@ -13,7 +13,6 @@
         <div class="hide circle"
              :style="getStyle" />
         <div v-if="!isComment"
-             :style="{borderTop: getBorder}"
              class="title">
             <!-- <span style="font-size:7pt">{{task.$meta}}</span> -->
             {{task.name}}
@@ -62,153 +61,28 @@
     </div>
 </template>
 
-
 <script>
 import Vue from 'vue';
-/*
-    const anchorsOriginal = {
-        input: [
-            [
-                [0.5, 0, 0, -1],
-            ],
-            [
-                [0.2, 0, 0, -1],
-                [0.8, 0, 0, -1]
-            ],
-            [
-                [0.2, 0, 0, -1],
-                [0.5, 0, 0, -1],
-                [0.8, 0, 0, -1]
-            ]
-        ],
-        output: [
-            [
-                [0.5, 1, 0, 1],
-            ],
-            [
-                [0.2, 1, 0, 1],
-                [0.8, 1, 0, 1]
-            ],
-            [
-                [0.2, 1, 0, 1],
-                [0.5, 1, 0, 1],
-                [0.8, 1, 0, 1]
-            ]
-        ]
-    }
-    */
-const anchors = {
-    input: [
-        [
-            [0, 0.5, -1, 0],
-        ],
-        [
-            [0, 0.2, -1, 0],
-            [0, 0.8, -1, 0]
-        ],
-        [
-            [0, 0.1, -1, 0],
-            [0, 0.5, -1, 0],
-            [0, 0.9, -1, 0]
-        ]
-        ,
-        [
-            [0, .1, -1, 0],
-            [0, 0.39, -1, 0],
-            [0, 0.65, -1, 0],
-            [0, .9, -1, 0]
-        ],
-    ],
-    output: [
-        [
-            [1, 0.5, 1, 0],
-        ],
-        [
-            [1, 0.2, 1, 0],
-            [1, 0.8, 1, 0]
-        ],
-        [
-            [1, 0.1, 1, 0],
-            [1, 0.5, 1, 0],
-            [1, 0.9, 1, 0]
-        ],
-        [
-            [1, .1, 1, 0],
-            [1, 0.39, 1, 0],
-            [1, 0.65, 1, 0],
-            [1, .9, 1, 0]
-        ],
-    ]
-}
-const connectorType = ['Flowchart', 'Bezier', 'StateMachine'][0];
-const connectorPaintStyle = {
-    lineWidth: 1,
-    radius: 8,
-    strokeStyle: "#111",
-    stroke: "#111",
-    outlineColor: 'white',
-    outlineWidth: 2,
-};
-
-const endPointPaintStyle = {
-    fillStyle: 'rgba(102, 155, 188, 1)',
-    radius: 8,
-    height: 15,
-    width: 15,
-    zIndex: 99,
-}
-const overlays = [
-    ["Arrow", { location: .85, width: 10, length: 15 }],
-    //["Label", { padding: 10, location: .5, label: '[ <font-awesome-icon icon="fa fa-dot-circle-o" /> ]', cssClass: "labelClass" }]
-];
-
-
-const endPointOptionsInput = {
-    isSource: false,
-    isTarget: true,
-    cssClass: 'endpoint',
-    paintStyle: endPointPaintStyle,
-    connectorOverlays: overlays,
-    endpoint: "Dot",
-    maxConnections: 1,
-    fill: '#222'
-};
-
-const endPointOptionsOutput = {
-    connector: [connectorType, { gap: 0, xproximityLimit: 100, curviness: 75, xmargin: 10, cornerRadius: 5, stub: [20, 20], midpoint: .5 },],
-    isSource: true,
-    isTarget: false,
-    cssClass: 'endpoint',
-    paintStyle: endPointPaintStyle,
-    connectorOverlays: overlays,
-    endpoint: "Rectangle",
-    maxConnections: 1,
-    connectorStyle: connectorPaintStyle,
-    fill: '#faa'
-};
-    /*
-    const connectionOptions = {
-        maxConnections: 1,
-        endpoint: ['Dot', connectorPaintStyle],
-        paintStyle: connectorPaintStyle,
-        overlays: overlays,
-    }
-    */
+import {anchors, endPointOptionsInput, endPointOptionsOutput} from '../jsplumb-const.js';
 const TaskComponent = Vue.extend({
     name: 'TaskComponent',
     props: {
+        draggable: { default: true, type: Boolean },
         enableContextMenu: { default: true, type: Boolean },
         enablePositioning: {
             default: true, type: Boolean
         },
-        draggable: { default: true, type: Boolean },
         instance: {type: Object, default: () => null},
         showDecoration: {
             default: false, type: Boolean
         },
         task: {
             type: Object,
-            'default': function () { return { name: '', icon: '', status: '', forms: { color: { value: '#fff' } } }; }
+            'default': () => ({ 
+                name: '', icon: '', status: '', 
+                forms: { color: { value: '#fff' } },
+                operation: {name: '', id: 0, ports: []}
+            })
         },
     },
     data() {
@@ -216,22 +90,22 @@ const TaskComponent = Vue.extend({
             contextMenuOpened: false,
             isComment: false,
             contextMenuActions: [],
-        }
+        };
     },
     computed: {
         getStyle() {
-            let result = {}
-            let task = this.task
+            let result = {};
+            const task = this.task;
             if (this.enablePositioning) {
                 result = {
                     zIndex: task.z_index < 99 ? 100 : task.z_index,
                     top: task.top + 'px',
                     left: task.left + 'px',
-                }
+                };
             }
             result['background'] = task.forms && task.forms.color && task.forms.color.value
                 ? task.forms.color.value.background : '#fff';
-            return result
+            return result;
         },
         'classes': function () {
             if (this.task.operation) {
@@ -250,25 +124,13 @@ const TaskComponent = Vue.extend({
             if (this.task.step && this.task.step.status) {
                 return this.getClassesForDecor(this.task.step.status);
             } else {
-                return this.getClassesForDecor(this.task.status || '')
+                return this.getClassesForDecor(this.task.status || '');
             }
-        },
-        getBorder() {
-            let color = '#fff'
-            if (this.task.forms && this.task.forms.color && this.task.forms.color.value) {
-                color = this.task.forms.color.value.background
-            }
-            return `0px solid ${color}`
         },
         inGroup: function () {
             let elem = this.$refs.task;
             return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
         }
-    },
-    watch: {
-        enableContextMenu: function (newVal, oldVal) {
-            console.log('Prop changed: ', newVal, ' | was: ', oldVal)
-        },
     },
     mounted() {
         this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
@@ -276,11 +138,11 @@ const TaskComponent = Vue.extend({
         const self = this;
         let operation = this.task.operation;
         let taskId = this.task.id;
-        this.task.name = this.task.name || this.task.operation.name
+        this.task.name = this.task.name || this.task.operation.name;
 
         let zIndex = this.task['z_index'];
-        let inputs = []
-        let outputs = []
+        let inputs = [];
+        let outputs = [];
 
         if (operation.ports) {
             outputs = operation.ports.filter((p) => {
@@ -300,7 +162,7 @@ const TaskComponent = Vue.extend({
                 // return a.order - b.order;
             });
         }
-        const locations = { input: [-1.2, 0], output: [3, -1.1] }
+        const locations = { input: [-1.2, 0], output: [3, -1.1] };
         var lbls = [
             // note the cssClass and id parameters here
             ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
@@ -428,14 +290,14 @@ const TaskComponent = Vue.extend({
                     self.$refs.right.focus();
                     //self.$refs.right.style.left = e.offsetX;
                     //self.$refs.right.style.top = e.offsetY;
-                    self.setMenu(e.offsetY, e.offsetX)
+                    self.setMenu(e.offsetY, e.offsetX);
                 }.bind(this));
                 // Force close previously opened menus
                 document.dispatchEvent(new Event('click'));
                 document.addEventListener('click', this.hideMenu);
                 this.zIndex = this.$el.style.zIndex;
                 this.$el.style.zIndex = 100000;
-                e.preventDefault()
+                e.preventDefault();
             }
         },
         hideMenu() {
@@ -470,7 +332,7 @@ const TaskComponent = Vue.extend({
                 this.$el.classList.add('selected');
                 self.selectedTask = this;
             }
-            self.instance.repaintEverything()
+            self.instance.repaintEverything();
 
             // Raise the click event to upper components
             this.$root.$emit('onclick-task', self, showProperties);
@@ -480,7 +342,7 @@ const TaskComponent = Vue.extend({
             this._click(ev, true);
         },
         click(ev) {
-            this.$el.focus()
+            this.$el.focus();
             this._click(ev, false);
         },
         showResults() {
@@ -563,7 +425,7 @@ export default TaskComponent;
         margin: 0px 0;
         padding: 0px 0px;
         text-align: center;
-        max-width: $elementWidth / 3;
+        max-width: calc($elementWidth / 3);
         z-index: 90;
     }
 
@@ -734,10 +596,11 @@ export default TaskComponent;
 
                 &.completed {
                     color: seagreen;
-
+                    /*
                     span {
-                        /* @extend .fa-check; */
+                         @extend .fa-check; 
                     }
+                    */
                 }
 
                 &.running {
@@ -756,34 +619,37 @@ export default TaskComponent;
 
                 &.interrupted {
                     color: black;
-
+                    /*
                     span {
-                        /* @extend .fa-hand-stop-o; */
-                    }
+                        @extend .fa-hand-stop-o; 
+                    }*/
                 }
 
                 &.canceled {
                     color: darkgray;
-
+                    /*
                     span {
-                        /* @extend .fa-close; */
+                         @extend .fa-close; 
                     }
+                    */
                 }
 
                 &.waiting {
                     color: #aaa;
-
+                    /*
                     span {
-                        /* @extend .fa-clock-o; */
+                        @extend .fa-clock-o; 
                     }
+                    */
                 }
 
                 &.error {
                     color: red;
 
+                    /*
                     span {
-                        /* @extend .fa-warning; */
-                    }
+                        @extend .fa-warning; 
+                    }*/
                 }
             }
 
@@ -1011,8 +877,7 @@ export default TaskComponent;
     .margin-top-10 {
         margin-top: 10px;
     }
-</style>
-<style lang="scss" scoped>
+
     .contextMenuOpened {
         cursor: default !important;
     }
@@ -1099,10 +964,11 @@ export default TaskComponent;
         -webkit-transform: skew(-30deg);
         -moz-transform: skew(-30deg);
         -o-transform: skew(-30deg);
+        transform: skew(-30deg);
         z-index: -1;
     }
     .parallelogram.selected:after {
-        webkit-box-shadow: 0px 6px 10px rgba(dodgerblue, .5);
+        -webkit-box-shadow: 0px 6px 10px rgba(dodgerblue, .5);
         box-shadow: 0px 4px 8px rgba(dodgerblue, .5);
     }
 
@@ -1118,11 +984,11 @@ export default TaskComponent;
 
         &.selected,
         &.jtk-drag-selected {
-            webkit-box-shadow: none !important;
+            -webkit-box-shadow: none !important;
             box-shadow: none !important;
 
             .circle {
-                webkit-box-shadow: 6px 4px 6px 0px #020f57;
+                -webkit-box-shadow: 6px 4px 6px 0px #020f57;
                 box-shadow: 6px 4px 6px 0px #020f57;
                 border: 1px dashed #222;
             }

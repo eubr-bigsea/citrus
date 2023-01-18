@@ -330,6 +330,7 @@ export default {
 
         #sidebar-wrapper {
             width: 250px;
+            overflow: hidden;
         }
 
         /*

@@ -5,7 +5,10 @@
                          :use-data-source="useDataSource" />
         <div id="lemonade-container" :class="{ 'with-grid': showGrid, 'dark-mode': darkMode }" class="lemonade-container not-selectable"
              @click="diagramClick">
-            <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle">
+            <!--
+                 <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle" />
+                -->
+            <div class="scroll-area">
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                      :style="{'pointer-events':showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
                      @drop="drop" @dragover="allowDrop">
@@ -35,7 +38,7 @@
                 <div v-else>
                     <font-awesome-icon icon="spinner" pulse class="icon" /> {{$t('common.loading')}}
                 </div>
-            </VuePerfectScrollbar>
+            </div>
         </div>
     </div>
 </template>
@@ -44,14 +47,12 @@
 
 import Vue from 'vue';
 
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
-
 import TaskComponent from './Task.vue';
 import DiagramToolbar from './DiagramToolbar.vue';
 import {jsPlumb} from 'jsplumb';
 
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL
-const standUrl = import.meta.env.VITE_STAND_URL
+const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const standUrl = import.meta.env.VITE_STAND_URL;
 const connectorPaintStyle = {
     lineWidth: 1,
     radius: 8,
@@ -66,64 +67,63 @@ const DiagramComponent = Vue.extend({
     components: {
         'task-component': TaskComponent,
         'diagram-toolbar': DiagramToolbar,
-        VuePerfectScrollbar
     },
     props: {
         formContainer: {
             type: Boolean,
-            default: () => { return null },
+            default: () => { return null; },
         },
         hack: {
             type: Boolean,
-            default: () => { return false },
+            default: () => { return false; },
         },
         initialZoom: {
             type: Number,
-            default: () => { return 1.0 },
+            default: () => { return 1.0; },
         },
         loaded: {
             type: Boolean,
-            default: () => { return false },
+            default: () => { return false; },
         },
         multipleSelectionEnabled: {
             type: Boolean,
-            default: () => { return true },
+            default: () => { return true; },
         },
         operations: {
             type: Array,
-            default: () => { return Array },
+            default: () => { return Array; },
         },
         renderFrom: {
             type: Boolean,
-            default: () => { return null },
+            default: () => { return null; },
         },
         showGrid: {
             type: Boolean,
-            default: () => { return false },
+            default: () => { return false; },
         },
         showTaskDecoration: {
             type: Boolean,
-            default: () => { return false },
+            default: () => { return false; },
         },
         editable: {
             type: Boolean,
-            default: () => { return true },
+            default: () => { return true; },
         },
         shink: {
             type: Boolean,
-            default: () => { return false },
+            default: () => { return false; },
         },
         showToolbar: {
             type: Boolean,
-            default: () => { return true },
+            default: () => { return true; },
         },
         title: {
             type: String,
-            default: () => { return '' },
+            default: () => { return ''; },
         },
         workflow: {
             type: Object,
-            default: () => { return {} },
+            default: () => { return {}; },
             name: ''
         },
         useDataSource: {
@@ -302,37 +302,37 @@ const DiagramComponent = Vue.extend({
                 }
             });
             if (task.tryConnections) {
-                let elem = document.getElementById(task.id)
+                let elem = document.getElementById(task.id);
                 elem.dispatchEvent(new MouseEvent('dblclick', {
                     bubbles: true,
                     cancelable: true,
                     view: window
                 }
                 )
-                )
+                );
                 let sortFunction = (a, b) => {
-                    if (a.type < b.type) { return -1 }
-                    if (a.type > b.type) { return 1 }
-                    return 0
-                }
-                let endpoints1 = self.instance.getEndpoints(task.tryConnections).reverse(sortFunction)
-                let endpoints2 = self.instance.getEndpoints(task.id).sort(sortFunction)
-                let shouldBreak = false
+                    if (a.type < b.type) { return -1; }
+                    if (a.type > b.type) { return 1; }
+                    return 0;
+                };
+                let endpoints1 = self.instance.getEndpoints(task.tryConnections).reverse(sortFunction);
+                let endpoints2 = self.instance.getEndpoints(task.id).sort(sortFunction);
+                let shouldBreak = false;
 
                 for (var i in endpoints1) {
-                    let e1 = endpoints1[i]
+                    let e1 = endpoints1[i];
                     for (var j in endpoints2) {
-                        let e2 = endpoints2[j]
+                        let e2 = endpoints2[j];
                         if (shouldBreak) {
-                            break
+                            break;
                         }
                         if (e2.scope == e1.scope && ((e1.type == 'Rectangle' && e2.type == 'Dot') || (e1.type == 'Dot' && e2.type == 'Rectangle'))) {
                             if (shouldBreak) {
-                                break
+                                break;
                             }
                             self.tryConnections = true;
                             var con = self.instance.connect({ uuids: [e1.getUuid(), e2.getUuid()] });
-                            shouldBreak = con != undefined
+                            shouldBreak = con != undefined;
                         }
                     }
                 }
@@ -718,7 +718,7 @@ const DiagramComponent = Vue.extend({
                     return c.type.replace(' ', '-');
                 })
                 .join(' ');
-            const tryConnections = ev.dataTransfer.getData('tryConnections')
+            const tryConnections = ev.dataTransfer.getData('tryConnections');
             const newTask = {
                 id: self.generateId(),
                 forms: {},
@@ -732,7 +732,7 @@ const DiagramComponent = Vue.extend({
                 height: 0,
                 width: 0,
                 tryConnections
-            }
+            };
             let defaults = ev.dataTransfer.getData('defaults');
             if (defaults){
                 defaults = JSON.parse(defaults);
@@ -756,11 +756,11 @@ const DiagramComponent = Vue.extend({
         },
         keyboardKeyUpHandler(ev) {
             let self = this;
-            let task = self.selectedTask
+            let task = self.selectedTask;
             let tasks = self.workflow.tasks
                 .filter(task => {
                     return self.selectedElements.includes(task.id);
-                })
+                });
             let inc = ev.ctrlKey ? 10 : 1;
 
 
@@ -769,35 +769,35 @@ const DiagramComponent = Vue.extend({
                 if (task) {
                     this.deleteTask(task);
                 } else if (tasks.length) {
-                    this.deleteTasks(tasks)
+                    this.deleteTasks(tasks);
                 }
                 break;
             case 'ArrowRight':
                 if (task) {
-                    this.moveTask({ task, position: 'right', inc })
+                    this.moveTask({ task, position: 'right', inc });
                 } else if (tasks.length) {
-                    this.moveTasks({ tasks, position: 'right', inc })
+                    this.moveTasks({ tasks, position: 'right', inc });
                 }
                 break;
             case 'ArrowLeft':
                 if (task) {
-                    this.moveTask({ task, position: 'left', inc })
+                    this.moveTask({ task, position: 'left', inc });
                 } else if (tasks.length) {
-                    this.moveTasks({ tasks, position: 'left', inc })
+                    this.moveTasks({ tasks, position: 'left', inc });
                 }
                 break;
             case 'ArrowUp':
                 if (task) {
-                    this.moveTask({ task, position: 'up', inc })
+                    this.moveTask({ task, position: 'up', inc });
                 } else if (tasks.length) {
-                    this.moveTasks({ tasks, position: 'up', inc })
+                    this.moveTasks({ tasks, position: 'up', inc });
                 }
                 break;
             case 'ArrowDown':
                 if (task) {
-                    this.moveTask({ task, position: 'down', inc })
+                    this.moveTask({ task, position: 'down', inc });
                 } else if (tasks.length) {
-                    this.moveTasks({ tasks, position: 'down', inc })
+                    this.moveTasks({ tasks, position: 'down', inc });
                 }
                 break;
             case 'KeyC':
@@ -817,15 +817,15 @@ const DiagramComponent = Vue.extend({
         },
         _copy(){
             const self = this;
-            let task = self.selectedTask
+            let task = self.selectedTask;
             let tasks = self.workflow.tasks
                 .filter(task => {
                     return self.selectedElements.includes(task.id);
-                })
+                });
             if (task) {
-                this.copyTask(task)
+                this.copyTask(task);
             } else if (tasks.length) {
-                this.copyTasks(tasks)
+                this.copyTasks(tasks);
             }
         },
         _paste(){
@@ -833,7 +833,7 @@ const DiagramComponent = Vue.extend({
             const offsetLeft = Math.floor(Math.random() * 50) + 30;
             const offsetTop = Math.floor(Math.random() * 20) + 10;
             if (self.copiedTasks.length) {
-                this.pasteTasks({ tasks: self.copiedTasks, offsetLeft, offsetTop })
+                this.pasteTasks({ tasks: self.copiedTasks, offsetLeft, offsetTop });
             }
         },
         deleteTask(task) {
@@ -847,15 +847,15 @@ const DiagramComponent = Vue.extend({
         },
         deleteTasks(tasks) {
             let self = this;
-            let tasks_ids = tasks.flatMap(task => { return task.id })
+            let tasks_ids = tasks.flatMap(task => { return task.id; });
 
             tasks.forEach(task => {
                 self.$root.$emit('onremove-task', task);
-            })
+            });
 
             self.selectedElements = self.selectedElements.filter((v, i, arr) => { // eslint-disable-line no-unused-vars
-                return !tasks_ids.includes(v)
-            })
+                return !tasks_ids.includes(v);
+            });
         },
         moveTask({ task, position, inc }) {
             let elem = document.getElementById(task.id);
@@ -887,7 +887,7 @@ const DiagramComponent = Vue.extend({
         moveTasks({ tasks, position, inc }) {
             tasks.forEach(task => {
                 this.moveTask({ task, position, inc });
-            })
+            });
         },
         copyTask(task) {
             this.copiedTasks = [task];
@@ -900,8 +900,8 @@ const DiagramComponent = Vue.extend({
             let copiedTask = JSON.parse(JSON.stringify(task));
 
             copiedTask.id = self.generateId();
-            copiedTask.left = copiedTask.left + offsetLeft
-            copiedTask.top = copiedTask.top + offsetTop
+            copiedTask.left = copiedTask.left + offsetLeft;
+            copiedTask.top = copiedTask.top + offsetTop;
             copiedTask.z_index = ++self.currentZIndex;
             copiedTask.name = `${copiedTask.operation.name} ${self.workflow.tasks.length}`;
             copiedTask.enabled = true;
@@ -913,7 +913,7 @@ const DiagramComponent = Vue.extend({
         pasteTasks({ tasks, offsetLeft, offsetTop }) {
             const self = this;
             const dic = {};
-            const tasksIds = tasks.flatMap(task => { return task.id });
+            const tasksIds = tasks.flatMap(task => { return task.id; });
 
             self.clearSelection();
             self.$emit('onclear-selection');
@@ -921,7 +921,7 @@ const DiagramComponent = Vue.extend({
             tasks.forEach(task => {
                 let newTask = self.pasteTask({ task, offsetLeft, offsetTop });
                 dic[task.id] = newTask.id;
-            })
+            });
 
             self.workflow.flows.forEach(flow => {
                 if (tasksIds.includes(flow.source_id) && tasksIds.includes(flow.target_id)) {
@@ -1294,7 +1294,7 @@ const DiagramComponent = Vue.extend({
                         source_port_name,
                         target_port_name
                     };
-                    self.tryConnections = false
+                    self.tryConnections = false;
                     self.$root.$emit('addFlow', flow, con);
                 }
             });
@@ -1315,8 +1315,8 @@ export default DiagramComponent;
     }
     .scroll-area {
         width: 100%;
-        height: 95vh;
-        max-height: calc(100vh - 265px);
+        height: 82vh;
+        overflow: auto;
     }
 
     .ghost-active {

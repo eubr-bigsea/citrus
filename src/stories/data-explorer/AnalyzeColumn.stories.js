@@ -1,4 +1,4 @@
-import AnalyzeColumnComponent from '../../components/data-explorer/AnalyzeColumn.vue';
+import AnalyzeColumnComponent from '../../views/data-explorer/AnalyzeColumn.vue';
 export default {
     title: 'DataExplorer/AnalyzeColumn'
 };
