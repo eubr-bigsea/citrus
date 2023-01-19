@@ -31,8 +31,8 @@
                     </div>
                     <hr>
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="card">
+                        <div class="col-md-12 scroll-area">
+                            <div class="card ">
                                 <div class="card-body">
                                     <div v-if="layout">
                                         <grid-layout :layout="layout" :col-num="12" :row-height="30"
@@ -322,5 +322,12 @@ export default {
 
     .vue-grid-item {
         padding: 0 5px 5px 5px;
+    }
+</style>
+<style scoped>
+    .scroll-area {
+        width: 100%;
+        height: 82vh;
+        overflow-y: auto;
     }
 </style>

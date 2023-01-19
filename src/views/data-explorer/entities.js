@@ -347,9 +347,6 @@ class Task {
         try {
             let result = (this.operation.label_format && this.operation.label_format.trim() !== '')
                 ? this._fillTemplate() : `<b>${this.operation.name}</b>`;
-            if (this.forms.comment?.value) {
-                result += `<br/><em>${this.forms.comment.value}</em>`;
-            }
             return result;
         } catch (ignore) {
             return `<b>${this.operation.name}</b>`;

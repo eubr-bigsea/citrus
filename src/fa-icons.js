@@ -30,6 +30,7 @@ import {
     faChevronRight,
     faCircle,
     faCircleNotch,
+    faCircleNodes,
     faCode,
     faCodeBranch,
     faCoffee,
@@ -127,6 +128,10 @@ import {
     faUserLock,
     faVial,
     faVials,
+    faWarehouse,
+    faBox,
+    faKey,
+    faUserGroup,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -141,6 +146,7 @@ library.add(
     faBell,
     faBolt,
     faBookOpen,
+    faBox,
     faBug,
     faBullseye,
     faCalculator,
@@ -159,6 +165,7 @@ library.add(
     faChevronLeft,
     faChevronRight,
     faCircle,
+    faCircleNodes,
     faCircleNotch,
     faCode,
     faCodeBranch,
@@ -197,6 +204,7 @@ library.add(
     faImage,
     faInfoCircle,
     faItalic,
+    faKey,
     faLaptopCode,
     faLayerGroup,
     faLemon,
@@ -254,9 +262,11 @@ library.add(
     faUpload,
     faUser,
     faUserEdit,
+    faUserGroup,
     faUserLock,
     faVial,
     faVials,
+    faWarehouse,
 
 );
 /**

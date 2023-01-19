@@ -1,16 +1,10 @@
 <template>
-    <div style="display: flex;" :class="{'soft-disabled': !step.previewable, 'hard-disabled': !step.enabled}">
-        <!--
-        <div style="width:2px" :style="{'background-color': step.backgroundColor}"
-            class="mr-1"></div>
-        -->
+    <div style="display: flex;" class="step" :class="{ 'soft-disabled': !step.previewable, 'hard-disabled': !step.enabled }">
+
+        <div style="width:2px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1"></div>
+
         <div class="float-left text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
-            <!--
-            <div class="mt-2">
-                <span :class="getStepClass(step)"></span>
-            </div>
-            -->
         </div>
         <div v-if="hasProblems" class="pulse-item">
             <Pulse title="Existem problemas na configuração. Edite para corrigir." />
@@ -18,7 +12,7 @@
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
                 <input v-if="!locked" v-model="step.selected" type="checkbox">&nbsp;
-                <span class="step-number">#{{index + 1}}</span> -
+                <span class="step-number">#{{ index + 1}}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
@@ -26,26 +20,26 @@
             </div>
             <div>
                 <font-awesome-icon v-if="step.error" v-b-tooltip.html icon="fa fa-exclamation-circle text-danger"
-                                   :title="step.error" />
+                    :title="step.error" />
 
-                <small v-if="step.forms.comment.value" class="text-secondary">{{step.forms.comment.value}}</small>
+                <small v-if="step?.forms?.comment?.value" class="step-comment">{{ step?.forms?.comment?.value }}</small>
                 <b-button-group v-if="!step.editing" class="zoom-buttom float-right">
                     <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
-                              :title="$t('actions.edit')" @click="edit('execution')">
+                        :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
                     </b-button>
                     <b-button variant="light" size="sm" class="text-secondary" :title="$t('common.previewUntilHere')"
-                              @click="$emit('previewUntilHere', step.id)">
-                        <span class="fa" :class="{'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable}" />
+                        @click="$emit('previewUntilHere', step)">
+                        <span class="fa" :class="{ 'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable }" />
                     </b-button>
 
                     <b-button v-if="!locked" variant="light" size="sm" class="text-secondary"
-                              :title="$t('actions.delete')" @click="$emit('delete', step.id)">
+                        :title="$t('actions.delete')" @click="$emit('delete', step)">
                         <font-awesome-icon icon="fa fa-trash" />
                     </b-button>
                     <b-button v-if="index > 0" variant="light" size="sm"
-                              :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
-                              @click="$emit('toggle', step)">
+                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
+                        @click="$emit('toggle', step)">
                         <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success" />
                         <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
                     </b-button>
@@ -54,30 +48,24 @@
                             <font-awesome-icon icon="fa fa-ellipsis-h" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="edit('appearance')">
-                            {{$tc('titles.comment')}} &amp;
-                            {{$tc('titles.color').toLowerCase()}}
+                            {{ $tc('titles.comment') }} &amp;
+                            {{ $tc('titles.color').toLowerCase() }}
                         </b-dropdown-item>
                         <b-dropdown-item href="#" @click.prevent="$emit('duplicate', step)">
-                            {{$tc('actions.duplicate')}}
-                            {{$tc('dataExplorer.step').toLowerCase()}}
+                            {{ $tc('actions.duplicate') }}
+                            {{ $tc('dataExplorer.step').toLowerCase() }}
                         </b-dropdown-item>
                     </b-dropdown>
-                    <!--
-                    <b-button variant="light" size="sm" class="text-secondary"
-                        @click.prevent="$emit('customOpen', $event, step)">
-                        <font-awesome-icon icon="fa fa-ellipsis-h" />
-                    </b-button>
-                    -->
                 </b-button-group>
                 <div v-else class="border-top" style="width: 100%; padding: 2px; zoom:90%">
                     <div class="mb-3">
                         <template v-for="form in step.operation.forms" v-if="form.category === displayFormCategory">
                             <div v-for="field in form.fields" v-if="field.editable" :key="`${step.id}:${field.name}`"
-                                 class="mb-2 step-properties">
+                                class="mb-2 step-properties">
                                 <component :is="getWidget(field)" v-if="field.enabled !== false" :field="field"
-                                           :value="getValue(field.name)" :language="language" :type="field.suggested_widget"
-                                           :read-only="!field.editable" context="context" :suggestion-event="suggestionEvent"
-                                           @update="updateField" />
+                                    :value="getValue(field.name)" :language="language" :type="field.suggested_widget"
+                                    :read-only="!field.editable" context="context" :suggestion-event="suggestionEvent"
+                                    @update="updateField" />
                             </div>
                         </template>
                     </div>
@@ -100,6 +88,7 @@ import Pulse from '../../components/Pulse.vue';
 import Vue from 'vue';
 export default {
     name: 'StepComponent',
+    emits: ['previewUntilHere', 'delete', 'toggle', 'duplicate', 'update'],
     components: { Pulse, },
     props: {
         attributes: { type: Array, required: true },
@@ -124,18 +113,18 @@ export default {
     computed: {
         hasProblems() {
             const self = this;
-            return this.step.operation.forms.find(f => f.category === 'execution')
-                .fields.find(field => {
-                    return (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value))
-                }) !== undefined;
+            const executionForm = this.step.operation.forms.find(f => f.category === 'execution');
+            return executionForm && executionForm.fields.find(field => {
+                return (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value))
+            }) !== undefined;
         },
         // attributes that may be selected based on their type
         validAttributes() {
             switch (this.functionName) {
-            case 'round':
-                return this.attributes.filter(attr => attr.type === 'Decimal');
-            default:
-                return this.attributes;
+                case 'round':
+                    return this.attributes.filter(attr => attr.type === 'Decimal');
+                default:
+                    return this.attributes;
             }
         },
         suggestedAttributes() {
@@ -149,7 +138,7 @@ export default {
         this.enableDisableFields();
     },
     methods: {
-        evalInContext(js, context) {
+        _evalInContext(js, context) {
             return new Function(`return ${js};`).call(context);
         },
         updateField(field, value) {
@@ -183,7 +172,7 @@ export default {
                                         self.conditionalFields.set(key, []);
                                     }
                                     self.conditionalFields.get(key).push(field);*/
-                                field.enabled = Boolean(self.evalInContext(field.enable_conditions, allFields));
+                                field.enabled = Boolean(self._evalInContext(field.enable_conditions, allFields));
                             });
                         }
                     }
@@ -193,8 +182,8 @@ export default {
         },
         getValue(name) {
             return this.editableStep
-                    && this.editableStep.forms
-                    && this.editableStep.forms[name]
+                && this.editableStep.forms
+                && this.editableStep.forms[name]
                 ? this.editableStep.forms[name].value : null;
         },
         getWidget(field) {
@@ -246,96 +235,81 @@ export default {
 }
 </script>
 <style scoped>
-    .step {
-        font-size: 10pt;
-        padding: 2px 0;
-        width: 3px;
-    }
+.step {
+    font-size: 10pt;
+    padding: 2px 0;
+    position: relative;
+    xwidth: 3px;
+}
 
-    .step-number {
-        color: #bbb;
-        font-size: 8pt;
-        /*
-        padding: 4px;
-        position: absolute;
-        top: 0;
-        right: 0;
-        */
-    }
+.step-description * {
+    color: #222;
+    font-size: 9.5pt;
+    font-weight: bold;
+}
 
-    .step-description * {
-        color: #888;
-        font-size: 8.5pt;
-    }
+.step-comment {
+    font-size: 8.5pt;
+    font-style: italic;
+}
 
-    .step-description>>>input {
-        vertical-align: middle;
-        position: relative;
-        bottom: 2px;
-    }
+.step-description>>>input {
+    vertical-align: middle;
+    position: relative;
+    bottom: 2px;
+}
 
-    .step-description>>>b {
-        /*background-color: #17a2b8;*/
-        /*border: 1px solid #17a2b8;
-        border-radius: 3px;
-        color: #17a2b8;*/
-        color: #3D9970;
-        font-weight: normal;
-        /*
-        font-weight: normal;
-        padding: 1px 5px;*/
-    }
 
-    .step-description>>>i {
-        color: #0074D9;
-    }
+.step-description>>>i {
+    color: #0074D9;
+}
 
-    .step-description>>>code {
-        color: #222;
-        font-weight: lighter;
-        font-size: 8pt;
-    }
+.step-description>>>code {
+    color: #222;
+    font-weight: lighter;
+    font-size: 8pt;
+}
 
-    .zoom-buttom>>>.btn {
-        font-size: 9pt;
-        padding: 2px;
-    }
+.zoom-buttom>>>.btn {
+    font-size: 9pt;
+    padding: 2px;
+}
 
-    .zoom-buttom>>>.dropdown-menu {
-        font-size: 9pt;
-    }
+.zoom-buttom>>>.dropdown-menu {
+    font-size: 9pt;
+}
 
-    .step-properties>>>textarea,
-    .step-properties>>>input,
-    .step-properties>>>select {
-        font-size: .9em;
-    }
+.step-properties>>>textarea,
+.step-properties>>>input,
+.step-properties>>>select {
+    font-size: .9em;
+}
 
-    .step-drag-handle {
-        cursor: move;
-        text-align: center;
-        width: 14px;
-    }
+.step-drag-handle {
+    cursor: move;
+    text-align: center;
+    width: 14px;
+}
 
-    .soft-disabled {
-        color: black;
-        background: repeating-linear-gradient(135deg,
-                transparent,
-                transparent 15px,
-                #eee 15px,
-                #eee 30px),
-            linear-gradient(to bottom,
-                #fff,
-                #ddd)
-    }
+.soft-disabled {
+    color: black;
+    background: repeating-linear-gradient(135deg,
+            transparent,
+            transparent 15px,
+            #eee 15px,
+            #eee 30px),
+        linear-gradient(to bottom,
+            #fff,
+            #ddd)
+}
 
-    .hard-disabled {
-        background-color: rgb(248, 249, 250);
-    }
+.hard-disabled {
+    background-color: rgb(248, 249, 250);
+}
 
-    .pulse-item {
-        position: absolute;
-        left: 5px;
-        bottom: 10px;
-    }
+.pulse-item {
+    position: absolute;
+    left: 5px;
+    bottom: 10px;
+}
 </style>

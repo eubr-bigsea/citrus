@@ -3,139 +3,95 @@
         <LabelComponent :field="field" :value="value" />
         <textarea disabled :value="displayValue" class="form-control code" rows="4" />
         <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
-            {{$t('property.editValue')}}
+            {{ $t('property.editValue') }}
         </b-link>
-        <b-modal id="expressionModal"
-                 ref="modal"
-                 size="xl"
-                 :title="field.label"
-                 :hide-header="true"
-                 :cancel-title="$t('actions.cancel')">
-            <div class="context-help"
-                 :class="{'d-none': !help}"
-                 :style="{top: positionTop + 'px', left: positionLeft + 'px'}"
-                 v-html="help" />
-            <div class="row"
-                 @click="closeTooltip">
+        <b-modal id="expressionModal" ref="modal" size="xl" :title="field.label" :hide-header="true"
+            :cancel-title="$t('actions.cancel')">
+            <div class="context-help" :class="{ 'd-none': !help }"
+                :style="{ top: positionTop + 'px', left: positionLeft + 'px' }" v-html="help" />
+            <div class="row" @click="closeTooltip">
                 <div class="col-md-4 reference">
                     <h6>Referência</h6>
                     <b-tabs card>
-                        <b-tab title="Funções"
-                               class="p-1">
-                            <select class="form-control shadow-none"
-                                    @change="changeFunctionType($event)">
+                        <b-tab title="Funções" class="p-1">
+                            <select class="form-control shadow-none" @change="changeFunctionType($event)">
                                 <option value="all">
                                     Todas
                                 </option>
-                                <option v-for="f in treeData"
-                                        :key="f.key"
-                                        :value="f.key">
-                                    {{f.name}}
+                                <option v-for="f in treeData" :key="f.key" :value="f.key">
+                                    {{ f.name }}
                                 </option>
                             </select>
-                            <select class="form-control shadow-none"
-                                    size="10"
-                                    @change="displayFunctionHelp($event)"
-                                    @dblclick="copyPasteValue">
-                                <option v-for="f in displayFunctions"
-                                        :key="f"
-                                        :value="f">
-                                    {{f}}
+                            <select class="form-control shadow-none" size="10" @change="displayFunctionHelp($event)"
+                                @dblclick="copyPasteValue">
+                                <option v-for="f in displayFunctions" :key="f" :value="f">
+                                    {{ f }}
                                 </option>
                             </select>
-                            <div class="function-help"
-                                 v-html="currentFunctionHelp" />
+                            <div class="function-help" v-html="currentFunctionHelp" />
                         </b-tab>
                         <b-tab title="Atributos">
-                            <select class="form-control shadow-none"
-                                    size="18"
-                                    @dblclick="copyPasteValue">
-                                <option v-for="sg in suggestions"
-                                        :key="sg">
-                                    {{sg}}
+                            <select class="form-control shadow-none" size="18" @dblclick="copyPasteValue">
+                                <option v-for="sg in suggestions" :key="sg">
+                                    {{ sg }}
                                 </option>
                             </select>
                         </b-tab>
-                        <b-tab title="Operadores"
-                               class="p-0">
-                            <table v-if="operators"
-                                   class="table operators-table table-sm table-borderless">
-                                <div v-for="(group, groupName) in operators"
-                                     :key="groupName"
-                                     style="display: contents">
+                        <b-tab title="Operadores" class="p-0">
+                            <table v-if="operators" class="table operators-table table-sm table-borderless">
+                                <div v-for="(group, groupName) in operators" :key="groupName" style="display: contents">
                                     <tr>
                                         <th colspan="2">
-                                            {{groupName}}
+                                            {{ groupName }}
                                         </th>
                                     </tr>
-                                    <tr v-for="(description, op) in group"
-                                        :key="op">
-                                        <td style="width:20px"
-                                            class="text-center">
-                                            {{op}}
+                                    <tr v-for="(description, op) in group" :key="op">
+                                        <td style="width:20px" class="text-center">
+                                            {{ op }}
                                         </td>
-                                        <td>{{description}}</td>
+                                        <td>{{ description }}</td>
                                     </tr>
                                 </div>
                             </table>
                         </b-tab>
                     </b-tabs>
-                    <small>{{$t('property.copyAttributeName')}}</small>
+                    <small>{{ $t('property.copyAttributeName') }}</small>
                 </div>
                 <div class="col-md-8">
-                    <form v-if="expressionList && expressionList.length"
-                          ref="form"
-                          onsubmit="return false"
-                          action="">
+                    <form v-if="expressionList && expressionList.length" ref="form" onsubmit="return false" action="">
                         <table class="table table-sm expression-table">
                             <thead>
-                                <th> {{$t('property.expression.title')}}</th>
+                                <th> {{ $t('property.expression.title') }}</th>
                                 <th v-if="values.alias !== false">
-                                    {{$t('property.expression.alias')}}
+                                    {{ $t('property.expression.alias') }}
                                 </th>
                                 <th style="width:12%" />
                             </thead>
                             <tbody>
-                                <tr v-for="(row, index) in expressionList"
-                                    :key="index">
+                                <tr v-for="(row, index) in expressionList" :key="index">
                                     <td class="expression-editor-area autocomplete">
-                                        <input ref="expr"
-                                               v-focus
-                                               type="text"
-                                               class="form-control"
-                                               :class="{'text-danger': row.error}"
-                                               :value="row.expression"
-                                               required
-                                               @keyup="onKeyUp($event, row, 'expression')"
-                                               @blur="elementBlur(row, $event)"
-                                               @paste="changed($event, row, 'expression')"
-                                               @dblclick="debugExpression(row)">
-                                        <ul v-show="isOpen"
-                                            class="autocomplete-results">
-                                            <li v-for="(result, i) in suggestionResults"
-                                                :key="i"
-                                                class="autocomplete-result"
-                                                :class="{ 'is-active': i === arrowCounter }"
+                                        <input ref="expr" v-focus type="text" class="form-control"
+                                            :class="{ 'text-danger': row.error }" :value="row.expression" required
+                                            @keyup="onKeyUp($event, row, 'expression')" @blur="elementBlur(row, $event)"
+                                            @paste="changed($event, row, 'expression')"
+                                            @dblclick="debugExpression(row)">
+                                        <ul v-show="isOpen" class="autocomplete-results">
+                                            <li v-for="(result, i) in suggestionResults" :key="i"
+                                                class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }"
                                                 @click="setResult(result)">
-                                                {{result}}
+                                                {{ result }}
                                             </li>
                                         </ul>
-                                        <small class="label text-danger"
-                                               v-html="row.error" />
+                                        <small class="label text-danger" v-html="row.error" />
                                         <!-- <small>{{row}}</small> -->
                                     </td>
-                                    <td v-if="values.alias !== false"
-                                        style="width: 20%">
-                                        <input class="form-control"
-                                               :value="row.alias"
-                                               required
-                                               @change="updated($event, row, 'alias')">
+                                    <td v-if="values.alias !== false" style="width: 20%">
+                                        <input class="form-control" :value="row.alias" required
+                                            @change="updated($event, row, 'alias')">
                                     </td>
-                                    <td style="width:2%"
-                                        class="text-center">
-                                        <a href="#"
-                                           class="btn btn-danger btn-sm"
-                                           @click.prevent="remove($event, index)">
+                                    <td style="width:2%" class="text-center">
+                                        <a href="#" class="btn btn-danger btn-sm"
+                                            @click.prevent="remove($event, index)">
                                             <!-- <font-awesome-icon icon="fa fa-minus-circle text-danger" /> -->
                                             <font-awesome-icon icon="trash" />
                                         </a>
@@ -144,17 +100,15 @@
                             </tbody>
                         </table>
                     </form>
-                    <div v-else
-                         class="border pt-5 pb-5 pl-3">
+                    <div v-else class="border pt-5 pb-5 pl-3">
                         <div class="label label-info">
-                            {{$t('property.noExpressions')}}
+                            {{ $t('property.noExpressions') }}
                         </div>
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <button class="btn btn-success btn-sm float-right"
-                            @click.prevent="add">
-                        <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.simpleAdd')}}
+                    <button class="btn btn-success btn-sm float-right" @click.prevent="add">
+                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.simpleAdd') }}
                     </button>
                 </div>
                 <!-- <div class="col-md-4 border-left">
@@ -169,10 +123,11 @@
 
 
             <small class="mt-2">
-                {{$t('property.expression.explanation')}}
+                {{ $t('property.expression.explanation') }}
                 <span v-html="$t('property.expression.tip')" />
                 <ul>
-                    <li><code>substring(name, instr(name, " "))</code></li> <li><code>upper(name)</code></li>
+                    <li><code>substring(name, instr(name, " "))</code></li>
+                    <li><code>upper(name)</code></li>
                 </ul>
                 <i18n path="property.expression.validExpressions" tag="span">
                     <template #ex1>
@@ -185,15 +140,11 @@
             </small>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-btn variant="primary"
-                           class="btn-sm mr-1"
-                           @click.prevent="okClicked">
-                        {{$t('common.ok')}}
+                    <b-btn variant="primary" class="btn-sm mr-1" @click.prevent="okClicked">
+                        {{ $t('common.ok') }}
                     </b-btn>
-                    <b-btn variant="secondary"
-                           class="btn-sm "
-                           @click.prevent="cancelClicked">
-                        {{$t('actions.cancel')}}
+                    <b-btn variant="secondary" class="btn-sm " @click.prevent="cancelClicked">
+                        {{ $t('actions.cancel') }}
                     </b-btn>
                 </div>
             </template>
@@ -209,11 +160,11 @@ import functionsHelp from '../../i18n/functions.js';
 import Notifier from '../../mixins/Notifier.js';
 
 export default {
-    components: { LabelComponent},
+    components: { LabelComponent },
     mixins: [Widget, Notifier],
     props: {
-        addOperators: {type: Function, default: () => null},
-        removeOperators: {type: Function, default: () => null},
+        addOperators: { type: Function, default: () => null },
+        removeOperators: { type: Function, default: () => null },
     },
     data() {
         return {
@@ -302,16 +253,16 @@ export default {
                     position = position.replace('at character', this.$t('widgets.expressionEditor.atPosition'))
                     if (error.includes("Unclosed quote")) {
                         row['error'] = this.$t('widgets.expressionEditor.unclosedQuoteAfter') +
-                                ' ' + position;
+                            ' ' + position;
                     } else if (error.includes("Expected expression")) {
                         row['error'] = this.$t('widgets.expressionEditor.expectedExpression') +
-                                ' ' + position;
+                            ' ' + position;
                     } else if (error.includes("Expected")) {
                         row['error'] = this.$t('widgets.expressionEditor.expected') +
-                                ' <b>' + error.substring(16, pos) + '</b> ' + position;
+                            ' <b>' + error.substring(16, pos) + '</b> ' + position;
                     } else if (error.includes("Unexpected")) {
                         row['error'] = this.$t('widgets.expressionEditor.unexpected') +
-                                ' ' + position;
+                            ' ' + position;
                     } else {
                         row['error'] = error;
                     }
@@ -420,7 +371,7 @@ export default {
                 const startPos = el.selectionStart;
                 const endPos = el.selectionEnd;
                 const value = el.value.substring(0, startPos) +
-                        v.target.value + el.value.substring(endPos, el.value.length);
+                    v.target.value + el.value.substring(endPos, el.value.length);
                 el.value = value;
                 // this.lastEdited.row.expression = value;
                 this.updated({ target: el }, this.lastEdited.row, 'expression')
@@ -459,93 +410,93 @@ export default {
 }
 </script>
 <style>
-    .expression-editor-area {
-        width: 85%;
-        position: relative;
-    }
+.expression-editor-area {
+    width: 85%;
+    position: relative;
+}
 
-    .expression-editor-area textarea {
-        font-size: 9pt;
-    }
+.expression-editor-area textarea {
+    font-size: 9pt;
+}
 
-    table.operators-table td,
-    table.operators-table th {
-        font-size: 9pt;
-        padding: 1px 4px;
-    }
+table.operators-table td,
+table.operators-table th {
+    font-size: 9pt;
+    padding: 1px 4px;
+}
 
-    .context-help {
-        background: #f9ffcc;
-        border: 1px solid #888;
-        color: #222;
-        font-size: .8em;
-        margin: 0 20px;
-        padding: 2px 4px;
-        position: absolute;
-        z-index: 99;
-    }
+.context-help {
+    background: #f9ffcc;
+    border: 1px solid #888;
+    color: #222;
+    font-size: .8em;
+    margin: 0 20px;
+    padding: 2px 4px;
+    position: absolute;
+    z-index: 99;
+}
 
-    .context-help i,
-    .function-help i {
-        font-style: normal !important;
-        color: navy;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 10pt;
-    }
+.context-help i,
+.function-help i {
+    font-style: normal !important;
+    color: navy;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10pt;
+}
 
-    .expression-table input {
-        height: 30px;
-    }
+.expression-table input {
+    height: 30px;
+}
 
-    .expression-table input,
-    textarea {
-        font-size: .8em;
-    }
+.expression-table input,
+textarea {
+    font-size: .8em;
+}
 
-    .reference,
-    .reference select,
-    .reference input {
-        font-size: 9pt;
-    }
+.reference,
+.reference select,
+.reference input {
+    font-size: 9pt;
+}
 
-    .reference .nav-link {
-        padding: 5px;
-    }
+.reference .nav-link {
+    padding: 5px;
+}
 
-    .function-help {
-        border: 1px solid #ddd;
-        background-color: #fafafa;
-        height: 120px;
-        margin-top: 5px;
-        padding: 5px;
-        overflow: auto;
-    }
+.function-help {
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    height: 120px;
+    margin-top: 5px;
+    padding: 5px;
+    overflow: auto;
+}
 </style>
 <style>
-    .autocomplete {
-        position: relative;
-        width: 130px;
-    }
+.autocomplete {
+    position: relative;
+    width: 130px;
+}
 
-    .autocomplete-results {
-        padding: 0;
-        margin: 0;
-        border: 1px solid #eeeeee;
-        height: 120px;
-        overflow: auto;
-        width: 100%;
-    }
+.autocomplete-results {
+    padding: 0;
+    margin: 0;
+    border: 1px solid #eeeeee;
+    height: 120px;
+    overflow: auto;
+    width: 100%;
+}
 
-    .autocomplete-result {
-        list-style: none;
-        text-align: left;
-        padding: 4px 2px;
-        cursor: pointer;
-    }
+.autocomplete-result {
+    list-style: none;
+    text-align: left;
+    padding: 4px 2px;
+    cursor: pointer;
+}
 
-    .autocomplete-result.is-active,
-    .autocomplete-result:hover {
-        background-color: #4aae9b;
-        color: white;
-    }
+.autocomplete-result.is-active,
+.autocomplete-result:hover {
+    background-color: #4aae9b;
+    color: white;
+}
 </style>

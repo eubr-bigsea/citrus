@@ -1315,7 +1315,7 @@ export default DiagramComponent;
     }
     .scroll-area {
         width: 100%;
-        height: 82vh;
+        height: 87vh;
         overflow: auto;
     }
 

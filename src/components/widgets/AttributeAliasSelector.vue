@@ -1,72 +1,51 @@
 <template>
     <div v-if="readOnly">
-        <span>{{value ? (multiple ? value.join(', '): value): ''}}</span>
+        <span>{{ value?(multiple? value.join(', '): value): ''}}</span>
     </div>
     <div v-else>
-        <LabelComponent :field="field"
-                        :value="value" />
+        <LabelComponent :field="field" :value="value" />
         <div v-if="multiple">
-            <textarea readonly
-                      :value="displayValue"
-                      class="form-control pointer"
-                      :rows="rows"
-                      @click.prevent="openModal" />
-            <b-modal ref="modal"
-                     size="xl"
-                     :title="field.label"
-                     ok-disabled
-                     :cancel-title="$t('actions.cancel')"
-                     no-fade>
+            <textarea readonly :value="displayValue" class="form-control pointer" :rows="rows"
+                @click.prevent="openModal" />
+            <b-modal ref="modal" size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')"
+                no-fade>
                 <template #default>
                     <div class="row">
                         <div class="col-12">
                             <div class="alert alert-info">
                                 <font-awesome-icon icon="fa fa-info-circle" />
                                 <small>
-                                    {{$tc('property.clickToMove', 2)}}.
-                                    {{$tc('property.multipleTimes')}}
+                                    {{ $tc('property.clickToMove', 2) }}.
+                                    {{ $tc('property.multipleTimes') }}
                                 </small>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <small>{{$tc('property.availableAttribute', 2)}}:</small>
+                            <small>{{ $tc('property.availableAttribute', 2) }}:</small>
                             <div class="left options border mt-1 p-2">
-                                <div v-for="(suggestion, index) in available"
-                                     :key="suggestion"
-                                     class="border mb-1 p-1 suggested-attr"
-                                     role="button"
-                                     :title="suggestion"
-                                     @click="move('right', index)">
-                                    {{suggestion}}
+                                <div v-for="(suggestion, index) in available" :key="suggestion"
+                                    class="border mb-1 p-1 suggested-attr" role="button" :title="suggestion"
+                                    @click="move('right', index)">
+                                    {{ suggestion }}
                                 </div>
                             </div>
-                            <label class="m-0 mt-2"><small>{{$t('property.informAttributeName')}}:</small></label>
+                            <label class="m-0 mt-2"><small>{{ $t('property.informAttributeName') }}:</small></label>
                             <b-input-group class="">
-                                <b-form-input v-model="extra"
-                                              class="form-control-sm"
-                                              maxlength="50" />
+                                <b-form-input v-model="extra" class="form-control-sm" maxlength="50" />
                                 <b-input-group-append>
-                                    <b-button size="sm"
-                                              :disabled="extra === null || extra.trim() === ''"
-                                              @click="add">
-                                        {{$t('actions.addItem')}}
+                                    <b-button size="sm" :disabled="extra === null || extra.trim() === ''" @click="add">
+                                        {{ $t('actions.addItem') }}
                                     </b-button>
                                 </b-input-group-append>
                             </b-input-group>
                         </div>
                         <div class="text-center mt-5 text-center actions col-md-1">
                             <div v-if="!single">
-                                <b-btn class="mb-1"
-                                       variant=""
-                                       size="sm"
-                                       @click="move('all-right', null)">
+                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-right', null)">
                                     &gt;&gt;
                                 </b-btn>
                                 <br>
-                                <b-btn class="mb-1"
-                                       variant=""
-                                       size="sm"
-                                       @click="move('all-left', null)">
+                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-left', null)">
                                     &lt;&lt;
                                 </b-btn>
                             </div>
@@ -75,31 +54,25 @@
                             <div class="row">
                                 <div class="col-6">
                                     <small>
-                                        {{$tc('property.selectedAttribute', 2)}}:
+                                        {{ $tc('property.selectedAttribute', 2) }}:
                                     </small>
                                 </div>
                                 <div class="col-6">
-                                    <small>{{$tc('property.alias', 2)}}
-                                        ({{$tc('common.optional')}}):</small>
+                                    <small>{{ $tc('property.alias', 2) }}
+                                        ({{ $tc('common.optional') }}):</small>
                                 </div>
                                 <div class="col-12">
                                     <div class="options border mt-1 p-2">
-                                        <div class="row">
-                                            <div v-for="(item, index) in selected"
-                                                 :key="index"
-                                                 class="mb-1 col-6 border-right">
-                                                <div class="border selected-attr"
-                                                     role="button"
-                                                     :title="item.attribute"
-                                                     @click="move('left', index)">
-                                                    {{item.attribute}}
+                                        <div class="row" v-for="(item, index) in selected" :key="index">
+                                            <div class="mb-1 col-6 border-right">
+                                                <div class="border selected-attr" role="button" :title="item.attribute"
+                                                    @click="move('left', index)">
+                                                    {{ item.attribute }}
                                                 </div>
                                             </div>
-                                            <div class="col-5">
-                                                <input v-model="item.alias"
-                                                       type="text"
-                                                       class="form-control form-control-sm"
-                                                       :placeholder="item.attribute">
+                                            <div class="col-5" :key="index + 'a'">
+                                                <input v-model="item.alias" type="text"
+                                                    class="form-control form-control-sm" :placeholder="item.attribute">
                                             </div>
                                         </div>
                                     </div>
@@ -109,29 +82,22 @@
                     </div>
                 </template>
                 <template #modal-footer>
-                    <b-btn variant="outline-secondary"
-                           size="sm"
-                           class="float-right"
-                           @click="cancelModal">
-                        {{$t('actions.cancel')}}
+                    <b-btn variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
+                        {{ $t('actions.cancel') }}
                     </b-btn>
-                    <b-btn variant="primary mr-1"
-                           size="sm"
-                           class="float-right"
-                           @click="okModal">
-                        {{$t('common.ok')}}
+                    <b-btn variant="primary mr-1" size="sm" class="float-right" @click="okModal">
+                        {{ $t('common.ok') }}
                     </b-btn>
                 </template>
             </b-modal>
         </div>
         <div v-else>
-            <v-select v-model="select2Value"
-                      :options="suggestions"
-                      :multiple="false"
-                      :taggable="true"
-                      :close-on-select="true"
-                      @input="updated" />
+            <v-select v-model="select2Value" :options="suggestions" :multiple="false" :taggable="true"
+                :close-on-select="true" @input="updated" />
         </div>
+        <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
+            {{ $t('property.editValue') }}
+        </b-link>
     </div>
 </template>
 <script>
@@ -186,9 +152,9 @@ export default {
     },
     mounted() {
         let value = this.value || [];
-        if (value && Array.isArray(value) && value.length && typeof(value[0]) !== 'object') {
+        if (value && Array.isArray(value) && value.length && typeof (value[0]) !== 'object') {
             // Handle legacy format
-            value = value.map(v => { return { attribute: v, alias: null} });
+            value = value.map(v => { return { attribute: v, alias: null } });
         }
         this.updated(value);
         this.originalValue = value;
@@ -209,7 +175,7 @@ export default {
         add() {
             let sel = this.value ? [... this.value] : [];
             if (this.extra && sel.indexOf(this.extra) === -1) {
-                sel.push({attribute: this.extra, alias: null});
+                sel.push({ attribute: this.extra, alias: null });
                 this.extra = '';
             } else {
                 this.extra = '';
@@ -222,17 +188,17 @@ export default {
                 let sel = this.value ? [... this.value] : [];
                 this.suggestions.forEach((v) => {
                     if (sel.indexOf(v) === -1)
-                        sel.push({attribute: v, alias: null})
+                        sel.push({ attribute: v, alias: null })
                 });
                 this.updated(sel);
             } else if (direction === 'all-left') {
                 this.updated([]);
             } else if (direction === 'right') {
                 const attribute = this.available[index];
-                const newItem = {attribute};
+                const newItem = { attribute };
                 // Prevent duplicated aliases
                 const repetition = this.value.filter(a => a.attribute === attribute || a.alias === attribute).length;
-                if (repetition > 0){
+                if (repetition > 0) {
                     newItem['alias'] = `${attribute}${repetition}`
                 }
                 if (!this.value) {
@@ -270,48 +236,48 @@ export default {
 }
 </script>
 <style scoped>
-    div.options {
-        height: 320px;
-        overflow-x: hidden;
-        overflow-y: auto;
-        margin-right: 15px;
-        -webkit-user-select: none;
-        /* Chrome all / Safari all */
-        -moz-user-select: none;
-        /* Firefox all */
-        -ms-user-select: none;
-        /* IE 10+ */
-        user-select: none;
-        /* Likely future */
-    }
+div.options {
+    height: 320px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-right: 15px;
+    -webkit-user-select: none;
+    /* Chrome all / Safari all */
+    -moz-user-select: none;
+    /* Firefox all */
+    -ms-user-select: none;
+    /* IE 10+ */
+    user-select: none;
+    /* Likely future */
+}
 
-    div.options.left {
-        height: 250px;
-    }
+div.options.left {
+    height: 250px;
+}
 
-    div.actions>button {
-        width: 50px;
-        display: block;
-        margin: 5px auto;
-    }
+div.actions>button {
+    width: 50px;
+    display: block;
+    margin: 5px auto;
+}
 
-    div.suggested-attr,
-    div.selected-attr {
-        font-size: 10pt;
-        border-radius: 4px;
-        max-height: 30px;
-        overflow: hidden;
-        padding: 4px 10px !important;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        align-items: flex-start;
-    }
+div.suggested-attr,
+div.selected-attr {
+    font-size: 10pt;
+    border-radius: 4px;
+    max-height: 30px;
+    overflow: hidden;
+    padding: 4px 10px !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-items: flex-start;
+}
 
-    div.selected-attr {
-        background: #DDDDDD
-    }
+div.selected-attr {
+    background: #DDDDDD
+}
 
-    .pointer {
-        cursor: pointer;
-    }
+.pointer {
+    cursor: pointer;
+}
 </style>

@@ -103,6 +103,7 @@ widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
 //Vue.component('Plotly', Plotly.default || Plotly);
 import './assets/main.scss';
+import '~vue-snotify/styles/dark.scss'; //dark or material.css or simple.css
 
 // Snotify
 import Snotify from 'vue-snotify';
