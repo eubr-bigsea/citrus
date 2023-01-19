@@ -27,4 +27,4 @@ export default {
             'tests/**/*.spec.js',
         ],
     },
-}
+};

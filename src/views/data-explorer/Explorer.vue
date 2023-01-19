@@ -2,7 +2,7 @@
     <div>
         <TahitiSuggester />
         <div class="row">
-            <div class="col noselect step-list p-1">
+            <div class="col-3 noselect step-list p-1">
                 <div class="p-2">
                     <h6>{{$t('dataExplorer.title')}}</h6>
                     <div>
@@ -116,15 +116,14 @@
                         <br>
                         <small v-if="loadedDataSize > 1"
                                class="text-info">
-                            {{$tc('common.pagerShowing', 0,
-                                  {from: 1,
-                                   to: Math.min(pageSize * page, tableData.total), count: tableData.total
-                                  })}}.</small>
+                            {{$tc('common.pagerShowing', 0, {from: 1,
+                                                             to: Math.min(pageSize * page, tableData.total), count: tableData.total
+                            })}}.</small>
                     </div>
                 </div>
             </div>
             <!-- Preview area -->
-            <div class="col border-left fill-height mt-3">
+            <div class="col-9 border-left fill-height mt-3">
                 <PreviewMenu :selected="selected"
                              :menus="menus"
                              @select="performAction"
@@ -325,16 +324,18 @@ import Preview from './Preview.vue';
 import PreviewMenu from './PreviewMenu.vue';
 import Step from './Step.vue';
 import Notifier from '../../mixins/Notifier.js';
-import { Workflow, Operation, Task, Constants } from './entities.js'
+import { Workflow, Operation, Task, Constants } from './entities.js';
 import ModalExport from './ModalExport.vue';
 import Plotly from '../../components/visualization/Plotly.vue';
 
 jsep.addBinaryOp(">=", 1);
 jsep.removeBinaryOp('^');
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL
-const limoneroUrl = import.meta.env.VITE_LIMONERO_URL
-const standUrl = import.meta.env.VITE_STAND_URL
+const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
+const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
 const PAGE_SIZE = 100;
@@ -351,8 +352,8 @@ export default {
                 const script = document.createElement('script');
                 script.setAttribute('id', 'tahiti-script');
                 script.async = true;
-                document.head.appendChild(script)
-            })
+                document.head.appendChild(script);
+            });
         }
     },
     mixins: [Notifier],
@@ -399,7 +400,7 @@ export default {
             stats: null,
             valuesClusters: [],
             similarity: 0.8,
-        }
+        };
     },
     computed: {
         pendingSteps() {
@@ -413,7 +414,7 @@ export default {
         this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
 
         const job_id = WORKFLOW_OFFSET + parseInt(this.internalWorkflowId);
-        this.job = { id: job_id }
+        this.job = { id: job_id };
 
         await this.loadClusters();
         await this.loadOperations();
@@ -472,14 +473,14 @@ export default {
         async loadWorkflow() {
             const self = this;
             self.loadingData = true;
-            this.$Progress.start()
+            this.$Progress.start();
             try {
                 const resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}?type=DATA_EXPLORER`);
                 const workflow = resp.data;
                 workflow.tasks = workflow.tasks.sort(
                     (a, b) => { return a.display_order - b.display_order; });
                 workflow.tasks.forEach(t => {
-                    t.operation = self.operationLookup.get(t.operation.id)
+                    t.operation = self.operationLookup.get(t.operation.id);
                 });
 
                 const user = this.$store.getters.user;
@@ -504,16 +505,16 @@ export default {
                 // 5 - Only some operations are supported
                 const readerTask = workflow.tasks[0]; //workflow.tasks.find(t => t.operation.slug === 'read-data');
                 const sampleTask = workflow.tasks[1];
-                this.dataSourceLabel = `${readerTask.forms.data_source.value} - ${readerTask.forms.data_source.labelValue}`
+                this.dataSourceLabel = `${readerTask.forms.data_source.value} - ${readerTask.forms.data_source.labelValue}`;
 
-                const hasUnsupported = workflow.platform.slug !== 'meta' //tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
+                const hasUnsupported = workflow.platform.slug !== 'meta'; //tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
                 if (hasUnsupported || readerTask?.operation?.slug !== 'read-data') {
                     self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format.' });
-                    self.$router.push({ name: 'index-explorer' })
+                    self.$router.push({ name: 'index-explorer' });
                     return;
                 }
                 if (sampleTask?.operation?.slug !== 'sample') {
-                    const op = this.operationLookup.get(2110) // FIXME;
+                    const op = this.operationLookup.get(2110); // FIXME;
                     const sample = Workflow.createSampleTask(1, op, this.$tc);
                     self.warning('FIXME: Invalid workflow. Tried to fix it.');
                     this.workflowObj.tasks.splice(1, 0, sample);
@@ -523,9 +524,9 @@ export default {
                     'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.workflowObj.platform.id}`);
 
             } catch (e) {
-                console.debug(e)
+                console.debug(e);
                 self.error(e);
-                self.$router.push({ name: 'index-explorer' })
+                self.$router.push({ name: 'index-explorer' });
             } finally {
                 Vue.nextTick(() => {
                     this.$Progress.finish();
@@ -538,7 +539,7 @@ export default {
         async loadData() {
             const self = this;
             if (self.pendingSteps) {
-                self.warning("Existe(m) etapa(s) com pendências. Faça as correções antes de executar o experimento.", 5000)
+                self.warning("Existe(m) etapa(s) com pendências. Faça as correções antes de executar o experimento.", 5000);
                 return;
             }
             self.loadingData = true;
@@ -546,7 +547,7 @@ export default {
             cloned.platform_id = cloned.platform.id; //FIXME: review
             cloned.preferred_cluster_id = self.clusterId;
 
-            const enableTasksForPreview = []
+            const enableTasksForPreview = [];
             cloned.tasks.forEach((task) => {
                 if (task.enabled && task.previewable) {
                     // Remove unnecessary attributes from operation
@@ -566,12 +567,12 @@ export default {
                     verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1,
                     target_platform: 'spark', sample_style: 'DATA_EXPLORER'
                 },
-            }
+            };
             //console.debug(new Date());
 
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body,
-                    { headers: { 'Locale': self.$root.$i18n.locale, } })
+                    { headers: { 'Locale': self.$root.$i18n.locale, } });
                 self.$refs.preview && self.$refs.preview.scroll({
                     top: 0,
                 });
@@ -599,7 +600,7 @@ export default {
             }
         },
         async loadOperations() {
-            const self = this
+            const self = this;
             // Platform is always META_OPERATION_ID
             try {
                 const resp = await axios.get(`${tahitiUrl}/operations?platform=${META_PLATFORM_ID}`);
@@ -648,13 +649,13 @@ export default {
         handleSelectAll(ev) {
             this.workflowObj.tasks.forEach((task) => {
                 task.selected = (task.display_order > 1) && ev.target.checked;
-            })
+            });
         },
         handleToggleSelected(value) {
             this.workflowObj.tasks.forEach((task) => {
                 task.enabled = (task.selected && value) || (task.display_order <= 1);
                 this.isDirty = true;
-            })
+            });
         },
         handleRemoveSelected() {
             this.confirm(
@@ -665,7 +666,7 @@ export default {
                             this.workflowObj.deleteTask(task);
                             this.isDirty = true;
                         }
-                    })
+                    });
                 }
             );
         },
@@ -685,7 +686,7 @@ export default {
                     (response) => {
                         //console.debug(response.data)
                         let ds = response.data;
-                        attributes = ds.attributes.map(function (attr) { return attr.name });
+                        attributes = ds.attributes.map(function (attr) { return attr.name; });
                         window.TahitiAttributeSuggester.cached[id] = attributes;
                         callback(attributes);
                     },
@@ -725,7 +726,7 @@ export default {
             }
         },
         _unique(data) {
-            return Array.from(new Set(data))
+            return Array.from(new Set(data));
         },
         getSuggestions(taskId) {
             const extendedSuggestions = this.getExtendedSuggestions(taskId);
@@ -814,14 +815,14 @@ export default {
 
         //
         saveWorkflow() {
-            let self = this
+            let self = this;
             let cloned = JSON.parse(JSON.stringify(self.workflowObj));
             let url = `${tahitiUrl}/workflows`;
-            let method = 'post'
+            let method = 'post';
 
             if (cloned.id !== 0) {
                 url = `${url}/${cloned.id}`;
-                method = 'patch'
+                method = 'patch';
             }
             cloned.preferred_cluster_id = self.clusterId;
             cloned.platform_id = META_PLATFORM_ID;
@@ -940,9 +941,9 @@ export default {
                 task.display_order = i;
                 if (task.previewable) {
                     elem = task;
-                    return false
+                    return false;
                 }
-            })
+            });
             this.isDirty = true;
             this.previewUntilHere(elem);
             this.loadData();
@@ -1026,13 +1027,19 @@ export default {
         connectWebSocket() {
             const self = this;
             if (self.socket === null) {
-                const socket = io(standNamespace, { upgrade: true, });
+                const opts = {upgrade: true};
+                if (standSocketIoPath !== ''){
+                    opts['path'] = standSocketIoPath;
+                }
+                const socket = io(
+                    `${standSocketServer}${standNamespace}`, opts);
+
                 self.socket = socket;
 
                 socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
 
                 socket.on('exported result', (msg) => {
-                    console.debug(msg)
+                    console.debug(msg);
                 });
                 socket.on('analysis', (msg, callback) => { // eslint-disable-line no-unused-vars
                     if (msg.analysis_type !== 'cluster') {
@@ -1066,15 +1073,15 @@ export default {
 
                                 const attributeIds = messageJson.attributes.map(attr => attr.key);
                                 const mapped = messageJson.rows.map(
-                                    row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] } })));
+                                    row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] }; })));
 
 
                                 if (messageJson.page === 1) {
                                     self.tableData = messageJson;
                                     // Update selected attribute (may have its time changed during processing)
-                                    const selected = self.tableData.attributes.find(t => t?.key === self.selected.column)
+                                    const selected = self.tableData.attributes.find(t => t?.key === self.selected.column);
                                     if (selected) {
-                                        self.select({ field: selected, column: selected.key, label: selected.key })
+                                        self.select({ field: selected, column: selected.key, label: selected.key });
                                     }
                                     self.rows = mapped;
                                     self.page = 1;
@@ -1087,7 +1094,7 @@ export default {
                                 } else {
                                     self.loadingData = false;
                                 }
-                            })
+                            });
                             //console.debug(new Date());
                         } else if (msg.meaning === 'schema') {
                             self.schemas[msg.id] = msg.message;
@@ -1116,7 +1123,7 @@ export default {
             }
         }
     }
-}
+};
 </script>
 <style>
     .ghost {

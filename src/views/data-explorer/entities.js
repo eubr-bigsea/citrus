@@ -1,8 +1,8 @@
 class Constants {
     static get DATA_TYPES() {
         return [
-            'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'Text', 'Time',]
-    }
+            'Array', 'Boolean', 'Date', 'Decimal', 'Integer', 'Text', 'Time',];
+    };
 }
 const META_PLATFORM_ID = 1000;
 class Workflow {
@@ -39,19 +39,19 @@ class Workflow {
         // Operations that handle 'attributes' in a different field
         if (attrs && attrs.length && attrs[0]) {
             if (op.slug === 'sort') {
-                forms = { order_by: { value: attrs.map(attr => { return { attribute: attr, f: 'asc' } }) } };
+                forms = { order_by: { value: attrs.map(attr => { return { attribute: attr, f: 'asc' }; }) } };
             } else if (op.slug === 'cast') {
-                forms = { cast_attributes: { value: attrs.map(attr => { return { attribute: attr, type: 'Text' } }) } };
+                forms = { cast_attributes: { value: attrs.map(attr => { return { attribute: attr, type: 'Text' }; }) } };
             } else if (op.slug === 'select') {
-                forms = { mode: { value: 'include' }, attributes: { value: attrs.map(attr => { return { attribute: attr, alias: null } }) } };
+                forms = { mode: { value: 'include' }, attributes: { value: attrs.map(attr => { return { attribute: attr, alias: null }; }) } };
             } else if (op.slug === 'rename') {
-                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: attr } }) } };
+                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: attr }; }) } };
             } else if (op.slug === 'duplicate') {
-                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: `${attr}_1` } }) } };
+                forms = { attributes: { value: attrs.map(attr => { return { attribute: attr, alias: `${attr}_1` }; }) } };
             } else if (op.slug === 'extract-from-array') {
                 forms = { attributes: { value: attrs }, indexes: { value: "0" } };
             } else {
-                forms = { attributes: { value: attrs } }
+                forms = { attributes: { value: attrs } };
             }
         }
         if (fields) {
@@ -84,12 +84,12 @@ class Workflow {
             'type': { value: 'head' },
             'value': { value: 50 },
             'seed': { value: 0 },
-        }
+        };
         const realOp = op || new Operation({ id: 2110 });
         return realOp.createTask({
             name: i18n.$tc('dataExplorer.sampelData') || realOp.name,
             forms, display_order
-        })
+        });
     }
     static buildDataExplorer(name, ds, i18n) {
         const dataReader = new Task({
@@ -254,8 +254,8 @@ class Operation {
             form.fields.forEach(field => {
                 finalForms[field.name] = { 'value': null };
             }
-            )
-        })
+            );
+        });
         Object.assign(finalForms, forms);
 
         const task = new Task({
@@ -313,8 +313,8 @@ class Task {
         this.top = top;
         this.error = null;
         this.editing = false;
-        this.operation = null;
-        this.forms = {}
+        //this.operation = null;
+        this.forms = {};
 
         //Initialize form fields
         if (operation.form) {
@@ -390,7 +390,7 @@ class Task {
         const result = this.enabled && this.previewable &&
             (this.operation.forms.find(f => f.category === 'execution')
                 .fields.find(field => {
-                    return (field.required && (!self.forms[field.name] || !self.forms[field.name].value))
+                    return (field.required && (!self.forms[field.name] || !self.forms[field.name].value));
                 }) !== undefined);
         return result;
     }
@@ -405,7 +405,7 @@ class Flow {
         {
             this.environment = 'DESIGN';
             this.source_port = source_port;
-            this.target_port = target_port
+            this.target_port = target_port;
             this.source_port_name = source_port_name;
             this.target_port_name = target_port_name;
             this.source_id = source_id;
@@ -437,4 +437,4 @@ export {
     Constants,
     ModelBuilderWorkflow,
     VisualizationBuilderWorkflow,
-}
+};

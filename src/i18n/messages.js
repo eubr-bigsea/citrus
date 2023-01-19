@@ -179,7 +179,7 @@ export default {
             or: 'Ou',
             owner: 'Proprietário',
             pagerShowing:
-                "Exibindo registros de {'{'}from{'}'} até {'{'}to{'}'} , para um total de {'{'}count{'}'} registros{'|'}{'{'}count{'}'} registros{'|'}Um registro",
+                "Exibindo registros de {'{'}from{'}'} até {'{'}to{'}'}, para um total de {'{'}count{'}'} registros{'|'}{'{'}count{'}'} registros{'|'}Um registro",
             parameters: 'Parâmetro | Parâmetros',
             password: 'Senha',
             path: 'Caminho|Caminhos',

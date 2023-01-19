@@ -49,14 +49,15 @@
 export default {
     props: {
         selected: { type: Object, default: () => ({}) },
-        menus: { type: Object, default: () => null }
+        menus: { type: Array, default: () => [] }
     },
+    emits: ['select'],
     methods: {
         trigger(action, ...params) {
-            this.$emit('select', { action, params, 'selected': this.selected })
+            this.$emit('select', { action, params, 'selected': this.selected });
         }
     }
-}
+};
 </script>
 <style scoped>
     .preview-menu>>>.nav-pills a.dropdown-toggle {
