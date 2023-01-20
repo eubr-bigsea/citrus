@@ -349,6 +349,7 @@ class Task {
                 ? this._fillTemplate() : `<b>${this.operation.name}</b>`;
             return result;
         } catch (ignore) {
+            console.debug(ignore)
             return `<b>${this.operation.name}</b>`;
         }
     }

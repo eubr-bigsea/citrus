@@ -1,17 +1,11 @@
-import Step from '../../views/data-explorer/Step.vue';
-import { Task } from '../../views/data-explorer/entities.js';
-import TextComponent from '../../components/widgets/Text.vue';
-import ColorComponent from '../../components/widgets/Color.vue';
-import Vue from 'vue';
-
-Vue.component("TextComponent", TextComponent);
-Vue.component("ColorComponent", ColorComponent);
+import StepList from '../../views/data-explorer/StepList.vue';
+import { Task, Workflow } from '../../views/data-explorer/entities.js';
 export default {
-    title: 'DataExplorer/Step'
+    title: 'DataExplorer/StepList'
 };
 
 const Template = (args, { argTypes }) => ({
-    components: { Step },
+    components: { StepList },
     props: Object.keys(argTypes),
     mounted() {
     },
@@ -29,10 +23,10 @@ const Template = (args, { argTypes }) => ({
             console.debug('Deleting', task);
         },
         update(task) {
-            this.step.forms = {...task.forms};
+            this.step.forms = { ...task.forms };
             console.debug('Updating', task);
         },
-        select(task, value){
+        select(task, value) {
             this.step.selected = value;
             console.debug('Selecting', task, value);
         }
@@ -42,7 +36,7 @@ const Template = (args, { argTypes }) => ({
         };
     },
     template: `<div style="margin-right:200px" >
-                <step v-bind="$props"
+                <step-list v-bind="$props" v-on="$listeners"
                 @toggle="toggle"
                 @previewUntilHere="preview"
                 @delete="deleteAction"
@@ -53,7 +47,8 @@ const Template = (args, { argTypes }) => ({
                </div>`
 });
 
-const task = new Task({
+const task1 = new Task({
+    index: 1,
     operation: {
         name: 'Read data',
         label_format: 'Read data from local',
@@ -63,6 +58,7 @@ const task = new Task({
     }
 });
 const task2 = new Task({
+    index: 2,
     forms: {
         comment: { value: 'Please, review this task' },
     },
@@ -85,9 +81,10 @@ const task2 = new Task({
     }
 });
 const task3 = new Task({
+    index: 3,
     forms: {
         regex: { value: '\\d+' },
-        replacement: {value: '?'}
+        replacement: { value: '?' }
     },
     operation: {
         label_format: 'Replace regex (${this.regex.value}) by "${this.replacement.value}"',
@@ -107,21 +104,14 @@ const task3 = new Task({
         ]
     }
 });
-export const BasicWithEvents = Template.bind({});
-BasicWithEvents.args = {
-    index: 1, language: 'pt', attributes: [{}],
-    step: task,
-    forms: { comment: 'Some comments' }
+const tasks = [task1, task2, task3];
+const platform = {id: 1, name: 'Spark', slug: 'spark'};
+const workflow = new Workflow({ id: 1, name: 'Test', tasks, platform });
+export const BasicList = Template.bind({});
+BasicList.args = {
+    workflow,
+    language: 'pt',
+    attributes: ['a', 'b']
 };
 
-export const EditComment = Template.bind({});
-EditComment.args = {
-    index: 2, language: 'pt', attributes: [{}],
-    step: task2,
-};
-export const EditProperties = Template.bind({});
-EditProperties.args = {
-    index: 3, language: 'pt', attributes: [{}],
-    step: task3,
-};
 

@@ -1,7 +1,6 @@
 <template>
     <div style="display: flex;" class="step" :class="{ 'soft-disabled': !step.previewable, 'hard-disabled': !step.enabled }">
-
-        <div style="width:2px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1"></div>
+        <div style="width:2px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1" />
 
         <div class="float-left text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
@@ -11,8 +10,8 @@
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
-                <input v-if="!locked" v-model="step.selected" type="checkbox">&nbsp;
-                <span class="step-number">#{{ index + 1}}</span> -
+                <input v-if="!locked" type="checkbox" @click="select">&nbsp;
+                <span class="step-number">#{{index + 1}}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
@@ -20,26 +19,26 @@
             </div>
             <div>
                 <font-awesome-icon v-if="step.error" v-b-tooltip.html icon="fa fa-exclamation-circle text-danger"
-                    :title="step.error" />
+                                   :title="step.error" />
 
-                <small v-if="step?.forms?.comment?.value" class="step-comment">{{ step?.forms?.comment?.value }}</small>
-                <b-button-group v-if="!step.editing" class="zoom-buttom float-right">
+                <small v-if="step?.forms?.comment?.value" class="step-comment">{{step?.forms?.comment?.value}}</small>
+                <b-button-group v-if="!editableStep.editing" class="zoom-buttom float-right">
                     <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
-                        :title="$t('actions.edit')" @click="edit('execution')">
+                              :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
                     </b-button>
                     <b-button variant="light" size="sm" class="text-secondary" :title="$t('common.previewUntilHere')"
-                        @click="$emit('previewUntilHere', step)">
+                              @click="$emit('previewUntilHere', step)">
                         <span class="fa" :class="{ 'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable }" />
                     </b-button>
 
                     <b-button v-if="!locked" variant="light" size="sm" class="text-secondary"
-                        :title="$t('actions.delete')" @click="$emit('delete', step)">
+                              :title="$t('actions.delete')" @click="$emit('delete', step)">
                         <font-awesome-icon icon="fa fa-trash" />
                     </b-button>
                     <b-button v-if="index > 0" variant="light" size="sm"
-                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
-                        @click="$emit('toggle', step)">
+                              :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
+                              @click="$emit('toggle', step)">
                         <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success" />
                         <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
                     </b-button>
@@ -48,24 +47,25 @@
                             <font-awesome-icon icon="fa fa-ellipsis-h" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="edit('appearance')">
-                            {{ $tc('titles.comment') }} &amp;
-                            {{ $tc('titles.color').toLowerCase() }}
+                            {{$tc('titles.comment')}} &amp;
+                            {{$tc('titles.color').toLowerCase()}}
                         </b-dropdown-item>
                         <b-dropdown-item href="#" @click.prevent="$emit('duplicate', step)">
-                            {{ $tc('actions.duplicate') }}
-                            {{ $tc('dataExplorer.step').toLowerCase() }}
+                            {{$tc('actions.duplicate')}}
+                            {{$tc('dataExplorer.step').toLowerCase()}}
                         </b-dropdown-item>
                     </b-dropdown>
                 </b-button-group>
-                <div v-else class="border-top" style="width: 100%; padding: 2px; zoom:90%">
+                <div v-else ref="form" class="border-top" style="width: 100%; padding: 2px; zoom:90%">
                     <div class="mb-3">
-                        <template v-for="form in step.operation.forms" v-if="form.category === displayFormCategory">
-                            <div v-for="field in form.fields" v-if="field.editable" :key="`${step.id}:${field.name}`"
-                                class="mb-2 step-properties">
-                                <component :is="getWidget(field)" v-if="field.enabled !== false" :field="field"
-                                    :value="getValue(field.name)" :language="language" :type="field.suggested_widget"
-                                    :read-only="!field.editable" context="context" :suggestion-event="suggestionEvent"
-                                    @update="updateField" />
+                        <template v-for="form in currentForm">
+                            <div v-for="field in form.fields" :key="`${step.id}:${field.name}`"
+                                 class="mb-2 step-properties">
+                                <component :is="getWidget(field)" 
+                                           v-if="field.editable && field.enabled !== false" :field="field"
+                                           :value="getValue(field.name)" :language="language" :type="field.suggested_widget"
+                                           :read-only="!field.editable" context="context" :suggestion-event="suggestionEvent"
+                                           @update="updateField" />
                             </div>
                         </template>
                     </div>
@@ -88,53 +88,51 @@ import Pulse from '../../components/Pulse.vue';
 import Vue from 'vue';
 export default {
     name: 'StepComponent',
-    emits: ['previewUntilHere', 'delete', 'toggle', 'duplicate', 'update'],
     components: { Pulse, },
     props: {
         attributes: { type: Array, required: true },
-        inputAttributes: { type: String, default: 'single' },
-        inputAlias: { type: Boolean, default: true },
         index: { type: Number, required: true },
         language: { type: String, required: true },
         locked: { type: Boolean, default: false },
-        serviceBus: { type: Object, default: () => null },
-        showKeepAttribute: { type: Boolean, default: true },
         step: { type: Object, required: true },
         suggestionEvent: { type: Function, default: () => null },
     },
+    emits: ['previewUntilHere', 'delete', 'toggle', 'duplicate', 'update', 'cancel', 'editing', 'select', ],
     data() {
         return {
             displayFormCategory: 'execution', //what kind of form to display and edit
             functionName: '',
-            keepAttribute: true,
-            editableStep: null,
-        }
+            editableStep: {},
+        };
     },
     computed: {
         hasProblems() {
             const self = this;
             const executionForm = this.step.operation.forms.find(f => f.category === 'execution');
             return executionForm && executionForm.fields.find(field => {
-                return (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value))
+                return (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value));
             }) !== undefined;
         },
         // attributes that may be selected based on their type
-        validAttributes() {
-            switch (this.functionName) {
-                case 'round':
-                    return this.attributes.filter(attr => attr.type === 'Decimal');
-                default:
-                    return this.attributes;
-            }
-        },
+        // validAttributes() {
+        //     switch (this.functionName) {
+        //     case 'round':
+        //         return this.attributes.filter(attr => attr.type === 'Decimal');
+        //     default:
+        //         return this.attributes;
+        //     }
+        // },
         suggestedAttributes() {
             return this.attributes.map(a => a.key);
         },
+        currentForm(){
+            return this.step.operation.forms.filter(
+                f => f.category === this.displayFormCategory);
+        }
     },
     mounted() {
         this.functionName = this.step.functionName;
-        this.editableStep = JSON.parse(JSON.stringify(this.step));
-        //const op = this.step.operation;
+        this.editableStep = structuredClone(this.step);
         this.enableDisableFields();
     },
     methods: {
@@ -143,7 +141,7 @@ export default {
         },
         updateField(field, value) {
             this.editableStep.forms[field.name] = { value };
-            this.enableDisableFields()
+            this.enableDisableFields();
         },
         enableDisableFields() {
             /* Enable/disable fields according to the new value*/
@@ -197,21 +195,26 @@ export default {
                 return field.suggested_widget + '-component';
             }
         },
+        select(ev){
+            this.$emit('select', this.step, ev.target.checked);
+        },
         cancelEdit() {
-            this.step.editing = false;
-            this.editableStep = JSON.parse(JSON.stringify(this.step));
+            this.editableStep.editing = false;
+            this.editableStep = structuredClone(this.step);
+            this.$emit('cancel', this.step);
         },
         edit(category) {
             this.enableDisableFields();
             this.displayFormCategory = category;
-            this.step.editing = true;
-            /*
-                Vue.nextTick(() => {
-                    try {
-                        //self.$refs.step.scrollIntoView();
-                    } catch (ignore) { }
-                });
-                */
+            this.editableStep.editing = true;
+            this.$emit('editing', this.step);
+            Vue.nextTick(() => {
+                const elem = this.$refs.form.querySelector('input, select');
+                elem && elem.focus();
+                // try {
+                //     self.$refs.step.scrollIntoView();
+                // } catch (ignore) { }
+            });
         },
         save() {
             //Cloned object doesn't carry function
@@ -222,24 +225,23 @@ export default {
                 if (this.step?.forms?.callbacks?.out) {
                     this.step?.forms?.callbacks?.out(this.step, this.step.editableStep.forms['$meta']?.value);
                 }*/
-            this.step.editing = false;
+            this.editableStep.editing = false;
             this.$emit('update', this.editableStep);
         },
         getStepClass(step) {
             if (step === undefined) { return ''; }
-            else if (step.status === 'ERROR') { return 'fa text-danger fa-times-circle' }
-            else if (step.status === 'COMPLETED') { return 'fa text-success fa-check-circle' }
-            else if (step.status === 'CANCELED') { return 'fa text-secondary fa-hand-paper' }
+            else if (step.status === 'ERROR') { return 'fa text-danger fa-times-circle'; }
+            else if (step.status === 'COMPLETED') { return 'fa text-success fa-check-circle'; }
+            else if (step.status === 'CANCELED') { return 'fa text-secondary fa-hand-paper'; }
         }
     },
-}
+};
 </script>
 <style scoped>
 .step {
     font-size: 10pt;
     padding: 2px 0;
     position: relative;
-    xwidth: 3px;
 }
 
 .step-description * {

@@ -1,5 +1,10 @@
 // Place your settings in this file to overwrite the default settings
 {
+    // https://stackoverflow.com/a/55527190/1646932
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/node_modules/**": true
+    } ,
     //"editor.renderWhitespace": "all",
     "editor.selectionClipboard": true,
     "editor.detectIndentation": false,

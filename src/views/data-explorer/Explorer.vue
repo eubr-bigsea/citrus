@@ -106,6 +106,7 @@
                                           @delete="handleDeleteTask(task)"
                                           @update="updateStep"
                                           @previewUntilHere="previewUntilHere(task)"
+                                          @cancel="task.editing = false"
                                           @duplicate="duplicate" />
                                 </div>
                             </draggable>
