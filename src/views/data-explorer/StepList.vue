@@ -1,30 +1,16 @@
 <template>
-    <div ref="stepsArea"
-         class="step-scroll-area scroll-area"
-         style="overflow-y: scroll;">
-        <draggable class="list-group"
-                   ghost-class="ghost"
-                   handle=".step-drag-handle"
-                   :list="workflow.tasks"
-                   :move="handleStepDrag"
-                   @start="drag=true"
-                   @end="endSortSteps">
-            <div v-for="(task, inx) in workflow.tasks"
-                 :key="task.id"
-                 xv-if="task.operation.slug !== 'read-data'"
-                 class="list-group-item steps clearfix p-0"
-                 :title="task.name"
-                 :style="{'border-left': '4px solid ' + task.backgroundColor}">
-                <Step ref="steps"
-                      :step="task"
-                      :language="language"
-                      :attributes="attributes"
-                      :index="inx"
-                      :protected="inx <=1 "
-                      :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null"
-                      :suggestion-event="() => getSuggestions(task.id)"
-                      v-bind="$attrs" />
+    <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
+        <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflow.tasks"
+            :move="handleStepDrag" @start="drag = true" @end="endSortSteps">
+            <div v-for="(task, inx) in workflow.tasks" :key="task.id" xv-if="task.operation.slug !== 'read-data'"
+                class="list-group-item steps clearfix p-0" :title="task.name !== 'unnamed' ? task.name : ''"
+                :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
+                <Step ref="steps" :step="task" :language="language" :attributes="attributes" :index="inx"
+                    :protected="inx <= 1" :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null"
+                    :suggestion-event="() => getSuggestions(task.id)" 
+                    v-on="$listeners" />
             </div>
+            
         </draggable>
     </div>
 </template>
@@ -49,14 +35,15 @@ export default {
     computed: {
     },
     async mounted() {
- 
+
     },
     beforeUnmount() {
     },
     methods: {
         endSortSteps({ originalEvent }) { // eslint-disable-line no-unused-vars
             let elem = null;
-            this.workflowObj.tasks.forEach((task, i) => {
+            console.debug(this.workflow)
+            this.workflow.tasks.forEach((task, i) => {
                 task.display_order = i;
                 if (task.previewable) {
                     elem = task;
@@ -64,8 +51,8 @@ export default {
                 }
             });
             this.isDirty = true;
-            this.previewUntilHere(elem);
-            this.loadData();
+            // this.previewUntilHere(elem);
+            // this.loadData();
         },
         handleStepDrag(e) {
             // Disable some steps to be dragged
@@ -96,7 +83,7 @@ export default {
                 }
             );
         },
-     
+
         /* Trigged by the step action */
         duplicate(step) {
             // Clone tasks instance
@@ -144,7 +131,15 @@ export default {
             this.valuesClusters = [];
         },
 
-      
+
     }
 };
 </script>
+<style scoped>
+.step-scroll-area {
+    max-width: 300px;
+    max-height: 80vh;
+    padding-bottom: 10px;
+    background: #fbfbfb;
+}
+</style>

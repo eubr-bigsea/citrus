@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;" class="step" :class="{ 'soft-disabled': !step.previewable, 'hard-disabled': !step.enabled }">
-        <div style="width:2px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1" />
+        <!-- <div style="width:4px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1" /> -->
 
         <div class="float-left text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
@@ -246,8 +246,8 @@ export default {
 
 .step-description * {
     color: #222;
-    font-size: 9.5pt;
-    font-weight: bold;
+    font-size: 9pt;
+    font-weight: normal;
 }
 
 .step-comment {

@@ -1184,12 +1184,7 @@ export default {
         flex: 0 0 305px;
     }
 
-    .step-scroll-area {
-        width: 300px;
-        height: 60vh;
-        padding-bottom: 100px;
-    }
-
+ 
     .table-stats {
         font-size: 9pt;
     }

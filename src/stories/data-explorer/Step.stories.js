@@ -1,11 +1,5 @@
 import Step from '../../views/data-explorer/Step.vue';
 import { Task } from '../../views/data-explorer/entities.js';
-import TextComponent from '../../components/widgets/Text.vue';
-import ColorComponent from '../../components/widgets/Color.vue';
-import Vue from 'vue';
-
-Vue.component("TextComponent", TextComponent);
-Vue.component("ColorComponent", ColorComponent);
 export default {
     title: 'DataExplorer/Step'
 };

@@ -14,21 +14,28 @@ const Template = (args, { argTypes }) => ({
             task.enabled = !task.enabled;
         },
         preview(task) {
-            task.previewable = !task.previewable;
+            this.workflow.tasks.forEach(t => {
+                t.previewable = t.display_order <= task.display_order; 
+            });
         },
         duplicate(task) {
             console.debug('Duplicating', task);
         },
         deleteAction(task) {
             console.debug('Deleting', task);
+            this.workflow.deleteTask(task);
         },
         update(task) {
-            this.step.forms = { ...task.forms };
+            const wfTask = this.workflow.tasks.find(t => t.id === task.id);
+            wfTask.forms = { ...task.forms };
             console.debug('Updating', task);
         },
         select(task, value) {
             this.step.selected = value;
             console.debug('Selecting', task, value);
+        },
+        cancel(task){
+            console.debug('Canceling edition', task)
         }
     },
     data() {
@@ -41,29 +48,22 @@ const Template = (args, { argTypes }) => ({
                 @previewUntilHere="preview"
                 @delete="deleteAction"
                 @update="update"
-                @cancel="step.editing = false"
+                @cancel="cancel"
                 @select="select"
                 @duplicate="duplicate"/>
                </div>`
 });
 
-const task1 = new Task({
+const task = new Task({
+    id: 1,
     index: 1,
-    operation: {
-        name: 'Read data',
-        label_format: 'Read data from local',
-        forms: [
-            { 'category': 'execution', fields: [] }
-        ]
-    }
-});
-const task2 = new Task({
-    index: 2,
+    display_order: 1,
     forms: {
-        comment: { value: 'Please, review this task' },
+        regex: { value: '\\d+' },
+        replacement: { value: '?' }
     },
     operation: {
-        name: 'Convert to numbers',
+        label_format: 'Replace regex (${this.regex.value}) by "${this.replacement.value}"',
         forms: [
             {
                 'category': 'appearance', fields: [
@@ -76,19 +76,7 @@ const task2 = new Task({
                         editable: true, label: 'Color'
                     }
                 ]
-            }
-        ]
-    }
-});
-const task3 = new Task({
-    index: 3,
-    forms: {
-        regex: { value: '\\d+' },
-        replacement: { value: '?' }
-    },
-    operation: {
-        label_format: 'Replace regex (${this.regex.value}) by "${this.replacement.value}"',
-        forms: [
+            },
             {
                 'category': 'execution', fields: [
                     {
@@ -98,13 +86,33 @@ const task3 = new Task({
                     {
                         name: 'replacement', suggested_widget: 'text',
                         editable: true, label: 'Replacement'
+                    },
+                    {
+                        name: 'global', suggested_widget: 'checkbox',
+                        editable: true, label: 'Global'
+                    },
+                    {
+                        name: 'maxOccur', suggested_widget: 'integer',
+                        editable: true, label: 'Max occurrencies',
+                        required: true,
                     }
                 ]
             }
         ]
     }
 });
-const tasks = [task1, task2, task3];
+const replacements = ['\\d+', '\\w+', '\\s+', '[abc]', '^test'];
+const tasks = [];
+for (let i = 0; i < 10; i++){
+    const t = structuredClone(task)
+    tasks.push(t);
+    t.id = '' + i;
+    t.index = i;
+    t.display_order = i;
+    t.forms.regex.value = replacements[i % replacements.length];
+    
+}
+tasks.forEach((t, i) => t.id = i);
 const platform = {id: 1, name: 'Spark', slug: 'spark'};
 const workflow = new Workflow({ id: 1, name: 'Test', tasks, platform });
 export const BasicList = Template.bind({});

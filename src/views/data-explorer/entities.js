@@ -317,7 +317,7 @@ class Task {
         this.forms = {};
 
         //Initialize form fields
-        if (operation.form) {
+        if (operation?.forms) {
             operation.forms.filter(f => f.category === 'execution')
                 .forEach(f => f.fields.forEach(field => this.forms[field.name] = { value: field.default_value }));
         }

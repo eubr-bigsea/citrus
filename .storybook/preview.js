@@ -12,6 +12,16 @@ import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome
 import Snotify from 'vue-snotify';
 import vSelect from 'vue-select'
 
+import TextComponent from '../src/components/widgets/Text.vue';
+import ColorComponent from '../src/components/widgets/Color.vue';
+import CheckboxComponent from '../src/components/widgets/Checkbox.vue';
+import IntegerComponent from '../src/components/widgets/Integer.vue';
+
+Vue.component("TextComponent", TextComponent);
+Vue.component("ColorComponent", ColorComponent);
+Vue.component("CheckboxComponent", CheckboxComponent);
+Vue.component("IntegerComponent", IntegerComponent);
+
 
 Vue.use(VueI18n)
 Vue.use(VueTheMask);
