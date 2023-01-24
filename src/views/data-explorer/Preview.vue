@@ -41,6 +41,8 @@
                                     <!--<select>
                         <option v-for="dt in dataTypes" :value="dt" :key="dt">{{dt}}</option>
                     </select>-->
+                                    {{scope.field.generic_type}}
+                                    <br/> 
                                     {{scope.field.type}} <span v-if="scope.field.truncated">(trunc.)</span>
                                 </div>
                                 <!--
@@ -450,7 +452,11 @@ export default {
     }
 
     .table-preview>>>table {
-        width: unset !important;
+        /* min-width: 100% !important;
+        width: 1500px; */
+    }
+    .table-preview>>>td {
+        white-space: nowrap;
     }
 
     .table-preview {

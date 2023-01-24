@@ -1,17 +1,40 @@
+<!-- eslint-disable vue/no-deprecated-dollar-listeners-api -->
 <template>
-    <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
-        <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflow.tasks"
-            :move="handleStepDrag" @start="drag = true" @end="endSortSteps">
-            <div v-for="(task, inx) in workflow.tasks" :key="task.id" xv-if="task.operation.slug !== 'read-data'"
-                class="list-group-item steps clearfix p-0" :title="task.name !== 'unnamed' ? task.name : ''"
-                :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
-                <Step ref="steps" :step="task" :language="language" :attributes="attributes" :index="inx"
-                    :protected="inx <= 1" :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null"
-                    :suggestion-event="() => getSuggestions(task.id)" 
-                    v-on="$listeners" />
-            </div>
-            
-        </draggable>
+    <div>
+        <b-dropdown class="more-actions mr-1 mt-1 border rounded"
+                    size="sm" variant="btn" split>
+            <template #button-content>
+                <input type="checkbox"
+                       @change="handleSelectAll($event)">
+            </template>
+            <b-dropdown-item @click="handleToggleSelected(true)">
+                {{$t('dataExplorer.enableSelected')}}
+            </b-dropdown-item>
+            <b-dropdown-item @click="handleToggleSelected(false)">
+                {{$t('dataExplorer.disableSelected')}}
+            </b-dropdown-item>
+            <b-dropdown-item @click="handleRemoveSelected">
+                {{$t('dataExplorer.removeSelected')}}
+            </b-dropdown-item>
+        </b-dropdown>
+        <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
+            <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflow.tasks"
+                       :move="handleStepDrag" @start="drag = true" @end="endSortSteps">
+                <div v-for="(task, inx) in workflow.tasks" :key="task.id" xv-if="task.operation.slug !== 'read-data'"
+                     class="list-group-item steps clearfix p-0" :title="task.name !== 'unnamed' ? task.name : ''"
+                     :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
+                    <Step ref="steps" :step="task" :language="language"
+                          :attributes="attributes"
+                          :index="inx" :protected="inx <= 1"
+                          :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null" 
+                          :suggestion-event="() => getSuggestions(task.id)" 
+                          @edit="editStep(task)"
+                          @cancel="cancelEdit(task)"
+                          @preview="preview(task)"
+                          v-on="$listeners" />
+                </div>
+            </draggable>
+        </div>
     </div>
 </template>
 <script>
@@ -28,8 +51,10 @@ export default {
         language: { type: String, required: true },
         suggestionEvent: { type: Function, default: () => null },
     },
+    emits: ['changed', 'delete-many'],
     data() {
         return {
+            lastPreviewableStep: null,
         };
     },
     computed: {
@@ -42,7 +67,7 @@ export default {
     methods: {
         endSortSteps({ originalEvent }) { // eslint-disable-line no-unused-vars
             let elem = null;
-            console.debug(this.workflow)
+            console.debug(this.workflow);
             this.workflow.tasks.forEach((task, i) => {
                 task.display_order = i;
                 if (task.previewable) {
@@ -59,29 +84,23 @@ export default {
             return (e?.relatedContext?.element?.display_order > 1);
         },
         /* Step group actions */
-        handleSelectAll(ev) {
-            this.workflow.tasks.forEach((task) => {
-                task.selected = (task.display_order > 1) && ev.target.checked;
-            });
+        handleSelectAll(checked) {
+            this.$refs.steps.forEach(s => s.select(checked));
         },
         handleToggleSelected(value) {
-            this.workflow.tasks.forEach((task) => {
-                task.enabled = (task.selected && value) || (task.display_order <= 1);
-                this.isDirty = true;
+            let changed = false;
+            this.$refs.steps.forEach(s =>  {
+                if (s.editableStep.selected) {
+                    s.setEnabled(value);
+                    changed = true;
+                }
             });
+            changed && this.$emit('changed');
         },
         handleRemoveSelected() {
-            this.confirm(
-                this.$t('actions.delete'), this.$t('dataExplorer.doYouWantToDeleteStep'),
-                () => {
-                    this.workflow.tasks.forEach((task) => {
-                        if (task.display_order > 1 && task.selected) {
-                            this.workflow.deleteTask(task);
-                            this.isDirty = true;
-                        }
-                    });
-                }
-            );
+            this.$emit('delete-many', this.$refs.steps
+                .filter(s => s.editableStep.selected)
+                .map(s => s.editableStep));
         },
 
         /* Trigged by the step action */
@@ -100,19 +119,7 @@ export default {
             el.scrollTo({ top: el.scrollHeight + 200, behavior: 'smooth' });
             //const self = this; //this.$refs.steps
         },
-        previewUntilHere(step) {
-            this.workflow.tasks.forEach((task) => {
-                const previewable = (task.display_order <= step.display_order);
-                task.previewable = previewable;
-                if (task.forms?.$meta?.value) {
-                    task.forms.$meta.value.previewable = previewable;
-                } else {
-                    task.forms.$meta = { value: { previewable } };
-                }
-            });
-            this.isDirty = true;
-            this.loadData();
-        },
+        
         updateStep(step) {
             const task = this.workflow.tasks.find(t => t.id === step.id);
             if (task) {
@@ -130,7 +137,19 @@ export default {
             this.selected = attr;
             this.valuesClusters = [];
         },
-
+        editStep(step){
+            this.$refs.steps.forEach(s => s.setEditable(s.step.id === step.id));
+        },
+        cancelEdit(step){
+            this.$refs.steps.forEach(s => s.setEditable(true));
+        },
+        preview(step){
+            const toggle = this.lastPreviewableStep === step;
+            this.workflow.tasks.forEach(t => {
+                t.previewable = toggle || t.display_order <= step.display_order; 
+            });
+            this.lastPreviewableStep = toggle ? null : step;
+        }
 
     }
 };

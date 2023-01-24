@@ -313,6 +313,7 @@ class Task {
         this.top = top;
         this.error = null;
         this.editing = false;
+        this.editable = true;
         //this.operation = null;
         this.forms = {};
 

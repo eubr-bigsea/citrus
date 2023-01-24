@@ -1,18 +1,21 @@
 <template>
-    <div style="display: flex;" class="step" :class="{ 'soft-disabled': !step.previewable, 'hard-disabled': !step.enabled }">
+    <div style="display: flex;" class="step" 
+         :class="{ 'soft-disabled': !step.previewable, 'hard-disabled': !editableStep.enabled, 
+                   'editing-step': editableStep.editing }">
         <!-- <div style="width:4px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1" /> -->
 
         <div class="float-left text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
-        <div v-if="hasProblems" class="pulse-item">
-            <Pulse title="Existem problemas na configuração. Edite para corrigir." />
+        <div v-if="hasProblems" class="pulse-item text-warning">
+            <font-awesome-icon icon="fa fa-exclamation-circle" title="Existem problemas na configuração. Edite para corrigir." />
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
-                <input v-if="!locked" type="checkbox" @click="select">&nbsp;
+                <input v-if="!locked" v-model="editableStep.selected" 
+                       type="checkbox">&nbsp;
                 <span class="step-number">#{{index + 1}}</span> -
-                <del v-if="!step.enabled">
+                <del v-if="!editableStep.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
                 <span v-else v-html="step.getLabel()" />
@@ -23,12 +26,12 @@
 
                 <small v-if="step?.forms?.comment?.value" class="step-comment">{{step?.forms?.comment?.value}}</small>
                 <b-button-group v-if="!editableStep.editing" class="zoom-buttom float-right">
-                    <b-button v-if="step.previewable" variant="light" size="sm" class="text-primary"
+                    <b-button v-if="editableStep.editable" variant="light" size="sm" class="text-primary"
                               :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
                     </b-button>
                     <b-button variant="light" size="sm" class="text-secondary" :title="$t('common.previewUntilHere')"
-                              @click="$emit('previewUntilHere', step)">
+                              @click="$emit('preview', step)">
                         <span class="fa" :class="{ 'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable }" />
                     </b-button>
 
@@ -97,7 +100,7 @@ export default {
         step: { type: Object, required: true },
         suggestionEvent: { type: Function, default: () => null },
     },
-    emits: ['previewUntilHere', 'delete', 'toggle', 'duplicate', 'update', 'cancel', 'editing', 'select', ],
+    emits: ['preview', 'delete', 'toggle', 'duplicate', 'update', 'cancel', 'select', 'edit', ],
     data() {
         return {
             displayFormCategory: 'execution', //what kind of form to display and edit
@@ -138,6 +141,16 @@ export default {
     methods: {
         _evalInContext(js, context) {
             return new Function(`return ${js};`).call(context);
+        },
+        setEditable(value){
+            this.editableStep.editable = value;
+        },
+        setEnabled(value){
+            this.editableStep.enabled = value;
+        },
+        select(ev){
+            this.$emit('select', this.step, ev.target.checked);
+            this.editableStep.selected = ev.target.checked;
         },
         updateField(field, value) {
             this.editableStep.forms[field.name] = { value };
@@ -195,9 +208,6 @@ export default {
                 return field.suggested_widget + '-component';
             }
         },
-        select(ev){
-            this.$emit('select', this.step, ev.target.checked);
-        },
         cancelEdit() {
             this.editableStep.editing = false;
             this.editableStep = structuredClone(this.step);
@@ -207,7 +217,7 @@ export default {
             this.enableDisableFields();
             this.displayFormCategory = category;
             this.editableStep.editing = true;
-            this.$emit('editing', this.step);
+            this.$emit('edit', this.step);
             Vue.nextTick(() => {
                 const elem = this.$refs.form.querySelector('input, select');
                 elem && elem.focus();
@@ -313,5 +323,8 @@ export default {
     position: absolute;
     left: 5px;
     bottom: 10px;
+}
+.editing-step {
+    background-color: #f0f0f0;
 }
 </style>

@@ -195,7 +195,6 @@
 import Vue from 'vue';
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
-import View from '../../mixins/View.vue';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 

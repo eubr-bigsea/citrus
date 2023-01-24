@@ -28,7 +28,7 @@
                     </template>
 
                     <template v-for="op in menu.operations">
-                        <div v-if="op.css_class === 'separator' || op.css_class === '' || (selected.field.type && op.css_class.toLowerCase().includes(selected.field.type.toLowerCase()))"
+                        <div v-if="op.css_class === 'separator' || op.css_class === '' || (selected.field.generic_type && op.css_class.toLowerCase().includes(selected.field.generic_type.toLowerCase()))"
                              :key="op.name">
                             <b-dropdown-item @click="trigger('menu', op)">
                                 <span :class="op.icon" /> {{op.name}}

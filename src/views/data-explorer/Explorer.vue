@@ -4,45 +4,34 @@
         <div class="row">
             <div class="col-3 noselect step-list p-1">
                 <div class="p-2">
-                    <h6>{{$t('dataExplorer.title')}}</h6>
+                    <h6>{{ $t('dataExplorer.title') }}</h6>
                     <div>
-                        <small>{{$tc('common.name')}}</small>
-                        <input v-model="workflowObj.name"
-                               type="text"
-                               class="form-control form-control-sm"
-                               maxlength="50">
+                        <small>{{ $tc('common.name') }}</small>
+                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
+                            maxlength="50">
                     </div>
                     <div class="mb-">
-                        <small>{{$tc('titles.cluster')}}</small>
-                        <v-select v-model="clusterId"
-                                  :options="clusters"
-                                  label="name"
-                                  :reduce="(opt) => opt.id"
-                                  :taggable="false"
-                                  :close-on-select="true"
-                                  :filterable="false">
+                        <small>{{ $tc('titles.cluster') }}</small>
+                        <v-select v-model="clusterId" :options="clusters" label="name" :reduce="(opt) => opt.id"
+                            :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{name}}<br>
-                                <small><em>{{description}}</em></small>
+                                {{ name }}<br>
+                                <small><em>{{ description }}</em></small>
                             </template>
                         </v-select>
                     </div>
-                    <b-dropdown class="more-actions mr-1 mt-1 border rounded"
-                                size="sm"
-                                variant="btn"
-                                split>
+                    <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split>
                         <template #button-content>
-                            <input type="checkbox"
-                                   @change="handleSelectAll($event)">
+                            <input type="checkbox" @change="handleSelectAll($event)">
                         </template>
                         <b-dropdown-item @click="handleToggleSelected(true)">
-                            {{$t('dataExplorer.enableSelected')}}
+                            {{ $t('dataExplorer.enableSelected') }}
                         </b-dropdown-item>
                         <b-dropdown-item @click="handleToggleSelected(false)">
-                            {{$t('dataExplorer.disableSelected')}}
+                            {{ $t('dataExplorer.disableSelected') }}
                         </b-dropdown-item>
                         <b-dropdown-item @click="handleRemoveSelected">
-                            {{$t('dataExplorer.removeSelected')}}
+                            {{ $t('dataExplorer.removeSelected') }}
                         </b-dropdown-item>
                     </b-dropdown>
                     <!-- FIXME
@@ -56,184 +45,129 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button :disabled="loadingData"
-                              variant="primary"
-                              size="sm"
-                              class="float-right mt-2"
-                              @click="saveWorkflow">
-                        <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
+                    <b-button :disabled="loadingData" variant="primary" size="sm" class="float-right mt-2"
+                        @click="saveWorkflow">
+                        <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
-                    <b-button :disabled="pendingSteps || loadingData"
-                              size="sm"
-                              variant="outline-secondary"
-                              class="float-right mt-2 mr-1"
-                              @click="loadData">
-                        <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
+                    <b-button :disabled="pendingSteps || loadingData" size="sm" variant="outline-secondary"
+                        class="float-right mt-2 mr-1" @click="loadData">
+                        <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
                     <!--
                     <b-button @click="loadingData = !loadingData" class="btn btn-sm">OK</b-button>
                 -->
                 </div>
                 <!-- Steps -->
-                <div v-if="workflowObj"
-                     class="clearfix mt-2">
+                <div v-if="workflowObj" class="clearfix mt-2">
                     <div id="step-container">
-                        <div ref="stepsArea"
-                             class="step-scroll-area scroll-area"
-                             style="overflow-y: scroll;">
-                            <draggable class="list-group"
-                                       ghost-class="ghost"
-                                       handle=".step-drag-handle"
-                                       :list="workflowObj.tasks"
-                                       :move="handleStepDrag"
-                                       @start="drag=true"
-                                       @end="endSortSteps">
-                                <div v-for="(task, inx) in workflowObj.tasks"
-                                     :key="task.id"
-                                     xv-if="task.operation.slug !== 'read-data'"
-                                     class="list-group-item steps clearfix p-0"
-                                     :title="task.name"
-                                     :style="{'border-left': '4px solid ' + task.backgroundColor}">
-                                    <Step ref="steps"
-                                          :step="task"
-                                          :language="language"
-                                          :attributes="tableData.attributes"
-                                          :index="inx"
-                                          :protected="inx <=1 "
-                                          :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
-                                          :suggestion-event="() => getSuggestions(task.id)"
-                                          @toggle="handleToggleStep(task)"
-                                          @delete="handleDeleteTask(task)"
-                                          @update="updateStep"
-                                          @previewUntilHere="previewUntilHere(task)"
-                                          @cancel="task.editing = false"
-                                          @duplicate="duplicate" />
+                        <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
+                            <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle"
+                                :list="workflowObj.tasks" :move="handleStepDrag" @start="drag = true"
+                                @end="endSortSteps">
+                                <div v-for="(task, inx) in workflowObj.tasks" :key="task.id"
+                                    xv-if="task.operation.slug !== 'read-data'"
+                                    class="list-group-item steps clearfix p-0" :title="task.name"
+                                    :style="{ 'border-left': '4px solid ' + task.backgroundColor }">
+                                    <Step ref="steps" :step="task" :language="language"
+                                        :attributes="tableData.attributes" :index="inx" :protected="inx <= 1"
+                                        :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
+                                        :suggestion-event="() => getSuggestions(task.id)"
+                                        @toggle="handleToggleStep(task)" @delete="handleDeleteTask(task)"
+                                        @update="updateStep" @preview="previewUntilHere(task)"
+                                        @cancel="task.editing = false" @duplicate="duplicate" />
                                 </div>
                             </draggable>
                         </div>
                     </div>
                     <div class="text-secondary">
-                        <small>{{jobStatus}} (p. {{page}})</small>
+                        <small>{{ jobStatus }} (p. {{ page }})</small>
                         <br>
-                        <small v-if="loadedDataSize > 1"
-                               class="text-info">
-                            {{$tc('common.pagerShowing', 0, {from: 1,
-                                                             to: Math.min(pageSize * page, tableData.total), count: tableData.total
-                            })}}.</small>
+                        <!--
+
+                            <small v-if="loadedDataSize > 1"
+                                class="text-info">
+                                {{$tc('common.pagerShowing', 0, {from: 1,
+                                    to: Math.min(pageSize * page, tableData.total), count: tableData.total
+                                })}}.</small>
+                            -->
                     </div>
                 </div>
             </div>
             <!-- Preview area -->
             <div class="col-9 border-left fill-height mt-3">
-                <PreviewMenu :selected="selected"
-                             :menus="menus"
-                             @select="performAction"
-                             @analyse="handleAnalyse" />
-                <Preview ref="preview"
-                         :attributes="tableData.attributes"
-                         :items="rows"
-                         :missing="tableData.missing"
-                         :invalid="tableData.invalid"
-                         :loading="loadingData"
-                         :total="tableData.total"
-                         @select="select"
-                         @drop="performAction"
-                         @context-menu="handleContextMenu"
-                         @scroll="handleScroll" />
+                <PreviewMenu :selected="selected" :menus="menus" @select="performAction" @analyse="handleAnalyse" />
+                <Preview ref="preview" :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
+                    :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total" @select="select"
+                    @drop="performAction" @context-menu="handleContextMenu" @scroll="handleScroll" />
             </div>
 
-            <ModalExport v-if="!loadingData"
-                         ref="modalExport"
-                         :name="workflowObj.name"
-                         @ok="handleExport" />
+            <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal"
-                     button-size="sm"
-                     size="xl"
-                     :ok-only="true"
-                     :title="stats && stats.attribute">
+            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true" :title="stats && stats.attribute">
                 <table v-if="stats && stats.attribute === null"
-                       class="table table-bordered table-stats table-striped table-sm">
+                    class="table table-bordered table-stats table-striped table-sm">
                     <thead>
-                        <tr v-if="stats.message && stats.message.index"
-                            class="text-center">
+                        <tr v-if="stats.message && stats.message.index" class="text-center">
                             <th />
-                            <th v-for="k in stats.message.columns"
-                                :key="k">
-                                {{k}}
+                            <th v-for="k in stats.message.columns" :key="k">
+                                {{ k }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(attr, inx) in stats.message.index"
-                            :key="attr">
+                        <tr v-for="(attr, inx) in stats.message.index" :key="attr">
                             <th class="text-center">
-                                {{attr}}
+                                {{ attr }}
                             </th>
-                            <td v-for="data in stats.message.data[inx]"
-                                :key="data">
-                                {{data === null ? '-': data}}
+                            <td v-for="data in stats.message.data[inx]" :key="data">
+                                {{ data === null ? '-' : data}}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div v-else>
                     <b-tabs>
-                        <b-tab title="Análise"
-                               :title-link-class="'small-nav-link'">
-                            <div v-if="stats && stats.message"
-                                 class="row">
-                                <div v-if="stats && stats.message.histogram"
-                                     class="col-10">
-                                    <Plotly v-if="stats"
-                                            ref="plotly2"
-                                            :auto-resize="true"
-                                            :layout="{height: 120, hoverlabel: {font: {size: 9}}, autosize: true, margin: {l: 0,r: 50, b: 30, t: 10, pad: 0} }"
-                                            :data="[{opacity: 0.6, marker: {color: 'rgb(49,130,189)'}, 'orientation': 'h', 'type': 'box', 'lowerfence': [stats.message.fence_low], 'mean': [stats.message.stats.mean], 'median': [stats.message.stats.median], 'q1': [stats.message.stats['25%']], 'q3': [stats.message.stats['75%']], 'sd': [stats.message.stats.std], 'upperfence': [stats.message.fence_high]}]"
-                                            :height="200"
-                                            :options="{displayModeBar: false}" />
-                                    <Plotly v-if="stats"
-                                            ref="plotly"
-                                            :auto-resize="true"
-                                            :layout="{height: 140, autosize: true, margin: {l: 50,r: 50, b: 30, t: 10, pad: 4} }"
-                                            :data="getStatData()"
-                                            :height="200"
-                                            :options="{displayModeBar: false}" />
+                        <b-tab title="Análise" :title-link-class="'small-nav-link'">
+                            <div v-if="stats && stats.message" class="row">
+                                <div v-if="stats && stats.message.histogram" class="col-10">
+                                    <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
+                                        :layout="{ height: 120, hoverlabel: { font: { size: 9 } }, autosize: true, margin: { l: 0, r: 50, b: 30, t: 10, pad: 0 } }"
+                                        :data="[{ opacity: 0.6, marker: { color: 'rgb(49,130,189)' }, 'orientation': 'h', 'type': 'box', 'lowerfence': [stats.message.fence_low], 'mean': [stats.message.stats.mean], 'median': [stats.message.stats.median], 'q1': [stats.message.stats['25%']], 'q3': [stats.message.stats['75%']], 'sd': [stats.message.stats.std], 'upperfence': [stats.message.fence_high] }]"
+                                        :height="200" :options="{ displayModeBar: false }" />
+                                    <Plotly v-if="stats" ref="plotly" :auto-resize="true"
+                                        :layout="{ height: 140, autosize: true, margin: { l: 50, r: 50, b: 30, t: 10, pad: 4 } }"
+                                        :data="getStatData()" :height="200" :options="{ displayModeBar: false }" />
                                 </div>
                                 <div class="col-4">
                                     <strong>Estatísticas (exclui nulos)</strong>
                                     <table class="table table-sm table-stats">
-                                        <tr v-for="value, stat in stats.message.stats"
-                                            :key="stat">
-                                            <th>{{stat}}</th>
-                                            <td>{{value}}</td>
+                                        <tr v-for="value, stat in stats.message.stats" :key="stat">
+                                            <th>{{ stat }}</th>
+                                            <td>{{ value }}</td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div :class="{'col-4': stats.message.outliers, 'col-8': !stats.message.outliers}">
+                                <div :class="{ 'col-4': stats.message.outliers, 'col-8': !stats.message.outliers }">
                                     <strong>Top valores *</strong>
                                     <table class="table table-sm table-stats">
-                                        <tr v-for="t in stats.message.top20.slice(0, 10)"
-                                            :key="t">
+                                        <tr v-for="t in stats.message.top20.slice(0, 10)" :key="t">
                                             <th class="col-8">
-                                                {{t[0]}}
+                                                {{ t[0]}}
                                                 <div class="top-bar"
-                                                     :style="{width: (100*t[1]/stats.message.stats.rows) + '%'}" />
+                                                    :style="{ width: (100 * t[1] / stats.message.stats.rows) + '%' }" />
                                             </th>
                                             <td class="col-4 text-right">
-                                                {{t[1]}}
-                                                ({{(100*t[1]/stats.message.stats.rows).toFixed(2)}})%
+                                                {{ t[1]}}
+                                                ({{(100 * t[1] / stats.message.stats.rows).toFixed(2)}})%
                                             </td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div v-if="stats.message.outliers"
-                                     class="col-4">
+                                <div v-if="stats.message.outliers" class="col-4">
                                     <strong>Valores atípicos (outliers)*</strong>
                                     <table class="table table-sm table-stats">
-                                        <tr v-for="t in stats.message.outliers"
-                                            :key="t">
-                                            <td>{{t}}</td>
+                                        <tr v-for="t in stats.message.outliers" :key="t">
+                                            <td>{{ t }}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -242,17 +176,13 @@
                                 </div>
                             </div>
                         </b-tab>
-                        <b-tab v-if="selected.field.type === 'Text'"
-                               title="Agrupar/mesclar"
-                               class="pt-4"
-                               :title-link-class="'small-nav-link'">
-                            <form action=""
-                                  class="form-inline">
+                        <b-tab v-if="selected.field.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
+                            :title-link-class="'small-nav-link'">
+                            <form action="" class="form-inline">
                                 <div class="form-group mb-2">
                                     <label for="similarity">Similaridade:</label> &nbsp;
-                                    <select v-model.number="similarity"
-                                            name="similarity"
-                                            class="form-control-sm ml-3 mr-3">
+                                    <select v-model.number="similarity" name="similarity"
+                                        class="form-control-sm ml-3 mr-3">
                                         <option value="0.5">
                                             0.5 (menos semelhantes)
                                         </option>
@@ -265,19 +195,17 @@
                                     </select>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <button class="btn btn-secondary btn-sm"
-                                            @click.prevent="handleComputeCluster">
+                                    <button class="btn btn-secondary btn-sm" @click.prevent="handleComputeCluster">
                                         Computar grupos
                                     </button>
-                                    <button class="btn btn-success btn-sm ml-2"
-                                            @click.prevent="handleComputeCluster">
+                                    <button class="btn btn-success btn-sm ml-2" @click.prevent="handleComputeCluster">
                                         Mesclar selecionados
                                     </button>
                                 </div>
                             </form>
                             <div style="height: 500px; overflow-y:auto">
                                 <table v-if="valuesClusters && valuesClusters.length > 0"
-                                       class="table table-sm table-smallest mt-4">
+                                    class="table table-sm table-smallest mt-4">
                                     <tr>
                                         <th />
                                         <th class="col-6">
@@ -287,22 +215,17 @@
                                             Substituir por
                                         </th>
                                     </tr>
-                                    <tr v-for="values in valuesClusters"
-                                        :key="values[0]">
+                                    <tr v-for="values in valuesClusters" :key="values[0]">
                                         <td>
-                                            <input type="checkbox"
-                                                   class="checkbox">
+                                            <input type="checkbox" class="checkbox">
                                         </td>
                                         <td>
-                                            <span v-for="v, k in values"
-                                                  :key="k"
-                                                  style="white-space: pre"
-                                                  :class="{'text-secondary': k !== 0}">{{v}} <br></span>
+                                            <span v-for="v, k in values" :key="k" style="white-space: pre"
+                                                :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
                                         </td>
                                         <td>
-                                            <input type="text"
-                                                   class="form-control form-control-sm w-100"
-                                                   :value="values[0]">
+                                            <input type="text" class="form-control form-control-sm w-100"
+                                                :value="values[0]">
                                         </td>
                                     </tr>
                                 </table>
@@ -341,6 +264,27 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 const META_PLATFORM_ID = 1000;
 const PAGE_SIZE = 100;
 const WORKFLOW_OFFSET = 800000;
+
+const type2Generic = new Map([
+    ['Float32', 'Decimal'],
+    ['Float64', 'Decimal'],
+    ['Int8', 'Integer'],
+    ['Int16', 'Integer'],
+    ['Int32', 'Integer'],
+    ['Int64', 'Integer'],
+    ['UInt8', 'Integer'],
+    ['UInt16', 'Integer'],
+    ['UInt32', 'Integer'],
+    ['UInt64', 'Integer'],
+    ['Date', 'Date'],
+    ['Datetime', 'Date'],
+    ['Duration', 'Integer'], //Evaluate
+    ['Time', 'Time'],
+    ['Boolean', 'Boolean'],
+    ['List', 'Array'],
+    ['Utf8', 'Text'],
+    ['Categorical', 'Text'],
+]);
 
 export default {
     name: "DataExplorer",
@@ -406,9 +350,10 @@ export default {
     computed: {
         pendingSteps() {
             //const self = this;
+            console.debug(this.workflowObj.tasks.find(t => t.editing));
             return (this.workflowObj && this.workflowObj.tasks &&
-                    this.workflowObj.tasks.find(t => t.editing) !== undefined)
-                    || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
+                this.workflowObj.tasks.find(t => t.editing) !== undefined)
+                || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
         }
     },
     async mounted() {
@@ -566,7 +511,9 @@ export default {
                 persist: false, // do not save the job in db.
                 app_configs: {
                     verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1,
-                    target_platform: 'spark', sample_style: 'DATA_EXPLORER'
+                    target_platform: 'scikit-learn',
+                    variant: 'polars',
+                    sample_style: 'DATA_EXPLORER'
                 },
             };
             //console.debug(new Date());
@@ -747,17 +694,17 @@ export default {
             const self = this;
             if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                 if (window.TahitiAttributeSuggester.processed === undefined
-                        || this.attributeSuggestion[taskId] === undefined
-                        || this.attributeSuggestion[taskId].length === 0) {
+                    || this.attributeSuggestion[taskId] === undefined
+                    || this.attributeSuggestion[taskId].length === 0) {
                     this.updateAttributeSuggestion();
                 }
                 Object.keys(this.attributeSuggestion).forEach(key => {
                     self.attributeSuggestion[key] &&
-                            self.attributeSuggestion[key].output.forEach(v => allSuggestions.add(v));
+                        self.attributeSuggestion[key].output.forEach(v => allSuggestions.add(v));
                 });
                 Object.keys(this.schemas).forEach(key => {
                     self.schemas[key] &&
-                            self.schemas[key].forEach(v => allSuggestions.add(v.name));
+                        self.schemas[key].forEach(v => allSuggestions.add(v.name));
                 });
                 /*if (this.attributeSuggestion[taskId]) {
                         return this.attributeSuggestion[taskId];
@@ -904,30 +851,30 @@ export default {
         dateTruncate(attributeName) {
             const modal = this.$refs.simpleInput;
             const modalConfig =
-                {
-                    format: 'options',
-                    okTitle: this.$t('common.ok'),
-                    cancelTitle: this.$t('actions.cancel'),
-                    message: this.$t('dataExplorer.informFormat'),
-                    title: this.$t('actions.formatDate'),
-                    options: [
-                        { value: 'YEAR', text: this.$tc('common.periods.year') },
-                        { value: 'MONTH', text: this.$tc('common.periods.month') },
-                        { value: 'DAY', text: this.$tc('common.periods.day') },
-                        { value: 'HOUR', text: this.$tc('common.periods.hour') },
-                        { value: 'MINUTE', text: this.$tc('common.periods.minute') },
-                        { value: 'SECOND', text: this.$tc('common.periods.seconds') },
-                        { value: 'WEEK', text: this.$tc('common.periods.week') },
-                        //maybe quarter
-                    ],
-                    value: null,
-                    ok: () => {
-                        this.store.transformWithFunction(
-                            attributeName,
-                            this.selected.field.position,
-                            ['dateTruncate', 'date_trunc', attributeName, `'${modal.value}'`]);
-                    }
-                };
+            {
+                format: 'options',
+                okTitle: this.$t('common.ok'),
+                cancelTitle: this.$t('actions.cancel'),
+                message: this.$t('dataExplorer.informFormat'),
+                title: this.$t('actions.formatDate'),
+                options: [
+                    { value: 'YEAR', text: this.$tc('common.periods.year') },
+                    { value: 'MONTH', text: this.$tc('common.periods.month') },
+                    { value: 'DAY', text: this.$tc('common.periods.day') },
+                    { value: 'HOUR', text: this.$tc('common.periods.hour') },
+                    { value: 'MINUTE', text: this.$tc('common.periods.minute') },
+                    { value: 'SECOND', text: this.$tc('common.periods.seconds') },
+                    { value: 'WEEK', text: this.$tc('common.periods.week') },
+                    //maybe quarter
+                ],
+                value: null,
+                ok: () => {
+                    this.store.transformWithFunction(
+                        attributeName,
+                        this.selected.field.position,
+                        ['dateTruncate', 'date_trunc', attributeName, `'${modal.value}'`]);
+                }
+            };
             modal.show(modalConfig);
         },
         disconnectWebSocket() {
@@ -1028,8 +975,8 @@ export default {
         connectWebSocket() {
             const self = this;
             if (self.socket === null) {
-                const opts = {upgrade: true};
-                if (standSocketIoPath !== ''){
+                const opts = { upgrade: true };
+                if (standSocketIoPath !== '') {
                     opts['path'] = standSocketIoPath;
                 }
                 const socket = io(
@@ -1065,35 +1012,87 @@ export default {
                                 //console.debug(new Date());
                                 // Update must be done before assigning to observable self.tableData!
                                 const messageJson = msg.message;
-                                const truncated = messageJson.truncated || [];
-                                messageJson.attributes.forEach((attr, index) => {
-                                    attr['selected'] = true;
-                                    attr['truncated'] = truncated.indexOf(attr.key) > -1;
-                                    attr['position'] = index;
-                                });
+                                if (messageJson.format === 'polars') {
+                                    const truncated = messageJson.truncated || [];
+                                    const attributes = messageJson.columns.map(
+                                        c => ({ key: c.name, label: c.name, name: c.name, type: c.datatype }));
+                                    self.tableData = { attributes };
+                                    self.loadingData = false;
+                                    attributes.forEach(attr => attr.generic_type = 
+                                        type2Generic.get(attr.type) || attr.type);
+                                    self.attributes = attributes;
 
-                                const attributeIds = messageJson.attributes.map(attr => attr.key);
-                                const mapped = messageJson.rows.map(
-                                    row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] }; })));
+                                    const columnNames = attributes.map(a => a.name);
+                                    const columnValues = messageJson.columns.map(col => col.values);
 
-
-                                if (messageJson.page === 1) {
-                                    self.tableData = messageJson;
-                                    // Update selected attribute (may have its time changed during processing)
-                                    const selected = self.tableData.attributes.find(t => t?.key === self.selected.column);
-                                    if (selected) {
-                                        self.select({ field: selected, column: selected.key, label: selected.key });
+                                    // Transpose the columns to rows
+                                    const rows = []
+                                    for (let i = 0; i < columnValues[0].length; i++) {
+                                        const row = []
+                                        for (let j = 0; j < columnValues.length; j++) {
+                                            row.push(columnValues[j][i])
+                                        }
+                                        rows.push(row)
                                     }
-                                    self.rows = mapped;
-                                    self.page = 1;
-                                    self.loadedDataSize = messageJson.size;
-                                } else if (messageJson.page === self.page + 1 && mapped.length > 0) {
-                                    self.rows.push.apply(self.rows, mapped);
-                                    self.page = messageJson.page;
-                                    self.loadedDataSize += Math.min(self.tableData.size, mapped.length);
-                                    self.loadingData = false;
+
+                                    // Create the row-oriented JSON
+                                    const rowOriented = { rows: [] }
+                                    rows.forEach(row => {
+                                        const rowObject = {}
+                                        for (let i = 0; i < columnNames.length; i++) {
+                                            rowObject[columnNames[i]] = row[i]
+                                        }
+                                        rowOriented.rows.push(rowObject)
+                                    })
+
+                                    if (messageJson.page === 1) {
+                                        // Update selected attribute (may have its time changed during processing)
+                                        const selected = self.tableData.attributes.find(t => t?.key === self.selected.column);
+                                        if (selected) {
+                                            self.select({ field: selected, column: selected.key, label: selected.key });
+                                        }
+                                        self.rows = rowOriented.rows;
+                                        self.page = 1;
+                                        self.loadedDataSize = messageJson.size;
+                                    } else if (messageJson.page === self.page + 1 && mapped.length > 0) {
+                                        self.rows.push.apply(self.rows, rowOriented.rows);
+                                        self.page = messageJson.page;
+                                        self.loadedDataSize += Math.min(self.tableData.size, rowOriented.rows.length);
+                                        self.loadingData = false;
+                                    } else {
+                                        self.loadingData = false;
+                                    }
                                 } else {
-                                    self.loadingData = false;
+                                    const truncated = messageJson.truncated || [];
+                                    messageJson.attributes.forEach((attr, index) => {
+                                        attr['selected'] = true;
+                                        attr['truncated'] = truncated.indexOf(attr.key) > -1;
+                                        attr['position'] = index;
+                                    });
+
+                                    const attributeIds = messageJson.attributes.map(attr => attr.key);
+                                    const mapped = messageJson.rows.map(
+                                        row => Object.assign(...attributeIds.map((attr, i) => { return { [attr]: row[i] }; })));
+
+
+                                    if (messageJson.page === 1) {
+                                        self.tableData = messageJson;
+                                        // Update selected attribute (may have its time changed during processing)
+                                        const selected = self.tableData.attributes.find(t => t?.key === self.selected.column);
+                                        if (selected) {
+                                            self.select({ field: selected, column: selected.key, label: selected.key });
+                                        }
+                                        self.rows = mapped;
+                                        self.page = 1;
+                                        self.loadedDataSize = messageJson.size;
+                                    } else if (messageJson.page === self.page + 1 && mapped.length > 0) {
+                                        self.rows.push.apply(self.rows, mapped);
+                                        self.page = messageJson.page;
+                                        self.loadedDataSize += Math.min(self.tableData.size, mapped.length);
+                                        self.loadingData = false;
+                                    } else {
+                                        self.loadingData = false;
+                                    }
                                 }
                             });
                             //console.debug(new Date());
@@ -1127,75 +1126,75 @@ export default {
 };
 </script>
 <style>
-    .ghost {
-        opacity: 0.5;
-        background: #c8ebfb;
-    }
+.ghost {
+    opacity: 0.5;
+    background: #c8ebfb;
+}
 
-    .list-group {
-        min-height: 20px;
-    }
+.list-group {
+    min-height: 20px;
+}
 
-    .steps {
-        border-radius: 0 !important;
-        padding-bottom: 100px;
-    }
+.steps {
+    border-radius: 0 !important;
+    padding-bottom: 100px;
+}
 
-    .steps .list-group-item {
-        cursor: move;
-        font-size: .8em;
-    }
+.steps .list-group-item {
+    cursor: move;
+    font-size: .8em;
+}
 
-    .list-group-item:first-child {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-    }
+.list-group-item:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
 
-    .list-group-item:last-child {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-    }
+.list-group-item:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
 
-    .list-group-item.steps {
-        padding: 8px 5px;
-    }
+.list-group-item.steps {
+    padding: 8px 5px;
+}
 
-    .more-actions li {
-        font-size: .8em !important;
-    }
+.more-actions li {
+    font-size: .8em !important;
+}
 
-    #step-container {
-        position: relative;
-    }
+#step-container {
+    position: relative;
+}
 
-    /*
+/*
     #step-scroll {
         position: relative;
         margin: auto;
         height: 60vh;
     }*/
 
-    .fill-height {
-        height: 75vh
-    }
+.fill-height {
+    height: 75vh
+}
 
-    .step-list {
-        -ms-flex: 0 0 305px;
-        flex: 0 0 305px;
-    }
+.step-list {
+    -ms-flex: 0 0 305px;
+    flex: 0 0 305px;
+}
 
- 
-    .table-stats {
-        font-size: 9pt;
-    }
 
-    .table-stats td,
-    .table-stats th {
-        padding: 0
-    }
+.table-stats {
+    font-size: 9pt;
+}
 
-    .top-bar {
-        height: 4px;
-        background: rgb(49, 130, 189)
-    }
+.table-stats td,
+.table-stats th {
+    padding: 0
+}
+
+.top-bar {
+    height: 4px;
+    background: rgb(49, 130, 189)
+}
 </style>

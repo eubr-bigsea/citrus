@@ -3,7 +3,9 @@
     // https://stackoverflow.com/a/55527190/1646932
     "files.watcherExclude": {
         "**/.git/objects/**": true,
-        "**/node_modules/**": true
+        "**/node_modules/**": true,
+        "**/dist/**": true,
+        "**/coverage/**": true,
     } ,
     //"editor.renderWhitespace": "all",
     "editor.selectionClipboard": true,
@@ -42,7 +44,7 @@
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
-    "eslint.format.enable": true,
+    //"eslint.format.enable": true,
     // "editor.codeActionsOnSave": {
     //     "source.fixAll.eslint": true
     // }

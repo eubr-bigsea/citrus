@@ -15,7 +15,7 @@ const Template = (args, { argTypes }) => ({
         },
         preview(task) {
             this.workflow.tasks.forEach(t => {
-                t.previewable = t.display_order <= task.display_order; 
+                t.previewable = t.display_order <= task.display_order;
             });
         },
         duplicate(task) {
@@ -30,12 +30,22 @@ const Template = (args, { argTypes }) => ({
             wfTask.forms = { ...task.forms };
             console.debug('Updating', task);
         },
-        select(task, value) {
-            this.step.selected = value;
-            console.debug('Selecting', task, value);
+        cancel(task) {
+            console.debug('Canceling edition', task);
         },
-        cancel(task){
-            console.debug('Canceling edition', task)
+        edit(task) {
+            console.debug('Editing', task);
+        },
+        deleteMany(tasks){
+            console.debug(tasks);
+            const ids = new Set(tasks.map(t => t.id));
+            this.workflow.tasks.forEach((task) => {
+                if (task.display_order > 1 && 
+                        ids.has(task.id)) {
+                    this.workflow.deleteTask(task);
+                    // this.isDirty = true;
+                }
+            });            
         }
     },
     data() {
@@ -45,11 +55,9 @@ const Template = (args, { argTypes }) => ({
     template: `<div style="margin-right:200px" >
                 <step-list v-bind="$props" v-on="$listeners"
                 @toggle="toggle"
-                @previewUntilHere="preview"
                 @delete="deleteAction"
                 @update="update"
-                @cancel="cancel"
-                @select="select"
+                @delete-many="deleteMany"
                 @duplicate="duplicate"/>
                </div>`
 });
@@ -103,17 +111,17 @@ const task = new Task({
 });
 const replacements = ['\\d+', '\\w+', '\\s+', '[abc]', '^test'];
 const tasks = [];
-for (let i = 0; i < 10; i++){
+for (let i = 0; i < 10; i++) {
     const t = structuredClone(task)
     tasks.push(t);
     t.id = '' + i;
     t.index = i;
     t.display_order = i;
     t.forms.regex.value = replacements[i % replacements.length];
-    
+
 }
 tasks.forEach((t, i) => t.id = i);
-const platform = {id: 1, name: 'Spark', slug: 'spark'};
+const platform = { id: 1, name: 'Spark', slug: 'spark' };
 const workflow = new Workflow({ id: 1, name: 'Test', tasks, platform });
 export const BasicList = Template.bind({});
 BasicList.args = {
