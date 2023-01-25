@@ -1,7 +1,5 @@
 <template>
-    <div style="display: flex;" class="step" 
-         :class="{ 'soft-disabled': !step.previewable, 'hard-disabled': !editableStep.enabled, 
-                   'editing-step': editableStep.editing }">
+    <div style="display: flex;" class="step" :class="stepClass">
         <!-- <div style="width:4px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1" /> -->
 
         <div class="float-left text-secondary step-drag-handle">
@@ -12,10 +10,10 @@
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
-                <input v-if="!locked" v-model="editableStep.selected" 
+                <input v-if="!locked && index > 0" v-model="editableStep.selected" 
                        type="checkbox">&nbsp;
                 <span class="step-number">#{{index + 1}}</span> -
-                <del v-if="!editableStep.enabled">
+                <del v-if="!step.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
                 <span v-else v-html="step.getLabel()" />
@@ -109,6 +107,15 @@ export default {
         };
     },
     computed: {
+        stepClass(){
+            if (!this.step.enabled){
+                return 'hard-disabled';
+            } else if (!this.step.previewable){
+                return 'soft-disabled';
+            } else if (this.editableStep.editing){
+                return 'editing-step';
+            }
+        },
         hasProblems() {
             const self = this;
             const executionForm = this.step.operation.forms.find(f => f.category === 'execution');

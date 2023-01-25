@@ -20,6 +20,7 @@
                             </template>
                         </v-select>
                     </div>
+                    <!--
                     <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split>
                         <template #button-content>
                             <input type="checkbox" @change="handleSelectAll($event)">
@@ -34,6 +35,7 @@
                             {{ $t('dataExplorer.removeSelected') }}
                         </b-dropdown-item>
                     </b-dropdown>
+                -->
                     <!-- FIXME
                     <b-dropdown :disabled="false && loadingData" variant="secondary" size="sm"
                         class="float-right mt-2 ml-1" @click="saveWorkflow">
@@ -59,26 +61,9 @@
                 </div>
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
-                    <div id="step-container">
-                        <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
-                            <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle"
-                                :list="workflowObj.tasks" :move="handleStepDrag" @start="drag = true"
-                                @end="endSortSteps">
-                                <div v-for="(task, inx) in workflowObj.tasks" :key="task.id"
-                                    xv-if="task.operation.slug !== 'read-data'"
-                                    class="list-group-item steps clearfix p-0" :title="task.name"
-                                    :style="{ 'border-left': '4px solid ' + task.backgroundColor }">
-                                    <Step ref="steps" :step="task" :language="language"
-                                        :attributes="tableData.attributes" :index="inx" :protected="inx <= 1"
-                                        :schema="inx > 0 && workflowObj.schema ? workflowObj.schema[inx - 1] : null"
-                                        :suggestion-event="() => getSuggestions(task.id)"
-                                        @toggle="handleToggleStep(task)" @delete="handleDeleteTask(task)"
-                                        @update="updateStep" @preview="previewUntilHere(task)"
-                                        @cancel="task.editing = false" @duplicate="duplicate" />
-                                </div>
-                            </draggable>
-                        </div>
-                    </div>
+                    <step-list :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
+                    @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate" @update="handleUpdateStep"/>
+
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
                         <br>
@@ -247,6 +232,7 @@ import draggable from 'vuedraggable';
 import Preview from './Preview.vue';
 import PreviewMenu from './PreviewMenu.vue';
 import Step from './Step.vue';
+import StepList from './StepList.vue';
 import Notifier from '../../mixins/Notifier.js';
 import { Workflow, Operation, Task, Constants } from './entities.js';
 import ModalExport from './ModalExport.vue';
@@ -291,7 +277,7 @@ export default {
     components: {
         Plotly,
         Preview, draggable,
-        Step, PreviewMenu, ModalExport,
+        StepList, Step, PreviewMenu, ModalExport,
         TahitiSuggester: () => {
             return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                 const script = document.createElement('script');
@@ -350,7 +336,7 @@ export default {
     computed: {
         pendingSteps() {
             //const self = this;
-            console.debug(this.workflowObj.tasks.find(t => t.editing));
+            //console.debug(this.workflowObj.tasks.find(t => t.editing));
             return (this.workflowObj && this.workflowObj.tasks &&
                 this.workflowObj.tasks.find(t => t.editing) !== undefined)
                 || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
@@ -585,6 +571,7 @@ export default {
 
         },
         handleToggleStep(task) {
+            console.debug(task)
             task.enabled = !task.enabled;
             this.isDirty = true;
             this.loadData();
@@ -605,7 +592,7 @@ export default {
                 this.isDirty = true;
             });
         },
-        handleRemoveSelected() {
+        handleDeleteSelected() {
             this.confirm(
                 this.$t('actions.delete'), this.$t('dataExplorer.doYouWantToDeleteStep'),
                 () => {
@@ -743,7 +730,7 @@ export default {
             this.isDirty = true;
             this.loadData();
         },
-        updateStep(step) {
+        handleUpdateStep(step) {
             const task = this.workflowObj.tasks.find(t => t.id === step.id);
             if (task) {
                 Object.assign(task.forms, step.forms);
@@ -896,7 +883,7 @@ export default {
             this.previewUntilHere(elem);
             this.loadData();
         },
-        handleDeleteTask(task) {
+        handleDeleteStep(task) {
             this.workflowObj.deleteTask(task);
             if (task.previewable) {
                 this.loadData();
@@ -1018,7 +1005,7 @@ export default {
                                         c => ({ key: c.name, label: c.name, name: c.name, type: c.datatype }));
                                     self.tableData = { attributes };
                                     self.loadingData = false;
-                                    attributes.forEach(attr => attr.generic_type = 
+                                    attributes.forEach(attr => attr.generic_type =
                                         type2Generic.get(attr.type) || attr.type);
                                     self.attributes = attributes;
 
