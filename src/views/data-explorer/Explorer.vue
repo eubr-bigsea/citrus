@@ -62,7 +62,8 @@
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <step-list :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
-                    @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate" @update="handleUpdateStep"/>
+                        @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
+                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -470,10 +471,10 @@ export default {
         },
         async loadData() {
             const self = this;
-            if (self.pendingSteps) {
-                self.warning("Existe(m) etapa(s) com pendências. Faça as correções antes de executar o experimento.", 5000);
-                return;
-            }
+            // if (self.pendingSteps) {
+            //     self.warning("Existe(m) etapa(s) com pendências. Faça as correções antes de executar o experimento.", 5000);
+            //     return;
+            // }
             self.loadingData = true;
             const cloned = JSON.parse(JSON.stringify(this.workflowObj));
             cloned.platform_id = cloned.platform.id; //FIXME: review
@@ -664,8 +665,9 @@ export default {
             return Array.from(new Set(data));
         },
         getSuggestions(taskId) {
-            const extendedSuggestions = this.getExtendedSuggestions(taskId);
-            return extendedSuggestions;
+            return this.tableData.attributes.map(a => a.label);
+            // const extendedSuggestions = this.getExtendedSuggestions(taskId);
+            // return extendedSuggestions;
             /*
                 if (extendedSuggestions && extendedSuggestions.inputs?.length) {
                     return this._unique(Array.prototype.concat.apply([],
@@ -712,11 +714,6 @@ export default {
                 (task) => task.display_order++);
             this.isDirty = true;
         },
-        scrollToStep() {
-            const el = this.$refs.stepsArea;
-            el.scrollTo({ top: el.scrollHeight + 200, behavior: 'smooth' });
-            //const self = this; //this.$refs.steps
-        },
         previewUntilHere(step) {
             this.workflowObj.tasks.forEach((task) => {
                 const previewable = (task.display_order <= step.display_order);
@@ -734,6 +731,7 @@ export default {
             const task = this.workflowObj.tasks.find(t => t.id === step.id);
             if (task) {
                 Object.assign(task.forms, step.forms);
+                task.editing = false;
             }
             this.updateAttributeSuggestion();
             this.loadData();
@@ -823,12 +821,6 @@ export default {
                     this.operationLookup.get(options.params[0].id),
                     options.selected, options.fields);
                 this.isDirty = true;
-                Vue.nextTick(() => {
-                    newTask.editing = true;
-                    Vue.nextTick(() => {
-                        this.scrollToStep(this.workflowObj.tasks.length - 1);
-                    });
-                });
                 //this.loadData();
             } else {
                 console.log(`Unknown action: ${options.action}`);
@@ -1017,7 +1009,12 @@ export default {
                                     for (let i = 0; i < columnValues[0].length; i++) {
                                         const row = []
                                         for (let j = 0; j < columnValues.length; j++) {
-                                            row.push(columnValues[j][i])
+                                            // Test if it is a list
+                                            if (columnValues[j][i] && columnValues[j][i].values) {
+                                                row.push(columnValues[j][i].values);
+                                            } else {
+                                                row.push(columnValues[j][i]);
+                                            }
                                         }
                                         rows.push(row)
                                     }

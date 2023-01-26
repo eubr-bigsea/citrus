@@ -1,7 +1,6 @@
 <template>
     <div style="display: flex;" class="step" :class="stepClass">
         <!-- <div style="width:4px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1" /> -->
-
         <div class="float-left text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
@@ -78,6 +77,10 @@
                         <b-button variant="light" size="sm" :title="$t('actions.cancel')" @click="cancelEdit">
                             <font-awesome-icon icon="fa fa-undo-alt" />
                         </b-button>
+                        <b-button variant="light" size="sm" class="text-secondary"
+                              :title="$t('actions.delete')" @click="$emit('delete', step)">
+                        <font-awesome-icon icon="fa fa-trash" />
+                    </b-button>
                     </b-button-group>
                 </div>
             </div>

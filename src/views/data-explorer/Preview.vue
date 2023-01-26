@@ -369,11 +369,13 @@ export default {
             // Users cannot filter using garge text and context menu
             if (cellText.length <= 40) {
                 let value;
-                if (['Text', 'Date', 'Datetime', 'Time'].includes(attribute.type)) {
-                    value = `"${cellText.substring(0, 40)}"`
-                } else {
+                if (!['Text', 'Date', 'Datetime', 'Time', 'Boolean'].includes(attribute.generic_type)) {
                     // Convert to Number
                     value = Number(event.target.innerText);
+                } else if (attribute.generic_type === 'Boolean'){
+                    value = event.target.innerText === 'true';
+                } else {
+                    value = `"${cellText.substring(0, 40)}"`
                 }
                 const raw = `"{value}"`;
                 this.$refs.ctxCellMenu.open(this._eventModifier(event, {}),
@@ -450,13 +452,14 @@ export default {
     .table-preview {
         position: relative;
     }
-
+    
     .table-preview>>>table {
+        width: initial !important;
         /* min-width: 100% !important;
         width: 1500px; */
     }
     .table-preview>>>td {
-        white-space: nowrap;
+        white-space: pre;
     }
 
     .table-preview {

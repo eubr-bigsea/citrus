@@ -67,7 +67,7 @@ class Workflow {
                 }
             }
         });
-
+        newTask.editing = true;
         this.tasks.push(newTask);
         this._tasksLookup.set(newTask.id, newTask);
 
@@ -350,7 +350,7 @@ class Task {
                 ? this._fillTemplate() : `<b>${this.operation.name}</b>`;
             return result;
         } catch (ignore) {
-            console.debug(ignore)
+            //console.debug(ignore)
             return `<b>${this.operation.name}</b>`;
         }
     }

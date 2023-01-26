@@ -27,10 +27,11 @@
                           :attributes="attributes"
                           :index="inx" :protected="inx <= 1"
                           :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null" 
-                          :suggestion-event="() => getSuggestions(task.id)" 
                           @edit="editStep(task)"
                           @cancel="cancelEdit(task)"
+                          @update="update(task)"
                           @preview="preview(task)"
+                          :suggestion-event="suggestionEvent" 
                           v-on="$listeners" />
                 </div>
             </draggable>
@@ -51,7 +52,7 @@ export default {
         language: { type: String, required: true },
         suggestionEvent: { type: Function, default: () => null },
     },
-    emits: ['changed', 'delete-many'],
+    emits: ['changed', 'delete-many', 'update'],
     data() {
         return {
             lastPreviewableStep: null,
@@ -142,6 +143,10 @@ export default {
         },
         cancelEdit(step){
             this.$refs.steps.forEach(s => s.setEditable(true));
+        },
+        update(step){
+            this.$refs.steps.forEach(s => s.setEditable(true));
+            this.$emit('update', step);
         },
         preview(step){
             const toggle = this.lastPreviewableStep === step;
