@@ -37,8 +37,10 @@ class Workflow {
         let forms = {};
 
         // Operations that handle 'attributes' in a different field
+        let ignoreDefault = false;
         if (attrs && attrs.length && attrs[0]) {
             if (op.slug === 'sort') {
+                ignoreDefault = true;
                 forms = { order_by: { value: attrs.map(attr => { return { attribute: attr, f: 'asc' }; }) } };
             } else if (op.slug === 'cast') {
                 forms = { cast_attributes: { value: attrs.map(attr => { return { attribute: attr, type: 'Text' }; }) } };
@@ -59,7 +61,7 @@ class Workflow {
         }
         const newTask = op.createTask({ name: op.name, forms });
         op.forms.find(f => f.category === 'execution').fields.forEach(opField => {
-            if (opField.default) {
+            if (opField.default && !ignoreDefault) {
                 if (opField.type === 'INTEGER') {
                     newTask.forms[opField.name] = { 'value': parseInt(opField.default) };
                 } else {

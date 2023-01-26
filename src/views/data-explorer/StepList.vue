@@ -162,7 +162,7 @@ export default {
 <style scoped>
 .step-scroll-area {
     max-width: 300px;
-    max-height: 80vh;
+    /* max-height: 80vh; */
     padding-bottom: 10px;
     background: #fbfbfb;
 }

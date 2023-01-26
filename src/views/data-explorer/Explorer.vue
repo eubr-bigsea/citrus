@@ -47,7 +47,7 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button :disabled="loadingData" variant="primary" size="sm" class="float-right mt-2"
+                    <b-button :disabled="loadingData || !isDirty" variant="primary" size="sm" class="float-right mt-2"
                         @click="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
@@ -63,7 +63,8 @@
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <step-list :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
                         @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
-                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" />
+                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" 
+                        />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -81,10 +82,11 @@
             </div>
             <!-- Preview area -->
             <div class="col-9 border-left fill-height mt-3">
-                <PreviewMenu :selected="selected" :menus="menus" @select="performAction" @analyse="handleAnalyse" />
+                <PreviewMenu :selected="selected" :menus="menus" @trigger="handleTrigger" @analyse="handleAnalyse" />
                 <Preview ref="preview" :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
-                    :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total" @select="select"
-                    @drop="performAction" @context-menu="handleContextMenu" @scroll="handleScroll" />
+                    :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
+                    @select="handleSelectAttribute" @drop="handleTrigger" @context-menu="handleContextMenu"
+                    @scroll="handleScroll" />
             </div>
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
@@ -336,8 +338,6 @@ export default {
     },
     computed: {
         pendingSteps() {
-            //const self = this;
-            //console.debug(this.workflowObj.tasks.find(t => t.editing));
             return (this.workflowObj && this.workflowObj.tasks &&
                 this.workflowObj.tasks.find(t => t.editing) !== undefined)
                 || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
@@ -402,7 +402,29 @@ export default {
                 }
             }
         }, 500),
-        /* Data loading */
+        /* Data loading - Workflow */
+        //
+        async saveWorkflow() {
+            const cloned = structuredClone(this.workflowObj);
+            const url = `${tahitiUrl}/workflows/${cloned.id}`;
+            
+            cloned.preferred_cluster_id = this.clusterId;
+            cloned.platform_id = META_PLATFORM_ID;
+            cloned.tasks.forEach((task) => {
+                task.operation = { id: task.operation.id };
+                delete task.version;
+                delete task.step;
+                delete task.status;
+            });
+            try {
+                await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
+                this.isDirty = false;
+                this.success(this.$t('messages.savedWithSuccess',
+                        { what: this.$tc('titles.workflow') }));
+            } catch(e) {
+                this.error(e);
+            }
+        },
         async loadWorkflow() {
             const self = this;
             self.loadingData = true;
@@ -480,19 +502,16 @@ export default {
             cloned.platform_id = cloned.platform.id; //FIXME: review
             cloned.preferred_cluster_id = self.clusterId;
 
-            const enableTasksForPreview = [];
+            cloned.tasks = cloned.tasks.filter(task => task.enabled && task.previewable)
             cloned.tasks.forEach((task) => {
-                if (task.enabled && task.previewable) {
                     // Remove unnecessary attributes from operation
                     task.operation = { id: task.operation.id };
                     delete task.version;
-                    enableTasksForPreview.push(task);
-                }
             });
-            cloned.tasks = enableTasksForPreview;
+
             const body = {
                 workflow: cloned,
-                cluster: { id: 1 }, //FIXME: How to determine the cluster?
+                cluster: { id: self.clusterId }, 
                 name: `## explorer ${self.workflowObj.id} ##`,
                 user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                 persist: false, // do not save the job in db.
@@ -503,14 +522,11 @@ export default {
                     sample_style: 'DATA_EXPLORER'
                 },
             };
-            //console.debug(new Date());
 
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body,
                     { headers: { 'Locale': self.$root.$i18n.locale, } });
-                self.$refs.preview && self.$refs.preview.scroll({
-                    top: 0,
-                });
+                self.$refs.preview && self.$refs.preview.scroll({top: 0});
                 self.job = response.data.data;
                 self.page = 1;
                 self.connectWebSocket();
@@ -526,6 +542,7 @@ export default {
                 self.$Progress.finish();
             }
         },
+        /* Load auxiliary objects */
         async loadClusters() {
             try {
                 const resp = await axios.get(`${standUrl}/clusters?enable=true&fields=id,name,description,type,platforms`);
@@ -571,16 +588,12 @@ export default {
             }
 
         },
-        handleToggleStep(task) {
-            console.debug(task)
-            task.enabled = !task.enabled;
-            this.isDirty = true;
-            this.loadData();
-        },
+
         handleStepDrag(e) {
             // Disable some steps to be dragged
             return (e?.relatedContext?.element?.display_order > 1);
         },
+
         /* Step group actions */
         handleSelectAll(ev) {
             this.workflowObj.tasks.forEach((task) => {
@@ -606,6 +619,7 @@ export default {
                 }
             );
         },
+        /* Attribute suggestion */
         _queryDataSource(id, callback) {
             let attributes = null;
             let self = this;
@@ -704,9 +718,14 @@ export default {
             }
         },
         /* Trigged by the step action */
+        handleToggleStep(task) {
+            task.enabled = !task.enabled;
+            this.isDirty = true;
+            this.loadData();
+        },
         duplicate(step) {
             // Clone tasks instance
-            const cloned = new Task(JSON.parse(JSON.stringify(step)));
+            const cloned = new Task(structuredClone(step));
             cloned.id = Operation.generateTaskId();
             this.workflowObj.tasks.splice(step.display_order, 0, cloned);
             // Update the display_order
@@ -732,50 +751,31 @@ export default {
             if (task) {
                 Object.assign(task.forms, step.forms);
                 task.editing = false;
+                this.updateAttributeSuggestion();
+                this.isDirty = true;
+                this.loadData();
             }
-            this.updateAttributeSuggestion();
-            this.loadData();
         },
+        handleDeleteStep(task) {
+            this.workflowObj.deleteTask(task);
+            if (task.previewable) {
+                this.loadData();
+            }
+            this.isDirty = true;
+        },
+        /*
 
         resetMenuData() {
             this.selected = { field: {} };
             this.$refs.preview.resetMenuData();
         },
-        select(attr) {
+        */
+        handleSelectAttribute(attr) {
             this.selected = attr;
             this.valuesClusters = [];
         },
 
-        //
-        saveWorkflow() {
-            let self = this;
-            let cloned = JSON.parse(JSON.stringify(self.workflowObj));
-            let url = `${tahitiUrl}/workflows`;
-            let method = 'post';
-
-            if (cloned.id !== 0) {
-                url = `${url}/${cloned.id}`;
-                method = 'patch';
-            }
-            cloned.preferred_cluster_id = self.clusterId;
-            cloned.platform_id = META_PLATFORM_ID;
-            cloned.tasks.forEach((task) => {
-                task.operation = { id: task.operation.id };
-                delete task.version;
-                delete task.step;
-                delete task.status;
-            });
-            return axios[method](url, cloned, { headers: { 'Content-Type': 'application/json' } }).then(
-                () => {
-                    self.isDirty = false;
-                    self.success(self.$t('messages.savedWithSuccess',
-                        { what: self.$tc('titles.workflow') }));
-                }
-            ).catch(function (e) {
-                this.error(e);
-            }.bind(this));
-        },
-
+        /* Actions that add new steps */
         /* Handle Preview component context menu event */
         handleContextMenu(action, attributeName, operator, attributeValue) {
             //Formula using JSep syntax (https://ericsmekens.github.io/jsep/)
@@ -804,16 +804,16 @@ export default {
                 expression = `when(${attributeName} == ${attributeValue}, null, ${attributeName})`;
             }
 
-            const formula = { alias, expression };
-            formula['tree'] = jsep(expression);
-            this.performAction({
+            const formula = { alias, expression, tree: jsep(expression) };
+            // formula['tree'] = jsep(expression);
+            this.handleTrigger({
                 action: 'menu',
                 fields: { formula: { value: [formula] } },
                 params: [op], 'selected': attributeName,
             });
         },
         /* Handle Preview component menu clicks */
-        performAction(options) {
+        handleTrigger(options) {
             if (options.action === 'export') {
                 this.$refs.modalExport.show();
             } else if (options.action === 'menu') {
@@ -827,6 +827,7 @@ export default {
             }
         },
         /* to be removed*/
+        /*
         dateTruncate(attributeName) {
             const modal = this.$refs.simpleInput;
             const modalConfig =
@@ -855,7 +856,7 @@ export default {
                 }
             };
             modal.show(modalConfig);
-        },
+        },*/
         disconnectWebSocket() {
             if (this.socket) {
                 this.socket.emit('leave', { room: this.job.id });
@@ -875,12 +876,7 @@ export default {
             this.previewUntilHere(elem);
             this.loadData();
         },
-        handleDeleteStep(task) {
-            this.workflowObj.deleteTask(task);
-            if (task.previewable) {
-                this.loadData();
-            }
-        },
+
         handleAnalyse(selected) {
             const workflow_id = this.workflowObj.id;
             const job_id = WORKFLOW_OFFSET + parseInt(workflow_id);
@@ -1033,7 +1029,7 @@ export default {
                                         // Update selected attribute (may have its time changed during processing)
                                         const selected = self.tableData.attributes.find(t => t?.key === self.selected.column);
                                         if (selected) {
-                                            self.select({ field: selected, column: selected.key, label: selected.key });
+                                            self.handleSelectAttribute({ field: selected, column: selected.key, label: selected.key });
                                         }
                                         self.rows = rowOriented.rows;
                                         self.page = 1;
@@ -1064,7 +1060,7 @@ export default {
                                         // Update selected attribute (may have its time changed during processing)
                                         const selected = self.tableData.attributes.find(t => t?.key === self.selected.column);
                                         if (selected) {
-                                            self.select({ field: selected, column: selected.key, label: selected.key });
+                                            self.handleSelectAttribute({ field: selected, column: selected.key, label: selected.key });
                                         }
                                         self.rows = mapped;
                                         self.page = 1;
@@ -1118,7 +1114,7 @@ export default {
 .list-group {
     min-height: 20px;
 }
-
+/*
 .steps {
     border-radius: 0 !important;
     padding-bottom: 100px;
@@ -1146,27 +1142,27 @@ export default {
 .more-actions li {
     font-size: .8em !important;
 }
-
+*/
 #step-container {
     position: relative;
 }
 
-/*
-    #step-scroll {
-        position: relative;
-        margin: auto;
-        height: 60vh;
-    }*/
+.step-scroll-area {
+    position: relative;
+    margin: auto;
+    height: 70vh;
+    
+}
 
 .fill-height {
     height: 75vh
 }
-
+/*
 .step-list {
     -ms-flex: 0 0 305px;
     flex: 0 0 305px;
 }
-
+*/
 
 .table-stats {
     font-size: 9pt;

@@ -51,10 +51,10 @@ export default {
         selected: { type: Object, default: () => ({}) },
         menus: { type: Array, default: () => [] }
     },
-    emits: ['select'],
+    emits: ['trigger'],
     methods: {
         trigger(action, ...params) {
-            this.$emit('select', { action, params, 'selected': this.selected });
+            this.$emit('trigger', { action, params, 'selected': this.selected });
         }
     }
 };
