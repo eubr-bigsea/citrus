@@ -1,8 +1,8 @@
 <template>
     <div>
         <TahitiSuggester />
-        <div class="row">
-            <div class="col-3 noselect step-list p-1">
+        <div class="flex_container">
+            <div class="flex_item_left noselect step-list p-1">
                 <div class="p-2">
                     <h6>{{ $t('dataExplorer.title') }}</h6>
                     <div>
@@ -63,8 +63,7 @@
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <step-list :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
                         @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
-                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" 
-                        />
+                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -81,7 +80,7 @@
                 </div>
             </div>
             <!-- Preview area -->
-            <div class="col-9 border-left fill-height mt-3">
+            <div class="flex_item_right mt-3">
                 <PreviewMenu :selected="selected" :menus="menus" @trigger="handleTrigger" @analyse="handleAnalyse" />
                 <Preview ref="preview" :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
                     :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
@@ -407,7 +406,7 @@ export default {
         async saveWorkflow() {
             const cloned = structuredClone(this.workflowObj);
             const url = `${tahitiUrl}/workflows/${cloned.id}`;
-            
+
             cloned.preferred_cluster_id = this.clusterId;
             cloned.platform_id = META_PLATFORM_ID;
             cloned.tasks.forEach((task) => {
@@ -420,8 +419,8 @@ export default {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
                 this.success(this.$t('messages.savedWithSuccess',
-                        { what: this.$tc('titles.workflow') }));
-            } catch(e) {
+                    { what: this.$tc('titles.workflow') }));
+            } catch (e) {
                 this.error(e);
             }
         },
@@ -504,14 +503,14 @@ export default {
 
             cloned.tasks = cloned.tasks.filter(task => task.enabled && task.previewable)
             cloned.tasks.forEach((task) => {
-                    // Remove unnecessary attributes from operation
-                    task.operation = { id: task.operation.id };
-                    delete task.version;
+                // Remove unnecessary attributes from operation
+                task.operation = { id: task.operation.id };
+                delete task.version;
             });
 
             const body = {
                 workflow: cloned,
-                cluster: { id: self.clusterId }, 
+                cluster: { id: self.clusterId },
                 name: `## explorer ${self.workflowObj.id} ##`,
                 user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                 persist: false, // do not save the job in db.
@@ -526,7 +525,7 @@ export default {
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body,
                     { headers: { 'Locale': self.$root.$i18n.locale, } });
-                self.$refs.preview && self.$refs.preview.scroll({top: 0});
+                self.$refs.preview && self.$refs.preview.scroll({ top: 0 });
                 self.job = response.data.data;
                 self.page = 1;
                 self.connectWebSocket();
@@ -1105,6 +1104,21 @@ export default {
     }
 };
 </script>
+<style scoped>
+.flex_container {
+    display: flex;
+    width: 100%;
+}
+
+.flex_item_left {
+    width: 300px;
+}
+
+.flex_item_right {
+    flex: 1;
+}
+</style>
+
 <style>
 .ghost {
     opacity: 0.5;
@@ -1114,6 +1128,7 @@ export default {
 .list-group {
     min-height: 20px;
 }
+
 /*
 .steps {
     border-radius: 0 !important;
@@ -1151,12 +1166,13 @@ export default {
     position: relative;
     margin: auto;
     height: 70vh;
-    
+
 }
 
 .fill-height {
     height: 75vh
 }
+
 /*
 .step-list {
     -ms-flex: 0 0 305px;
