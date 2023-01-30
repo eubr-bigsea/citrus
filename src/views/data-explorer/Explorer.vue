@@ -63,8 +63,7 @@
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <step-list :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
                         @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
-                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" 
-                        />
+                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -95,20 +94,16 @@
                 <table v-if="stats && stats.attribute === null"
                     class="table table-bordered table-stats table-striped table-sm">
                     <thead>
-                        <tr v-if="stats.message && stats.message.index" class="text-center">
-                            <th />
-                            <th v-for="k in stats.message.columns" :key="k">
-                                {{ k }}
+                        <tr v-if="stats.message" class="text-center">
+                            <th v-for="k in stats.message.columns" :key="k.name">
+                                {{ k.name }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(attr, inx) in stats.message.index" :key="attr">
-                            <th class="text-center">
-                                {{ attr }}
-                            </th>
-                            <td v-for="data in stats.message.data[inx]" :key="data">
-                                {{ data === null ? '-' : data}}
+                        <tr v-for="(v, row) in stats.message.columns[0].values" :key="row">
+                            <td v-for="(attr, col) in stats.message.columns" :key="col" :class="{'font-weight-bold': col === 0}">
+                                {{stats.message.columns[col].values[row] || '-'}}
                             </td>
                         </tr>
                     </tbody>
@@ -407,7 +402,7 @@ export default {
         async saveWorkflow() {
             const cloned = structuredClone(this.workflowObj);
             const url = `${tahitiUrl}/workflows/${cloned.id}`;
-            
+
             cloned.preferred_cluster_id = this.clusterId;
             cloned.platform_id = META_PLATFORM_ID;
             cloned.tasks.forEach((task) => {
@@ -420,8 +415,8 @@ export default {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
                 this.success(this.$t('messages.savedWithSuccess',
-                        { what: this.$tc('titles.workflow') }));
-            } catch(e) {
+                    { what: this.$tc('titles.workflow') }));
+            } catch (e) {
                 this.error(e);
             }
         },
@@ -504,14 +499,14 @@ export default {
 
             cloned.tasks = cloned.tasks.filter(task => task.enabled && task.previewable)
             cloned.tasks.forEach((task) => {
-                    // Remove unnecessary attributes from operation
-                    task.operation = { id: task.operation.id };
-                    delete task.version;
+                // Remove unnecessary attributes from operation
+                task.operation = { id: task.operation.id };
+                delete task.version;
             });
 
             const body = {
                 workflow: cloned,
-                cluster: { id: self.clusterId }, 
+                cluster: { id: self.clusterId },
                 name: `## explorer ${self.workflowObj.id} ##`,
                 user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                 persist: false, // do not save the job in db.
@@ -526,7 +521,7 @@ export default {
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body,
                     { headers: { 'Locale': self.$root.$i18n.locale, } });
-                self.$refs.preview && self.$refs.preview.scroll({top: 0});
+                self.$refs.preview && self.$refs.preview.scroll({ top: 0 });
                 self.job = response.data.data;
                 self.page = 1;
                 self.connectWebSocket();
@@ -1114,6 +1109,7 @@ export default {
 .list-group {
     min-height: 20px;
 }
+
 /*
 .steps {
     border-radius: 0 !important;
@@ -1151,12 +1147,13 @@ export default {
     position: relative;
     margin: auto;
     height: 70vh;
-    
+
 }
 
 .fill-height {
     height: 75vh
 }
+
 /*
 .step-list {
     -ms-flex: 0 0 305px;
