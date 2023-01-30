@@ -1,8 +1,8 @@
 <template>
     <div>
         <TahitiSuggester />
-        <div class="row">
-            <div class="col-3 noselect step-list p-1">
+        <div class="flex_container">
+            <div class="flex_item_left noselect step-list p-1">
                 <div class="p-2">
                     <h6>{{ $t('dataExplorer.title') }}</h6>
                     <div>
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <!-- Preview area -->
-            <div class="col-9 border-left fill-height mt-3">
+            <div class="flex_item_right mt-3">
                 <PreviewMenu :selected="selected" :menus="menus" @trigger="handleTrigger" @analyse="handleAnalyse" />
                 <Preview ref="preview" :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
                     :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
@@ -1100,6 +1100,21 @@ export default {
     }
 };
 </script>
+<style scoped>
+.flex_container {
+    display: flex;
+    width: 100%;
+}
+
+.flex_item_left {
+    width: 300px;
+}
+
+.flex_item_right {
+    flex: 1;
+}
+</style>
+
 <style>
 .ghost {
     opacity: 0.5;

@@ -231,9 +231,9 @@ export default {
             Vue.nextTick(() => {
                 const elem = this.$refs.form.querySelector('input, select');
                 elem && elem.focus();
-                // try {
-                //     self.$refs.step.scrollIntoView();
-                // } catch (ignore) { }
+                try {
+                     this.$refs.step.scrollIntoView();
+                } catch (ignore) { console.debug(ignore)}
             });
         },
         save() {
