@@ -158,6 +158,45 @@
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
+            <b-navbar-nav class="pt-1">
+                <b-nav-item-dropdown ref="dropdown" right toggle-class>
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-bars" size="1x" class="text-success" />
+                    </template>
+
+                    <b-dropdown-form style="width: 300px" class="text-center">
+                        <font-awesome-icon icon="fa fa-user" />
+                        <p>
+                            <strong>{{user.name}}</strong>
+                            <br>
+                            <small>{{user.email}}</small>
+                        </p>
+                        <div class="text-center">
+                            <strong>{{$tc('titles.role', 2)}}</strong><br>
+                            <div class="mt-2">
+                                <span v-for="role in user.roles"
+                                      :key="role.id"
+                                      class="badge badge-info mr-1 p-1">
+                                    {{role.label}}
+                                </span>
+                            </div>
+                        </div>
+                        <p class="border-top pt-2">
+                            <b-button variant="primary"
+                                      size="sm"
+                                      @click="profile">
+                                {{$t('titles.profile')}}
+                            </b-button>
+                            <b-button variant="danger"
+                                      size="sm"
+                                      class="ml-2"
+                                      @click="logout">
+                                {{$t('common.logout')}}
+                            </b-button>
+                        </p>
+                    </b-dropdown-form>
+                </b-nav-item-dropdown>
+            </b-navbar-nav>
         </b-collapse>
     </b-navbar>
 </template>

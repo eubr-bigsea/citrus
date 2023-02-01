@@ -146,7 +146,7 @@ export default {
         },
         update(step){
             this.$refs.steps.forEach(s => s.setEditable(true));
-            this.$emit('update', step);
+            // this.$emit('update', step);
         },
         preview(step){
             const toggle = this.lastPreviewableStep === step;

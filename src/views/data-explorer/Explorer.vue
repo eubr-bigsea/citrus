@@ -534,7 +534,9 @@ export default {
                     self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                 }
             } finally {
-                self.$Progress.finish();
+                Vue.nextTick(() => {
+                    self.$Progress.finish();
+                });
             }
         },
         /* Load auxiliary objects */
@@ -985,7 +987,8 @@ export default {
                                 if (messageJson.format === 'polars') {
                                     const truncated = messageJson.truncated || [];
                                     const attributes = messageJson.columns.map(
-                                        c => ({ key: c.name, label: c.name, name: c.name, type: c.datatype }));
+                                        c => ({ key: c.name, label: c.name, name: c.name, 
+                                            type: typeof(c.datatype) === 'object' ?  Object.keys(c.datatype)[0] : c.datatype }));
                                     self.tableData = { attributes };
                                     self.loadingData = false;
                                     attributes.forEach(attr => attr.generic_type =
@@ -1002,7 +1005,9 @@ export default {
                                         for (let j = 0; j < columnValues.length; j++) {
                                             // Test if it is a list
                                             if (columnValues[j][i] && columnValues[j][i].values) {
-                                                row.push(columnValues[j][i].values);
+                                                row.push(JSON.stringify(columnValues[j][i].values));
+                                            } else if (attributes[j].type === 'Datetime') {
+                                                row.push(this.$filters.formatTimestamp(columnValues[j][i]));
                                             } else {
                                                 row.push(columnValues[j][i]);
                                             }
