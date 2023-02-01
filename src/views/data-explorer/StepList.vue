@@ -121,19 +121,6 @@ export default {
             //const self = this; //this.$refs.steps
         },
         
-        updateStep(step) {
-            const task = this.workflow.tasks.find(t => t.id === step.id);
-            if (task) {
-                Object.assign(task.forms, step.forms);
-            }
-            this.updateAttributeSuggestion();
-            this.loadData();
-        },
-
-        resetMenuData() {
-            this.selected = { field: {} };
-            this.$refs.preview.resetMenuData();
-        },
         select(attr) {
             this.selected = attr;
             this.valuesClusters = [];
@@ -146,7 +133,7 @@ export default {
         },
         update(step){
             this.$refs.steps.forEach(s => s.setEditable(true));
-            this.$emit('update', step);
+            //this.$emit('update', step);
         },
         preview(step){
             const toggle = this.lastPreviewableStep === step;
@@ -154,8 +141,10 @@ export default {
                 t.previewable = toggle || t.display_order <= step.display_order; 
             });
             this.lastPreviewableStep = toggle ? null : step;
+        },
+        editLast(category){
+            this.$refs.steps.slice(-1)[0].edit(category);
         }
-
     }
 };
 </script>

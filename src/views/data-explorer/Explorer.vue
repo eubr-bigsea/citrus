@@ -61,7 +61,7 @@
                 </div>
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
-                    <step-list :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
+                    <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
                         @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
                         @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" />
 
@@ -724,8 +724,9 @@ export default {
             cloned.id = Operation.generateTaskId();
             this.workflowObj.tasks.splice(step.display_order, 0, cloned);
             // Update the display_order
-            this.workflowObj.tasks.slice(step.display_order + 1).forEach(
-                (task) => task.display_order++);
+            this.workflowObj.tasks.forEach(
+                (task, i) => task.display_order = i);
+            this.loadData();
             this.isDirty = true;
         },
         previewUntilHere(step) {
@@ -816,6 +817,9 @@ export default {
                     this.operationLookup.get(options.params[0].id),
                     options.selected, options.fields);
                 this.isDirty = true;
+                Vue.nextTick(() => {
+                    this.$refs.stepList.editLast('execution');
+                });
                 //this.loadData();
             } else {
                 console.log(`Unknown action: ${options.action}`);
@@ -1112,6 +1116,7 @@ export default {
 
 .flex_item_right {
     flex: 1;
+    width: calc(100% - 300px);
 }
 </style>
 
@@ -1182,7 +1187,7 @@ export default {
 
 .table-stats td,
 .table-stats th {
-    padding: 0
+    padding: 2px;
 }
 
 .top-bar {

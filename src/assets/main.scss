@@ -31,6 +31,7 @@ body {
 }
 .snotify {
   z-index: 1000005 !important;
+  min-width: 500px;
   .snotifyToast__title {
     font-size: 1.2rem;
   }
