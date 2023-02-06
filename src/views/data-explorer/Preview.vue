@@ -1,13 +1,13 @@
 <template>
     <div>
         <v-style v-if="rightAlignedAttributes && rightAlignedAttributes.length">
-            {{rightAlignedAttributes}} {
+            {{ rightAlignedAttributes }} {
             text-align: right;
             }
         </v-style>
         <div v-show="loading" class="preview-loading">
             <font-awesome-icon icon="lemon" spin class="text-success" />
-            {{$t('common.wait')}}
+            {{ $t('common.wait') }}
         </div>
         <template v-if="items">
             <div style="position: relative">
@@ -15,24 +15,23 @@
                     <div />
                 </div>
                 <b-table ref="table" :no-border-collapse="false" :items="items" :fields="['#'].concat(attributes)"
-                         tbody-class="body" sticky-header="80vh" table-class="table-preview"
-                         class="border scroll-area table-preview" outlined small hover
-                         bordered responsive
-                         @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
+                    tbody-class="body" sticky-header="90vh" table-class="table-preview"
+                    class="border scroll-area table-preview" outlined small hover bordered responsive
+                    @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
                     <!-- A custom formatted column -->
                     <template #cell(#)="data">
-                        {{data.index + 1}}
+                        {{ data.index + 1 }}
                     </template>
 
                     <template #head()="scope">
                         <div class="grabbable" draggable="true" @click.prevent="customOpen($event, scope)"
-                             @dragstart="dragStart(scope.field, $event)" @dragend.prevent="dragEnd(scope.field, $event)"
-                             @dragenter="dragEnter(scope.field, $event)" @dragleave="dragLeave(scope.field, $event)"
-                             @dragover.prevent="dragOver(scope.field, $event)" @drop="drop(scope.field, $event)">
+                            @dragstart="dragStart(scope.field, $event)" @dragend.prevent="dragEnd(scope.field, $event)"
+                            @dragenter="dragEnter(scope.field, $event)" @dragleave="dragLeave(scope.field, $event)"
+                            @dragover.prevent="dragOver(scope.field, $event)" @drop="drop(scope.field, $event)">
                             <div style="pointer-events: none;">
                                 <div class="clearfix no-wrap">
                                     <div class="attribute-name mr-2">
-                                        {{scope.label}}
+                                        {{ scope.label }}
                                     </div>
                                     <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
                                     <!--<font-awesome-icon v-else class="right" icon="chevron-down" />-->
@@ -41,9 +40,9 @@
                                     <!--<select>
                         <option v-for="dt in dataTypes" :value="dt" :key="dt">{{dt}}</option>
                     </select>-->
-                                    {{scope.field.generic_type}}
-                                    <br/> 
-                                    {{scope.field.type}} <span v-if="scope.field.truncated">(trunc.)</span>
+                                    {{ scope.field.generic_type }}
+                                    <br />
+                                    {{ scope.field.type }} <span v-if="scope.field.truncated">(trunc.)</span>
                                 </div>
                                 <!--
                                 <div>
@@ -65,27 +64,27 @@
 
         <!-- FIXME: translation -->
         <context-menu ref="ctxCellMenu" class="menu" @ctx-open="(data) => cellMenuData = data"
-                      @ctx-cancel="resetCellCtxLocals">
+            @ctx-cancel="resetCellCtxLocals">
             <template v-if="cellMenuData">
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('filter', cellMenuData.name, '!=', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-times" class="text-danger" /> <b>Remover</b> registros onde
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                    <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '!', null)">
                     <font-awesome-icon icon="fa fa-times" class="text-secondary" /> <b>Remover</b> registros onde
-                    <b><code>{{cellMenuData.name}} é nulo</code></b>
+                    <b><code>{{ cellMenuData.name }} é nulo</code></b>
                 </li>
                 <li class="ctx-divider" />
 
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('filter', cellMenuData.name, '==', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-check" class="text-success" /> <b>Manter</b> apenas registros onde
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                    <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '', null)">
                     <font-awesome-icon icon="fa fa-check text-secondary" /> <b>Manter</b> apenas registros onde
-                    <b><code>{{cellMenuData.name}} é nulo</code></b>
+                    <b><code>{{ cellMenuData.name }} é nulo</code></b>
                 </li>
 
                 <li class="ctx-divider" />
@@ -94,30 +93,30 @@
                     @click="onCellContextMenuAction('flag', cellMenuData.name, '==', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-flag text-primary" />
                     <b>Sinalizar</b> quando
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                    <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
                 </li>
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('flag', cellMenuData.name, '!=', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-flag text-danger" />
                     <b>Sinalizar</b> quando
-                    <b><code>{{cellMenuData.name}} 	&#8800; {{cellMenuData.value}}</code></b>
+                    <b><code>{{ cellMenuData.name }} 	&#8800; {{ cellMenuData.value }}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '', null)">
                     <font-awesome-icon icon="fa fa-flag" calss="text-warning" />
                     <b>Sinalizar</b> quando
-                    <b><code>{{cellMenuData.name}} é nulo</code></b>
+                    <b><code>{{ cellMenuData.name }} é nulo</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '!', null)">
                     <font-awesome-icon icon="fa fa-flag" class="text-secondary" />
                     <b>Sinalizar </b> quando
-                    <b><code>{{cellMenuData.name}} não é nulo</code></b>
+                    <b><code>{{ cellMenuData.name }} não é nulo</code></b>
                 </li>
                 <li class="ctx-divider" />
 
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('clean', cellMenuData.name, '==', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-eraser" class="text-warning" /> <b>Limpar</b> dados do atributo
-                    onde <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
+                    onde <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
                 </li>
                 <!--
                 <li class="ctx-divider"></li>
@@ -232,8 +231,8 @@ export default {
     beforeUnmount() {
         window.removeEventListener("resize", this.resize);
         this.$refs.table &&
-                this.$refs.table.$el.removeEventListener(
-                    'scroll', this.handleTableScrollEvent);
+            this.$refs.table.$el.removeEventListener(
+                'scroll', this.handleTableScrollEvent);
     },
     methods: {
         resize() {
@@ -252,31 +251,35 @@ export default {
             this.$refs.colOverlay.style.width = 0;
             this.$refs.colOverlay.style.display = 'none';
             this.resetMenuData();
+            const cell = event.target.closest('td');
+            const index = parseInt(cell.getAttribute('aria-colindex')) - 1;
+            const field = this.attributes[index - 1];
+            this.customOpen(event, { field, column: field.name, label: field.name }, index);
             return;
-            /*
-                const cell = event.target.closest('td');
-                const index = parseInt(cell.getAttribute('aria-colindex')) - 1;
+        },
+        customOpen(event, data, index) {
+            let th;
+            if (index !== undefined) {
+                th = this.$refs.table.$el.querySelectorAll('th')[index];
+            } else if (data.column === '#') {
+                this.resetMenuData();
+                this.$emit('select', { field: {} });
+                return;
+            } else {
+                th = event.target.closest('th');
+            }
 
-                //this.customOpen(event, this.attributes[index], index);
-
-                this.lastHeader && this.lastHeader.classList.remove('bg-info', 'text-white');
-                const data = {
-                    attribute: index, field: this.attributes[index],
-                    label: this.attributes[index].key
-                };
-                const th = this.$refs.table.$el.querySelectorAll('th')[index];
-                if (this.menuData.field !== data.field) {
-                    this.lastHeader = th;
-                    this.lastHeader.classList.add('bg-info', 'text-white')
-                    this.menuData = data;
-                    this.moveSelectionOverlay(th);
-                } else {
-                    this.$refs.colOverlay.style.left = -10;
-                    this.$refs.colOverlay.style.width = 0;
-                    this.$refs.colOverlay.style.display = 'none';
-                    this.resetMenuData();
-                }
-                */
+            this.lastHeader && this.lastHeader.classList.remove('bg-info', 'text-white');
+            if (this.menuData.field !== data.field) {
+                this.lastHeader = th;
+                this.moveSelectionOverlay(th);
+                this.lastHeader.classList.add('bg-info', 'text-white')
+                this.menuData = data;
+                this.$emit('select', data);
+            } else {
+                this.resetMenuData();
+                this.$emit('select', { field: {} });
+            }
         },
         resetMenuData() {
             this.menuData = { field: { label: '', position: -1 } };
@@ -303,35 +306,7 @@ export default {
         scroll(opts) {
             this.$refs.table && this.$refs.table.$el.scroll(opts);
         },
-        customOpen(event, data, index) {
-            let th;
-            if (index !== undefined) {
-                th = this.$refs.table.$el.querySelectorAll('th')[index];
-            } else {
-                th = event.target.closest('th');
-            }
 
-            this.lastHeader && this.lastHeader.classList.remove('bg-info', 'text-white');
-            if (this.menuData.field !== data.field) {
-                this.lastHeader = th;
-                this.moveSelectionOverlay(th);
-                this.lastHeader.classList.add('bg-info', 'text-white')
-                this.menuData = data;
-                this.$emit('select', data);
-            } else {
-                this.resetMenuData();
-                this.$emit('select', { field: {} });
-            }
-            /*const rect = th.getBoundingClientRect();
-                const clientX = rect.left + window.pageXOffset;
-                 this.$refs.ctxMenu.open(this._eventModifier(event,
-                    {
-                        clientX: clientX > 0 ? clientX : 0,
-                        clientY: th.offsetTop + 125
-                    }), data);
-                    */
-            //console.debug(event.clientX, rect.left + window.pageXOffset, clientX > 0 ? clientX : 0)
-        },
         moveSelectionOverlay(th, showBorder) {
             const scrollOffset = this.$refs.table.$el.scrollLeft;
             if (th) {
@@ -372,7 +347,7 @@ export default {
                 if (!['Text', 'Date', 'Datetime', 'Time', 'Boolean'].includes(attribute.generic_type)) {
                     // Convert to Number
                     value = Number(event.target.innerText);
-                } else if (attribute.generic_type === 'Boolean'){
+                } else if (attribute.generic_type === 'Boolean') {
                     value = event.target.innerText === 'true';
                 } else {
                     value = `"${cellText.substring(0, 40)}"`
@@ -439,126 +414,126 @@ export default {
 </script>
 
 <style scoped>
-    div.menu>>>li {
-        font-size: .9em;
-        margin: 0;
-        min-width: 200px;
-    }
+div.menu>>>li {
+    font-size: .9em;
+    margin: 0;
+    min-width: 200px;
+}
 
-    div.menu>>>li.ctx-item>span {
-        margin-right: 5px
-    }
+div.menu>>>li.ctx-item>span {
+    margin-right: 5px
+}
 
-    .table-preview {
-        position: relative;
-    }
-    
-    .table-preview>>>table {
-        width: initial !important;
-        /* min-width: 100% !important;
-        width: 1500px; */
-    }
-    .table-preview>>>td {
-        white-space: pre;
-    }
+div.table-preview {
+    position: relative;
+    max-width: calc(95vw - 301px);
+}
 
-    .table-preview {
-        color: #aaa;
-        font-size: 10pt;
-        xwhite-space: pre-wrap;
-        /*
+/* .table-preview>>>table {
+        min-width: 100% !important;
+        width: 1500px;
+    } */
+.table-preview>>>td {
+    white-space: pre;
+}
+
+.table-preview {
+    color: #aaa;
+    font-size: 10pt;
+    xwhite-space: pre-wrap;
+    /*
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         user-select: none*/
-    }
+}
 
-    .table-preview>>>td.invalid-data {
-        background-color: #fee;
-    }
+.table-preview>>>td.invalid-data {
+    background-color: #fee;
+}
 
-    .table-preview>>>td.missing-data {
-        background-color: #fffdeb;
-    }
+.table-preview>>>td.missing-data {
+    background-color: #fffdeb;
+}
 
-    .table-preview>>>td:hover {
-        background-color: #666;
-        color: #fff;
-    }
+.table-preview>>>td:hover {
+    background-color: #666;
+    color: #fff;
+}
 
-    .no-wrap {
-        overflow: auto;
-        white-space: nowrap;
-    }
+.no-wrap {
+    overflow: auto;
+    white-space: nowrap;
+}
 
-    .no-wrap * {
-        display: inline-block;
-    }
+.no-wrap * {
+    display: inline-block;
+}
 
-    .table-preview>>>td {
-        font-size: 9pt;
-        /*min-width: 150px;*/
-        padding: 1px 4px;
-        /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
-    }
+.table-preview>>>td {
+    font-size: 9pt;
+    /*min-width: 150px;*/
+    padding: 1px 4px;
+    /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+}
 
-    div.data-type {
-        font-weight: normal;
-        font-size: .9em;
-    }
+div.data-type {
+    font-weight: normal;
+    font-size: .9em;
+}
 
-    .smallest-icon {
-        font-size: .9em;
-    }
+.smallest-icon {
+    font-size: .9em;
+}
 
-    .ctx-item {
-        line-height: 1.2 !important;
-    }
+.ctx-item {
+    line-height: 1.2 !important;
+}
 
-    .preview-loading {
-        background: #f3f3f4;
-        border: 1px solid #222;
-        font-size: 20pt;
-        color: #666;
-        padding: 10px;
-        left: 25%;
-        margin: 0 auto;
-        position: absolute;
-        text-align: center;
-        top: 40%;
-        width: 40%;
-        z-index: 101;
-    }
+.preview-loading {
+    background: #f3f3f4;
+    border: 1px solid #222;
+    font-size: 20pt;
+    color: #666;
+    padding: 10px;
+    left: 25%;
+    margin: 0 auto;
+    position: absolute;
+    text-align: center;
+    top: 40%;
+    width: 40%;
+    z-index: 101;
+}
 
-    .col-overlay {
-        /*border: 1px solid rgb(14, 101, 235);*/
-        border-bottom: 0;
-        left: -10000px;
-        overflow: hidden;
-        pointer-events: none;
-        position: absolute;
-        height: 80vh;
-        /*min-width: 100px;*/
-    }
+.col-overlay {
+    /*border: 1px solid rgb(14, 101, 235);*/
+    border-bottom: 0;
+    left: -10000px;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+    height: 80vh;
+    /*min-width: 100px;*/
+}
 
-    .col-overlay div {
-        opacity: .04;
-        background-color: rgb(14, 101, 235);
-        height: 80vh;
-        width: 100%;
-    }
+.col-overlay div {
+    opacity: .04;
+    background-color: rgb(14, 101, 235);
+    height: 80vh;
+    width: 100%;
+}
 
-    .grabbable {
-        cursor: move;
-        /* fallback if grab cursor is unsupported */
-        cursor: grab;
-        cursor: -moz-grab;
-        cursor: -webkit-grab;
-    }
+.grabbable {
+    cursor: move;
+    /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
 
-    /* (Optional) Apply a "closed-hand" cursor during drag operation. */
-    .grabbable:active {
-        cursor: grabbing;
-        cursor: -moz-grabbing;
-        cursor: -webkit-grabbing;
-    }
+/* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
+}
 </style>

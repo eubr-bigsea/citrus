@@ -21,7 +21,10 @@ label {
 }
 body {
   xbackground-color: var(--background-color);
-  font-family: 'Roboto', sans-serif;
+  font-family:  'Roboto', sans-serif;
+}
+.source-code-pro-font {
+    font-family:  "Source Sans Pro", "Roboto", sans-serif;
 }
 .btn:focus {
     box-shadow: none;
@@ -825,4 +828,8 @@ h1 {
 .VueTables .form-inline label {
     display: block !important;
     font-weight: bold;
+}
+.small-nav-link {
+    padding: 5px 8px !important;
+    margin: 0;
 }

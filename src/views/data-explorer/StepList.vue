@@ -154,6 +154,9 @@ export default {
                 t.previewable = toggle || t.display_order <= step.display_order; 
             });
             this.lastPreviewableStep = toggle ? null : step;
+        },
+        setEdition(value){
+            this.$refs.steps.forEach(s => s.setEditable(value));
         }
 
     }

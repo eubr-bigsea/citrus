@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="source-code-pro-font">
         <TahitiSuggester />
         <div class="flex_container">
             <div class="flex_item_left noselect step-list p-1">
@@ -47,8 +47,7 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button :disabled="loadingData || !isDirty" variant="primary" size="sm" class="float-right mt-2"
-                        @click="saveWorkflow">
+                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
                     <b-button :disabled="pendingSteps || loadingData" size="sm" variant="outline-secondary"
@@ -61,12 +60,15 @@
                 </div>
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
-                    <step-list :workflow="workflowObj" language="pt" :attributes="[]" @toggle="handleToggleStep"
-                        @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
-                        @preview="previewUntilHere" @update="handleUpdateStep" :suggestion-event="getSuggestions" />
+                    <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]"
+                        @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
+                        @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
+                        :suggestion-event="getSuggestions" />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
+                        <br />
+                        <small>Data size: {{ dataSize }} kb.</small>
                         <br>
                         <!--
 
@@ -90,76 +92,100 @@
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true" :title="stats && stats.attribute">
+            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true">
                 <table v-if="stats && stats.attribute === null"
                     class="table table-bordered table-stats table-striped table-sm">
                     <thead>
                         <tr v-if="stats.message" class="text-center">
-                            <th v-for="k in stats.message.columns" :key="k.name">
+                            <td v-for="k in stats.message.columns" :key="k.name">
                                 {{ k.name }}
-                            </th>
+                            </td>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(v, row) in stats.message.columns[0].values" :key="row">
-                            <td v-for="(attr, col) in stats.message.columns" :key="col" :class="{'font-weight-bold': col === 0}">
-                                {{stats.message.columns[col].values[row] || '-'}}
+                            <td v-for="(attr, col) in stats.message.columns" :key="col"
+                                :class="{ 'font-weight-bold': col === 0 }">
+                                {{ stats.message.columns[col].values[row] || '-' }}
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 <div v-else>
+                    <span> {{stats && stats.attribute}}</span>
                     <b-tabs>
-                        <b-tab title="Análise" :title-link-class="'small-nav-link'">
+                        <b-tab title="Numérico" title-link-class="small-nav-link">
                             <div v-if="stats && stats.message" class="row">
-                                <div v-if="stats && stats.message.histogram" class="col-10">
-                                    <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
-                                        :layout="{ height: 120, hoverlabel: { font: { size: 9 } }, autosize: true, margin: { l: 0, r: 50, b: 30, t: 10, pad: 0 } }"
-                                        :data="[{ opacity: 0.6, marker: { color: 'rgb(49,130,189)' }, 'orientation': 'h', 'type': 'box', 'lowerfence': [stats.message.fence_low], 'mean': [stats.message.stats.mean], 'median': [stats.message.stats.median], 'q1': [stats.message.stats['25%']], 'q3': [stats.message.stats['75%']], 'sd': [stats.message.stats.std], 'upperfence': [stats.message.fence_high] }]"
-                                        :height="200" :options="{ displayModeBar: false }" />
+                                <div v-if="stats && stats.message.histogram" class="col-9">
+                                    <!-- <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
+                                        :layout="{ height: 180, hoverlabel: { font: { size: 9 } }, autosize: true, margin: { l: 0, r: 50, b: 30, t: 20, pad: 0 } }"
+                                        :data="[{
+                                            opacity: 0.6, marker: { color: 'rgb(49,130,189)' }, 'orientation': 'h', 'type': 'box',
+                                            'lowerfence': [stats.message.fence_low],
+                                            'mean': [stats.message.stats.mean],
+                                            'median': [stats.message.stats.median],
+                                            'q1': [stats.message.stats['25%']],
+                                            'q3': [stats.message.stats['75%']],
+                                            'sd': [stats.message.stats.std],
+                                            'upperfence': [stats.message.fence_high]
+                                        }]" :height="200" :options="{ displayModeBar: false }" />
                                     <Plotly v-if="stats" ref="plotly" :auto-resize="true"
                                         :layout="{ height: 140, autosize: true, margin: { l: 50, r: 50, b: 30, t: 10, pad: 4 } }"
-                                        :data="getStatData()" :height="200" :options="{ displayModeBar: false }" />
+                                        :data="getStatData()" :height="200" :options="{ displayModeBar: false }" /> -->
+
+                                    <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
+                                        showlegend: false,
+                                        margin: { l: 50, r: 50, b: 30, t: 10, pad: 4 },
+                                        xyaxis: { domain: [0] },
+                                        yaxis2: { domain: [0.9] },
+                                        legend: { traceorder: 'reversed' },
+                                        height: 200, width: 600,
+                                    }" :data="getStatData2()" :options="{ displayModeBar: false }" />
+
+
+                                </div>
+                                <div class="col-3">
+                                    <div v-if="stats.message.outliers">
+                                        <span>Valores atípicos (outliers)*</span>
+                                        <table class="table table-sm table-stats">
+                                            <tr v-for="t, i in stats.message.outliers" :key="i">
+                                                <td>{{ t }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
                                 </div>
                                 <div class="col-4">
-                                    <strong>Estatísticas (exclui nulos)</strong>
+                                    <span>Estatísticas (exclui nulos)</span>
                                     <table class="table table-sm table-stats">
                                         <tr v-for="value, stat in stats.message.stats" :key="stat">
-                                            <th>{{ stat }}</th>
+                                            <td class="text-capitalize">{{ stat }}</td>
                                             <td>{{ value }}</td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div :class="{ 'col-4': stats.message.outliers, 'col-8': !stats.message.outliers }">
-                                    <strong>Top valores *</strong>
+                                <div v-if="stats.message.top20" class="col-8">
+                                    <span>Top valores *</span>
                                     <table class="table table-sm table-stats">
-                                        <tr v-for="t in stats.message.top20.slice(0, 10)" :key="t">
-                                            <th class="col-8">
+                                        <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
+                                            <td class="col-8">
                                                 {{ t[0]}}
                                                 <div class="top-bar"
-                                                    :style="{ width: (100 * t[1] / stats.message.stats.rows) + '%' }" />
-                                            </th>
+                                                    :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                            </td>
                                             <td class="col-4 text-right">
                                                 {{ t[1]}}
-                                                ({{(100 * t[1] / stats.message.stats.rows).toFixed(2)}})%
+                                                ({{(100 * t[1] / stats.message.stats.count).toFixed(2)}})%
                                             </td>
                                         </tr>
                                     </table>
                                 </div>
-                                <div v-if="stats.message.outliers" class="col-4">
-                                    <strong>Valores atípicos (outliers)*</strong>
-                                    <table class="table table-sm table-stats">
-                                        <tr v-for="t in stats.message.outliers" :key="t">
-                                            <td>{{ t }}</td>
-                                        </tr>
-                                    </table>
-                                </div>
+
                                 <div class="col-12 text-right">
                                     <small><em>*limitados a 10</em></small>
                                 </div>
                             </div>
                         </b-tab>
-                        <b-tab v-if="selected.field.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
+                        <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
                             :title-link-class="'small-nav-link'">
                             <form action="" class="form-inline">
                                 <div class="form-group mb-2">
@@ -265,7 +291,7 @@ const type2Generic = new Map([
     ['Duration', 'Integer'], //Evaluate
     ['Time', 'Time'],
     ['Boolean', 'Boolean'],
-    ['List', 'Array'],
+    ['List', 'List'],
     ['Utf8', 'Text'],
     ['Categorical', 'Text'],
 ]);
@@ -308,6 +334,7 @@ export default {
             isDirty: false,  //check if workflow is dirty before leaving page
             job: null,  //last job details
             jobStatus: null,
+            dataSize: 0,
             language: this.$store.getters.user.locale,
             loadingData: true,  //data loading state
             operations: [],
@@ -758,6 +785,7 @@ export default {
             if (task.previewable) {
                 this.loadData();
             }
+            this.$refs.stepList.setEdition(true);
             this.isDirty = true;
         },
         /*
@@ -942,6 +970,34 @@ export default {
                 }
             }];
         },
+        getStatData2() {
+            const x = this.stats.message.histogram[1];
+            const customdata = x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`);
+            return [
+                {
+                    opacity: 0.6, marker: { color: 'rgb(49,130,189)' }, 'orientation': 'h', 'type': 'box',
+                    'lowerfence': [this.stats.message.fence_low],
+                    'mean': [this.stats.message.stats.mean],
+                    'median': [this.stats.message.stats.median],
+                    'q1': [this.stats.message.stats['25%']],
+                    'q3': [this.stats.message.stats['75%']],
+                    // 'sd': [this.stats.message.stats.std],
+                    'upperfence': [this.stats.message.fence_high],
+                    yaxis: 'y2',
+                },
+                {
+                    type: 'bar',
+                    hovertemplate: `%{customdata}: %{y} ${this.$tc("common.records", 2)}<extra></extra>`,
+                    customdata,
+                    x,
+                    y: this.stats.message.histogram[0],
+                    marker: {
+                        color: 'rgb(49,130,189)',
+                        opacity: 0.4,
+                    }
+                },
+            ];
+        },
 
         /* WebSocket Handling */
         connectWebSocket() {
@@ -955,7 +1011,6 @@ export default {
                     `${standSocketServer}${standNamespace}`, opts);
 
                 self.socket = socket;
-
                 socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
 
                 socket.on('exported result', (msg) => {
@@ -987,12 +1042,18 @@ export default {
                                 if (messageJson.format === 'polars') {
                                     const truncated = messageJson.truncated || [];
                                     const attributes = messageJson.columns.map(
-                                        c => ({ key: c.name, label: c.name, name: c.name, 
-                                            type: typeof(c.datatype) === 'object' ?  Object.keys(c.datatype)[0] : c.datatype }));
+                                        c => ({
+                                            key: c.name, label: c.name, name: c.name,
+                                            type: typeof (c.datatype) === 'object' ? Object.keys(c.datatype)[0] : c.datatype
+                                        }));
                                     self.tableData = { attributes };
                                     self.loadingData = false;
-                                    attributes.forEach(attr => attr.generic_type =
-                                        type2Generic.get(attr.type) || attr.type);
+                                    attributes.forEach((attr, i) => {
+                                        attr.type = msg.message.types[i]; // Polars cast to Int32 when generating JSON
+                                        attr.generic_type = type2Generic.get(attr.type) || attr.type
+                                    });
+                                    console.debug(msg.message.estimated_size)
+                                    self.dataSize = Math.round(msg.message.estimated_size / 1024.0) || '?';
                                     self.attributes = attributes;
 
                                     const columnNames = attributes.map(a => a.name);
