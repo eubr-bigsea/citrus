@@ -132,12 +132,18 @@ import {
     faBox,
     faKey,
     faUserGroup,
+    faCaretUp,
+    faCaretDown,
+    faArrowDown,
+    faArrowUp,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
     faAngleDoubleRight,
     faAngleDown,
     faAngleRight,
+    faArrowDown,
+    faArrowUp,
     faArrowsAltH,
     faArrowsAltV,
     faAsterisk,
@@ -152,6 +158,8 @@ library.add(
     faCalculator,
     faCalendarAlt,
     faCalendar,
+    faCaretDown,
+    faCaretUp,
     faCartPlus,
     faChartBar,
     faChartLine,

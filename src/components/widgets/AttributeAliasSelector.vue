@@ -74,6 +74,17 @@
                                                 <input v-model="item.alias" type="text"
                                                     class="form-control form-control-sm" :placeholder="item.attribute">
                                             </div>
+                                            <div>
+                                                <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')"
+                                                    @click.prevent="moveUp($event, index)" class="mr-2">
+                                                    <font-awesome-icon icon="fa fa-arrow-up" />
+                                                </a>
+                                                <a v-if="index !== (value.length - 1)" href="#"
+                                                    :title="$t('actions.moveDown')"
+                                                    @click.prevent="moveDown($event, index)">
+                                                    <font-awesome-icon icon="fa fa-arrow-down" />
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -209,6 +220,18 @@ export default {
             } else if (direction == 'left') {
                 this.updated(this.value.filter((a, i) => i !== index));
             }
+        },
+        moveUp(e, index) {
+            const sel = this.value ? [... this.value] : [];
+            const tmp = sel.splice(index, 1)[0]
+            sel.splice(index - 1, 0, tmp)
+            this.updated(sel);
+        },
+        moveDown(e, index) {
+            const sel = this.value ? [... this.value] : [];
+            const tmp = sel.splice(index, 1)[0]
+            sel.splice(index + 1, 0, tmp)
+            this.updated(sel);
         },
         updated(val) {
             if (Array.isArray(val)) {
