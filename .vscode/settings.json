@@ -6,7 +6,7 @@
         "**/node_modules/**": true,
         "**/dist/**": true,
         "**/coverage/**": true,
-    } ,
+    },
     //"editor.renderWhitespace": "all",
     "editor.selectionClipboard": true,
     "editor.detectIndentation": false,
@@ -36,13 +36,15 @@
     ],
     "window.zoomLevel": 0,
     "files.autoSave": "off",
-    "vetur.format.defaultFormatter.html": "prettier",
-    "vetur.format.defaultFormatter.js": "prettier-eslint",
     "[javascript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[vue]": {
+        // "editor.formatOnSave": true,
+        "editor.defaultFormatter": "Vue.volar"
     },
     //"eslint.format.enable": true,
     // "editor.codeActionsOnSave": {

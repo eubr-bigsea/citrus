@@ -1,20 +1,14 @@
 <template>
     <div class="axis-attribute">
-        <b-dropdown ref="dropdown"
-                    size="sm"
-                    variant="transparent text-left">
+        <b-dropdown ref="dropdown" size="sm" variant="transparent text-left">
             <template #button-content>
                 <font-awesome-icon icon="fa fa-chevron-down" /> &nbsp;&nbsp;
-                <span v-if="aggregation.length">{{aggregation}}({{name}})</span>
-                <span v-else>{{name}}</span>
+                <span v-if="aggregation.length">{{ aggregation }}({{ name }})</span>
+                <span v-else>{{ name }}</span>
             </template>
             <b-dropdown-form class="dd-form">
-                <b-form-group label="Agregação"
-                              label-for="dropdown-form-email"
-                              @submit.stop.prevent>
-                    <b-select v-model="aggregation"
-                              size="sm"
-                              @change="handleSelect">
+                <b-form-group label="Agregação" label-for="dropdown-form-email" @submit.stop.prevent>
+                    <b-select v-model="aggregation" size="sm" @change="handleSelect">
                         <option value="COUNT">
                             COUNT
                         </option>
@@ -78,26 +72,26 @@ export default {
 }
 </script>
 <style>
-    .axis-attribute .dd-form {
-        min-width: 125px;
+.axis-attribute .dd-form {
+    min-width: 125px;
 
-    }
+}
 
-    .axis-attribute .dropdown {
-        width: 100%;
-    }
+.axis-attribute .dropdown {
+    width: 100%;
+}
 
-    .axis-attribute button {
-        font-size: .9em;
-    }
+.axis-attribute button {
+    font-size: .9em;
+}
 
-    .axis-attribute .dd-form form {
-        padding: 0px 8px !important;
-        background-color: #fff;
-        z-index: 0;
-    }
+.axis-attribute .dd-form form {
+    padding: 0px 8px !important;
+    background-color: #fff;
+    z-index: 0;
+}
 
-    .vs__selected {
-        z-index: unset !important;
-    }
+.vs__selected {
+    z-index: unset !important;
+}
 </style>

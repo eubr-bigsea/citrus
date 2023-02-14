@@ -116,7 +116,7 @@ export default {
     components: { LabelComponent },
     mixins: [Widget],
     props: {
-        value: {type: String, default: () => null},
+        value: {type: Array, default: () => []},
         field: {type: Object, default: () => null},
         message: {
             type: String,
@@ -175,11 +175,12 @@ export default {
     }
 
     div.color {
-        border-bottom: 1px solid #222;
-        border-top: 1px solid #222;
+        border: 1px solid #bbb;
+        margin-right: 1px;
+        margin-bottom: 1px;
         float: left;
         height: 18px;
-        width: 24px;
+        width: 18px;
     }
 
     div.color-select {
