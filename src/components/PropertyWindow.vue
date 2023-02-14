@@ -407,11 +407,6 @@ export default {
         flex: inherit
     }
 
-    .small-nav-link {
-        padding: 5px 8px !important;
-        margin: 0;
-    }
-
     .props .form-control {
         font-size: .7rem !important;
     }

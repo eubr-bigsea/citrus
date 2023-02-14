@@ -5,13 +5,13 @@
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
         <div v-if="hasProblems" class="pulse-item text-warning">
-            <font-awesome-icon icon="fa fa-exclamation-circle" title="Existem problemas na configuração. Edite para corrigir." />
+            <font-awesome-icon icon="fa fa-exclamation-circle"
+                title="Existem problemas na configuração. Edite para corrigir." />
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
-                <input v-if="!locked && index > 0" v-model="editableStep.selected" 
-                       type="checkbox">&nbsp;
-                <span class="step-number">#{{index + 1}}</span> -
+                <input v-if="!locked && index > 0" v-model="editableStep.selected" type="checkbox">&nbsp;
+                <span class="step-number">#{{ index + 1}}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
@@ -19,26 +19,26 @@
             </div>
             <div>
                 <font-awesome-icon v-if="step.error" v-b-tooltip.html icon="fa fa-exclamation-circle text-danger"
-                                   :title="step.error" />
+                    :title="step.error" />
 
-                <small v-if="step?.forms?.comment?.value" class="step-comment">{{step?.forms?.comment?.value}}</small>
+                <small v-if="step?.forms?.comment?.value" class="step-comment">{{ step?.forms?.comment?.value }}</small>
                 <b-button-group v-if="!editableStep.editing" class="zoom-buttom float-right">
                     <b-button v-if="editableStep.editable" variant="light" size="sm" class="text-primary"
-                              :title="$t('actions.edit')" @click="edit('execution')">
+                        :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
                     </b-button>
                     <b-button variant="light" size="sm" class="text-secondary" :title="$t('common.previewUntilHere')"
-                              @click="$emit('preview', step)">
+                        @click="$emit('preview', step)">
                         <span class="fa" :class="{ 'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable }" />
                     </b-button>
 
-                    <b-button v-if="!locked" variant="light" size="sm" class="text-secondary"
-                              :title="$t('actions.delete')" @click="$emit('delete', step)">
+                    <b-button v-if="index > 0" variant="light" size="sm" class="text-secondary"
+                        :title="$t('actions.delete')" @click="$emit('delete', step)">
                         <font-awesome-icon icon="fa fa-trash" />
                     </b-button>
                     <b-button v-if="index > 0" variant="light" size="sm"
-                              :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
-                              @click="$emit('toggle', step)">
+                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
+                        @click="$emit('toggle', step)">
                         <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success" />
                         <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
                     </b-button>
@@ -47,12 +47,12 @@
                             <font-awesome-icon icon="fa fa-ellipsis-h" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="edit('appearance')">
-                            {{$tc('titles.comment')}} &amp;
-                            {{$tc('titles.color').toLowerCase()}}
+                            {{ $tc('titles.comment') }} &amp;
+                            {{ $tc('titles.color').toLowerCase() }}
                         </b-dropdown-item>
                         <b-dropdown-item href="#" @click.prevent="$emit('duplicate', step)">
-                            {{$tc('actions.duplicate')}}
-                            {{$tc('dataExplorer.step').toLowerCase()}}
+                            {{ $tc('actions.duplicate') }}
+                            {{ $tc('dataExplorer.step').toLowerCase() }}
                         </b-dropdown-item>
                     </b-dropdown>
                 </b-button-group>
@@ -60,12 +60,11 @@
                     <div class="mb-3">
                         <template v-for="form in currentForm">
                             <div v-for="field in form.fields" :key="`${step.id}:${field.name}`"
-                                 class="mb-2 step-properties">
-                                <component :is="getWidget(field)" 
-                                           v-if="field.editable && field.enabled !== false" :field="field"
-                                           :value="getValue(field.name)" :language="language" :type="field.suggested_widget"
-                                           :read-only="!field.editable" context="context" :suggestion-event="suggestionEvent"
-                                           @update="updateField" />
+                                class="mb-2 step-properties">
+                                <component :is="getWidget(field)" v-if="field.editable && field.enabled !== false"
+                                    :field="field" :value="getValue(field.name)" :language="language"
+                                    :type="field.suggested_widget" :read-only="!field.editable" context="context"
+                                    :suggestion-event="suggestionEvent" @update="updateField" />
                             </div>
                         </template>
                     </div>
@@ -77,10 +76,10 @@
                         <b-button variant="light" size="sm" :title="$t('actions.cancel')" @click="cancelEdit">
                             <font-awesome-icon icon="fa fa-undo-alt" />
                         </b-button>
-                        <b-button variant="light" size="sm" class="text-secondary"
-                              :title="$t('actions.delete')" @click="$emit('delete', step)">
-                        <font-awesome-icon icon="fa fa-trash" />
-                    </b-button>
+                        <b-button variant="light" size="sm" class="text-secondary" :title="$t('actions.delete')"
+                            @click="$emit('delete', step)">
+                            <font-awesome-icon icon="fa fa-trash" />
+                        </b-button>
                     </b-button-group>
                 </div>
             </div>
@@ -101,7 +100,7 @@ export default {
         step: { type: Object, required: true },
         suggestionEvent: { type: Function, default: () => null },
     },
-    emits: ['preview', 'delete', 'toggle', 'duplicate', 'update', 'cancel', 'select', 'edit', ],
+    emits: ['preview', 'delete', 'toggle', 'duplicate', 'update', 'cancel', 'select', 'edit',],
     data() {
         return {
             displayFormCategory: 'execution', //what kind of form to display and edit
@@ -110,12 +109,12 @@ export default {
         };
     },
     computed: {
-        stepClass(){
-            if (!this.step.enabled){
+        stepClass() {
+            if (!this.step.enabled) {
                 return 'hard-disabled';
-            } else if (!this.step.previewable){
+            } else if (!this.step.previewable) {
                 return 'soft-disabled';
-            } else if (this.editableStep.editing){
+            } else if (this.editableStep.editing) {
                 return 'editing-step';
             }
         },
@@ -138,7 +137,7 @@ export default {
         suggestedAttributes() {
             return this.attributes.map(a => a.key);
         },
-        currentForm(){
+        currentForm() {
             return this.step.operation.forms.filter(
                 f => f.category === this.displayFormCategory);
         }
@@ -152,13 +151,13 @@ export default {
         _evalInContext(js, context) {
             return new Function(`return ${js};`).call(context);
         },
-        setEditable(value){
+        setEditable(value) {
             this.editableStep.editable = value;
         },
-        setEnabled(value){
+        setEnabled(value) {
             this.editableStep.enabled = value;
         },
-        select(ev){
+        select(ev) {
             this.$emit('select', this.step, ev.target.checked);
             this.editableStep.selected = ev.target.checked;
         },
@@ -232,8 +231,8 @@ export default {
                 const elem = this.$refs.form.querySelector('input, select');
                 elem && elem.focus();
                 try {
-                     this.$refs.step.scrollIntoView();
-                } catch (ignore) { console.debug(ignore)}
+                    this.$refs.step.scrollIntoView();
+                } catch (ignore) { console.debug(ignore) }
             });
         },
         save() {
@@ -334,6 +333,7 @@ export default {
     left: 5px;
     bottom: 10px;
 }
+
 .editing-step {
     background-color: #f0f0f0;
 }

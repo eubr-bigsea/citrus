@@ -23,6 +23,7 @@ const Profile = () => import(/* webpackChunkName: "group-user-profile" */  './vi
 const DataSourceList = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceList.vue');
 const DataSourceEdit = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceEdit.vue');
 const DataSourceAdd = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceAdd.vue');
+const DataSourceStorage = () => import(/* webpackChunkName: "group-data-source" */ './views/data-source/DataSourceStorage.vue');
 
 const JobList = () => import(/* webpackChunkName: "group-job" */ './views/JobList.vue');
 const JobDetail = () => import(/* webpackChunkName: "group-job" */ './views/JobDetail.vue');
@@ -301,6 +302,16 @@ let router = new VueRouter({
                 title: ['titles.dataSource', 1]
             }
         },
+        {
+            path: '/data-sources/storage/:id',
+            name: 'dataSourceStorage',
+            component: DataSourceStorage,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataSource', 1]
+            }
+        },
+        /**/
         {
             path: '/display/:id',
             name: 'displayHtml',

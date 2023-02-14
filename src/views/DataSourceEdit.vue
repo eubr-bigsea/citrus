@@ -7,7 +7,10 @@
                         <h1>{{$tc('titles.dataSource', 1)}}</h1>
                     </div>
                     <div class="row">
-                        <div v-if="dataSource.id" class="col-md-12 col-xg-12 mx-auto">
+                        <div class="col-md-2">
+                            <data-source-options selected="editDataSource"/>
+                        </div>
+                        <div v-if="dataSource.id" class="col-md-10 col-xg-10 mx-auto">
                             <b-card no-body>
                                 <b-tabs card>
                                     <b-tab :title="$t('dataSource.basicInformation')" active>
@@ -430,6 +433,7 @@ import axios from 'axios';
 import VueSelect from 'vue-select';
 import Notifier from '../mixins/Notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
+import DataSourceOptions from '../components/data-source/DataSourceOptions.vue';
 import { debounce } from '../util.js';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -440,6 +444,7 @@ export default {
     components: {
         'v-select': VueSelect,
         ModalPreviewDataSource,
+        DataSourceOptions,
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
