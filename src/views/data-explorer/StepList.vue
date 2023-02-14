@@ -1,38 +1,30 @@
 <!-- eslint-disable vue/no-deprecated-dollar-listeners-api -->
 <template>
     <div>
-        <b-dropdown class="more-actions mr-1 mt-1 border rounded"
-                    size="sm" variant="btn" split>
+        <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split>
             <template #button-content>
-                <input type="checkbox"
-                       @change="handleSelectAll($event)">
+                <input type="checkbox" @change="handleSelectAll($event)">
             </template>
             <b-dropdown-item @click="handleToggleSelected(true)">
-                {{$t('dataExplorer.enableSelected')}}
+                {{ $t('dataExplorer.enableSelected') }}
             </b-dropdown-item>
             <b-dropdown-item @click="handleToggleSelected(false)">
-                {{$t('dataExplorer.disableSelected')}}
+                {{ $t('dataExplorer.disableSelected') }}
             </b-dropdown-item>
             <b-dropdown-item @click="handleRemoveSelected">
-                {{$t('dataExplorer.removeSelected')}}
+                {{ $t('dataExplorer.removeSelected') }}
             </b-dropdown-item>
         </b-dropdown>
         <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
             <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflow.tasks"
-                       :move="handleStepDrag" @start="drag = true" @end="endSortSteps">
+                :move="handleStepDrag" @start="drag = true" @end="endSortSteps">
                 <div v-for="(task, inx) in workflow.tasks" :key="task.id" xv-if="task.operation.slug !== 'read-data'"
-                     class="list-group-item steps clearfix p-0" :title="task.name !== 'unnamed' ? task.name : ''"
-                     :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
-                    <Step ref="steps" :step="task" :language="language"
-                          :attributes="attributes"
-                          :index="inx" :protected="inx <= 1"
-                          :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null" 
-                          @edit="editStep(task)"
-                          @cancel="cancelEdit(task)"
-                          @update="update(task)"
-                          @preview="preview(task)"
-                          :suggestion-event="suggestionEvent" 
-                          v-on="$listeners" />
+                    class="list-group-item steps clearfix p-0" :title="task.name !== 'unnamed' ? task.name : ''"
+                    :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
+                    <Step ref="steps" :step="task" :language="language" :attributes="attributes" :index="inx"
+                        :protected="inx <= 1" :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null"
+                        @edit="editStep(task)" @cancel="cancelEdit(task)" @update="update(task)"
+                        @preview="preview(task)" :suggestion-event="suggestionEvent" v-on="$listeners" />
                 </div>
             </draggable>
         </div>
@@ -90,7 +82,7 @@ export default {
         },
         handleToggleSelected(value) {
             let changed = false;
-            this.$refs.steps.forEach(s =>  {
+            this.$refs.steps.forEach(s => {
                 if (s.editableStep.selected) {
                     s.setEnabled(value);
                     changed = true;
@@ -120,7 +112,7 @@ export default {
             el.scrollTo({ top: el.scrollHeight + 200, behavior: 'smooth' });
             //const self = this; //this.$refs.steps
         },
-        
+
         updateStep(step) {
             const task = this.workflow.tasks.find(t => t.id === step.id);
             if (task) {
@@ -138,24 +130,24 @@ export default {
             this.selected = attr;
             this.valuesClusters = [];
         },
-        editStep(step){
+        editStep(step) {
             this.$refs.steps.forEach(s => s.setEditable(s.step.id === step.id));
         },
-        cancelEdit(step){
+        cancelEdit(step) {
             this.$refs.steps.forEach(s => s.setEditable(true));
         },
-        update(step){
+        update(step) {
             this.$refs.steps.forEach(s => s.setEditable(true));
             // this.$emit('update', step);
         },
-        preview(step){
+        preview(step) {
             const toggle = this.lastPreviewableStep === step;
             this.workflow.tasks.forEach(t => {
-                t.previewable = toggle || t.display_order <= step.display_order; 
+                t.previewable = toggle || t.display_order <= step.display_order;
             });
             this.lastPreviewableStep = toggle ? null : step;
         },
-        setEdition(value){
+        setEdition(value) {
             this.$refs.steps.forEach(s => s.setEditable(value));
         }
 

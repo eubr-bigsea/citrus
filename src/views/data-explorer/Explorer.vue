@@ -92,7 +92,8 @@
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true">
+            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true"
+                @close="stats = null" @ok="stats = null">
                 <table v-if="stats && stats.attribute === null"
                     class="table table-bordered table-stats table-striped table-sm">
                     <thead>
@@ -112,40 +113,38 @@
                     </tbody>
                 </table>
                 <div v-else>
-                    <span> {{stats && stats.attribute}}</span>
+                    <span v-if="stats">
+                        <select @change.prevent="handleSelectAttributeStat" class="form-control-sm mb-2"
+                            ref="selectAttributeStat">
+                            <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{
+                                name
+                            }}</option>
+                        </select>
+                    </span>
                     <b-tabs>
-                        <b-tab title="Numérico" title-link-class="small-nav-link">
+                        <b-tab title="Estatísticas" title-link-class="small-nav-link">
                             <div v-if="stats && stats.message" class="row">
-                                <div v-if="stats && stats.message.histogram" class="col-9">
-                                    <!-- <Plotly v-if="stats" ref="plotly2" :auto-resize="true"
-                                        :layout="{ height: 180, hoverlabel: { font: { size: 9 } }, autosize: true, margin: { l: 0, r: 50, b: 30, t: 20, pad: 0 } }"
-                                        :data="[{
-                                            opacity: 0.6, marker: { color: 'rgb(49,130,189)' }, 'orientation': 'h', 'type': 'box',
-                                            'lowerfence': [stats.message.fence_low],
-                                            'mean': [stats.message.stats.mean],
-                                            'median': [stats.message.stats.median],
-                                            'q1': [stats.message.stats['25%']],
-                                            'q3': [stats.message.stats['75%']],
-                                            'sd': [stats.message.stats.std],
-                                            'upperfence': [stats.message.fence_high]
-                                        }]" :height="200" :options="{ displayModeBar: false }" />
-                                    <Plotly v-if="stats" ref="plotly" :auto-resize="true"
-                                        :layout="{ height: 140, autosize: true, margin: { l: 50, r: 50, b: 30, t: 10, pad: 4 } }"
-                                        :data="getStatData()" :height="200" :options="{ displayModeBar: false }" /> -->
-
+                                <div v-if="stats && stats.message.histogram" :class="stats.message.numeric ? 'col-9' : 'col-12'">
                                     <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
                                         showlegend: false,
-                                        margin: { l: 50, r: 50, b: 30, t: 10, pad: 4 },
-                                        xyaxis: { domain: [0] },
-                                        yaxis2: { domain: [0.9] },
+                                        margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
+                                        xaxis: { tickangle: 45, tickfont: {size: 11}, 
+                                            type: stats.message.numeric ? null : 'category'
+                                        },
+                                        yaxis: {domain: [0.2]},
+                                        yaxis2: {
+                                            domain: [0.8],
+                                            visible: false,
+                                        },
                                         legend: { traceorder: 'reversed' },
-                                        height: 200, width: 600,
+                                        height: stats.message.numeric ? 200 : 300, width:  stats.message.numeric? 600: 750, 
+                                        autosize: true,
                                     }" :data="getStatData2()" :options="{ displayModeBar: false }" />
 
 
                                 </div>
-                                <div class="col-3">
-                                    <div v-if="stats.message.outliers">
+                                <div v-if="stats.message.numeric" class="col-3">
+                                    <div v-if="stats.message.outliers && stats.message.outliers.length">
                                         <span>Valores atípicos (outliers)*</span>
                                         <table class="table table-sm table-stats">
                                             <tr v-for="t, i in stats.message.outliers" :key="i">
@@ -153,6 +152,7 @@
                                             </tr>
                                         </table>
                                     </div>
+                                    <div v-else>Não há valores atípicos (outliers)</div>
                                 </div>
                                 <div class="col-4">
                                     <span>Estatísticas (exclui nulos)</span>
@@ -288,10 +288,10 @@ const type2Generic = new Map([
     ['UInt64', 'Integer'],
     ['Date', 'Date'],
     ['Datetime', 'Date'],
-    ['Duration', 'Integer'], //Evaluate
+    ['Duration', 'Integer'],
     ['Time', 'Time'],
     ['Boolean', 'Boolean'],
-    ['List', 'List'],
+    ['List', 'Array'],
     ['Utf8', 'Text'],
     ['Categorical', 'Text'],
 ]);
@@ -325,6 +325,8 @@ export default {
     data() {
         return {
             attributeSelection: [], // used to select attributes
+            attributes: [],
+            attributeNames: [],
             clusters: [],
             clusterId: null,
             dataSource: {}, // current data source
@@ -795,6 +797,22 @@ export default {
             this.$refs.preview.resetMenuData();
         },
         */
+        handleSelectAttributeStat(ev) {
+            const name = ev.target.value;
+            this.handleAnalyse({ column: name, field: { key: name } });
+            this.$refs.selectAttributeStat.disabled = true;
+            // const pos = this.attributeNames.indexOf(this.stats.attribute);
+            // if (pos > -1) {
+            //     if (action === 'next' && this.tableData.attributes[pos + 1]) {
+            //         const attr = this.tableData.attributes[pos + 1]
+            //         this.handleAnalyse({column: attr.name, field: attr});
+            //     } else if (this.attributeNames[pos - 1]) {
+            //         const attr = this.tableData.attributes[pos - 1];
+            //         this.handleAnalyse({column: attr.name, field: attr});
+            //     }
+            // }
+
+        },
         handleSelectAttribute(attr) {
             this.selected = attr;
             this.valuesClusters = [];
@@ -847,6 +865,7 @@ export default {
                     options.selected, options.fields);
                 this.isDirty = true;
                 //this.loadData();
+                Vue.nextTick(() => {this.$refs.stepList.scrollToStep()});
             } else {
                 console.log(`Unknown action: ${options.action}`);
             }
@@ -955,7 +974,7 @@ export default {
             this.info('Exportando o fluxo de trabalho. Quando a exportação terminar, você será notificado.', 10000);
         },
 
-        getStatData() {
+        /*getStatData() {
             const x = this.stats.message.histogram[1];
             const customdata = x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`);
             return [{
@@ -969,12 +988,15 @@ export default {
                     opacity: 0.4,
                 }
             }];
-        },
+        },*/
         getStatData2() {
             const x = this.stats.message.histogram[1];
-            const customdata = x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`);
-            return [
-                {
+            const customdata = this.stats.message.numeric ?
+                x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`) : x;
+            const result = []
+
+            if (this.stats.message.numeric) {
+                result.push({
                     opacity: 0.6, marker: { color: 'rgb(49,130,189)' }, 'orientation': 'h', 'type': 'box',
                     'lowerfence': [this.stats.message.fence_low],
                     'mean': [this.stats.message.stats.mean],
@@ -984,19 +1006,25 @@ export default {
                     // 'sd': [this.stats.message.stats.std],
                     'upperfence': [this.stats.message.fence_high],
                     yaxis: 'y2',
-                },
-                {
-                    type: 'bar',
-                    hovertemplate: `%{customdata}: %{y} ${this.$tc("common.records", 2)}<extra></extra>`,
-                    customdata,
-                    x,
-                    y: this.stats.message.histogram[0],
-                    marker: {
-                        color: 'rgb(49,130,189)',
-                        opacity: 0.4,
-                    }
-                },
-            ];
+                });
+            }
+
+            result.push({
+                type: 'bar',
+                hovertemplate: `%{customdata}: %{y} ${this.$tc("common.records", 2)}<extra></extra>`,
+                customdata,
+                x,
+                y: this.stats.message.histogram[0],
+                marker: {
+                    color: 'rgb(49,130,189)',
+                    opacity: 0.4,
+                }
+            }
+            );
+            if (this.stats.message.outliers?.length) {
+                result[0]['x'] = [this.stats.message.outliers];
+            }
+            return result;
         },
 
         /* WebSocket Handling */
@@ -1018,11 +1046,13 @@ export default {
                 });
                 socket.on('analysis', (msg, callback) => { // eslint-disable-line no-unused-vars
                     if (msg.analysis_type !== 'cluster') {
-                        self.stats = msg;
-                        self.$refs.statsModal.show();
+                        this.stats = msg;
+                        this.$refs.statsModal?.show();
                     } else {
-                        self.valuesClusters = msg.message;
+                        this.valuesClusters = msg.message;
                     }
+                    if (this.$refs.selectAttributeStat)
+                        this.$refs.selectAttributeStat.disabled = false;
                 });
                 socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
 
@@ -1044,7 +1074,9 @@ export default {
                                     const attributes = messageJson.columns.map(
                                         c => ({
                                             key: c.name, label: c.name, name: c.name,
-                                            type: typeof (c.datatype) === 'object' ? Object.keys(c.datatype)[0] : c.datatype
+                                            type: typeof (c.datatype) === 'object' ? Object.keys(c.datatype)[0] : c.datatype,
+                                            inner: c?.values[0]?.datatype,
+                                            tdClass: 'customTdClass'
                                         }));
                                     self.tableData = { attributes };
                                     self.loadingData = false;
@@ -1052,11 +1084,13 @@ export default {
                                         attr.type = msg.message.types[i]; // Polars cast to Int32 when generating JSON
                                         attr.generic_type = type2Generic.get(attr.type) || attr.type
                                     });
-                                    console.debug(msg.message.estimated_size)
+                                    // console.debug(attributes)
+
                                     self.dataSize = Math.round(msg.message.estimated_size / 1024.0) || '?';
                                     self.attributes = attributes;
 
-                                    const columnNames = attributes.map(a => a.name);
+                                    const attributeNames = attributes.map(a => a.name);
+                                    self.attributeNames = attributeNames;
                                     const columnValues = messageJson.columns.map(col => col.values);
 
                                     // Transpose the columns to rows
@@ -1080,8 +1114,8 @@ export default {
                                     const rowOriented = { rows: [] }
                                     rows.forEach(row => {
                                         const rowObject = {}
-                                        for (let i = 0; i < columnNames.length; i++) {
-                                            rowObject[columnNames[i]] = row[i]
+                                        for (let i = 0; i < attributeNames.length; i++) {
+                                            rowObject[attributeNames[i]] = row[i]
                                         }
                                         rowOriented.rows.push(rowObject)
                                     })
@@ -1248,7 +1282,7 @@ export default {
 
 .table-stats td,
 .table-stats th {
-    padding: 0
+    padding: 4px
 }
 
 .top-bar {

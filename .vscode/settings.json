@@ -36,8 +36,8 @@
     ],
     "window.zoomLevel": 0,
     "files.autoSave": "off",
-    //"vetur.format.defaultFormatter.html": "prettyhtml",
-    //"vetur.format.defaultFormatter.js": "prettier",
+    "vetur.format.defaultFormatter.html": "prettier",
+    "vetur.format.defaultFormatter.js": "prettier-eslint",
     "[javascript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },

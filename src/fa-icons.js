@@ -136,6 +136,8 @@ import {
     faCaretDown,
     faArrowDown,
     faArrowUp,
+    faCaretLeft,
+    faCaretRight,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -160,6 +162,8 @@ library.add(
     faCalendar,
     faCaretDown,
     faCaretUp,
+    faCaretLeft,
+    faCaretRight,
     faCartPlus,
     faChartBar,
     faChartLine,

@@ -42,7 +42,10 @@
                     </select>-->
                                     {{ scope.field.generic_type }}
                                     <br />
-                                    {{ scope.field.type }} <span v-if="scope.field.truncated">(trunc.)</span>
+                                    {{ scope.field.type }}<span v-if="scope.field.inner">({{
+                                        scope.field.inner
+                                    }})</span>
+                                    <span v-if="scope.field.truncated">(trunc.)</span>
                                 </div>
                                 <!--
                                 <div>
@@ -156,17 +159,18 @@ export default {
             scrollEventSet: false,
             rightAlignedAttributes: { type: String },
             dragTimeout: null,
+            columnTypes: new Map(),
         }
     },
     watch: {
         attributes() {
             //const self = this;
-            const rightAlignedTypes = new Set(['integer', 'date', 'decimal', 'boolean', 'time']);
+            const rightAlignedTypes = new Set(['integer', 'date', 'datetime', 'decimal', 'boolean', 'time']);
             const rightAlignedAttributes = [];
 
             const attributeIndexes = new Map();
             this.attributes.forEach((attr, inx) => {
-                if (rightAlignedTypes.has(attr.type.toLowerCase())) {
+                if (rightAlignedTypes.has(attr.generic_type.toLowerCase())) {
                     rightAlignedAttributes.push(inx + 1); // +1 because there is a row index at column 0
                 }
                 attributeIndexes.set(attr.key, inx + 1);
@@ -213,6 +217,7 @@ export default {
                     }
                 });
                 */
+                this.attributes.forEach(attr => this.columnTypes.set(attr.key, attr.generic_type));
         },
         items() {
             if (!this.scrollEventSet) {
@@ -226,6 +231,7 @@ export default {
     },
     mounted: function () {
         window.addEventListener("resize", this.resize);
+        //this.attributes.forEach(attr => attr['tdClass'] = this.customTdClass);
         //this.handleTableScroll = debounce(this.handleScroll, 100);
     },
     beforeUnmount() {
@@ -235,6 +241,15 @@ export default {
                 'scroll', this.handleTableScrollEvent);
     },
     methods: {
+        customTdClass(value, key, item, a, b) {
+            if (item[key] == null) {
+                return 'null-cell';
+            //} else if (this.columnTypes.get(key) == 'Decimal' || this.columnTypes.get(key) == 'Integer') {
+            //    return 'text-right'
+            }
+            //return null;
+        },
+
         resize() {
             const th = this.lastHeader;
             if (th) {
@@ -412,8 +427,15 @@ export default {
     },
 }
 </script>
+<style>
+    .null-cell {
+        background: #eee;  
+    } 
+</style>
 
 <style scoped>
+
+
 div.menu>>>li {
     font-size: .9em;
     margin: 0;
@@ -536,4 +558,5 @@ div.data-type {
     cursor: -moz-grabbing;
     cursor: -webkit-grabbing;
 }
+
 </style>
