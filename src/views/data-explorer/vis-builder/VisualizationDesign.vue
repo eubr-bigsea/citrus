@@ -92,6 +92,7 @@
             </div>
         </div>
         <div class="options-main">
+            <chart-builder-axis :attributes="attributes" :workflow="workflowObj"/>
             <div class="chart">
                 <ChartBuilderVisualization />
             </div>
@@ -102,6 +103,7 @@
 <script>
 import ChartBuilderVisualization from '../../../components/chart-builder/ChartBuilderVisualization.vue';
 import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
+import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
 
 import Vue from 'vue';
 import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
@@ -121,6 +123,7 @@ export default {
         'vue-select': vSelect,
         ChartBuilderVisualization,
         ChartBuilderOptions,
+        ChartBuilderAxis,
         ExpressionEditor
     },
     mixins: [DataSourceMixin, Notifier],
@@ -297,8 +300,9 @@ export default {
 
 <style scoped lang="scss">
 .chart {
+    margin-top: 10px;
     position: relative;
-    height: 98vh;
+    height: 70vh;
     width: 100%;
     padding: 5px 0;
 }
