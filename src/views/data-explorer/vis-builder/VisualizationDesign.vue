@@ -8,65 +8,46 @@
             <div>
                 <form class="clearfix visualization-form">
                     <b-card sub-title="Dados básicos">
-                        <label>{{$tc('common.title')}}:</label>
-                        <input v-model="workflowObj.name"
-                               type="text"
-                               class="form-control form-control-sm"
-                               :placeholder="$tc('common.name')"
-                               maxlength="100">
+                        <label>{{ $tc('common.title') }}:</label>
+                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
+                            :placeholder="$tc('common.name')" maxlength="100">
 
                         <label for="">Fonte de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
-                                    v-model="workflowObj.readData.forms.data_source.value"
-                                    :filterable="false"
-                                    :options="dataSourceList"
-                                    :reduce="(opt) => opt.id"
-                                    label="name"
-                                    @search="loadDataSourceList"
-                                    @input="retrieveAttributes">
-                            <template #no-options="{ }">
+                            v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
+                            :options="dataSourceList" :reduce="(opt) => opt.id" label="name"
+                            @search="loadDataSourceList" @input="retrieveAttributes">
+                            <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
+                                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
+                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
                                 </div>
                             </template>
                         </vue-select>
 
-                        <label>{{$tc('titles.cluster')}}: </label>
-                        <v-select v-model="workflowObj.preferred_cluster_id"
-                                  :options="clusters"
-                                  label="name"
-                                  :reduce="(opt) => opt.id"
-                                  :taggable="false"
-                                  :close-on-select="true"
-                                  :filterable="false">
+                        <label>{{ $tc('titles.cluster') }}: </label>
+                        <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
+                            :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{name}}<br>
-                                <small><em>{{description}}</em></small>
+                                {{ name }}<br>
+                                <small><em>{{ description }}</em></small>
                             </template>
                         </v-select>
                     </b-card>
-                    <b-card v-if="loaded"
-                            class="mt-1"
-                            sub-title="Consulta (opcional)">
+                    <b-card v-if="loaded" class="mt-1" sub-title="Consulta (opcional)">
                         <label>Limitar quantidade de registros:</label>
-                        <input v-model.number="workflowObj.sample.forms.value.value"
-                               type="number"
-                               class="form-control form-control-sm w-50"
-                               maxlength="10"
-                               step="100">
+                        <input v-model.number="workflowObj.sample.forms.value.value" type="number"
+                            class="form-control form-control-sm w-50" maxlength="10" step="100">
 
-                        <ExpressionEditor :field="filterField"
-                                          :value="workflowObj.filter.forms.formula.value"
-                                          :suggestion-event="() => attributes.map(a=>a.name)"
-                                          @update="handleUpdateFilter" />
+                        <ExpressionEditor :field="filterField" :value="workflowObj.filter.forms.formula.value"
+                            :suggestion-event="() => attributes.map(a => a.name)" @update="handleUpdateFilter" />
 
                         <!--
                         <template>
@@ -89,34 +70,31 @@
                 </form>
             </div>
             <div class="mt-2 ">
-                <button class="btn btn-sm btn-primary ml-1 mr-5"
-                        @click.prevent="loadData">
+                <button class="btn btn-sm btn-primary ml-1 mr-5" @click.prevent="loadData">
                     <font-awesome-icon icon="fa fa-search" />
-                    {{$t('actions.search')}}
+                    {{ $t('actions.search') }}
                 </button>
 
-                <button class="btn btn-sm btn-outline-success ml-1 float-right"
-                        @click.prevent="saveWorkflow">
+                <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
                     <font-awesome-icon icon="fa fa-save" />
-                    {{$t('actions.save')}}
+                    {{ $t('actions.save') }}
                 </button>
 
-                <router-link class="btn btn-sm btn-outline-secondary ml-1 float-right"
-                             :to="{name: 'index-explorer'}"
-                             :title="$t('actions.back')">
-                    {{$t('actions.back')}}
+                <router-link class="btn btn-sm btn-outline-secondary ml-1 float-right" :to="{ name: 'index-explorer' }"
+                    :title="$t('actions.back')">
+                    {{ $t('actions.back') }}
                 </router-link>
-            </div>
-        </div>
-        <div class="options-main">
-            <div class="chart">
-                <ChartBuilderVisualization />
             </div>
         </div>
         <div class="options-visualization">
             <div>
-                <ChartBuilderOptions :attributes="attributes"
-                                     :workflow="workflowObj" />
+                <ChartBuilderOptions :attributes="attributes" :workflow="workflowObj" />
+            </div>
+        </div>
+        <div class="options-main">
+            <chart-builder-axis :attributes="attributes" :workflow="workflowObj"/>
+            <div class="chart">
+                <ChartBuilderVisualization />
             </div>
         </div>
     </div>
@@ -125,6 +103,7 @@
 <script>
 import ChartBuilderVisualization from '../../../components/chart-builder/ChartBuilderVisualization.vue';
 import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
+import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
 
 import Vue from 'vue';
 import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
@@ -144,6 +123,7 @@ export default {
         'vue-select': vSelect,
         ChartBuilderVisualization,
         ChartBuilderOptions,
+        ChartBuilderAxis,
         ExpressionEditor
     },
     mixins: [DataSourceMixin, Notifier],
@@ -183,13 +163,13 @@ export default {
     methods: {
         getIcon(attr) {
             switch (attr.type) {
-            case 'DECIMAL':
-            case 'INTEGER':
-                return 'hashtag';
-            case 'CHARACTER':
-                return 'font';
-            case 'DATE':
-                return 'calendar';
+                case 'DECIMAL':
+                case 'INTEGER':
+                    return 'hashtag';
+                case 'CHARACTER':
+                    return 'font';
+                case 'DATE':
+                    return 'calendar';
 
             }
         },
@@ -209,7 +189,7 @@ export default {
 
                 const self = this;
                 const attributes = this.dataSource.attributes;
-                self.workflowObj.group.forms.function.value.forEach(attr => {
+                self.workflowObj?.group?.forms?.function?.value?.forEach(attr => {
                     attr['name'] = attr.attribute;
                     const v = attributes.find(a => a.name === attr.name);
                     attr['type'] = v ? v.type : '';
@@ -319,16 +299,23 @@ export default {
 </script>
 
 <style scoped lang="scss">
-    #chart-builder {
-        width: 100%;
-        height: calc(100vh - 110px);
-        display: flex;
+.chart {
+    margin-top: 10px;
+    position: relative;
+    height: 70vh;
+    width: 100%;
+    padding: 5px 0;
+}
+#chart-builder {
+    width: 100%;
+    height: calc(100vh - 110px);
+    display: flex;
 
-        .visualization-builder {
-            width: 550px;
-        }
+    .visualization-builder {
+        width: 550px;
+    }
 
-        /*
+    /*
         .datasource {
             overflow: auto;
             width: 250px;
@@ -347,39 +334,40 @@ export default {
             }
         }*/
 
-        .visualization {
+    .visualization {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        div {
             width: 100%;
-            display: flex;
-            flex-direction: column;
+        }
 
-            div {
-                width: 100%;
-            }
-
-            .chart {
-                height: 100%;
-            }
+        .chart {
+            height: 100%;
         }
     }
+}
 
-    .options-visualization {
-        flex: 0 0 350px;
-        background-color: #fff;
-        padding: 5px;
-    }
+.options-visualization {
+    flex: 0 0 300px;
+    background-color: #fff;
+    padding: 0px;
+}
 
-    .options-container {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 auto;
-        gap: 10px;
-    }
+.options-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    gap: 10px;
+    height: 100vh;
+}
 
-    .options-main {
-        flex: 3;
-    }
+.options-main {
+    flex: 3;
+}
 
-    .visualization-form {
-        font-size: .8em;
-    }
+.visualization-form {
+    font-size: .8em;
+}
 </style>
