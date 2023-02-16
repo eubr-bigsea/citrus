@@ -418,7 +418,9 @@ class Flow {
 class Visualization {
     constructor({ type = { value: null }, displayLegend = { value: 'next' },
         smothing = { value: true }, palette = {value: null}, 
-        x = { value: [] }, y = { value: [] } }) {
+        x = { value: [] }, y = { value: [] },
+        xAxis = null, yAxis = null },
+     ) {
         this.displayLegend = displayLegend; //right, left, top, bottom, hide, in_chart
         this.smothing = smothing;
         this.palette = palette;
@@ -426,6 +428,8 @@ class Visualization {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.xAxis = xAxis || new Axis({});
+        this.yAxis = yAxis || new Axis({});
     }
     /*
     toJSON() {

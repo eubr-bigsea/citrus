@@ -8,7 +8,7 @@
         <b-form class="chart-properties">
             <b-card sub-title="Opções da visualização">
                 <b-form-group id="title" label="Tipo do gráfico:" label-for="title">
-                    <v-select v-model="workflow.visualization.forms.type.value" :options="chartTypes" label="label"
+                    <v-select v-model="editableVisualization.type.value" :options="chartTypes" label="label"
                         :reduce="(opt) => opt.name">
                         <template #option="{ label, name }">
                             <div class="bg-chart" :class="`bg-${name}`">
@@ -39,7 +39,11 @@
                         <option value="hide">Não exibir</option>
                     </select>
                 </b-form-group>
-
+                <b-form-group>
+                    <b-form-checkbox v-model="editableVisualization.smothing.value" switch>
+                        Suavizar
+                    </b-form-checkbox>
+                </b-form-group>
                 <b-form-group>
                     <ColorPalette :field="palette" :value="workflow.visualization.forms.palette.value"
                         @update="handleUpdatePalette" />
