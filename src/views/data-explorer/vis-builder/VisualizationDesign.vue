@@ -87,8 +87,8 @@
             </div>
         </div>
         <div class="options-visualization">
-            <div>
-                <ChartBuilderOptions :attributes="attributes" :workflow="workflowObj" />
+            <div v-if="visualizationObj">
+                <chart-builder-options :attributes="attributes" :workflow="workflowObj" :visualization="visualizationObj"/>
             </div>
         </div>
         <div class="options-main">
@@ -110,7 +110,7 @@ import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
 import DataSourceMixin from '../DataSourceMixin.js';
 import Notifier from '../../../mixins/Notifier.js';
 
-import { Operation, VisualizationBuilderWorkflow } from '../entities.js';
+import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
 import axios from 'axios';
 import vSelect from 'vue-select';
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -146,8 +146,9 @@ export default {
             notRunning: true,
             operationsMap: new Map(),
             socket: null, // used by socketio (web sockets)
-            targetPlatform: 1,
+            targetPlatform: 4,
             workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
+            visualizationObj: null
         }
     },
     computed: {
@@ -187,15 +188,20 @@ export default {
                 }
                 await this.loadDataSource(this.dataSourceId);
 
-                const self = this;
                 const attributes = this.dataSource.attributes;
-                self.workflowObj?.group?.forms?.function?.value?.forEach(attr => {
+                // FIXME: 'group' task is not necessary anymore
+                /*
+                this.workflowObj?.group?.forms?.function?.value?.forEach(attr => {
                     attr['name'] = attr.attribute;
                     const v = attributes.find(a => a.name === attr.name);
                     attr['type'] = v ? v.type : '';
-                });
+                }); */
+
                 this.loadClusters();
+                this.visualizationObj = new Visualization(
+                    this.workflowObj.visualization.forms);
                 this.loaded = true;
+                
             } catch (e) {
                 this.error(e);
                 this.$router.push({ name: 'index-explorer' })

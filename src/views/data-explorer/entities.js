@@ -202,9 +202,10 @@ class VisualizationBuilderWorkflow extends Workflow {
         this.sample = null;
         this.visualization = null;
 
+        // Default tasks to be included
         const pairs = new Map([
             ['filter', 'filter'],
-            ['group', 'group'],
+            ['group', 'group'], // FIXME is it necessary?
             ['read-data', 'readData'],
             ['sample', 'sample'],
             ['visualization', 'visualization'],
@@ -414,19 +415,78 @@ class Flow {
         }
     }
 }
-/*
-module.exports = {
-    Workflow,
-    Platform,
-    Operation,
-    OperationList,
-    Task,
-    Form,
-    FormField,
-    Constants,
-    ModelBuilderWorkflow,
-    VisualizationBuilderWorkflow,
-}*/
+class Visualization {
+    constructor({ type = { value: null }, displayLegend = { value: 'next' },
+        smothing = { value: true }, palette = {value: null}, 
+        x = { value: [] }, y = { value: [] } }) {
+        this.displayLegend = displayLegend; //right, left, top, bottom, hide, in_chart
+        this.smothing = smothing;
+        this.palette = palette;
+
+        this.x = x;
+        this.y = y;
+        this.type = type;
+    }
+    /*
+    toJSON() {
+        return JSON.stringify(this);
+    }*/
+}
+class XDimension {
+    constructor({ binning = 'equal_interval', bins = 20, binSize = 10,
+        emptyBins = 'zeros', multiplier = null, decimalPlaces = 2,
+        prefix = null, suffix = null, label = null, maxDisplayed = null,
+        groupOthers = true, sorting = 'natural' }) {
+        this.binning = binning;  // equal_interval, fixed_size, none, categorical
+        this.bins = bins;
+        this.binSize = binSize;
+        this.emptyBins = emptyBins; //zeros, link, interrupt
+        this.multiplier = multiplier; // A number to multiply by
+        this.decimalPlaces = decimalPlaces;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.label = label;
+        this.maxDisplayed = (binning === 'categorical') ? maxDisplayed || 20 : maxDisplayed;
+        this.groupOthers = groupOthers;
+        this.sorting = sorting; //natural, yAsc, yDesc
+    }
+}
+class YDimension {
+    constructor({ aggregation = 'count', compute = null, displayOn = 'left',
+        multiplier = null, decimalPlaces = 2,
+        prefix = null, suffix = null, label = null,
+        strokeSize = 1, stroke = null }) {
+
+        this.aggregation = aggregation; //count, countd, max, min, avg, sum
+        this.compute = compute; //percent, ration_to_avg, cum_values, cum_percent, differential
+        this.displayOn = displayOn; // left, right
+
+        this.multiplier = multiplier; // A number to multiply by
+        this.decimalPlaces = decimalPlaces;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.label = label;
+        this.strokeSize = strokeSize;
+        this.stroke = stroke;
+    }
+}
+class Axis {
+    constructor({ lowerBound = null, upperBound = null, logScale = false, display = true,
+        displayLabel = true, label = null, multiplier = null, decimalPlaces = 2,
+        prefix = null, suffix = null }) {
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+        this.logScale = logScale;
+        this.display = display;
+        this.displayLabel = displayLabel;
+        this.label = label;
+        this.multiplier = multiplier;
+        this.decimalPlaces = decimalPlaces;
+        this.prefix = prefix;
+        this.suffix = suffix;
+    }
+}
+
 export {
     Workflow,
     Platform,
@@ -437,5 +497,6 @@ export {
     FormField,
     Constants,
     ModelBuilderWorkflow,
+    Visualization,
     VisualizationBuilderWorkflow,
 };

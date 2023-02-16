@@ -1,5 +1,10 @@
 <template>
-    <div v-if="workflow.visualization" class="chart-builder-options">
+    <div v-if="workflow.visualization && editableVisualization" class="chart-builder-options">
+        <div>
+            <small>
+            {{ editableVisualization }}
+        </small>
+        </div>
         <b-form class="chart-properties">
             <b-card sub-title="Opções da visualização">
                 <b-form-group id="title" label="Tipo do gráfico:" label-for="title">
@@ -24,9 +29,15 @@
 
             <b-card sub-title="Formatação" class="mt-1" style="z-index:1">
                 <b-form-group>
-                    <b-form-checkbox v-model="workflow.visualization.forms.display_legend.value" switch>
-                        Exibir legenda
-                    </b-form-checkbox>
+                    <label>Exibir legenda:</label>
+                    <select v-model="editableVisualization.displayLegend.value" class="form-control form-control-sm">
+                        <option value="right">À direita</option>
+                        <option value="left">À esquerda</option>
+                        <option value="top">No topo</option>
+                        <option value="bottom">Na parte inferior</option>
+                        <option value="in_chart">Dentro do gráfico</option>
+                        <option value="hide">Não exibir</option>
+                    </select>
                 </b-form-group>
 
                 <b-form-group>
@@ -122,10 +133,12 @@ export default {
     components: { vSelect, ColorPalette, 'column-aggregate': ChartBuilderColumnAggregate },
     props: {
         attributes: { type: Array, required: true },
-        workflow: { type: Object, required: true }
+        workflow: { type: Object, required: true },
+        visualization: {type: Object, required: true}
     },
     data() {
         return {
+            editableVisualization: null,
             form: {
                 title: {
                     text: ""
@@ -196,16 +209,17 @@ export default {
             return this.chartType !== 'pie';
         }
     },
+    /*
     watch: {
         workflow() {
             if (this.workflow.visualization.forms.hole.value === null) {
                 this.$nextTick(() => this.workflow.visualization.forms.hole.value = 100);
             }
         }
-    },
+    },*/
     mounted() {
-        this.$root.$on('chartBuilderUpdateChart', this.updateChart)
-
+        //this.$root.$on('chartBuilderUpdateChart', this.updateChart)
+        this.editableVisualization = structuredClone(this.visualization)
     },
     methods: {
         getIcon(attr) {
