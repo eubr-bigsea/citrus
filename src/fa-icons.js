@@ -138,6 +138,8 @@ import {
     faArrowUp,
     faCaretLeft,
     faCaretRight,
+    faY,
+    faX,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -279,6 +281,8 @@ library.add(
     faVial,
     faVials,
     faWarehouse,
+    faX,
+    faY,
 
 );
 /**

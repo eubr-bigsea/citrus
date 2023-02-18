@@ -87,12 +87,13 @@
             </div>
         </div>
         <div class="options-visualization">
+            <small class="bg-info">{{ visualizationObj }}</small>
             <div v-if="visualizationObj">
-                <chart-builder-options :attributes="attributes" :workflow="workflowObj" :visualization="visualizationObj"/>
+                <chart-builder-options :attributes="attributes" :workflow="workflowObj" v-model="options" />
             </div>
         </div>
-        <div class="options-main">
-            <chart-builder-axis :attributes="attributes" :workflow="workflowObj"/>
+        <div class="options-main" v-if="visualizationObj">
+            <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis" />
             <div class="chart">
                 <ChartBuilderVisualization />
             </div>
@@ -156,6 +157,24 @@ export default {
             get() { return this.workflowObj.readData.forms.data_source.value; },
             set(newValue) { this.workflowObj.readData.forms.data_source.value = newValue }
         },
+        axis: {
+            get() {
+                const { xAxis, yAxis, y, x } = this.visualizationObj;
+                return { xAxis, yAxis, y, x };
+            },
+            set(value) {
+                Object.assign(this.visualizationObj, value);
+            }
+        },
+        options: {
+            get() {
+                const { displayLegend, smothing, palette, label, type } = this.visualizationObj
+                return { displayLegend, smothing, palette, label, type };
+            },
+            set(value) {
+                Object.assign(this.visualizationObj, value);
+            }
+        }
     },
     async created() {
         this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
@@ -201,7 +220,7 @@ export default {
                 this.visualizationObj = new Visualization(
                     this.workflowObj.visualization.forms);
                 this.loaded = true;
-                
+
             } catch (e) {
                 this.error(e);
                 this.$router.push({ name: 'index-explorer' })
@@ -298,7 +317,7 @@ export default {
             } finally {
                 self.$Progress.finish();
             }
-        },
+        }
     }
 }
 
@@ -312,6 +331,7 @@ export default {
     width: 100%;
     padding: 5px 0;
 }
+
 #chart-builder {
     width: 100%;
     height: calc(100vh - 110px);

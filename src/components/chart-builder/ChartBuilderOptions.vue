@@ -1,10 +1,5 @@
 <template>
     <div v-if="workflow.visualization && editableVisualization" class="chart-builder-options">
-        <div>
-            <small>
-            {{ editableVisualization }}
-        </small>
-        </div>
         <b-form class="chart-properties">
             <b-card sub-title="Opções da visualização">
                 <b-form-group id="title" label="Tipo do gráfico:" label-for="title">
@@ -45,7 +40,7 @@
                     </b-form-checkbox>
                 </b-form-group>
                 <b-form-group>
-                    <ColorPalette :field="palette" :value="workflow.visualization.forms.palette.value"
+                    <ColorPalette :field="palette" :value="editableVisualization.palette.value"
                         @update="handleUpdatePalette" />
                 </b-form-group>
 
@@ -138,10 +133,11 @@ export default {
     props: {
         attributes: { type: Array, required: true },
         workflow: { type: Object, required: true },
-        visualization: {type: Object, required: true}
+        value: { type: Object, required: true }
     },
     data() {
         return {
+            toEmit: true,
             editableVisualization: null,
             form: {
                 title: {
@@ -221,10 +217,6 @@ export default {
             }
         }
     },*/
-    mounted() {
-        //this.$root.$on('chartBuilderUpdateChart', this.updateChart)
-        this.editableVisualization = structuredClone(this.visualization)
-    },
     methods: {
         getIcon(attr) {
             switch (attr.type) {
@@ -279,7 +271,7 @@ export default {
             }
         },
         handleUpdatePalette(field, value) {
-            this.workflow.visualization.forms.palette.value = value;
+            this.editableVisualization.palette.value = value;
         },
         handleSelect(name) { // eslint-disable-line no-unused-vars
             /*const item = this.yAxis.find((v) => v.attribute === name);
@@ -298,6 +290,26 @@ export default {
         // reduceYAxis(opt) {
         //     return { attribute: opt.name, f: 'count', alias: `count_${opt.name}` };
         // }
+    },
+    watch: {
+        editableVisualization: {
+            deep: true,
+            handler(value) {
+                if (this.toEmit) {
+                    this.$emit('input', value);
+                }
+                this.toEmit = true;
+                //console.debug('handler')
+            }
+        },
+        value: {
+            immediate: true,
+            deep: true,
+            handler(val) {
+                this.editableVisualization = structuredClone(val);
+                this.toEmit = false;
+            }
+        },
     }
 }
 </script>

@@ -140,7 +140,7 @@ export default {
     },
     methods: {
         clear() {
-            this.$root.$emit(this.message, this.field, null);
+            this.triggerUpdateEvent(this.message, this.field, []);
             this.displayValue = null;
         },
         openModal() {
