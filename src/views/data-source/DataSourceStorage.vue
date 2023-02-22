@@ -31,7 +31,7 @@
                                         <b>Importante:</b> Esse formato não é otimizado para leitura, processamento e espaço em disco. Recomenda-se que seja usado um formato mais otimizado, especialmente quando a fonte de dados contiver milhares de registros ou centenas de atributos. O Lemonade suporta a conversão para o formato <b><u>Parquet</u></b>.<br><br>
                                         Você poderá posteriormente exportar a fonte de dados novamente no formato CSV.<br><br>
 
-                                        <input type="button" class="btn btn-primary" value="Converter para Parquet" v-on:click="convertToParquet">
+                                        <input type="button" class="btn btn-primary" value="Converter para Parquet" v-on:click="dataLoad(dataSource.name)">
                                     </div>
 
                                     <div v-else-if="dataSource.format === 'PARQUET'">
@@ -75,6 +75,13 @@ export default {
             const resp = await axios.get(
                 `${limoneroUrl}/datasources/${this.$route.params.id}`);
             this.dataSource = resp.data;
+        },
+        dataLoad(sourceName) {
+            var sourceToConvert = new Object();
+            sourceToConvert.name = sourceName;
+            sourceToConvert.format = 'PARQUET';
+            // console.log(sourceToConvert);
+            return sourceToConvert;
         },
     },
 }
