@@ -74,7 +74,7 @@ export default {
         convertData: function (event) {
             if(event){
                 this.dataSource = 'PARQUET'
-               <!-- return ['PARQUET'].includes(this.dataSource.format)-->
+               //return ['PARQUET'].includes(this.dataSource.format)
 
             }
 
