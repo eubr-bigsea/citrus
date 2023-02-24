@@ -73,7 +73,7 @@ import Widget from '../../mixins/Widget.js';
 
 // Colors from plotly in Python. Is there a method to retrieve them in JS?
 const palettes = [
-    ["Alphabet", ["#AA0DFE", "#3283FE", "#85660D", "#782AB6", "#565656", "#1C8356", "#16FF32", "#F7E1A0", "#E2E2E2", "#1CBE]4F", "#C4451C", "#DEA0FD", "#FE00FA", "#325A9B", "#FEAF16", "#F8A19F", "#90AD1C", "#F6222E", "#1CFFCE", "#2ED9FF", "#B10DA1", "#C075A6", "#FC1CBF", "#B00068", "#FBE426", "#FA0087"]],
+    ["Alphabet", ["#AA0DFE", "#3283FE", "#85660D", "#782AB6", "#565656", "#1C8356", "#16FF32", "#F7E1A0", "#E2E2E2", "#1CBE4F", "#C4451C", "#DEA0FD", "#FE00FA", "#325A9B", "#FEAF16", "#F8A19F", "#90AD1C", "#F6222E", "#1CFFCE", "#2ED9FF", "#B10DA1", "#C075A6", "#FC1CBF", "#B00068", "#FBE426", "#FA0087"]],
     ["Alphabet_r", ["#FA0087", "#FBE426", "#B00068", "#FC1CBF", "#C075A6", "#B10DA1", "#2ED9FF", "#1CFFCE", "#F6222E", "#90AD1C", "#F8A19F", "#FEAF16", "#325A9B", "#]FE00FA", "#DEA0FD", "#C4451C", "#1CBE4F", "#E2E2E2", "#F7E1A0", "#16FF32", "#1C8356", "#565656", "#782AB6", "#85660D", "#3283FE", "#AA0DFE"]],
     ["Antique", ["rgb(133, 92, 117)", "rgb(217, 175, 107)", "rgb(175, 100, 88)", "rgb(115, 111, 76)", "rgb(82, 106, 131)", "rgb(98, 83, 119)", "rgb(104, 133, 92)", "rgb(156, 156, 94)", "rgb(160, 97, 119)", "rgb(140, 120, 93)", "rgb(124, 124, 124)"]],
     ["Antique_r", ["rgb(124, 124, 124)", "rgb(140, 120, 93)", "rgb(160, 97, 119)", "rgb(156, 156, 94)", "rgb(104, 133, 92)]", "rgb(98, 83, 119)", "rgb(82, 106, 131)", "rgb(115, 111, 76)", "rgb(175, 100, 88)", "rgb(217, 175, 107)", "rgb(133, 92, 117)"]],

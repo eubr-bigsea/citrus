@@ -1,104 +1,82 @@
 <template>
     <div class="options-container">
-        <div class="options-visualization">
-            <div class="title border-bottom">
-                <h5>Construção de Visualização</h5>
-            </div>
-            <br>
+        <div class="options-visualization mt-1">
             <div>
                 <form class="clearfix visualization-form">
-                    <b-card sub-title="Dados básicos">
-                        <label>{{ $tc('common.title') }}:</label>
-                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                            :placeholder="$tc('common.name')" maxlength="100">
 
-                        <label for="">Fonte de dados:</label> &nbsp;
-                        <vue-select v-if="workflowObj && workflowObj.readData"
-                            v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
-                            :options="dataSourceList" :reduce="(opt) => opt.id" label="name"
-                            @search="loadDataSourceList" @input="retrieveAttributes">
-                            <template #no-options="{}">
-                                <small>Digite parte do nome pesquisar ...</small>
-                            </template>
-                            <template #option="option">
-                                <div class="d-center">
-                                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
-                                </div>
-                            </template>
-                            <template #selected-option="option">
-                                <div class="selected d-center">
-                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
-                                </div>
-                            </template>
-                        </vue-select>
+                    <label>{{ $tc('common.title') }}:</label>
+                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
+                        :placeholder="$tc('common.name')" maxlength="100">
 
-                        <label>{{ $tc('titles.cluster') }}: </label>
-                        <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                            :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
-                            <template #option="{ description, name }">
-                                {{ name }}<br>
-                                <small><em>{{ description }}</em></small>
-                            </template>
-                        </v-select>
-                    </b-card>
-                    <b-card v-if="loaded" class="mt-1" sub-title="Consulta (opcional)">
-                        <label>Limitar quantidade de registros:</label>
-                        <input v-model.number="workflowObj.sample.forms.value.value" type="number"
-                            class="form-control form-control-sm w-50" maxlength="10" step="100">
-
-                        <ExpressionEditor :field="filterField" :value="workflowObj.filter.forms.formula.value"
-                            :suggestion-event="() => attributes.map(a => a.name)" @update="handleUpdateFilter" />
-
-                        <!--
-                        <template>
-                            <label class="mt-2">Agrupar por:</label>
-                            <v-select :options="attributes" label="name" :reduce="(opt) => opt.name" :multiple="true"
-                                v-model="workflowObj.group.forms.attributes.value">
-                                <template #option="{name, type}">
-                                    <font-awesome-icon class="mr-2" prefix="fa" :icon="getIcon({type})" />{{name}}
-                                </template>
-
-                                <template #selected-option="{name, type}">
-                                    <div role="button">
-                                        <font-awesome-icon class="mr-2" prefix="fa" :icon="getIcon({type})" />{{name}}
-                                    </div>
-                                </template>
-                            </v-select>
+                    <label for="">Fonte de dados:</label> &nbsp;
+                    <vue-select v-if="workflowObj && workflowObj.readData"
+                        v-model="workflowObj.readData.forms.data_source.value" :filterable="false" :options="dataSourceList"
+                        :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList" @input="retrieveAttributes">
+                        <template #no-options="{}">
+                            <small>Digite parte do nome pesquisar ...</small>
                         </template>
-                        -->
-                    </b-card>
+                        <template #option="option">
+                            <div class="d-center">
+                                <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
+                            </div>
+                        </template>
+                        <template #selected-option="option">
+                            <div class="selected d-center">
+                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                            </div>
+                        </template>
+                    </vue-select>
+
+                    <label>{{ $tc('titles.cluster') }}: </label>
+                    <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
+                        :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
+                        <template #option="{ description, name }">
+                            {{ name }}<br>
+                            <small><em>{{ description }}</em></small>
+                        </template>
+                    </v-select>
+                    <div v-if="visualizationObj">
+                        <chart-builder-options :attributes="attributes" v-model="options" />
+                    </div>
+
+                    <label>Limitar quantidade de registros:</label>
+                    <input v-if="workflowObj.sample" v-model.number="workflowObj.sample.forms.value.value" type="number"
+                        class="form-control form-control-sm w-50" maxlength="10" step="100">
+
+                    <ExpressionEditor v-if="workflowObj.filter" :field="filterField"
+                        :value="workflowObj.filter.forms.formula.value"
+                        :suggestion-event="() => attributes.map(a => a.name)" @update="handleUpdateFilter" />
+
                 </form>
             </div>
             <div class="mt-2 ">
-                <button class="btn btn-sm btn-primary ml-1 mr-5" @click.prevent="loadData">
+                <button class="btn btn-sm btn-primary ml-1" @click.prevent="loadData">
                     <font-awesome-icon icon="fa fa-search" />
                     {{ $t('actions.search') }}
                 </button>
 
-                <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
+                <button class="btn btn-sm btn-outline-success ml-1 " @click.prevent="saveWorkflow">
                     <font-awesome-icon icon="fa fa-save" />
                     {{ $t('actions.save') }}
                 </button>
-
-                <router-link class="btn btn-sm btn-outline-secondary ml-1 float-right" :to="{ name: 'index-explorer' }"
+                <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
                     :title="$t('actions.back')">
                     {{ $t('actions.back') }}
                 </router-link>
             </div>
         </div>
-        <div class="options-visualization">
-            <small class="bg-info">{{ visualizationObj }}</small>
-            <div v-if="visualizationObj">
-                <chart-builder-options :attributes="attributes" :workflow="workflowObj" v-model="options" />
-            </div>
-        </div>
         <div class="options-main" v-if="visualizationObj">
             <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis" />
+            <small>{{ visualizationObj }}</small>
+            <div v-if="plotlyData">
+                <plotly :options="{}" :data="plotlyData.data" :layout="plotlyData.layout" />
+                ||{{ plotlyData }}||
+            </div>
             <div class="chart">
                 <ChartBuilderVisualization />
             </div>
         </div>
-    </div>
+</div>
 </template>
 
 <script>
@@ -111,12 +89,20 @@ import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
 import DataSourceMixin from '../DataSourceMixin.js';
 import Notifier from '../../../mixins/Notifier.js';
 
+import Plotly from '../../../components/visualization/Plotly.vue';
+
 import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
 import axios from 'axios';
 import vSelect from 'vue-select';
+
+import io from 'socket.io-client';
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
+const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
+
 const META_PLATFORM_ID = 1000;
 
 export default {
@@ -125,7 +111,7 @@ export default {
         ChartBuilderVisualization,
         ChartBuilderOptions,
         ChartBuilderAxis,
-        ExpressionEditor
+        ExpressionEditor, Plotly
     },
     mixins: [DataSourceMixin, Notifier],
     data() {
@@ -135,21 +121,24 @@ export default {
             clusterId: null,
             dataSource: null,
             dataSourceOptions: [],
-            filterField: { label: 'Filtrar', values: '{"alias": false}' },
+            filterField: { label: 'Filtrar', values: '{"alias": false}', required: false },
             group: false,
             internalWorkflowId: null,
             isDirty: false,
             job: null,
+            jobStatus: '',
             jobs: [],
             groupedJobs: null,
             loaded: false,
             loadingData: false,
             notRunning: true,
             operationsMap: new Map(),
+            plotlyData: null,
             socket: null, // used by socketio (web sockets)
             targetPlatform: 4,
             workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
-            visualizationObj: null
+            visualizationObj: null,
+
         }
     },
     computed: {
@@ -159,8 +148,8 @@ export default {
         },
         axis: {
             get() {
-                const { xAxis, yAxis, y, x } = this.visualizationObj;
-                return { xAxis, yAxis, y, x };
+                const { x_axis, y_axis, y, x } = this.visualizationObj;
+                return { x_axis, y_axis, y, x };
             },
             set(value) {
                 Object.assign(this.visualizationObj, value);
@@ -168,8 +157,8 @@ export default {
         },
         options: {
             get() {
-                const { displayLegend, smothing, palette, label, type } = this.visualizationObj
-                return { displayLegend, smothing, palette, label, type };
+                const { display_legend, smothing, palette, color_scale, label, type, title } = this.visualizationObj
+                return { display_legend, smothing, palette, color_scale, label, type, title };
             },
             set(value) {
                 Object.assign(this.visualizationObj, value);
@@ -179,6 +168,9 @@ export default {
     async created() {
         this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
         await this.load();
+    },
+    beforeUnmount() {
+        this.disconnectWebSocket();
     },
     methods: {
         getIcon(attr) {
@@ -207,7 +199,7 @@ export default {
                 }
                 await this.loadDataSource(this.dataSourceId);
 
-                const attributes = this.dataSource.attributes;
+                //const attributes = this.dataSource.attributes;
                 // FIXME: 'group' task is not necessary anymore
                 /*
                 this.workflowObj?.group?.forms?.function?.value?.forEach(attr => {
@@ -245,7 +237,11 @@ export default {
             const resp = await axios.get(`${limoneroUrl}/datasources/${id}`);
             this.dataSource = resp.data;
             this.attributes = this.dataSource.attributes.sort((a, b) => a.name.localeCompare(b.name));
-            this.attributes.forEach(a => a.attribute = a.name);
+            this.attributes.forEach(a => {
+                a.attribute = a.name;
+                a.numeric = ['DECIMAL', 'INTEGER', 'DOUBLE', 'FLOAT', 'LONG']
+                    .indexOf(a.type) >= 0;
+            });
             this.dataSourceList = [this.dataSource];
         },
         async loadClusters() {
@@ -257,7 +253,14 @@ export default {
             }
         },
         async saveWorkflow() {
-            let cloned = JSON.parse(JSON.stringify(this.workflowObj));
+            this.workflowObj.visualization.forms = this.visualizationObj;
+            let cloned = structuredClone(this.workflowObj);
+            if (!cloned.filter.forms.formula || cloned.filter.forms.formula.value === null || cloned.filter.forms.formula.value.length === 0) {
+                cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
+            }
+            if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
+                cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
+            }
             let url = `${tahitiUrl}/workflows/${cloned.id}`;
 
             cloned.platform_id = META_PLATFORM_ID;
@@ -281,9 +284,14 @@ export default {
             this.workflowObj.filter.forms.formula.value = value;
         },
         async loadData() {
-            const self = this;
-            self.loadingData = true;
+            this.loadingData = true;
+            Object.assign(this.workflowObj.visualization.forms, this.visualizationObj);
+            if (this.workflowObj.sort.forms.order_by.value === 'asc' || 
+                this.workflowObj.sort.forms.order_by.value === null) {
+                    this.workflowObj.sort.enabled = false;
+            }
             const cloned = JSON.parse(JSON.stringify(this.workflowObj));
+            console.debug(cloned.tasks[4].forms.y.value)
             cloned.platform_id = cloned.platform.id; //FIXME: review
 
             cloned.tasks.forEach((task) => {
@@ -295,29 +303,73 @@ export default {
             const body = {
                 workflow: cloned,
                 cluster: { id: cloned.preferred_cluster_id },
-                name: `## vis explorer ${self.workflowObj.id} ##`,
+                name: `## vis explorer ${this.workflowObj.id} ##`,
                 user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                 persist: false, // do not save the job in db.
-                app_configs: { verbosity: 0, target_platform: 'scikit-learn' },
+                app_configs: { 
+                    verbosity: 0, 
+                    target_platform: 'scikit-learn',
+                    variant: 'polars'
+                 },
             }
 
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body,
-                    { headers: { 'Locale': self.$root.$i18n.locale, } })
-                self.job = response.data.data;
-                //self.connectWebSocket();
+                    { headers: { 'Locale': this.$root.$i18n.locale, } })
+                this.job = response.data.data;
+                this.connectWebSocket();
             } catch (ex) {
                 if (ex.data) {
-                    self.error(ex.data.message);
+                    this.error(ex.data.message);
                 } else if (ex.status === 0) {
-                    self.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
+                    this.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
                 } else {
-                    self.error(`Unhandled error: ${JSON.stringify(ex)}`);
+                    this.error(`Unhandled error: ${ex}`);
                 }
             } finally {
-                self.$Progress.finish();
+                this.$Progress.finish();
+            }
+        },
+        disconnectWebSocket() {
+            if (this.socket) {
+                this.socket.emit('leave', { room: this.job.id });
+                this.socket.close();
+            }
+        },
+        /* WebSocket Handling */
+        connectWebSocket() {
+            if (this.socket === null) {
+                const opts = { upgrade: true };
+                if (standSocketIoPath !== '') {
+                    opts['path'] = standSocketIoPath;
+                }
+                const socket = io(
+                    `${standSocketServer}${standNamespace}`, opts);
+
+                this.socket = socket;
+                socket.on('connect', () => { socket.emit('join', { cached: false, room: this.job.id }); });
+                socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
+                    if (msg.type === 'PLOTLY') {
+                         const messageJson = msg.message; 
+                         this.plotlyData = messageJson;
+                    }
+                });
+                socket.on('update job', msg => {
+                    this.jobStatus = '';
+                    if (msg.status === 'ERROR') {
+                        this.error(msg);
+                        this.loadingData = false;
+                    }
+                    if (msg.status === 'COMPLETED') {
+                        this.jobStatus = msg.message;
+                        this.loadingData = false;
+                    }
+                });
+            } else {
+                //self.socket.emit('join', { room: self.job.id });
             }
         }
+
     }
 }
 
@@ -376,7 +428,7 @@ export default {
 }
 
 .options-visualization {
-    flex: 0 0 300px;
+    flex: 0 0 250px;
     background-color: #fff;
     padding: 0px;
 }

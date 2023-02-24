@@ -198,24 +198,35 @@ class VisualizationBuilderWorkflow extends Workflow {
         //
         this.readData = null;
         this.filter = null;
-        this.group = null;
+        this.sort = null;
         this.sample = null;
         this.visualization = null;
 
         // Default tasks to be included
-        const pairs = new Map([
-            ['filter', 'filter'],
-            ['group', 'group'], // FIXME is it necessary?
+        const keyPairs = [
             ['read-data', 'readData'],
+            ['filter', 'filter'],
+            ['sort', 'sort'],
             ['sample', 'sample'],
             ['visualization', 'visualization'],
-        ]);
+        ];
+        const pairs = new Map(keyPairs);
+        this.tasks = this.tasks.filter(task => pairs.has(task.operation.slug));
         this.tasks.forEach((task) => {
             if (pairs.has(task.operation.slug)) {
                 this[pairs.get(task.operation.slug)] = task;
                 task.operation = operations.get(task.operation.slug);
             }
         });
+        keyPairs.forEach((kp, i) => {
+            const [slug, prop] = kp;
+            if (!this[prop]) {
+                this[prop] = this.addTask(operations.get(slug));
+            }
+            this[prop].display_order = i;
+        });
+        this.tasks.sort((a, b) => a.display_order - b.display_order);
+
         for (let [slug, prop] of pairs.entries()) {
             // recreate the tasks
             if (this[prop] === null) {
@@ -416,20 +427,24 @@ class Flow {
     }
 }
 class Visualization {
-    constructor({ type = { value: null }, displayLegend = { value: 'next' },
-        smothing = { value: true }, palette = {value: null}, 
+    constructor({ type = { value: null }, display_legend = { value: 'HIDE' },
+        smothing = { value: true }, palette = { value: null }, 
+        color_scale = {value: null},
         x = { value: [] }, y = { value: [] },
-        xAxis = null, yAxis = null },
-     ) {
-        this.displayLegend = displayLegend; //right, left, top, bottom, hide, in_chart
+        x_axis = null, y_axis = null, title = { value: null } },
+    ) {
+        this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
         this.smothing = smothing;
         this.palette = palette;
+        this.color_scale = color_scale;
+        this.title = title;
 
         this.x = x;
         this.y = y;
         this.type = type;
-        this.xAxis = xAxis || new Axis({});
-        this.yAxis = yAxis || new Axis({});
+        this.x_axis = (x_axis && x_axis.value) ? x_axis : {value: new Axis({})};
+        this.y_axis = (y_axis && y_axis.value) ? y_axis : {value: new Axis({})};
+        
     }
     /*
     toJSON() {
@@ -437,10 +452,10 @@ class Visualization {
     }*/
 }
 class XDimension {
-    constructor({ binning = 'equal_interval', bins = 20, binSize = 10,
-        emptyBins = 'zeros', multiplier = null, decimalPlaces = 2,
+    constructor({ binning = 'EQUAL_INTERVAL', bins = 20, binSize = 10,
+        emptyBins = 'ZEROS', multiplier = null, decimalPlaces = 2,
         prefix = null, suffix = null, label = null, maxDisplayed = null,
-        groupOthers = true, sorting = 'natural' }) {
+        groupOthers = true, sorting = 'NATURAL' }) {
         this.binning = binning;  // equal_interval, fixed_size, none, categorical
         this.bins = bins;
         this.binSize = binSize;
@@ -450,17 +465,18 @@ class XDimension {
         this.prefix = prefix;
         this.suffix = suffix;
         this.label = label;
-        this.maxDisplayed = (binning === 'categorical') ? maxDisplayed || 20 : maxDisplayed;
+        this.maxDisplayed = (binning === 'CATEGORICAL') ? maxDisplayed || 20 : maxDisplayed;
         this.groupOthers = groupOthers;
         this.sorting = sorting; //natural, yAsc, yDesc
     }
 }
 class YDimension {
-    constructor({ aggregation = 'count', compute = null, displayOn = 'left',
+    constructor({ attribute = '*', aggregation = 'COUNT', compute = null, displayOn = 'left',
         multiplier = null, decimalPlaces = 2,
         prefix = null, suffix = null, label = null,
-        strokeSize = 1, stroke = null }) {
+        strokeSize = 1, stroke = null, color = null, marker = null }) {
 
+        this.attribute = attribute;
         this.aggregation = aggregation; //count, countd, max, min, avg, sum
         this.compute = compute; //percent, ration_to_avg, cum_values, cum_percent, differential
         this.displayOn = displayOn; // left, right
@@ -472,6 +488,8 @@ class YDimension {
         this.label = label;
         this.strokeSize = strokeSize;
         this.stroke = stroke;
+        this.color = color;
+        this.marker = marker;
     }
 }
 class Axis {
@@ -503,4 +521,5 @@ export {
     ModelBuilderWorkflow,
     Visualization,
     VisualizationBuilderWorkflow,
+    YDimension, XDimension, Axis
 };
