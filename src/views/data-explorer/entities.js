@@ -428,13 +428,15 @@ class Flow {
 }
 class Visualization {
     constructor({ type = { value: null }, display_legend = { value: 'HIDE' },
-        smothing = { value: true }, palette = { value: null }, 
+        smoothing = { value: true }, palette = { value: null }, 
         color_scale = {value: null},
         x = { value: [] }, y = { value: [] },
-        x_axis = null, y_axis = null, title = { value: null } },
+        x_axis = null, y_axis = null, title = { value: null },
+        hole = null, text_position = null, text_info = null
+    },
     ) {
         this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
-        this.smothing = smothing;
+        this.smoothing = smoothing;
         this.palette = palette;
         this.color_scale = color_scale;
         this.title = title;
@@ -444,6 +446,10 @@ class Visualization {
         this.type = type;
         this.x_axis = (x_axis && x_axis.value) ? x_axis : {value: new Axis({})};
         this.y_axis = (y_axis && y_axis.value) ? y_axis : {value: new Axis({})};
+
+        this.hole = hole;
+        this.text_info = text_info;
+        this.text_position = text_position;
         
     }
     /*

@@ -35,6 +35,21 @@
                             <small><em>{{ description }}</em></small>
                         </template>
                     </v-select>
+                    <div class="mt-2 ">
+                        <button class="btn btn-sm btn-primary ml-1" @click.prevent="loadData">
+                            <font-awesome-icon icon="fa fa-search" />
+                            {{ $t('actions.search') }}
+                        </button>
+
+                        <button class="btn btn-sm btn-outline-success ml-1 " @click.prevent="saveWorkflow">
+                            <font-awesome-icon icon="fa fa-save" />
+                            {{ $t('actions.save') }}
+                        </button>
+                        <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
+                            :title="$t('actions.back')">
+                            {{ $t('actions.back') }}
+                        </router-link>
+                    </div>
                     <div v-if="visualizationObj">
                         <chart-builder-options :attributes="attributes" v-model="options" />
                     </div>
@@ -49,38 +64,30 @@
 
                 </form>
             </div>
-            <div class="mt-2 ">
-                <button class="btn btn-sm btn-primary ml-1" @click.prevent="loadData">
-                    <font-awesome-icon icon="fa fa-search" />
-                    {{ $t('actions.search') }}
-                </button>
 
-                <button class="btn btn-sm btn-outline-success ml-1 " @click.prevent="saveWorkflow">
-                    <font-awesome-icon icon="fa fa-save" />
-                    {{ $t('actions.save') }}
-                </button>
-                <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
-                    :title="$t('actions.back')">
-                    {{ $t('actions.back') }}
-                </router-link>
-            </div>
         </div>
         <div class="options-main" v-if="visualizationObj">
             <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis" />
-            <small>{{ visualizationObj }}</small>
-            <div v-if="plotlyData">
-                <plotly :options="{}" :data="plotlyData.data" :layout="plotlyData.layout" />
-                ||{{ plotlyData }}||
-            </div>
             <div class="chart">
-                <ChartBuilderVisualization />
+                <div class="chart-builder-visualization" style="height: 85vh">
+                    <div v-if="plotlyData" style="background: orange; height: 100%">
+                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data" :layout="plotlyData.layout" />
+                        ||{{ plotlyData }}||
+                    
+                    </div>
+                    <div v-else class="chart-not-available">
+                        Selecione o tipo de gráfico e configure suas propriedades
+                    </div>
+                    <!--
+                    <small>{{ visualizationObj }}</small>
+                    -->
+                </div>
             </div>
         </div>
 </div>
 </template>
 
 <script>
-import ChartBuilderVisualization from '../../../components/chart-builder/ChartBuilderVisualization.vue';
 import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
 import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
 
@@ -108,7 +115,6 @@ const META_PLATFORM_ID = 1000;
 export default {
     components: {
         'vue-select': vSelect,
-        ChartBuilderVisualization,
         ChartBuilderOptions,
         ChartBuilderAxis,
         ExpressionEditor, Plotly
@@ -157,8 +163,12 @@ export default {
         },
         options: {
             get() {
-                const { display_legend, smothing, palette, color_scale, label, type, title } = this.visualizationObj
-                return { display_legend, smothing, palette, color_scale, label, type, title };
+                const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
+                    text_position, text_info } = this.visualizationObj
+                return {
+                    display_legend, smoothing, palette, color_scale, label, type, title, hole,
+                    text_position, text_info
+                };
             },
             set(value) {
                 Object.assign(this.visualizationObj, value);
@@ -271,6 +281,11 @@ export default {
                 delete task.step;
                 delete task.status;
             });
+            delete cloned.readData
+            delete cloned.sort
+            delete cloned.visualization
+            delete cloned.sample
+            delete cloned.filter
 
             try {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
@@ -286,9 +301,9 @@ export default {
         async loadData() {
             this.loadingData = true;
             Object.assign(this.workflowObj.visualization.forms, this.visualizationObj);
-            if (this.workflowObj.sort.forms.order_by.value === 'asc' || 
+            if (this.workflowObj.sort.forms.order_by.value === 'asc' ||
                 this.workflowObj.sort.forms.order_by.value === null) {
-                    this.workflowObj.sort.enabled = false;
+                this.workflowObj.sort.enabled = false;
             }
             const cloned = JSON.parse(JSON.stringify(this.workflowObj));
             console.debug(cloned.tasks[4].forms.y.value)
@@ -306,11 +321,11 @@ export default {
                 name: `## vis explorer ${this.workflowObj.id} ##`,
                 user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
                 persist: false, // do not save the job in db.
-                app_configs: { 
-                    verbosity: 0, 
+                app_configs: {
+                    verbosity: 0,
                     target_platform: 'scikit-learn',
                     variant: 'polars'
-                 },
+                },
             }
 
             try {
@@ -350,8 +365,8 @@ export default {
                 socket.on('connect', () => { socket.emit('join', { cached: false, room: this.job.id }); });
                 socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
                     if (msg.type === 'PLOTLY') {
-                         const messageJson = msg.message; 
-                         this.plotlyData = messageJson;
+                        const messageJson = msg.message;
+                        this.plotlyData = messageJson;
                     }
                 });
                 socket.on('update job', msg => {
@@ -447,5 +462,28 @@ export default {
 
 .visualization-form {
     font-size: .8em;
+}
+
+.chart-builder-visualization {
+    //height: 600px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+.chart-not-available {
+    background-color: #fff;
+    border: 1px solid rgba(#000, .08);
+    padding: 1rem;
+    margin: 0;
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: rgba(#000, .2);
 }
 </style>
