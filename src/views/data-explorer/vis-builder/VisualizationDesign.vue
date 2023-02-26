@@ -4,7 +4,7 @@
             <div>
                 <form class="clearfix visualization-form">
 
-                    <label>{{ $tc('common.title') }}:</label>
+                    <label>{{ $tc('common.name') }}:</label>
                     <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                         :placeholder="$tc('common.name')" maxlength="100">
 
@@ -53,15 +53,6 @@
                     <div v-if="visualizationObj">
                         <chart-builder-options :attributes="attributes" v-model="options" />
                     </div>
-
-                    <label>Limitar quantidade de registros:</label>
-                    <input v-if="workflowObj.sample" v-model.number="workflowObj.sample.forms.value.value" type="number"
-                        class="form-control form-control-sm w-50" maxlength="10" step="100">
-
-                    <ExpressionEditor v-if="workflowObj.filter" :field="filterField"
-                        :value="workflowObj.filter.forms.formula.value"
-                        :suggestion-event="() => attributes.map(a => a.name)" @update="handleUpdateFilter" />
-
                 </form>
             </div>
 
@@ -71,20 +62,25 @@
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 85vh">
                     <div v-if="plotlyData" style="background: orange; height: 100%">
-                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data" :layout="plotlyData.layout" />
-                        ||{{ plotlyData }}||
-                    
+                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
+                            :layout="plotlyData.layout" />
+                        <!-- ||{{ plotlyData }}|| -->
+
                     </div>
                     <div v-else class="chart-not-available">
                         Selecione o tipo de gráfico e configure suas propriedades
                     </div>
                     <!--
-                    <small>{{ visualizationObj }}</small>
-                    -->
+                                <small>{{ visualizationObj }}</small>
+                                -->
                 </div>
             </div>
         </div>
-</div>
+        <div v-show="loadingData" class="preview-loading">
+            <font-awesome-icon icon="lemon" spin class="text-success" />
+            {{ $t('common.wait') }}
+        </div>
+    </div>
 </template>
 
 <script>
@@ -164,10 +160,12 @@ export default {
         options: {
             get() {
                 const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
-                    text_position, text_info } = this.visualizationObj
+                    text_position, text_info, 
+                    top_margin, bottom_margin, left_margin, right_margin, auto_margin} = this.visualizationObj
                 return {
                     display_legend, smoothing, palette, color_scale, label, type, title, hole,
-                    text_position, text_info
+                    text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
+                    auto_margin,
                 };
             },
             set(value) {
@@ -306,7 +304,6 @@ export default {
                 this.workflowObj.sort.enabled = false;
             }
             const cloned = JSON.parse(JSON.stringify(this.workflowObj));
-            console.debug(cloned.tasks[4].forms.y.value)
             cloned.platform_id = cloned.platform.id; //FIXME: review
 
             cloned.tasks.forEach((task) => {

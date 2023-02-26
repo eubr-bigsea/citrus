@@ -428,11 +428,13 @@ class Flow {
 }
 class Visualization {
     constructor({ type = { value: null }, display_legend = { value: 'HIDE' },
-        smoothing = { value: true }, palette = { value: null }, 
-        color_scale = {value: null},
+        smoothing = { value: true }, palette = { value: null },
+        color_scale = { value: null },
         x = { value: [] }, y = { value: [] },
         x_axis = null, y_axis = null, title = { value: null },
-        hole = null, text_position = null, text_info = null
+        hole = null, text_position = null, text_info = null,
+        right_margin = null, left_margin = 0, top_margin = 0, bottom_margin = 0,
+        auto_margin = { value: true },
     },
     ) {
         this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
@@ -444,13 +446,18 @@ class Visualization {
         this.x = x;
         this.y = y;
         this.type = type;
-        this.x_axis = (x_axis && x_axis.value) ? x_axis : {value: new Axis({})};
-        this.y_axis = (y_axis && y_axis.value) ? y_axis : {value: new Axis({})};
+        this.x_axis = (x_axis && x_axis.value) ? x_axis : { value: new Axis({}) };
+        this.y_axis = (y_axis && y_axis.value) ? y_axis : { value: new Axis({}) };
 
         this.hole = hole;
         this.text_info = text_info;
         this.text_position = text_position;
-        
+        this.right_margin = right_margin;
+        this.left_margin = left_margin;
+        this.top_margin = top_margin;
+        this.bottom_margin = bottom_margin;
+        this.auto_margin = auto_margin;
+
     }
     /*
     toJSON() {

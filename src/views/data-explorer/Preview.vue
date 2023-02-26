@@ -511,20 +511,6 @@ div.data-type {
     line-height: 1.2 !important;
 }
 
-.preview-loading {
-    background: #f3f3f4;
-    border: 1px solid #222;
-    font-size: 20pt;
-    color: #666;
-    padding: 10px;
-    left: 25%;
-    margin: 0 auto;
-    position: absolute;
-    text-align: center;
-    top: 40%;
-    width: 40%;
-    z-index: 101;
-}
 
 .col-overlay {
     /*border: 1px solid rgb(14, 101, 235);*/
