@@ -1,63 +1,78 @@
 <template>
     <div>
         <span v-if="!readOnly">
-            <LabelComponent :field="field"
-                            :value="value" />
+            <LabelComponent :field="field" :value="value" />
 
             <div class="palette clearfix">
                 <template v-if="displayValue && displayValue.length > 0">
-                    <div v-for="color in displayValue"
-                         :key="color">
-                        <div class="color"
-                             :style="{'background-color': color}" />
+                    <div v-for="color in displayValue" :key="color">
+                        <div class="color" :style="{ 'background-color': color }" />
                     </div>
                 </template>
                 <div v-else>
                     -
                 </div>
             </div>
-                <b-link variant="sm"
-                        @click.prevent="openModal">
-                    {{$t('actions.chooseOption')}}
-                </b-link>
-                |
-                <b-link variant="sm"
-                        @click.prevent="clear">
-                    {{$t('actions.clear')}}
-                </b-link>
+            <b-link variant="sm" @click.prevent="openModal">
+                {{ $t('actions.chooseOption') }}
+            </b-link>
+            |
+            <b-link variant="sm" @click.prevent="clear">
+                {{ $t('actions.clear') }}
+            </b-link>
         </span>
-        <span v-else>{{displayValue}}</span>
-        <b-modal id="lookupModal"
-                 ref="modal"
-                 size="lg"
-                 :title="field.label"
-                 :hide-header="true"
-                 :cancel-title="$t('actions.cancel')"
-                 no-fade>
+        <span v-else>{{ displayValue }}</span>
+        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label" :hide-header="true"
+            :cancel-title="$t('actions.cancel')" no-fade>
             <p>
-                {{field.label || field.name}}
+                {{ field.label || field.name }}
             </p>
-            <div class="color-select">
-                <div v-for="(palette, inx) in palettes"
-                     :key="palette[0]"
-                     class="palette clearfix"
-                     @click="select(inx)">
-                    <div class="palette-name">
-                        {{palette[0]}}
+            <b-tabs>
+                <b-tab title="Matplotlib">
+
+                    <div class="color-select">
+                        <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix"
+                            @click="select(inx, 'palette')">
+                            <div class="palette-name">
+                                {{ palette[0] }}
+                            </div>
+                            <div v-for="color in palette[1]" :key="color">
+                                <div class="color" :style="{ 'background-color': color }" />
+                            </div>
+                        </div>
                     </div>
-                    <div v-for="color in palette[1]"
-                         :key="color">
-                        <div class="color"
-                             :style="{'background-color': color}" />
+                </b-tab>
+                <b-tab title="Color blind">
+                    <div class="color-select">
+                        <div v-for="(palette, inx) in colorBlindPalettes" :key="palette[0]" class="palette clearfix"
+                            @click="select(inx, 'colorBlindPalettes')">
+                            <div class="palette-name">
+                                {{ palette[0] }}
+                            </div>
+                            <div v-for="color in palette[1]" :key="color">
+                                <div class="color" :style="{ 'background-color': color }" />
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </b-tab>
+                <b-tab title="Wes Anderson Palettes">
+                    <div class="color-select">
+                        <div v-for="(palette, inx) in wesAndersonPalettes" :key="palette[0]" class="palette clearfix"
+                            @click="select(inx, 'wesAndersonPalettes')">
+                            <div class="palette-name">
+                                {{ palette[0] }}
+                            </div>
+                            <div v-for="color in palette[1]" :key="color">
+                                <div class="color" :style="{ 'background-color': color }" />
+                            </div>
+                        </div>
+                    </div>
+                </b-tab>
+            </b-tabs>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-btn variant="secondary"
-                           class="btn-sm "
-                           @click="cancelClicked">
-                        {{$t('actions.cancel')}}
+                    <b-btn variant="secondary" class="btn-sm " @click="cancelClicked">
+                        {{ $t('actions.cancel') }}
                     </b-btn>
                 </div>
             </template>
@@ -68,6 +83,27 @@
 import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 
+
+const wesAndersonPalettes = [
+    ["BottleRocket1", ["#A42820", "#5F5647", "#9B110E", "#3F5151", "#4E2A1E", "#550307", "#0C1707"]],
+    ["BottleRocket2", ["#FAD510", "#CB2314", "#273046", "#354823", "#1E1E1E"]],
+    ["Rushmore1", ["#E1BD6D", "#EABE94", "#0B775E", "#35274A", "#F2300F"]],
+    ["Royal1", ["#899DA4", "#C93312", "#FAEFD1", "#DC863B"]],
+    ["Royal2", ["#9A8822", "#F5CDB4", "#F8AFA8", "#FDDDA0", "#74A089"]],
+    ["Zissou1", ["#3B9AB2", "#78B7C5", "#EBCC2A", "#E1AF00", "#F21A00"]],
+    ["Darjeeling1", ["#FF0000", "#00A08A", "#F2AD00", "#F98400", "#5BBCD6"]],
+    ["Darjeeling2", ["#ECCBAE", "#046C9A", "#D69C4E", "#ABDDDE", "#000000"]],
+    ["Chevalier1", ["#446455", "#FDD262", "#D3DDDC", "#C7B19C"]],
+    ["FantasticFox1", ["#DD8D29", "#E2D200", "#46ACC8", "#E58601", "#B40F20"]],
+    ["Moonrise1", ["#F3DF6C", "#CEAB07", "#D5D5D3", "#24281A"]],
+    ["Moonrise2", ["#798E87", "#C27D38", "#CCC591", "#29211F"]],
+    ["Moonrise3", ["#85D4E3", "#F4B5BD", "#9C964A", "#CDC08C", "#FAD77B"]],
+    ["Cavalcanti1", ["#D8B70A", "#02401B", "#A2A475", "#81A88D", "#972D15"]],
+    ["GrandBudapest1", ["#F1BB7B", "#FD6467", "#5B1A18", "#D67236"]],
+    ["GrandBudapest2", ["#E6A0C4", "#C6CDF7", "#D8A499", "#7294D4"]],
+    ["IsleofDogs1", ["#9986A5", "#79402E", "#CCBA72", "#0F0D0E", "#D9D0D3", "#8D8680"]],
+    ["IsleofDogs2", ["#EAD3BF", "#AA9486", "#B6854D", "#39312F", "#1C1718"]]
+];
 // Colors from plotly in Python. Is there a method to retrieve them in JS?
 const palettes = [
     ["Alphabet", ["#AA0DFE", "#3283FE", "#85660D", "#782AB6", "#565656", "#1C8356", "#16FF32", "#F7E1A0", "#E2E2E2", "#1CBE4F", "#C4451C", "#DEA0FD", "#FE00FA", "#325A9B", "#FEAF16", "#F8A19F", "#90AD1C", "#F6222E", "#1CFFCE", "#2ED9FF", "#B10DA1", "#C075A6", "#FC1CBF", "#B00068", "#FBE426", "#FA0087"]],
@@ -109,12 +145,34 @@ const palettes = [
     ["Vivid", ["rgb(229, 134, 6)", "rgb(93, 105, 177)", "rgb(82, 188, 163)", "rgb(153, 201, 69)", "rgb(204, 97, 176)", "rgb(36, 121, 108)", "rgb(218, 165, 27)", "rgb(47, 138, 196)", "rgb(118, 78, 159)", "rgb(237, 100, 90)", "rgb(165, 170, 153)"]],
     ["Vivid_r", ["rgb(165, 170, 153)", "rgb(237, 100, 90)", "rgb(118, 78, 159)", "rgb(47, 138, 196)", "rgb(218, 165, 27)", "rgb(36, 121, 108)", "rgb(204, 97, 176)", "rgb(153, 201, 69)", "rgb(82, 188, 163)", "rgb(93, 105, 177)", "rgb(229, 134, 6)"]]
 ]
+const colorBlindPalettes = [
+    ['paletteMartin', ['#000000', '#004949', '#009292', '#FF6DB6', '#FFB6DB', '#490092', '#006DDB', '#B66DFF', '#6DB6FF', '#B6DBFF', '#920000', '#924900', '#DB6D00', '#24FF24', '#FFFF6D']],
+    ['Blue2DarkOrange12Steps', ['#1E8E99', '#51C3CC', '#99F9FF', '#B2FCFF', '#CCFEFF', '#E5FFFF', '#FFE5CC', '#FFCA99', '#FFAD65', '#FF8E32', '#CC5800', '#993F00']],
+    ['Blue2DarkOrange18Steps', ['#006666', '#009999', '#00CCCC', '#00FFFF', '#33FFFF', '#65FFFF', '#99FFFF', '#B2FFFF', '#CBFFFF', '#E5FFFF', '#FFE5CB', '#FFCA99', '#FFAD65', '#FF8E33', '#FF6E00', '#CC5500', '#993D00', '#662700']],
+    ['Blue2DarkRed12Steps', ['#290AD8', '#264DFF', '#3FA0FF', '#72D9FF', '#AAF7FF', '#E0FFFF', '#FFFFBF', '#FFE099', '#FFAD72', '#F76D5E', '#D82632', '#A50021']],
+    ['Blue2DarkRed18Steps', ['#2400D8', '#181CF7', '#2857FF', '#3D87FF', '#56B0FF', '#75D3FF', '#99EAFF', '#BCF9FF', '#EAFFFF', '#FFFFEA', '#FFF1BC', '#FFD699', '#FFAC75', '#FF7856', '#FF3D3D', '#F72735', '#D8152F', '#A50021']],
+    ['Blue2Gray8Steps', ['#0099CC', '#66E5FF', '#99FFFF', '#CCFFFF', '#E5E5E5', '#999999', '#666666', '#333333']],
+    ['Blue2Green14Steps', ['#0000FF', '#3333FF', '#6565FF', '#9999FF', '#B2B2FF', '#CBCBFF', '#E5E5FF', '#E5FFE5', '#CBFFCB', '#B2FFB2', '#99FF99', '#65FF65', '#33FF33', '#00FF00']],
+    ['Blue2Orange10Steps', ['#0054FF', '#3299FF', '#65CCFF', '#99EDFF', '#CCFFFF', '#FFFFCC', '#FFEE99', '#FFCC65', '#FF9932', '#FF5500']],
+    ['Blue2Orange12Steps', ['#002AFF', '#1965FF', '#3299FF', '#65CCFF', '#99EDFF', '#CCFFFF', '#FFFFCC', '#FFEE99', '#FFCC65', '#FF9932', '#FF6619', '#FF2A00']],
+    ['Blue2Orange8Steps', ['#007FFF', '#4CC3FF', '#99EDFF', '#CCFFFF', '#FFFFCC', '#FFEE99', '#FFC34C', '#FF7F00']],
+    ['Blue2OrangeRed14Steps', ['#075AFF', '#3276FF', '#5990FF', '#8CB2FF', '#BFD4FF', '#E5EEFF', '#F7F9FF', '#FFFFCC', '#FFFF99', '#FFFF00', '#FFCC00', '#FF9900', '#FF6600', '#FF0000']],
+    ['Brown2Blue10Steps', ['#662F00', '#996035', '#CC9B7A', '#D8AF97', '#F2DACD', '#CCFDFF', '#99F8FF', '#65EFFF', '#32E3FF', '#00A9CC']],
+    ['Brown2Blue12Steps', ['#331900', '#662F00', '#996035', '#CC9B7A', '#D8AF97', '#F2DACD', '#CCFDFF', '#99F8FF', '#65EFFF', '#32E3FF', '#00A9CC', '#007A99']],
+    ['Green2Magenta16Steps', ['#005000', '#008600', '#00BB00', '#00F100', '#50FF50', '#86FF86', '#BBFFBB', '#FFFFFF', '#FFF1FF', '#FFBBFF', '#FF86FF', '#FF50FF', '#F100F1', '#BB00BB', '#860086', '#500050']],
+    ['LightBlue2DarkBlue10Steps', ['#E5FFFF', '#CCFAFF', '#B2F2FF', '#99E5FF', '#7FD4FF', '#65BFFF', '#4CA5FF', '#3288FF', '#1965FF', '#003FFF']],
+    ['LightBlue2DarkBlue7Steps', ['#FFFFFF', '#CCFDFF', '#99F8FF', '#66F0FF', '#33E4FF', '#00AACC', '#007A99']],
+    ['ModifiedSpectralScheme11Steps', ['#A50021', '#D82632', '#F76D5E', '#FFAD72', '#FFE099', '#FFFFBF', '#E0FFFF', '#AAF7FF', '#72D8FF', '#3FA0FF', '#264CFF']],
+    ['PairedColor12Steps', ['#FFBF7F', '#FF7F00', '#FFFF99', '#FFFF32', '#B2FF8C', '#32FF00', '#A5EDFF', '#19B2FF', '#CCBFFF', '#654CFF', '#FF99BF', '#E51932']],
+    ['SteppedSequential5Steps', ['#990F0F', '#B22C2C', '#CC5151', '#E57E7E', '#FFB2B2', '#99540F', '#B26F2C', '#CC8E51', '#E5B17E', '#FFD8B2', '#6B990F', '#85B22C', '#A3CC51', '#C3E57E', '#E5FFB2', '#0F6B99', '#2C85B2', '#51A3CC', '#7EC3E5', '#B2E5FF', '#260F99', '#422CB2', '#6551CC', '#8F7EE5', '#BFB2FF']]
+]
+
 export default {
     components: { LabelComponent },
     mixins: [Widget],
     props: {
-        value: {type: Array, default: () => []},
-        field: {type: Object, default: () => null},
+        value: { type: Array, default: () => [] },
+        field: { type: Object, default: () => null },
         message: {
             type: String,
             default: () => 'update-form-field-value'
@@ -124,12 +182,12 @@ export default {
         return {
             displayValue: '',
             internalValue: null,
-            palettes
+            palettes, wesAndersonPalettes, colorBlindPalettes,
         }
     },
     mounted() {
         this.displayValue = this.value;
-        if (this.value === null || this.value === undefined){
+        if (this.value === null || this.value === undefined) {
             this.internalValue = this.palettes[6][1]; // D3
             this.triggerUpdateEvent(this.message, this.field, this.internalValue);
             this.displayValue = this.internalValue;
@@ -146,10 +204,10 @@ export default {
                 this.suggestions = this.suggestionEvent();
             }
         },
-        select(inx) {
-            this.triggerUpdateEvent(this.message, this.field, this.palettes[inx][1]);
+        select(inx, type) {
+            this.triggerUpdateEvent(this.message, this.field, this[type][inx][1]);
             this.$refs.modal.hide();
-            this.displayValue = this.palettes[inx][1];
+            this.displayValue = this[type][inx][1];
         },
         cancelClicked() {
             this.$refs.modal.hide();
@@ -158,32 +216,32 @@ export default {
 }
 </script>
 <style scoped>
-    div.palette {
-        cursor: pointer;
-        clear: both;
-        margin: 1px 0;
-        padding-top: 3px;
-    }
+div.palette {
+    cursor: pointer;
+    clear: both;
+    margin: 1px 0;
+    padding-top: 3px;
+}
 
-    div.palette-name {
-        float: left;
-        font-size: .7em;
-        width: 60px;
-    }
+div.palette-name {
+    float: left;
+    font-size: .7em;
+    width: 160px;
+}
 
-    div.color {
-        border: 1px solid #bbb;
-        margin-right: 1px;
-        margin-bottom: 1px;
-        float: left;
-        height: 18px;
-        width: 18px;
-    }
+div.color {
+    border: 1px solid #bbb;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    float: left;
+    height: 18px;
+    width: 18px;
+}
 
-    div.color-select {
-        height: 400px;
-        overflow: auto;
-        padding: 5px;
-        border: 1px solid #aaa;
-    }
+div.color-select {
+    height: 400px;
+    overflow: auto;
+    padding: 5px;
+    border: 1px solid #aaa;
+}
 </style>
