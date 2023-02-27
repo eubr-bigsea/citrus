@@ -58,21 +58,20 @@
 
         </div>
         <div class="options-main" v-if="visualizationObj">
-            <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis" :type="visualizationObj.type.value"/>
+            <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis"
+                :type="visualizationObj.type.value" />
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 85vh">
                     <div v-if="plotlyData" style="background: orange; height: 100%">
                         <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
                             :layout="plotlyData.layout" />
-                        <!-- ||{{ plotlyData }}|| -->
+                        <small>{{ plotlyData }}</small>
 
                     </div>
                     <div v-else class="chart-not-available">
                         Selecione o tipo de gráfico e configure suas propriedades
                     </div>
-                    <!--
-                                <small>{{ visualizationObj }}</small>
-                                -->
+                    <!--small>{{ visualizationObj }}</small -->
                 </div>
             </div>
         </div>
@@ -80,7 +79,7 @@
             <font-awesome-icon icon="lemon" spin class="text-success" />
             {{ $t('common.wait') }}
         </div>
-    </div>
+</div>
 </template>
 
 <script>
@@ -161,8 +160,8 @@ export default {
         options: {
             get() {
                 const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
-                    text_position, text_info, 
-                    top_margin, bottom_margin, left_margin, right_margin, auto_margin} = this.visualizationObj
+                    text_position, text_info,
+                    top_margin, bottom_margin, left_margin, right_margin, auto_margin } = this.visualizationObj
                 return {
                     display_legend, smoothing, palette, color_scale, label, type, title, hole,
                     text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
