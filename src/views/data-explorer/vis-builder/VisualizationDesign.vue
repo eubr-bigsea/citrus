@@ -58,7 +58,7 @@
 
         </div>
         <div class="options-main" v-if="visualizationObj">
-            <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis" />
+            <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis" :type="visualizationObj.type.value"/>
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 85vh">
                     <div v-if="plotlyData" style="background: orange; height: 100%">
@@ -150,13 +150,14 @@ export default {
         },
         axis: {
             get() {
-                const { x_axis, y_axis, y, x } = this.visualizationObj;
-                return { x_axis, y_axis, y, x };
+                const { x_axis, y_axis, y, x, type } = this.visualizationObj;
+                return { x_axis, y_axis, y, x, type };
             },
             set(value) {
                 Object.assign(this.visualizationObj, value);
             }
         },
+
         options: {
             get() {
                 const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
