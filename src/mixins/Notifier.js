@@ -85,7 +85,7 @@ export default {
                     }
                 } else {
                     this.$snotify.error(
-                        e.message, this.$t('titles.error'),
+                        e.message || e, this.$t('titles.error'),
                         { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                     );
                     console.debug(e);

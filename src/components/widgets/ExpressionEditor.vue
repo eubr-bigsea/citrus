@@ -275,7 +275,7 @@ export default {
             }).length == 0;
         },
         okClicked() {
-            const result = this.$refs.form && this.$refs.form.reportValidity() & this.validate();
+            const result = !this.field.required || this.$refs.form && this.$refs.form.reportValidity() & this.validate();
             if (result) {
                 this.triggerUpdateEvent(this.message, this.field,
                     this.expressionList);
