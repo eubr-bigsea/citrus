@@ -32,7 +32,7 @@
 
                     <div class="color-select">
                         <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix"
-                            @click="select(inx, 'palette')">
+                            @click="select(inx, 'palettes')">
                             <div class="palette-name">
                                 {{ palette[0] }}
                             </div>

@@ -434,7 +434,8 @@ class Visualization {
         x_axis = null, y_axis = null, title = { value: null },
         hole = null, text_position = null, text_info = null,
         right_margin = null, left_margin = 0, top_margin = 0, bottom_margin = 0,
-        auto_margin = { value: true },
+        auto_margin = { value: true }, template = { value: null },
+        blackWhite = { value: false}
     },
     ) {
         this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
@@ -457,6 +458,8 @@ class Visualization {
         this.top_margin = top_margin;
         this.bottom_margin = bottom_margin;
         this.auto_margin = auto_margin;
+        this.template = template;
+        this.blackWhite = blackWhite;
 
     }
     /*

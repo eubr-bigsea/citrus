@@ -161,11 +161,12 @@ export default {
             get() {
                 const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
                     text_position, text_info,
-                    top_margin, bottom_margin, left_margin, right_margin, auto_margin } = this.visualizationObj
+                    top_margin, bottom_margin, left_margin, right_margin, auto_margin, 
+                    template, blackWhite } = this.visualizationObj
                 return {
                     display_legend, smoothing, palette, color_scale, label, type, title, hole,
                     text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
-                    auto_margin,
+                    auto_margin, template, blackWhite
                 };
             },
             set(value) {
