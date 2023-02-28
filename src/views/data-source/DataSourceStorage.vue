@@ -11,8 +11,6 @@
                             <data-source-options selected="dataSourceStorage" />
                         </div>
                         <div class="col-md-10">
-                            <!--FIXME-->
-                            <!--{{ dataSource.format === 'CSV' }}-->
                             <div v-if="dataSource.format === 'CSV'">
                                 <p>
                                 	<b>CSV</b><br><br>
@@ -27,7 +25,7 @@
 					Você poderá posteriormente exportar a fonte de dados novamente no formato <b>CSV</b>.
 
   				</p>
-                                <button v-on:click="save">Converter para Parquet</button>
+                                <button @click="convertData">Converter para Parquet</button>
                             </div>
 
                             <div v-if="dataSource.format === 'PARQUET'">
@@ -60,19 +58,7 @@ export default {
     data() {
         return {
             isDirty: false,
-            samples: [],
-            localStorages: [],
-            dataSource: null,
-            dataTypes: [
-                'BINARY', 'CHARACTER', 'DOUBLE', 'DECIMAL', 'DATE', 'DATETIME',
-                'FLOAT', 'INTEGER', 'LONG', 'TEXT', 'TIME', 'TIMESTAMP',
-                'VECTOR'].sort(),
-            formats: [
-                'CSV', 'CUSTOM', 'GEO_JSON', 'HAR_IMAGE_FOLDER', 'HDF5',
-                'DATA_FOLDER', 'IMAGE_FOLDER', 'HIVE', 'JDBC', 'JSON',
-                'NPY', 'PARQUET', 'PICKLE', 'SAV', 'SHAPEFILE',
-                'TAR_IMAGE_FOLDER', 'TEXT', 'VIDEO_FOLDER', 'UNKNOWN',
-                'XML_FILE'].sort()
+            dataSource: null
         }
     },
     mounted() {
@@ -83,14 +69,6 @@ export default {
             const resp = await axios.get(
                 `${limoneroUrl}/datasources/${this.$route.params.id}`);
             this.dataSource = resp.data;
-        },
-        convertData: function (event) {
-            if(event){
-                this.dataSource = 'PARQUET'
-               //return ['PARQUET'].includes(this.dataSource.format)
-
-            }
-
         },
         success(msg) {
             this.$snotify.success(msg, this.$t('titles.success'));
@@ -107,23 +85,9 @@ export default {
                 this.$snotify.error(e.message, this.$t('titles.error'));
             }
         },
-        save(event) {
+        convertData(event) {
             const self = this;
-            self.dataSource.format === 'PARQUET';
-            let inconsistentFormat =
-                    (self.dataSource.format === 'PARQUET' &&
-                        self.dataSource.storage.type !== 'PARQUET');
-            self.dataSource.attributes.forEach(attr => {
-                if (attr.attribute_privacy &&
-                        (!attr.attribute_privacy.anonymization_technique
-                            || !attr.attribute_privacy.privacy_type)) {
-                    attr.attribute_privacy = null;
-                }
-            });
-            if (inconsistentFormat) {
-                self.error({ message: self.$t('dataSource.inconsistentFormat') });
-                return;
-            }
+            self.dataSource.format == 'PARQUET';
             let url = `${limoneroUrl}/datasources/${this.dataSource.id}`;
             event.target.setAttribute('disabled', 'disabled');
             event.target.classList.remove('btn-spinner');
