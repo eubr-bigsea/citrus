@@ -77,11 +77,7 @@ export default {
             this.dataSource = resp.data;
         },
         dataLoad(sourceName) {
-            var sourceToConvert = new Object();
-            sourceToConvert.name = sourceName;
-            sourceToConvert.format = 'PARQUET';
-            // console.log(sourceToConvert);
-            return sourceToConvert;
+            this.dataSource.format = 'PARQUET';
         },
     },
 }
