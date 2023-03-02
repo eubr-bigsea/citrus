@@ -245,6 +245,35 @@
                         </b-card-body>
                     </b-collapse>
                 </b-card>
+                <b-card no-body class="mb-0">
+                    <b-card-header header-tag="header" class="p-0" role="tab">
+                        <b-button block v-b-toggle.accordion-5 variant="light" size="sm">Subgráficos</b-button>
+                    </b-card-header>
+                    <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
+                        <b-card-body>
+                            <label>Subgráficos por:</label>
+                            <v-select v-model="editableVisualization.subgraph.value" :options="attributes" label="name"
+                                value="name" :append-to-body="true"></v-select>
+
+                            <b-form-group label="Direção (orientação)" class="p-0 mt-3">
+                                <b-form-radio v-model="editableVisualization.subgraph_orientation.value" value="v">Vertical</b-form-radio>
+                                <b-form-radio v-model="editableVisualization.subgraph_orientation.value" value="h">Horizontal</b-form-radio>
+                            </b-form-group>
+                        </b-card-body>
+                    </b-collapse>
+                </b-card>
+                <b-card no-body class="mb-0">
+                    <b-card-header header-tag="header" class="p-0" role="tab">
+                        <b-button block v-b-toggle.accordion-6 variant="light" size="sm">Animação</b-button>
+                    </b-card-header>
+                    <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
+                        <b-card-body>
+                            <label>Atributo usado para animação:</label>
+                            <v-select v-model="editableVisualization.animation.value" :options="attributes" label="name"
+                                value="name" :append-to-body="true"></v-select>
+                        </b-card-body>
+                    </b-collapse>
+                </b-card>
             </div>
             <!--
                                                 <b-form-group>
@@ -307,7 +336,7 @@
                                                 </b-form-group>
                                                 -->
         </b-form>
-</div>
+    </div>
 </template>
 <script>
 
@@ -522,7 +551,7 @@ export default {
                 }
                 const tests = ['color_scale', 'hole', 'text_info', 'text_position',
                     'left_margin', 'right_margin', 'top_margin', 'bottom_margin',
-                    'auto_margin'];
+                    'auto_margin', 'subgraph'];
                 tests.forEach(t => {
                     if (!value[t]) {
                         value[t] = { value: null };
