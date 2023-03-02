@@ -48,6 +48,9 @@ export default {
         },
         layout: {
             type: Object, default: () => null
+        },
+        frames: {
+            type: Array, default: () => null
         }
     },
     data() {
@@ -116,7 +119,11 @@ export default {
             return Plotly.downloadImage(this.$refs.container, opts);
         },
         plot() {
-            return Plotly.plot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+            const fig = Plotly.plot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+            if (this.frames) {
+                Plotly.addFrames(this.frames);
+            }
+            return fig;
         },
         getOptions() {
             let el = this.$refs.container;
@@ -129,10 +136,15 @@ export default {
             return opts;
         },
         newPlot() {
+            debugger
             return Plotly.newPlot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
         },
         react() {
-            return Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+            const fig = Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+            if (this.frames) {
+                Plotly.addFrames(this.$refs.container, this.frames);
+            }
+            return fig;
         }
     }
 };

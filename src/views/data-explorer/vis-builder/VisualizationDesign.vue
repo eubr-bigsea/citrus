@@ -69,7 +69,7 @@
                         <div class="chart-builder-visualization" style="height: 80vh">
                             <div v-if="plotlyData" style="background: orange; height: 100%" ref="chart">
                                 <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
-                                    :layout="plotlyData.layout" />
+                                    :layout="plotlyData.layout" :frames="plotlyData.frames"/>
                                 <small>{{ plotlyData }}</small>
 
                             </div>
