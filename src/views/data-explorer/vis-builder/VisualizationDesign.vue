@@ -58,28 +58,41 @@
 
         </div>
         <div class="options-main" v-if="visualizationObj">
-            <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis"
-                :type="visualizationObj.type.value" />
-            <div class="chart">
-                <div class="chart-builder-visualization" style="height: 85vh">
-                    <div v-if="plotlyData" style="background: orange; height: 100%">
-                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
-                            :layout="plotlyData.layout" />
-                        <small>{{ plotlyData }}</small>
+            <b-tabs>
+                <b-tab active>
+                    <template #title>
+                        <img ref="tabImage" style="width: 68px; height: 32px; filter: brightness(120%);filter: contrast(120%);"/>
+                    </template>
+                    <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis"
+                        :type="visualizationObj.type.value" />
+                    <div class="chart">
+                        <div class="chart-builder-visualization" style="height: 80vh">
+                            <div v-if="plotlyData" style="background: orange; height: 100%" ref="chart">
+                                <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
+                                    :layout="plotlyData.layout" />
+                                <small>{{ plotlyData }}</small>
 
+                            </div>
+                            <div v-else class="chart-not-available">
+                                Selecione o tipo de gráfico e configure suas propriedades
+                            </div>
+                            <!--small>{{ visualizationObj }}</small -->
+                            <button class="btn btn-sm btn-secondary" @click="updateThumb">Test</button>
+                        </div>
                     </div>
-                    <div v-else class="chart-not-available">
-                        Selecione o tipo de gráfico e configure suas propriedades
-                    </div>
-                    <!--small>{{ visualizationObj }}</small -->
-                </div>
+                </b-tab>
+                <b-tab title="OK">
+                    <template #title>
+                        Teste
+                    </template>
+                </b-tab>
+            </b-tabs>
+            <div v-show="loadingData" class="preview-loading">
+                <font-awesome-icon icon="lemon" spin class="text-success" />
+                {{ $t('common.wait') }}
             </div>
         </div>
-        <div v-show="loadingData" class="preview-loading">
-            <font-awesome-icon icon="lemon" spin class="text-success" />
-            {{ $t('common.wait') }}
-        </div>
-</div>
+    </div>
 </template>
 
 <script>
@@ -98,6 +111,7 @@ import axios from 'axios';
 import vSelect from 'vue-select';
 
 import io from 'socket.io-client';
+import { toPng } from 'html-to-image';
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
@@ -161,7 +175,7 @@ export default {
             get() {
                 const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
                     text_position, text_info,
-                    top_margin, bottom_margin, left_margin, right_margin, auto_margin, 
+                    top_margin, bottom_margin, left_margin, right_margin, auto_margin,
                     template, blackWhite } = this.visualizationObj
                 return {
                     display_legend, smoothing, palette, color_scale, label, type, title, hole,
@@ -182,6 +196,14 @@ export default {
         this.disconnectWebSocket();
     },
     methods: {
+        updateThumb() {
+            const $elem = this.$refs.chart;
+            const $tabImage = this.$refs.tabImage;
+            toPng($elem, {canvasWidth: 68 * 20, canvasHeight: 32 * 20})
+                .then(function (dataUrl) {
+                    $tabImage.src = dataUrl;
+                });
+        },
         getIcon(attr) {
             switch (attr.type) {
                 case 'DECIMAL':
@@ -392,7 +414,7 @@ export default {
 .chart {
     margin-top: 10px;
     position: relative;
-    height: 70vh;
+    height: 65vh;
     width: 100%;
     padding: 5px 0;
 }

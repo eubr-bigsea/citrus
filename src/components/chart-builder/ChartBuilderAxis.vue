@@ -1,6 +1,5 @@
 <template>
     <div>
-        ||{{ type }}||
         <b-card class="mt-1">
             <div class="clearfix">
                 <b-dropdown size="sm" ref="axis" class="mt-2 mr-1 float-left" variant="outline-secondary small-dd-title">

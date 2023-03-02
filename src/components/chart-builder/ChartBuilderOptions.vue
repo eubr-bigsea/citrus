@@ -587,7 +587,7 @@ export default {
     font-size: 10pt;
 }
 
-.options-font>>>button.collapsed {
+.options-font button.collapsed {
     font-size: 10pt;
 }
 </style>
