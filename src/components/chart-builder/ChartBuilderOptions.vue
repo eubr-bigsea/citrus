@@ -262,6 +262,18 @@
                         </b-card-body>
                     </b-collapse>
                 </b-card>
+                <b-card no-body class="mb-0">
+                    <b-card-header header-tag="header" class="p-0" role="tab">
+                        <b-button block v-b-toggle.accordion-6 variant="light" size="sm">Animação</b-button>
+                    </b-card-header>
+                    <b-collapse id="accordion-6" accordion="my-accordion" role="tabpanel">
+                        <b-card-body>
+                            <label>Atributo usado para animação:</label>
+                            <v-select v-model="editableVisualization.animation.value" :options="attributes" label="name"
+                                value="name" :append-to-body="true"></v-select>
+                        </b-card-body>
+                    </b-collapse>
+                </b-card>
             </div>
             <!--
                                                 <b-form-group>

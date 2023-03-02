@@ -162,11 +162,12 @@ export default {
                 const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
                     text_position, text_info,
                     top_margin, bottom_margin, left_margin, right_margin, auto_margin, 
-                    template, blackWhite, subgraph, subgraph_orientation } = this.visualizationObj
+                    template, blackWhite, subgraph, subgraph_orientation,
+                    animation } = this.visualizationObj
                 return {
                     display_legend, smoothing, palette, color_scale, label, type, title, hole,
                     text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
-                    auto_margin, template, blackWhite, subgraph, subgraph_orientation
+                    auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation
                 };
             },
             set(value) {

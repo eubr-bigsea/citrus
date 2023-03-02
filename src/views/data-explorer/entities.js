@@ -436,8 +436,9 @@ class Visualization {
         right_margin = null, left_margin = 0, top_margin = 0, bottom_margin = 0,
         auto_margin = { value: true }, template = { value: null },
         blackWhite = { value: false},
-        subgraph = { value: false},
-        subgraph_orientation = {value: 'v'}
+        subgraph = { value: null},
+        subgraph_orientation = {value: 'v'},
+        animation = {value: null},
     },
     ) {
         this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
@@ -464,6 +465,7 @@ class Visualization {
         this.blackWhite = blackWhite;
         this.subgraph = subgraph;
         this.subgraph_orientation = subgraph_orientation;
+        this.animation = animation
 
     }
     /*
