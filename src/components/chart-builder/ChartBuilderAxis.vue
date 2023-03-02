@@ -55,8 +55,8 @@
                 </b-dropdown>
 
                 <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.y.value"
-                    :move="handleYAxisDrag" direction="horizontal" v-model="editableVisualization.y.value"
-                    @start="drag = true" @end="drag = false" class="draggable-area">
+                    :move="handleYAxisDrag" direction="horizontal" @start="drag = true" @end="drag = false"
+                    class="draggable-area">
                     <div v-for="(y, i) in ySeries" :key="i" class="drag-handle">
 
                         <b-dropdown size="sm" ref="yDimensionDD" class="mt-2 mr-1 pull-right"
@@ -228,7 +228,7 @@
                     </b-dropdown-form>
                 </b-dropdown>
                 <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.x.value"
-                    :move="handleYAxisDrag" direction="horizontal" v-model="editableVisualization.x.value"
+                    :move="handleYAxisDrag" direction="horizontal"
                     @start="drag = true" @end="drag = false" class="draggable-area">
 
                     <div v-for="(x, i) in xSeries" :key="i" class="drag-handle">
@@ -364,13 +364,13 @@
                         <font-awesome-icon icon="fa fa-grip-vertical" />
                     </div>
                 </draggable>
-                <b-button v-if="canAddXDimension" size="sm" variant="success small-dd-title" class="mt-2 float-left clearfix"
-                    @click="handleAddX">
+                <b-button v-if="canAddXDimension" size="sm" variant="success small-dd-title"
+                    class="mt-2 float-left clearfix" @click="handleAddX">
                     <font-awesome-icon prefix="fa" icon="plus" />
                 </b-button>
             </div>
         </b-card>
-</div>
+    </div>
 </template>
 <script>
 import { XDimension, YDimension } from '../../views/data-explorer/entities.js';
