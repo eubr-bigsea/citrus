@@ -228,8 +228,8 @@
                     </b-dropdown-form>
                 </b-dropdown>
                 <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.x.value"
-                    :move="handleYAxisDrag" direction="horizontal" @start="drag = true" @end="drag = false"
-                    class="draggable-area">
+                    :move="handleYAxisDrag" direction="horizontal"
+                    @start="drag = true" @end="drag = false" class="draggable-area">
 
                     <div v-for="(x, i) in xSeries" :key="i" class="drag-handle">
                         <b-dropdown size="sm small-dd-title" ref="xDimensionDD" class="mt-2 mr-1 pull-right"
