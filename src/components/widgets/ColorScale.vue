@@ -191,7 +191,6 @@ export default {
     },
     mounted() {
         this.displayValue = this.value;
-        console.debug(this.value)
     },
     methods: {
         getColorScale(scale) {

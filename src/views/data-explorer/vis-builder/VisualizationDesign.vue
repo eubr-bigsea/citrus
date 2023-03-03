@@ -70,7 +70,7 @@
                             <div v-if="plotlyData" style="background: orange; height: 100%" ref="chart">
                                 <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
                                     :layout="plotlyData.layout" :frames="plotlyData.frames"/>
-                                <small>{{ plotlyData }}</small>
+                                <!--small>{{ plotlyData }}</small -->
 
                             </div>
                             <div v-else class="chart-not-available">

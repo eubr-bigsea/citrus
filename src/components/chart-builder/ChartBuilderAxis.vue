@@ -138,27 +138,26 @@
                                             </select>
                                         </b-form-group>
                                         <!-- FIXME 
-                                                                            <b-form-group label="Exibir eixo:">
-                                                                                <select class="form-control form-control-sm">
-                                                                                    <option label="LEFT" value="LEFT">Esquerda</option>
-                                                                                    <option label="DIREITA" value="DIREITA">Direita</option>
-                                                                                    <option label="HIDE" value="HIDE">Ocultar</option>
-                                                                                </select>
-                                                                            </b-form-group>
-                                                                            <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
-                                                                            <b-form-group label="Faixa de valores:">
-                                                                                <b-form-radio> Automática </b-form-radio>
-                                                                                <b-form-radio> Manual </b-form-radio>
-                                                                                <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
-                                                                                <input type="number" class="form-control form-control-sm" placeholder="max" />
+                                                                                    <b-form-group label="Exibir eixo:">
+                                                                                        <select class="form-control form-control-sm">
+                                                                                            <option label="LEFT" value="LEFT">Esquerda</option>
+                                                                                            <option label="DIREITA" value="DIREITA">Direita</option>
+                                                                                            <option label="HIDE" value="HIDE">Ocultar</option>
+                                                                                        </select>
+                                                                                    </b-form-group>
+                                                                                    <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
+                                                                                    <b-form-group label="Faixa de valores:">
+                                                                                        <b-form-radio> Automática </b-form-radio>
+                                                                                        <b-form-radio> Manual </b-form-radio>
+                                                                                        <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
+                                                                                        <input type="number" class="form-control form-control-sm" placeholder="max" />
 
-                                                                            </b-form-group>
-                                                                            -->
+                                                                                    </b-form-group>
+                                                                                    -->
                                     </div>
                                     <div class="col-12">
-                                        <b-button size="sm" variant="danger" class="float-right"
-                                            @click="handleDeleteY(i)">{{
-                                                $tc('actions.delete') }}</b-button>
+                                        <b-button size="sm" variant="danger" class="float-right" @click="handleDeleteY(i)">{{
+                                            $tc('actions.delete') }}</b-button>
                                     </div>
                                 </div>
                             </b-dropdown-form>
@@ -227,8 +226,8 @@
                     </b-dropdown-form>
                 </b-dropdown>
                 <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.x.value"
-                    :move="handleYAxisDrag" direction="horizontal"
-                    @start="drag = true" @end="drag = false" class="draggable-area">
+                    :move="handleYAxisDrag" direction="horizontal" @start="drag = true" @end="drag = false"
+                    class="draggable-area">
 
                     <div v-for="(x, i) in xSeries" :key="i" class="drag-handle">
                         <b-dropdown size="sm small-dd-title" ref="xDimensionDD" class="mt-2 mr-1 pull-right"
@@ -334,27 +333,26 @@
                                             </b-form-group>
                                         </template>
                                         <!-- FIXME 
-                                                                                        <b-form-group label="Exibir eixo:">
-                                                                                            <select class="form-control form-control-sm">
-                                                                                                <option label="LEFT" value="LEFT">Esquerda</option>
-                                                                                                <option label="DIREITA" value="DIREITA">Direita</option>
-                                                                                                <option label="HIDE" value="HIDE">Ocultar</option>
-                                                                                            </select>
-                                                                                        </b-form-group>
-                                                                                        <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
-                                                                                        <b-form-group label="Faixa de valores:">
-                                                                                            <b-form-radio> Automática </b-form-radio>
-                                                                                            <b-form-radio> Manual </b-form-radio>
-                                                                                            <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
-                                                                                            <input type="number" class="form-control form-control-sm" placeholder="max" />
+                                                <b-form-group label="Exibir eixo:">
+                                                    <select class="form-control form-control-sm">
+                                                        <option label="LEFT" value="LEFT">Esquerda</option>
+                                                        <option label="DIREITA" value="DIREITA">Direita</option>
+                                                        <option label="HIDE" value="HIDE">Ocultar</option>
+                                                    </select>
+                                                </b-form-group>
+                                                <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
+                                                <b-form-group label="Faixa de valores:">
+                                                    <b-form-radio> Automática </b-form-radio>
+                                                    <b-form-radio> Manual </b-form-radio>
+                                                    <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
+                                                    <input type="number" class="form-control form-control-sm" placeholder="max" />
 
-                                                                                        </b-form-group>
-                                                                                        -->
+                                                </b-form-group>
+                                                -->
                                     </div>
                                     <div class="col-12">
-                                        <b-button size="sm" variant="danger" class="float-right"
-                                            @click="handleDeleteX(i)">{{
-                                                $tc('actions.delete') }}</b-button>
+                                        <b-button size="sm" variant="danger" class="float-right" @click="handleDeleteX(i)">{{
+                                            $tc('actions.delete') }}</b-button>
                                     </div>
 
                                 </div>
@@ -371,154 +369,153 @@
         </b-card>
     </div>
 </template>
-<script>
+<script setup>
+import { ref, computed, watch, defineProps, defineEmits, onBeforeMount } from "vue";
 import { XDimension, YDimension } from '../../views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
-export default {
-    components: {
-        Draggable,
-    },
-    props: {
-        workflow: { type: Object, required: true },
-        attributes: { type: Array, required: true },
-        value: {
-            type: Object, required: true,
-            default: () => ({
-                x_axis: { value: {} }, y_axis: { value: {} },
-                x: { value: {} }, y: { value: {} }
-            })
-        },
-        type: { type: String, required: true, default: '' }
-    },
-    data() {
-        return {
-            editableVisualization: structuredClone(this.value),
-            toEmit: true,
-            attributesMap: {}
-        }
-    },
-    computed: {
-        xSeries() {
-            return this.editableVisualization.x.value.slice(0, this.limitXDimension);
-        },
-        ySeries() {
-            return this.editableVisualization.y.value.slice(0, this.limitYDimension);
-        },
-        limitXDimension() {
-            let result = Number.MAX_SAFE_INTEGER;
-            if (this.type === 'pie' || this.type === 'donut') {
-                result = 1;
-            } else if (this.editableVisualization.x.value.length >= 2 && this.type !== 'treemap') {
-                result = 2;
-            }
-            return result;
-        },
-        limitYDimension() {
-            let result = Number.MAX_SAFE_INTEGER;
-            if (
-                (this.type === 'pie' || this.type === 'donut' || this.type == 'treemap')
-                || (this.editableVisualization.x.value.length >= 2)
-            ) {
-                result = 1;
-            }
-            return result;
-        },
-        canAddXDimension() {
-            let result = true;
-            result = (this.limitXDimension > this.editableVisualization.x.value.length);
-            return result;
-        },
-        canAddYDimension() {
-            let result = true;
-            result = (this.limitYDimension > this.editableVisualization.y.value.length);
-            return result;
-        }
-    },
-    beforeMount() {
-        this.attributes.forEach(a => this.attributesMap[a.name] = a);
-    },
-    methods: {
-        endYAxisSort({ originalEvent }) { // eslint-disable-line no-unused-vars
-            return true;
-        },
-        handleYAxisDrag(e) {
-            // Disable some steps to be dragged
-            return true;
-        },
-        isNumeric(attributeName) {
-            return this.attributes && this.attributesMap[attributeName] &&
-                this.attributesMap[attributeName].numeric
-        },
-        handleSelectAttribute(x) {
-            if (!this.isNumeric(x.attribute)) {
-                x.binning = null;
-            } else {
-                x.binning = 'EQUAL_INTERVAL';
-            }
-        },
-        handleAddY() {
-            this.editableVisualization.y.value.push(new YDimension({}));
-        },
-        handleAddX() {
-            this.editableVisualization.x.value.push(new XDimension({}));
-        },
-        handleDeleteY(index) {
-            this.$refs.yDimensionDD[index].hide(true)
-            this.editableVisualization.y.value.splice(index, 1);
-        },
-        handleDeleteX(index) {
-            this.$refs.xDimensionDD[index].hide(true)
-            this.editableVisualization.x.value.splice(index, 1);
-        },
-        getDisplayXDimensionLabel(obj, defaultValue, bins, size, categorical) {
-            if (!obj.attribute) {
-                return defaultValue;
-            }
-            if (!this.isNumeric(obj.attribute)) {
-                return obj.attribute;
-            }
-            switch (obj.binning) {
-                case 'EQUAL_INTERVAL':
-                    return `${obj.attribute} (${obj.bins} ${bins})`;
-                case 'FIXED_SIZE':
-                    return `${obj.attribute} (${bins} ${size} ${obj.binSize} )`;
-                case 'NONE':
-                    return obj.attribute;
-                case 'CATEGORICAL':
-                    return `${obj.attribute} (${categorical})`;
-                default:
-                    return obj.attribute;
-            }
-        }
 
+const emit = defineEmits(['input']);
+const editableVisualization = ref(null);
+const props = defineProps({
+    workflow: { type: Object, required: true },
+    attributes: { type: Array, required: true },
+    value: {
+        type: Object, required: true,
+        default: () => ({
+            x_axis: { value: {} }, y_axis: { value: {} },
+            x: { value: {} }, y: { value: {} }
+        })
     },
-    watch: {
-        editableVisualization: {
-            deep: true,
-            handler(value) {
-                if (this.toEmit) {
-                    this.$emit('input', value);
-                }
-                this.toEmit = true;
-            }
-        },
-        value: {
-            immediate: true,
-            deep: true,
-            handler(val) {
-                const checks = ['x_axis', 'y_axis', 'x', 'y']
-                checks.forEach(check => {
-                    if (!val[check]) {
-                        val[check] = { value: {} }
-                    }
-                });
-                this.editableVisualization = structuredClone(val);
+    type: { type: String }
+});
 
-                this.toEmit = false;
-            }
-        },
+/* Data */
+const toEmit = ref(true);
+const attributesMap = ref({});
+
+
+onBeforeMount(() =>
+    props.attributes.forEach(a => attributesMap[a.name] = a)
+);
+
+
+/* Elements refs */
+const yDimensionDD = ref(null);
+const xDimensionDD =  ref(null);
+
+
+editableVisualization.value = structuredClone(props.value);
+
+
+/* Computed */
+const xSeries = computed(() =>
+    editableVisualization.value.x.value.slice(0, limitXDimension.value)
+);
+const ySeries = computed(() =>
+    editableVisualization.value.y.value.slice(0, limitYDimension.value)
+);
+const limitXDimension = computed(() => {
+    let result = Number.MAX_SAFE_INTEGER;
+    if (props.type.value === 'pie' || props.type.value === 'donut') {
+        result = 1;
+    } else if (editableVisualization.value.x.value.length >= 2 && props.type.value !== 'treemap') {
+        result = 2;
     }
-}
+    return result;
+});
+const limitYDimension = computed(() => {
+    let result = Number.MAX_SAFE_INTEGER;
+    if (
+        (props.type.value === 'pie' || props.type.value === 'donut' || props.type.value == 'treemap')
+        || (editableVisualization.value.x.value.length >= 2)
+    ) {
+        result = 1;
+    }
+    return result;
+});
+const canAddXDimension = computed(() => {
+    let result = true;
+    result = (limitXDimension.value > editableVisualization.value.x.value.length);
+    return result;
+});
+const canAddYDimension = computed(() => {
+    let result = true;
+    result = (limitYDimension.value > editableVisualization.value.y.value.length);
+    return result;
+});
+
+/* Methods */
+const handleYAxisDrag = (e) => true;
+const isNumeric = (attributeName) =>
+    props.attributes.value && props.attributes.valueMap[attributeName] &&
+    props.attributes.valueMap[attributeName].numeric;
+
+const handleSelectAttribute = (x) => {
+    if (!isNumeric(x.attribute)) {
+        x.binning = null;
+    } else {
+        x.binning = 'EQUAL_INTERVAL';
+    }
+};
+
+
+const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
+const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
+const handleDeleteY = (index) => {
+    yDimensionDD[index].hide(true)
+    editableVisualization.value.y.value.splice(index, 1);
+};
+const handleDeleteX = (index) => {
+    xDimensionDD[index].hide(true)
+    editableVisualization.value.x.value.splice(index, 1);
+};
+const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) => {
+    if (!obj.attribute) {
+        return defaultValue;
+    }
+    if (!isNumeric(obj.attribute)) {
+        return obj.attribute;
+    }
+    switch (obj.binning) {
+        case 'EQUAL_INTERVAL':
+            return `${obj.attribute} (${obj.bins} ${bins})`;
+        case 'FIXED_SIZE':
+            return `${obj.attribute} (${bins} ${size} ${obj.binSize} )`;
+        case 'NONE':
+            return obj.attribute;
+        case 'CATEGORICAL':
+            return `${obj.attribute} (${categorical})`;
+        default:
+            return obj.attribute;
+    }
+};
+/* Watch */
+watch(
+    () => editableVisualization,
+    (value) => {
+        if (toEmit.value) {
+            emit('input', value.value);
+        }
+        toEmit.value = true;
+    }, { deep: true });
+
+watch(
+    () => props.value,
+    (value) => {
+        if (!value.display_legend) {
+            value.display_legend = { value: 'HIDE' }
+        }
+        const tests = ['x_axis', 'y_axis', 'x', 'y'];
+        tests.forEach(t => {
+            if (!value[t]) {
+                value[t] = { value: null };
+            }
+        });
+
+        editableVisualization.value = structuredClone(value);
+        toEmit.value = false;
+    }, { deep: true, immediate: true });
+
 </script>
 <style>
 .small-dd-title {
