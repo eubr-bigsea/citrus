@@ -20,32 +20,16 @@
                             <data-source-options selected="dataSourceValidation" />
                         </div>
                         <div class="col-md-10">
-                            <!-- {{ dataSource.format === 'CSV' }} -->
-                            <div class="row border rounded mx-1 py-3">
-                                <div class="col-md-2">
-                                    Formato
-                                </div>
-                                <div class="col-md-10">
-                                    <div v-if="dataSource.format === 'CSV'">
-                                        Atualmente, a fonte de dados está armazenada usando o formato <b>CSV</b>.<br><br>
-                                        <b>Importante:</b> Esse formato não é otimizado para leitura, processamento e espaço em disco. Recomenda-se que seja usado um formato mais otimizado, especialmente quando a fonte de dados contiver milhares de registros ou centenas de atributos. O Lemonade suporta a conversão para o formato <b><u>Parquet</u></b>.<br><br>
-                                        Você poderá posteriormente exportar a fonte de dados novamente no formato CSV.<br><br>
+                            <div>X validações falhando</div>
 
-                                        <input type="button" class="btn btn-primary" value="Converter para Parquet" @click="dataLoad()">
-                                    </div>
 
-                                    <div v-else-if="dataSource.format === 'PARQUET'">
-                                        Atualmente, a fonte de dados está armazenada usando o formato <b>Parquet</b>.<br><br>
-                                        Esse formato já é o formato recomendado para uso no Lemonade, por ser otimizado para leitura, processamento e espaço em disco. <br><br>
-                                        Você poderá posteriormente exportar a fonte de dados novamente no formato CSV.
-                                    </div>
+                            <!-- <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList"/> -->
 
-                                    <div v-else>
-                                        Atualmente, a fonte de dados está armazenada usando o formato <b>{{ dataSource.format }}</b>.
-                                    </div>
 
-                                </div>
-                            </div>
+
+                            
+
+
                         </div>
                     </div>
                 </div>
@@ -75,9 +59,6 @@ export default {
             const resp = await axios.get(
                 `${limoneroUrl}/datasources/${this.$route.params.id}`);
             this.dataSource = resp.data;
-        },
-        dataLoad() {
-            this.dataSource.format = 'PARQUET';
         },
     },
 }
