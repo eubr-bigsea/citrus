@@ -68,13 +68,16 @@
 </template>
 <script>
 import Vue from 'vue';
-import "prismjs/themes/prism.css";
+//import "prismjs/themes/prism.min.css";
 import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
-import { PrismEditor } from 'vue-prism-editor';
+
+import 'vue-prism-editor/dist/prismeditor.min.css'
+import { PrismEditor } from 'vue-prism-editor'
 import { highlight, languages } from 'prismjs/components/prism-core';
-//import 'prismjs/components/prism-python.js';
+import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-sql';
+import 'prismjs/themes/prism.css';
 //import { debounce } from '../../util.js';
 
 export default {
@@ -112,7 +115,7 @@ export default {
             */
     },
     mounted() {
-        this.code = this.value || this.field.default || '';
+        this.code = this.value || this.field.default || ' ';
         this.originalCode = this.code;
         if (this.suggestionEvent) {
             this.suggestions = this.suggestionEvent();
@@ -149,6 +152,7 @@ export default {
         highlighter() {
             if (this.code !== '') {
                 const lang = this.computedProgrammingLanguage;
+                
                 if (lang === 'sql') {
                     return highlight(this.code || '', languages.sql, 'sql');
                 } else if (lang === 'python') {

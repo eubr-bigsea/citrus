@@ -34,9 +34,7 @@
                 <div>
                     <form>
                         <b-card no-body
-                                class="scrollable">
-                            <VuePerfectScrollbar ref="scrollBar"
-                                                 use-both-wheel-axes="true">
+                                class="scroll-area scrollable">
                                 <b-tabs v-model="tabIndex"
                                         card>
                                     <b-tab v-for="(form, index) in forms"
@@ -77,7 +75,6 @@
                                         </button>
                                     </b-tab>
                                 </b-tabs>
-                            </VuePerfectScrollbar>
                         </b-card>
                     </form>
                     <div class="card-body">
@@ -276,7 +273,8 @@ export default {
             //# Return the results of the in-line anonymous function we .call with the passed context
             return function () {
                 try{
-                    return eval(js);
+                    //return eval(js);
+                    return true;
                 } catch(pass){
                     return false;
                 }
@@ -398,8 +396,9 @@ export default {
         zoom: 100%;
         font-size: .75rem
     }
-    .scrollable {
+    .scrollable{
         max-height: calc(100vh - 420px);
+        overflow-y: auto;
     }
 </style>
 <style>

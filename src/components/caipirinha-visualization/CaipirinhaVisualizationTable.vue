@@ -61,7 +61,6 @@ export default {
             console.debug(target.innerText);
             console.debug(data.index);
             console.debug(Array.from(target.parentNode.children).indexOf(target));
-            eval("alert(this.columns)")
         }
     },
 };

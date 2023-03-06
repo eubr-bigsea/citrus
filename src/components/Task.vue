@@ -418,7 +418,7 @@ export default TaskComponent;
 
     .has-2-ports {
         text-align: center;
-        max-width: $elementWidth / 2 + 5;
+        max-width: calc($elementWidth / 2) + 5;
     }
 
     .has-3-ports {
