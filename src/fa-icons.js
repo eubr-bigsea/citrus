@@ -140,6 +140,7 @@ import {
     faCaretRight,
     faY,
     faX,
+    faXmarkCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -282,6 +283,7 @@ library.add(
     faVials,
     faWarehouse,
     faX,
+    faXmarkCircle,
     faY,
 
 );

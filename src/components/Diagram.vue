@@ -391,17 +391,18 @@ const DiagramComponent = Vue.extend({
                     return;
                 }
                 self.clearSelection(ev);
-                let ghostSelect = self.$refs.ghostSelect;
-                ghostSelect.classList.add('ghost-active');
-                ghostSelect.style.left = ev.offsetY + 'px';
-                ghostSelect.style.top = ev.offsetX + 'px';
-                ghostSelect.style.width = '0px';
-                ghostSelect.style.height = '0px';
-
-                self.initialW = ev.offsetX;
-                self.initialH = ev.offsetY;
-                document.addEventListener('mouseup', self.selectElements);
-                document.addEventListener('mousemove', self.openSelector);
+                const ghostSelect = self.$refs.ghostSelect;
+                if (ghostSelect){
+                    ghostSelect.classList.add('ghost-active');
+                    ghostSelect.style.left = ev.offsetY + 'px';
+                    ghostSelect.style.top = ev.offsetX + 'px';
+                    ghostSelect.style.width = '0px';
+                    ghostSelect.style.height = '0px';
+                    self.initialW = ev.offsetX;
+                    self.initialH = ev.offsetY;
+                    document.addEventListener('mouseup', self.selectElements);
+                    document.addEventListener('mousemove', self.openSelector);
+                }
             }
         });
         if (self.shink) {

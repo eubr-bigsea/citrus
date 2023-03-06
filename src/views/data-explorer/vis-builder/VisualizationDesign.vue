@@ -3,7 +3,6 @@
         <div class="options-visualization mt-1">
             <div>
                 <form class="clearfix visualization-form">
-
                     <label>{{ $tc('common.name') }}:</label>
                     <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                         :placeholder="$tc('common.name')" maxlength="100">
@@ -11,18 +10,18 @@
                     <label for="">Fonte de dados:</label> &nbsp;
                     <vue-select v-if="workflowObj && workflowObj.readData"
                         v-model="workflowObj.readData.forms.data_source.value" :filterable="false" :options="dataSourceList"
-                        :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList" @input="retrieveAttributes">
+                        :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList" @input="getAttributeList">
                         <template #no-options="{}">
                             <small>Digite parte do nome pesquisar ...</small>
                         </template>
                         <template #option="option">
                             <div class="d-center">
-                                <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
+                                <span class="span-id">{{ option.id }}</span> - {{ option.name }}
                             </div>
                         </template>
                         <template #selected-option="option">
                             <div class="selected d-center">
-                                {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                {{ option.id }} - {{ option.name }}
                             </div>
                         </template>
                     </vue-select>
@@ -30,7 +29,7 @@
                     <label>{{ $tc('titles.cluster') }}: </label>
                     <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
                         :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
-                        <template #option="{ description, name }">
+                        <template #option="{description, name}">
                             {{ name }}<br>
                             <small><em>{{ description }}</em></small>
                         </template>
@@ -38,66 +37,96 @@
                     <div class="mt-2 ">
                         <button class="btn btn-sm btn-primary ml-1" @click.prevent="loadData">
                             <font-awesome-icon icon="fa fa-search" />
-                            {{ $t('actions.search') }}
+                            {{ i18n.$t('actions.search') }}
                         </button>
 
                         <button class="btn btn-sm btn-outline-success ml-1 " @click.prevent="saveWorkflow">
                             <font-awesome-icon icon="fa fa-save" />
-                            {{ $t('actions.save') }}
+                            {{ i18n.$t('actions.save') }}
                         </button>
-                        <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
-                            :title="$t('actions.back')">
-                            {{ $t('actions.back') }}
+                        <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{name: 'index-explorer'}"
+                            :title="i18n.$t('actions.back')">
+                            {{ i18n.$t('actions.back') }}
                         </router-link>
                     </div>
                     <div v-if="visualizationObj">
-                        <chart-builder-options :attributes="attributes" v-model="options" />
+                        <chart-builder-options v-model="options" :attributes="attributes" />
                     </div>
                 </form>
             </div>
-
         </div>
-        <div class="options-main" v-if="visualizationObj">
-            <chart-builder-axis :attributes="attributes" :workflow="workflowObj" v-model="axis"
-                :type="visualizationObj.type.value" />
-            <div class="chart">
-                <div class="chart-builder-visualization" style="height: 85vh">
-                    <div v-if="plotlyData" style="background: orange; height: 100%">
-                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
-                            :layout="plotlyData.layout" />
-                        <small>{{ plotlyData }}</small>
+        <div v-if="visualizationObj" class="options-main">
+                    <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
+                        :type="visualizationObj.type.value" />
+                    <div class="chart">
+                        <div class="chart-builder-visualization" style="height: 80vh">
+                            <div v-if="display && plotlyData" ref="chart" style="background: orange; height: 100%">
+                                <plotly :options="{responsive: true, height: 600}" :data="plotlyData.data"
+                                    :layout="plotlyData.layout" :frames="plotlyData.frames" :key="plotVersion"
+                                    ref="plotly" />
+                                <small>{{ plotlyData }}</small>
 
+                            </div>
+                            <div v-else class="chart-not-available">
+                                Selecione o tipo de gráfico e configure suas propriedades
+                            </div>
+                            <button class="btn btn-sm btn-secondary" @click.prevent="display = !display">Teste</button>
+                            <!--small>{{ visualizationObj }}</small -->
+                        </div>
                     </div>
-                    <div v-else class="chart-not-available">
-                        Selecione o tipo de gráfico e configure suas propriedades
-                    </div>
-                    <!--small>{{ visualizationObj }}</small -->
-                </div>
+                    <b-tabs>
+                <b-tab active>
+                    <template #title>
+                        <img ref="tabImage"
+                            style="width: 68px; height: 32px; filter: brightness(120%);filter: contrast(120%);">
+                    </template>
+          
+                </b-tab>
+                <b-tab title="OK">
+                    <template #title>
+                        Teste
+                    </template>
+                </b-tab>
+            </b-tabs>
+            <div v-show="loadingData" class="preview-loading">
+                <font-awesome-icon icon="lemon" spin class="text-success" />
+                {{ i18n.$t('common.wait') }}
             </div>
         </div>
-        <div v-show="loadingData" class="preview-loading">
-            <font-awesome-icon icon="lemon" spin class="text-success" />
-            {{ $t('common.wait') }}
-        </div>
-</div>
+    </div>
 </template>
 
-<script>
+<script setup>
+import {ref, shallowRef, computed, onBeforeMount} from "vue";
+import {getCurrentInstance} from 'vue';
 import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
 import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
 
 import Vue from 'vue';
 import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
-import DataSourceMixin from '../DataSourceMixin.js';
-import Notifier from '../../../mixins/Notifier.js';
 
 import Plotly from '../../../components/visualization/Plotly.vue';
+import useNotifier from '../../../composables/useNotifier.js';
+import useDataSource from '../../../composables/useDataSource.js';
 
-import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
+import {Operation, VisualizationBuilderWorkflow, Visualization} from '../entities.js';
 import axios from 'axios';
-import vSelect from 'vue-select';
+import VueSelect from 'vue-select';
 
 import io from 'socket.io-client';
+import {toPng} from 'html-to-image';
+
+const vm = getCurrentInstance();
+const router = vm.proxy.$router;
+const route = vm.proxy.$route;
+const progress = vm.proxy.$Progress;
+const store = vm.proxy.$store;
+const i18n = vm.proxy.$i18n.vm;
+const {success, error} = useNotifier(vm.proxy);
+
+const plotVersion = ref(0);
+const display = ref(true)
+
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
@@ -107,284 +136,282 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
 
-export default {
-    components: {
-        'vue-select': vSelect,
-        ChartBuilderOptions,
-        ChartBuilderAxis,
-        ExpressionEditor, Plotly
+const attributes = ref([]);
+const clusters = ref([]);
+const clusterId = ref(null);
+const dataSource = ref(null);
+const filterField = ref({label: 'Filtrar', values: '{"alias": false}', required: false});
+const internalWorkflowId = ref(null);
+const isDirty = ref(false);
+const job = ref(null);
+const jobStatus = ref(null);
+const loaded = ref(false);
+const loadingData = ref(false);
+const operationsMap = ref(new Map());
+const plotlyData = shallowRef(null);
+const socketIo = ref(null); // used by socketio (web sockets)
+const targetPlatform = ref(4);
+const workflowObj = ref({forms: {$meta: {value: {target: '', taskType: ''}}}});
+const visualizationObj = ref(null);
+
+const dataSourceId = computed({
+    get() {return workflowObj.value.readData.forms.data_source.value;},
+    set(newValue) {workflowObj.value.readData.forms.data_source.value = newValue;}
+});
+const axis = computed({
+    get() {
+        const {x_axis, y_axis, y, x, type} = visualizationObj.value;
+        return {x_axis, y_axis, y, x, type};
     },
-    mixins: [DataSourceMixin, Notifier],
-    data() {
+    set(value) {
+        Object.assign(visualizationObj.value, value);
+    }
+});
+
+const options = computed({
+    get() {
+        const {display_legend, smoothing, palette, color_scale, label, type, title, hole,
+            text_position, text_info,
+            top_margin, bottom_margin, left_margin, right_margin, auto_margin,
+            template, blackWhite, subgraph, subgraph_orientation,
+            animation, height, width, opacity, scatter_color, scatter_size} = visualizationObj.value;
         return {
-            attributes: [],
-            clusters: [],
-            clusterId: null,
-            dataSource: null,
-            dataSourceOptions: [],
-            filterField: { label: 'Filtrar', values: '{"alias": false}', required: false },
-            group: false,
-            internalWorkflowId: null,
-            isDirty: false,
-            job: null,
-            jobStatus: '',
-            jobs: [],
-            groupedJobs: null,
-            loaded: false,
-            loadingData: false,
-            notRunning: true,
-            operationsMap: new Map(),
-            plotlyData: null,
-            socket: null, // used by socketio (web sockets)
-            targetPlatform: 4,
-            workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
-            visualizationObj: null,
-
-        }
+            display_legend, smoothing, palette, color_scale, label, type, title, hole,
+            text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
+            auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation,
+            height, width, opacity, scatter_color, scatter_size,
+        };
     },
-    computed: {
-        dataSourceId: {
-            get() { return this.workflowObj.readData.forms.data_source.value; },
-            set(newValue) { this.workflowObj.readData.forms.data_source.value = newValue }
-        },
-        axis: {
-            get() {
-                const { x_axis, y_axis, y, x, type } = this.visualizationObj;
-                return { x_axis, y_axis, y, x, type };
-            },
-            set(value) {
-                Object.assign(this.visualizationObj, value);
-            }
-        },
+    set(value) {
+        Object.assign(visualizationObj.value, value);
+    }
+});
+const {getAttributeList, loadDataSourceList} = useDataSource();
 
-        options: {
-            get() {
-                const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
-                    text_position, text_info,
-                    top_margin, bottom_margin, left_margin, right_margin, auto_margin, 
-                    template, blackWhite } = this.visualizationObj
-                return {
-                    display_legend, smoothing, palette, color_scale, label, type, title, hole,
-                    text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
-                    auto_margin, template, blackWhite
-                };
-            },
-            set(value) {
-                Object.assign(this.visualizationObj, value);
-            }
-        }
-    },
-    async created() {
-        this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
-        await this.load();
-    },
-    beforeUnmount() {
-        this.disconnectWebSocket();
-    },
-    methods: {
-        getIcon(attr) {
-            switch (attr.type) {
-                case 'DECIMAL':
-                case 'INTEGER':
-                    return 'hashtag';
-                case 'CHARACTER':
-                    return 'font';
-                case 'DATE':
-                    return 'calendar';
+onBeforeMount(async () => {
+    disconnectWebSocket();
+    internalWorkflowId.value = (route) ? route.params.id : 0;
+    await load();
+});
 
-            }
-        },
-        async load() {
-            this.loadingData = true;
-            this.$Progress.start()
-            try {
-                await this.loadOperations();
-                let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
-                this.workflowObj = new VisualizationBuilderWorkflow(resp.data, this.operationsMap);
-                if (this.workflowObj.type !== 'VIS_BUILDER') {
-                    this.error(null, this.$tc('modelBuilder.invalidType'));
-                    this.$router.push({ name: 'index-explorer' })
-                    return;
-                }
-                await this.loadDataSource(this.dataSourceId);
-
-                //const attributes = this.dataSource.attributes;
-                // FIXME: 'group' task is not necessary anymore
-                /*
-                this.workflowObj?.group?.forms?.function?.value?.forEach(attr => {
-                    attr['name'] = attr.attribute;
-                    const v = attributes.find(a => a.name === attr.name);
-                    attr['type'] = v ? v.type : '';
-                }); */
-
-                this.loadClusters();
-                this.visualizationObj = new Visualization(
-                    this.workflowObj.visualization.forms);
-                this.loaded = true;
-
-            } catch (e) {
-                this.error(e);
-                this.$router.push({ name: 'index-explorer' })
-            } finally {
-                Vue.nextTick(() => {
-                    this.$Progress.finish();
-                    this.loadingData = false;
-                    this.isDirty = false;
-                });
-            }
-        },
-        async loadOperations() {
-            const params = {
-                category: 'visualization-builder', platform: META_PLATFORM_ID,
-                fields: 'id,forms,categories,name,slug'
-            };
-
-            const resp = await axios.get(`${tahitiUrl}/operations`, { params });
-            resp.data.data.forEach(op => this.operationsMap.set(op.slug, new Operation(op)));
-        },
-        async loadDataSource(id) {
-            const resp = await axios.get(`${limoneroUrl}/datasources/${id}`);
-            this.dataSource = resp.data;
-            this.attributes = this.dataSource.attributes.sort((a, b) => a.name.localeCompare(b.name));
-            this.attributes.forEach(a => {
-                a.attribute = a.name;
-                a.numeric = ['DECIMAL', 'INTEGER', 'DOUBLE', 'FLOAT', 'LONG']
-                    .indexOf(a.type) >= 0;
-            });
-            this.dataSourceList = [this.dataSource];
-        },
-        async loadClusters() {
-            try {
-                const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${this.targetPlatform}`)
-                this.clusters = resp.data.data;
-            } catch (ex) {
-                this.error(ex);
-            }
-        },
-        async saveWorkflow() {
-            this.workflowObj.visualization.forms = this.visualizationObj;
-            let cloned = structuredClone(this.workflowObj);
-            if (!cloned.filter.forms.formula || cloned.filter.forms.formula.value === null || cloned.filter.forms.formula.value.length === 0) {
-                cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
-            }
-            if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
-                cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
-            }
-            let url = `${tahitiUrl}/workflows/${cloned.id}`;
-
-            cloned.platform_id = META_PLATFORM_ID;
-
-            cloned.tasks.forEach((task) => {
-                task.operation = { id: task.operation.id };
-                delete task.version;
-                delete task.step;
-                delete task.status;
-            });
-            delete cloned.readData
-            delete cloned.sort
-            delete cloned.visualization
-            delete cloned.sample
-            delete cloned.filter
-
-            try {
-                await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
-                this.isDirty = false;
-                this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
-            } catch (e) {
-                this.error(e);
-            }
-        },
-        handleUpdateFilter(field, value) {
-            this.workflowObj.filter.forms.formula.value = value;
-        },
-        async loadData() {
-            this.loadingData = true;
-            Object.assign(this.workflowObj.visualization.forms, this.visualizationObj);
-            if (this.workflowObj.sort.forms.order_by.value === 'asc' ||
-                this.workflowObj.sort.forms.order_by.value === null) {
-                this.workflowObj.sort.enabled = false;
-            }
-            const cloned = JSON.parse(JSON.stringify(this.workflowObj));
-            cloned.platform_id = cloned.platform.id; //FIXME: review
-
-            cloned.tasks.forEach((task) => {
-                // Remove unnecessary attributes from operation
-                task.operation = { id: task.operation.id };
-                delete task.version;
-            });
-
-            const body = {
-                workflow: cloned,
-                cluster: { id: cloned.preferred_cluster_id },
-                name: `## vis explorer ${this.workflowObj.id} ##`,
-                user: this.$store.getters.user, //: { id: user.id, login: user.login, name: user.name },
-                persist: false, // do not save the job in db.
-                app_configs: {
-                    verbosity: 0,
-                    target_platform: 'scikit-learn',
-                    variant: 'polars'
-                },
-            }
-
-            try {
-                const response = await axios.post(`${standUrl}/jobs`, body,
-                    { headers: { 'Locale': this.$root.$i18n.locale, } })
-                this.job = response.data.data;
-                this.connectWebSocket();
-            } catch (ex) {
-                if (ex.data) {
-                    this.error(ex.data.message);
-                } else if (ex.status === 0) {
-                    this.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
-                } else {
-                    this.error(`Unhandled error: ${ex}`);
-                }
-            } finally {
-                this.$Progress.finish();
-            }
-        },
-        disconnectWebSocket() {
-            if (this.socket) {
-                this.socket.emit('leave', { room: this.job.id });
-                this.socket.close();
-            }
-        },
-        /* WebSocket Handling */
-        connectWebSocket() {
-            if (this.socket === null) {
-                const opts = { upgrade: true };
-                if (standSocketIoPath !== '') {
-                    opts['path'] = standSocketIoPath;
-                }
-                const socket = io(
-                    `${standSocketServer}${standNamespace}`, opts);
-
-                this.socket = socket;
-                socket.on('connect', () => { socket.emit('join', { cached: false, room: this.job.id }); });
-                socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
-                    if (msg.type === 'PLOTLY') {
-                        const messageJson = msg.message;
-                        this.plotlyData = messageJson;
-                    }
-                });
-                socket.on('update job', msg => {
-                    this.jobStatus = '';
-                    if (msg.status === 'ERROR') {
-                        this.error(msg);
-                        this.loadingData = false;
-                    }
-                    if (msg.status === 'COMPLETED') {
-                        this.jobStatus = msg.message;
-                        this.loadingData = false;
-                    }
-                });
-            } else {
-                //self.socket.emit('join', { room: self.job.id });
-            }
-        }
+const updateThumb = () => {
+    const $elem = this.$refs.chart;
+    const $tabImage = this.$refs.tabImage;
+    toPng($elem, {canvasWidth: 68 * 20, canvasHeight: 32 * 20})
+        .then(function (dataUrl) {
+            $tabImage.src = dataUrl;
+        });
+};
+const getIcon = (attr) => {
+    switch (attr.type) {
+        case 'DECIMAL':
+        case 'INTEGER':
+            return 'hashtag';
+        case 'CHARACTER':
+            return 'font';
+        case 'DATE':
+            return 'calendar';
 
     }
-}
+};
+const load = async () => {
+    loadingData.value = true;
+    progress.start();
+    try {
+        await loadOperations();
+        let resp = await axios.get(`${tahitiUrl}/workflows/${internalWorkflowId.value}`);
+        workflowObj.value = new VisualizationBuilderWorkflow(resp.data, operationsMap.value);
+        if (resp.data?.forms?.$meta?.plot) {
+            console.debug(resp.data?.forms?.$meta?.plot);
+            plotlyData.value = resp.data.forms.$meta.plot;
+        }
+        if (workflowObj.value.type !== 'VIS_BUILDER') {
+            error(null, i18n.$t('modelBuilder.invalidType'));
+            router.push({name: 'index-explorer'});
+            return;
+        }
+        await loadDataSource(dataSourceId.value);
+
+        //const attributes = dataSource.value.attributes;
+        // FIXME: 'group' task is not necessary anymore
+        /*
+        workflowObj.value?.group?.forms?.function?.value?.forEach(attr => {
+            attr['name'] = attr.attribute;
+            const v = attributes.find(a => a.name === attr.name);
+            attr['type'] = v ? v.type : '';
+        }); */
+
+        loadClusters();
+        visualizationObj.value = new Visualization(
+            workflowObj.value.visualization.forms);
+        loaded.value = true;
+
+    } catch (e) {
+        error(e);
+        router.push({name: 'index-explorer'});
+    } finally {
+        Vue.nextTick(() => {
+            progress.finish();
+            loadingData.value = false;
+            isDirty.value = false;
+        });
+    }
+};
+const loadOperations = async () => {
+    const params = {
+        category: 'visualization-builder', platform: META_PLATFORM_ID,
+        fields: 'id,forms,categories,name,slug'
+    };
+
+    const resp = await axios.get(`${tahitiUrl}/operations`, {params});
+    resp.data.data.forEach(op => operationsMap.value.set(op.slug, new Operation(op)));
+};
+const dataSourceList = ref([]);
+
+const loadDataSource = async (id) => {
+    const resp = await axios.get(`${limoneroUrl}/datasources/${id}`);
+    dataSource.value = resp.data;
+    attributes.value = dataSource.value.attributes.sort((a, b) => a.name.localeCompare(b.name));
+    attributes.value.forEach(a => {
+        a.attribute = a.name;
+        a.numeric = ['DECIMAL', 'INTEGER', 'DOUBLE', 'FLOAT', 'LONG']
+            .indexOf(a.type) >= 0;
+    });
+    dataSourceList.value = [dataSource.value];
+};
+const loadClusters = async () => {
+    try {
+        const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${targetPlatform.value}`);
+        clusters.value = resp.data.data;
+    } catch (ex) {
+        error(ex);
+    }
+};
+const saveWorkflow = async () => {
+    workflowObj.value.visualization.forms = visualizationObj.value;
+    let cloned = structuredClone(workflowObj.value);
+    if (!cloned.filter.forms.formula || cloned.filter.forms.formula.value === null || cloned.filter.forms.formula.value.length === 0) {
+        cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
+    }
+    if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
+        cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
+    }
+    cloned.forms = {$meta: {plot: plotlyData.value}};
+    let url = `${tahitiUrl}/workflows/${cloned.id}`;
+
+    cloned.platform_id = META_PLATFORM_ID;
+
+    cloned.tasks.forEach((task) => {
+        task.operation = {id: task.operation.id};
+        delete task.version;
+        delete task.step;
+        delete task.status;
+    });
+    delete cloned.readData;
+    delete cloned.sort;
+    delete cloned.visualization;
+    delete cloned.sample;
+    delete cloned.filter;
+
+    try {
+        await axios.patch(url, cloned, {headers: {'Content-Type': 'application/json'}});
+        isDirty.value = false;
+        success(i18n.$t('messages.savedWithSuccess', {what: i18n.$t('titles.workflow')}));
+    } catch (e) {
+        error(e);
+    }
+};
+const handleUpdateFilter = (field, value) => {
+    workflowObj.value.filter.forms.formula.value = value;
+};
+const loadData = async () => {
+
+    loadingData.value = true;
+    Object.assign(workflowObj.value.visualization.forms, visualizationObj.value);
+    if (workflowObj.value.sort.forms.order_by.value === 'asc' ||
+        workflowObj.value.sort.forms.order_by.value === null) {
+        workflowObj.value.sort.enabled = false;
+    }
+    const cloned = JSON.parse(JSON.stringify(workflowObj.value));
+    cloned.platform_id = cloned.platform.id; //FIXME: review
+
+    cloned.tasks.forEach((task) => {
+        // Remove unnecessary attributes from operation
+        task.operation = {id: task.operation.id};
+        delete task.version;
+    });
+
+    const body = {
+        workflow: cloned,
+        cluster: {id: cloned.preferred_cluster_id},
+        name: `## vis explorer ${workflowObj.value.id} ##`,
+        user: store.getters.user, //: { id: user.id, login: user.login, name: user.name },
+        persist: false, // do not save the job in db.
+        app_configs: {
+            verbosity: 0,
+            target_platform: 'scikit-learn',
+            variant: 'polars'
+        },
+    };
+
+    try {
+        const response = await axios.post(`${standUrl}/jobs`, body,
+            {headers: {'Locale': i18n.locale, }});
+        job.value = response.data.data;
+        connectWebSocket();
+    } catch (ex) {
+        if (ex.data) {
+            error(ex.data.message);
+        } else if (ex.status === 0) {
+            this.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
+        } else {
+            error(`Unhandled error: ${ex}`);
+        }
+    } finally {
+        progress.finish();
+    }
+};
+/* WebSocket Handling */
+const disconnectWebSocket = () => {
+    if (socketIo.value) {
+        socketIo.value.emit('leave', {room: job.value.id});
+        socketIo.value.close();
+    }
+};
+
+const connectWebSocket = () => {
+    if (socketIo.value === null) {
+        const opts = {upgrade: true};
+        if (standSocketIoPath !== '') {
+            opts['path'] = standSocketIoPath;
+        }
+        const socket = io(
+            `${standSocketServer}${standNamespace}`, opts);
+
+        socketIo.value = socket;
+        socket.on('connect', () => {socket.emit('join', {cached: false, room: job.value.id});});
+        socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
+            if (msg.type === 'PLOTLY') {
+                const messageJson = msg.message;
+                plotlyData.value = messageJson;
+                plotVersion.value++;
+            }
+        });
+        socket.on('update job', msg => {
+            jobStatus.value = '';
+            if (msg.status === 'ERROR') {
+                error(msg);
+                loadingData.value = false;
+            }
+            if (msg.status === 'COMPLETED') {
+                jobStatus.value = msg.message;
+                loadingData.value = false;
+            }
+        });
+    } else {
+        //self.socket.emit('join', { room: self.job.id });
+    }
+};
 
 </script>
 
@@ -392,7 +419,7 @@ export default {
 .chart {
     margin-top: 10px;
     position: relative;
-    height: 70vh;
+    height: 65vh;
     width: 100%;
     padding: 5px 0;
 }
