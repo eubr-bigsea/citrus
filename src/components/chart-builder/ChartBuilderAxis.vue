@@ -61,7 +61,8 @@
                         <b-dropdown size="sm" ref="yDimensionDD" class="mt-2 mr-1 pull-right"
                             variant="outline-secondary small-dd-title">
                             <template #button-content>
-                                {{ y.attribute === '*' ? 'COUNT' : y.aggregation.toUpperCase() }}({{ y.attribute }})
+                                {{ y.attribute === '*' ? 'COUNT' : y.aggregation.toUpperCase() }}
+                                {{ y.aggregation !== '' ? `(${y.attribute})` : y.attribute }}
                             </template>
                             <b-dropdown-form form-class="right-drop-form">
                                 <div class="row series-form">
@@ -83,6 +84,7 @@
 
                                         <b-form-group v-if="y.attribute !== '*'" label="Função de agregação:">
                                             <select class="form-control form-control-sm" v-model="y.aggregation">
+                                                <option label="" value="">Usar valor sem agregar</option>
                                                 <option label="COUNT" value="COUNT">COUNT</option>
                                                 <option label="COUNTD" value="COUNTD">COUNT DISTINCT</option>
                                                 <option label="AVG" value="AVG">AVG</option>
@@ -416,9 +418,9 @@ const ySeries = computed(() =>
 );
 const limitXDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
-    if (props.type.value === 'pie' || props.type.value === 'donut') {
+    if (['pie', 'donut', 'scatter'].includes(props.type)) {
         result = 1;
-    } else if (editableVisualization.value.x.value.length >= 2 && props.type.value !== 'treemap') {
+    } else if (editableVisualization.value.x.value.length >= 2 && props.type !== 'treemap') {
         result = 2;
     }
     return result;
@@ -426,7 +428,7 @@ const limitXDimension = computed(() => {
 const limitYDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
     if (
-        (props.type.value === 'pie' || props.type.value === 'donut' || props.type.value == 'treemap')
+        (['pie', 'donut', 'scatter', 'treemap'].includes(props.type))
         || (editableVisualization.value.x.value.length >= 2)
     ) {
         result = 1;

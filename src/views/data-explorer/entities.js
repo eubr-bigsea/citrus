@@ -439,6 +439,11 @@ class Visualization {
         subgraph = { value: null},
         subgraph_orientation = {value: 'v'},
         animation = {value: null},
+        opacity = {value: 1},
+        height = {value: null}, width = {value: null},
+        scatter_color = {value: null}, 
+        scatter_size = {value: null}, 
+
     },
     ) {
         this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
@@ -465,7 +470,12 @@ class Visualization {
         this.blackWhite = blackWhite;
         this.subgraph = subgraph;
         this.subgraph_orientation = subgraph_orientation;
-        this.animation = animation
+        this.animation = animation;
+        this.height = height;
+        this.width = width;
+        this.opacity = opacity;
+        this.scatter_color = scatter_color;
+        this.scatter_size = scatter_size;
 
     }
     /*

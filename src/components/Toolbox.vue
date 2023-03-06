@@ -1,7 +1,6 @@
 <template>
     <div class="lemonade-toolbox">
-        <VuePerfectScrollbar class="scroll-area"
-                             :settings="settings">
+       
             <div>
                 <ul class="list-group">
                     <li class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
@@ -124,7 +123,6 @@
                     </li>
                 </ul>
             </div> -->
-        </VuePerfectScrollbar>
         <div ref="opDrag"
              class="drag-template" />
     </div>
