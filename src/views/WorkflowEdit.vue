@@ -6,7 +6,22 @@
 
                 <div class="title">
                     <div class="float-right">
-                        <workflow-toolbar v-if="loaded" :workflow="workflow" />
+                        <workflow-toolbar v-if="loaded" :workflow="workflow" 
+                            @onsave-workflow="saveWorkflow(false)"
+                            @onshow-history="showHistory"
+                            @onshow-executions="$refs.executionsModal.show()"
+                            @onshow-variables="$refs.variablesModal.show()"
+                            @onsave-workflow-as="saveWorkflowAs"
+                            @onshow-properties="showWorkflowProperties"
+                            @onsaveas-workflow="showSaveAs"
+                            @onclick-execute="showExecuteWindow"
+                            @onclick-export="(format) => this.exportWorkflow(format)"
+                            @onupdate-workflow-properties="saveWorkflowProperties"
+                            @onchange-cluster="changeCluster"
+                            @onexecute-workflow="execute"
+                            @onrestore-workflow="restore"
+                            @onsave-as-image="saveAsImage"
+                            />
                     </div>
 
                     <h6 class="header-pretitle">
@@ -41,7 +56,16 @@
                 <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
                          :operations="operations"
                          :loaded="loaded" :version="workflow.version" tabindex="0"
-                         :use-data-source="expandableOperations.length > 0" />
+                         :use-data-source="expandableOperations.length > 0" 
+                          @ontoggle-tasksPanel="toggleTasksPanel"
+                          @ontoggle-dataSourcesPanel="toggleDataSourcesPanel"
+                          @ondistribute-tasks="distribute"
+                          @onselect-image="selectImage"
+                          @onset-isDirty="setIsDirty"
+                          @onzoom="applyZoom"
+                          @addTask="addTask"
+                          @onclick-task="clickTask"
+                         />
 
                 <div v-if="showProperties" class="diagram-properties">
                     <property-window v-if="selectedTask.task" :task="selectedTask.task"
@@ -118,7 +142,7 @@
                 <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables" />
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :cluster-info="clusterInfo"
                                       :validation-errors="validationErrors" :workflow="workflow" />
-                <ModalWorkflowHistory ref="historyModal" :history="history" />
+                <ModalWorkflowHistory ref="historyModal" :history="history" @onrestore-workflow="restore"/>
                 <ModalSaveWorkflowAs ref="saveAsModal" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow"
@@ -249,9 +273,6 @@ export default {
         document.getElementById('tahiti-script').setAttribute(
             'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.$route.params.platform}`);
 
-        this.$root.$on('addTask', () => {
-            this.showTasksPanel = false;
-        });
 
         this.$root.$on('onclear-selection', () => {
             this.selectedTask = {};
@@ -259,52 +280,17 @@ export default {
             this.showDataSourcesPanel = false;
             this.showTasksPanel = false;
         });
-        this.$root.$on('onclick-task', (taskComponent, showProperties) => {
-            // If there is a selected task, keep properties opened
-            this.showProperties = showProperties ||
-                    (this.selectedTask.task && this.selectedTask.task.id);
-            this.selectedTask = taskComponent;
-            this.updateAttributeSuggestion();
-        });
+        
         this.$root.$on('on-error', (e) => {
             this.error(e);
         });
-        this.$root.$on('onsave-as-image', () => {
-            this.saveAsImage()
-        });
-        this.$root.$on('onsave-workflow', () => this.saveWorkflow(false));
-        this.$root.$on('onshow-executions', () => this.$refs.executionsModal.show());
-        this.$root.$on('onshow-variables', () => this.$refs.variablesModal.show());
-        this.$root.$on('onsave-workflow-as', (saveOption, newName) => {
-            if (saveOption === 'new') {
-                this.saveWorkflow(true, newName);
-            } else if (saveOption === 'image') {
-                this.saveAsImage();
-            }
-        });
-        // Modal
-        this.$root.$on('onsaveas-workflow', this.showSaveAs);
-        this.$root.$on('onupdate-workflow-properties', this.saveWorkflowProperties);
-        this.$root.$on('onrestore-workflow', this.restore);
-        this.$root.$on('onchange-cluster', this.changeCluster);
-        this.$root.$on('onexecute-workflow', this.execute);
-
-
-        this.$root.$on('onalign-tasks', this.align);
-        this.$root.$on('ontoggle-tasks', this.toggleTasks);
+        
         this.$root.$on('ontoggle-tasksPanel', this.toggleTasksPanel);
         this.$root.$on('ontoggle-dataSourcesPanel', this.toggleDataSourcesPanel);
-        this.$root.$on('onremove-tasks', this.removeTasks);
         this.$root.$on('ondistribute-tasks', this.distribute);
-        this.$root.$on('onclick-export', (format) => this.exportWorkflow(format));
-        this.$root.$on('onclick-execute', this.showExecuteWindow);
-        this.$root.$on('onshow-properties', this.showWorkflowProperties);
+       
         this.$root.$on('onselect-image', this.selectImage);
         this.$root.$on('onset-isDirty', this.setIsDirty);
-        this.$root.$on('onclick-setup', (options) => {
-            this.performanceModel.cores = options.cores;
-            this.performanceModel.setup = options.setup;
-        });
         this.$root.$on('onblur-selection', () => {
             this.showProperties = false;
             this.selectedTask = { task: {} };
@@ -367,14 +353,7 @@ export default {
             }
         })
         /* Task related */
-        this.$root.$on('addTask', (task) => {
-            this.maxDisplayOrder++;
-            task.step = null;
-            task.display_order = this.maxDisplayOrder;
-
-            this.workflow.tasks.push(task);
-            this.isDirty = true;
-        });
+        
         this.$root.$on('onremove-task', (task) => {
             // const self = this;
             // this.instance.deleteConnectionsForElement(task.id);
@@ -431,10 +410,7 @@ export default {
                 }
             }
         });
-        this.$root.$on('onshow-history', this.showHistory);
-        this.$root.$on('onzoom', (zoom) => {
-            this.$refs.diagram.setZoomPercent(zoom);
-        });
+       
         this.$root.$on('onshow-result', this.showTaskResult);
         this.load();
 
@@ -451,30 +427,39 @@ export default {
         this.$root.$off('onalign-tasks');
         this.$root.$off('ontoggle-tasksPanel');
         this.$root.$off('ontoggle-tasks');
-        this.$root.$off('ondistribute-tasks');
-        this.$root.$off('onclick-execute');
         this.$root.$off('onblur-selection');
         this.$root.$off('update-form-field-value');
         this.$root.$off('update-workflow-form-field-value');
         this.$root.$off('addTask');
-        this.$root.$off('onremove-task');
         this.$root.$off('addFlow');
         this.$root.$off('removeFlow');
-        this.$root.$off('onshow-history');
-        this.$root.$off('onzoom');
         this.$root.$off('onshow-result');
         this.$root.$off('onset-isDirty');
-        this.$root.$off('onsaveas-workflow');
-        this.$root.$off('onupdate-workflow-properties');
-        this.$root.$off('onrestore-workflow');
-        this.$root.$off('onchange-cluster');
-        this.$root.$off('onexecute-workflow');
-        this.$root.$off('onshow-properties');
-        this.$root.$off('onshow-executions');
-        this.$root.$off('onshow-variables');
         window.removeEventListener('beforeunload', this.leaving)
     },
     methods: {
+
+        /* Task related  */
+        clickTask(taskComponent, showProperties) {
+            // If there is a selected task, keep properties opened
+            this.showProperties = showProperties
+                || (this.showProperties && this.selectedTask.task && this.selectedTask.task.id);
+            this.selectedTask = taskComponent;
+            this.updateAttributeSuggestion();
+        },
+        addTask(task) {
+            this.showTasksPanel = false;
+            this.maxDisplayOrder++;
+            task.step = null;
+            task.display_order = this.maxDisplayOrder;
+
+            this.workflow.tasks.push(task);
+            this.isDirty = true;
+        },
+
+        applyZoom(zoom){
+            this.$refs.diagram.setZoomPercent(zoom);
+        },
         getCaipirinhaLink(jobId, taskId, visId) {
             return `${caipirinhaUrl}/visualizations/${jobId}/${taskId}/${visId}`;
         },
@@ -492,13 +477,8 @@ export default {
         showJobs() {
             this.showPreviousJobs = true
         },
-        align(prop, fn) {
-            this.$refs.diagram.align(prop, fn);
-        },
         toggleTasksPanel() { this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false; },
         toggleDataSourcesPanel() { this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false; },
-        toggleTasks(mode, prop) { this.$refs.diagram.toggleTasks(mode, prop); },
-        removeTasks() { this.$refs.diagram.removeSelectedTasks(); },
         distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
         updateSelectedTab(index) {// eslint-disable-line no-unused-vars
             //this.selectedTab = index;
@@ -736,6 +716,13 @@ export default {
             }
 
             // self.success(self.$t('messages.exportWorkflow'));
+        },
+        saveWorkflowAs(saveOption, newName){
+            if (saveOption === 'new') {
+                this.saveWorkflow(true, newName);
+            } else if (saveOption === 'image') {
+                this.saveAsImage();
+            }
         },
         saveWorkflow(savingCopy, newName) {
             let self = this

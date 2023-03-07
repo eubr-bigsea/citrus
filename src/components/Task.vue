@@ -132,6 +132,7 @@ const TaskComponent = Vue.extend({
             return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
         }
     },
+    emit: ['onclick-task'],
     mounted() {
         this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
 
@@ -335,7 +336,7 @@ const TaskComponent = Vue.extend({
             self.instance.repaintEverything();
 
             // Raise the click event to upper components
-            this.$root.$emit('onclick-task', self, showProperties);
+            this.$emit('onclick-task', self, showProperties);
             this.hideMenu();
         },
         dblClick(ev) {

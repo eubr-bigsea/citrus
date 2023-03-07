@@ -39,6 +39,7 @@
                 <b-dropdown-item @click.prevent="exportWorkflow()">
                     {{$t('common.json')}}
                 </b-dropdown-item>
+                <!--
                 <b-dropdown-divider />
                 <b-dropdown-item @click.prevent="exportWorkflow('python')">
                     {{$t('common.python')}}
@@ -46,6 +47,7 @@
                 <b-dropdown-item @click.prevent="exportWorkflow('notebook')">
                     {{$t('common.jupyter')}}
                 </b-dropdown-item>
+                -->
             </b-dropdown>
         </div>
         <div class="btn-group mr-2"
@@ -55,11 +57,13 @@
                     @click.prevent="showProperties">
                 <font-awesome-icon icon="fa fa-cogs" />
             </button>
+            <!--
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.selectImage')"
                     @click.prevent="selectImage">
                 <font-awesome-icon icon="fa fa-image" />
             </button>
+            -->
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.showHistory')"
                     @click.prevent="showHistory">
@@ -97,33 +101,37 @@ export default {
     computed: {
         ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
     },
+    emit: ['onsave-workflow', 'onsaveas-workflow', 'onshow-history',
+        'onclick-execute', 'onclick-export', 'onshow-properties', 'onshow-executions',
+        'onshow-variables', 'onselect-image'
+    ],
     methods: {
         saveWorkflow() {
-            this.$root.$emit('onsave-workflow')
+            this.$emit('onsave-workflow')
         },
         saveWorkflowAs() {
-            this.$root.$emit('onsaveas-workflow')
+            this.$emit('onsaveas-workflow')
         },
         showHistory() {
-            this.$root.$emit('onshow-history');
+            this.$emit('onshow-history');
         },
         execute() {
-            this.$root.$emit('onclick-execute');
+            this.$emit('onclick-execute');
         },
         exportWorkflow(format) {
-            this.$root.$emit('onclick-export', format);
+            this.$emit('onclick-export', format);
         },
         showProperties() {
-            this.$root.$emit('onshow-properties')
+            this.$emit('onshow-properties')
         },
         showExecutions() {
-            this.$root.$emit('onshow-executions')
+            this.$emit('onshow-executions')
         },
         showVariables() {
-            this.$root.$emit('onshow-variables')
+            this.$emit('onshow-variables')
         },
         selectImage() {
-            this.$root.$emit('onselect-image');
+            this.$emit('onselect-image');
         }
     }
 }
