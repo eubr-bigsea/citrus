@@ -17,7 +17,10 @@
                         <task-component v-for="task of workflow.tasks"
                             :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task" :instance="instance"
                             :enable-context-menu="editable" :draggable="editable"
-                            :show-decoration="showTaskDecoration || showTaskDecorationInternal" @onclick-task="clickTask" />
+                            :show-decoration="showTaskDecoration || showTaskDecorationInternal" @onstart-flow="startFlow"
+                            @onstop-flow="stopFlow" @onset-isDirty="setDirty" @ontask-ready="taskReady"
+                            @onkeyboard-keyup="keyboardKeyUpHandler" @onclick-task="clickTask" @onshow-result="showResult"
+                            @onremove-task="removeTask" />
                         <div ref="ghostSelect" class="ghost-select">
                             <span />
                         </div>
@@ -64,13 +67,18 @@ const DiagramComponent = Vue.extend({
         'task-component': TaskComponent,
         'diagram-toolbar': DiagramToolbar,
     },
+    emit: ['addFlow', 'addTask', 'onblur-selection', 'onclear-selection',
+        'onclick-task', 'onkeyboard-keyup',
+        'onremove-task', 'onset-isDirty', 'onshow-deploy', 'onshow-result',
+        'removeFlow'],
+        /*
     emit: [
         'oncopy-tasks', 'onpaste-tasks', 'onremove-tasks',
         'ontoggle-tasksPanel', 'ontoggle-dataSourcesPanel',
         'ontoggle-darkMode', 'onzoom',
         'oncopy-tasks', 'onpaste-tasks', 'onremove-tasks', 'ontoggle-task',
         'onshow-deploy', 'onclear-selection', 'addTask', 'onclick-task'
-    ],
+    ],*/
     props: {
         formContainer: {
             type: Boolean,
@@ -208,7 +216,6 @@ const DiagramComponent = Vue.extend({
         const self = this;
 
         if (this.$route.params.id) {
-            this.changeWorkflowId(this.$route.params.id);
             this.init();
         }
 
@@ -217,138 +224,15 @@ const DiagramComponent = Vue.extend({
         //   this.showToolbarInternal = true;
         //   this.showTaskDecorationInternal = false;
         // });
-        this.$root.$on('onremove-task', task => {
-            this.removeTask(task);
-        });
-        this.$root.$on('onkeyboard-keyup', ev => {
-            this.keyboardKeyUpHandler(ev);
-        });
-        this.$root.$on('on-align-tasks', (pos, fn) => {
-            this.align(pos, fn);
-        });
-        this.$root.$on('ontoggle-darkMode', () => {
-            this.darkMode = localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') == "true" : false;
-        });
+
         // this.$on('xupdate-form-field-value', (field, value) => {
         //   this.$emit('update-form-field-value-in-diagram', field, value);
         //   this.updateAttributeSuggestion();
         // });
 
-        // Highlight which operations can be target for a new flow.
-        this.$root.$on('onstart-flow', interfaceName => {
-            this.clearSelection(null);
-            let sourceInterfaces = new Set(interfaceName.split(' '));
-            this.instance.selectEndpoints().each(endPoint => {
-                if (endPoint.isTarget) {
-                    let intersection = endPoint.scope
-                        .split(' ')
-                        .filter(Set.prototype.has, sourceInterfaces);
-                    if (intersection.length > 0) {
-                        endPoint.element.classList.add('selected');
-                    }
-                }
-            });
-        });
-
-        this.$root.$on('onstop-flow', interfaceName => { // eslint-disable-line no-unused-vars
-            this.instance.selectEndpoints().each(endPoint => {
-                if (endPoint.isTarget) {
-                    endPoint.element.classList.remove('selected');
-                }
-            });
-        });
-
-        self.$root.$on('ontask-ready', task => {
-            self.readyTasks.add(task.id);
-            //Evaluates if flow can be draw now (both endpoints were created)
-            const candidates = self.workflow.flows.filter(flow => {
-                return (
-                    (flow['target_id'] === task.id || flow['source_id'] === task.id) &&
-                    self.readyTasks.has(flow['target_id']) &&
-                    self.readyTasks.has(flow['source_id'])
-                );
-            });
-
-            candidates.forEach(flow => {
-                let uuids = flow.uuids || [
-                    `${flow['source_id']}/${flow['source_port']}`,
-                    `${flow['target_id']}/${flow['target_port']}`
-                ];
-
-                const connection = self.instance.connect({uuids});
-                if (connection) {
-                    connection.bind('mouseover', (c, originalEvent) => {
-                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
-                        if (originalEvent) {
-                            const currentStyle = c ? c.getPaintStyle() : null;
-                            currentStyle.lineWidth = 20;
-                            currentStyle.outlineColor = '#ed8';
-                            c.setPaintStyle(currentStyle);
-                            self.instance.repaintEverything();
-                        }
-                    });
-                    const currentStyle = connection ? connection.getPaintStyle() : null;
-                    if (currentStyle) {
-                        currentStyle[
-                            'strokeStyle'
-                        ] = connection.endpoints[0].getPaintStyle().fillStyle;
-                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
-                        connection.setPaintStyle(currentStyle);
-                    }
-                }
-            });
-            if (task.tryConnections) {
-                let elem = document.getElementById(task.id);
-                elem.dispatchEvent(new MouseEvent('dblclick', {
-                    bubbles: true,
-                    cancelable: true,
-                    view: window
-                }
-                )
-                );
-                let sortFunction = (a, b) => {
-                    if (a.type < b.type) {return -1;}
-                    if (a.type > b.type) {return 1;}
-                    return 0;
-                };
-                let endpoints1 = self.instance.getEndpoints(task.tryConnections).reverse(sortFunction);
-                let endpoints2 = self.instance.getEndpoints(task.id).sort(sortFunction);
-                let shouldBreak = false;
-
-                for (var i in endpoints1) {
-                    let e1 = endpoints1[i];
-                    for (var j in endpoints2) {
-                        let e2 = endpoints2[j];
-                        if (shouldBreak) {
-                            break;
-                        }
-                        if (e2.scope == e1.scope && ((e1.type == 'Rectangle' && e2.type == 'Dot') || (e1.type == 'Dot' && e2.type == 'Rectangle'))) {
-                            if (shouldBreak) {
-                                break;
-                            }
-                            self.tryConnections = true;
-                            var con = self.instance.connect({uuids: [e1.getUuid(), e2.getUuid()]});
-                            shouldBreak = con != undefined;
-                        }
-                    }
-                }
-            }
-        });
     },
 
     beforeUnmount() {
-        this.$root.$off('ontask-ready');
-        this.$root.$off('onkeyboard-keyup');
-        this.$root.$off('onstop-flow');
-        this.$root.$off('ontask-ready');
-        this.$root.$off('onclick-task');
-        this.$root.$off('onremove-task');
-        this.$root.$off('on-align-tasks');
-        this.$root.$off('oncopy-tasks');
-        this.$root.$off('onpaste-tasks');
-        this.$root.$off('onstart-flow');
-        this.$root.$off('onstop-flow');
-        this.$root.$off('ontoggle-darkMode');
         this.readyTasks = new Set();
     },
 
@@ -409,7 +293,41 @@ const DiagramComponent = Vue.extend({
             self.$refs.diagram.style.height = '100%';
         }
     },
+
     methods: {
+        showResult() {
+            this.$emit('onshow-result', this.task);
+        },
+
+        /* Flow management  */
+        startFlow(interfaceName) {
+            this.clearSelection(null);
+            const sourceInterfaces = new Set(interfaceName.split(' '));
+
+            // Highlight which operations can be target for a new flow.
+            this.instance.selectEndpoints().each(endPoint => {
+                if (endPoint.isTarget) {
+                    const intersection = endPoint.scope
+                        .split(' ')
+                        .filter(Set.prototype.has, sourceInterfaces);
+                    if (intersection.length > 0) {
+                        endPoint.element.classList.add('candidate');
+                    }
+                }
+            });
+        },
+        stopFlow(interfaceName) { // eslint-disable-line no-unused-vars
+            // Remove hightlight from cancidate operations
+            this.instance.selectEndpoints().each(endPoint => {
+                if (endPoint.isTarget) {
+                    endPoint.element.classList.remove('candidate');
+                }
+            });
+        },
+
+        setDirty(value) {
+            this.$emit('onset-isDirty', value);
+        },
         clickTask(taskComponent, showProperties) {
             if (!this.selectedElements.includes(taskComponent.task.id)) {
                 this.selectedTask = taskComponent.task;
@@ -499,7 +417,7 @@ const DiagramComponent = Vue.extend({
         },
 
         removeTask(task) {
-            const self = this;
+
             //this.instance.detachAllConnections(task.id);
             this.instance.deleteConnectionsForElement(task.id);
             this.instance.removeAllEndpoints(task.id);
@@ -516,8 +434,86 @@ const DiagramComponent = Vue.extend({
                 this.workflow.tasks.splice(inx, 1);
             }
 
-            self.clearSelection();
-            self.instance.repaintEverything();
+            this.clearSelection();
+            this.instance.repaintEverything();
+            this.setDirty(true);
+        },
+        taskReady(task) {
+            const self = this;
+            this.readyTasks.add(task.id);
+            //Evaluates if flow can be draw now (both endpoints were created)
+            const candidates = this.workflow.flows.filter(flow => {
+                return (
+                    (flow['target_id'] === task.id || flow['source_id'] === task.id) &&
+                    this.readyTasks.has(flow['target_id']) &&
+                    this.readyTasks.has(flow['source_id'])
+                );
+            });
+
+            candidates.forEach(flow => {
+                let uuids = flow.uuids || [
+                    `${flow['source_id']}/${flow['source_port']}`,
+                    `${flow['target_id']}/${flow['target_port']}`
+                ];
+
+                const connection = self.instance.connect({uuids});
+                if (connection) {
+                    connection.bind('mouseover', (c, originalEvent) => {
+                        //var arr = self.instance.select({ source: con.sourceId, target: con.targetId });
+                        if (originalEvent) {
+                            const currentStyle = c ? c.getPaintStyle() : null;
+                            currentStyle.lineWidth = 20;
+                            currentStyle.outlineColor = '#ed8';
+                            c.setPaintStyle(currentStyle);
+                            self.instance.repaintEverything();
+                        }
+                    });
+                    const currentStyle = connection ? connection.getPaintStyle() : null;
+                    if (currentStyle) {
+                        currentStyle[
+                            'strokeStyle'
+                        ] = connection.endpoints[0].getPaintStyle().fillStyle;
+                        currentStyle['stroke'] = connection.endpoints[0].getPaintStyle().fill;
+                        connection.setPaintStyle(currentStyle);
+                    }
+                }
+            });
+            if (task.tryConnections) {
+                let elem = document.getElementById(task.id);
+                elem.dispatchEvent(new MouseEvent('dblclick', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window
+                }
+                )
+                );
+                let sortFunction = (a, b) => {
+                    if (a.type < b.type) {return -1;}
+                    if (a.type > b.type) {return 1;}
+                    return 0;
+                };
+                let endpoints1 = self.instance.getEndpoints(task.tryConnections).reverse(sortFunction);
+                let endpoints2 = self.instance.getEndpoints(task.id).sort(sortFunction);
+                let shouldBreak = false;
+
+                for (var i in endpoints1) {
+                    let e1 = endpoints1[i];
+                    for (var j in endpoints2) {
+                        let e2 = endpoints2[j];
+                        if (shouldBreak) {
+                            break;
+                        }
+                        if (e2.scope == e1.scope && ((e1.type == 'Rectangle' && e2.type == 'Dot') || (e1.type == 'Dot' && e2.type == 'Rectangle'))) {
+                            if (shouldBreak) {
+                                break;
+                            }
+                            self.tryConnections = true;
+                            var con = self.instance.connect({uuids: [e1.getUuid(), e2.getUuid()]});
+                            shouldBreak = con != undefined;
+                        }
+                    }
+                }
+            }
         },
         repaint() {
             this.$nextTick(() => {
@@ -539,24 +535,11 @@ const DiagramComponent = Vue.extend({
                 resolve();
             });
         },
-        clearTasks() {
-            this.$root.$emit('clearTasks');
-        },
         // addFlow(flow) {
         //    this.$root.$emit('addFlow', flow)
         // },
         removeFlow(flow) {
-            this.$root.$emit('removeFlow', flow);
-        },
-        clearFlows() {
-            this.$root.$emit('clearFlow');
-        },
-        changeWorkflowName(name) {
-            this.$root.$emit('changeWorkflowName', name);
-        },
-        changeWorkflowId(id) { // eslint-disable-line no-unused-vars
-            //@FIXME
-            //this.$store.dispatch('changeWorkflowId', id);
+            this.$emit('removeFlow', flow);
         },
         getOperationFromId(id) {
             let result = this.operations.find(v => {
@@ -611,7 +594,7 @@ const DiagramComponent = Vue.extend({
                 this.$emit('onclear-selection');
 
                 self.workflow.tasks.forEach(task => {
-                    let taskElem = document.getElementById(task.id);
+                    const taskElem = document.getElementById(task.id);
                     if (taskElem) {
                         let bounds = taskElem.getBoundingClientRect();
 
@@ -632,6 +615,7 @@ const DiagramComponent = Vue.extend({
                             self.instance.addToDragSelection(task.id);
                             self.selectedElements.push(task.id);
                         }
+                        taskElem.focus();
                         //console.debug (bounds.left, task.left)
                         //console.debug(task)
                     }
@@ -684,15 +668,8 @@ const DiagramComponent = Vue.extend({
                 self.selectedTask = null;
                 self.selectedFlow = null;
             });
-            this.$root.$emit('onblur-selection');
+            this.$emit('onblur-selection');
             this.selectedElements = [];
-        },
-        doChangeWorkflowName(ev) {
-            this.changeWorkflowName(ev.target.value);
-        },
-        doChangeWorkflowId(ev) {
-            /** Debug */
-            this.changeWorkflowId(ev.target.value);
         },
         flowClick(connection, e) {
             var self = this;
@@ -753,13 +730,8 @@ const DiagramComponent = Vue.extend({
             ev.preventDefault();
         },
 
-        clear() {
-            let self = this;
-            self.clearFlows();
-            self.clearTasks();
-        },
         keyboardKeyUpTrigger(ev) {
-            this.$root.$emit('onkeyboard-keyup', ev);
+            this.$emit('onkeyboard-keyup', ev);
         },
         keyboardKeyUpHandler(ev) {
             let self = this;
@@ -774,7 +746,7 @@ const DiagramComponent = Vue.extend({
             switch (ev.code) {
                 case 'Delete':
                     if (task) {
-                        this.deleteTask(task);
+                        this.removeTask(task);
                     } else if (tasks.length) {
                         this.deleteTasks(tasks);
                     }
@@ -843,6 +815,7 @@ const DiagramComponent = Vue.extend({
                 this.pasteTasks({tasks: self.copiedTasks, offsetLeft, offsetTop});
             }
         },
+        /*
         deleteTask(task) {
             let self = this;
 
@@ -851,16 +824,14 @@ const DiagramComponent = Vue.extend({
             }
 
             self.$root.$emit('onremove-task', task);
-        },
+        },*/
         deleteTasks(tasks) {
-            let self = this;
             let tasks_ids = tasks.flatMap(task => {return task.id;});
-
             tasks.forEach(task => {
-                self.$root.$emit('onremove-task', task);
+                this.removeTask(task);
             });
 
-            self.selectedElements = self.selectedElements.filter((v, i, arr) => { // eslint-disable-line no-unused-vars
+            this.selectedElements = this.selectedElements.filter((v, i, arr) => { // eslint-disable-line no-unused-vars
                 return !tasks_ids.includes(v);
             });
         },
@@ -935,7 +906,7 @@ const DiagramComponent = Vue.extend({
                     let copiedFlow = JSON.parse(JSON.stringify(flow));
                     copiedFlow.source_id = dic[flow.source_id];
                     copiedFlow.target_id = dic[flow.target_id];
-                    self.$root.$emit('addFlow', copiedFlow);
+                    self.$emit('addFlow', copiedFlow);
                 }
             });
             self.$nextTick(() => {
@@ -951,7 +922,7 @@ const DiagramComponent = Vue.extend({
                 ev.preventDefault();
                 this.clearSelection(ev);
             }
-            this.$root.$emit('onclear-selection');
+            this.$emit('onclear-selection');
         },
         generateId() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
@@ -1302,7 +1273,7 @@ const DiagramComponent = Vue.extend({
                         target_port_name
                     };
                     self.tryConnections = false;
-                    self.$root.$emit('addFlow', flow, con);
+                    self.$emit('addFlow', flow, con);
                 }
             });
             self.instance.setContainer('lemonade-diagram');

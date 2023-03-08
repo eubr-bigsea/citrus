@@ -6,73 +6,63 @@
 
                 <div class="title">
                     <div class="float-right">
-                        <workflow-toolbar v-if="loaded" :workflow="workflow" 
-                            @onsave-workflow="saveWorkflow(false)"
-                            @onshow-history="showHistory"
+                        <workflow-toolbar v-if="loaded" :workflow="workflow" :isDirty="isDirty"
+                            @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
                             @onshow-executions="$refs.executionsModal.show()"
-                            @onshow-variables="$refs.variablesModal.show()"
-                            @onsave-workflow-as="saveWorkflowAs"
-                            @onshow-properties="showWorkflowProperties"
-                            @onsaveas-workflow="showSaveAs"
-                            @onclick-execute="showExecuteWindow"
-                            @onclick-export="(format) => this.exportWorkflow(format)"
-                            @onupdate-workflow-properties="saveWorkflowProperties"
-                            @onchange-cluster="changeCluster"
-                            @onexecute-workflow="execute"
-                            @onrestore-workflow="restore"
-                            @onsave-as-image="saveAsImage"
+                            @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
+                            @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
+                            @onclick-execute="showExecuteWindow" @onclick-export="(format) => this.exportWorkflow(format)"
+                            @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
+                            @onsave-as-image="saveAsImage" 
                             />
                     </div>
 
                     <h6 class="header-pretitle">
-                        {{$tc('titles.workflow', 1)}} #{{workflow.id}}
+                        {{ $tc('titles.workflow', 1) }} #{{ workflow.id }}
                     </h6>
                     <InputHeader v-model="workflow.name" />
+
                 </div>
 
                 <div v-show="showTasksPanel" class="toolbox">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{$tc('common.operation', 2)}}
+                                {{ $tc('common.operation', 2) }}
                             </h4>
                         </div>
                         <toolbox :operations="operations" :workflow="workflow" :selected-task="selectedTask.task"
-                                 :loading="loadingToolbox" />
+                            :loading="loadingToolbox" />
                     </div>
                 </div>
                 <div v-show="showDataSourcesPanel" class="toolbox datasource-toolbox">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{$tc('titles.dataSource2', 2)}}
+                                {{ $tc('titles.dataSource2', 2) }}
                             </h4>
                         </div>
                         <custom-toolbox :operations="expandableOperations" :workflow="workflow"
-                                        :selected-task="selectedTask.task" />
+                            :selected-task="selectedTask.task" />
                     </div>
                 </div>
 
-                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
-                         :operations="operations"
-                         :loaded="loaded" :version="workflow.version" tabindex="0"
-                         :use-data-source="expandableOperations.length > 0" 
-                          @ontoggle-tasksPanel="toggleTasksPanel"
-                          @ontoggle-dataSourcesPanel="toggleDataSourcesPanel"
-                          @ondistribute-tasks="distribute"
-                          @onselect-image="selectImage"
-                          @onset-isDirty="setIsDirty"
-                          @onzoom="applyZoom"
-                          @addTask="addTask"
-                          @onclick-task="clickTask"
-                         />
+                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow" :operations="operations"
+                    :loaded="loaded" :version="workflow.version" tabindex="0"
+                    :use-data-source="expandableOperations.length > 0" @ontoggle-tasksPanel="toggleTasksPanel"
+                    @ontoggle-dataSourcesPanel="toggleDataSourcesPanel" 
+                    @onselect-image="selectImage" @onset-isDirty="setIsDirty" @onzoom="applyZoom" @addTask="addTask"
+                    @onclick-task="clickTask" 
+                    @addFlow="addFlow" @removeFlow="removeFlow"
+                    @onclear-selection="clearSelection" 
+                    @onblur-selection="blurSelection"/>
 
                 <div v-if="showProperties" class="diagram-properties">
                     <property-window v-if="selectedTask.task" :task="selectedTask.task"
-                                     :variables="workflow.variables || []"
-                                     :suggestion-event="() => getSuggestions(selectedTask.task.id)"
-                                     :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
-                                     :publishing-enabled="workflow && workflow.publishing_enabled" />
+                        :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
+                        :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
+                        :publishing-enabled="workflow && workflow.publishing_enabled" 
+                        @update-form-field-value="updateFormFieldValue"/>
                 </div>
 
                 <!--
@@ -141,13 +131,16 @@
                 -->
                 <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables" />
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :cluster-info="clusterInfo"
-                                      :validation-errors="validationErrors" :workflow="workflow" />
-                <ModalWorkflowHistory ref="historyModal" :history="history" @onrestore-workflow="restore"/>
-                <ModalSaveWorkflowAs ref="saveAsModal" />
+                    :validation-errors="validationErrors" :workflow="workflow" @onexecute-workflow="execute"
+                    @onchange-cluster="changeCluster" />
+                <ModalWorkflowHistory ref="historyModal" :history="history" @onrestore-workflow="restore" />
+                <ModalSaveWorkflowAs ref="saveAsModal" @onsave-workflow-as="saveWorkflowAs" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow"
-                                         :clusters="clusters" />
+                    :clusters="clusters" />
+                <!--
                 <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" />
+                -->
                 <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
         </div>
@@ -158,7 +151,7 @@
 import axios from 'axios';
 import DiagramComponent from '../components/Diagram.vue';
 //import html2canvas from 'html2canvas';
-import { toPng } from 'html-to-image';
+import {toPng} from 'html-to-image';
 import InputHeader from '../components/InputHeader.vue';
 import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
 import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
@@ -210,9 +203,8 @@ export default {
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
-        let self = this;
-        if (self.isDirty) {
-            if (confirm(self.$tc('warnings.dirtyCheck'))) {
+        if (this.isDirty) {
+            if (confirm(this.$t('warnings.dirtyCheck'))) {
                 next()
             }
         } else {
@@ -221,7 +213,6 @@ export default {
     },
     data() {
         return {
-            atmosphereExtension: false,
             job: {},
             attributeSuggesterLoaded: false,
             attributeSuggestion: {},
@@ -242,14 +233,14 @@ export default {
 
             showTasksPanel: false,
             showDataSourcesPanel: false,
-            resultTask: { step: {} },
+            resultTask: {step: {}},
             saveOption: 'new',
             selectedTab: 0,
-            selectedTask: { task: { operation: {} } },
+            selectedTask: {task: {operation: {}}},
             showPreviousJobs: false,
             showProperties: false,
             validationErrors: [],
-            workflow: { tasks: [], flows: [], platform: {} },
+            workflow: {tasks: [], flows: [], platform: {}},
             performanceModel: {
                 cores: null,
                 setup: null
@@ -265,38 +256,24 @@ export default {
         }
     },
     created() {
-        var self = this;
-        window.addEventListener('beforeunload', self.leaving)
+        window.addEventListener('beforeunload', this.leaving)
     },
     mounted() {
         const self = this
         document.getElementById('tahiti-script').setAttribute(
             'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.$route.params.platform}`);
 
+        //this.$root.$on('onshow-result', this.showTaskResult);
+        this.load();
 
-        this.$root.$on('onclear-selection', () => {
-            this.selectedTask = {};
-            this.selectedElements = [];
-            this.showDataSourcesPanel = false;
-            this.showTasksPanel = false;
-        });
-        
-        this.$root.$on('on-error', (e) => {
-            this.error(e);
-        });
-        
-        this.$root.$on('ontoggle-tasksPanel', this.toggleTasksPanel);
-        this.$root.$on('ontoggle-dataSourcesPanel', this.toggleDataSourcesPanel);
-        this.$root.$on('ondistribute-tasks', this.distribute);
-       
-        this.$root.$on('onselect-image', this.selectImage);
-        this.$root.$on('onset-isDirty', this.setIsDirty);
-        this.$root.$on('onblur-selection', () => {
-            this.showProperties = false;
-            this.selectedTask = { task: {} };
-        });
-
-        this.$root.$on('update-form-field-value', (field, value, labelValue) => {
+    },
+    beforeUnmount() {
+        window.removeEventListener('beforeunload', this.leaving)
+    },
+    methods: {
+        // Forms 
+        updateFormFieldValue(field, value, labelValue){
+            const self = this;
             if (self.selectedTask.task.forms[field.name]) {
                 if (self.selectedTask.task.forms[field.name].value !== value) {
                     self.selectedTask.task.forms[field.name].value = value
@@ -304,7 +281,7 @@ export default {
                 }
             } else {
                 this.isDirty = true;
-                self.selectedTask.task.forms[field.name] = { value: value }
+                self.selectedTask.task.forms[field.name] = {value: value}
             }
             self._validateTasks([self.selectedTask.task]);
 
@@ -316,7 +293,7 @@ export default {
             if (fieldInSelectedTask) {
                 fieldInSelectedTask.value = value
             } else {
-                fieldInSelectedTask = { value: value }
+                fieldInSelectedTask = {value: value}
             }
             fieldInSelectedTask.label = field.label;
             if (labelValue) {
@@ -324,8 +301,8 @@ export default {
             } else if (fieldInSelectedTask.labelValue) {
                 delete fieldInSelectedTask.labelValue
             }
-        });
-        this.$root.$on('update-workflow-form-field-value', (field, value, labelValue) => {
+        },
+       updateWorkflowFormFieldValue(field, value, labelValue){
             const self = this;
             if (self.workflow)
                 if (!self.workflow.forms || !(self.workflow.forms instanceof Object)) {
@@ -351,48 +328,32 @@ export default {
             } catch (e) {
                 console.debug(e)
             }
-        })
-        /* Task related */
-        
-        this.$root.$on('onremove-task', (task) => {
-            // const self = this;
-            // this.instance.deleteConnectionsForElement(task.id);
-            // this.instance.removeAllEndpoints(task.id);
-            // let elem = document.getElementById(task.id)
-            // elem.parentNode.removeChild(elem);
-            // //console.debug(this.instance.getConnections());
-            // this.instance.repaintEverything();
-            // Vue.nextTick(function () {
-            //     self.$store.dispatch('removeTask', task);
-            //     self.clearSelection();
-            //     self.instance.repaintEverything();
-            // })
-            const inx = this.workflow.tasks.findIndex((n) => n.id === task.id);
-            if (inx > -1) {
-                this.workflow.tasks.splice(inx, 1);
-                // const flows = this.workflow.flows;
-                // for (let i = flows.length - 1; i > 0; i--) {
-                //     if (flows[i].source_id === task.id) {
-                //         state.workflow.flows.splice(i, 1);
-                //     }
-                // }
-            }
-            this.isDirty = true;
-        });
-        this.$root.$on('addFlow', (flow, jsPlumbConn) => {// eslint-disable-line no-unused-vars
-            const sourceTask = self.workflow.tasks.find((t) => t.id === flow.source_id);
-            const targetTask = self.workflow.tasks.find((t) => t.id === flow.target_id);
+        },
+        // Selection
+        blurSelection() {
+            this.showProperties = false;
+            this.selectedTask = {task: {}};
+        },
+        clearSelection() {
+            this.selectedTask = {};
+            this.selectedElements = [];
+            this.showDataSourcesPanel = false;
+            this.showTasksPanel = false;
+        },
+        addFlow(flow, jsPlumbConn) {// eslint-disable-line no-unused-vars
+            const sourceTask = this.workflow.tasks.find((t) => t.id === flow.source_id);
+            const targetTask = this.workflow.tasks.find((t) => t.id === flow.target_id);
             if (targetTask.$meta === undefined) {
                 targetTask.$meta = {}
             }
             const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
-            targetTask.$meta[inputPort.slug] = { sourceOperationSlug: sourceTask.operation.slug };
+            targetTask.$meta[inputPort.slug] = {sourceOperationSlug: sourceTask.operation.slug};
 
             flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
             this.workflow.flows.push(flow);
             this.isDirty = true;
-        });
-        this.$root.$on('removeFlow', (flowId) => {
+        },
+        removeFlow(flowId) {
             const inx = this.workflow.flows.findIndex((n) => {
                 const id = `${n.source_id}/${n.source_port}-${n.target_id}/${n.target_port}`;
                 return id === flowId;
@@ -403,41 +364,13 @@ export default {
 
                 this.isDirty = true;
 
-                const targetTask = self.workflow.tasks.find((t) => t.id === flow.target_id);
+                const targetTask = this.workflow.tasks.find((t) => t.id === flow.target_id);
                 const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
                 if (targetTask.$meta && targetTask.$meta[inputPort.slug]) {
                     delete targetTask.$meta[inputPort.slug];
                 }
             }
-        });
-       
-        this.$root.$on('onshow-result', this.showTaskResult);
-        this.load();
-
-    },
-    beforeUnmount() {
-        this.$root.$off('onclick-export');
-        this.$root.$off('addTask');
-        this.$root.$off('onclick-task');
-        this.$root.$off('on-error');
-        this.$root.$off('onsave-as-image');
-        this.$root.$off('onsave-workflow');
-        this.$root.$off('onsave-workflow-as');
-        this.$root.$off('onsaveas-workflow');
-        this.$root.$off('onalign-tasks');
-        this.$root.$off('ontoggle-tasksPanel');
-        this.$root.$off('ontoggle-tasks');
-        this.$root.$off('onblur-selection');
-        this.$root.$off('update-form-field-value');
-        this.$root.$off('update-workflow-form-field-value');
-        this.$root.$off('addTask');
-        this.$root.$off('addFlow');
-        this.$root.$off('removeFlow');
-        this.$root.$off('onshow-result');
-        this.$root.$off('onset-isDirty');
-        window.removeEventListener('beforeunload', this.leaving)
-    },
-    methods: {
+        },
 
         /* Task related  */
         clickTask(taskComponent, showProperties) {
@@ -457,7 +390,7 @@ export default {
             this.isDirty = true;
         },
 
-        applyZoom(zoom){
+        applyZoom(zoom) {
             this.$refs.diagram.setZoomPercent(zoom);
         },
         getCaipirinhaLink(jobId, taskId, visId) {
@@ -477,9 +410,8 @@ export default {
         showJobs() {
             this.showPreviousJobs = true
         },
-        toggleTasksPanel() { this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false; },
-        toggleDataSourcesPanel() { this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false; },
-        distribute(mode, prop) { this.$refs.diagram.distribute(mode, prop); },
+        toggleTasksPanel() {this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false;},
+        toggleDataSourcesPanel() {this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false;},
         updateSelectedTab(index) {// eslint-disable-line no-unused-vars
             //this.selectedTab = index;
             this.$refs.diagram.repaint();
@@ -494,7 +426,7 @@ export default {
             workflow.tasks.forEach((task) => {
                 let op = self.operationsLookup[task.operation.id];
                 self.maxDisplayOrder = self.maxDisplayOrder < task.display_order ? task.display_order : self.maxDisplayOrder;
-                task.operation = op || { forms: [] };
+                task.operation = op || {forms: []};
                 task.step = null;
                 usingDisabledOp |= op === undefined || op.enabled === false;
                 if (op === undefined || !op.enabled) {
@@ -505,7 +437,7 @@ export default {
             });
             if (usingDisabledOp && showDisabledOpsAlert) {
                 self.warning(self.$t('messages.usingDisabledOperation',
-                    { what: self.$tc('titles.workflow') }), 60000, 300);
+                    {what: self.$tc('titles.workflow')}), 60000, 300);
             }
             if (!workflow.forms) {
                 workflow.forms = {};
@@ -543,7 +475,7 @@ export default {
                         workflow: workflow.id,
                         t: new Date().getTime(), // Force refresh
                     }
-                    axios.get(`${tahitiUrl}/operations`, { params }).then(
+                    axios.get(`${tahitiUrl}/operations`, {params}).then(
                         resp => self._loadOperations(self, workflow, resp.data, true)
                     ).catch(function (e) {
                         this.error(e);
@@ -553,14 +485,14 @@ export default {
                             self.loadingToolbox = true;
                             delete params['workflow'];
                             delete params['t'];
-                            axios.get(`${tahitiUrl}/operations`, { params }).then(
+                            axios.get(`${tahitiUrl}/operations`, {params}).then(
                                 resp => self._loadOperations(self, workflow, resp.data, false)
                             ).catch(function (e) {
                                 this.error(e);
                             });
                         });
                     });
-                    axios.get(`${standUrl}/jobs/latest`, { params })
+                    axios.get(`${standUrl}/jobs/latest`, {params})
                         .then((resp2 => {
                             const job = resp2.data;
                             self.job = job;
@@ -581,7 +513,7 @@ export default {
                                     foundTask.result = result;
                                 }
                             });
-                        })).catch(() => { });
+                        })).catch(() => {});
 
                 }
             ).catch(function (e) {
@@ -678,7 +610,7 @@ export default {
             const self = this;
             const element = document.createElement('a');
             element.setAttribute('href', `data:${contentType};charset=utf-8,` +
-                    encodeURIComponent(data));
+                encodeURIComponent(data));
             element.setAttribute('download', `workflow_${self.workflow.id}.${extension}`);
             element.style.display = 'none';
             document.body.appendChild(element);
@@ -705,8 +637,8 @@ export default {
                             resp => {
                                 self._downloadAsType(resp.data, contentType, extension);
                             }).catch(function (e) {
-                            self.error(e);
-                        });
+                                self.error(e);
+                            });
                     }, 5000)
                 }).catch(function (e) {
                     self.error(e);
@@ -717,7 +649,7 @@ export default {
 
             // self.success(self.$t('messages.exportWorkflow'));
         },
-        saveWorkflowAs(saveOption, newName){
+        saveWorkflowAs(saveOption, newName) {
             if (saveOption === 'new') {
                 this.saveWorkflow(true, newName);
             } else if (saveOption === 'image') {
@@ -728,7 +660,7 @@ export default {
             let self = this
             let cloned = JSON.parse(JSON.stringify(self.workflow));
             let url = `${tahitiUrl}/workflows`;
-            let headers = { 'Content-Type': 'application/json' }
+            let headers = {'Content-Type': 'application/json'}
             let method = 'post'
             if (cloned.id !== 0 && !savingCopy) {
                 url = `${url}/${cloned.id}`;
@@ -737,7 +669,7 @@ export default {
             cloned.platform_id = this.$route.params.platform;
             const oldId2NewId = new Map();
             cloned.tasks.forEach((task) => {
-                task.operation = { id: task.operation.id };
+                task.operation = {id: task.operation.id};
                 delete task.version; //
                 delete task.step;
                 delete task.status;
@@ -758,7 +690,7 @@ export default {
                     flow.id = `${newSource}/${flow.source_port}-${newTarget}/${flow.target_port}`;
                 });
             }
-            return axios[method](url, cloned, { headers }).then(
+            return axios[method](url, cloned, {headers}).then(
                 (resp) => {
                     self.isDirty = false;
                     if (!savingCopy) {
@@ -768,11 +700,11 @@ export default {
                         });
                         self.workflow = workflow;
                         self.success(self.$t('messages.savedWithSuccess',
-                            { what: self.$tc('titles.workflow') }));
+                            {what: self.$tc('titles.workflow')}));
                         self._validateTasks(self.workflow.tasks);
                     } else {
                         self.success(self.$t('workflow.copySavedWithSuccess',
-                            { what: self.$tc('titles.workflow') }));
+                            {what: self.$tc('titles.workflow')}));
                     }
                 }
             ).catch(function (e) {
@@ -787,11 +719,11 @@ export default {
                 () => {
                     self.$refs.diagram.clearWorkflow().then(() => {
                         let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
-                        axios.post(url, { version })
+                        axios.post(url, {version})
                             .then(() => {
                                 self.isDirty = false;
                                 self.success(self.$t('workflow.versionRestored',
-                                    { version }));
+                                    {version}));
                                 //self.$router.go(self.$router.currentRoute);
                                 self.closeHistory();
                                 self.load();
@@ -804,7 +736,7 @@ export default {
             if (extendedSuggestions) {
                 return this._unique(Array.prototype.concat.apply([],
                     extendedSuggestions.inputs.map(
-                        (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
+                        (item) => {return item.attributes;}))).sort(this._caseInsensitiveComparator);
             } else {
                 return [];
             }
@@ -812,8 +744,8 @@ export default {
         getExtendedSuggestions(taskId) {
             if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                 if (window.TahitiAttributeSuggester.processed === undefined
-                        || this.attributeSuggestion[taskId] === undefined
-                        || this.attributeSuggestion[taskId].length === 0) {
+                    || this.attributeSuggestion[taskId] === undefined
+                    || this.attributeSuggestion[taskId].length === 0) {
                     this.updateAttributeSuggestion();
                 }
                 if (this.attributeSuggestion[taskId]) {
@@ -882,7 +814,6 @@ export default {
                 const uiParameters = c.ui_parameters
                     ? new Map(c.ui_parameters.split(",").map(item => item.split("=")))
                     : new Map();
-                this.atmosphereExtension = uiParameters.get('atmosphere') === 'true';
                 this.clusterInfo.description = c.description;
                 this.clusterInfo.clusterName = c.name;
             }
@@ -895,11 +826,14 @@ export default {
             });
         },
         execute() {
-            const self = this;
             this.$Progress.start()
-            this.saveWorkflow(false).then(() => {
-                self._execute();
-            });
+            if (this.isDirty) {
+                this.saveWorkflow(false).then(() => {
+                    this._execute();
+                });
+            } else {
+                this._execute();
+            }
         },
         _retrieveClusters() {
             const self = this;
@@ -922,17 +856,14 @@ export default {
             const self = this;
             const cloned = JSON.parse(JSON.stringify(this.workflow));
             cloned.platform_id = cloned.platform.id;
-            if (self.atmosphereExtension) {
-                cloned['atmosphere'] = this.$refs.performanceModel.payload;
-            }
             cloned.tasks.forEach((task) => {
-                task.operation = { id: task.operation.id };
+                task.operation = {id: task.operation.id};
                 delete task.version;
             });
             const user = this.$store.getters.user;
             const body = {
                 workflow: cloned,
-                cluster: { id: self.clusterInfo.id },
+                cluster: {id: self.clusterInfo.id},
                 name: self.clusterInfo.jobName,
                 user: {
                     id: user.id,
@@ -943,7 +874,7 @@ export default {
             const headers = {
                 'Locale': self.$root.$i18n.locale,
             };
-            axios.post(`${standUrl}/jobs`, body, { headers })
+            axios.post(`${standUrl}/jobs`, body, {headers})
                 .then(function (response) {
                     self.$Progress.finish()
                     self.$router.push({
@@ -980,7 +911,7 @@ export default {
                                         if (value === null || value === undefined || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
                                             warning = this.$tc("errors.missingRequiredValue");
                                             self.validationErrors.push({
-                                                id: counter++, task: { id: t.id, name: t.name },
+                                                id: counter++, task: {id: t.id, name: t.name},
                                                 field: field.label,
                                                 message: self.$tc("errors.missingRequiredValue")
                                             })
@@ -1015,7 +946,7 @@ export default {
                     (response) => {
                         //console.debug(response.data)
                         let ds = response.data;
-                        attributes = ds.attributes.map(function (attr) { return attr.name });
+                        attributes = ds.attributes.map(function (attr) {return attr.name});
                         window.TahitiAttributeSuggester.cached[id] = attributes;
                         callback(attributes);
                     },
@@ -1030,69 +961,64 @@ export default {
 }
 </script>
 <style scoped>
-    body {
-        overflow-y: hidden
-    }
+body {
+    overflow-y: hidden
+}
 </style>
 <style lang="scss">
-    .toolbox {
-        &:before {
-            content: "";
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background-color: #ECEEEF;
-            margin: -8px 0 0 12px;
-            transform: rotate(45deg);
-            z-index: 1;
-        }
-
+.toolbox {
+    &:before {
+        content: "";
         position: absolute;
-        z-index: 10;
-        width: 250px;
-        margin-top: 50px;
-        //overflow: hidden;
-        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
-        border-radius: 5px;
+        width: 15px;
+        height: 15px;
+        background-color: #ECEEEF;
+        margin: -8px 0 0 12px;
+        transform: rotate(45deg);
+        z-index: 1;
+    }
 
-        .card .card-header {
+    position: absolute;
+    z-index: 10;
+    width: 250px;
+    margin-top: 50px;
+    //overflow: hidden;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
+    border-radius: 5px;
 
-            .card-title {
-                font-size: 12px;
-            }
+    .card .card-header {
+
+        .card-title {
+            font-size: 12px;
         }
-
-        .ps__scrollbar-y-rail {
-            z-index: 1;
-        }
-
-        &.datasource-toolbox {
-            left: 200px;
-        }
     }
 
-    .diagram-properties {
-        width: 350px;
-        height: calc(100vh - 250px);
-        position: fixed;
-        right: 1rem;
-        /* bottom: calc(1rem + 25px); */
-        top: 190px;
-        overflow: hidden;
-        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
+    .ps__scrollbar-y-rail {
+        z-index: 1;
     }
 
-    .blackout {
-        background-color: rgba(0, 0, 0, 0) !important;
+    &.datasource-toolbox {
+        left: 200px;
     }
+}
 
-    .historyArea {
-        height: 60vh;
-        overflow: auto
-    }
+.diagram-properties {
+    width: 350px;
+    height: calc(100vh - 250px);
+    position: fixed;
+    right: 1rem;
+    /* bottom: calc(1rem + 25px); */
+    top: 190px;
+    overflow: hidden;
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.16);
+}
 
-    .atmosphere h3 {
-        text-align: center;
-        color: #aaa;
-    }
+.blackout {
+    background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.historyArea {
+    height: 60vh;
+    overflow: auto
+}
 </style>

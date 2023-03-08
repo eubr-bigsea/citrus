@@ -16,11 +16,10 @@
         </div>
         <div class="btn-group mr-2"
              role="group">
-            <button class="btn btn-sm btn-outline-dark"
+            <button class="btn btn-sm btn-outline-success"
                     :title="$t('actions.save')"
-                    @click.prevent="saveWorkflow">
-                <font-awesome-icon icon="fa fa-save"
-                                   class="text-success" /> {{$t('actions.save')}}
+                    @click.prevent="saveWorkflow" :disabled="!isDirty">
+                <font-awesome-icon icon="fa fa-save"/> {{$t('actions.save')}}
             </button>
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.saveAs')"
@@ -96,7 +95,8 @@ import { mapGetters } from 'vuex';
 export default {
     name: 'WorkflowToolbar',
     props: {
-        workflow: {type: Object, default: () => null}
+        workflow: {type: Object, default: () => null},
+        isDirty: {type: Boolean, default: () => false}
     },
     computed: {
         ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),

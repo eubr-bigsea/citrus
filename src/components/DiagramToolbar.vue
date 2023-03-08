@@ -134,7 +134,12 @@ export default {
             this.$parent.$emit('onzoom', this.zoom);
         }
     },
-    emit: ['onremove-tasks', 'onalign-tasks', 'ondistribute-tasks'],
+    emit: ['onalign-tasks', 'oncopy-tasks', 'ondistribute-tasks',
+        'onpaste-tasks', 'onremove-tasks', 'ontoggle-darkMode',
+        'ontoggle-dataSourcesPanel', 'ontoggle-tasks',
+        'ontoggle-tasksPanel', 'onzoom',
+    ],
+    
     methods: {
         copy() {
             this.$emit('oncopy-tasks');

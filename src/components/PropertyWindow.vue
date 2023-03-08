@@ -59,7 +59,8 @@
                                                            :read-only="!field.editable"
                                                            :lookups-method="getLookups"
                                                            :lookups="lookups"
-                                                           context="context" />
+                                                           context="context" 
+                                                           @update-form-field-value="updateField"/>
                                             </keep-alive>
                                         </div>
                                     </b-tab>
@@ -207,6 +208,7 @@ export default {
         publishingEnabled: {type: Boolean, default: () => false},
         variables: { type: Array, default: () => [] }
     },
+    emit: ['update-form-field-value'],
     data() {
         return {
             allFields: new Map(),
@@ -236,7 +238,7 @@ export default {
     mounted() {
         const self = this;
         this.update();
-        self.$root.$on('update-form-field-value', this.toggleFields);
+        //self.$root.$on('update-form-field-value', this.toggleFields);
     },
     methods: {
         getWidget(field) {
@@ -273,7 +275,7 @@ export default {
             //# Return the results of the in-line anonymous function we .call with the passed context
             return function () {
                 try{
-                    //return eval(js);
+                    return eval(js);
                     return true;
                 } catch(pass){
                     return false;
@@ -340,8 +342,9 @@ export default {
             }
             this.tabIndex = 0;
             callback();
+            
         },
-        toggleFields(field, value){
+        updateField(field, value, labelValue){
             const self = this;
             field.internalValue = value;
             const f = self.allFields[field.name];
@@ -364,6 +367,7 @@ export default {
                     });
                 }
             }
+            this.$emit('update-form-field-value', field, value, labelValue)
         }
     }
 }
