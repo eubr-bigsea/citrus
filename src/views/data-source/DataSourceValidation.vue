@@ -22,7 +22,8 @@
                         <div class="col-md-10">
                             <div class="card">
                                 <div class="card-body">
-                                    <div>X validações falhando</div>
+                                    <h4 v-if="failedValidations() > 0" class="text-danger">{{ failedValidations() }} de {{ totalValidations() }} validações falhando</h4>
+                                    <h4 v-else-if="failedValidations() === 0" class="text-success">Todas as {{ totalValidations() }} validações passando</h4>
 
                                     <!-- <v-server-table ref="validationList" :columns="columns" :options="options" name="validationList"> -->
                                     <v-client-table ref="validationList" :data="validations" :columns="columns" :options="options" name="validationList">
@@ -37,28 +38,12 @@
                                                 formatJsonDate}}
                                         </template>
                                         <template #situation="props">
-                                            {{props.row.situation}}
+                                            <p v-if="props.row.situation === 'Sucesso'" class="text-success">{{props.row.situation}}</p>
+                                            <p v-else-if="props.row.situation === 'Falha'" class="text-danger">{{props.row.situation}}</p>
                                         </template>
                                         <template #schedule="props">
                                             {{props.row.schedule}}
                                         </template>
-
-                                        <div slot="afterFilter" class="ml-2">
-                                            <!-- also create this one in the messages.js
-                                            <label>{{$tc('common.situation')}}</label> -->
-                                            <label>Situação</label>
-                                            <select v-model="situation" class="form-control">
-                                                <option />
-                                                <option v-for="sit in situations" :key="sit.id" :value="sit.slug">
-                                                    {{sit.name}}
-                                                </option>
-                                            </select>
-
-                                            <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
-                                                    @click="clearFilters">
-                                                {{$t('actions.clearFilters')}}
-                                            </button>
-                                        </div>
                                         
                                         <template #actions="props">
                                             <button class="btn btn-sm btn-primary" @click="edit(props.row.name)">
@@ -97,8 +82,6 @@ export default {
     data() {
         return {
             dataSource: null,
-            situation: '',
-            situations: [],
             validations: [],
             columns: [
                 'name',
@@ -110,7 +93,7 @@ export default {
             ],
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table-sm table table-hover align="center"',
                 dateColumns: ['last_executed'],
                 columnClasses: { actions: 'th-10' },
                 headings: {
@@ -125,7 +108,7 @@ export default {
                     schedule: 'Agendamento',
                     actions: this.$t('common.action', 2),
                 },
-                sortable: ['name', 'last_executed'],
+                sortable: ['name', 'last_executed', 'status', 'situation'],
                 filterable: ['name'],
                 sortIcon: {
                     base: 'fa fas',
@@ -135,13 +118,6 @@ export default {
                 },
                 preserveState: true,
                 saveState: true,
-                // customFilters: ['situation'],
-                customFilters: [{
-                    name: 'situation',
-                    callback: function (row, query) {
-                        return row.name[0] == query;
-                    }
-                }],
                 filterByColumn: false,
                 // requestFunction: function (data) {
                 //     data.sort = data.orderBy;
@@ -182,35 +158,6 @@ export default {
             }
         }
     },
-    watch: {
-        situation(query) {
-            // // This doesnt work
-            // Event.$emit('vue-tables.validationList.filter::situation', v);
-            // Event.$emit('vue-tables.filter::situation', v);
-
-            // // This works, but it uses internal details of component
-            // const table = this.$refs.validationList;
-            // table.customQueries['situation'] = v;
-            // //table.updateState('customQueries', table.customQueries);
-            // table.getData();
-            
-            // Also not working 
-            Event.$emit('vue-tables.filter::situation', query);
-        }
-    },
-    // async mounted() {
-    //     let url = `${limoneroUrl}/situations`;
-    //     this.$Progress.start();
-    //     try {
-    //         const resp = await axios.get(url);
-    //         this.situations = resp.data.data;
-    //     } catch (e) {
-    //         this.error(e);
-    //     } finally {
-    //         this.$Progress.finish();
-    //     }
-    //     this.situation = this.$refs.validationList.customQueries['situation'];
-    // },
     mounted() {
         this.validations = this.loadData();
         this.load();
@@ -223,19 +170,19 @@ export default {
         },
         loadData() {
             let validations = [
+                // {
+                //     'id': '1000' , 'name': 'Validação 1', 'status': 'Habilitado',
+                //     'last_executed': Date('2020-03-21'), 'situation': 'Falha',
+                //     'schedule' : 'Todo dia, 9h da noite'
+                // },
                 {
-                    'id': '1000' , 'name': 'Validação 1', 'status': 'Habilitado',
+                    'id': '1001' , 'name': 'Validação 2', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
                     'schedule' : 'Todo dia, 9h da noite'
                 },
                 {
-                    'id': '1001' , 'name': 'Validação 2', 'status': 'Habilitado',
-                    'last_executed': '', 'situation': 'Falha',
-                    'schedule' : 'Todo dia, 9h da noite'
-                },
-                {
                     'id': '1002' , 'name': 'Validação 3', 'status': 'Desabilitado',
-                    'last_executed': '', 'situation': 'Falha',
+                    'last_executed': '', 'situation': 'Sucesso',
                     'schedule' : 'Todo dia, 9h da noite'
                 },
                 {
@@ -245,12 +192,12 @@ export default {
                 },
                 {
                     'id': '1300' , 'name': 'Validação 5', 'status': 'Desabilitado',
-                    'last_executed': '', 'situation': 'Falha',
+                    'last_executed': '', 'situation': 'Sucesso',
                     'schedule' : 'Todo dia, 9h da noite'
                 },
                 {
                     'id': '2000' , 'name': 'Validação 6', 'status': 'Habilitado',
-                    'last_executed': '', 'situation': 'Falha',
+                    'last_executed': '', 'situation': 'Sucesso',
                     'schedule' : 'Todo dia, 9h da noite'
                 },
                 {
@@ -260,7 +207,7 @@ export default {
                 },
                 {
                     'id': '1005' , 'name': 'Validação 8', 'status': 'Habilitado',
-                    'last_executed': '', 'situation': 'Sucesso',
+                    'last_executed': '', 'situation': 'Falha',
                     'schedule' : 'Todo dia, 9h da noite'
                 },
                 {
@@ -274,7 +221,32 @@ export default {
                     'schedule' : 'Todo dia, 9h da noite'
                 },
                 {
-                    'id': '1010' , 'name': 'Validação 11', 'status': 'Habilitado',
+                    'id': '1010' , 'name': 'Validação 11', 'status': 'Desabilitado',
+                    'last_executed': '', 'situation': 'Sucesso',
+                    'schedule' : 'Todo dia, 9h da noite'
+                },
+                {
+                    'id': '1011' , 'name': 'Validação 12', 'status': 'Habilitado',
+                    'last_executed': '', 'situation': 'Sucesso',
+                    'schedule' : 'Todo dia, 9h da noite'
+                },
+                {
+                    'id': '1012' , 'name': 'Validação 22', 'status': 'Desabilitado',
+                    'last_executed': '', 'situation': 'Sucesso',
+                    'schedule' : 'Todo dia, 9h da noite'
+                },
+                {
+                    'id': '1013' , 'name': 'Validação 23', 'status': 'Habilitado',
+                    'last_executed': '', 'situation': 'Falha',
+                    'schedule' : 'Todo dia, 9h da noite'
+                },
+                {
+                    'id': '1014' , 'name': 'Validação 24', 'status': 'Desabilitado',
+                    'last_executed': '', 'situation': 'Sucesso',
+                    'schedule' : 'Todo dia, 9h da noite'
+                },
+                {
+                    'id': '10100' , 'name': 'Validação 25', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Falha',
                     'schedule' : 'Todo dia, 9h da noite'
                 },
@@ -284,7 +256,6 @@ export default {
         clearFilters() {
             this.$refs.validationList.setFilter('');
             this.$refs.validationList.customQueries = {};
-            this.situation = '';
         },
         edit(validationId) {
 
@@ -306,9 +277,17 @@ export default {
             //             .catch(e => self.error(e));
             //     }
             // );
+            alert("Dado excluído com sucesso!");
         },
         execute(validationId) {
 
+        },
+        failedValidations() {
+            // this.validations.map(x => x.situation)
+            return this.validations.filter(x => x.situation === 'Falha').length;
+        },
+        totalValidations() {
+            return this.validations.length;
         },
     },
 }
