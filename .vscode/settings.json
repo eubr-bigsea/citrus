@@ -35,7 +35,7 @@
         "\\.vue$"
     ],
     "window.zoomLevel": 0,
-    "files.autoSave": "off",
+    "files.autoSave": "afterDelay",
     "[javascript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },
