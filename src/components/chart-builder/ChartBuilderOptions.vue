@@ -102,6 +102,13 @@
                                         value="name" :append-to-body="true"></v-select>
                                 </b-form-group>
                             </template>
+                            <template v-if="editableVisualization.type.value == 'sunburst'">
+                                <!--FIXME-->
+                                <b-form-group label="Hierarquia" label-for="sunburst">
+                                    <b-form-input id="title" v-model="workflow.visualization.forms.hole.value" type="number" min="0"
+                                        max="100" step="1" class="w-50 form-control-sm" />
+                                </b-form-group>
+                            </template>
                             <template v-if="['donut', 'pie'].indexOf(editableVisualization.type.value) > -1">
                                 <b-form-group label="Posição do texto">
                                     <select v-model="editableVisualization.text_position.value"
@@ -393,6 +400,7 @@ const chartTypes = [
         },*/
     {name: "filled-area", label: "Gráfico de Área", },
     {name: "stacked-filled-area", label: "Gráfico de Área 100%", },
+    {name: "sunburst", label: "Gráfico de Hierarquias", },
     
 ];
 /* Data fields */
@@ -505,6 +513,13 @@ const handleUpdateColorScale = (field, value) => {
 .right-drop-form {
     width: 600px;
 }
+
+.bg-sunburst {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -146px -10px;
+}
+
 
 .options-font {
     font-size: 10pt;

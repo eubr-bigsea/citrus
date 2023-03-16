@@ -464,11 +464,11 @@ const handleSelectAttribute = (x) => {
 const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
 const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
 const handleDeleteY = (index) => {
-    yDimensionDD[index].hide(true)
+    yDimensionDD.value[index].hide(true)
     editableVisualization.value.y.value.splice(index, 1);
 };
 const handleDeleteX = (index) => {
-    xDimensionDD[index].hide(true)
+    xDimensionDD.value[index].hide(true)
     editableVisualization.value.x.value.splice(index, 1);
 };
 const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) => {

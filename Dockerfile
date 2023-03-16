@@ -5,7 +5,7 @@ ENV CITRUS_HOME=/usr/local/citrus
 WORKDIR $CITRUS_HOME
 
 COPY package*.json $CITRUS_HOME/
-RUN npm install
+RUN npm install 
 
 COPY . $CITRUS_HOME
 RUN npm run build

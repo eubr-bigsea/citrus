@@ -151,6 +151,16 @@ export default {
                         });
                     }
                     break;
+                
+                    case "sunburst":
+                    data.push({
+                        type: this.chartData.type,
+                        labels: this.chartData.axis.x.data[0].data,
+                        values: this.chartData.axis.y.data[0].data,
+                        parents: this.chartData.axis.x.data[0].data,
+                        //symbol: this.getFormatedLayout().symbol
+                    });
+                    break;
 
                 default:
                     for (let y of this.chartData.axis.y.data) {
