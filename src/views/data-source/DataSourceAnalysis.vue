@@ -2,9 +2,9 @@
     <main role="main">
         <div class="row header">
             <div class="title col-md-3">
-                <h1>{{ $tc('titles.dataSource', 1) }}</h1>
+                <h1>{{$tc('titles.dataSource', 1)}}</h1>
             </div>
-            <h2>{{ dataSource.name }}</h2>
+            <h2>{{dataSource.name}}</h2>
             <button v-b-modal.add-analysis type="button" class="btn btn-primary">
                 Adicionar...
             </button>
@@ -19,37 +19,49 @@
                 </select>
                 <label for="exampleFormControlSelect1">Tipo</label>
                 <select id="exampleFormControlSelect1" class="form-control">
-                    <option @click="select(unidimensional)">Unidimensional</option>
-                    <option @click="select(bidimensional)">Bidimensional</option>
-                    <option @click="select(multidimensional)">Multidimensional</option>
-                    <option @click="select(testes)">Testes Estatísticos</option>
-                    <option @click="select(ajustar)">Ajustar (fit) a uma distribuição</option>
-                    <option @click="select(series)">Séries temporais</option>
+                    <option @click="select(unidimensional)">
+                        Unidimensional
+                    </option>
+                    <option @click="select(bidimensional)">
+                        Bidimensional
+                    </option>
+                    <option @click="select(multidimensional)">
+                        Multidimensional
+                    </option>
+                    <option @click="select(testes)">
+                        Testes Estatísticos
+                    </option>
+                    <option @click="select(ajustar)">
+                        Ajustar (fit) a uma distribuição
+                    </option>
+                    <option @click="select(series)">
+                        Séries temporais
+                    </option>
                 </select>
                 <p>Análises:</p>
                 <div v-if="choice == unidimensional" class="flex column">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <input id="defaultCheck1" class="form-check-input" type="checkbox" value="">
                         <label class="form-check-label" for="defaultCheck1">
                             Histograma
                         </label>
-                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <input id="defaultCheck1" class="form-check-input" type="checkbox" value="">
                         <label class="form-check-label" for="defaultCheck1">
                             Quantile table
                         </label>
-                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <input id="defaultCheck1" class="form-check-input" type="checkbox" value="">
                         <label class="form-check-label" for="defaultCheck1">
                             Frequency table
                         </label>
-                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <input id="defaultCheck1" class="form-check-input" type="checkbox" value="">
                         <label class="form-check-label" for="defaultCheck1">
                             Summary stats
                         </label>
-                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <input id="defaultCheck1" class="form-check-input" type="checkbox" value="">
                         <label class="form-check-label" for="defaultCheck1">
                             Box Plot
                         </label>
-                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <input id="defaultCheck1" class="form-check-input" type="checkbox" value="">
                         <label class="form-check-label" for="defaultCheck1">
                             Cumulative Distribution Function
                         </label>
@@ -68,9 +80,25 @@
                     <h4>Unidimensional</h4>
                     <div>
                         <div class="analysis_card">
-                            <h6>Atributo</h6>
-                            <div class="analysis_card_title">Histograma</div>
-                            <div></div>
+                            <div class="analysis_card_header">
+                                <h6>Atributo</h6>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" />
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#">Excluir</a></li>
+                                        <li><a class="dropdown-item" href="#">Editar</a></li>
+                                        <li><a class="dropdown-item" href="#">Atualizar</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <h7>Histograma</h7>
+                            <ul class="measurements">
+                                <li>Max: </li>
+                                <li>Min: </li>
+                                <li>Avg: </li>
+                                <li>Std: </li>
+                                <li>Median: </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -110,16 +138,10 @@ export default {
 </script>
 
 <style scoped>
-
 .analisys {
     display: flex;
     flex-direction: column;
-}
-
-.analysis > div {
-    height: 60vh;
-    border: 1px solid #D9DADB;
-    border-radius: 4px;
+    align-items: center;
 }
 
 .header {
@@ -130,9 +152,43 @@ export default {
     padding: 0 10% 0 0;
 }
 
+.analysis>div {
+    height: 60vh;
+    border: 1px solid #D9DADB;
+    border-radius: 4px;
+}
+
 .analysis_card {
     display: flex;
     flex-direction: column;
+    height: 100%;
     width: 300px;
+    border-right: 1px solid #D9DADB;
+    padding: 20px;
+}
+
+.analysis_card>h6,
+.analysis_card>h7 {
+    text-align: center;
+}
+
+.analysis_card_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.analysis_checkbox {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.measurements {
+    width: 100%;
+    text-decoration: none;
+    list-style: none;
+    text-align: start;
 }
 </style>
