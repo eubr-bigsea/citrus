@@ -4,7 +4,7 @@
             <div class="title col-md-3">
                 <h1>{{$tc('titles.dataSource', 1)}}</h1>
             </div>
-            <h2>{{dataSource.name}}</h2>
+            <div>{{dataSource.name}}</div>
             <button v-b-modal.add-analysis type="button" class="btn btn-primary">
                 Adicionar...
             </button>
@@ -19,24 +19,12 @@
                 </select>
                 <label for="exampleFormControlSelect1">Tipo</label>
                 <select id="exampleFormControlSelect1" class="form-control">
-                    <option @click="select(unidimensional)">
-                        Unidimensional
-                    </option>
-                    <option @click="select(bidimensional)">
-                        Bidimensional
-                    </option>
-                    <option @click="select(multidimensional)">
-                        Multidimensional
-                    </option>
-                    <option @click="select(testes)">
-                        Testes Estatísticos
-                    </option>
-                    <option @click="select(ajustar)">
-                        Ajustar (fit) a uma distribuição
-                    </option>
-                    <option @click="select(series)">
-                        Séries temporais
-                    </option>
+                    <option>Unidimensional</option>
+                    <option>Bidimensional</option>
+                    <option>Multidimensional</option>
+                    <option>Testes Estatísticos</option>
+                    <option>Ajustar (fit) a uma distribuição</option>
+                    <option>Séries temporais</option>
                 </select>
                 <p>Análises:</p>
                 <div v-if="choice == unidimensional" class="flex column">
@@ -78,26 +66,29 @@
             <div class="col-md-8">
                 <div class="analysis">
                     <h4>Unidimensional</h4>
-                    <div>
+                    <div class="analysis_box">
                         <div class="analysis_card">
                             <div class="analysis_card_header">
                                 <h6>Atributo</h6>
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" />
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Excluir</a></li>
-                                        <li><a class="dropdown-item" href="#">Editar</a></li>
-                                        <li><a class="dropdown-item" href="#">Atualizar</a></li>
-                                    </ul>
-                                </div>
+                                <b-dropdown id="dropdown-right" right class="m-2">
+                                    <b-dropdown-item href="#">
+                                        Excluir
+                                    </b-dropdown-item>
+                                    <b-dropdown-item href="#">
+                                        Editar
+                                    </b-dropdown-item>
+                                    <b-dropdown-item href="#">
+                                        Atualizar
+                                    </b-dropdown-item>
+                                </b-dropdown>
                             </div>
-                            <h7>Histograma</h7>
+                            <h6>Histograma</h6>
                             <ul class="measurements">
-                                <li>Max: </li>
-                                <li>Min: </li>
-                                <li>Avg: </li>
-                                <li>Std: </li>
-                                <li>Median: </li>
+                                <li>Max:</li>
+                                <li>Min:</li>
+                                <li>Avg:</li>
+                                <li>Std:</li>
+                                <li>Median:</li>
                             </ul>
                         </div>
                     </div>
@@ -113,12 +104,12 @@ const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
 export default {
     components: {
-        DataSourceOptions
+        DataSourceOptions,
     },
     data() {
         return {
             dataSource: null,
-            choice: null
+            choice: null,
         };
     },
     mounted() {
@@ -127,68 +118,64 @@ export default {
     methods: {
         async load() {
             const resp = await axios.get(
-                `${limoneroUrl}/datasources/${this.$route.params.id}`);
+                `${limoneroUrl}/datasources/${this.$route.params.id}`
+            );
             this.dataSource = resp.data;
         },
         select(option) {
             this.choice = option;
-        }
+        },
     },
 };
 </script>
 
 <style scoped>
 .analisys {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10% 0 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10% 0 0;
 }
 
-.analysis>div {
-    height: 60vh;
-    border: 1px solid #D9DADB;
-    border-radius: 4px;
+.analysis_box {
+  height: 60vh;
+  border: 1px solid #d9dadb;
+  border-radius: 4px;
 }
 
 .analysis_card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 300px;
-    border-right: 1px solid #D9DADB;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 300px;
+  border-right: 1px solid #d9dadb;
+  padding: 20px;
 }
 
-.analysis_card>h6,
-.analysis_card>h7 {
-    text-align: center;
+.analysis_card>h6 {
+  text-align: center;
 }
 
 .analysis_card_header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.analysis_checkbox {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .measurements {
-    width: 100%;
-    text-decoration: none;
-    list-style: none;
-    text-align: start;
+  height: fit-content;
+  width: 100%;
+  text-decoration: none;
+  list-style: none;
+  text-align: start;
+  padding: 0 0 0 0;
 }
 </style>
