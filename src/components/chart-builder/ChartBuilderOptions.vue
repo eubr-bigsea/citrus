@@ -443,8 +443,8 @@ const chartTypes = [
     /*{name: "dots",label: "Pontos",
             image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
         },*/
-    { name: "filled-area", label: "Área", },
-    { name: "stacked-filled-area", label: "Área 100%", },
+    { name: "stacked-area", label: "Área empilhado", },
+    { name: "stacked-area-100", label: "Área empilhado 100%", },
 
 ];
 /* Data fields */
