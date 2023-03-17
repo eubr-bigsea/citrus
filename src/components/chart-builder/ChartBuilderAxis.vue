@@ -140,22 +140,22 @@
                                             </select>
                                         </b-form-group>
                                         <!-- FIXME 
-                                                                                    <b-form-group label="Exibir eixo:">
-                                                                                        <select class="form-control form-control-sm">
-                                                                                            <option label="LEFT" value="LEFT">Esquerda</option>
-                                                                                            <option label="DIREITA" value="DIREITA">Direita</option>
-                                                                                            <option label="HIDE" value="HIDE">Ocultar</option>
-                                                                                        </select>
-                                                                                    </b-form-group>
-                                                                                    <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
-                                                                                    <b-form-group label="Faixa de valores:">
-                                                                                        <b-form-radio> Automática </b-form-radio>
-                                                                                        <b-form-radio> Manual </b-form-radio>
-                                                                                        <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
-                                                                                        <input type="number" class="form-control form-control-sm" placeholder="max" />
+                                        <b-form-group label="Exibir eixo:">
+                                            <select class="form-control form-control-sm">
+                                                <option label="LEFT" value="LEFT">Esquerda</option>
+                                                <option label="DIREITA" value="DIREITA">Direita</option>
+                                                <option label="HIDE" value="HIDE">Ocultar</option>
+                                            </select>
+                                        </b-form-group>
+                                        <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
+                                        <b-form-group label="Faixa de valores:">
+                                            <b-form-radio> Automática </b-form-radio>
+                                            <b-form-radio> Manual </b-form-radio>
+                                            <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
+                                            <input type="number" class="form-control form-control-sm" placeholder="max" />
 
-                                                                                    </b-form-group>
-                                                                                    -->
+                                        </b-form-group>
+                                        -->
                                     </div>
                                     <div class="col-12">
                                         <b-button size="sm" variant="danger" class="float-right" @click="handleDeleteY(i)">{{

@@ -443,6 +443,9 @@ class Visualization {
         height = {value: null}, width = {value: null},
         scatter_color = {value: null}, 
         scatter_size = {value: null}, 
+        color_attribute = {value: null}, 
+        color_aggregation = {value: null}, 
+        size_attribute = {value: null}, 
 
     },
     ) {
@@ -451,6 +454,9 @@ class Visualization {
         this.palette = palette;
         this.color_scale = color_scale;
         this.title = title;
+        this.color_attribute = color_attribute;
+        this.color_aggregation = color_aggregation;
+        this.size_attribute = size_attribute;
 
         this.x = x;
         this.y = y;

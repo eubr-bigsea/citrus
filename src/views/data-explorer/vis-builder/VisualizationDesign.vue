@@ -29,7 +29,7 @@
                     <label>{{ $tc('titles.cluster') }}: </label>
                     <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
                         :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
-                        <template #option="{description, name}">
+                        <template #option="{ description, name }">
                             {{ name }}<br>
                             <small><em>{{ description }}</em></small>
                         </template>
@@ -44,7 +44,7 @@
                             <font-awesome-icon icon="fa fa-save" />
                             {{ i18n.$t('actions.save') }}
                         </button>
-                        <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{name: 'index-explorer'}"
+                        <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
                             :title="i18n.$t('actions.back')">
                             {{ i18n.$t('actions.back') }}
                         </router-link>
@@ -56,31 +56,30 @@
             </div>
         </div>
         <div v-if="visualizationObj" class="options-main">
-                    <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
-                        :type="visualizationObj.type.value" />
-                    <div class="chart">
-                        <div class="chart-builder-visualization" style="height: 80vh">
-                            <div v-if="display && plotlyData" ref="chart" style="background: orange; height: 100%">
-                                <plotly :options="{responsive: true, height: 600}" :data="plotlyData.data"
-                                    :layout="plotlyData.layout" :frames="plotlyData.frames" :key="plotVersion"
-                                    ref="plotly" />
-                                <small>{{ plotlyData }}</small>
+            <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
+                :type="visualizationObj.type.value" />
+            <div class="chart">
+                <div class="chart-builder-visualization" style="height: 80vh">
+                    <div v-if="display && plotlyData" ref="chart" style="background: orange; height: 100%">
+                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
+                            :layout="plotlyData.layout" :frames="plotlyData.frames" :key="plotVersion" ref="plotly" />
+                        <small>{{ plotlyData }}</small>
 
-                            </div>
-                            <div v-else class="chart-not-available">
-                                Selecione o tipo de gráfico e configure suas propriedades
-                            </div>
-                            <button class="btn btn-sm btn-secondary" @click.prevent="display = !display">Teste</button>
-                            <!--small>{{ visualizationObj }}</small -->
-                        </div>
                     </div>
-                    <b-tabs>
+                    <div v-else class="chart-not-available">
+                        Selecione o tipo de gráfico e configure suas propriedades
+                    </div>
+                    <button class="btn btn-sm btn-secondary" @click.prevent="display = !display">Teste</button>
+                    <!--small>{{ visualizationObj }}</small -->
+                </div>
+            </div>
+            <b-tabs>
                 <b-tab active>
                     <template #title>
                         <img ref="tabImage"
                             style="width: 68px; height: 32px; filter: brightness(120%);filter: contrast(120%);">
                     </template>
-          
+
                 </b-tab>
                 <b-tab title="OK">
                     <template #title>
@@ -97,8 +96,8 @@
 </template>
 
 <script setup>
-import {ref, shallowRef, computed, onBeforeMount} from "vue";
-import {getCurrentInstance} from 'vue';
+import { ref, shallowRef, computed, onBeforeMount } from "vue";
+import { getCurrentInstance } from 'vue';
 import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
 import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
 
@@ -109,12 +108,12 @@ import Plotly from '../../../components/visualization/Plotly.vue';
 import useNotifier from '../../../composables/useNotifier.js';
 import useDataSource from '../../../composables/useDataSource.js';
 
-import {Operation, VisualizationBuilderWorkflow, Visualization} from '../entities.js';
+import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
 import axios from 'axios';
 import VueSelect from 'vue-select';
 
 import io from 'socket.io-client';
-import {toPng} from 'html-to-image';
+import { toPng } from 'html-to-image';
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
@@ -122,7 +121,7 @@ const route = vm.proxy.$route;
 const progress = vm.proxy.$Progress;
 const store = vm.proxy.$store;
 const i18n = vm.proxy.$i18n.vm;
-const {success, error} = useNotifier(vm.proxy);
+const { success, error } = useNotifier(vm.proxy);
 
 const plotVersion = ref(0);
 const display = ref(true)
@@ -140,7 +139,7 @@ const attributes = ref([]);
 const clusters = ref([]);
 const clusterId = ref(null);
 const dataSource = ref(null);
-const filterField = ref({label: 'Filtrar', values: '{"alias": false}', required: false});
+const filterField = ref({ label: 'Filtrar', values: '{"alias": false}', required: false });
 const internalWorkflowId = ref(null);
 const isDirty = ref(false);
 const job = ref(null);
@@ -151,17 +150,17 @@ const operationsMap = ref(new Map());
 const plotlyData = shallowRef(null);
 const socketIo = ref(null); // used by socketio (web sockets)
 const targetPlatform = ref(4);
-const workflowObj = ref({forms: {$meta: {value: {target: '', taskType: ''}}}});
+const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 const visualizationObj = ref(null);
 
 const dataSourceId = computed({
-    get() {return workflowObj.value.readData.forms.data_source.value;},
-    set(newValue) {workflowObj.value.readData.forms.data_source.value = newValue;}
+    get() { return workflowObj.value.readData.forms.data_source.value; },
+    set(newValue) { workflowObj.value.readData.forms.data_source.value = newValue; }
 });
 const axis = computed({
     get() {
-        const {x_axis, y_axis, y, x, type} = visualizationObj.value;
-        return {x_axis, y_axis, y, x, type};
+        const { x_axis, y_axis, y, x, type } = visualizationObj.value;
+        return { x_axis, y_axis, y, x, type };
     },
     set(value) {
         Object.assign(visualizationObj.value, value);
@@ -170,23 +169,25 @@ const axis = computed({
 
 const options = computed({
     get() {
-        const {display_legend, smoothing, palette, color_scale, label, type, title, hole,
+        const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info,
             top_margin, bottom_margin, left_margin, right_margin, auto_margin,
             template, blackWhite, subgraph, subgraph_orientation,
-            animation, height, width, opacity, scatter_color, scatter_size} = visualizationObj.value;
+            animation, height, width, opacity, scatter_color, scatter_size,
+            color_attribute, color_aggregation, size_attribute } = visualizationObj.value;
         return {
             display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
             auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation,
-            height, width, opacity, scatter_color, scatter_size,
+            height, width, opacity, scatter_color, scatter_size, color_attribute, color_aggregation,
+            size_attribute,
         };
     },
     set(value) {
         Object.assign(visualizationObj.value, value);
     }
 });
-const {getAttributeList, loadDataSourceList} = useDataSource();
+const { getAttributeList, loadDataSourceList } = useDataSource();
 
 onBeforeMount(async () => {
     disconnectWebSocket();
@@ -197,7 +198,7 @@ onBeforeMount(async () => {
 const updateThumb = () => {
     const $elem = this.$refs.chart;
     const $tabImage = this.$refs.tabImage;
-    toPng($elem, {canvasWidth: 68 * 20, canvasHeight: 32 * 20})
+    toPng($elem, { canvasWidth: 68 * 20, canvasHeight: 32 * 20 })
         .then(function (dataUrl) {
             $tabImage.src = dataUrl;
         });
@@ -227,7 +228,7 @@ const load = async () => {
         }
         if (workflowObj.value.type !== 'VIS_BUILDER') {
             error(null, i18n.$t('modelBuilder.invalidType'));
-            router.push({name: 'index-explorer'});
+            router.push({ name: 'index-explorer' });
             return;
         }
         await loadDataSource(dataSourceId.value);
@@ -248,7 +249,7 @@ const load = async () => {
 
     } catch (e) {
         error(e);
-        router.push({name: 'index-explorer'});
+        router.push({ name: 'index-explorer' });
     } finally {
         Vue.nextTick(() => {
             progress.finish();
@@ -263,7 +264,7 @@ const loadOperations = async () => {
         fields: 'id,forms,categories,name,slug'
     };
 
-    const resp = await axios.get(`${tahitiUrl}/operations`, {params});
+    const resp = await axios.get(`${tahitiUrl}/operations`, { params });
     resp.data.data.forEach(op => operationsMap.value.set(op.slug, new Operation(op)));
 };
 const dataSourceList = ref([]);
@@ -296,13 +297,13 @@ const saveWorkflow = async () => {
     if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
     }
-    cloned.forms = {$meta: {plot: plotlyData.value}};
+    cloned.forms = { $meta: { plot: plotlyData.value } };
     let url = `${tahitiUrl}/workflows/${cloned.id}`;
 
     cloned.platform_id = META_PLATFORM_ID;
 
     cloned.tasks.forEach((task) => {
-        task.operation = {id: task.operation.id};
+        task.operation = { id: task.operation.id };
         delete task.version;
         delete task.step;
         delete task.status;
@@ -314,9 +315,9 @@ const saveWorkflow = async () => {
     delete cloned.filter;
 
     try {
-        await axios.patch(url, cloned, {headers: {'Content-Type': 'application/json'}});
+        await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
         isDirty.value = false;
-        success(i18n.$t('messages.savedWithSuccess', {what: i18n.$t('titles.workflow')}));
+        success(i18n.$t('messages.savedWithSuccess', { what: i18n.$t('titles.workflow') }));
     } catch (e) {
         error(e);
     }
@@ -337,13 +338,13 @@ const loadData = async () => {
 
     cloned.tasks.forEach((task) => {
         // Remove unnecessary attributes from operation
-        task.operation = {id: task.operation.id};
+        task.operation = { id: task.operation.id };
         delete task.version;
     });
 
     const body = {
         workflow: cloned,
-        cluster: {id: cloned.preferred_cluster_id},
+        cluster: { id: cloned.preferred_cluster_id },
         name: `## vis explorer ${workflowObj.value.id} ##`,
         user: store.getters.user, //: { id: user.id, login: user.login, name: user.name },
         persist: false, // do not save the job in db.
@@ -356,7 +357,7 @@ const loadData = async () => {
 
     try {
         const response = await axios.post(`${standUrl}/jobs`, body,
-            {headers: {'Locale': i18n.locale, }});
+            { headers: { 'Locale': i18n.locale, } });
         job.value = response.data.data;
         connectWebSocket();
     } catch (ex) {
@@ -374,14 +375,14 @@ const loadData = async () => {
 /* WebSocket Handling */
 const disconnectWebSocket = () => {
     if (socketIo.value) {
-        socketIo.value.emit('leave', {room: job.value.id});
+        socketIo.value.emit('leave', { room: job.value.id });
         socketIo.value.close();
     }
 };
 
 const connectWebSocket = () => {
     if (socketIo.value === null) {
-        const opts = {upgrade: true};
+        const opts = { upgrade: true };
         if (standSocketIoPath !== '') {
             opts['path'] = standSocketIoPath;
         }
@@ -389,7 +390,7 @@ const connectWebSocket = () => {
             `${standSocketServer}${standNamespace}`, opts);
 
         socketIo.value = socket;
-        socket.on('connect', () => {socket.emit('join', {cached: false, room: job.value.id});});
+        socket.on('connect', () => { socket.emit('join', { cached: false, room: job.value.id }); });
         socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
             if (msg.type === 'PLOTLY') {
                 const messageJson = msg.message;
