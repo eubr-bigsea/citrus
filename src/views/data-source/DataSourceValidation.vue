@@ -58,10 +58,45 @@
                                         </template>
                                     <!-- </v-server-table> -->
                                     </v-client-table>
-                                    <b-modal ref="editWindow" size="xl" :title="$t('common.edit')"
-                                            no-stacking button-size="sm"
-                                            header-bg-variant="dark" header-text-variant="light">
-                                        {{this.validationToEdit}}
+                                    <b-modal ref="editWindow" size="xl" :title="$t('actions.edit')" no-stacking button-size="sm" header-bg-variant="dark" 
+                                            header-text-variant="light" @ok="handleEditOk" @show="resetEditModal" @hidden="resetEditModal">
+                                        <!-- {{this.validationToEdit}} -->
+
+                                        <form ref="editForm" @submit.stop.prevent="handleEditSubmit">
+                                            <div class="row" align-v="center">
+                                                <div class="col-md-10">
+                                                    <b-form-group label="Name" label-for="name-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="nameState">
+                                                        <b-form-input
+                                                            id="name-input"
+                                                            v-model="name"
+                                                            type="text"
+                                                            :state="nameState"
+                                                            required>
+                                                        </b-form-input>
+                                                    </b-form-group>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <b-form-checkbox
+                                                        id="status-checkbox"
+                                                        v-model="status"
+                                                        name="status"
+                                                        value="Habilitado"
+                                                        unchecked-value="Desabilitado"
+                                                    >Habilitado</b-form-checkbox>
+                                                </div>
+                                            </div>
+
+
+                                        </form>
+
+
+
+                                        <!-- Just to see the results -->
+                                        <br><br>
+                                        {{ this.name }}<br>
+                                        {{ this.status }}<br> 
+
                                     </b-modal>
                                 </div>
                             </div>
@@ -90,6 +125,9 @@ export default {
             previewWindow: null,
             validations: [],
             validationToEdit: null,
+            name: '',
+            nameState: null,
+            status: 'Desabilitado',
             columns: [
                 'name',
                 'status',
@@ -267,6 +305,30 @@ export default {
         edit(validationId) {
             this.validationToEdit = this.validations.filter(x => x.id === validationId);
             this.$refs.editWindow.show();
+        },
+        resetEditModal() {
+            this.name = '';
+            this.nameState = null;
+            this.status = 'Desabilitado';
+        },
+        handleEditOk(bvModalEvent) {
+            bvModalEvent.preventDefault();
+            this.handleEditSubmit();
+        },
+        handleEditSubmit() {
+            if (!this.checkEditFormValidity()) {
+                return;
+            }
+            // Here I send the editted validation to the api
+            //...
+            this.$nextTick(() => {
+                this.$refs.editWindow.hide();
+            })
+        },
+        checkEditFormValidity() {
+            const valid = this.$refs.editForm.checkValidity();
+            this.nameState = valid;
+            return valid;
         },
         remove(validationId) {
             // const self = this;
