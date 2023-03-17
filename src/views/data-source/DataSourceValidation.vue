@@ -46,18 +46,23 @@
                                         </template>
                                         
                                         <template #actions="props">
-                                            <button class="btn btn-sm btn-primary" @click="edit(props.row.name)">
+                                            <button class="btn btn-sm btn-primary" @click.stop="edit(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-edit" />
                                             </button>
-                                            <button class="btn btn-sm btn-danger" @click="remove(props.row.name)">
+                                            <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-trash" />
                                             </button>
-                                            <button class="btn btn-sm btn-info" @click="execute(props.row.name)">
+                                            <button class="btn btn-sm btn-info" @click="execute(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-play" />
                                             </button>
                                         </template>
                                     <!-- </v-server-table> -->
                                     </v-client-table>
+                                    <b-modal ref="editWindow" size="xl" :title="$t('common.edit')"
+                                            no-stacking button-size="sm"
+                                            header-bg-variant="dark" header-text-variant="light">
+                                        {{this.validationToEdit}}
+                                    </b-modal>
                                 </div>
                             </div>
                         </div>
@@ -77,12 +82,14 @@ const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 export default {
     mixins: [Notifier],
     components: {
-        DataSourceOptions
+        DataSourceOptions,
     },
     data() {
         return {
             dataSource: null,
+            previewWindow: null,
             validations: [],
+            validationToEdit: null,
             columns: [
                 'name',
                 'status',
@@ -258,7 +265,8 @@ export default {
             this.$refs.validationList.customQueries = {};
         },
         edit(validationId) {
-
+            this.validationToEdit = this.validations.filter(x => x.id === validationId);
+            this.$refs.editWindow.show();
         },
         remove(validationId) {
             // const self = this;
