@@ -87,6 +87,9 @@
                                                 </div>
                                             </div>
 
+                                            <div>
+                                                <VueCronEditorBuefy v-model="cronExpression"/>
+                                            </div>
 
                                         </form>
 
@@ -95,7 +98,8 @@
                                         <!-- Just to see the results -->
                                         <br><br>
                                         {{ this.name }}<br>
-                                        {{ this.status }}<br> 
+                                        {{ this.status }}<br>
+                                        {{ this.cronExpression }}<br>
 
                                     </b-modal>
                                 </div>
@@ -110,6 +114,7 @@
 <script>
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
+import VueCronEditorBuefy from 'vue-cron-editor-buefy';
 import DataSourceOptions from '../../components/data-source/DataSourceOptions.vue';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -117,6 +122,7 @@ const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 export default {
     mixins: [Notifier],
     components: {
+        VueCronEditorBuefy,
         DataSourceOptions,
     },
     data() {
@@ -128,6 +134,9 @@ export default {
             name: '',
             nameState: null,
             status: 'Desabilitado',
+            
+            cronExpression: "*/1 * * * *",
+
             columns: [
                 'name',
                 'status',
