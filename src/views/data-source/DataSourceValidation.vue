@@ -13,6 +13,15 @@
                                 {{ dataSource.name }}
                             </div>
                         </div>
+                        
+                        <div class="col-md-6">
+                            <div class="row d-flex flex-row-reverse mx-1">
+                                <button class="btn btn-primary btn-lemonade-primary" @click.stop="add">
+                                    <font-awesome-icon icon="fa fa-plus" />
+                                    {{$t('actions.addItem')}}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="row">
@@ -44,20 +53,26 @@
                                         <template #schedule="props">
                                             {{props.row.schedule}}
                                         </template>
+                                        <template #category_and_validation="props">
+                                            {{props.row.category}} / {{props.row.validation}}
+                                        </template>
                                         
                                         <template #actions="props">
                                             <button class="btn btn-sm btn-primary" @click.stop="edit(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-edit" />
                                             </button>
-                                            <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                                            <button class="btn btn-sm btn-danger" @click.stop="remove(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-trash" />
                                             </button>
-                                            <button class="btn btn-sm btn-info" @click="execute(props.row.id)">
+                                            <button class="btn btn-sm btn-info" @click.stop="execute(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-play" />
                                             </button>
                                         </template>
                                     <!-- </v-server-table> -->
                                     </v-client-table>
+
+                                    
+
                                     <b-modal ref="editWindow" size="xl" :title="$t('actions.edit')" no-stacking button-size="sm" header-bg-variant="dark" 
                                             header-text-variant="light" @ok="handleEditOk" @show="resetEditModal" @hidden="resetEditModal">
                                         <!-- {{this.validationToEdit}} -->
@@ -65,7 +80,7 @@
                                         <form ref="editForm" @submit.stop.prevent="handleEditSubmit">
                                             <div class="row" align-v="center">
                                                 <div class="col-md-10">
-                                                    <b-form-group label="Name" label-for="name-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="nameState">
+                                                    <b-form-group :label="$t('common.name')" label-for="name-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="nameState">
                                                         <b-form-input
                                                             id="name-input"
                                                             v-model="name"
@@ -83,13 +98,19 @@
                                                         name="status"
                                                         value="Habilitado"
                                                         unchecked-value="Desabilitado"
-                                                    >Habilitado</b-form-checkbox>
+                                                    >{{ $t('common.enabled') }}</b-form-checkbox>
                                                 </div>
                                             </div>
 
-                                            <div>
-                                                <VueCronEditorBuefy v-model="cronExpression"/>
-                                            </div>
+                                            <b-form-group label="Agendamento" label-for="schedule-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="scheduleState">
+                                                <b-form-input
+                                                    id="schedule-input"
+                                                    v-model="schedule"
+                                                    type="text"
+                                                    :state="scheduleState"
+                                                    required>
+                                                </b-form-input>
+                                            </b-form-group>
 
                                         </form>
 
@@ -99,7 +120,7 @@
                                         <br><br>
                                         {{ this.name }}<br>
                                         {{ this.status }}<br>
-                                        {{ this.cronExpression }}<br>
+                                        {{ this.schedule }}<br>
 
                                     </b-modal>
                                 </div>
@@ -114,7 +135,7 @@
 <script>
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
-import VueCronEditorBuefy from 'vue-cron-editor-buefy';
+// import VueCronEditorBuefy from 'vue-cron-editor-buefy';
 import DataSourceOptions from '../../components/data-source/DataSourceOptions.vue';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -122,28 +143,27 @@ const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 export default {
     mixins: [Notifier],
     components: {
-        VueCronEditorBuefy,
         DataSourceOptions,
     },
     data() {
         return {
-            dataSource: null,
+            dataSource: [],
             previewWindow: null,
             validations: [],
             validationToEdit: null,
             name: '',
             nameState: null,
             status: 'Desabilitado',
-            
-            cronExpression: "*/1 * * * *",
-
+            schedule: '',
+            scheduleState: null,
             columns: [
                 'name',
                 'status',
                 'last_executed',
                 'situation',
                 'schedule',
-                'actions'
+                'category_and_validation',
+                'actions',
             ],
             options: {
                 debounce: 800,
@@ -153,13 +173,10 @@ export default {
                 headings: {
                     name: this.$t('common.name'),
                     status: this.$t('common.status'),
-                    // create this messages in the messages.js
-                    // last_executed: this.$tc('common.last_executed'),
-                    // situation: this.$tc('common.situation'),
-                    // schedule: this.$tc('common.schedule'),
                     last_executed: 'Última execução',
                     situation: 'Situação',
                     schedule: 'Agendamento',
+                    category_and_validation: this.$t('common.category') + ' / ' + this.$t('titles.validation'),
                     actions: this.$t('common.action', 2),
                 },
                 sortable: ['name', 'last_executed', 'status', 'situation'],
@@ -227,82 +244,82 @@ export default {
                 // {
                 //     'id': '1000' , 'name': 'Validação 1', 'status': 'Habilitado',
                 //     'last_executed': Date('2020-03-21'), 'situation': 'Falha',
-                //     'schedule' : 'Todo dia, 9h da noite'
+                //     'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 // },
                 {
                     'id': '1001' , 'name': 'Validação 2', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': 'Categoria Teste 1', 'validation': 'Validação Teste',
                 },
                 {
                     'id': '1002' , 'name': 'Validação 3', 'status': 'Desabilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1003' , 'name': 'Validação 4', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1300' , 'name': 'Validação 5', 'status': 'Desabilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '2000' , 'name': 'Validação 6', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1004' , 'name': 'Validação 7', 'status': 'Desabilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1005' , 'name': 'Validação 8', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Falha',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1006' , 'name': 'Validação 19', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1007' , 'name': 'Validação 20', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1010' , 'name': 'Validação 11', 'status': 'Desabilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1011' , 'name': 'Validação 12', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1012' , 'name': 'Validação 22', 'status': 'Desabilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1013' , 'name': 'Validação 23', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Falha',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '1014' , 'name': 'Validação 24', 'status': 'Desabilitado',
                     'last_executed': '', 'situation': 'Sucesso',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
                 {
                     'id': '10100' , 'name': 'Validação 25', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Falha',
-                    'schedule' : 'Todo dia, 9h da noite'
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
                 },
             ];
             return validations;
@@ -318,6 +335,8 @@ export default {
         resetEditModal() {
             this.name = '';
             this.nameState = null;
+            this.schedule = '';
+            this.scheduleState = null;
             this.status = 'Desabilitado';
         },
         handleEditOk(bvModalEvent) {
@@ -330,13 +349,21 @@ export default {
             }
             // Here I send the editted validation to the api
             //...
+
             this.$nextTick(() => {
                 this.$refs.editWindow.hide();
             })
         },
         checkEditFormValidity() {
             const valid = this.$refs.editForm.checkValidity();
-            this.nameState = valid;
+            if(valid == true) {
+                this.nameState = valid;
+                this.scheduleState = valid;
+            }
+            else {
+                this.nameState = ((this.name == '') ? valid : !valid);
+                this.scheduleState = ((this.schedule == '') ? valid : !valid);
+            }
             return valid;
         },
         remove(validationId) {
@@ -359,14 +386,16 @@ export default {
             alert("Dado excluído com sucesso!");
         },
         execute(validationId) {
-
+            // Do this
         },
         failedValidations() {
-            // this.validations.map(x => x.situation)
             return this.validations.filter(x => x.situation === 'Falha').length;
         },
         totalValidations() {
             return this.validations.length;
+        },
+        add() {
+            // Implement a modal like the edit modal
         },
     },
 }
