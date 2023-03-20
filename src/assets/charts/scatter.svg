@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="Layer_2"
+   data-name="Layer 2"
+   viewBox="0 0 18.96 17.97"
+   version="1.1"
+   sodipodi:docname="scatter.svg"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)">
+  <metadata
+     id="metadata36">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     id="namedview34"
+     showgrid="false"
+     inkscape:zoom="12.353924"
+     inkscape:cx="-24.504529"
+     inkscape:cy="27.963228"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_2" />
+  <defs
+     id="defs4">
+    <style
+       id="style2">
+      .cls-1 {
+        fill: #578f40;
+      }
+
+      .cls-2 {
+        fill: #b7d883;
+        opacity: .8;
+      }
+    </style>
+  </defs>
+  <circle
+     style="fill:#008000;stroke-width:3.14285731"
+     id="path105-7-7"
+     cx="3.7235131"
+     cy="15.339257"
+     r="1.7808107" />
+  <circle
+     style="fill:#008000;stroke-width:3.14285731"
+     id="path105-7-7-5"
+     cx="4.6139188"
+     cy="10.280135"
+     r="1.7808107" />
+  <circle
+     style="fill:#008000;stroke-width:3.14285731"
+     id="path105-7-7-8"
+     cx="9.0659456"
+     cy="13.598919"
+     r="1.7808107" />
+  <circle
+     style="fill:#008000;stroke-width:3.14285731"
+     id="path105-7-7-1"
+     cx="8.6612158"
+     cy="9.3087835"
+     r="1.7808107" />
+  <circle
+     style="fill:#008000;stroke-width:3.14285731"
+     id="path105-7-7-55"
+     cx="14.16554"
+     cy="9.0659456"
+     r="1.7808107" />
+  <circle
+     style="fill:#008000;stroke-width:3.14285731"
+     id="path105-7-7-9"
+     cx="16.75581"
+     cy="3.5616214"
+     r="1.7808107" />
+</svg>
