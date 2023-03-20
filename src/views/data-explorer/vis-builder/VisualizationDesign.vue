@@ -61,7 +61,7 @@
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 80vh">
                     <div v-if="display && plotlyData" ref="chart" style="background: orange; height: 100%">
-                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
+                        <plotly :options="{responsive: true, height: 600}" :data="plotlyData.data"
                             :layout="plotlyData.layout" :frames="plotlyData.frames" :key="plotVersion" ref="plotly" />
                         <small>{{ plotlyData }}</small>
 
@@ -73,7 +73,8 @@
                     <!--small>{{ visualizationObj }}</small -->
                 </div>
             </div>
-            <b-tabs>
+            <!--
+                    <b-tabs>
                 <b-tab active>
                     <template #title>
                         <img ref="tabImage"
@@ -87,6 +88,7 @@
                     </template>
                 </b-tab>
             </b-tabs>
+            -->
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
                 {{ i18n.$t('common.wait') }}
@@ -153,6 +155,9 @@ const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 const visualizationObj = ref(null);
 
+// Elements refs
+const cluster = ref(null)
+
 const dataSourceId = computed({
     get() { return workflowObj.value.readData.forms.data_source.value; },
     set(newValue) { workflowObj.value.readData.forms.data_source.value = newValue; }
@@ -174,13 +179,14 @@ const options = computed({
             top_margin, bottom_margin, left_margin, right_margin, auto_margin,
             template, blackWhite, subgraph, subgraph_orientation,
             animation, height, width, opacity, scatter_color, scatter_size,
-            color_attribute, color_aggregation, size_attribute } = visualizationObj.value;
+            color_attribute, color_aggregation, size_attribute,
+            fill_opacity } = visualizationObj.value;
         return {
             display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
             auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation,
             height, width, opacity, scatter_color, scatter_size, color_attribute, color_aggregation,
-            size_attribute,
+            size_attribute, fill_opacity
         };
     },
     set(value) {
@@ -326,7 +332,10 @@ const handleUpdateFilter = (field, value) => {
     workflowObj.value.filter.forms.formula.value = value;
 };
 const loadData = async () => {
-
+    if (!workflowObj.value.preferred_cluster_id) {
+        error(`${i18n.$t('errors.missingRequiredValue')}: ${i18n.$t('workflow.preferredCluster')}`);
+        return;
+    }
     loadingData.value = true;
     Object.assign(workflowObj.value.visualization.forms, visualizationObj.value);
     if (workflowObj.value.sort.forms.order_by.value === 'asc' ||

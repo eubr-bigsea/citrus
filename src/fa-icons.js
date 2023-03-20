@@ -141,6 +141,7 @@ import {
     faY,
     faX,
     faXmarkCircle,
+    faHatWizard,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -214,6 +215,7 @@ library.add(
     faGripVertical,
     faHandPaper,
     faHashtag,
+    faHatWizard,
     faHistory,
     faHome,
     faImage,

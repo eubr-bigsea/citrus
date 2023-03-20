@@ -8,54 +8,41 @@
             <div class="row">
                 <div class="col-md-3">
                     <b-card>
-                        <label class=""
-                               for="name">Nome do experimento:</label>
-                        <input id="name"
-                               v-model="name"
-                               v-focus
-                               type="text"
-                               class="form-control"
-                               maxlength="100">
+                        <label class="" for="name">Nome do experimento:</label>
+                        <input id="name" v-model="name" v-focus type="text" class="form-control" maxlength="100">
 
                         <label class="mt-2">Escolha a fonte de dados:</label>
-                        <vue-select v-model="selectedDataSource"
-                                    :filterable="false"
-                                    :options="dataSourceList"
-                                    label="name"
-                                    @search="loadDataSourceList"
-                                    @input="retrieveAttributes">
+                        <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList" label="name"
+                            @search="loadDataSourceList" @input="retrieveAttributes">
                             <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
+                                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
+                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
                                 </div>
                             </template>
                         </vue-select>
                         <hr>
-                        <router-link :to="{name: 'index-explorer'}"
-                                     class="btn btn-sm btn-outline-secondary mr-2">
-                            {{$t('actions.back')}}
+                        <router-link :to="{name: 'index-explorer'}" class="btn btn-sm btn-outline-secondary mr-2">
+                            {{ $t('actions.back') }}
                         </router-link>
-                        <button v-if="valid"
-                                class="btn btn-primary btn-sm"
-                                @click="create">
-                            {{$t('actions.create', {type: 'experimento'})}}
+                        <button v-if="valid" class="btn btn-primary btn-sm" @click="create">
+                            {{ $t('actions.create', {type: 'experimento'}) }}
                         </button>
                     </b-card>
                 </div>
                 <div class="col-md-9">
                     <div class="card-deck1 text-center">
-                        <div class="custom-card">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <span class="fa-stack fa-3x">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="custom-card" role="button" @click="create">
+                                    <span class="fa-stack fa-3x text-success">
                                         <span class="fas fa-circle text- fa-stack-2x" />
                                         <span class="fas fa-glasses fa-stack-1x fa-inverse" />
                                     </span>
@@ -65,18 +52,28 @@
                                         gráfico e detalhes de apresentação.
                                     </small>
                                 </div>
-                                <div class="col-md-8 text-left">
-                                    <b-form-radio v-model="method"
-                                                  name="method"
-                                                  class="font-weight-bold"
-                                                  value="custom">
-                                        Configurar visualização
-                                    </b-form-radio>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="custom-card" role="button">
+                                    <span class="fa-stack fa-3x">
+                                        <span class="fas fa-circle text- fa-stack-2x text-primary" />
+                                        <span class="fas fa-hat-wizard fa-stack-1x fa-inverse" />
+                                    </span>
+                                    <h6>Usando assistente</h6>
+                                    <small>
+                                        Você será orientado por meio de perguntas a escolher o melhor tipo de gráfico para o seu propósito.
+                                        Claro, você poderá alterar o tipo de gráfico posteriormente, caso seja necessário. 
+                                    </small>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+
             </div>
         </div>
     </main>
@@ -87,12 +84,12 @@ import axios from 'axios';
 import vSelect from 'vue-select';
 import Notifier from '../../../mixins/Notifier.js';
 import DataSourceMixin from '../DataSourceMixin.js';
-import { Workflow } from '../entities.js';
+import {Workflow} from '../entities.js';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
-    components: { 'vue-select': vSelect },
+    components: {'vue-select': vSelect},
     mixins: [Notifier, DataSourceMixin],
     data() {
         return {
@@ -108,16 +105,16 @@ export default {
     },
     methods: {
         navigate(name) {
-            this.$router.push({ name });
+            this.$router.push({name});
         },
         async create() {
             try {
-                const ds = { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name };
+                const ds = {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name};
                 const workflow = Workflow.buildVisualizationBuilder(
                     this.name, ds, this.method, this);
                 const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
                 const workflowResp = resp.data;
-                this.$router.push({ name: 'visualization-design', params: { id: workflowResp.id } });
+                this.$router.push({name: 'visualization-design', params: {id: workflowResp.id}});
             } catch (e) {
                 this.error(e);
             }
@@ -126,11 +123,11 @@ export default {
 }
 </script>
 <style scoped>
-    .custom-card {
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 5px;
-    }
+.custom-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 5px;
+}
 </style>

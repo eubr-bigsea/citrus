@@ -446,6 +446,7 @@ class Visualization {
         color_attribute = {value: null}, 
         color_aggregation = {value: null}, 
         size_attribute = {value: null}, 
+        fill_opacity = {value: 255}, 
 
     },
     ) {
@@ -457,6 +458,7 @@ class Visualization {
         this.color_attribute = color_attribute;
         this.color_aggregation = color_aggregation;
         this.size_attribute = size_attribute;
+        this.fill_opacity = fill_opacity;
 
         this.x = x;
         this.y = y;

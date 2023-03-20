@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{$tc('titles.dataSource', 2)}}</h1>
             <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" :to="{ name: 'addDataSource' }"
-                         class="btn btn-primary btn-lemonade-primary">
+                         class="btn btn-success">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </router-link>
         </div>

@@ -125,11 +125,17 @@
 
                     <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
                         <b-card-body class="p-2">
-                            <b-form-group label="Opacidade:" label-for="line-width">
+                            <b-form-group label="Opacidade do gráfico:" label-for="line-width">
                                 <b-form-input id="title" v-model.number="editableVisualization.opacity.value" type="range"
-                                    min="0" max="1" step="0.1" class="form-control-sm" />
+                                    min="0" max="1" step="0.01" class="form-control-sm" />
                                 <b-form-text
-                                    class="text-center mt-0 mb-2">{{ editableVisualization.opacity.value * 100 }}%</b-form-text>
+                                    class="text-center mt-0 mb-2">{{ Math.round(editableVisualization.opacity.value * 100) }}%</b-form-text>
+                            </b-form-group>
+                            <b-form-group label="Opacidade do preenchimento:">
+                                <b-form-input id="title" v-model.number="editableVisualization.fill_opacity.value" type="range"
+                                    min="0" max="1" step=".01" class="form-control-sm" />
+                                <b-form-text
+                                    class="text-center mt-0 mb-2">{{ Math.round(editableVisualization.fill_opacity.value * 100)}}%</b-form-text>
                             </b-form-group>
                             <b-form-group>
                                 <b-form-checkbox v-model="editableVisualization.smoothing.value" switch>
@@ -445,6 +451,7 @@ const chartTypes = [
         },*/
     { name: "stacked-area", label: "Área empilhado", },
     { name: "stacked-area-100", label: "Área empilhado 100%", },
+    { name: "sunburst", label: "Sunburst", },
 
 ];
 /* Data fields */

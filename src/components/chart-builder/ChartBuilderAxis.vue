@@ -69,6 +69,22 @@
                                     <div class="col-6">
                                         <b-form-group :label="$tc('common.attribute', 1) + ':'"
                                             label-for="dropdown-form-email">
+
+                                            <v-select v-model="y.attribute" :options="attributes" label="name"
+                                                :reduce="(opt) => opt.name" :searchable="false">
+                                                <template #option="{type, name}">
+                                                    <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                    {{ name }}
+                                                </template>
+
+                                                <template #selected-option="{type, name}">
+                                                    <div>
+                                                        <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                        {{ name }}
+                                                    </div>
+                                                </template>
+                                            </v-select>
+                                            <!--
                                             <select class="form-control form-control-sm mt-2" v-model="y.attribute">
                                                 <option value="*"># Total de registros</option>
                                                 <option v-for="attr in attributes" :value="attr.name">
@@ -76,6 +92,7 @@
                                                     ({{ attr.type }})
                                                 </option>
                                             </select>
+                                        -->
                                         </b-form-group>
                                         <b-form-group label="Rótulo para legenda:">
                                             <b-form-input type="text" v-model="y.label" class="form-control form-control-sm"
@@ -123,8 +140,12 @@
                                             <b-form-input type="text" v-model="y.suffix"
                                                 class="form-control form-control-sm" maxlength="20" debounce="500" />
                                         </b-form-group>
-                                        <b-form-group label="Cor:">
-                                            <b-form-input type="color" v-model="y.color"
+                                        <b-form-group v-if="!['donut', 'pie'].includes(type)">
+                                            <template #label>
+                                                <b-form-checkbox v-model="y.custom_color"> Usar cor personalizada
+                                                </b-form-checkbox>
+                                            </template>
+                                            <b-form-input v-if="y.custom_color" type="color" v-model="y.color"
                                                 class="form-control form-control-sm" />
                                         </b-form-group>
                                         <b-form-group label="Tipo de linha:">
@@ -138,6 +159,25 @@
                                             <select class="form-control form-control-sm w-50" v-model.number="y.strokeSize">
                                                 <option v-for="i in 10" :key="i" :value="i">{{ i }}</option>
                                             </select>
+                                        </b-form-group>
+                                        <b-form-group v-if="type.endsWith('bar') || type.endsWith('area')"
+                                            label="Padrão de preenchimento:">
+                                            <v-select v-model="y.shape" :options="shapes" label="label"
+                                                :reduce="(opt) => opt.name" :searchable="false" style="font-size:10pt">
+                                                <template #option="{label, name, icon}">
+                                                    <img :src="getShapeIcon(icon)" style="width:20px; height: 20px" />
+                                                    {{ label }}
+                                                    <!--<div class="bg-chart" :class="`bg-${name}`"></div>-->
+                                                </template>
+
+                                                <template #selected-option="{label, name, icon}">
+                                                    <div>
+                                                        <img :src="getShapeIcon(icon)" style="width:20px; height: 20px" />
+                                                        {{ label }}
+                                                        <!--<div class="bg-chart" :class="`bg-${name}`"></div> -->
+                                                    </div>
+                                                </template>
+                                            </v-select>
                                         </b-form-group>
                                         <!-- FIXME 
                                         <b-form-group label="Exibir eixo:">
@@ -157,9 +197,10 @@
                                         </b-form-group>
                                         -->
                                     </div>
-                                    <div class="col-12">
-                                        <b-button size="sm" variant="danger" class="float-right" @click="handleDeleteY(i)">{{
-                                            $tc('actions.delete') }}</b-button>
+                                    <div class="col-12 border-top pt-2">
+                                        <b-button size="sm" variant="danger" class="float-right"
+                                            @click="handleDeleteY(i)">{{
+                                                $tc('actions.delete') }}</b-button>
                                     </div>
                                 </div>
                             </b-dropdown-form>
@@ -241,6 +282,22 @@
                                 <div class="row series-form">
                                     <div class="col-6">
                                         <b-form-group :label="$tc('common.attribute', 1) + ':'">
+                                            <v-select v-model="x.attribute" :options="attributes" label="name"
+                                                :reduce="(opt) => opt.name" :searchable="false"
+                                                @change="handleSelectAttribute(x)">
+                                                <template #option="{type, name}">
+                                                    <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                    {{ name }}
+                                                </template>
+
+                                                <template #selected-option="{type, name}">
+                                                    <div>
+                                                        <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                        {{ name }}
+                                                    </div>
+                                                </template>
+                                            </v-select>
+                                            <!--
                                             <select class="form-control form-control-sm" v-model="x.attribute"
                                                 @change="handleSelectAttribute(x)">
                                                 <option v-for="attr in attributes" :value="attr.name">
@@ -248,6 +305,7 @@
                                                     ({{ attr.type }})
                                                 </option>
                                             </select>
+                                        -->
                                         </b-form-group>
                                         <b-form-group label="Rótulo para legenda:">
                                             <b-form-input type="text" v-model="x.displayLabel"
@@ -353,8 +411,9 @@
                                                 -->
                                     </div>
                                     <div class="col-12">
-                                        <b-button size="sm" variant="danger" class="float-right" @click="handleDeleteX(i)">{{
-                                            $tc('actions.delete') }}</b-button>
+                                        <b-button size="sm" variant="danger" class="float-right"
+                                            @click="handleDeleteX(i)">{{
+                                                $tc('actions.delete') }}</b-button>
                                     </div>
 
                                 </div>
@@ -372,24 +431,38 @@
     </div>
 </template>
 <script setup>
-import { ref, computed, watch, defineProps, defineEmits, onBeforeMount } from "vue";
-import { XDimension, YDimension } from '../../views/data-explorer/entities.js';
+import {ref, computed, watch, defineProps, defineEmits, onBeforeMount} from "vue";
+import {XDimension, YDimension} from '../../views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
+
+const shapes = [
+    {name: '', label: 'Sólido', icon: 'solid'},
+    {name: '/', label: 'Diagonal direita', icon: 'right-diag'},
+    {name: '\\\\', label: 'Diagonal esquerda', icon: 'left-diag'},
+    {name: 'x', label: 'Formato em X', icon: 'x-format'},
+    {name: '-', label: 'Linha horizontal', icon: 'horizontal'},
+    {name: '|', label: 'Linha vertical', icon: 'vertical'},
+    {name: '+', label: 'Cruz', icon: 'crosses'},
+    {name: '.', label: 'Ponto', icon: 'points'},
+];
 
 const emit = defineEmits(['input']);
 const editableVisualization = ref(null);
 const props = defineProps({
-    workflow: { type: Object, required: true },
-    attributes: { type: Array, required: true },
+    workflow: {type: Object, required: true},
+    attributes: {type: Array, required: true},
     value: {
         type: Object, required: true,
         default: () => ({
-            x_axis: { value: {} }, y_axis: { value: {} },
-            x: { value: {} }, y: { value: {} }
+            x_axis: {value: {}}, y_axis: {value: {}},
+            x: {value: {}}, y: {value: {}}
         })
     },
-    type: { type: String }
+    type: {type: String}
 });
+const getShapeIcon = (type) => {
+    return new URL(`../../assets/charts/shapes/${type}.svg`, import.meta.url).href;
+}
 
 /* Data */
 const toEmit = ref(true);
@@ -403,7 +476,7 @@ onBeforeMount(() =>
 
 /* Elements refs */
 const yDimensionDD = ref(null);
-const xDimensionDD =  ref(null);
+const xDimensionDD = ref(null);
 
 
 editableVisualization.value = structuredClone(props.value);
@@ -464,7 +537,7 @@ const handleSelectAttribute = (x) => {
 const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
 const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
 const handleDeleteY = (index) => {
-    yDimensionDD[index].hide(true)
+    yDimensionDD.value[index].hide(true)
     editableVisualization.value.y.value.splice(index, 1);
 };
 const handleDeleteX = (index) => {
@@ -499,24 +572,21 @@ watch(
             emit('input', value.value);
         }
         toEmit.value = true;
-    }, { deep: true });
+    }, {deep: true});
 
 watch(
     () => props.value,
     (value) => {
-        if (!value.display_legend) {
-            value.display_legend = { value: 'HIDE' }
-        }
         const tests = ['x_axis', 'y_axis', 'x', 'y'];
         tests.forEach(t => {
             if (!value[t]) {
-                value[t] = { value: null };
+                value[t] = {value: null};
             }
         });
 
         editableVisualization.value = structuredClone(value);
         toEmit.value = false;
-    }, { deep: true, immediate: true });
+    }, {deep: true, immediate: true});
 
 </script>
 <style>
@@ -534,7 +604,7 @@ watch(
 }
 
 .series-form {
-    width: 500px;
+    width: 520px;
     zoom: .8;
 }
 
@@ -543,7 +613,13 @@ watch(
     margin-right: 0px;
 }
 
-.drag-handle>>>svg {
+.drag-handle>svg {
     margin: -5px 10px -5px -2px;
+}
+.ghost {
+    background: #ddd;
+    padding: -20px 0 0 0;
+    margin: 0;
+    opacity: 100%;
 }
 </style>
