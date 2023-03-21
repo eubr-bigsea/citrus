@@ -41,6 +41,44 @@
                                        class="text-success" /> {{$tc('titles.dashboard', 2)}}
                 </b-nav-item>
 
+                
+            </b-navbar-nav>
+            <b-navbar-nav class="ml-auto">
+                <!--
+                <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
+                    <template slot="button-content">
+                        <font-awesome-icon icon="fa fa-bell" />
+
+                        <span class="badge badge-pill"
+                            :class="unreadNotifications > 0 ? 'badge-danger': 'badge-success'">
+                            {{unreadNotifications > 99 ? '99+': unreadNotifications}}
+                        </span>
+                    </template>
+                    <div class="notification-container">
+                        <b-dropdown-item v-for="notification in notifications" style="width: 300px"
+                            :key="notification.id">
+                            <div class="notification border-bottom pb-2">
+                                <span class="badge"
+                                    :class="{'badge-success': notification.type === 'INFO', 'badge-warning': notification.type === 'WARNING', 'badge-danger': notification.type === 'ERROR'}">
+                                    &nbsp;{{$t('titles.' + notification.type.toLowerCase()).toUpperCase()}}
+                                </span>
+                                <span class="notification" :class="{'unread': notification.status === 'UNREAD'}">
+                                    {{notification.created|formatJsonDate}}
+                                </span>
+                                <div class="notification" :class="{'unread': notification.status === 'UNREAD'}"
+                                    v-html="notification.text.substring(0, Math.min(notification.text.length, 500))">
+                                </div>
+                            </div>
+                        </b-dropdown-item>
+                    </div>
+                    <b-dropdown-item :to="{ name: 'notifications' }" class="border-top pt-2">
+                        {{ $t('titles.allNotifications') }}
+                        <font-awesome-icon icon="fa fa-angle-right" />
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+            -->
+            </b-navbar-nav>
+            <b-navbar-nav class="pt-1">
                 <b-nav-item-dropdown v-if="isAdmin"
                                      right>
                     <template #button-content>
@@ -82,43 +120,6 @@
                         Test Websocket
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
-            </b-navbar-nav>
-            <b-navbar-nav class="ml-auto">
-                <!--
-                <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications">
-                    <template slot="button-content">
-                        <font-awesome-icon icon="fa fa-bell" />
-
-                        <span class="badge badge-pill"
-                            :class="unreadNotifications > 0 ? 'badge-danger': 'badge-success'">
-                            {{unreadNotifications > 99 ? '99+': unreadNotifications}}
-                        </span>
-                    </template>
-                    <div class="notification-container">
-                        <b-dropdown-item v-for="notification in notifications" style="width: 300px"
-                            :key="notification.id">
-                            <div class="notification border-bottom pb-2">
-                                <span class="badge"
-                                    :class="{'badge-success': notification.type === 'INFO', 'badge-warning': notification.type === 'WARNING', 'badge-danger': notification.type === 'ERROR'}">
-                                    &nbsp;{{$t('titles.' + notification.type.toLowerCase()).toUpperCase()}}
-                                </span>
-                                <span class="notification" :class="{'unread': notification.status === 'UNREAD'}">
-                                    {{notification.created|formatJsonDate}}
-                                </span>
-                                <div class="notification" :class="{'unread': notification.status === 'UNREAD'}"
-                                    v-html="notification.text.substring(0, Math.min(notification.text.length, 500))">
-                                </div>
-                            </div>
-                        </b-dropdown-item>
-                    </div>
-                    <b-dropdown-item :to="{ name: 'notifications' }" class="border-top pt-2">
-                        {{ $t('titles.allNotifications') }}
-                        <font-awesome-icon icon="fa fa-angle-right" />
-                    </b-dropdown-item>
-                </b-nav-item-dropdown>
-            -->
-            </b-navbar-nav>
-            <b-navbar-nav class="pt-1">
                 <b-nav-item-dropdown ref="dropdown" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
@@ -158,6 +159,7 @@
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
+            <!--
             <b-navbar-nav class="pt-1">
                 <b-nav-item-dropdown ref="dropdown" right toggle-class>
                     <template #button-content>
@@ -197,6 +199,7 @@
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
+        -->
         </b-collapse>
     </b-navbar>
 </template>

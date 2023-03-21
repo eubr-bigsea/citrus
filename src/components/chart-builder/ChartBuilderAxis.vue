@@ -284,7 +284,8 @@
                                         <b-form-group :label="$tc('common.attribute', 1) + ':'">
                                             <v-select v-model="x.attribute" :options="attributes" label="name"
                                                 :reduce="(opt) => opt.name" :searchable="false"
-                                                @change="handleSelectAttribute(x)">
+                                                :selected="handleSelectAttribute(x)"
+                                                @selected="handleSelectAttribute(x)">
                                                 <template #option="{type, name}">
                                                     <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
                                                     {{ name }}
@@ -311,7 +312,7 @@
                                             <b-form-input type="text" v-model="x.displayLabel"
                                                 class="form-control form-control-sm" maxlength="100" debounce="500" />
                                         </b-form-group>
-                                        <div v-if="isNumeric(x.attribute)">
+                                        <div v-if="true && isNumeric(x.attribute)">
                                             <b-form-group label="Agrupamento (bins):">
                                                 <select class="form-control form-control-sm" v-model="x.binning">
                                                     <option label="EQUAL_INTERVAL" value="EQUAL_INTERVAL">Número fixo de
@@ -469,8 +470,8 @@ const toEmit = ref(true);
 const attributesMap = ref({});
 
 
-onBeforeMount(() =>
-    props.attributes.forEach(a => attributesMap[a.name] = a)
+onBeforeMount(() => 
+    props.attributes.forEach(a => attributesMap.value[a.name] = a)
 );
 
 
@@ -521,9 +522,11 @@ const canAddYDimension = computed(() => {
 
 /* Methods */
 const handleYAxisDrag = (e) => true;
-const isNumeric = (attributeName) =>
-    props.attributes.value && props.attributes.valueMap[attributeName] &&
-    props.attributes.valueMap[attributeName].numeric;
+const isNumeric = function(attributeName){
+    const b = !! props.attributes && attributesMap.value[attributeName] &&
+        attributesMap.value[attributeName].numeric;
+    return b;
+}
 
 const handleSelectAttribute = (x) => {
     if (!isNumeric(x.attribute)) {
@@ -541,7 +544,7 @@ const handleDeleteY = (index) => {
     editableVisualization.value.y.value.splice(index, 1);
 };
 const handleDeleteX = (index) => {
-    xDimensionDD[index].hide(true)
+    xDimensionDD.value[index].hide(true)
     editableVisualization.value.x.value.splice(index, 1);
 };
 const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) => {
