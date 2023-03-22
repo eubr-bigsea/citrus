@@ -11,11 +11,9 @@
             <b-modal id="add-analysis" title="Adicionar Análise" class="row gx-5">
                 <label for="exampleFormControlSelect1">Atributos</label>
                 <select id="exampleFormControlSelect1" class="form-control">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
+                    <option v-for="attr in dataSource.attributes" :key="attr.name" :value="attr.name">
+                        {{attr.name}}
+                    </option>
                 </select>
                 <label for="exampleFormControlSelect1">Tipo</label>
                 <select id="exampleFormControlSelect1" class="form-control">
