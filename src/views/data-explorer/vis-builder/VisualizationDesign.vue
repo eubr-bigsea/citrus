@@ -61,7 +61,7 @@
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 80vh">
                     <div v-if="display && plotlyData" ref="chart" style="background: orange; height: 100%">
-                        <plotly :options="{responsive: true, height: 600}" :data="plotlyData.data"
+                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
                             :layout="plotlyData.layout" :frames="plotlyData.frames" :key="plotVersion" ref="plotly" />
                         <small>{{ plotlyData }}</small>
 
@@ -74,21 +74,21 @@
                 </div>
             </div>
             <!--
-                    <b-tabs>
-                <b-tab active>
-                    <template #title>
-                        <img ref="tabImage"
-                            style="width: 68px; height: 32px; filter: brightness(120%);filter: contrast(120%);">
-                    </template>
+                        <b-tabs>
+                    <b-tab active>
+                        <template #title>
+                            <img ref="tabImage"
+                                style="width: 68px; height: 32px; filter: brightness(120%);filter: contrast(120%);">
+                        </template>
 
-                </b-tab>
-                <b-tab title="OK">
-                    <template #title>
-                        Teste
-                    </template>
-                </b-tab>
-            </b-tabs>
-            -->
+                    </b-tab>
+                    <b-tab title="OK">
+                        <template #title>
+                            Teste
+                        </template>
+                    </b-tab>
+                </b-tabs>
+                -->
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
                 {{ i18n.$t('common.wait') }}
@@ -103,6 +103,7 @@ import { getCurrentInstance } from 'vue';
 import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
 import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
 
+import { debounce } from "../../../util.js";
 import Vue from 'vue';
 import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
 
@@ -155,6 +156,7 @@ const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 const visualizationObj = ref(null);
 
+
 // Elements refs
 const cluster = ref(null)
 
@@ -193,7 +195,12 @@ const options = computed({
         Object.assign(visualizationObj.value, value);
     }
 });
-const { getAttributeList, loadDataSourceList } = useDataSource();
+const { getAttributeList, asyncLoadDataSourceList } = useDataSource();
+const loadDataSourceList = debounce(async function (search, loading) {
+    if (search) {
+        dataSourceList.value = await asyncLoadDataSourceList(search, loading);
+    }
+}, 800);
 
 onBeforeMount(async () => {
     disconnectWebSocket();

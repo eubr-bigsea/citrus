@@ -1,21 +1,37 @@
 import { debounce } from "../util.js";
+import axios from 'axios';
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
 export default () => {
-    const loadDataSourceList = debounce(function (search, loading) {
+    const asyncLoadDataSourceList = async (search, loading) => {
+        const params = {
+            sort: 'name', size: 20, name: search,
+            enabled: true, simple: true, fields: 'id,name'
+        };
+        try {
+            const dataSourceList = await axios.get(
+                `${limoneroUrl}/datasources`, { params });
+            return dataSourceList.data.data;
+        } finally {
+            loading(false);
+        }
+    };
+    const loadDataSourceList = debounce(async function (search, loading) {
         if (search) {
-            this.asyncLoadDataSourceList(search, loading);
+            return await asyncLoadDataSourceList(search, loading);
         }
     }, 800);
     const getAttributeList = async (id, loading) => {
-        loading && loading(true);
+        if (id) {
+            loading && loading(true);
 
-        try {
-            const dataSource = await axios.get(
-                `${limoneroUrl}/datasources/${id}`);
-            return dataSource.data.attributes.map(attr => attr.name).sort();
-        } finally {
-            loading && loading(false);
+            try {
+                const dataSource = await axios.get(
+                    `${limoneroUrl}/datasources/${id}`);
+                return dataSource.data.attributes.map(attr => attr.name).sort();
+            } finally {
+                loading && loading(false);
+            }
         }
     };
     const loadDataSources = async (search, loading) => {
@@ -32,5 +48,6 @@ export default () => {
             loading && loading(false);
         }
     };
-    return { getAttributeList, loadDataSources, loadDataSourceList };
+    return { getAttributeList, loadDataSources, loadDataSourceList, 
+        asyncLoadDataSourceList };
 }
