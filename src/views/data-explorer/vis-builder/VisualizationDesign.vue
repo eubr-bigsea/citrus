@@ -49,7 +49,12 @@
                             {{ i18n.$t('actions.back') }}
                         </router-link>
                     </div>
-                    <div v-if="visualizationObj">
+                    <div class="mt-2 mb-2">
+                        <a href=""><font-awesome-icon icon="chart-line" /> Adicionar ao dashboard...</a>
+                        <br/>
+                        <a href="">Exportar ...</a>
+                    </div>
+                    <div v-if="visualizationObj" class="pt-2 border-top">
                         <chart-builder-options v-model="options" :attributes="attributes" />
                     </div>
                 </form>
@@ -69,26 +74,28 @@
                     <div v-else class="chart-not-available">
                         Selecione o tipo de gráfico e configure suas propriedades
                     </div>
+                    <!--
                     <button class="btn btn-sm btn-secondary" @click.prevent="display = !display">Teste</button>
+                    -->
                     <!--small>{{ visualizationObj }}</small -->
                 </div>
             </div>
             <!--
-                        <b-tabs>
-                    <b-tab active>
-                        <template #title>
-                            <img ref="tabImage"
-                                style="width: 68px; height: 32px; filter: brightness(120%);filter: contrast(120%);">
-                        </template>
+                            <b-tabs>
+                        <b-tab active>
+                            <template #title>
+                                <img ref="tabImage"
+                                    style="width: 68px; height: 32px; filter: brightness(120%);filter: contrast(120%);">
+                            </template>
 
-                    </b-tab>
-                    <b-tab title="OK">
-                        <template #title>
-                            Teste
-                        </template>
-                    </b-tab>
-                </b-tabs>
-                -->
+                        </b-tab>
+                        <b-tab title="OK">
+                            <template #title>
+                                Teste
+                            </template>
+                        </b-tab>
+                    </b-tabs>
+                    -->
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
                 {{ i18n.$t('common.wait') }}
@@ -181,14 +188,14 @@ const options = computed({
             top_margin, bottom_margin, left_margin, right_margin, auto_margin,
             template, blackWhite, subgraph, subgraph_orientation,
             animation, height, width, opacity, scatter_color, scatter_size,
-            color_attribute, color_aggregation, size_attribute,
+            color_attribute, color_aggregation, size_attribute, number_format,
             fill_opacity } = visualizationObj.value;
         return {
             display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
             auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation,
             height, width, opacity, scatter_color, scatter_size, color_attribute, color_aggregation,
-            size_attribute, fill_opacity
+            size_attribute, fill_opacity, number_format
         };
     },
     set(value) {

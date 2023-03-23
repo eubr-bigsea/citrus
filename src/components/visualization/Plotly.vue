@@ -56,11 +56,12 @@ export default {
     data() {
         return {
             internalLayout: {
-                ...this.layout,
+                ... structuredClone(this.layout),
                 datarevision: 1
             }
         };
     },
+    
     mounted() {
         this.react();
         this.initEvents();

@@ -447,9 +447,11 @@ class Visualization {
         color_aggregation = {value: null}, 
         size_attribute = {value: null}, 
         fill_opacity = {value: 255}, 
+        number_format = {value: null}, 
 
     },
     ) {
+        this.number_format = number_format;
         this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
         this.smoothing = smoothing;
         this.palette = palette;
