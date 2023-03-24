@@ -51,18 +51,18 @@
                     </div>
                     <div class="mt-2 mb-2">
                         <a href=""><font-awesome-icon icon="chart-line" /> Adicionar ao dashboard...</a>
-                        <br/>
+                        <br />
                         <a href="">Exportar ...</a>
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top">
-                        <chart-builder-options v-model="options" :attributes="attributes" />
+                        <chart-builder-options v-model="options" :attributes="attributes" @update-chart="updateChart" />
                     </div>
                 </form>
             </div>
         </div>
         <div v-if="visualizationObj" class="options-main">
             <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
-                :type="visualizationObj.type.value" />
+                :chartType="visualizationObj.type.value" />
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 80vh">
                     <div v-if="display && plotlyData" ref="chart" style="background: orange; height: 100%">
@@ -167,6 +167,7 @@ const visualizationObj = ref(null);
 // Elements refs
 const cluster = ref(null)
 
+
 const dataSourceId = computed({
     get() { return workflowObj.value.readData.forms.data_source.value; },
     set(newValue) { workflowObj.value.readData.forms.data_source.value = newValue; }
@@ -181,6 +182,8 @@ const axis = computed({
     }
 });
 
+const plotly = ref()
+let changeCause = '';
 const options = computed({
     get() {
         const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
@@ -189,19 +192,36 @@ const options = computed({
             template, blackWhite, subgraph, subgraph_orientation,
             animation, height, width, opacity, scatter_color, scatter_size,
             color_attribute, color_aggregation, size_attribute, number_format,
-            fill_opacity } = visualizationObj.value;
+            fill_opacity, paper_color } = visualizationObj.value;
         return {
             display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
             auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation,
             height, width, opacity, scatter_color, scatter_size, color_attribute, color_aggregation,
-            size_attribute, fill_opacity, number_format
+            size_attribute, fill_opacity, number_format, paper_color
         };
     },
     set(value) {
+        if (changeCause) {
+            //handleChangeLayout(changeCause, value);
+        }
         Object.assign(visualizationObj.value, value);
     }
 });
+const handleChangeLayout = (changeCause, value) => {
+    console.debug('ok')
+    if (changeCause === 'title' && plotlyData.value?.layout?.title) {
+        plotlyData.value.layout.title.text = value[changeCause].value;
+        //plotly.value.react();
+    }
+};
+const updateChart = debounce((property) => {
+    if (property === 'title') {
+        console.debug(property, plotlyData.value.layout.title.text)
+        plotlyData.value.layout.title.text = options.value.title.value;
+    }
+}, 800);
+
 const { getAttributeList, asyncLoadDataSourceList } = useDataSource();
 const loadDataSourceList = debounce(async function (search, loading) {
     if (search) {
@@ -296,7 +316,8 @@ const loadDataSource = async (id) => {
     attributes.value.forEach(a => {
         a.attribute = a.name;
         a.numeric = ['DECIMAL', 'INTEGER', 'DOUBLE', 'FLOAT', 'LONG']
-            .indexOf(a.type) >= 0;
+            .includes(a.type);
+        a.integerType = ['INTEGER', 'LONG'].includes(a.type);
     });
     dataSourceList.value = [dataSource.value];
 };

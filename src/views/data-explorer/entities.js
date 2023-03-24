@@ -448,6 +448,7 @@ class Visualization {
         size_attribute = {value: null}, 
         fill_opacity = {value: 255}, 
         number_format = {value: null}, 
+        paper_color = {value: null}, 
 
     },
     ) {
@@ -462,6 +463,7 @@ class Visualization {
         this.size_attribute = size_attribute;
         this.fill_opacity = fill_opacity;
 
+        this.paper_color = paper_color;
         this.x = x;
         this.y = y;
         this.type = type;
@@ -495,7 +497,7 @@ class Visualization {
 }
 class XDimension {
     constructor({ binning = 'EQUAL_INTERVAL', bins = 20, binSize = 10,
-        emptyBins = 'ZEROS', multiplier = null, decimalPlaces = 2,
+        emptyBins = 'ZEROS', multiplier = null, decimal_places = 2,
         prefix = null, suffix = null, label = null, maxDisplayed = null,
         groupOthers = true, sorting = 'NATURAL' }) {
         this.binning = binning;  // equal_interval, fixed_size, none, categorical
@@ -503,7 +505,7 @@ class XDimension {
         this.binSize = binSize;
         this.emptyBins = emptyBins; //zeros, link, interrupt
         this.multiplier = multiplier; // A number to multiply by
-        this.decimalPlaces = decimalPlaces;
+        this.decimal_places = decimal_places;
         this.prefix = prefix;
         this.suffix = suffix;
         this.label = label;
@@ -514,7 +516,7 @@ class XDimension {
 }
 class YDimension {
     constructor({ attribute = '*', aggregation = 'COUNT', compute = null, displayOn = 'left',
-        multiplier = null, decimalPlaces = 2,
+        multiplier = null, decimal_places = 2,
         prefix = null, suffix = null, label = null,
         strokeSize = 1, stroke = null, color = null, marker = null }) {
 
@@ -524,7 +526,7 @@ class YDimension {
         this.displayOn = displayOn; // left, right
 
         this.multiplier = multiplier; // A number to multiply by
-        this.decimalPlaces = decimalPlaces;
+        this.decimal_places = decimal_places;
         this.prefix = prefix;
         this.suffix = suffix;
         this.label = label;
@@ -536,7 +538,7 @@ class YDimension {
 }
 class Axis {
     constructor({ lowerBound = null, upperBound = null, logScale = false, display = true,
-        displayLabel = true, label = null, multiplier = null, decimalPlaces = 2,
+        displayLabel = true, label = null, multiplier = null, decimal_places = 2,
         prefix = null, suffix = null }) {
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
@@ -545,7 +547,7 @@ class Axis {
         this.displayLabel = displayLabel;
         this.label = label;
         this.multiplier = multiplier;
-        this.decimalPlaces = decimalPlaces;
+        this.decimal_places = decimal_places;
         this.prefix = prefix;
         this.suffix = suffix;
     }

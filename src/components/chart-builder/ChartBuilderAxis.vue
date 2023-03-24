@@ -31,15 +31,17 @@
                                     do eixo </b-form-checkbox>
                             </div>
                             <div class="col-6">
+                                <!--
                                 <b-form-group label="Multiplicar por:">
-                                    <b-form-input type="number" v-model="editableVisualization.y_axis.value.multiplier"
+                                    <b-form-input type="number" v-model.number="editableVisualization.y_axis.value.multiplier"
                                         class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
                                 </b-form-group>
                                 <b-form-group label="Casas decimais:">
                                     <input type="number" class="form-control form-control-sm w-50"
-                                        v-model="editableVisualization.y_axis.value.decimalPlaces" max="6" min="0"
+                                        v-model.number="editableVisualization.y_axis.value.decimal_places" max="6" min="0"
                                         debounce="500" />
                                 </b-form-group>
+                                -->
                                 <b-form-group label="Prefixo:">
                                     <input type="text" class="form-control form-control-sm"
                                         v-model="editableVisualization.y_axis.value.prefix" maxlength="20" debounce="500" />
@@ -122,12 +124,12 @@
                                             </select>
                                         </b-form-group>
                                         <b-form-group label="Multiplicar:">
-                                            <b-form-input type="number" v-model="y.multiplier"
+                                            <b-form-input type="number" v-model.number="y.multiplier"
                                                 class="form-control form-control-sm" max="1000000000000" min="1"
                                                 debounce="500" />
                                         </b-form-group>
                                         <b-form-group label="Casas decimais:">
-                                            <b-form-input type="number" v-model="y.decimalPlaces"
+                                            <b-form-input type="number" v-model.number="y.decimal_places"
                                                 class="form-control form-control-sm w-25" max="6" min="0" debounce="500" />
                                         </b-form-group>
                                     </div>
@@ -140,7 +142,7 @@
                                             <b-form-input type="text" v-model="y.suffix"
                                                 class="form-control form-control-sm" maxlength="20" debounce="500" />
                                         </b-form-group>
-                                        <b-form-group v-if="!['donut', 'pie'].includes(type)">
+                                        <b-form-group v-if="!['donut', 'pie'].includes(chartType)">
                                             <template #label>
                                                 <b-form-checkbox v-model="y.custom_color"> Usar cor personalizada
                                                 </b-form-checkbox>
@@ -160,7 +162,7 @@
                                                 <option v-for="i in 10" :key="i" :value="i">{{ i }}</option>
                                             </select>
                                         </b-form-group>
-                                        <b-form-group v-if="type.endsWith('bar') || type.endsWith('area')"
+                                        <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
                                             label="Padrão de preenchimento:">
                                             <v-select v-model="y.shape" :options="shapes" label="label"
                                                 :reduce="(opt) => opt.name" :searchable="false" style="font-size:10pt">
@@ -243,15 +245,17 @@
                                     do eixo </b-form-checkbox>
                             </div>
                             <div class="col-6">
+                                <!--
                                 <b-form-group label="Multiplicar por:">
-                                    <b-form-input type="number" v-model="editableVisualization.x_axis.value.multiplier"
+                                    <b-form-input type="number" v-model.number="editableVisualization.x_axis.value.multiplier"
                                         class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
                                 </b-form-group>
-                                <b-form-group label="Casas decimais:">
+                                <b-form-group v-if="editableVisualization.x_axis.value.attribute" label="Casas decimais:">
                                     <input type="number" class="form-control form-control-sm w-50"
-                                        v-model="editableVisualization.x_axis.value.decimalPlaces" max="6" min="0"
+                                        v-model.number="editableVisualization.x_axis.value.decimal_places" max="6" min="0"
                                         debounce="500" />
                                 </b-form-group>
+                            -->
                                 <template>
                                     <b-form-group label="Prefixo:">
                                         <input type="text" class="form-control form-control-sm"
@@ -343,12 +347,12 @@
                                                 </select>
                                             </b-form-group>
                                             <b-form-group label="Multiplicar:">
-                                                <b-form-input type="number" v-model="x.multiplier"
+                                                <b-form-input type="number" v-model.number="x.multiplier"
                                                     class="form-control form-control-sm" max="1000000000000" min="1"
                                                     debounce="500" />
                                             </b-form-group>
                                             <b-form-group label="Casas decimais:">
-                                                <b-form-input type="number" v-model="x.decimalPlaces"
+                                                <b-form-input type="number" v-model.number="x.decimal_places"
                                                     class="form-control form-control-sm w-25" max="6" min="0"
                                                     debounce="500" />
                                             </b-form-group>
@@ -459,7 +463,7 @@ const props = defineProps({
             x: {value: {}}, y: {value: {}}
         })
     },
-    type: {type: String}
+    chartType: {type: String}
 });
 const getShapeIcon = (type) => {
     return new URL(`../../assets/charts/shapes/${type}.svg`, import.meta.url).href;
@@ -525,6 +529,11 @@ const handleYAxisDrag = (e) => true;
 const isNumeric = function(attributeName){
     const b = !! props.attributes && attributesMap.value[attributeName] &&
         attributesMap.value[attributeName].numeric;
+    return b;
+}
+const isInteger = function(attributeName){
+    const b = !! props.attributes && attributesMap.value[attributeName] &&
+        attributesMap.value[attributeName].integerType;
     return b;
 }
 

@@ -21,7 +21,8 @@
             </b-form-group>
             <b-form-group>
                 <label>{{ $tc('common.title') }}:</label>
-                <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm" />
+                <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"
+                    @input="emit('update-chart', 'title')" />
             </b-form-group>
 
             <div class="accordion options-font" role="tablist">
@@ -34,7 +35,7 @@
                         <b-card-body class="p-2">
                             <label>Exibir legenda:</label>
                             <select v-model="editableVisualization.display_legend.value"
-                                class="form-control form-control-sm">
+                                class="form-control form-control-sm" @input="emit('update-chart', 'display_legend')">
                                 <option value="HIDE">Ocultar</option>
                                 <option value="AUTO">Posicionar automaticamente</option>
                                 <option value="LEFT">Topo à esquerda</option>
@@ -127,6 +128,12 @@
 
                     <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
                         <b-card-body class="p-2">
+                            <!--
+                            <b-form-group label="Cor de fundo">
+                                <b-form-input type="color" v-model="editableVisualization.paper_color.value"
+                                        class="form-control form-control-sm" />
+                            </b-form-group>
+                            -->
                             <b-form-group label="Formato dos números">
                                 <select v-model="editableVisualization.number_format.value"
                                     class="form-control form-control-sm">
@@ -139,26 +146,28 @@
                             <b-form-group label="Opacidade do gráfico:" label-for="line-width">
                                 <b-form-input id="title" v-model.number="editableVisualization.opacity.value" type="range"
                                     min="0" max="1" step="0.01" class="form-control-sm" />
-                                <b-form-text
-                                    class="text-center mt-0 mb-2">{{ Math.round(editableVisualization.opacity.value * 100) }}%</b-form-text>
+                                <b-form-text class="text-center mt-0">{{ Math.round(editableVisualization.opacity.value
+                                    * 100) }}%</b-form-text>
                             </b-form-group>
                             <b-form-group label="Opacidade do preenchimento:">
                                 <b-form-input id="title" v-model.number="editableVisualization.fill_opacity.value"
                                     type="range" min="0" max="1" step=".01" class="form-control-sm" />
-                                <b-form-text
-                                    class="text-center mt-0 mb-2">{{ Math.round(editableVisualization.fill_opacity.value * 100) }}%</b-form-text>
+                                <b-form-text class="text-center mt-0">{{
+                                    Math.round(editableVisualization.fill_opacity.value * 100) }}%</b-form-text>
                             </b-form-group>
+                            <template v-if="editableVisualization.type.value == 'donut'">
+                                <b-form-group label="Preenchimento (0 = pizza, > 0 donut)" label-for="pie-fill">
+                                    <b-form-input id="title" v-model.number="editableVisualization.hole.value" type="range"
+                                        min="0" max="90" step="1" class="form-control-sm" />
+                                    <b-form-text class="text-center mt-0">{{
+                                        Math.round(editableVisualization.hole.value) }}%</b-form-text>
+                                </b-form-group>
+                            </template>
                             <b-form-group>
                                 <b-form-checkbox v-model="editableVisualization.smoothing.value" switch>
                                     Suavizar
                                 </b-form-checkbox>
                             </b-form-group>
-                            <template v-if="editableVisualization.type.value == 'donut'">
-                                <b-form-group label="Preenchimento (0 = pizza, > 0 donut)" label-for="pie-fill">
-                                    <b-form-input id="title" v-model.number="editableVisualization.hole.value" type="number"
-                                        min="0" max="90" step="1" class="w-50 form-control-sm" />
-                                </b-form-group>
-                            </template>
                             <template v-if="editableVisualization.type.value == 'scatter'">
                                 <b-form-group label="Cor dos pontos">
                                     <v-select v-model="editableVisualization.scatter_color.value" :options="attributes"
@@ -188,6 +197,7 @@
                                         <option value="value">Valor</option>
                                         <option value="value+percent">Valor e percentual</option>
                                         <option value="percent">Percentual</option>
+                                        <option value="label+value+percent">Rótulo, valor e percentual</option>
                                     </select>
                                 </b-form-group>
                             </template>
@@ -436,6 +446,7 @@ import ColorPalette from '../widgets/ColorPalette.vue';
 import ColorScale from '../widgets/ColorScale.vue';
 import ExpressionEditor from '../widgets/ExpressionEditor.vue';
 import useNotifier from '../../composables/useNotifier.js';
+import { debounce } from "../../util.js";
 
 const vm = getCurrentInstance();
 const props = defineProps({
@@ -530,6 +541,9 @@ const handleUpdateColorScale = (field, value) => {
     editableVisualization.value.color_scale.value = value;
 };
 
+const updateChart = (property) => {
+    emit('update-chart', property)
+}
 </script>
 
 <style scoped lang="scss">
