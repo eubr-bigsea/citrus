@@ -276,7 +276,7 @@ export default {
                         jobId: vis.job_id || 0,
                         taskId: vis.task_id || 0,
                         vizId: vis.id,
-                        x: 0, y: 10000, width: 12
+                        x: 0, y: 0, width: 3
                     };
                 } else {
                     this.configuration[vis.id]['vizId'] = vis.id;
@@ -347,6 +347,7 @@ export default {
 .vue-grid-item {
     padding: 0 5px 5px 5px;
     background-color: #fff;
+    overflow: hidden;
 }
 
 .grid::before {

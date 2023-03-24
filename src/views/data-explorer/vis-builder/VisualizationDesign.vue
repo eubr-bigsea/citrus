@@ -55,7 +55,8 @@
                         <a href="">Exportar ...</a>
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top">
-                        <chart-builder-options v-model="options" :attributes="attributes" @update-chart="updateChart" />
+                        <chart-builder-options v-model="options" :attributes="attributes" 
+                            @update-chart="updateChart" :chartType="visualizationObj.type.value" />
                     </div>
                 </form>
             </div>
