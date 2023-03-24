@@ -35,13 +35,13 @@
                             <div class="card ">
                                 <div class="card-body">
                                     <div v-if="layout">
-                                        <grid-layout :layout="layout" :col-num="12" :row-height="30"
+                                        <grid-layout :layout="layout" :col-num="12" :row-height="30" ref="grid"
                                             :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
-                                            :is-responsive="true" :vertical-compact="true" :margin="[10, 10]"
+                                            :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
                                             :use-css-transforms="true" :prevent-collision="false"
                                             @layout-updated="layoutUpdatedEvent">
                                             <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
-                                                :w="item.w" :h="item.h" :i="item.i">
+                                                :w="item.w" :h="item.h" :i="item.i" @move="moveEvent" @moved="movedEvent">
                                                 <caipirinha-visualization :url="item.url" :public-route="publicRoute" />
                                             </grid-item>
                                         </grid-layout>
@@ -167,6 +167,12 @@ export default {
         });
     },
     methods: {
+        moveEvent() {
+            this.$refs.grid.$el.classList.add('grid');
+        },
+        movedEvent() {
+            this.$refs.grid.$el.classList.remove('grid');
+        },
         copyLink() {
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(this.link).then(() => {
@@ -272,6 +278,8 @@ export default {
                         vizId: vis.id,
                         x: 0, y: 10000, width: 12
                     };
+                } else {
+                    this.configuration[vis.id]['vizId'] = vis.id;
                 }
                 allVisIds.add(vis.id);
             });
@@ -292,7 +300,7 @@ export default {
                     w: width,
                     h: height,
                     i: parseInt(vizId),
-                    url: `${caipirinhaUrl}/${path}/${jobId}/${taskId}/${vizId}`
+                    url: `${caipirinhaUrl}/${path}/${jobId || 0}/${taskId || 0}/${vizId}`
                 };
             }).filter(v => allVisIds.has(v.i));
             return result;
@@ -338,6 +346,21 @@ export default {
 
 .vue-grid-item {
     padding: 0 5px 5px 5px;
+    background-color: #fff;
+}
+
+.grid::before {
+    content: '';
+    background-size: calc(calc(100% - 5px) / 12) 40px;
+    background-image: linear-gradient(to right,
+            lightgrey 1px,
+            transparent 1px),
+        linear-gradient(to bottom, lightgrey 1px, transparent 1px);
+    height: calc(100% - 5px);
+    width: calc(100% - 5px);
+    position: absolute;
+    background-repeat: repeat;
+    margin: 5px;
 }
 </style>
 <style scoped>
