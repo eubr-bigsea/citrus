@@ -6,7 +6,7 @@
                     <template #button-content>
                         <font-awesome-icon class="mr-2" prefix="fa" icon="y" />
                     </template>
-                    <b-dropdown-form form-class="down-drop-form">
+                    <b-dropdown-form v-if="!['pie', 'donut', 'indicator'].includes(chartType)" form-class="down-drop-form">
                         <div class="row axis-form">
                             <div class="col-12">
                                 <b-form-group label="Título:">
@@ -32,16 +32,16 @@
                             </div>
                             <div class="col-6">
                                 <!--
-                                <b-form-group label="Multiplicar por:">
-                                    <b-form-input type="number" v-model.number="editableVisualization.y_axis.value.multiplier"
-                                        class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
-                                </b-form-group>
-                                <b-form-group label="Casas decimais:">
-                                    <input type="number" class="form-control form-control-sm w-50"
-                                        v-model.number="editableVisualization.y_axis.value.decimal_places" max="6" min="0"
-                                        debounce="500" />
-                                </b-form-group>
-                                -->
+                                            <b-form-group label="Multiplicar por:">
+                                                <b-form-input type="number" v-model.number="editableVisualization.y_axis.value.multiplier"
+                                                    class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
+                                            </b-form-group>
+                                            <b-form-group label="Casas decimais:">
+                                                <input type="number" class="form-control form-control-sm w-50"
+                                                    v-model.number="editableVisualization.y_axis.value.decimal_places" max="6" min="0"
+                                                    debounce="500" />
+                                            </b-form-group>
+                                            -->
                                 <b-form-group label="Prefixo:">
                                     <input type="text" class="form-control form-control-sm"
                                         v-model="editableVisualization.y_axis.value.prefix" maxlength="20" debounce="500" />
@@ -52,6 +52,9 @@
                                 </b-form-group>
                             </div>
                         </div>
+                    </b-dropdown-form>
+                    <b-dropdown-form v-else>
+                        <div>O tipo de gráfico não possui configurações para o eixo.</div>
                     </b-dropdown-form>
                 </b-dropdown>
 
@@ -72,47 +75,51 @@
                                         <b-form-group :label="$tc('common.attribute', 1) + ':'"
                                             label-for="dropdown-form-email">
 
-                                            <v-select v-model="y.attribute" :options="attributes" label="name"
+                                            <v-select v-model="y.attribute"
+                                                :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
                                                 :reduce="(opt) => opt.name" :searchable="false">
-                                                <template #option="{type, name}">
-                                                    <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                <template #option="{ type, name }">
+                                                    <span v-if="name !== '*'"
+                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
                                                     {{ name }}
                                                 </template>
 
-                                                <template #selected-option="{type, name}">
+                                                <template #selected-option="{ type, name }">
                                                     <div>
-                                                        <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                        <span v-if="name !== '*'"
+                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
                                                         {{ name }}
                                                     </div>
                                                 </template>
                                             </v-select>
                                             <!--
-                                            <select class="form-control form-control-sm mt-2" v-model="y.attribute">
-                                                <option value="*"># Total de registros</option>
-                                                <option v-for="attr in attributes" :value="attr.name">
-                                                    {{ attr.name }}
-                                                    ({{ attr.type }})
-                                                </option>
-                                            </select>
-                                        -->
+                                                        <select class="form-control form-control-sm mt-2" v-model="y.attribute">
+                                                            <option value="*"># Total de registros</option>
+                                                            <option v-for="attr in attributes" :value="attr.name">
+                                                                {{ attr.name }}
+                                                                ({{ attr.type }})
+                                                            </option>
+                                                        </select>
+                                                    -->
                                         </b-form-group>
-                                        <b-form-group label="Rótulo para legenda:">
+                                        <b-form-group v-if="!pieFamily" label="Rótulo para legenda:">
                                             <b-form-input type="text" v-model="y.label" class="form-control form-control-sm"
                                                 maxlength="100" debounce="500" />
                                         </b-form-group>
 
-                                        <b-form-group v-if="y.attribute !== '*'" label="Função de agregação:">
+                                        <b-form-group label="Função de agregação:">
                                             <select class="form-control form-control-sm" v-model="y.aggregation">
-                                                <option label="" value="">Usar valor sem agregar</option>
-                                                <option label="COUNT" value="COUNT">COUNT</option>
-                                                <option label="COUNTD" value="COUNTD">COUNT DISTINCT</option>
-                                                <option label="AVG" value="AVG">AVG</option>
-                                                <option label="SUM" value="SUM">SUM</option>
-                                                <option label="MIN" value="MIN">MIN</option>
-                                                <option label="MAX" value="MAX">MAX</option>
+                                                <option v-if="y.attribute !== '*'" label="" value="">Usar valor sem agregar
+                                                </option>
+                                                <option value="COUNT">Contar (COUNT)</option>
+                                                <option value="COUNTD">Contar distintos (COUNT DISTINCT)</option>
+                                                <option v-if="y.attribute !== '*'" value="AVG">Média (AVG)</option>
+                                                <option v-if="y.attribute !== '*'" value="SUM">Soma (SUM)</option>
+                                                <option v-if="y.attribute !== '*'" value="MIN">Mínimo (MIN)</option>
+                                                <option v-if="y.attribute !== '*'" value="MAX">Máximo (MAX)</option>
                                             </select>
                                         </b-form-group>
-                                        <b-form-group label="Computação:">
+                                        <b-form-group v-if="false" label="Computação:">
                                             <select class="form-control form-control-sm" v-model="y.compute">
                                                 <option label="NORMAL" value="NORMAL">NORMAL</option>
                                                 <option label="PERCENTAGE SCALE" value="PERCENTAGE SCALE">PERCENTAGE SCALE
@@ -134,11 +141,11 @@
                                         </b-form-group>
                                     </div>
                                     <div class="col-6">
-                                        <b-form-group label="Prefixo:">
+                                        <b-form-group v-if="!pieFamily" label="Prefixo:">
                                             <b-form-input type="text" v-model="y.prefix"
                                                 class="form-control form-control-sm" maxlength="20" debounce="500" />
                                         </b-form-group>
-                                        <b-form-group label="Sufixo:">
+                                        <b-form-group v-if="!pieFamily" label="Sufixo:">
                                             <b-form-input type="text" v-model="y.suffix"
                                                 class="form-control form-control-sm" maxlength="20" debounce="500" />
                                         </b-form-group>
@@ -150,7 +157,7 @@
                                             <b-form-input v-if="y.custom_color" type="color" v-model="y.color"
                                                 class="form-control form-control-sm" />
                                         </b-form-group>
-                                        <b-form-group label="Tipo de linha:">
+                                        <b-form-group v-if="!pieFamily" label="Tipo de linha:">
                                             <select class="form-control form-control-sm w-50" v-model="y.stroke">
                                                 <option
                                                     v-for="opt in ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']"
@@ -159,20 +166,20 @@
                                         </b-form-group>
                                         <b-form-group label="Espessura da linha:">
                                             <select class="form-control form-control-sm w-50" v-model.number="y.strokeSize">
-                                                <option v-for="i in 10" :key="i" :value="i">{{ i }}</option>
+                                                <option v-for="i in 11" :key="i-1" :value="i-1">{{ i - 1 }}</option>
                                             </select>
                                         </b-form-group>
                                         <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
                                             label="Padrão de preenchimento:">
                                             <v-select v-model="y.shape" :options="shapes" label="label"
                                                 :reduce="(opt) => opt.name" :searchable="false" style="font-size:10pt">
-                                                <template #option="{label, name, icon}">
+                                                <template #option="{ label, name, icon }">
                                                     <img :src="getShapeIcon(icon)" style="width:20px; height: 20px" />
                                                     {{ label }}
                                                     <!--<div class="bg-chart" :class="`bg-${name}`"></div>-->
                                                 </template>
 
-                                                <template #selected-option="{label, name, icon}">
+                                                <template #selected-option="{ label, name, icon }">
                                                     <div>
                                                         <img :src="getShapeIcon(icon)" style="width:20px; height: 20px" />
                                                         {{ label }}
@@ -182,27 +189,26 @@
                                             </v-select>
                                         </b-form-group>
                                         <!-- FIXME 
-                                        <b-form-group label="Exibir eixo:">
-                                            <select class="form-control form-control-sm">
-                                                <option label="LEFT" value="LEFT">Esquerda</option>
-                                                <option label="DIREITA" value="DIREITA">Direita</option>
-                                                <option label="HIDE" value="HIDE">Ocultar</option>
-                                            </select>
-                                        </b-form-group>
-                                        <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
-                                        <b-form-group label="Faixa de valores:">
-                                            <b-form-radio> Automática </b-form-radio>
-                                            <b-form-radio> Manual </b-form-radio>
-                                            <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
-                                            <input type="number" class="form-control form-control-sm" placeholder="max" />
+                                                    <b-form-group label="Exibir eixo:">
+                                                        <select class="form-control form-control-sm">
+                                                            <option label="LEFT" value="LEFT">Esquerda</option>
+                                                            <option label="DIREITA" value="DIREITA">Direita</option>
+                                                            <option label="HIDE" value="HIDE">Ocultar</option>
+                                                        </select>
+                                                    </b-form-group>
+                                                    <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
+                                                    <b-form-group label="Faixa de valores:">
+                                                        <b-form-radio> Automática </b-form-radio>
+                                                        <b-form-radio> Manual </b-form-radio>
+                                                        <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
+                                                        <input type="number" class="form-control form-control-sm" placeholder="max" />
 
-                                        </b-form-group>
-                                        -->
+                                                    </b-form-group>
+                                                    -->
                                     </div>
                                     <div class="col-12 border-top pt-2">
-                                        <b-button size="sm" variant="danger" class="float-right"
-                                            @click="handleDeleteY(i)">{{
-                                                $tc('actions.delete') }}</b-button>
+                                        <b-button size="sm" variant="danger" class="float-right" @click="handleDeleteY(i)">{{
+                                            $tc('actions.delete') }}</b-button>
                                     </div>
                                 </div>
                             </b-dropdown-form>
@@ -220,7 +226,7 @@
                     <template #button-content>
                         <font-awesome-icon class="mr-2" prefix="fa" icon="x" />
                     </template>
-                    <b-dropdown-form form-class="down-drop-form">
+                    <b-dropdown-form v-if="!['pie', 'donut', 'indicator'].includes(chartType)" form-class="down-drop-form">
                         <div class="row axis-form">
                             <div class="col-12">
                                 <b-form-group label="Título:">
@@ -246,16 +252,16 @@
                             </div>
                             <div class="col-6">
                                 <!--
-                                <b-form-group label="Multiplicar por:">
-                                    <b-form-input type="number" v-model.number="editableVisualization.x_axis.value.multiplier"
-                                        class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
-                                </b-form-group>
-                                <b-form-group v-if="editableVisualization.x_axis.value.attribute" label="Casas decimais:">
-                                    <input type="number" class="form-control form-control-sm w-50"
-                                        v-model.number="editableVisualization.x_axis.value.decimal_places" max="6" min="0"
-                                        debounce="500" />
-                                </b-form-group>
-                            -->
+                                            <b-form-group label="Multiplicar por:">
+                                                <b-form-input type="number" v-model.number="editableVisualization.x_axis.value.multiplier"
+                                                    class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
+                                            </b-form-group>
+                                            <b-form-group v-if="editableVisualization.x_axis.value.attribute" label="Casas decimais:">
+                                                <input type="number" class="form-control form-control-sm w-50"
+                                                    v-model.number="editableVisualization.x_axis.value.decimal_places" max="6" min="0"
+                                                    debounce="500" />
+                                            </b-form-group>
+                                        -->
                                 <template>
                                     <b-form-group label="Prefixo:">
                                         <input type="text" class="form-control form-control-sm"
@@ -271,6 +277,10 @@
                             </div>
                         </div>
                     </b-dropdown-form>
+                    <b-dropdown-form v-else>
+                        <div>O tipo de gráfico não possui configurações para o eixo.</div>
+                    </b-dropdown-form>
+
                 </b-dropdown>
                 <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.x.value"
                     :move="handleYAxisDrag" direction="horizontal" @start="drag = true" @end="drag = false"
@@ -288,31 +298,32 @@
                                         <b-form-group :label="$tc('common.attribute', 1) + ':'">
                                             <v-select v-model="x.attribute" :options="attributes" label="name"
                                                 :reduce="(opt) => opt.name" :searchable="false"
-                                                :selected="handleSelectAttribute(x)"
-                                                @selected="handleSelectAttribute(x)">
-                                                <template #option="{type, name}">
-                                                    <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                :selected="handleSelectAttribute(x)" @selected="handleSelectAttribute(x)">
+                                                <template #option="{ type, name }">
+                                                    <span
+                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
                                                     {{ name }}
                                                 </template>
 
-                                                <template #selected-option="{type, name}">
+                                                <template #selected-option="{ type, name }">
                                                     <div>
-                                                        <span :class="{'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER'}"></span>
+                                                        <span
+                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
                                                         {{ name }}
                                                     </div>
                                                 </template>
                                             </v-select>
                                             <!--
-                                            <select class="form-control form-control-sm" v-model="x.attribute"
-                                                @change="handleSelectAttribute(x)">
-                                                <option v-for="attr in attributes" :value="attr.name">
-                                                    {{ attr.name }}
-                                                    ({{ attr.type }})
-                                                </option>
-                                            </select>
-                                        -->
+                                                        <select class="form-control form-control-sm" v-model="x.attribute"
+                                                            @change="handleSelectAttribute(x)">
+                                                            <option v-for="attr in attributes" :value="attr.name">
+                                                                {{ attr.name }}
+                                                                ({{ attr.type }})
+                                                            </option>
+                                                        </select>
+                                                    -->
                                         </b-form-group>
-                                        <b-form-group label="Rótulo para legenda:">
+                                        <b-form-group v-if="!pieFamily" label="Rótulo para legenda:">
                                             <b-form-input type="text" v-model="x.displayLabel"
                                                 class="form-control form-control-sm" maxlength="100" debounce="500" />
                                         </b-form-group>
@@ -334,7 +345,7 @@
                                                     debounce="500" />
                                             </b-form-group>
 
-                                            <b-form-group label="Computação:">
+                                            <b-form-group v-if="false" label="Computação:">
                                                 <select class="form-control form-control-sm" v-model="x.compute">
                                                     <option label="NORMAL" value="NORMAL">NORMAL</option>
                                                     <option label="PERCENTAGE SCALE" value="PERCENTAGE SCALE">PERCENTAGE
@@ -346,7 +357,7 @@
                                                         PERCENTAGE</option>
                                                 </select>
                                             </b-form-group>
-                                            <b-form-group label="Multiplicar:">
+                                            <b-form-group v-if="!pieFamily" label="Multiplicar:">
                                                 <b-form-input type="number" v-model.number="x.multiplier"
                                                     class="form-control form-control-sm" max="1000000000000" min="1"
                                                     debounce="500" />
@@ -359,7 +370,7 @@
                                         </div>
                                     </div>
                                     <div class="col-6">
-                                        <b-form-group label="Tratar valores vazios:">
+                                        <b-form-group v-if="!pieFamily" label="Tratar valores vazios:">
                                             <select class="form-control-sm">
                                                 <option label="Replace with zeros" value="ZEROS" selected="selected">
                                                     Replace with zeros</option>
@@ -387,38 +398,37 @@
                                                 Agrupar os outros valores
                                             </b-form-checkbox>
                                         </b-form-group>
-                                        <template v-if="x && isNumeric(x.attribute)">
+                                        <template v-if="!pieFamily">
                                             <b-form-group label="Prefixo:">
                                                 <b-form-input type="text" v-model="x.prefix"
                                                     class="form-control form-control-sm" maxlength="20" debounce="500" />
                                             </b-form-group>
-                                            <b-form-group label="Sufixo:">
+                                            <b-form-group v-if="!pieFamily" label="Sufixo:">
                                                 <b-form-input type="text" v-model="x.suffix"
                                                     class="form-control form-control-sm" maxlength="20" debounce="500" />
                                             </b-form-group>
                                         </template>
                                         <!-- FIXME 
-                                                <b-form-group label="Exibir eixo:">
-                                                    <select class="form-control form-control-sm">
-                                                        <option label="LEFT" value="LEFT">Esquerda</option>
-                                                        <option label="DIREITA" value="DIREITA">Direita</option>
-                                                        <option label="HIDE" value="HIDE">Ocultar</option>
-                                                    </select>
-                                                </b-form-group>
-                                                <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
-                                                <b-form-group label="Faixa de valores:">
-                                                    <b-form-radio> Automática </b-form-radio>
-                                                    <b-form-radio> Manual </b-form-radio>
-                                                    <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
-                                                    <input type="number" class="form-control form-control-sm" placeholder="max" />
+                                                            <b-form-group label="Exibir eixo:">
+                                                                <select class="form-control form-control-sm">
+                                                                    <option label="LEFT" value="LEFT">Esquerda</option>
+                                                                    <option label="DIREITA" value="DIREITA">Direita</option>
+                                                                    <option label="HIDE" value="HIDE">Ocultar</option>
+                                                                </select>
+                                                            </b-form-group>
+                                                            <b-form-checkbox> Usar escala logarítmica </b-form-checkbox>
+                                                            <b-form-group label="Faixa de valores:">
+                                                                <b-form-radio> Automática </b-form-radio>
+                                                                <b-form-radio> Manual </b-form-radio>
+                                                                <input type="number" class="form-control form-control-sm mb-2" placeholder="min" />
+                                                                <input type="number" class="form-control form-control-sm" placeholder="max" />
 
-                                                </b-form-group>
-                                                -->
+                                                            </b-form-group>
+                                                            -->
                                     </div>
                                     <div class="col-12">
-                                        <b-button size="sm" variant="danger" class="float-right"
-                                            @click="handleDeleteX(i)">{{
-                                                $tc('actions.delete') }}</b-button>
+                                        <b-button size="sm" variant="danger" class="float-right" @click="handleDeleteX(i)">{{
+                                            $tc('actions.delete') }}</b-button>
                                     </div>
 
                                 </div>
@@ -436,34 +446,34 @@
     </div>
 </template>
 <script setup>
-import {ref, computed, watch, defineProps, defineEmits, onBeforeMount} from "vue";
-import {XDimension, YDimension} from '../../views/data-explorer/entities.js';
+import { ref, computed, watch, defineProps, defineEmits, onBeforeMount } from "vue";
+import { XDimension, YDimension } from '../../views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
 
 const shapes = [
-    {name: '', label: 'Sólido', icon: 'solid'},
-    {name: '/', label: 'Diagonal direita', icon: 'right-diag'},
-    {name: '\\\\', label: 'Diagonal esquerda', icon: 'left-diag'},
-    {name: 'x', label: 'Formato em X', icon: 'x-format'},
-    {name: '-', label: 'Linha horizontal', icon: 'horizontal'},
-    {name: '|', label: 'Linha vertical', icon: 'vertical'},
-    {name: '+', label: 'Cruz', icon: 'crosses'},
-    {name: '.', label: 'Ponto', icon: 'points'},
+    { name: '', label: 'Sólido', icon: 'solid' },
+    { name: '/', label: 'Diagonal direita', icon: 'right-diag' },
+    { name: '\\\\', label: 'Diagonal esquerda', icon: 'left-diag' },
+    { name: 'x', label: 'Formato em X', icon: 'x-format' },
+    { name: '-', label: 'Linha horizontal', icon: 'horizontal' },
+    { name: '|', label: 'Linha vertical', icon: 'vertical' },
+    { name: '+', label: 'Cruz', icon: 'crosses' },
+    { name: '.', label: 'Ponto', icon: 'points' },
 ];
 
 const emit = defineEmits(['input']);
 const editableVisualization = ref(null);
 const props = defineProps({
-    workflow: {type: Object, required: true},
-    attributes: {type: Array, required: true},
+    workflow: { type: Object, required: true },
+    attributes: { type: Array, required: true },
     value: {
         type: Object, required: true,
         default: () => ({
-            x_axis: {value: {}}, y_axis: {value: {}},
-            x: {value: {}}, y: {value: {}}
+            x_axis: { value: {} }, y_axis: { value: {} },
+            x: { value: {} }, y: { value: {} }
         })
     },
-    chartType: {type: String}
+    chartType: { type: String, required: true }
 });
 const getShapeIcon = (type) => {
     return new URL(`../../assets/charts/shapes/${type}.svg`, import.meta.url).href;
@@ -474,7 +484,7 @@ const toEmit = ref(true);
 const attributesMap = ref({});
 
 
-onBeforeMount(() => 
+onBeforeMount(() =>
     props.attributes.forEach(a => attributesMap.value[a.name] = a)
 );
 
@@ -488,6 +498,9 @@ editableVisualization.value = structuredClone(props.value);
 
 
 /* Computed */
+const pieFamily = computed(() =>
+    ['donut', 'pie'].includes(props.chartType)
+);
 const xSeries = computed(() =>
     editableVisualization.value.x.value.slice(0, limitXDimension.value)
 );
@@ -496,9 +509,9 @@ const ySeries = computed(() =>
 );
 const limitXDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
-    if (['pie', 'donut', 'scatter'].includes(props.type)) {
+    if (['pie', 'donut', 'scatter'].includes(props.chartType)) {
         result = 1;
-    } else if (editableVisualization.value.x.value.length >= 2 && props.type !== 'treemap') {
+    } else if (editableVisualization.value.x.value.length >= 2 && props.chartType !== 'treemap') {
         result = 2;
     }
     return result;
@@ -506,7 +519,7 @@ const limitXDimension = computed(() => {
 const limitYDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
     if (
-        (['pie', 'donut', 'scatter', 'treemap'].includes(props.type))
+        (['pie', 'donut', 'scatter', 'treemap'].includes(props.chartType))
         || (editableVisualization.value.x.value.length >= 2)
     ) {
         result = 1;
@@ -526,13 +539,13 @@ const canAddYDimension = computed(() => {
 
 /* Methods */
 const handleYAxisDrag = (e) => true;
-const isNumeric = function(attributeName){
-    const b = !! props.attributes && attributesMap.value[attributeName] &&
+const isNumeric = function (attributeName) {
+    const b = !!props.attributes && attributesMap.value[attributeName] &&
         attributesMap.value[attributeName].numeric;
     return b;
 }
-const isInteger = function(attributeName){
-    const b = !! props.attributes && attributesMap.value[attributeName] &&
+const isInteger = function (attributeName) {
+    const b = !!props.attributes && attributesMap.value[attributeName] &&
         attributesMap.value[attributeName].integerType;
     return b;
 }
@@ -584,7 +597,7 @@ watch(
             emit('input', value.value);
         }
         toEmit.value = true;
-    }, {deep: true});
+    }, { deep: true });
 
 watch(
     () => props.value,
@@ -592,13 +605,13 @@ watch(
         const tests = ['x_axis', 'y_axis', 'x', 'y'];
         tests.forEach(t => {
             if (!value[t]) {
-                value[t] = {value: null};
+                value[t] = { value: null };
             }
         });
 
         editableVisualization.value = structuredClone(value);
         toEmit.value = false;
-    }, {deep: true, immediate: true});
+    }, { deep: true, immediate: true });
 
 </script>
 <style>
@@ -628,6 +641,7 @@ watch(
 .drag-handle>svg {
     margin: -5px 10px -5px -2px;
 }
+
 .ghost {
     background: #ddd;
     padding: -20px 0 0 0;

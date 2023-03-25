@@ -55,67 +55,69 @@
                                 <option value="plotly_dark">Plotly (Escuro)</option>
                                 <option value="presentation">Apresentação</option>
                                 <!--
-                                    <option value="xgridoff">Grade desabilitada eixo X</option>
-                                    <option value="ygridoff">Grade desabilitada eixo Y</option>
-                                    <option value="gridon">Grid habilitada</option>
-                                    -->
+                                        <option value="xgridoff">Grade desabilitada eixo X</option>
+                                        <option value="ygridoff">Grade desabilitada eixo Y</option>
+                                        <option value="gridon">Grid habilitada</option>
+                                        -->
                             </select>
+                            <template v-if="['bubble', 'scatter'].includes(chartType)">
+                                <label>Atributo usado para cor:</label>
+                                <v-select v-model="editableVisualization.color_attribute.value" :options="attributes"
+                                    label="name" value="name" :append-to-body="true"></v-select>
 
-                            <label>Atributo usado para cor:</label>
-                            <v-select v-model="editableVisualization.color_attribute.value" :options="attributes"
-                                label="name" value="name" :append-to-body="true"></v-select>
-
-                            <label>Atributo usado para tamanho:</label>
-                            <v-select v-model="editableVisualization.size_attribute.value" :options="attributes"
-                                label="name" value="name" :append-to-body="true"></v-select>
+                                <label>Atributo usado para tamanho:</label>
+                                <v-select v-model="editableVisualization.size_attribute.value" :options="attributes"
+                                    label="name" value="name" :append-to-body="true"></v-select>
+                            </template>
                             <!--
-                                    <b-dropdown dropdown size="sm" ref="axis" class="mt-2 mr-1 w-75" variant="light xsmall-dd-title" :boundary="'window'">
-                                        <template #button-content>
-                                            {{ editableVisualization.color_attribute.value === '*' ? 'COUNT' : editableVisualization.color_aggregation.value.toUpperCase() }}
-                                            {{ editableVisualization.color_aggregation.value !== '' ? `(${editableVisualization.color_attribute.value})` : editableVisualization.color_attribute.value }}
-                                        </template>
-                                        <b-dropdown-form form-class="down-drop-form">
-                                            <div class="row xseries-form">
-                                                <div class="col-10">
-                                                    <b-form-group :label="$tc('common.attribute', 1) + ':'"
-                                                        label-for="dropdown-form-email">
-                                                        <select class="form-control form-control-sm mt-2"
-                                                            v-model="editableVisualization.color_attribute.value">
-                                                            <option value="*"># Total de registros</option>
-                                                            <option v-for="attr in attributes" :value="attr.name">
-                                                                {{ attr.name }}
-                                                                ({{ attr.type }})
-                                                            </option>
-                                                        </select>
-                                                    </b-form-group>
+                                        <b-dropdown dropdown size="sm" ref="axis" class="mt-2 mr-1 w-75" variant="light xsmall-dd-title" :boundary="'window'">
+                                            <template #button-content>
+                                                {{ editableVisualization.color_attribute.value === '*' ? 'COUNT' : editableVisualization.color_aggregation.value.toUpperCase() }}
+                                                {{ editableVisualization.color_aggregation.value !== '' ? `(${editableVisualization.color_attribute.value})` : editableVisualization.color_attribute.value }}
+                                            </template>
+                                            <b-dropdown-form form-class="down-drop-form">
+                                                <div class="row xseries-form">
+                                                    <div class="col-10">
+                                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
+                                                            label-for="dropdown-form-email">
+                                                            <select class="form-control form-control-sm mt-2"
+                                                                v-model="editableVisualization.color_attribute.value">
+                                                                <option value="*"># Total de registros</option>
+                                                                <option v-for="attr in attributes" :value="attr.name">
+                                                                    {{ attr.name }}
+                                                                    ({{ attr.type }})
+                                                                </option>
+                                                            </select>
+                                                        </b-form-group>
 
-                                                    <b-form-group v-if="editableVisualization.color_atribute !== '*'"
-                                                        label="Função de agregação:">
-                                                        <select class="form-control form-control-sm"
-                                                            v-model="editableVisualization.color_aggregation.value">
-                                                            <option label="" value="">Usar valor sem agregar</option>
-                                                            <option label="COUNT" value="COUNT">COUNT</option>
-                                                            <option label="COUNTD" value="COUNTD">COUNT DISTINCT</option>
-                                                            <option label="AVG" value="AVG">AVG</option>
-                                                            <option label="SUM" value="SUM">SUM</option>
-                                                            <option label="MIN" value="MIN">MIN</option>
-                                                            <option label="MAX" value="MAX">MAX</option>
-                                                        </select>
-                                                    </b-form-group>
+                                                        <b-form-group v-if="editableVisualization.color_atribute !== '*'"
+                                                            label="Função de agregação:">
+                                                            <select class="form-control form-control-sm"
+                                                                v-model="editableVisualization.color_aggregation.value">
+                                                                <option label="" value="">Usar valor sem agregar</option>
+                                                                <option label="COUNT" value="COUNT">COUNT</option>
+                                                                <option label="COUNTD" value="COUNTD">COUNT DISTINCT</option>
+                                                                <option label="AVG" value="AVG">AVG</option>
+                                                                <option label="SUM" value="SUM">SUM</option>
+                                                                <option label="MIN" value="MIN">MIN</option>
+                                                                <option label="MAX" value="MAX">MAX</option>
+                                                            </select>
+                                                        </b-form-group>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </b-dropdown-form>
-                                    </b-dropdown>-->
+                                            </b-dropdown-form>
+                                        </b-dropdown>-->
 
                             <color-palette :field="palette" :value="editableVisualization.palette.value"
                                 @update="handleUpdatePalette" />
-                            <color-scale v-if="!['pie', 'donut'].includes(editableVisualization.type.value) && editableVisualization.type.value === 'treemap'" :field="colorScale"
+                            <color-scale v-if="['sunburst', 'treemap'].includes(chartType)" :field="colorScale"
                                 :value="editableVisualization.color_scale.value" @update="handleUpdateColorScale" />
 
+                            <!--
                             <b-form-checkbox v-model="editableVisualization.blackWhite.value" switch>
                                 Gráfico preto e branco
                             </b-form-checkbox>
-
+                            -->
                         </b-card-body>
                     </b-collapse>
                 </b-card>
@@ -127,11 +129,11 @@
                     <b-collapse id="accordion-1" accordion="my-accordion" role="tabpanel">
                         <b-card-body class="p-2">
                             <!--
-                            <b-form-group label="Cor de fundo">
-                                <b-form-input type="color" v-model="editableVisualization.paper_color.value"
-                                        class="form-control form-control-sm" />
-                            </b-form-group>
-                            -->
+                                <b-form-group label="Cor de fundo">
+                                    <b-form-input type="color" v-model="editableVisualization.paper_color.value"
+                                            class="form-control form-control-sm" />
+                                </b-form-group>
+                                -->
                             <b-form-group label="Formato dos números">
                                 <select v-model="editableVisualization.number_format.value"
                                     class="form-control form-control-sm">
@@ -346,9 +348,9 @@
                         <b-card-body>
                             <label>Subgráficos por:</label>
                             <v-select v-model="editableVisualization.subgraph.value" :options="attributes" label="name"
-                                value="name" :append-to-body="true"></v-select>
+                                value="name" :searchable="false" :append-to-body="true"></v-select>
 
-                            <b-form-group label="Direção (orientação)" class="p-0 mt-3">
+                            <b-form-group v-if="editableVisualization.subgraph.value" label="Direção (orientação)" class="p-0 mt-3">
                                 <b-form-radio v-model="editableVisualization.subgraph_orientation.value"
                                     value="v">Vertical</b-form-radio>
                                 <b-form-radio v-model="editableVisualization.subgraph_orientation.value"
@@ -371,65 +373,65 @@
                 </b-card>
             </div>
             <!--
-                                    <b-form-group>
-                                        <label>Título:</label>
-                                        <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"/>
-                                    </b-form-group>
-                                    
-                                    <b-dropdown size="sm" dropright ref="axis" class="mt-2 mr-1" variant="light small-dd-title">
-                                        <template #button-content>
-                                            Margens
-                                        </template>
-                                        <b-dropdown-form form-class="down-drop-form" style="width:300px;font-size:9pt;">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <b-form-group label="Direita:">
-                                                        <input type="number" class="form-control form-control-sm"
-                                                            v-model="editableVisualization.right_margin.value" />
-                                                    </b-form-group>
-                                                    <b-form-group label="Esquerda:">
-                                                        <input type="number" class="form-control form-control-sm"
-                                                            v-model="editableVisualization.left_margin.value" />
-                                                    </b-form-group>
+                                        <b-form-group>
+                                            <label>Título:</label>
+                                            <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"/>
+                                        </b-form-group>
+                                        
+                                        <b-dropdown size="sm" dropright ref="axis" class="mt-2 mr-1" variant="light small-dd-title">
+                                            <template #button-content>
+                                                Margens
+                                            </template>
+                                            <b-dropdown-form form-class="down-drop-form" style="width:300px;font-size:9pt;">
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <b-form-group label="Direita:">
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                v-model="editableVisualization.right_margin.value" />
+                                                        </b-form-group>
+                                                        <b-form-group label="Esquerda:">
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                v-model="editableVisualization.left_margin.value" />
+                                                        </b-form-group>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <b-form-group label="Superior:">
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                v-model="editableVisualization.top_margin.value" />
+                                                        </b-form-group>
+                                                        <b-form-group label="Inferior:">
+                                                            <input type="number" class="form-control form-control-sm"
+                                                                v-model="editableVisualization.bottom_margin.value" />
+                                                        </b-form-group>
+                                                    </div>
                                                 </div>
-                                                <div class="col-6">
-                                                    <b-form-group label="Superior:">
-                                                        <input type="number" class="form-control form-control-sm"
-                                                            v-model="editableVisualization.top_margin.value" />
-                                                    </b-form-group>
-                                                    <b-form-group label="Inferior:">
-                                                        <input type="number" class="form-control form-control-sm"
-                                                            v-model="editableVisualization.bottom_margin.value" />
-                                                    </b-form-group>
-                                                </div>
-                                            </div>
-                                        </b-dropdown-form>
-                                    </b-dropdown>
-                                    <b-form-group>
-                                        <label>Exibir legenda:</label>
-                                        <select v-model="editableVisualization.display_legend.value" class="form-control form-control-sm">
-                                            <option value="HIDE">Ocultar</option>
-                                            <option value="AUTO">Posicionar automaticamente</option>
-                                            <option value="LEFT">Topo à esquerda</option>
-                                            <option value="RIGHT">Topo à direita</option>
-                                            <option value="CENTER">Topo ao centro</option>
-                                            <option value="BOTTOM_LEFT">Na parte inferior, à esquerda</option>
-                                            <option value="BOTTOM_RIGHT">Na parte inferior, à direita</option>
-                                            <option value="BOTTOM_CENTER">Na parte inferior, ao centro</option>
-                                        </select>
-                                    </b-form-group>
-                                    <b-form-group>
-                                        <b-form-checkbox v-model="editableVisualization.smoothing.value" switch>
-                                            Suavizar
-                                        </b-form-checkbox>
-                                    </b-form-group>
-                                    <b-form-group>
-                                        <color-palette :field="palette" :value="editableVisualization.palette.value"
-                                            @update="handleUpdatePalette" />
-                                        <color-scale v-if="editableVisualization.type.value === 'treemap'" :field="colorScale"
-                                            :value="editableVisualization.color_scale.value" @update="handleUpdateColorScale" />
-                                    </b-form-group>
-                                    -->
+                                            </b-dropdown-form>
+                                        </b-dropdown>
+                                        <b-form-group>
+                                            <label>Exibir legenda:</label>
+                                            <select v-model="editableVisualization.display_legend.value" class="form-control form-control-sm">
+                                                <option value="HIDE">Ocultar</option>
+                                                <option value="AUTO">Posicionar automaticamente</option>
+                                                <option value="LEFT">Topo à esquerda</option>
+                                                <option value="RIGHT">Topo à direita</option>
+                                                <option value="CENTER">Topo ao centro</option>
+                                                <option value="BOTTOM_LEFT">Na parte inferior, à esquerda</option>
+                                                <option value="BOTTOM_RIGHT">Na parte inferior, à direita</option>
+                                                <option value="BOTTOM_CENTER">Na parte inferior, ao centro</option>
+                                            </select>
+                                        </b-form-group>
+                                        <b-form-group>
+                                            <b-form-checkbox v-model="editableVisualization.smoothing.value" switch>
+                                                Suavizar
+                                            </b-form-checkbox>
+                                        </b-form-group>
+                                        <b-form-group>
+                                            <color-palette :field="palette" :value="editableVisualization.palette.value"
+                                                @update="handleUpdatePalette" />
+                                            <color-scale v-if="editableVisualization.type.value === 'treemap'" :field="colorScale"
+                                                :value="editableVisualization.color_scale.value" @update="handleUpdateColorScale" />
+                                        </b-form-group>
+                                        -->
         </b-form>
     </div>
 </template>
@@ -450,7 +452,8 @@ import { debounce } from "../../util.js";
 const vm = getCurrentInstance();
 const props = defineProps({
     attributes: { type: Array, required: true },
-    value: { type: Object, required: true }
+    value: { type: Object, required: true },
+    chartType: { type: String, required: true }
 });
 const emit = defineEmits(['input']);
 

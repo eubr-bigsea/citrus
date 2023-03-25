@@ -1,4 +1,6 @@
-<template><div ref="container" class="vue-plotly"/></template>
+<template>
+    <div ref="container" class="vue-plotly" />
+</template>
 <script>
 /* (c) https://github.com/statnett/vue-plotly/blob/master/src/Plotly.vue */
 import Plotly from 'plotly.js-dist-min';
@@ -56,12 +58,12 @@ export default {
     data() {
         return {
             internalLayout: {
-                ... structuredClone(this.layout),
+                ...structuredClone(this.layout),
                 datarevision: 1
             }
         };
     },
-    
+
     mounted() {
         this.react();
         this.initEvents();
@@ -151,8 +153,3 @@ export default {
     }
 };
 </script>
-<style scoped>
-.vue-plotly {
-    height: 100%;
-}
-</style>
