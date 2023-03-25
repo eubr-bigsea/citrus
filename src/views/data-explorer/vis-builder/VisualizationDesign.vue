@@ -54,7 +54,7 @@
                         <br />
                         <a href="">Exportar ...</a>
                     </div>
-                    <div v-if="visualizationObj" class="pt-2 border-top">
+                    <div v-if="visualizationObj" class="pt-2 border-top scroll-area">
                         <chart-builder-options v-model="options" :attributes="attributes" @update-chart="updateChart" />
                     </div>
                 </form>
@@ -65,7 +65,7 @@
                 :chartType="visualizationObj.type.value" />
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 80vh">
-                    <div v-if="display && plotlyData" ref="chart" style="background: orange; height: 100%">
+                    <div v-if="display && plotlyData" ref="chart">
                         <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
                             :layout="plotlyData.layout" :frames="plotlyData.frames" :key="plotVersion" ref="plotly" />
                         <small>{{ plotlyData }}</small>
@@ -216,10 +216,13 @@ const handleChangeLayout = (changeCause, value) => {
     }
 };
 const updateChart = debounce((property) => {
+    console.debug(property, plotlyData.value.layout.title.text)
     if (property === 'title') {
-        console.debug(property, plotlyData.value.layout.title.text)
         plotlyData.value.layout.title.text = options.value.title.value;
+    } else if (property === 'hole') {
+        plotlyData.value.data[0].hole = options.value.hole.value * 0.01;
     }
+    plotly.value.react()
 }, 800);
 
 const { getAttributeList, asyncLoadDataSourceList } = useDataSource();
@@ -555,5 +558,10 @@ const connectWebSocket = () => {
     font-size: 22px;
     font-weight: bold;
     color: rgba(#000, .2);
+}
+.scroll-area {
+    width: 100%;
+    height: 65vh;
+    overflow: auto;
 }
 </style>

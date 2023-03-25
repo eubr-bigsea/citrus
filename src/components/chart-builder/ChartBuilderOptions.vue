@@ -18,8 +18,6 @@
                         </div>
                     </template>
                 </v-select>
-            </b-form-group>
-            <b-form-group>
                 <label>{{ $tc('common.title') }}:</label>
                 <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"
                     @input="emit('update-chart', 'title')" />
@@ -111,7 +109,7 @@
 
                             <color-palette :field="palette" :value="editableVisualization.palette.value"
                                 @update="handleUpdatePalette" />
-                            <color-scale v-if="true || editableVisualization.type.value === 'treemap'" :field="colorScale"
+                            <color-scale v-if="!['pie', 'donut'].includes(editableVisualization.type.value) && editableVisualization.type.value === 'treemap'" :field="colorScale"
                                 :value="editableVisualization.color_scale.value" @update="handleUpdateColorScale" />
 
                             <b-form-checkbox v-model="editableVisualization.blackWhite.value" switch>
@@ -158,12 +156,13 @@
                             <template v-if="editableVisualization.type.value == 'donut'">
                                 <b-form-group label="Preenchimento (0 = pizza, > 0 donut)" label-for="pie-fill">
                                     <b-form-input id="title" v-model.number="editableVisualization.hole.value" type="range"
-                                        min="0" max="90" step="1" class="form-control-sm" />
+                                        min="0" max="90" step="1" class="form-control-sm" 
+                                        @input="emit('update-chart', 'hole')"/>
                                     <b-form-text class="text-center mt-0">{{
                                         Math.round(editableVisualization.hole.value) }}%</b-form-text>
                                 </b-form-group>
                             </template>
-                            <b-form-group>
+                            <b-form-group  v-if="!['pie', 'donut'].includes(editableVisualization.type.value)">
                                 <b-form-checkbox v-model="editableVisualization.smoothing.value" switch>
                                     Suavizar
                                 </b-form-checkbox>
