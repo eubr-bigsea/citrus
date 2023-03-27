@@ -2,7 +2,7 @@
     <div class="analysis_card">
         <div class="analysis_card_header">
             <h6>Atributo</h6>
-            <b-dropdown id="dropdown-right" right class="m-2">
+            <b-dropdown id="dropdown-right" right class="m-2" variant="outline-dark">
                 <b-dropdown-item href="#">
                     Excluir
                 </b-dropdown-item>
@@ -34,7 +34,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 300px;
+  min-width: 350px;
   border-right: 1px solid #d9dadb;
   padding: 20px;
 }
