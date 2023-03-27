@@ -7,29 +7,33 @@
             </option>
         </select>
         <label for="exampleFormControlSelect1">Tipo</label>
-        <select id="exampleFormControlSelect1" class="form-control">
-            <option>Unidimensional</option>
-            <option>Bidimensional</option>
-            <option>Multidimensional</option>
-            <option>Testes Estatísticos</option>
-            <option>Ajustar (fit) a uma distribuição</option>
-            <option>Séries temporais</option>
+        <select id="analysis_type" class="form-control">
+            <option value="unidimensional">
+                Unidimensional
+            </option>
+            <option value="bidimensional">
+                Bidimensional
+            </option>
+            <option value="multidimensional">
+                Multidimensional
+            </option>
+            <option value="testes_estatisticos">
+                Testes Estatísticos
+            </option>
+            <option value="ajustar_fit">
+                Ajustar (fit) a uma distribuição
+            </option>
+            <option value="series_temporais">
+                Séries temporais
+            </option>
         </select>
-        <p>Análises:</p>
-        <b-form-checkbox-group stacked>
-            <b-form-checkbox value="orange">
-                Arange
-            </b-form-checkbox>
-            <b-form-checkbox value="apple">
-                Apple
-            </b-form-checkbox>
-            <b-form-checkbox value="pineapple">
-                Pineapple
-            </b-form-checkbox>
-            <b-form-checkbox value="grape">
-                Grape
-            </b-form-checkbox>
-        </b-form-checkbox-group>
+        <b-form-group label="Análises:">
+            <b-form-checkbox-group stacked>
+                <b-form-checkbox v-for="option in analysis_options[selected]" :key="option">
+                    {{option}}
+                </b-form-checkbox>
+            </b-form-checkbox-group>
+        </b-form-group>
         <template #modal-footer>
             <b-button variant="primary" @click="[addCard(), $bvModal.hide('modal')]">
                 Ok
@@ -47,15 +51,25 @@ export default {
     props: {
         atributtes: {
             type: Object,
-            default() {
-                return null;
-            }
+            default: null
         }
+    },
+    emits: ['cards'],
+    data() {
+        return {
+            selected: 'multidimensional',
+            analysis_options: {
+                unidimensional: ['Histograma', 'Quantile Table', 'Frequency Table', 'Summary Stats', 'Box Plot', 'Cumulative distribution function'],
+                bidimensional: ['Mosaic Plot', 'Scatter Plot', 'Histogram', 'Frequency Table', 'Box Plot', 'Summary Test'],
+                multidimensional: ['PCA', 'Correlação', '...']
+            }
+        };
     },
     methods: {
         addCard() {
-            this.cards = this.cards + 1;
+            this.$emit('cards', true);
         }
     }
 };
 </script>
+
