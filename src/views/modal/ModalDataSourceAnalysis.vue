@@ -7,7 +7,7 @@
             </option>
         </select>
         <label for="exampleFormControlSelect1">Tipo</label>
-        <select id="analysis_type" class="form-control">
+        <select id="analysis_type" class="form-control" v-model="selected">
             <option value="unidimensional">
                 Unidimensional
             </option>
@@ -29,7 +29,7 @@
         </select>
         <b-form-group label="Análises:">
             <b-form-checkbox-group stacked>
-                <b-form-checkbox v-for="option in analysis_options[selected]" :key="option">
+                <b-form-checkbox v-for="option in selectedAnalysisOptions" :key="option" :value="option">
                     {{option}}
                 </b-form-checkbox>
             </b-form-checkbox-group>
@@ -57,13 +57,23 @@ export default {
     emits: ['cards'],
     data() {
         return {
-            selected: 'multidimensional',
+            selected: 'unidimensional',
             analysis_options: {
                 unidimensional: ['Histograma', 'Quantile Table', 'Frequency Table', 'Summary Stats', 'Box Plot', 'Cumulative distribution function'],
                 bidimensional: ['Mosaic Plot', 'Scatter Plot', 'Histogram', 'Frequency Table', 'Box Plot', 'Summary Test'],
                 multidimensional: ['PCA', 'Correlação', '...']
             }
         };
+    },
+    computed: {
+        selectedAnalysisOptions() {
+            if (this.selected) {
+                return this.analysis_options[this.selected];
+            }
+            else {
+                return [];
+            }
+        }
     },
     methods: {
         addCard() {
