@@ -241,11 +241,11 @@ export default {
         },
         loadData() {
             let validations = [
-                // {
-                //     'id': '1000' , 'name': 'Validação 1', 'status': 'Habilitado',
-                //     'last_executed': Date('2020-03-21'), 'situation': 'Falha',
-                //     'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
-                // },
+                {
+                    'id': '1000' , 'name': 'Validação 1', 'status': 'Habilitado',
+                    'last_executed': '', 'situation': 'Falha',
+                    'schedule' : 'Todo dia, 9h da noite', 'category': '', 'validation': '',
+                },
                 {
                     'id': '1001' , 'name': 'Validação 2', 'status': 'Habilitado',
                     'last_executed': '', 'situation': 'Sucesso',
@@ -383,10 +383,26 @@ export default {
             //             .catch(e => self.error(e));
             //     }
             // );
-            alert("Dado excluído com sucesso!");
+
+            const self = this;
+            this.confirm(
+                this.$t('actions.delete'),
+                this.$t('messages.doYouWantToDelete'),
+                () => {
+                    for(var i = 0; i < self.validations.length; i++) {
+                        if ( self.validations[i].id === validationId) {
+                            self.validations.splice(i, 1);
+                        }
+                    }
+                    self.success(self.$t('messages.successDeletion',
+                        { what: this.$tc('titles.validation', 1) }));
+                    self.$refs.validationList.refresh();
+                },
+            );
+            // The confirm dialog is not closing after the deletion!
         },
         execute(validationId) {
-            // Do this
+            // Implement this
         },
         failedValidations() {
             return this.validations.filter(x => x.situation === 'Falha').length;
