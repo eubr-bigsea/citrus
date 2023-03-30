@@ -469,6 +469,9 @@ const chartTypes = [
     { name: "boxplot", label: "Box plot", },
     { name: "bubble", label: "Bolhas", },
     { name: "scatter", label: "Dispersão", },
+
+    {name: "tile-map", label: 'Mapa de pontos'},
+
     { name: "treemap", label: "Mapa em Árvore (Treemap)", },
     /*{name: "dots",label: "Pontos",
             image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"

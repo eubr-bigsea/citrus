@@ -13,8 +13,10 @@
 
         <component v-if="visualizationComponent !== 'plotly'" :is="visualizationComponent"
             :visualization-data="visualizationData" :public-route="publicRoute" :height="height" />
-        <plotly v-else :data="visualizationData.data.data" :options="{ responsive: true }" :display-mode-bar="false"
-            :auto-resize="true" :layout="{ ...visualizationData.data.layout, autosize: true, height: this.height }" />
+        <div v-else>
+            <plotly :data="visualizationData.data.data" :display-mode-bar="true" :auto-resize="true"
+                :layout="{ ...visualizationData.data.layout, autosize: true, height: height }" />
+        </div>
     </div>
 </template>
 

@@ -166,7 +166,7 @@
                                         </b-form-group>
                                         <b-form-group label="Espessura da linha:">
                                             <select class="form-control form-control-sm w-50" v-model.number="y.strokeSize">
-                                                <option v-for="i in 11" :key="i-1" :value="i-1">{{ i - 1 }}</option>
+                                                <option v-for="i in 11" :key="i - 1" :value="i - 1">{{ i - 1 }}</option>
                                             </select>
                                         </b-form-group>
                                         <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
@@ -442,6 +442,108 @@
                     <font-awesome-icon prefix="fa" icon="plus" />
                 </b-button>
             </div>
+            <div class="cleafix">
+                <b-dropdown size="sm" ref="axis" class="mt-2 mr-1 float-left" variant="outline-secondary small-dd-title"
+                    title="Cor">
+                    <template #button-content>
+                        <font-awesome-icon class="mr-2 text-success" prefix="fa" icon="droplet" /> Cor?
+                    </template>
+                    <b-dropdown-form form-class="right-drop-form">
+                        <div class="row half-series-form">
+                            <div class="col-12">
+                                <b-form-group :label="$tc('common.attribute', 1) + ':'" label-for="dropdown-form-email">
+
+                                    <v-select xv-model="y.attribute"
+                                        :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
+                                        :reduce="(opt) => opt.name" :searchable="false">
+                                        <template #option="{ type, name }">
+                                            <span v-if="name !== '*'"
+                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                            {{ name }}
+                                        </template>
+
+                                        <template #selected-option="{ type, name }">
+                                            <div>
+                                                <span v-if="name !== '*'"
+                                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                                {{ name }}
+                                            </div>
+                                        </template>
+                                    </v-select>
+                                </b-form-group>
+                            </div>
+                        </div>
+                    </b-dropdown-form>
+                </b-dropdown>
+            </div>
+            <div class="cleafix">
+                <b-dropdown size="sm" ref="axis" class="mt-2 mr-1 float-left" variant="outline-secondary small-dd-title"
+                    title="Tamanho">
+                    <template #button-content>
+                        <font-awesome-icon class="mr-2 text-primary" prefix="fa" icon="ruler-combined" /> Tamanho
+                    </template>
+                    <b-dropdown-form form-class="right-drop-form">
+                        <div class="row half-series-form">
+                            <div class="col-12">
+                                <b-form-group :label="$tc('common.attribute', 1) + ':'" label-for="dropdown-form-email">
+
+                                    <v-select xv-model="y.attribute"
+                                        :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
+                                        :reduce="(opt) => opt.name" :searchable="false">
+                                        <template #option="{ type, name }">
+                                            <span v-if="name !== '*'"
+                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                            {{ name }}
+                                        </template>
+
+                                        <template #selected-option="{ type, name }">
+                                            <div>
+                                                <span v-if="name !== '*'"
+                                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                                {{ name }}
+                                            </div>
+                                        </template>
+                                    </v-select>
+                                </b-form-group>
+                            </div>
+                        </div>
+                    </b-dropdown-form>
+                </b-dropdown>
+            </div>
+            <div class="cleafix">
+                <b-dropdown size="sm" ref="axis" class="mt-2 mr-1 float-left" variant="outline-secondary small-dd-title"
+                    title="Texto">
+                    <template #button-content>
+                        <font-awesome-icon class="mr-2 text-warning" prefix="fa" icon="a" /> Texto
+                    </template>
+                    <b-dropdown-form form-class="right-drop-form">
+                        <div class="row half-series-form">
+                            <div class="col-12">
+                                <b-form-group :label="$tc('common.attribute', 1) + ':'" label-for="dropdown-form-email">
+
+                                    <v-select xv-model="y.attribute"
+                                        :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
+                                        :reduce="(opt) => opt.name" :searchable="false">
+                                        <template #option="{ type, name }">
+                                            <span v-if="name !== '*'"
+                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                            {{ name }}
+                                        </template>
+
+                                        <template #selected-option="{ type, name }">
+                                            <div>
+                                                <span v-if="name !== '*'"
+                                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                                {{ name }}
+                                            </div>
+                                        </template>
+                                    </v-select>
+                                </b-form-group>
+                            </div>
+                        </div>
+                    </b-dropdown-form>
+                </b-dropdown>
+            </div>
         </b-card>
     </div>
 </template>
@@ -630,6 +732,10 @@ watch(
 
 .series-form {
     width: 520px;
+    zoom: .8;
+}
+.half-series-form {
+    width: 260px;
     zoom: .8;
 }
 
