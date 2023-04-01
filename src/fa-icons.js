@@ -142,9 +142,12 @@ import {
     faX,
     faXmarkCircle,
     faHatWizard,
+    faDroplet,
+    faA,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
+    faA,
     faAngleDoubleRight,
     faAngleDown,
     faAngleRight,
@@ -194,6 +197,7 @@ library.add(
     faDatabase,
     faDollarSign,
     faDownload,
+    faDroplet,
     faEdit,
     faEquals,
     faEllipsisH,
