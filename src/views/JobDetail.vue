@@ -16,7 +16,7 @@
                             <router-link v-if="workflow.id"
                                          :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
                                          class="btn btn-outline-primary d-print-none float-right btn-sm">
-                                <i class="fa fa-chevron-left" />
+                                <font-awesome-icon icon="fa-chevron-left" />
                                 &nbsp; {{$t('actions.back')}} -
                                 {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
                             </router-link>
@@ -293,6 +293,8 @@ import CapirinhaVisualization from '../components/caipirinha-visualization/Caipi
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const caipirinhaUrl = import.meta.env.VITE_CAIPIRINHA_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -567,9 +569,13 @@ export default {
         },
         connectWebSocket() {
             const self = this;
-            const socket = io(standNamespace, {
+            const opts = {
                 upgrade: true,
-            });
+            };
+            if (standSocketIoPath !== '') {
+                opts['path'] = standSocketIoPath;
+            }
+            const socket = io(`${standSocketServer}${standNamespace}`, opts);
 
             self.socket = socket;
 

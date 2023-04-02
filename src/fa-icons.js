@@ -144,6 +144,7 @@ import {
     faHatWizard,
     faDroplet,
     faA,
+    faMapLocationDot,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -236,6 +237,7 @@ library.add(
     faLock,
     faLockOpen,
     faMagic,
+    faMapLocationDot,
     faMedal,
     faMicroscope,
     faMinusCircle,
@@ -297,4 +299,4 @@ library.add(
  * Allows DOM to change <i> tags to SVG for more features like layering
  * https://fontawesome.com/how-to-use/on-the-web/styling/layering
  */
-dom.watch();
+//dom.watch();

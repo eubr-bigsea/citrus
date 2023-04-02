@@ -6,18 +6,16 @@
             </div>
             <hr>
             <div class="card-deck">
-                <b-card class="clickable"
-                        role="button"
-                        @click="navigate('model-builder', {task: 'classification'})">
+                <b-card class="clickable" role="button" @click="navigate('model-builder', { task: 'classification' })">
                     <div class="row">
                         <div class="col-md-3 text-center">
-                            <span class="fa-stack fa-2x">
-                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-primary fa-stack-2x" />
-                                <font-awesome-icon icon="fas fa-project-diagram fa-stack-1x fa-inverse" />
-                            </span>
+                            <font-awesome-layers class="fa-stack fa-3x text-danger">
+                                <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                <font-awesome-icon icon="fa-project-diagram" inverse />
+                            </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{$t('dataExplorer.task.classification')}}</h6>
+                            <h6>{{ $t('dataExplorer.task.classification') }}</h6>
                             <small>
                                 Usar dados passados para predizer novas ocorrências.
                                 Detecção de fraudes, retenção de clientes, chance de venda, etc.
@@ -25,18 +23,16 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable"
-                        role="button"
-                        @click="navigate('model-builder', {task: 'regression'})">
+                <b-card class="clickable" role="button" @click="navigate('model-builder', { task: 'regression' })">
                     <div class="row">
                         <div class="col-md-3 text-center">
-                            <span class="fa-stack fa-2x">
-                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-warning fa-stack-2x" />
-                                <font-awesome-icon icon="fas fa-prescription-bottle fa-stack-1x fa-inverse" />
-                            </span>
+                            <font-awesome-layers class="fa-stack fa-3x text-info">
+                                <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                <font-awesome-icon icon="fa-prescription-bottle" inverse />
+                            </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{$t('dataExplorer.task.regression')}}</h6>
+                            <h6>{{ $t('dataExplorer.task.regression') }}</h6>
                             <small>
                                 Buscar padrões escondidos nos dados e revelar grupos de itens que compartilham
                                 alguma semelhança no corportamento,
@@ -45,18 +41,16 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable"
-                        role="button"
-                        @click="navigate('model-builder', {task: 'clustering'})">
+                <b-card class="clickable" role="button" @click="navigate('model-builder', { task: 'clustering' })">
                     <div class="row">
                         <div class="col-md-3 text-center">
-                            <span class="fa-stack fa-2x">
-                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-success fa-stack-2x" />
-                                <font-awesome-icon icon="fas fa-layer-group fa-stack-1x fa-inverse" />
-                            </span>
+                            <font-awesome-layers class="fa-stack fa-3x text-success">
+                                <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                <font-awesome-icon icon="layer-group" inverse />
+                            </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{$t('dataExplorer.task.clustering')}}</h6>
+                            <h6>{{ $t('dataExplorer.task.clustering') }}</h6>
                             <small>
                                 Buscar padrões escondidos nos dados e revelar grupos de itens que compartilham
                                 alguma semelhança no corportamento,
@@ -66,16 +60,15 @@
                     </div>
                 </b-card>
             </div>
-            <div v-if="false"
-                 class="card-deck mt-4">
-                <b-card class="clickable"
-                        @click="navigate('model-builderl-training')">
+            <div v-if="false" class="card-deck mt-4">
+                <b-card class="clickable" @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
-                            <span class="fa-stack fa-2x">
-                                <font-awesome-icon icon="fas fa-circle text-secondary xtext-danger fa-stack-2x" />
-                                <font-awesome-icon icon="fas fa-bug fa-stack-1x fa-inverse" />
-                            </span>
+                            <font-awesome-layers class="fa-stack fa-3x text-secondary">
+                                <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                <font-awesome-icon icon="bug" inverse />
+                            </font-awesome-layers>
+
                         </div>
                         <div class="col-md-9 text-center">
                             <h6>Detecção de anomalias</h6>
@@ -89,8 +82,7 @@
                 </b-card>
 
 
-                <b-card class="clickable"
-                        @click="navigate('model-builderl-training')">
+                <b-card class="clickable" @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -107,8 +99,7 @@
                         </div>
                     </div>
                 </b-card>
-                <b-card class="clickable"
-                        @click="navigate('model-builderl-training')">
+                <b-card class="clickable" @click="navigate('model-builderl-training')">
                     <div class="row">
                         <div class="col-md-3 text-center">
                             <span class="fa-stack fa-2x">
@@ -128,9 +119,8 @@
                 </b-card>
             </div>
         </div>
-        <router-link :to="{name: 'index-explorer'}"
-                     class="btn btn-sm btn-secondary mt-4 pl-4 pr-4">
-            {{$t('actions.back')}}
+        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-secondary mt-4 pl-4 pr-4">
+            {{ $t('actions.back') }}
         </router-link>
     </main>
 </template>

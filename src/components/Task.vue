@@ -10,7 +10,10 @@
             {{ task.name }}
         </div>
         <em v-if="isComment">{{ task.forms.comment ? task.forms.comment.value : '' }}</em>
-        <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass" />
+        <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
+            <font-awesome-icon v-if="!isComment && showDecoration"  :icon="getDecorationClass" size="2x"/>
+        </div>
+
         <div v-if="!isComment && task.step && task.step.status && !task.warning" class="right-decor"
             :class="task.step ? task.step.status.toLowerCase() : ''">
             <font-awesome-icon icon="fa fa-2x" :class="getDecorationClass" />
@@ -245,19 +248,19 @@ const TaskComponent = Vue.extend({
             let result = [];
             switch (value) {
                 case 'ERROR':
-                    result.push("fa fa-times-circle fa-2x");
+                    result.push("fa-times-circle");
                     break;
                 case 'PENDING':
-                    result.push("fa fa-pause-circle fa-2x");
+                    result.push("fa-pause-circle");
                     break;
                 case 'CANCELED':
-                    result.push("fa fa-stop-circle fa-2x");
+                    result.push("fa-stop-circle");
                     break;
                 case 'RUNNING':
-                    result.push("fa fa-sync fa-spin fa-2x");
+                    result.push("fa-sync fa-spin");
                     break;
                 case 'COMPLETED':
-                    result.push("fa fa-check-circle fa-2x");
+                    result.push("fa-check-circle");
                     break;
                 default:
             }
