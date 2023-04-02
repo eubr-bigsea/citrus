@@ -67,9 +67,9 @@
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 80vh">
                     <div v-if="display && plotlyData" ref="chart">
-                        <plotly :options="{ responsive: true, height: 600 }" :data="plotlyData.data"
-                            :layout="plotlyData.layout" :frames="plotlyData.frames" :key="plotVersion" ref="plotly" />
-                        <small>{{ plotlyData }}</small>
+                        <plotly :options="{ responsive: true, height: 600 }" :data="Object.freeze(plotlyData.data)"
+                            :layout="Object.freeze(plotlyData.layout)" :frames="Object.freeze(plotlyData.frames)" :key="plotVersion" ref="plotly" />
+                        <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData }}</small>
 
                     </div>
                     <div v-else class="chart-not-available">
@@ -175,8 +175,11 @@ const dataSourceId = computed({
 });
 const axis = computed({
     get() {
-        const { x_axis, y_axis, y, x, type } = visualizationObj.value;
-        return { x_axis, y_axis, y, x, type };
+        const { x_axis, y_axis, y, x, type, color_attribute, text_attribute, size_attribute,
+            latitude, longitude } = visualizationObj.value;
+        return { x_axis, y_axis, y, x, type, 
+            color_attribute, text_attribute, size_attribute,
+            latitude, longitude };
     },
     set(value) {
         Object.assign(visualizationObj.value, value);
@@ -193,13 +196,16 @@ const options = computed({
             template, blackWhite, subgraph, subgraph_orientation,
             animation, height, width, opacity, scatter_color, scatter_size,
             color_attribute, color_aggregation, size_attribute, number_format,
-            fill_opacity, paper_color } = visualizationObj.value;
+                fill_opacity, paper_color, style, tooltip_info, zoom, center_latitude, center_longitude,
+                marker_size,
+         } = visualizationObj.value;
         return {
             display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
             auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation,
             height, width, opacity, scatter_color, scatter_size, color_attribute, color_aggregation,
-            size_attribute, fill_opacity, number_format, paper_color
+            size_attribute, fill_opacity, number_format, paper_color,
+            style, tooltip_info, zoom, center_latitude, center_longitude, marker_size
         };
     },
     set(value) {
@@ -217,7 +223,11 @@ const handleChangeLayout = (changeCause, value) => {
     }
 };
 const updateChart = debounce((property) => {
-    console.debug(property, plotlyData.value.layout.title.text)
+    return 
+    if (!plotlyData || !plotlyData?.value?.layout){
+        return;
+    }
+    console.debug(property, plotlyData?.value?.layout?.title?.text)
     if (property === 'title') {
         plotlyData.value.layout.title.text = options.value.title.value;
     } else if (property === 'hole') {
@@ -342,7 +352,7 @@ const saveWorkflow = async () => {
     if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
     }
-    cloned.forms = { $meta: { plot: plotlyData.value } };
+    //cloned.forms = { $meta: { plot: plotlyData.value } };
     let url = `${tahitiUrl}/workflows/${cloned.id}`;
 
     cloned.platform_id = META_PLATFORM_ID;

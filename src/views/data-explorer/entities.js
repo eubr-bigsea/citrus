@@ -443,15 +443,35 @@ class Visualization {
         height = {value: null}, width = {value: null},
         scatter_color = {value: null}, 
         scatter_size = {value: null}, 
-        color_attribute = {value: null}, 
-        color_aggregation = {value: null}, 
-        size_attribute = {value: null}, 
         fill_opacity = {value: 255}, 
         number_format = {value: null}, 
         paper_color = {value: null}, 
+        
+        size_attribute = {value: null}, 
+        text_attribute = {value: null}, 
+        color_attribute = {value: null}, 
+        style = {value: null}, 
+
+        color_aggregation = {value: null}, 
+        
+        tooltip_info = {value: null}, 
+        zoom = {value: null}, 
+        center_latitude = {value: null}, 
+        center_longitude = {value: null}, 
+        latitude = {value: null}, 
+        longitude = {value: null}, 
+        marker_size = {value: null}, 
 
     },
     ) {
+        this.marker_size = marker_size;
+        this.center_latitude = center_latitude;
+        this.center_longitude = center_longitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.zoom = zoom;
+        this.style = style;
+        this.tooltip_info = tooltip_info;
         this.number_format = number_format;
         this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
         this.smoothing = smoothing;
@@ -461,6 +481,7 @@ class Visualization {
         this.color_attribute = color_attribute;
         this.color_aggregation = color_aggregation;
         this.size_attribute = size_attribute;
+        this.text_attribute = text_attribute;
         this.fill_opacity = fill_opacity;
 
         this.paper_color = paper_color;

@@ -29,11 +29,11 @@
                             </template>
                         </vue-select>
                         <hr>
-                        <router-link :to="{name: 'index-explorer'}" class="btn btn-sm btn-outline-secondary mr-2">
+                        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-outline-secondary mr-2">
                             {{ $t('actions.back') }}
                         </router-link>
                         <button v-if="valid" class="btn btn-primary btn-sm" @click="create">
-                            {{ $t('actions.create', {type: 'experimento'}) }}
+                            {{ $t('actions.create', { type: 'experimento' }) }}
                         </button>
                     </b-card>
                 </div>
@@ -42,10 +42,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="custom-card" role="button" @click="create">
-                                    <span class="fa-stack fa-3x text-success">
-                                        <span class="fas fa-circle text- fa-stack-2x" />
-                                        <span class="fas fa-glasses fa-stack-1x fa-inverse" />
-                                    </span>
+
+                                    <font-awesome-layers class="fa-stack fa-3x text-success">
+                                        <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                        <font-awesome-icon icon="glasses" inverse />
+                                    </font-awesome-layers>
                                     <h6>Especialista</h6>
                                     <small>
                                         Você controla como a visualização será criada, podendo escolher o tipo do
@@ -55,14 +56,15 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="custom-card" role="button">
-                                    <span class="fa-stack fa-3x">
-                                        <span class="fas fa-circle text- fa-stack-2x text-primary" />
-                                        <span class="fas fa-hat-wizard fa-stack-1x fa-inverse" />
-                                    </span>
+                                    <font-awesome-layers class="fa-stack fa-3x text-primary">
+                                        <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                        <font-awesome-icon icon="hat-wizard" inverse />
+                                    </font-awesome-layers>
                                     <h6>Usando assistente</h6>
                                     <small>
-                                        Você será orientado por meio de perguntas a escolher o melhor tipo de gráfico para o seu propósito.
-                                        Claro, você poderá alterar o tipo de gráfico posteriormente, caso seja necessário. 
+                                        Você será orientado por meio de perguntas a escolher o melhor tipo de gráfico para o
+                                        seu propósito.
+                                        Claro, você poderá alterar o tipo de gráfico posteriormente, caso seja necessário.
                                     </small>
                                 </div>
                             </div>
@@ -84,12 +86,12 @@ import axios from 'axios';
 import vSelect from 'vue-select';
 import Notifier from '../../../mixins/Notifier.js';
 import DataSourceMixin from '../DataSourceMixin.js';
-import {Workflow} from '../entities.js';
+import { Workflow } from '../entities.js';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
-    components: {'vue-select': vSelect},
+    components: { 'vue-select': vSelect },
     mixins: [Notifier, DataSourceMixin],
     data() {
         return {
@@ -105,16 +107,16 @@ export default {
     },
     methods: {
         navigate(name) {
-            this.$router.push({name});
+            this.$router.push({ name });
         },
         async create() {
             try {
-                const ds = {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name};
+                const ds = { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name };
                 const workflow = Workflow.buildVisualizationBuilder(
                     this.name, ds, this.method, this);
                 const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
                 const workflowResp = resp.data;
-                this.$router.push({name: 'visualization-design', params: {id: workflowResp.id}});
+                this.$router.push({ name: 'visualization-design', params: { id: workflowResp.id } });
             } catch (e) {
                 this.error(e);
             }

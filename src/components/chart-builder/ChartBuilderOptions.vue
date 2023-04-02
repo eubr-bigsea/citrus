@@ -134,7 +134,7 @@
                                             class="form-control form-control-sm" />
                                 </b-form-group>
                                 -->
-                            <b-form-group label="Formato dos números">
+                            <b-form-group v-if="!mapFamily" label="Formato dos números">
                                 <select v-model="editableVisualization.number_format.value"
                                     class="form-control form-control-sm">
                                     <option value=",.">1.234,56</option>
@@ -143,13 +143,13 @@
                                     <option value=".">1 234.56</option>
                                 </select>
                             </b-form-group>
-                            <b-form-group label="Opacidade do gráfico:" label-for="line-width">
+                            <b-form-group v-if="!mapFamily" label="Opacidade do gráfico:" label-for="line-width">
                                 <b-form-input id="title" v-model.number="editableVisualization.opacity.value" type="range"
                                     min="0" max="1" step="0.01" class="form-control-sm" />
                                 <b-form-text class="text-center mt-0">{{ Math.round(editableVisualization.opacity.value
                                     * 100) }}%</b-form-text>
                             </b-form-group>
-                            <b-form-group label="Opacidade do preenchimento:">
+                            <b-form-group v-if="!mapFamily" label="Opacidade do preenchimento:">
                                 <b-form-input id="title" v-model.number="editableVisualization.fill_opacity.value"
                                     type="range" min="0" max="1" step=".01" class="form-control-sm" />
                                 <b-form-text class="text-center mt-0">{{
@@ -158,13 +158,13 @@
                             <template v-if="editableVisualization.type.value == 'donut'">
                                 <b-form-group label="Preenchimento (0 = pizza, > 0 donut)" label-for="pie-fill">
                                     <b-form-input id="title" v-model.number="editableVisualization.hole.value" type="range"
-                                        min="0" max="90" step="1" class="form-control-sm" 
-                                        @input="emit('update-chart', 'hole')"/>
+                                        min="0" max="90" step="1" class="form-control-sm"
+                                        @input="emit('update-chart', 'hole')" />
                                     <b-form-text class="text-center mt-0">{{
                                         Math.round(editableVisualization.hole.value) }}%</b-form-text>
                                 </b-form-group>
                             </template>
-                            <b-form-group  v-if="!['pie', 'donut'].includes(editableVisualization.type.value)">
+                            <b-form-group v-if="!pieFamily && !mapFamily">
                                 <b-form-checkbox v-model="editableVisualization.smoothing.value" switch>
                                     Suavizar
                                 </b-form-checkbox>
@@ -179,7 +179,77 @@
                                         label="name" value="name" :append-to-body="true"></v-select>
                                 </b-form-group>
                             </template>
-                            <template v-if="['donut', 'pie'].indexOf(editableVisualization.type.value) > -1">
+                            <template v-if="mapFamily">
+                                <b-form-group label="Estilo do mapa:">
+                                    <select v-model="editableVisualization.style.value"
+                                        class="form-control form-control-sm">
+                                        <option value="carto-darkmatter">Carto Darkmatter</option> 
+                                        <option value="carto-positron">Carto Positron</option> 
+                                        <option value="open-street-map">Open Street Map</option> 
+                                        <option value="stamen-terrain">Stamen Terrain</option> 
+                                        <option value="stamen-toner">Stamen Toner</option> 
+                                        <option value="stamen-watercolor">Stamen Watercolor</option> 
+                                        <option value="white-bg">Fundo Branco (sem mapa)</option>
+                                        
+                                        <!-- Requires MapBox token 
+                                        <option value="basic">Mapbox Básico</option>
+                                        <option value="streets">Mapbox Streets</option>
+                                        <option value="outdoors">Mapbox Outdoors</option>
+                                        <option value="light">Mapbox Light</option>
+                                        <option value="dark">Mapbox Dark</option>
+                                        <option value="satellite">Mapbox Satellite</option>
+                                        <option value="satellite-streets">Mapbox Streets Satellite</option>
+                                        -->
+                                    </select>
+                                </b-form-group>
+                                <b-form-group label="Exibir no mapa:">
+                                    <select v-model="editableVisualization.text_info.value"
+                                        class="form-control form-control-sm">
+                                        <option value="markers">Marcadores</option>
+                                        <option value="text">Texto</option>
+                                        <option value="markers+text">Marcadores e texto</option>
+                                    </select>
+                                </b-form-group>
+                                <b-form-group label="Exibir dica (tooltip):">
+                                    <select v-model="editableVisualization.tooltip_info.value"
+                                        class="form-control form-control-sm">
+                                        <option value="lat">Latitude</option>
+                                        <option value="lon">Longitude</option>
+                                        <option value="text">Texto</option>
+                                        <option value="lat+lon">Latitude e longitude</option>
+                                        <option value="lat+lon+text">Latitude, longitude e texto</option>
+                                        <option value="none">Nenhuma</option>
+                                    </select>
+                                </b-form-group>
+                                <b-form-group label="Zoom mapa:">
+                                    <b-form-input type="range"
+                                        class="" min="0" step="1" max="20"
+                                        v-model.number="editableVisualization.zoom.value" />
+                                        <b-form-text class="text-center mt-0">{{editableVisualization.zoom.value }}</b-form-text>
+                                </b-form-group>
+                                <b-form-group label="Raio base (se atributo para tamanho):">
+                                    <b-form-input type="number"
+                                        class="form-control form-control-sm mb-0" min="0" step=".1" max=""
+                                        v-model.number="editableVisualization.marker_size.value" />
+                                </b-form-group>
+                                <b-form-group label="Centro do mapa:">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <b-form-input type="number"
+                                                class="form-control form-control-sm mb-0" min="0" step="0.01"
+                                                v-model="editableVisualization.center_latitude.value" />
+                                            <b-form-text class="text-center mt-0 mb-2">latitude</b-form-text>
+                                        </div>
+                                        <div class="col-6">
+                                            <b-form-input type="number"
+                                                class="form-control form-control-sm mb-0" min="0" step="0.01"
+                                                v-model="editableVisualization.center_longitude.value" />
+                                            <b-form-text class="text-center mt-0 mb-2">longitude</b-form-text>
+                                        </div>
+                                    </div>
+                                </b-form-group>
+                            </template>
+                            <template v-if="pieFamily">
                                 <b-form-group label="Posição do texto">
                                     <select v-model="editableVisualization.text_position.value"
                                         class="form-control form-control-sm">
@@ -350,7 +420,8 @@
                             <v-select v-model="editableVisualization.subgraph.value" :options="attributes" label="name"
                                 value="name" :searchable="false" :append-to-body="true"></v-select>
 
-                            <b-form-group v-if="editableVisualization.subgraph.value" label="Direção (orientação)" class="p-0 mt-3">
+                            <b-form-group v-if="editableVisualization.subgraph.value" label="Direção (orientação)"
+                                class="p-0 mt-3">
                                 <b-form-radio v-model="editableVisualization.subgraph_orientation.value"
                                     value="v">Vertical</b-form-radio>
                                 <b-form-radio v-model="editableVisualization.subgraph_orientation.value"
@@ -359,7 +430,7 @@
                         </b-card-body>
                     </b-collapse>
                 </b-card>
-                <b-card v-if="!['pie', 'donut'].includes(editableVisualization.type.value)" no-body class="mb-0">
+                <b-card v-if="!pieFamily" no-body class="mb-0">
                     <b-card-header header-tag="header" class="p-0" role="tab">
                         <b-button block v-b-toggle.accordion-6 variant="light" size="sm">Animação</b-button>
                     </b-card-header>
@@ -436,11 +507,8 @@
     </div>
 </template>
 <script setup>
-
-import pieChart from '../../assets/charts/pie.svg';
-
 import { getCurrentInstance } from 'vue';
-import { ref, watch, defineProps, defineEmits } from "vue";
+import { ref, watch, defineProps, defineEmits, computed } from "vue";
 
 import vSelect from 'vue-select';
 import ColorPalette from '../widgets/ColorPalette.vue';
@@ -453,31 +521,32 @@ const vm = getCurrentInstance();
 const props = defineProps({
     attributes: { type: Array, required: true },
     value: { type: Object, required: true },
-    chartType: { type: String, required: true }
+    chartType: { type: String, required: false }
 });
 const emit = defineEmits(['input']);
 
 const chartTypes = [
+    { name: "line", label: "Linhas", },
     { name: "bar", label: "Barras", },
     { name: "stacked-bar", label: "Barras Empilhadas", },
     { name: "horizontal-bar", label: "Barras Horizontais", },
     { name: "stacked-horizontal-bar", label: "Barras Horizontais Empilhada", },
+    { name: "stacked-area", label: "Área empilhado", },
+    { name: "stacked-area-100", label: "Área empilhado 100%", },
     { name: "pie", label: "Pizza", },
     { name: "donut", label: "Rosca (Donut)", },
-    { name: "line", label: "Linhas", },
     { name: "indicator", label: "Indicador", },
     { name: "boxplot", label: "Box plot", },
     { name: "bubble", label: "Bolhas", },
     { name: "scatter", label: "Dispersão", },
 
-    {name: "tile-map", label: 'Mapa de pontos'},
+    { name: "scattermapbox", label: 'Mapa de pontos' },
 
     { name: "treemap", label: "Mapa em Árvore (Treemap)", },
+    { name: "heatmap", label: "Mapa de Calor (Heatmap)", },
     /*{name: "dots",label: "Pontos",
             image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
         },*/
-    { name: "stacked-area", label: "Área empilhado", },
-    { name: "stacked-area-100", label: "Área empilhado 100%", },
     { name: "sunburst", label: "Sunburst", },
 
 ];
@@ -488,6 +557,15 @@ const palette = ref({ label: 'Paleta de cores' });
 const colorScale = ref({ label: 'Escala de cores' });
 
 editableVisualization.value = structuredClone(props.value);
+
+
+/* Computed */
+const mapFamily = computed(() =>
+    ['scattermapbox'].includes(props.chartType)
+);
+const pieFamily = computed(() =>
+    ['donut', 'pie'].includes(props.chartType)
+);
 
 /* Watch */
 watch(
@@ -604,5 +682,4 @@ const updateChart = (property) => {
 
 .options-font button.collapsed {
     font-size: 10pt;
-}
-</style>
+}</style>
