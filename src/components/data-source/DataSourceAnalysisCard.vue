@@ -1,9 +1,9 @@
 <template>
     <div class="analysis_card">
         <div class="analysis_card_header">
-            <h6>Atributo</h6>
+            <h6>{{info.atributte}}</h6>
             <b-dropdown id="dropdown-right" right class="m-2" variant="outline-dark">
-                <b-dropdown-item href="#">
+                <b-dropdown-item href="#" @click="deleteCard">
                     Excluir
                 </b-dropdown-item>
                 <b-dropdown-item href="#">
@@ -26,6 +26,20 @@
 </template>
 
 <script>
+export default {
+    props: {
+        info: {
+            type: Object,
+            default: null
+        }
+    },
+    emits: ['action'],
+    methods: {
+        deleteCard() {
+            this.$emit('action', this.info);
+        }
+    }
+};
 
 </script>
 
