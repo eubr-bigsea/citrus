@@ -20,7 +20,10 @@
                 <div class="analysis">
                     <h4>Unidimensional</h4>
                     <div class="analysis_box">
-                        <data-source-card v-for="card in cards" />
+                        <data-source-card v-for="card in cards" 
+                                          :key="card" 
+                                          :info="card"
+                                          @action="deleteCard" />
                     </div>
                 </div>
             </div>
@@ -56,7 +59,7 @@ export default {
         return {
             dataSource: null,
             choice: null,
-            cards: 0,
+            cards: [],
             atributtes: null
         };
     },
@@ -74,10 +77,12 @@ export default {
         select(option) {
             this.choice = option;
         },
-        addCard(value) {
-            if (value) {
-                this.cards = this.cards + 1;
-            }
+        addCard(card) {
+            card.id = this.cards.length;
+            this.cards.push(card);
+        },
+        deleteCard(info) {
+            this.cards.splice(this.cards.indexOf(info), 1);
         }
     },
 
