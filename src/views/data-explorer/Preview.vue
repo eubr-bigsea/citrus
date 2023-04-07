@@ -15,7 +15,7 @@
                     <div />
                 </div>
                 <b-table ref="table" :no-border-collapse="false" :items="items" :fields="['#'].concat(attributes)"
-                    tbody-class="body" sticky-header="90vh" table-class="table-preview"
+                    tbody-class="body" sticky-header="85vh" table-class="table-preview"
                     class="border scroll-area table-preview" outlined small hover bordered responsive
                     @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
                     <!-- A custom formatted column -->

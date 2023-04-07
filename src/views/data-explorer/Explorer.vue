@@ -1261,12 +1261,12 @@ export default {
 .step-scroll-area {
     position: relative;
     margin: auto;
-    height: 70vh;
+    height: 65vh;
 
 }
 
 .fill-height {
-    height: 75vh
+    height: 65vh
 }
 
 /*

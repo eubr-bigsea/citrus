@@ -1,7 +1,8 @@
 <template>
-    <div class="options-container">
+    <div class="options-container  source-code-pro-font">
         <div class="options-visualization mt-1">
             <div>
+                <h6>Construtor de visualizações</h6>
                 <form class="clearfix visualization-form">
                     <label>{{ $tc('common.name') }}:</label>
                     <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
@@ -35,22 +36,25 @@
                         </template>
                     </v-select>
                     <div class="mt-2 ">
-                        <button class="btn btn-sm btn-primary ml-1" @click.prevent="loadData">
-                            <font-awesome-icon icon="fa fa-search" />
-                            {{ i18n.$t('actions.search') }}
-                        </button>
 
-                        <button class="btn btn-sm btn-outline-success ml-1 " @click.prevent="saveWorkflow">
-                            <font-awesome-icon icon="fa fa-save" />
-                            {{ i18n.$t('actions.save') }}
-                        </button>
-                        <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2" size="sm" no-caret>
+
+                        <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-right"
+                            size="sm" no-caret>
                             <template #button-content>
-                               <font-awesome-icon icon="ellipsis-h"></font-awesome-icon>
+                                <font-awesome-icon icon="ellipsis-h"></font-awesome-icon>
                             </template>
-                            <b-dropdown-item href="#"><font-awesome-icon icon="chart-line" /> Adicionar ao dashboard...</b-dropdown-item>
-                            <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar ...</b-dropdown-item>
+                            <b-dropdown-item href="#"><font-awesome-icon icon="chart-line" /> Adicionar ao
+                                dashboard...</b-dropdown-item>
+                            <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar
+                                ...</b-dropdown-item>
                         </b-dropdown>
+                        <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow">
+                            <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                        </b-button>
+                        <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
+                            @click.prevent="loadData">
+                            <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
+                        </b-button>
                         <!--
                         <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
                             :title="i18n.$t('actions.back')">
