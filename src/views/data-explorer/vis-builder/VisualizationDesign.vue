@@ -44,19 +44,23 @@
                             <font-awesome-icon icon="fa fa-save" />
                             {{ i18n.$t('actions.save') }}
                         </button>
+                        <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2" size="sm" no-caret>
+                            <template #button-content>
+                               <font-awesome-icon icon="ellipsis-h"></font-awesome-icon>
+                            </template>
+                            <b-dropdown-item href="#"><font-awesome-icon icon="chart-line" /> Adicionar ao dashboard...</b-dropdown-item>
+                            <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar ...</b-dropdown-item>
+                        </b-dropdown>
+                        <!--
                         <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
                             :title="i18n.$t('actions.back')">
                             {{ i18n.$t('actions.back') }}
                         </router-link>
-                    </div>
-                    <div class="mt-2 mb-2">
-                        <a href=""><font-awesome-icon icon="chart-line" /> Adicionar ao dashboard...</a>
-                        <br />
-                        <a href="">Exportar ...</a>
+                        -->
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top scroll-area">
-                        <chart-builder-options v-model="options" :attributes="attributes" 
-                            @update-chart="updateChart" :chartType="visualizationObj.type.value" />
+                        <chart-builder-options v-model="options" :attributes="attributes" @update-chart="updateChart"
+                            :chartType="visualizationObj.type.value" />
                     </div>
                 </form>
             </div>
@@ -68,7 +72,8 @@
                 <div class="chart-builder-visualization" style="height: 80vh">
                     <div v-if="display && plotlyData" ref="chart">
                         <plotly :options="{ responsive: true, height: 600 }" :data="Object.freeze(plotlyData.data)"
-                            :layout="Object.freeze(plotlyData.layout)" :frames="Object.freeze(plotlyData.frames)" :key="plotVersion" ref="plotly" />
+                            :layout="Object.freeze(plotlyData.layout)" :frames="Object.freeze(plotlyData.frames)"
+                            :key="plotVersion" ref="plotly" />
                         <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData }}</small>
 
                     </div>
@@ -177,9 +182,11 @@ const axis = computed({
     get() {
         const { x_axis, y_axis, y, x, type, color_attribute, text_attribute, size_attribute,
             latitude, longitude } = visualizationObj.value;
-        return { x_axis, y_axis, y, x, type, 
+        return {
+            x_axis, y_axis, y, x, type,
             color_attribute, text_attribute, size_attribute,
-            latitude, longitude };
+            latitude, longitude
+        };
     },
     set(value) {
         Object.assign(visualizationObj.value, value);
@@ -196,16 +203,18 @@ const options = computed({
             template, blackWhite, subgraph, subgraph_orientation,
             animation, height, width, opacity, scatter_color, scatter_size,
             color_attribute, color_aggregation, size_attribute, number_format,
-                fill_opacity, paper_color, style, tooltip_info, zoom, center_latitude, center_longitude,
-                marker_size,
-         } = visualizationObj.value;
+            fill_opacity, paper_color, style, tooltip_info, zoom, center_latitude, center_longitude,
+            marker_size,
+            limit, filter
+        } = visualizationObj.value;
         return {
             display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info, top_margin, bottom_margin, left_margin, right_margin,
             auto_margin, template, blackWhite, subgraph, subgraph_orientation, animation,
             height, width, opacity, scatter_color, scatter_size, color_attribute, color_aggregation,
             size_attribute, fill_opacity, number_format, paper_color,
-            style, tooltip_info, zoom, center_latitude, center_longitude, marker_size
+            style, tooltip_info, zoom, center_latitude, center_longitude, marker_size,
+            limit, filter
         };
     },
     set(value) {
@@ -223,8 +232,8 @@ const handleChangeLayout = (changeCause, value) => {
     }
 };
 const updateChart = debounce((property) => {
-    return 
-    if (!plotlyData || !plotlyData?.value?.layout){
+    return
+    if (!plotlyData || !plotlyData?.value?.layout) {
         return;
     }
     console.debug(property, plotlyData?.value?.layout?.title?.text)
@@ -570,6 +579,7 @@ const connectWebSocket = () => {
     font-weight: bold;
     color: rgba(#000, .2);
 }
+
 .scroll-area {
     width: 100%;
     height: 65vh;

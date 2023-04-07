@@ -145,6 +145,7 @@ import {
     faDroplet,
     faA,
     faMapLocationDot,
+    faFileExport,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -207,6 +208,7 @@ library.add(
     faExclamation,
     faExclamationCircle,
     faExclamationTriangle,
+    faFileExport,
     faExternalLinkAlt,
     faEye,
     faEyeSlash,

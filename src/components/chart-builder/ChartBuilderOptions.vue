@@ -401,8 +401,8 @@
                     <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
                         <b-card-body>
                             <label>Limitar quantidade de registros:</label>
-                            <input v-if="false && workflowObj.sample" v-model.number="workflowObj.sample.forms.value.value"
-                                type="number" class="form-control form-control-sm w-50" maxlength="10" step="100">
+                            <input v-model.number="editableVisualization.limit.value"
+                                type="number" class="form-control form-control-sm w-50" min="1" step="100">
                             <expression-editor v-if="false && workflowObj.filter" :field="filterField"
                                 :value="workflowObj.filter.forms.formula.value"
                                 :suggestion-event="() => attributes.map(a => a.name)" @update="handleUpdateFilter" />
@@ -682,4 +682,6 @@ const updateChart = (property) => {
 
 .options-font button.collapsed {
     font-size: 10pt;
-}</style>
+}
+
+</style>

@@ -125,14 +125,14 @@ class Workflow {
         const workflow = new Workflow({
             $meta: { method, task_type: taskType },
             name: name,
-            tasks: [dataReader],
+            tasks: [dataReader, ],
             type: 'MODEL_BUILDER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             forms: { $meta: { value: { label: labelAttribute, method, taskType } } }
         });
         return workflow;
     }
-    static buildVisualizationBuilder(name, ds, method, i18n) {
+    static buildVisualizationBuilder(name, ds, type, method, i18n) {
         const dataReader = new Task({
             name: i18n.$tc('dataExplorer.readData'),
             operation: new Operation({ id: 2100 }),
@@ -140,11 +140,18 @@ class Workflow {
         });
         dataReader.setProperty('data_source', ds);
         dataReader.setProperty('display_sample', '0');
+        const visualization = new Task({
+            name: 'visualization',
+            operation: new Operation({ id: 2370 }),
+            display_order: 5,
+        });
+        visualization.setProperty('type', {value: type});
+
 
         const workflow = new Workflow({
             $meta: { method },
             name: name,
-            tasks: [dataReader],
+            tasks: [dataReader, visualization],
             type: 'VIS_BUILDER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             forms: { $meta: { value: { method } } }
@@ -211,13 +218,16 @@ class VisualizationBuilderWorkflow extends Workflow {
             ['visualization', 'visualization'],
         ];
         const pairs = new Map(keyPairs);
-        this.tasks = this.tasks.filter(task => pairs.has(task.operation.slug));
+        this.tasks = this.tasks.filter(task => {
+            return pairs.has(task.operation.slug)
+        });
         this.tasks.forEach((task) => {
             if (pairs.has(task.operation.slug)) {
                 this[pairs.get(task.operation.slug)] = task;
                 task.operation = operations.get(task.operation.slug);
             }
         });
+
         keyPairs.forEach((kp, i) => {
             const [slug, prop] = kp;
             if (!this[prop]) {
@@ -462,8 +472,14 @@ class Visualization {
         longitude = {value: null}, 
         marker_size = {value: null}, 
 
+        limit = {value: null},
+        filter = {value: null},
+
     },
     ) {
+        this.filter = filter;
+        this.limit = limit;
+
         this.marker_size = marker_size;
         this.center_latitude = center_latitude;
         this.center_longitude = center_longitude;
