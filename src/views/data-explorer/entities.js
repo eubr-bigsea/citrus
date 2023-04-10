@@ -535,8 +535,8 @@ class Visualization {
 class XDimension {
     constructor({ binning = 'EQUAL_INTERVAL', bins = 20, binSize = 10,
         emptyBins = 'ZEROS', multiplier = null, decimal_places = 2,
-        prefix = null, suffix = null, label = null, maxDisplayed = null,
-        groupOthers = true, sorting = 'NATURAL' }) {
+        prefix = null, suffix = null, label = null, max_displayed = null,
+        group_others = true, sorting = 'NATURAL' }) {
         this.binning = binning;  // equal_interval, fixed_size, none, categorical
         this.bins = bins;
         this.binSize = binSize;
@@ -546,8 +546,8 @@ class XDimension {
         this.prefix = prefix;
         this.suffix = suffix;
         this.label = label;
-        this.maxDisplayed = (binning === 'CATEGORICAL') ? maxDisplayed || 20 : maxDisplayed;
-        this.groupOthers = groupOthers;
+        this.max_displayed = (binning === 'CATEGORICAL') ? max_displayed || 20 : max_displayed;
+        this.group_others = group_others;
         this.sorting = sorting; //natural, yAsc, yDesc
     }
 }
@@ -555,7 +555,7 @@ class YDimension {
     constructor({ attribute = '*', aggregation = 'COUNT', compute = null, displayOn = 'left',
         multiplier = null, decimal_places = 2,
         prefix = null, suffix = null, label = null,
-        strokeSize = 1, stroke = null, color = null, marker = null }) {
+        strokeSize = 0, stroke = null, color = null, marker = null }) {
 
         this.attribute = attribute;
         this.aggregation = aggregation; //count, countd, max, min, avg, sum

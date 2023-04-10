@@ -146,6 +146,11 @@ const palettes = [
     ['Vivid_r', ['#a5aa99', '#ed645a', '#764e9f', '#2f8ac4', '#daa51b', '#24796c', '#cc61b0', '#99c945', '#52bca3', '#5d69b1', '#e58606']],
 ]
 const colorBlindPalettes = [
+    ['ibm', ['#648fff', '#785ef0', '#dc267f', '#fe6100', '#ffb000', '#000000', '#ffffff']],
+    ['ggplot.cbPalette', ["#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"]],
+    ['seaborn', ['#0173B2', '#DE8F05', '#029E73', '#D55E00', '#CC78BC', '#CA9161', '#FBAFE4', '#949494', '#ECE133', '#56B4E9']],
+    ['tbl20blind', ['#006ba4', '#ff80e0', '#ababab', '#595959', '#5f9ed1', '#c85200', '#898989', '#a3c8ec', '#ffbc79', '#cfcfcf']]
+    /*
     ['paletteMartin', ['#000000', '#004949', '#009292', '#FF6DB6', '#FFB6DB', '#490092', '#006DDB', '#B66DFF', '#6DB6FF', '#B6DBFF', '#920000', '#924900', '#DB6D00', '#24FF24', '#FFFF6D']],
     ['Blue2DarkOrange12Steps', ['#1E8E99', '#51C3CC', '#99F9FF', '#B2FCFF', '#CCFEFF', '#E5FFFF', '#FFE5CC', '#FFCA99', '#FFAD65', '#FF8E32', '#CC5800', '#993F00']],
     ['Blue2DarkOrange18Steps', ['#006666', '#009999', '#00CCCC', '#00FFFF', '#33FFFF', '#65FFFF', '#99FFFF', '#B2FFFF', '#CBFFFF', '#E5FFFF', '#FFE5CB', '#FFCA99', '#FFAD65', '#FF8E33', '#FF6E00', '#CC5500', '#993D00', '#662700']],
@@ -165,6 +170,7 @@ const colorBlindPalettes = [
     ['ModifiedSpectralScheme11Steps', ['#A50021', '#D82632', '#F76D5E', '#FFAD72', '#FFE099', '#FFFFBF', '#E0FFFF', '#AAF7FF', '#72D8FF', '#3FA0FF', '#264CFF']],
     ['PairedColor12Steps', ['#FFBF7F', '#FF7F00', '#FFFF99', '#FFFF32', '#B2FF8C', '#32FF00', '#A5EDFF', '#19B2FF', '#CCBFFF', '#654CFF', '#FF99BF', '#E51932']],
     ['SteppedSequential5Steps', ['#990F0F', '#B22C2C', '#CC5151', '#E57E7E', '#FFB2B2', '#99540F', '#B26F2C', '#CC8E51', '#E5B17E', '#FFD8B2', '#6B990F', '#85B22C', '#A3CC51', '#C3E57E', '#E5FFB2', '#0F6B99', '#2C85B2', '#51A3CC', '#7EC3E5', '#B2E5FF', '#260F99', '#422CB2', '#6551CC', '#8F7EE5', '#BFB2FF']]
+    */
 ]
 
 export default {

@@ -78,7 +78,9 @@
                         <plotly :options="{ responsive: true, height: 600 }" :data="Object.freeze(plotlyData.data)"
                             :layout="Object.freeze(plotlyData.layout)" :frames="Object.freeze(plotlyData.frames)"
                             :key="plotVersion" ref="plotly" />
+                        <!--
                         <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData }}</small>
+                        -->
 
                     </div>
                     <div v-else class="chart-not-available">

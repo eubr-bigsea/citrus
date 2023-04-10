@@ -5,8 +5,8 @@
                 <div class="row">
                     <div class="col-6">
                         <small class="form-text text-muted">Latitude:</small>
-                        <v-select v-model="editableVisualization.latitude.value" :options="attributes"
-                            label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                        <v-select v-model="editableVisualization.latitude.value" :options="attributes" label="name"
+                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
                             <template #option="{ type, name }">
                                 <span v-if="name !== '*'"
                                     :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
@@ -23,8 +23,8 @@
                         </v-select>
 
                         <small class="form-text text-muted">Longitude:</small>
-                        <v-select v-model="editableVisualization.longitude.value" :options="attributes"
-                            label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                        <v-select v-model="editableVisualization.longitude.value" :options="attributes" label="name"
+                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
                             <template #option="{ type, name }">
                                 <span v-if="name !== '*'"
                                     :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
@@ -380,6 +380,10 @@
                                                     <option v-for="i in 11" :key="i - 1" :value="i - 1">{{ i - 1 }}</option>
                                                 </select>
                                             </b-form-group>
+                                            <b-form-group label="Cor da Linha:" label-for="line-width">
+                                                <b-form-input v-model="y.line_color" type="color"
+                                                    class="form-control form-control-sm w-50" />
+                                            </b-form-group>
                                             <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
                                                 label="Padrão de preenchimento:">
                                                 <v-select v-model="y.shape" :options="shapes" label="label"
@@ -426,7 +430,7 @@
                                     </div>
                                 </b-dropdown-form>
                             </b-dropdown>
-                            <font-awesome-icon icon="fa fa-grip-vertical" />
+                            <font-awesome-icon v-if="canAddYDimension" icon="fa fa-grip-vertical" />
                         </div>
                     </draggable>
                     <b-button v-if="canAddYDimension" size="sm" variant="success small-dd-title" class="mt-2 float-left"
@@ -610,12 +614,16 @@
 
                                             <b-form-group label="Limitar qtde. de valores:">
                                                 <input type="number" class="form-control form-control-sm"
-                                                    v-model="x.maxDiplayed" />
+                                                    v-model.number="x.max_displayed" />
                                             </b-form-group>
-                                            <b-form-group>
-                                                <b-form-checkbox v-model="x.groupOthers">
+                                            <b-form-group v-if="x.max_displayed !== 0">
+                                                <b-form-checkbox v-model="x.group_others">
                                                     Agrupar os outros valores
                                                 </b-form-checkbox>
+                                            </b-form-group>
+                                            <b-form-group v-if="x.max_displayed !== 0 && x.group_others" label="Nome para 'outros valores'">
+                                                <input type="text" class="form-control form-control-sm"
+                                                    v-model="x.label_others" />
                                             </b-form-group>
                                             <template v-if="!pieFamily">
                                                 <b-form-group label="Prefixo:">
@@ -656,7 +664,7 @@
                                     </div>
                                 </b-dropdown-form>
                             </b-dropdown>
-                            <font-awesome-icon icon="fa fa-grip-vertical" />
+                            <font-awesome-icon v-if="canAddXDimension" icon="fa fa-grip-vertical" />
                         </div>
                     </draggable>
                     <b-button v-if="canAddXDimension" size="sm" variant="success small-dd-title"

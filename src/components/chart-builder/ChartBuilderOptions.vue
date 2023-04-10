@@ -298,6 +298,7 @@
                                     <b-form-input v-model="forms.line_stroke.value" type="number" min="1" max="10" step="1"
                                         class="form-control form-control-sm w-50" />
                                 </b-form-group>
+                                
 
                                 <b-form-group label="Tipo de Linha:" label-for="line-width">
                                     <select v-model="forms.line_type.value" class="form-control form-control-sm">

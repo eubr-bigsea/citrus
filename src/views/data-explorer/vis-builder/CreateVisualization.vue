@@ -42,8 +42,8 @@
                             <div class="mb-4">
                                 <img :src="getChartIcon(type.name)" style="width:60px; height: 60px;" />
                             </div>
-                            <div v-for="obj in type.objectives" :key="obj" class="badge badge-info ml-1">{{ obj }}</div>
-                            <div v-for="dt in type.dataTypes" :key="dt" class="badge badge-secondary ml-1">{{ dt }}</div>
+                            <div v-for="obj in type.objectives" :key="obj" class="badge badge-info ml-1 small-badge">{{ obj }}</div>
+                            <div v-for="dt in type.dataTypes" :key="dt" class="badge badge-secondary ml-1 small-badge">{{ dt }}</div>
                         </div>
                     </div>
                     <!--
@@ -161,10 +161,9 @@ div.vis-type-container {
 
 div.vis-type {
     border: 1px solid #eee;
-    flex: 0 0 19%;
-    padding: 20px;
+    flex: 0 0 24.5%;
+    padding: 10px;
     margin: 1px;
-    width: 150px;
     text-align: center;
 }
 
@@ -176,5 +175,9 @@ div.vis-type {
 .selected-type {
     border: 1px solid rgb(14, 187, 14) !important;
     background: rgb(242, 248, 242) !important;
+}
+.small-badge {
+    font-size: 8pt;
+    padding: 2px inherit inherit inherit;
 }
 </style>
