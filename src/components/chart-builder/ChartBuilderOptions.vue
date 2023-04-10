@@ -104,10 +104,42 @@
                             </template>
                             <template v-if="editableVisualization.type.value == 'sunburst'">
                                 <!--FIXME-->
+                                <!--
                                 <b-form-group label="Hierarquia" label-for="sunburst">
                                     <b-form-input id="title" v-model="workflow.visualization.forms.hole.value" type="number" min="0"
                                         max="100" step="1" class="w-50 form-control-sm" />
-                                </b-form-group>
+                                </b-form-group>-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'boxplot'">
+                                <!--FIXME
+                                <b-form-group label="Box" label-for="boxplot">
+                                    <b-form-input id="title" v-model="workflow.visualization.forms.hole.value" type="number" min="0"
+                                        max="100" step="1" class="w-50 form-control-sm" />
+                                </b-form-group>-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'pointcloud'">
+                                <!--FIXME-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'scattergeo'">
+                                <!--FIXME-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'funnel'">
+                                <!--FIXME-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'violin'">
+                                <!--FIXME-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'scatterplot'">
+                                <!--FIXME-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'histogram2d'">
+                                <!--FIXME-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'parcoords'">
+                                <!--FIXME-->
+                            </template>
+                            <template v-if="editableVisualization.type.value == 'histogram2dcontour'">
+                                <!--FIXME-->
                             </template>
                             <template v-if="['donut', 'pie'].indexOf(editableVisualization.type.value) > -1">
                                 <b-form-group label="Posição do texto">
@@ -401,6 +433,15 @@ const chartTypes = [
     {name: "filled-area", label: "Gráfico de Área", },
     {name: "stacked-filled-area", label: "Gráfico de Área 100%", },
     {name: "sunburst", label: "Gráfico de Hierarquias", },
+    {name: "boxplot", label: "Box Plot", },
+    {name: "pointcloud", label: "Nuvem de Pontos", },
+    {name: "scattergeo", label: "Bubble Map", },
+    {name: "funnel", label: "Gráfico de Funil", },
+    {name: "violin", label: "Violin Plot", },
+    {name: "scatterplot", label: "Scatter Plot", },
+    {name: "histogram2d", label: "Density Heatmap", },
+    {name: "parcoords", label: "Coordenadas Paralelas", },
+    {name: "histogram2dcontour", label: "2D Histogram Contour", },
     
 ];
 /* Data fields */
@@ -504,6 +545,12 @@ const handleUpdateColorScale = (field, value) => {
     background: url('chart-types.png') -146px -78px;
 }
 
+.bg-scatterplot {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -146px -78px;
+}
+
 .bg-chart {
     padding-left: 60px;
     padding-top: 15px;
@@ -518,6 +565,54 @@ const handleUpdateColorScale = (field, value) => {
     width: 52px;
     height: 52px;
     background: url('chart-types.png') -146px -10px;
+}
+
+.bg-funnel {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -146px -10px;
+}
+
+.bg-boxplot {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -10px -78px;
+}
+
+.bg-violin {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -10px -78px;
+}
+
+.bg-pointcloud {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -10px -78px;
+}
+
+.bg-scattergeo {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -8px -10px;
+}
+
+.bg-parcoords {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -8px -10px;
+}
+
+.bg-histogram2d {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -8px -10px;
+}
+
+.bg-histogram2dcontour {
+    width: 52px;
+    height: 52px;
+    background: url('chart-types.png') -8px -10px;
 }
 
 

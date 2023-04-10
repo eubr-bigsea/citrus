@@ -162,6 +162,52 @@ export default {
                     });
                     break;
 
+                    case "boxplot":
+                    data.push({
+                        type: this.chartData.type,
+                        x: this.chartData.axis.x.data[0].data,
+                        y: this.chartData.axis.y.data[0].data,
+                        
+                    });
+                    break;
+
+                    case "pointcloud":
+                    data.push({
+                        type: this.chartData.type,
+                        mode: 'markers',
+                        x: this.chartData.axis.x.data[0].data,
+                        y: this.chartData.axis.y.data[0].data,
+                        marker: {
+                            symbol: this.getFormatedLayout().symbol,
+                            size: this.chartData.axis.z.data[0].data,
+                            sizemin: 0.5,
+                            sizemax: 100,
+                            arearatio: 0,
+                            opacity: 0.8,
+                            blend: true
+                        }
+                    });
+                    break;
+
+                    case "scattergeo":
+                        data.push({
+                            type: this.chartData.type,
+                            locations: this.chartData.axis.x.data[0].data,
+                            marker: {
+                                cmin: 0,
+                                cmax: 50,
+                                colorbar: {
+                                    title: 'Some rate',
+                                    ticksuffix: '%',
+                                    showticksuffix: 'last'
+                                },
+                                line: {
+                                    color: 'black'
+                                }
+                            }
+                        })
+                    break;
+
                 default:
                     for (let y of this.chartData.axis.y.data) {
                         data.push({
