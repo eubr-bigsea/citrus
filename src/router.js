@@ -24,6 +24,7 @@ const DataSourceList = () => import(/* webpackChunkName: "group-data-source" */ 
 const DataSourceEdit = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceEdit.vue');
 const DataSourceAdd = () => import(/* webpackChunkName: "group-data-source" */ './views/DataSourceAdd.vue');
 const DataSourceStorage = () => import(/* webpackChunkName: "group-data-source" */ './views/data-source/DataSourceStorage.vue');
+const DataSourceFeatureGeneration = () => import(/* webpackChunkName: "group-data-source" */ './views/data-source/DataSourceFeatureGeneration.vue');
 
 const JobList = () => import(/* webpackChunkName: "group-job" */ './views/JobList.vue');
 const JobDetail = () => import(/* webpackChunkName: "group-job" */ './views/JobDetail.vue');
@@ -108,8 +109,9 @@ const ProjectDetail = () => import('./views/project/ProjectDetail.vue');
 Vue.use(VueRouter);
 
 let router = new VueRouter({
-    //mode: 'hash',
-    mode: 'history',
+    mode: 'hash',
+    //mode: 'history',
+    
     routes: [
         {
             path: '/',
@@ -309,6 +311,15 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataSource', 1]
+            }
+        },
+        {
+            path: 'data-sources/featuregeneration/:id',
+            name: 'dataSourceFeatureGeneration',
+            component: DataSourceFeatureGeneration,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.dataSource', 3]
             }
         },
         /**/
