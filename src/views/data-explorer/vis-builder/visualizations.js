@@ -16,13 +16,14 @@ export default {
         { name: "stacked-area-100", label: "Área empilhado 100%", dataTypes: ['contínuos'], objectives: ['comparação', 'composição'] },
         { name: "pie", label: "Pizza", dataTypes: ['categóricos'], objectives: ['comparação', 'composição'] },
         { name: "donut", label: "Rosca (Donut)", dataTypes: ['categóricos'], objectives: ['composição', 'comparação',] },
-        { name: "indicator", label: "Indicador",  dataTypes: ['contínuos'], objectives: ['tendência', ]},
-        { name: "boxplot", label: "Box plot",  dataTypes: ['contínuos'], objectives: ['comparação', 'distribuição']},
+        { name: "indicator", label: "Indicador", dataTypes: ['contínuos'], objectives: ['tendência',] },
+        { name: "boxplot", label: "Box plot", dataTypes: ['contínuos'], objectives: ['comparação', 'distribuição'] },
         { name: "bubble", label: "Bolhas", dataTypes: ['contínuos'], objectives: ['comparação', 'distribuição'] },
         {
             name: "scatter", label: "Dispersão",
             dataTypes: ['contínuos'], objectives: ['comparação']
         },
+        { name: "scatterplot", label: "Scatter Plot", },
 
         {
             name: "scattermapbox", label: 'Mapa de pontos',
@@ -33,7 +34,15 @@ export default {
             name: "treemap", label: "Mapa em Árvore (Treemap)",
             dataTypes: ['categóricos'], objectives: ['hierarquia']
         },
-        { name: "sunburst", label: "Sunburst", dataTypes: ['categóricos'], objectives: ['composição', 'comparação'] },
+        { name: "sunburst", label: "Gráfico de Hierarquias", dataTypes: ['categóricos'], objectives: ['composição', 'comparação'] },
+        { name: "boxplot", label: "Box Plot", },
+        { name: "pointcloud", label: "Nuvem de Pontos", },
+        { name: "scattergeo", label: "Bolhas em Mapa", },
+        { name: "funnel", label: "Gráfico de Funil", },
+        { name: "violin", label: "Violin Plot", },
+        { name: "histogram2d", label: "Density Heatmap", },
+        { name: "parcoords", label: "Coordenadas Paralelas", },
+        { name: "histogram2dcontour", label: "2D Histogram Contour", },
         { name: "heatmap", label: "Mapa de Calor (Heatmap)", },
         /*{name: "dots",label: "Pontos",
                 image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"

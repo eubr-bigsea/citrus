@@ -540,7 +540,8 @@ const chartTypes = [
     { name: "boxplot", label: "Box plot", },
     { name: "bubble", label: "Bolhas", },
     { name: "scatter", label: "Dispersão", },
-
+    {name: "scatterplot", label: "Scatter Plot", },
+    
     { name: "scattermapbox", label: 'Mapa de pontos' },
 
     { name: "treemap", label: "Mapa em Árvore (Treemap)", },
@@ -548,7 +549,15 @@ const chartTypes = [
     /*{name: "dots",label: "Pontos",
             image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
         },*/
-    { name: "sunburst", label: "Sunburst", },
+    {name: "sunburst", label: "Gráfico de Hierarquias", },
+    {name: "boxplot", label: "Box Plot", },
+    {name: "pointcloud", label: "Nuvem de Pontos", },
+    {name: "scattergeo", label: "Bubble Map", },
+    {name: "funnel", label: "Gráfico de Funil", },
+    {name: "violin", label: "Violin Plot", },
+    {name: "histogram2d", label: "Density Heatmap", },
+    {name: "parcoords", label: "Coordenadas Paralelas", },
+    {name: "histogram2dcontour", label: "2D Histogram Contour", },
 
 ];
 /* Data fields */
