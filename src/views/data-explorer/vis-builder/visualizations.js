@@ -23,7 +23,7 @@ export default {
             name: "scatter", label: "Dispersão",
             dataTypes: ['contínuos'], objectives: ['comparação']
         },
-        { name: "scatterplot", label: "Scatter Plot", },
+        //{ name: "scatterplot", label: "Scatter Plot", },
 
         {
             name: "scattermapbox", label: 'Mapa de pontos',
@@ -37,7 +37,7 @@ export default {
         { name: "sunburst", label: "Gráfico de Hierarquias", dataTypes: ['categóricos'], objectives: ['composição', 'comparação'] },
         { name: "boxplot", label: "Box Plot", },
         { name: "pointcloud", label: "Nuvem de Pontos", },
-        { name: "scattergeo", label: "Bolhas em Mapa", },
+        //{ name: "scattergeo", label: "Bolhas em Mapa", },
         { name: "funnel", label: "Gráfico de Funil", },
         { name: "violin", label: "Violin Plot", },
         { name: "histogram2d", label: "Density Heatmap", },
