@@ -20,7 +20,7 @@
                 </v-select>
                 <label>{{ $tc('common.title') }}:</label>
                 <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"
-                    @input="emit('update-chart', 'title')" />
+                    xinput="emit('update-chart', 'title')" />
             </b-form-group>
 
             <div class="accordion options-font" role="tablist">
@@ -31,18 +31,20 @@
                     </b-card-header>
                     <b-collapse id="accordion-2" visible accordion="my-accordion" role="tabpanel">
                         <b-card-body class="p-2">
-                            <label>Exibir legenda:</label>
-                            <select v-model="editableVisualization.display_legend.value"
-                                class="form-control form-control-sm" @input="emit('update-chart', 'display_legend')">
-                                <option value="HIDE">Ocultar</option>
-                                <option value="AUTO">Posicionar automaticamente</option>
-                                <option value="LEFT">Topo à esquerda</option>
-                                <option value="RIGHT">Topo à direita</option>
-                                <option value="CENTER">Topo ao centro</option>
-                                <option value="BOTTOM_LEFT">Na parte inferior, à esquerda</option>
-                                <option value="BOTTOM_RIGHT">Na parte inferior, à direita</option>
-                                <option value="BOTTOM_CENTER">Na parte inferior, ao centro</option>
-                            </select>
+                            <template v-if="supportsLegend">
+                                <label>Exibir legenda:</label>
+                                <select v-model="editableVisualization.display_legend.value"
+                                    class="form-control form-control-sm" @input="emit('update-chart', 'display_legend')">
+                                    <option value="HIDE">Ocultar</option>
+                                    <option value="AUTO">Posicionar automaticamente</option>
+                                    <option value="LEFT">Topo à esquerda</option>
+                                    <option value="RIGHT">Topo à direita</option>
+                                    <option value="CENTER">Topo ao centro</option>
+                                    <option value="BOTTOM_LEFT">Na parte inferior, à esquerda</option>
+                                    <option value="BOTTOM_RIGHT">Na parte inferior, à direita</option>
+                                    <option value="BOTTOM_CENTER">Na parte inferior, ao centro</option>
+                                </select>
+                            </template>
                             <label class="mt-2">Tema:</label>
                             <select v-model="editableVisualization.template.value"
                                 class="form-control form-control-sm mb-2">
@@ -108,9 +110,9 @@
                                             </b-dropdown-form>
                                         </b-dropdown>-->
 
-                            <color-palette :field="palette" :value="editableVisualization.palette.value"
-                                @update="handleUpdatePalette" />
-                            <color-scale v-if="['sunburst', 'treemap'].includes(chartType)" :field="colorScale"
+                            <color-palette v-if="discreteColors" :field="palette"
+                                :value="editableVisualization.palette.value" @update="handleUpdatePalette" />
+                            <color-scale v-if="continuousColors" :field="colorScale"
                                 :value="editableVisualization.color_scale.value" @update="handleUpdateColorScale" />
 
                             <!--
@@ -183,14 +185,14 @@
                                 <b-form-group label="Estilo do mapa:">
                                     <select v-model="editableVisualization.style.value"
                                         class="form-control form-control-sm">
-                                        <option value="carto-darkmatter">Carto Darkmatter</option> 
-                                        <option value="carto-positron">Carto Positron</option> 
-                                        <option value="open-street-map">Open Street Map</option> 
-                                        <option value="stamen-terrain">Stamen Terrain</option> 
-                                        <option value="stamen-toner">Stamen Toner</option> 
-                                        <option value="stamen-watercolor">Stamen Watercolor</option> 
+                                        <option value="carto-darkmatter">Carto Darkmatter</option>
+                                        <option value="carto-positron">Carto Positron</option>
+                                        <option value="open-street-map">Open Street Map</option>
+                                        <option value="stamen-terrain">Stamen Terrain</option>
+                                        <option value="stamen-toner">Stamen Toner</option>
+                                        <option value="stamen-watercolor">Stamen Watercolor</option>
                                         <option value="white-bg">Fundo Branco (sem mapa)</option>
-                                        
+
                                         <!-- Requires MapBox token 
                                         <option value="basic">Mapbox Básico</option>
                                         <option value="streets">Mapbox Streets</option>
@@ -222,28 +224,25 @@
                                     </select>
                                 </b-form-group>
                                 <b-form-group label="Zoom mapa:">
-                                    <b-form-input type="range"
-                                        class="" min="0" step="1" max="20"
+                                    <b-form-input type="range" class="" min="0" step="1" max="20"
                                         v-model.number="editableVisualization.zoom.value" />
-                                        <b-form-text class="text-center mt-0">{{editableVisualization.zoom.value }}</b-form-text>
+                                    <b-form-text class="text-center mt-0">{{ editableVisualization.zoom.value
+                                    }}</b-form-text>
                                 </b-form-group>
                                 <b-form-group label="Raio base (se atributo para tamanho):">
-                                    <b-form-input type="number"
-                                        class="form-control form-control-sm mb-0" min="0" step=".1" max=""
-                                        v-model.number="editableVisualization.marker_size.value" />
+                                    <b-form-input type="number" class="form-control form-control-sm mb-0" min="0" step=".1"
+                                        max="" v-model.number="editableVisualization.marker_size.value" />
                                 </b-form-group>
                                 <b-form-group label="Centro do mapa:">
                                     <div class="row">
                                         <div class="col-6">
-                                            <b-form-input type="number"
-                                                class="form-control form-control-sm mb-0" min="0" step="0.01"
-                                                v-model="editableVisualization.center_latitude.value" />
+                                            <b-form-input type="number" class="form-control form-control-sm mb-0" min="0"
+                                                step="0.01" v-model="editableVisualization.center_latitude.value" />
                                             <b-form-text class="text-center mt-0 mb-2">latitude</b-form-text>
                                         </div>
                                         <div class="col-6">
-                                            <b-form-input type="number"
-                                                class="form-control form-control-sm mb-0" min="0" step="0.01"
-                                                v-model="editableVisualization.center_longitude.value" />
+                                            <b-form-input type="number" class="form-control form-control-sm mb-0" min="0"
+                                                step="0.01" v-model="editableVisualization.center_longitude.value" />
                                             <b-form-text class="text-center mt-0 mb-2">longitude</b-form-text>
                                         </div>
                                     </div>
@@ -298,7 +297,7 @@
                                     <b-form-input v-model="forms.line_stroke.value" type="number" min="1" max="10" step="1"
                                         class="form-control form-control-sm w-50" />
                                 </b-form-group>
-                                
+
 
                                 <b-form-group label="Tipo de Linha:" label-for="line-width">
                                     <select v-model="forms.line_type.value" class="form-control form-control-sm">
@@ -402,8 +401,8 @@
                     <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
                         <b-card-body>
                             <label>Limitar quantidade de registros:</label>
-                            <input v-model.number="editableVisualization.limit.value"
-                                type="number" class="form-control form-control-sm w-50" min="1" step="100">
+                            <input v-model.number="editableVisualization.limit.value" type="number"
+                                class="form-control form-control-sm w-50" min="1" step="100">
                             <expression-editor v-if="false && workflowObj.filter" :field="filterField"
                                 :value="workflowObj.filter.forms.formula.value"
                                 :suggestion-event="() => attributes.map(a => a.name)" @update="handleUpdateFilter" />
@@ -510,6 +509,7 @@
 <script setup>
 import { getCurrentInstance } from 'vue';
 import { ref, watch, defineProps, defineEmits, computed } from "vue";
+import ChartTypes from '../../views/data-explorer/vis-builder/visualizations.js';
 
 import vSelect from 'vue-select';
 import ColorPalette from '../widgets/ColorPalette.vue';
@@ -526,40 +526,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['input']);
 
-const chartTypes = [
-    { name: "line", label: "Linhas", },
-    { name: "bar", label: "Barras", },
-    { name: "stacked-bar", label: "Barras Empilhadas", },
-    { name: "horizontal-bar", label: "Barras Horizontais", },
-    { name: "stacked-horizontal-bar", label: "Barras Horizontais Empilhada", },
-    { name: "stacked-area", label: "Área empilhado", },
-    { name: "stacked-area-100", label: "Área empilhado 100%", },
-    { name: "pie", label: "Pizza", },
-    { name: "donut", label: "Rosca (Donut)", },
-    { name: "indicator", label: "Indicador", },
-    { name: "boxplot", label: "Box plot", },
-    { name: "bubble", label: "Bolhas", },
-    { name: "scatter", label: "Dispersão", },
-    {name: "scatterplot", label: "Scatter Plot", },
-    
-    { name: "scattermapbox", label: 'Mapa de pontos' },
-
-    { name: "treemap", label: "Mapa em Árvore (Treemap)", },
-    { name: "heatmap", label: "Mapa de Calor (Heatmap)", },
-    /*{name: "dots",label: "Pontos",
-            image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
-        },*/
-    {name: "sunburst", label: "Gráfico de Hierarquias", },
-    {name: "boxplot", label: "Box Plot", },
-    {name: "pointcloud", label: "Nuvem de Pontos", },
-    {name: "scattergeo", label: "Bubble Map", },
-    {name: "funnel", label: "Gráfico de Funil", },
-    {name: "violin", label: "Violin Plot", },
-    {name: "histogram2d", label: "Density Heatmap", },
-    {name: "parcoords", label: "Coordenadas Paralelas", },
-    {name: "histogram2dcontour", label: "2D Histogram Contour", },
-
-];
+const chartTypes = ChartTypes.types;
 /* Data fields */
 const toEmit = ref(true);
 const editableVisualization = ref(null);
@@ -576,7 +543,15 @@ const mapFamily = computed(() =>
 const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
 );
-
+const continuousColors = computed(() => {
+    return ['sunburst', 'treemap'].includes(props.chartType);
+});
+const discreteColors = computed(() => {
+    return !continuousColors.value;
+});
+const supportsLegend = computed(() =>
+    !['treemap'].includes(props.chartType)
+);
 /* Watch */
 watch(
     () => editableVisualization,
@@ -693,5 +668,4 @@ const updateChart = (property) => {
 .options-font button.collapsed {
     font-size: 10pt;
 }
-
 </style>

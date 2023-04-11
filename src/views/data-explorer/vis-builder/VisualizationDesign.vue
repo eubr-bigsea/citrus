@@ -75,9 +75,9 @@
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 80vh">
                     <div v-if="display && plotlyData" ref="chart">
-                        <plotly :options="{ responsive: true, height: 600 }" :data="Object.freeze(plotlyData.data)"
+                        <plotly :options="Object.freeze({ responsive: true, height: 600 })" :data="Object.freeze(plotlyData.data)"
                             :layout="Object.freeze(plotlyData.layout)" :frames="Object.freeze(plotlyData.frames)"
-                            :key="plotVersion" ref="plotly" />
+                            :key="plotVersion" ref="plotly" :watchShallow="true"/>
                         <!--
                         <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData }}</small>
                         -->
@@ -238,6 +238,7 @@ const handleChangeLayout = (changeCause, value) => {
     }
 };
 const updateChart = debounce((property) => {
+    console.debug('FIXME')
     return
     if (!plotlyData || !plotlyData?.value?.layout) {
         return;

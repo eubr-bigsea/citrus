@@ -53,6 +53,9 @@ export default {
         },
         frames: {
             type: Array, default: () => null
+        },
+        watchShallow: {
+            type: Boolean, default: () => true
         }
     },
     data() {
@@ -67,12 +70,17 @@ export default {
     mounted() {
         this.react();
         this.initEvents();
+        /*
         this.$watch('data', () => {
             this.internalLayout.datarevision++;
             this.react();
         }, { deep: !this.watchShallow });
-        this.$watch('options', this.react, { deep: !this.watchShallow });
+        
+        this.$watch('options', (a, b) => {
+            this.react()
+        }, { deep: !this.watchShallow });
         this.$watch('layout', this.relayout, { deep: !this.watchShallow });
+        */
     },
     beforeUnmount() {
         window.removeEventListener('resize', this.__resizeListener);
@@ -131,7 +139,7 @@ export default {
         },
         getOptions() {
             let el = this.$refs.container;
-            let opts = this.options;
+            let opts = {... this.options};
             // if width/height is not specified for toImageButton, default to el.clientWidth/clientHeight
             if (!opts) opts = {};
             if (!opts.toImageButtonOptions) opts.toImageButtonOptions = {};
@@ -140,9 +148,11 @@ export default {
             return opts;
         },
         newPlot() {
+            console.debug('Plotly newPlot');
             return Plotly.newPlot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
         },
         react() {
+            console.debug('Plotly react');
             const fig = Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
             if (this.frames) {
                 Plotly.addFrames(this.$refs.container, this.frames);
