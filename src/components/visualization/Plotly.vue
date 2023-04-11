@@ -60,7 +60,8 @@ export default {
     },
     data() {
         return {
-            internalLayout: {
+            internalLayout: this.layout,
+            xinternalLayout: {
                 ...structuredClone(this.layout),
                 datarevision: 1
             }
@@ -75,12 +76,16 @@ export default {
             this.internalLayout.datarevision++;
             this.react();
         }, { deep: !this.watchShallow });
+        */
         
         this.$watch('options', (a, b) => {
-            this.react()
+            console.debug(a, b)
+            //this.react()
         }, { deep: !this.watchShallow });
-        this.$watch('layout', this.relayout, { deep: !this.watchShallow });
-        */
+        this.$watch('layout', (a, newValue) => {
+            this.internalLayout = {... newValue};
+            this.react();
+        }, { deep: true || !this.watchShallow });
     },
     beforeUnmount() {
         window.removeEventListener('resize', this.__resizeListener);
@@ -152,7 +157,7 @@ export default {
             return Plotly.newPlot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
         },
         react() {
-            console.debug('Plotly react');
+            console.debug('Plotly react:', this.layout.title);
             const fig = Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
             if (this.frames) {
                 Plotly.addFrames(this.$refs.container, this.frames);

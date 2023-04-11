@@ -20,7 +20,7 @@
                 </v-select>
                 <label>{{ $tc('common.title') }}:</label>
                 <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"
-                    xinput="emit('update-chart', 'title')" />
+                    @input="emit('update-chart', $event, ['title', 'text'])" data-chart-layout="title"/>
             </b-form-group>
 
             <div class="accordion options-font" role="tablist">

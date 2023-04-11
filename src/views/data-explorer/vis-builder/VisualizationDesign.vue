@@ -1,5 +1,5 @@
 <template>
-    <div class="options-container  source-code-pro-font">
+    <div class="options-container  source-code-pro-font" ref="visualizationDesigner">
         <div class="options-visualization mt-1">
             <div>
                 <h6>Construtor de visualizações</h6>
@@ -75,13 +75,12 @@
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 80vh">
                     <div v-if="display && plotlyData" ref="chart">
-                        <plotly :options="Object.freeze({ responsive: true, height: 600 })" :data="Object.freeze(plotlyData.data)"
-                            :layout="Object.freeze(plotlyData.layout)" :frames="Object.freeze(plotlyData.frames)"
+                        <plotly :options="chartOptions" :data="plotlyData.data"
+                            :layout="plotlyData.layout" :frames="plotlyData.frames"
                             :key="plotVersion" ref="plotly" :watchShallow="true"/>
-                        <!--
-                        <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData }}</small>
-                        -->
-
+                            <!--
+                        <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData.layout }}</small>
+                            -->
                     </div>
                     <div v-else class="chart-not-available">
                         Selecione o tipo de gráfico e configure suas propriedades
@@ -117,7 +116,7 @@
 </template>
 
 <script setup>
-import { ref, shallowRef, computed, onBeforeMount } from "vue";
+import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { getCurrentInstance } from 'vue';
 import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
 import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
@@ -174,10 +173,11 @@ const socketIo = ref(null); // used by socketio (web sockets)
 const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 const visualizationObj = ref(null);
-
+const chartOptions = ref({ responsive: true, height: 600 });
 
 // Elements refs
 const cluster = ref(null)
+const visualizationDesigner = ref(ref)
 
 
 const dataSourceId = computed({
@@ -237,18 +237,20 @@ const handleChangeLayout = (changeCause, value) => {
         //plotly.value.react();
     }
 };
-const updateChart = debounce((property) => {
-    console.debug('FIXME')
-    return
+const updateChart = debounce((value, propertyPath) => {
     if (!plotlyData || !plotlyData?.value?.layout) {
         return;
     }
-    console.debug(property, plotlyData?.value?.layout?.title?.text)
+    /*
     if (property === 'title') {
         plotlyData.value.layout.title.text = options.value.title.value;
     } else if (property === 'hole') {
         plotlyData.value.data[0].hole = options.value.hole.value * 0.01;
-    }
+    }*/
+    let current = plotlyData.value.layout;
+    propertyPath.slice(0, -1).forEach(p => current = current[p]);
+    current[propertyPath.slice(-1)] = value;
+    plotly.value.layout = plotlyData.value.layout;
     plotly.value.react()
 }, 800);
 
@@ -264,6 +266,12 @@ onBeforeMount(async () => {
     internalWorkflowId.value = (route) ? route.params.id : 0;
     await load();
 });
+
+const teste = () => {
+    plotlyData.value.layout.title.text = "OK Funcionou";
+    plotly.value.layout = plotlyData.value.layout;
+    plotly.value.react();
+};
 
 const updateThumb = () => {
     const $elem = this.$refs.chart;

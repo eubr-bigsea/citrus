@@ -32,10 +32,9 @@ export default {
 
         {
             name: "treemap", label: "Mapa em Árvore (Treemap)",
-            dataTypes: ['categóricos'], objectives: ['hierarquia']
+            dataTypes: ['categóricos'], objectives: ['hierarquia', 'comparação']
         },
-        { name: "sunburst", label: "Gráfico de Hierarquias", dataTypes: ['categóricos'], objectives: ['composição', 'comparação'] },
-        { name: "boxplot", label: "Box Plot", },
+        { name: "sunburst", label: "Gráfico de Hierarquias", dataTypes: ['categóricos'], objectives: ['hierarquia', 'comparação']},
         { name: "pointcloud", label: "Nuvem de Pontos", },
         //{ name: "scattergeo", label: "Bolhas em Mapa", },
         { name: "funnel", label: "Gráfico de Funil", },
