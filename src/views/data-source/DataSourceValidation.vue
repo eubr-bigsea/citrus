@@ -16,7 +16,7 @@
                         
                         <div class="col-md-6">
                             <div class="row d-flex flex-row-reverse mx-1">
-                                <button class="btn btn-primary btn-lemonade-primary" @click.stop="add">
+                                <button class="btn btn-primary btn-lemonade-primary" @click.stop.prevent="add">
                                     <font-awesome-icon icon="fa fa-plus" />
                                     {{$t('actions.addItem')}}
                                 </button>
@@ -58,71 +58,20 @@
                                         </template>
                                         
                                         <template #actions="props">
-                                            <button class="btn btn-sm btn-primary" @click.stop="edit(props.row.id)">
+                                            <button class="btn btn-sm btn-primary" @click.stop.prevent="edit(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-edit" />
                                             </button>
-                                            <button class="btn btn-sm btn-danger" @click.stop="remove(props.row.id)">
+                                            <button class="btn btn-sm btn-danger" @click.stop.prevent="remove(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-trash" />
                                             </button>
-                                            <button class="btn btn-sm btn-info" @click.stop="execute(props.row.id)">
+                                            <button class="btn btn-sm btn-info" @click.stop.prevent="execute(props.row.id)">
                                                 <font-awesome-icon icon="fa fa-play" />
                                             </button>
                                         </template>
                                     <!-- </v-server-table> -->
                                     </v-client-table>
 
-                                    
-
-                                    <b-modal ref="editWindow" size="xl" :title="$t('actions.edit')" no-stacking button-size="sm" header-bg-variant="dark" 
-                                            header-text-variant="light" @ok="handleEditOk" @show="resetEditModal" @hidden="resetEditModal">
-                                        <!-- {{this.validationToEdit}} -->
-
-                                        <form ref="editForm" @submit.stop.prevent="handleEditSubmit">
-                                            <div class="row" align-v="center">
-                                                <div class="col-md-10">
-                                                    <b-form-group :label="$t('common.name')" label-for="name-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="nameState">
-                                                        <b-form-input
-                                                            id="name-input"
-                                                            v-model="name"
-                                                            type="text"
-                                                            :state="nameState"
-                                                            required>
-                                                        </b-form-input>
-                                                    </b-form-group>
-                                                </div>
-
-                                                <div class="col-md-2">
-                                                    <b-form-checkbox
-                                                        id="status-checkbox"
-                                                        v-model="status"
-                                                        name="status"
-                                                        value="Habilitado"
-                                                        unchecked-value="Desabilitado"
-                                                    >{{ $t('common.enabled') }}</b-form-checkbox>
-                                                </div>
-                                            </div>
-
-                                            <b-form-group label="Agendamento" label-for="schedule-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="scheduleState">
-                                                <b-form-input
-                                                    id="schedule-input"
-                                                    v-model="schedule"
-                                                    type="text"
-                                                    :state="scheduleState"
-                                                    required>
-                                                </b-form-input>
-                                            </b-form-group>
-
-                                        </form>
-
-
-
-                                        <!-- Just to see the results -->
-                                        <br><br>
-                                        {{ this.name }}<br>
-                                        {{ this.status }}<br>
-                                        {{ this.schedule }}<br>
-
-                                    </b-modal>
+                                    <modal-edit-validation :validation="validationToEdit"/>
                                 </div>
                             </div>
                         </div>
@@ -137,6 +86,7 @@ import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
 // import VueCronEditorBuefy from 'vue-cron-editor-buefy';
 import DataSourceOptions from '../../components/data-source/DataSourceOptions.vue';
+import ModalEditValidation from '../modal/ModalEditValidation.vue';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
@@ -144,6 +94,7 @@ export default {
     mixins: [Notifier],
     components: {
         DataSourceOptions,
+        ModalEditValidation,
     },
     data() {
         return {
@@ -151,11 +102,6 @@ export default {
             previewWindow: null,
             validations: [],
             validationToEdit: null,
-            name: '',
-            nameState: null,
-            status: 'Desabilitado',
-            schedule: '',
-            scheduleState: null,
             columns: [
                 'name',
                 'status',
@@ -330,41 +276,17 @@ export default {
         },
         edit(validationId) {
             this.validationToEdit = this.validations.filter(x => x.id === validationId);
-            this.$refs.editWindow.show();
+            // this.$refs.editWindow.show();
+            // alert("antes do mdoal");
+            this.$bvModal.show('edit-window');
         },
-        resetEditModal() {
-            this.name = '';
-            this.nameState = null;
-            this.schedule = '';
-            this.scheduleState = null;
-            this.status = 'Desabilitado';
-        },
-        handleEditOk(bvModalEvent) {
-            bvModalEvent.preventDefault();
-            this.handleEditSubmit();
-        },
-        handleEditSubmit() {
-            if (!this.checkEditFormValidity()) {
-                return;
-            }
-            // Here I send the editted validation to the api
-            //...
-
-            this.$nextTick(() => {
-                this.$refs.editWindow.hide();
-            })
-        },
-        checkEditFormValidity() {
-            const valid = this.$refs.editForm.checkValidity();
-            if(valid == true) {
-                this.nameState = valid;
-                this.scheduleState = valid;
-            }
-            else {
-                this.nameState = ((this.name == '') ? valid : !valid);
-                this.scheduleState = ((this.schedule == '') ? valid : !valid);
-            }
-            return valid;
+        add() {
+            this.validationToEdit = [{
+                'id': '' , 'name': '', 'status': 'Desabilitado',
+                'last_executed': '', 'situation': 'Falha',
+                'schedule' : '', 'category': '', 'validation': '',
+            }];
+            this.$bvModal.show('edit-window');
         },
         remove(validationId) {
             // const self = this;
@@ -400,6 +322,7 @@ export default {
                 },
             );
             // The confirm dialog is not closing after the deletion!
+            // I think it will work when I use the api
         },
         execute(validationId) {
             // Implement this
@@ -409,9 +332,6 @@ export default {
         },
         totalValidations() {
             return this.validations.length;
-        },
-        add() {
-            // Implement a modal like the edit modal
         },
     },
 }
