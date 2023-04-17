@@ -16,7 +16,7 @@
                         
                         <div class="col-md-6">
                             <div class="row d-flex flex-row-reverse mx-1">
-                                <button class="btn btn-primary btn-lemonade-primary" @click.stop.prevent="add">
+                                <button class="btn btn-primary btn-lemonade-primary" @click.prevent="add">
                                     <font-awesome-icon icon="fa fa-plus" />
                                     {{$t('actions.addItem')}}
                                 </button>
@@ -58,20 +58,20 @@
                                         </template>
                                         
                                         <template #actions="props">
-                                            <button class="btn btn-sm btn-primary" @click.stop.prevent="edit(props.row.id)">
+                                            <button class="btn btn-sm btn-primary" @click.prevent="edit(props.row)">
                                                 <font-awesome-icon icon="fa fa-edit" />
                                             </button>
-                                            <button class="btn btn-sm btn-danger" @click.stop.prevent="remove(props.row.id)">
+                                            <button class="btn btn-sm btn-danger" @click.prevent="remove(props.row)">
                                                 <font-awesome-icon icon="fa fa-trash" />
                                             </button>
-                                            <button class="btn btn-sm btn-info" @click.stop.prevent="execute(props.row.id)">
+                                            <button class="btn btn-sm btn-info" @click.prevent="execute(props.row)">
                                                 <font-awesome-icon icon="fa fa-play" />
                                             </button>
                                         </template>
                                     <!-- </v-server-table> -->
                                     </v-client-table>
 
-                                    <modal-edit-validation :validation="validationToEdit"/>
+                                    <modal-edit-validation ref="editWindow" id="edit-window" :validation="validationToEdit"/>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +99,7 @@ export default {
     data() {
         return {
             dataSource: [],
-            previewWindow: null,
+            editWindow: null,
             validations: [],
             validationToEdit: null,
             columns: [
@@ -274,21 +274,37 @@ export default {
             this.$refs.validationList.setFilter('');
             this.$refs.validationList.customQueries = {};
         },
-        edit(validationId) {
-            this.validationToEdit = this.validations.filter(x => x.id === validationId);
-            // this.$refs.editWindow.show();
-            // alert("antes do mdoal");
+        edit(validation) {
+            this.validationToEdit = validation;
             this.$bvModal.show('edit-window');
+
+            // I have to run the insertValidation method only after the modal is closed, it is running before!
+            // this.insertValidation();
         },
         add() {
-            this.validationToEdit = [{
+            this.validationToEdit = {
                 'id': '' , 'name': '', 'status': 'Desabilitado',
                 'last_executed': '', 'situation': 'Falha',
                 'schedule' : '', 'category': '', 'validation': '',
-            }];
+            };
             this.$bvModal.show('edit-window');
+            
+            // I have to run the insertValidation method only after the modal is closed, it is running before!
+            // And it should only run if we closed the modal with ok, so i have to use emit there
+            // this.insertValidation();
         },
-        remove(validationId) {
+        insertValidation() {
+            alert(this.validationToEdit.name);
+
+            // Here I send to the api the editted validation (it is on validationToEdit)
+            // (with the id the api will decide if it is a new validation
+            // to insert or an existing one to edit)
+            //...
+
+            // And then I clear validationToEdit so that the next modal call doesnt have trash
+            // this.validationToEdit = {};
+        },
+        remove(validation) {
             // const self = this;
             // this.confirm(
             //     this.$t('actions.delete'),
@@ -312,7 +328,7 @@ export default {
                 this.$t('messages.doYouWantToDelete'),
                 () => {
                     for(var i = 0; i < self.validations.length; i++) {
-                        if ( self.validations[i].id === validationId) {
+                        if ( self.validations[i].id === validation.id) {
                             self.validations.splice(i, 1);
                         }
                     }
@@ -324,7 +340,7 @@ export default {
             // The confirm dialog is not closing after the deletion!
             // I think it will work when I use the api
         },
-        execute(validationId) {
+        execute(validation) {
             // Implement this
         },
         failedValidations() {
