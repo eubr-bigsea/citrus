@@ -58,20 +58,22 @@
                                         </template>
                                         
                                         <template #actions="props">
-                                            <button class="btn btn-sm btn-primary" @click.prevent="edit(props.row)">
-                                                <font-awesome-icon icon="fa fa-edit" />
-                                            </button>
-                                            <button class="btn btn-sm btn-danger" @click.prevent="remove(props.row)">
-                                                <font-awesome-icon icon="fa fa-trash" />
-                                            </button>
-                                            <button class="btn btn-sm btn-info" @click.prevent="execute(props.row)">
-                                                <font-awesome-icon icon="fa fa-play" />
-                                            </button>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-primary" @click.prevent="edit(props.row)">
+                                                    <font-awesome-icon icon="fa fa-edit" />
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" @click.prevent="remove(props.row)">
+                                                    <font-awesome-icon icon="fa fa-trash" />
+                                                </button>
+                                                <button class="btn btn-sm btn-info" @click.prevent="execute(props.row)">
+                                                    <font-awesome-icon icon="fa fa-play" />
+                                                </button>
+                                            </div>
                                         </template>
                                     <!-- </v-server-table> -->
                                     </v-client-table>
 
-                                    <modal-edit-validation ref="editWindow" id="edit-window" :validation="validationToEdit"/>
+                                    <modal-edit-validation id="edit-window" :oldValidation="validationToEdit" @newValidation="insertValidation"/>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +101,6 @@ export default {
     data() {
         return {
             dataSource: [],
-            editWindow: null,
             validations: [],
             validationToEdit: null,
             columns: [
@@ -274,12 +275,11 @@ export default {
             this.$refs.validationList.setFilter('');
             this.$refs.validationList.customQueries = {};
         },
+        // On edit and add, the first time i click it doesnt open the modal, dont know why
         edit(validation) {
-            this.validationToEdit = validation;
+            // here I use deep copy so that changing validationToEdit doesnt change validation
+            this.validationToEdit = JSON.parse(JSON.stringify(validation));
             this.$bvModal.show('edit-window');
-
-            // I have to run the insertValidation method only after the modal is closed, it is running before!
-            // this.insertValidation();
         },
         add() {
             this.validationToEdit = {
@@ -288,21 +288,14 @@ export default {
                 'schedule' : '', 'category': '', 'validation': '',
             };
             this.$bvModal.show('edit-window');
-            
-            // I have to run the insertValidation method only after the modal is closed, it is running before!
-            // And it should only run if we closed the modal with ok, so i have to use emit there
-            // this.insertValidation();
         },
-        insertValidation() {
-            alert(this.validationToEdit.name);
+        insertValidation(validation) {
+            alert(validation.name);
 
-            // Here I send to the api the editted validation (it is on validationToEdit)
+            // Here I send to the api the editted validation (it is on validation)
             // (with the id the api will decide if it is a new validation
             // to insert or an existing one to edit)
             //...
-
-            // And then I clear validationToEdit so that the next modal call doesnt have trash
-            // this.validationToEdit = {};
         },
         remove(validation) {
             // const self = this;

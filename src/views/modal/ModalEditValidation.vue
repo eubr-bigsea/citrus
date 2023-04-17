@@ -1,14 +1,14 @@
 <template>
     <b-modal id="edit-window" ref="editWindow" size="xl" :title="'Janela de Edição'" no-stacking button-size="sm" header-bg-variant="dark" 
-            header-text-variant="light" @ok="handleEditOk" @show="resetEditModal">
+            header-text-variant="light" @ok="handleEditOk" @show="reset" @hidden="reset">
 
-        <form ref="editForm" @submit.prevent="handleEditSubmit">
+        <form ref="editForm">
             <div class="row" align-v="center">
                 <div class="col-md-10">
                     <b-form-group :label="$t('common.name')" label-for="name-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="nameState">
                         <b-form-input
                             id="name-input"
-                            v-model="validation.name"
+                            v-model="oldValidation.name"
                             type="text"
                             :state="nameState"
                             required>
@@ -19,7 +19,7 @@
                 <div class="col-md-2">
                     <b-form-checkbox
                         id="status-checkbox"
-                        v-model="validation.status"
+                        v-model="oldValidation.status"
                         name="status"
                         value="Habilitado"
                         unchecked-value="Desabilitado"
@@ -30,7 +30,7 @@
             <b-form-group label="Agendamento" label-for="schedule-input" :invalid-feedback="$t('errors.missingRequiredValue')" :state="scheduleState">
                 <b-form-input
                     id="schedule-input"
-                    v-model="validation.schedule"
+                    v-model="oldValidation.schedule"
                     type="text"
                     :state="scheduleState"
                     required>
@@ -43,7 +43,7 @@
 
         <!-- Just to see the results -->
         <br><br>
-        {{ this.validation }}<br>
+        {{ this.oldValidation }}<br>
 
     </b-modal>
 </template>
@@ -54,11 +54,12 @@ import axios from 'axios';
 
 export default {
     props: {
-        validation: {
+        oldValidation: {
             type: Object,
             default: null,
         },
     },
+    emits: ['newValidation'],
     data() {
         return {
             // name: '',
@@ -69,25 +70,12 @@ export default {
         }
     },
     methods: {
-        resetEditModal() {
-            // this.name = this.validation.name;
-            // this.schedule = this.validation.schedule;
-            // this.status = this.validation.status;
+        reset() {
+            // this.name = this.oldValidation.name;
+            // this.schedule = this.oldValidation.schedule;
+            // this.status = this.oldValidation.status;
             this.nameState = null;
             this.scheduleState = null;
-        },
-        handleEditOk(bvModalEvent) {
-            bvModalEvent.preventDefault();
-            this.handleEditSubmit();
-        },
-        handleEditSubmit() {
-            if (!this.checkEditFormValidity()) {
-                return;
-            }
-
-            this.$nextTick(() => {
-                this.$bvModal.hide('edit-window');
-            });
         },
         checkEditFormValidity() {
             const valid = this.$refs.editForm.checkValidity();
@@ -96,10 +84,25 @@ export default {
                 this.scheduleState = valid;
             }
             else {
-                this.nameState = ((this.validation.name == '') ? valid : !valid);
-                this.scheduleState = ((this.validation.schedule == '') ? valid : !valid);
+                this.nameState = ((this.oldValidation.name == '') ? valid : !valid);
+                this.scheduleState = ((this.oldValidation.schedule == '') ? valid : !valid);
             }
             return valid;
+        },
+        handleEditOk(bvModalEvent) {
+            bvModalEvent.preventDefault();
+            
+            if (!this.checkEditFormValidity()) {
+                return;
+            }
+
+            this.$nextTick(() => {
+                this.insertValidation();
+                this.$bvModal.hide('edit-window');
+            });
+        },
+        insertValidation() {
+            this.$emit('newValidation', this.oldValidation);
         },
     }
 };
