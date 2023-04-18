@@ -551,18 +551,17 @@
                                             <div v-if="true && isNumeric(x.attribute)">
                                                 <b-form-group label="Agrupamento (bins):">
                                                     <select class="form-control form-control-sm" v-model="x.binning">
-                                                        <option label="EQUAL_INTERVAL" value="EQUAL_INTERVAL">Número fixo de
-                                                            grupos
-                                                            com
-                                                            intervalos iguais</option>
-                                                        <option label="FIXED_SIZE" value="FIXED_SIZE">FIXED_SIZE</option>
-                                                        <option label="NONE" value="NONE">NONE</option>
-                                                        <option label="CATEGORICAL" value="CATEGORICAL">CATEGORICAL</option>
+                                                        <option value="EQUAL_INTERVAL">Número fixo de
+                                                            grupos com intervalos iguais
+                                                        </option>
+                                                        <option value="FIXED_SIZE">Grupos com mesma quantidade de valores</option>
+                                                        <option value="NONE">Nenhuma transformação</option>
+                                                        <option value="CATEGORICAL">Tratar valores como categóricos</option>
                                                     </select>
                                                 </b-form-group>
                                                 <b-form-group label="Número de grupos (bins):">
                                                     <b-form-input type="number" v-model.number="x.bins"
-                                                        class="form-control form-control-sm" max="1000" min="1"
+                                                        class="form-control form-control-sm w-25" max="1000" min="1"
                                                         debounce="500" />
                                                 </b-form-group>
 
@@ -580,7 +579,7 @@
                                                 </b-form-group>
                                                 <b-form-group v-if="!pieFamily" label="Multiplicar:">
                                                     <b-form-input type="number" v-model.number="x.multiplier"
-                                                        class="form-control form-control-sm" max="1000000000000" min="1"
+                                                        class="form-control form-control-sm w-25" max="1000000000000" min="1"
                                                         debounce="500" />
                                                 </b-form-group>
                                                 <b-form-group label="Casas decimais:">
@@ -790,8 +789,6 @@ const isInteger = function (attributeName) {
 const handleSelectAttribute = (x) => {
     if (!isNumeric(x.attribute)) {
         x.binning = null;
-    } else {
-        x.binning = 'EQUAL_INTERVAL';
     }
 };
 
@@ -866,7 +863,7 @@ watch(
 }
 
 .series-form {
-    width: 520px;
+    width: 640px;
     zoom: .8;
 }
 
