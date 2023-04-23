@@ -544,7 +544,7 @@ const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
 );
 const continuousColors = computed(() => {
-    return ['sunburst', 'treemap'].includes(props.chartType);
+    return ['sunburst', 'treemap', 'histogram2dcontour'].includes(props.chartType);
 });
 const discreteColors = computed(() => {
     return !continuousColors.value;
