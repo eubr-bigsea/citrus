@@ -26,6 +26,12 @@
                                           @action="deleteCard" />
                     </div>
                 </div>
+                <div class="analysis">
+                    <h4>Bidimensional</h4>
+                    <div class="analysis_box">
+
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -77,9 +83,15 @@ export default {
         select(option) {
             this.choice = option;
         },
-        addCard(card) {
-            card.id = this.cards.length;
-            this.cards.push(card);
+        addCard(info) {
+            for (let i = 0; i < info.graphs.length; i++) {
+                let card = {
+                    type: info.analysisType,
+                    atributte: info.atributte,
+                    analysis: info.graphs[i]
+                };
+                this.cards.push(card);
+            }
         },
         deleteCard(info) {
             this.cards.splice(this.cards.indexOf(info), 1);

@@ -80,12 +80,14 @@ export default {
     methods: {
         addCard() {
             let cardInfo = {
-                id: null,
                 analysisType: this.selected,
                 atributte: this.selectedAtributte,
                 graphs: this.selectedGraphs
             };
             this.$emit('cards', cardInfo);
+            this.selected = null;
+            this.selectedAtributte = null;
+            this.selectedGraphs = [];
         }
     }
 };

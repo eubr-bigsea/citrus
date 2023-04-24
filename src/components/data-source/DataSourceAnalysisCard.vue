@@ -14,7 +14,7 @@
                 </b-dropdown-item>
             </b-dropdown>
         </div>
-        <h6>Histograma</h6>
+        <h6>{{info.analysis}}</h6>
         <ul class="measurements">
             <li>Max:</li>
             <li>Min:</li>
