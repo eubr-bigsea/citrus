@@ -145,7 +145,7 @@
                                 </select>
                                 <template v-if="selectedAttribute.transform === 'keep'">
                                     <label>Mudar a escala do número:</label>
-                                    <select v-model="selectedAttribute.scale"
+                                    <select v-model="selectedAttribute.scaler"
                                             class="form-control form-control-sm mb-3">
                                         <option />
                                         <option value="standard">

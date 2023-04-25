@@ -7,7 +7,7 @@
                     <b-list-group-item v-for="job in jobs"
                                        :key="job.id"
                                        class="flex-column align-items-start p-0"
-                                       @click="handleClick(job)">
+                                       @click="handleClick(job)" role="button">
                         <div class="d-flex w-100 justify-content-between p-1"
                              :class="(selectedJob && (selectedJob.id === job.id)) ? 'bg-secondary text-white': 'bg-light' ">
                             <span class="mb-1 job-title">{{$tc('titles.job')}} #{{job.id}}</span>
