@@ -36,8 +36,6 @@
                         </template>
                     </v-select>
                     <div class="mt-2 ">
-
-
                         <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-right"
                             size="sm" no-caret>
                             <template #button-content>
@@ -73,7 +71,7 @@
             <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
                 :chartType="visualizationObj.type.value" />
             <div class="chart">
-                <div class="chart-builder-visualization" style="height: 80vh">
+                <div class="chart-builder-visualization" style="height: 75vh">
                     <div v-if="display && plotlyData" ref="chart">
                         <plotly :options="chartOptions" :data="plotlyData.data"
                             :layout="plotlyData.layout" :frames="plotlyData.frames"
@@ -370,8 +368,13 @@ const loadClusters = async () => {
 const saveWorkflow = async () => {
     workflowObj.value.visualization.forms = visualizationObj.value;
     let cloned = structuredClone(workflowObj.value);
-    if (!cloned.filter.forms.formula || cloned.filter.forms.formula.value === null || cloned.filter.forms.formula.value.length === 0) {
+    
+    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null 
+            || cloned.visualization.forms.filter.value.length === 0) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
+    } else {
+        // Copy filter from visualization to correct operation
+        cloned.filter.forms.formula = structuredClone(cloned.visualization.forms.filter);
     }
     if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
@@ -417,6 +420,15 @@ const loadData = async () => {
     }
     const cloned = JSON.parse(JSON.stringify(workflowObj.value));
     cloned.platform_id = cloned.platform.id; //FIXME: review
+    const filterTask = cloned.tasks.find(t => t.operation.slug === 'filter');
+    const visualizationTask = cloned.tasks.find(t => t.operation.slug === 'visualization');
+    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null 
+            || cloned.visualization.forms.filter.value.length === 0) {
+        cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
+    } else {
+        // Copy filter from visualization to correct operation
+        filterTask.forms.formula = structuredClone(visualizationTask.forms.filter);
+    }
 
     cloned.tasks.forEach((task) => {
         // Remove unnecessary attributes from operation
@@ -561,7 +573,7 @@ const connectWebSocket = () => {
     flex-wrap: wrap;
     margin: 0 auto;
     gap: 10px;
-    height: 100vh;
+    height: 92vh;
 }
 
 .options-main {

@@ -2,95 +2,75 @@
     <main role="main">
         <div>
             <div class="d-flex justify-content-between align-items-center">
-                <h1>Escolha como parametrizar o modelo de {{$t('dataExplorer.task.' + taskType).toLowerCase()}}</h1>
+                <h1>Escolha como parametrizar o modelo de {{ $t('dataExplorer.task.' + taskType).toLowerCase() }}</h1>
             </div>
             <hr>
             <div class="row">
                 <div class="col-md-3">
                     <b-card>
-                        <label class=""
-                               for="name">Nome do experimento:</label>
-                        <input id="name"
-                               v-model="name"
-                               v-focus
-                               type="text"
-                               class="form-control"
-                               maxlength="100">
+                        <label class="" for="name">Nome do experimento:</label>
+                        <input id="name" v-model="name" v-focus type="text" class="form-control" maxlength="100">
 
                         <label class="mt-2">Escolha a fonte de dados:</label>
-                        <vue-select v-model="selectedDataSource"
-                                    :filterable="false"
-                                    :options="dataSourceList"
-                                    label="name"
-                                    @search="loadDataSourceList"
-                                    @input="retrieveAttributes">
-                            <template #no-options="{ }">
+                        <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList" label="name"
+                            @search="loadDataSourceList" @input="retrieveAttributes">
+                            <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
+                                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
+                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
                                 </div>
                             </template>
                         </vue-select>
 
                         <template v-if="supervisioned">
                             <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
-                            <vue-select v-model="selectedAttribute"
-                                        :options="attributes"
-                                        :searchable="true" />
+                            <vue-select v-model="selectedAttribute" :options="attributes" :searchable="true" />
                         </template>
 
                         <hr>
-                        <router-link :to="{name: 'choose-task'}"
-                                     class="btn btn-sm btn-outline-secondary mr-2">
-                            {{$t('actions.back')}}
+                        <router-link :to="{ name: 'choose-task' }" class="btn btn-sm btn-outline-secondary mr-2">
+                            {{ $t('actions.back') }}
                         </router-link>
-                        <button v-if="valid"
-                                class="btn btn-primary btn-sm"
-                                @click="create">
-                            {{$t('actions.create', {type: 'experimento'})}}
+                        <button v-if="valid" class="btn btn-primary btn-sm" @click="create">
+                            {{ $t('actions.create', { type: 'experimento' }) }}
                         </button>
                     </b-card>
                 </div>
-                <div v-if="supervisioned"
-                     class="col-md-9">
+                <div v-if="supervisioned" class="col-md-9">
                     <div class="card-deck1 text-center">
                         <div class="custom-card">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <span class="fa-stack fa-3x">
-                                        <span class="fas fa-circle text-info fa-stack-2x" />
-                                        <span class="fas fa-robot fa-stack-1x fa-inverse" />
-                                    </span>
+                                    <font-awesome-layers class="fa-stack fa-3x text-danger">
+                                        <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                        <font-awesome-icon icon="fa-robot" inverse />
+                                    </font-awesome-layers>
                                     <h6>Automática</h6>
                                     <small>
                                         O modelo será criado automaticamente, sendo escolhido aquele que melhor atender
                                         às metricas de avaliação (experimental).
                                         <br>
-                                        <strong>Você ainda terá que escolher os atributos a serem usados no experimento!</strong>
+                                        <strong>Você ainda terá que escolher os atributos a serem usados no
+                                            experimento!</strong>
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio v-model="method"
-                                                  name="method"
-                                                  class="font-weight-bold"
-                                                  value="fast">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
                                         Obtenha alguns modelos genéricos rapidamente. Útil para testes.
                                     </div>
 
-                                    <b-form-radio v-model="method"
-                                                  name="method"
-                                                  class="font-weight-bold"
-                                                  value="performance">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
+                                        value="performance">
                                         Desempenho
                                     </b-form-radio>
                                     <div class="description">
@@ -98,10 +78,8 @@
                                         pois pode demorar mais.
                                     </div>
 
-                                    <b-form-radio v-model="method"
-                                                  name="method"
-                                                  class="font-weight-bold"
-                                                  value="interpretable">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold"
+                                        value="interpretable">
                                         Crie modelos interpretáveis
                                     </b-form-radio>
                                     <div class="description">
@@ -114,10 +92,10 @@
                         <div class="custom-card">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <span class="fa-stack fa-3x">
-                                        <span class="fas fa-circle text- fa-stack-2x" />
-                                        <span class="fas fa-glasses fa-stack-1x fa-inverse" />
-                                    </span>
+                                    <font-awesome-layers class="fa-stack fa-3x text-success">
+                                        <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
+                                        <font-awesome-icon icon="fa-glasses" inverse />
+                                    </font-awesome-layers>
                                     <h6>Especialista</h6>
                                     <small>
                                         Você controla como o modelo será criado, podendo escolher os
@@ -127,10 +105,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 pt-5 text-left">
-                                    <b-form-radio v-model="method"
-                                                  name="method"
-                                                  class="font-weight-bold"
-                                                  value="custom">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="custom">
                                         Escolha os
                                         algoritmos
                                     </b-form-radio>
@@ -167,8 +142,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-if="clustering"
-                     class="col-md-9">
+                <div v-if="clustering" class="col-md-9">
                     <div class="card-deck1 text-center">
                         <div class="custom-card">
                             <div class="row">
@@ -184,10 +158,7 @@
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio v-model="method"
-                                                  name="method"
-                                                  class="font-weight-bold"
-                                                  value="fast">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="fast">
                                         Protótipo rápido
                                     </b-form-radio>
                                     <div class="description">
@@ -212,17 +183,14 @@
                                     </span>
                                     <h6>Especialista</h6>
                                     <small>
-                                        Você controla como o modelo será criado, podendo {{$t('common.ok')}} os
+                                        Você controla como o modelo será criado, podendo {{ $t('common.ok') }} os
                                         algoritmos,
                                         parâmetros, métricas e qual será
                                         o modelo a ser salvo.
                                     </small>
                                 </div>
                                 <div class="col-md-8 text-left">
-                                    <b-form-radio v-model="method"
-                                                  name="method"
-                                                  class="font-weight-bold"
-                                                  value="custom">
+                                    <b-form-radio v-model="method" name="method" class="font-weight-bold" value="custom">
                                         Escolha os
                                         algoritmos
                                     </b-form-radio>
@@ -287,8 +255,8 @@ export default {
     computed: {
         valid() {
             return this.selectedDataSource !== null &&
-                    (this.selectedAttribute !== null || this.clustering) &&
-                    this.type !== null;
+                (this.selectedAttribute !== null || this.clustering) &&
+                this.type !== null;
         },
         taskType() {
             return this.$route.params.task;
@@ -328,26 +296,26 @@ export default {
 }
 </script>
 <style scoped>
-    .custom-card {
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 15px;
-        margin-bottom: 5px;
-    }
+.custom-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 5px;
+}
 
-    .description {
-        font-size: .85em;
-        color: #555;
-    }
+.description {
+    font-size: .85em;
+    color: #555;
+}
 
-    .description:not(:last-child) {
-        margin-bottom: 20px;
-    }
+.description:not(:last-child) {
+    margin-bottom: 20px;
+}
 
-    .span-id {
-        display: inline-block;
-        width: 30px;
-        text-align: right;
-    }
+.span-id {
+    display: inline-block;
+    width: 30px;
+    text-align: right;
+}
 </style>

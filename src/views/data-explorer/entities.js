@@ -5,6 +5,7 @@ class Constants {
     };
 }
 const META_PLATFORM_ID = 1000;
+const MODEL_BUILDER_CATEGORY = 2113;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null, $meta = null } = {}) {
 
@@ -37,7 +38,7 @@ class Workflow {
         let forms = {};
 
         // Operations that handle 'attributes' in a different field
-        let ignoreDefault = false;
+        let ignoreDefault = !!op.categories.filter(c => c.id == MODEL_BUILDER_CATEGORY);
         if (attrs && attrs.length && attrs[0]) {
             if (op.slug === 'sort') {
                 ignoreDefault = true;
@@ -125,7 +126,7 @@ class Workflow {
         const workflow = new Workflow({
             $meta: { method, task_type: taskType },
             name: name,
-            tasks: [dataReader, ],
+            tasks: [dataReader,],
             type: 'MODEL_BUILDER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             forms: { $meta: { value: { label: labelAttribute, method, taskType } } }
@@ -145,7 +146,7 @@ class Workflow {
             operation: new Operation({ id: 2370 }),
             display_order: 5,
         });
-        visualization.setProperty('type', {value: type});
+        visualization.setProperty('type', { value: type });
 
 
         const workflow = new Workflow({
@@ -445,35 +446,35 @@ class Visualization {
         hole = null, text_position = null, text_info = null,
         right_margin = null, left_margin = 0, top_margin = 0, bottom_margin = 0,
         auto_margin = { value: true }, template = { value: null },
-        blackWhite = { value: false},
-        subgraph = { value: null},
-        subgraph_orientation = {value: 'v'},
-        animation = {value: null},
-        opacity = {value: 1},
-        height = {value: null}, width = {value: null},
-        scatter_color = {value: null}, 
-        scatter_size = {value: null}, 
-        fill_opacity = {value: 255}, 
-        number_format = {value: null}, 
-        paper_color = {value: null}, 
-        
-        size_attribute = {value: null}, 
-        text_attribute = {value: null}, 
-        color_attribute = {value: null}, 
-        style = {value: null}, 
+        blackWhite = { value: false },
+        subgraph = { value: null },
+        subgraph_orientation = { value: 'v' },
+        animation = { value: null },
+        opacity = { value: 1 },
+        height = { value: null }, width = { value: null },
+        scatter_color = { value: null },
+        scatter_size = { value: null },
+        fill_opacity = { value: 255 },
+        number_format = { value: null },
+        paper_color = { value: null },
 
-        color_aggregation = {value: null}, 
-        
-        tooltip_info = {value: null}, 
-        zoom = {value: null}, 
-        center_latitude = {value: null}, 
-        center_longitude = {value: null}, 
-        latitude = {value: null}, 
-        longitude = {value: null}, 
-        marker_size = {value: null}, 
+        size_attribute = { value: null },
+        text_attribute = { value: null },
+        color_attribute = { value: null },
+        style = { value: null },
 
-        limit = {value: null},
-        filter = {value: null},
+        color_aggregation = { value: null },
+
+        tooltip_info = { value: null },
+        zoom = { value: null },
+        center_latitude = { value: null },
+        center_longitude = { value: null },
+        latitude = { value: null },
+        longitude = { value: null },
+        marker_size = { value: null },
+
+        limit = { value: null },
+        filter = { value: null },
 
     },
     ) {
@@ -555,7 +556,8 @@ class YDimension {
     constructor({ attribute = '*', aggregation = 'COUNT', compute = null, displayOn = 'left',
         multiplier = null, decimal_places = 2,
         prefix = null, suffix = null, label = null,
-        strokeSize = 0, stroke = null, color = null, marker = null }) {
+        strokeSize = 0, stroke = null, color = null, marker = null,
+        enabled = true }) {
 
         this.attribute = attribute;
         this.aggregation = aggregation; //count, countd, max, min, avg, sum
@@ -571,6 +573,7 @@ class YDimension {
         this.stroke = stroke;
         this.color = color;
         this.marker = marker;
+        this.enabled = enabled;
     }
 }
 class Axis {

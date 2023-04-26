@@ -848,6 +848,7 @@ export default {
             INTERRUPTED: 'Interrompido',
             PENDING: 'Pendente',
             RUNNING: 'Executando',
+            WAITING: 'Preparando',
         }
     },
 

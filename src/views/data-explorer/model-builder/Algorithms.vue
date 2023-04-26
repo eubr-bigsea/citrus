@@ -28,10 +28,10 @@
                         <div v-for="field in form.fields" :key="field.name" class="mb-2 property clearfix"
                             :data-name="field.name">
                             <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}-->
-                            {{ getFieldValue(field.name) }}
+                            {{getFieldValue(field.name)}}
                             <keep-alive>
                                 <div v-if="getWidget(field) === 'checkbox-component'">
-                                    <checkboxes-component :field="field" :value="getFieldValue(field.name)"
+                                    <checkboxes-component :field="field" :value="(getFieldValue(field.name) || {}).list"
                                         :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
                                         :read-only="!field.editable" context="context" @update="handleUpdateField" />
                                 </div>
@@ -170,8 +170,8 @@ export default {
                 ? this.selectedAlgorithm.forms[name].value : null;
         },
         handleUpdateField(field, value, label) {
-            if (field.suggested_widget === 'checkbox') {
-                const newValue = {type: 'list', list: value};
+            if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
+                const newValue = {type: 'list', list: value.filter(a => a !== '')};
                 this.selectedAlgorithm.forms[field.name] = { value: newValue, label, internalValue: newValue };
             } else {
                 this.selectedAlgorithm.forms[field.name] = { value: value, label, internalValue: value };

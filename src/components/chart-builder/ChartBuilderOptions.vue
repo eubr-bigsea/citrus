@@ -403,8 +403,9 @@
                             <label>Limitar quantidade de registros:</label>
                             <input v-model.number="editableVisualization.limit.value" type="number"
                                 class="form-control form-control-sm w-50" min="1" step="100">
-                            <expression-editor v-if="false && workflowObj.filter" :field="filterField"
-                                :value="workflowObj.filter.forms.formula.value"
+                            <expression-editor :field="filterField"
+                                :value="editableVisualization.filter.value"
+                                :show-alias="false"
                                 :suggestion-event="() => attributes.map(a => a.name)" @update="handleUpdateFilter" />
 
                         </b-card-body>
@@ -532,7 +533,7 @@ const toEmit = ref(true);
 const editableVisualization = ref(null);
 const palette = ref({ label: 'Paleta de cores' });
 const colorScale = ref({ label: 'Escala de cores' });
-
+const filterField = ref({label: 'Filtros'})
 editableVisualization.value = structuredClone(props.value);
 
 
@@ -586,6 +587,11 @@ watch(
 
 
 /* Method */
+const handleUpdateFilter = (field, valueList) => {
+    filterField.value.value = valueList;
+    filterField.value.displayValue = valueList;
+    editableVisualization.value.filter.value = valueList;
+}
 const getChartIcon = (type) => {
     return new URL(`../../assets/charts/${type}.svg`, import.meta.url).href;
 }

@@ -271,7 +271,7 @@
                         <div v-for="(y, i) in ySeries" :key="i" class="drag-handle">
 
                             <b-dropdown size="sm" ref="yDimensionDD" class="mt-2 mr-1 pull-right"
-                                variant="outline-secondary small-dd-title">
+                                :variant="'outline-secondary small-dd-title ' + (y.enabled ? '' : 'disabled')">
                                 <template #button-content>
                                     {{ y.attribute === '*' ? 'COUNT' : y.aggregation.toUpperCase() }}
                                     {{ y.aggregation !== '' ? `(${y.attribute})` : y.attribute }}
@@ -308,6 +308,9 @@
                                                             </option>
                                                         </select>
                                                     -->
+                                            </b-form-group>
+                                            <b-form-group>
+                                                <b-form-checkbox v-model="y.enabled"> Habilitado</b-form-checkbox>
                                             </b-form-group>
                                             <b-form-group v-if="!pieFamily" label="Rótulo para legenda:">
                                                 <b-form-input type="text" v-model="y.label"
@@ -554,14 +557,27 @@
                                                         <option value="EQUAL_INTERVAL">Número fixo de
                                                             grupos com intervalos iguais
                                                         </option>
-                                                        <option value="FIXED_SIZE">Grupos com mesma quantidade de valores</option>
+                                                        <option value="FIXED_SIZE">Grupos com comprimento de intervalo fixo
+                                                        </option>
                                                         <option value="NONE">Nenhuma transformação</option>
+                                                        <option value="QUANTILES">Quantis (em %)</option>
                                                         <option value="CATEGORICAL">Tratar valores como categóricos</option>
                                                     </select>
                                                 </b-form-group>
-                                                <b-form-group label="Número de grupos (bins):">
+                                                <b-form-group v-if="x.binning === 'EQUAL_INTERVAL'"
+                                                    label="Número de grupos (bins):">
                                                     <b-form-input type="number" v-model.number="x.bins"
                                                         class="form-control form-control-sm w-25" max="1000" min="1"
+                                                        debounce="500" />
+                                                </b-form-group>
+                                                <b-form-group v-if="x.binning === 'FIXED_SIZE'" label="Tamanho dos grupos:">
+                                                    <b-form-input type="number" v-model.number="x.bin_size"
+                                                        class="form-control form-control-sm w-25" max="1000" min="1"
+                                                        debounce="500" />
+                                                </b-form-group>
+                                                <b-form-group v-if="x.binning === 'QUANTILES'" label="Quantis (inteiros separados por vírgula):">
+                                                    <b-form-input type="text" v-model="x.quantiles"
+                                                        class="form-control form-control-sm w-100" max="1000" min="1"
                                                         debounce="500" />
                                                 </b-form-group>
 
@@ -579,8 +595,8 @@
                                                 </b-form-group>
                                                 <b-form-group v-if="!pieFamily" label="Multiplicar:">
                                                     <b-form-input type="number" v-model.number="x.multiplier"
-                                                        class="form-control form-control-sm w-25" max="1000000000000" min="1"
-                                                        debounce="500" />
+                                                        class="form-control form-control-sm w-25" max="1000000000000"
+                                                        min="1" debounce="500" />
                                                 </b-form-group>
                                                 <b-form-group label="Casas decimais:">
                                                     <b-form-input type="number" v-model.number="x.decimal_places"
@@ -620,7 +636,8 @@
                                                     Agrupar os outros valores
                                                 </b-form-checkbox>
                                             </b-form-group>
-                                            <b-form-group v-if="x.max_displayed !== 0 && x.group_others" label="Nome para 'outros valores'">
+                                            <b-form-group v-if="x.max_displayed !== 0 && x.group_others"
+                                                label="Nome para 'outros valores'">
                                                 <input type="text" class="form-control form-control-sm"
                                                     v-model="x.label_others" />
                                             </b-form-group>
@@ -814,7 +831,9 @@ const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) =
         case 'EQUAL_INTERVAL':
             return `${obj.attribute} (${obj.bins} ${bins})`;
         case 'FIXED_SIZE':
-            return `${obj.attribute} (${bins} ${size} ${obj.binSize} )`;
+            return `${obj.attribute} (${bins} ${size} ${obj.bin_size} )`;
+        case 'QUANTILES':
+            return `${obj.attribute} (quantis informados)`;
         case 'NONE':
             return obj.attribute;
         case 'CATEGORICAL':

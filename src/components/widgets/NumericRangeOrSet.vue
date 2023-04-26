@@ -132,6 +132,15 @@ export default {
             this.triggerUpdateEvent(this.message, this.field, this.internalValue);
         }
     },
+    watch: {
+        value(v) {
+            if (v === null) {
+                this.internalValue = {
+                    distribution: 'uniform', list: [], max: null, min: null, quantity: null, type: 'list',
+                };
+            }
+        }
+    }
 }
 </script>
 <style scoped>

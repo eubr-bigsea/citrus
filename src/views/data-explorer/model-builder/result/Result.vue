@@ -380,8 +380,12 @@ export default {
             return series;
         },
         selectedGroupedResults() {
-            return Object.entries(this.selectedJob.groupedResults).filter(
-                (v) => v.length && v[0].type !== 'OTHER');
+            if (this.selectedJob.groupedResults){
+                return Object.entries(this.selectedJob.groupedResults).filter(
+                    (v) => v.length && v[0].type !== 'OTHER');
+            } else {
+                return [];
+            }
         },
     },
     watch: {
@@ -401,7 +405,11 @@ export default {
     },
     methods: {
         groupedResults(job) {
-            return Object.values(job.groupedResults).filter((result) => result[0].type !== 'OTHER');
+            if (job.groupedResults) {
+                return Object.values(job.groupedResults).filter((result) =>  result[0].type !== 'OTHER');
+            } else {
+                return [];
+            }
         },
 
         selectFirst() {

@@ -27,9 +27,10 @@
                         :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
                     </b-button>
+                    
                     <b-button variant="light" size="sm" class="text-secondary" :title="$t('common.previewUntilHere')"
                         @click="$emit('preview', step)">
-                        <span class="fa" :class="{ 'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable }" />
+                        <font-awesome-icon :icon="`fa ${step.previewable? 'fa-eye' : 'fa-eye-slash'}` " />
                     </b-button>
 
                     <b-button v-if="index > 0" variant="light" size="sm" class="text-secondary"
