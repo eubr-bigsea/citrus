@@ -50,8 +50,7 @@
                 </div>
             </div>
             <div class="col-md-8 col-lg-9">
-                <b-card v-if="selectedJob"
-                        variant="primary">
+                <b-card v-if="selectedJob"  variant="primary">
                     <template #header>
                         <b>{{$tc('titles.job')}} #{{selectedJob.id}}</b>
                         <span class="pull-right float-right">
@@ -122,9 +121,8 @@
                             </div>
                             -->
                     </div>
-                    <div v-for="(results, key) in selectedGroupedResults"
-                         :key="key"
-                         class="row">
+                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type !== 'OTHER'"
+                         :key="key" class="row">
                         <div v-if="results && results.length > 0"
                              class="col-12">
                             <h6 class="result">
@@ -146,7 +144,10 @@
                                 <th class="col-3">
                                     Resultado da métrica
                                 </th>
-                                <th class="col-8">
+                                <th class="col-2">
+                                    Mais informações
+                                </th>
+                                <th class="col-6">
                                     Saída
                                 </th>
                                 <th class="col-1">
@@ -163,19 +164,41 @@
                                         <font-awesome-icon v-if="result.winner"
                                                            icon="fa fa-trophy best" />
                                         <span v-for="(value, param) in result.content.params"
-                                              :key="param">
-                                            {{param}} = {{value}}<br>
+                                        :key="param">
+                                        {{param}} = {{value}}<br>
                                         </span>
                                     </td>
                                     <td>
                                         <span v-if="result.content.metric">
-                                            {{result.content.metric.name}} = {{result.content.metric.value}}
+                                            {{result.content.metric.name}} = {{parseFloat(result.content.metric.value).toFixed(4)}}
                                         </span>
+                                    </td>
+                                    <td>
+                                        <template v-if="result.content.feature_importance">
+                                            <!--
+                                            <b-link :id="`popover-${counter}`" href="#" size="sm" variant="info">
+                                                <font-awesome-icon icon="info-circle"/>
+                                            </b-link>
+                                            <b-popover :target="`popover-${counter}`" variant="" triggers="focus">
+                                            -->
+                                                <b>Importância dos atributos</b>
+                                                <div v-for="fi, inx in result.content.feature_importance">
+                                                    <template v-if="features[inx]">
+                                                        {{features[inx].name}}: {{parseFloat(fi).toFixed(4)}}
+                                                    </template>
+                                                    <template v-else>
+                                                        {{inx}}: {{parseFloat(fi).toFixed(2)}}
+                                                    </template>
+                                                </div>
+                                                <!--
+                                            </b-popover>
+                                        -->
+                                        </template>
                                     </td>
                                     <td>
                                         {{result.content.error || result.content.message}}
                                     </td>
-                                    <td>{{result.content.t}}</td>
+                                    <td>{{parseFloat(result.content.t).toFixed(4)}}</td>
                                     <!--
                                     <div class="col-3">Atributos mais importantes</div>
                                     -->
@@ -274,7 +297,8 @@ export default {
     components: { Plotly },
     props: {
         jobs: { required: true, type: Array, default: () => [] },
-        numberOfFeatures: { type: Number, default: () => 0 }
+        numberOfFeatures: { type: Number, default: () => 0 },
+        features: {type: Array, default: () => []}
     },
     emits: ['delete-job'],
     data() {
@@ -380,7 +404,7 @@ export default {
             return series;
         },
         selectedGroupedResults() {
-            if (this.selectedJob.groupedResults){
+            if (this.selectedJob.groupedResults) {
                 return Object.entries(this.selectedJob.groupedResults).filter(
                     (v) => v.length && v[0].type !== 'OTHER');
             } else {
@@ -406,7 +430,7 @@ export default {
     methods: {
         groupedResults(job) {
             if (job.groupedResults) {
-                return Object.values(job.groupedResults).filter((result) =>  result[0].type !== 'OTHER');
+                return Object.values(job.groupedResults).filter((result) => result[0].type !== 'OTHER');
             } else {
                 return [];
             }

@@ -90,7 +90,8 @@
                                         <Algorithms ref="algorithms"
                                                     :operations="algorithmOperation"
                                                     :workflow="workflowObj"
-                                                    :operation-map="operationsMap" />
+                                                    :operation-map="operationsMap" 
+                                                    />
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <Grid :grid="workflowObj.grid" />
@@ -112,7 +113,8 @@
                         <Result ref="results"
                                 :jobs="jobs"
                                 :number-of-features="numberOfFeatures"
-                                @delete-job="handleDeleteJob" />
+                                @delete-job="handleDeleteJob" 
+                                :features="features"/>
                     </b-tab>
                 </b-tabs>
             </div>
@@ -203,6 +205,10 @@ export default {
         },
         numberOfFeatures() {
             return this.workflowObj?.features?.forms?.features?.value?.length || 0;
+        },
+        features() {
+            console.debug(this.workflowObj?.features?.forms?.features)
+            return this.workflowObj?.features?.forms?.features?.value || [];
         }
     },
     watch: {

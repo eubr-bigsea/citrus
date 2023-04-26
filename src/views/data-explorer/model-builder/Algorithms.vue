@@ -27,17 +27,19 @@
                     <template v-for="form in selectedAlgorithm.operation.forms">
                         <div v-for="field in form.fields" :key="field.name" class="mb-2 property clearfix"
                             :data-name="field.name">
-                            <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}-->
-                            {{getFieldValue(field.name)}}
+                            <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}
+                                ||{{ getWidget(field) }}||
+                            -->
+                            {{getFieldValue(field.name, false)}}
                             <keep-alive>
-                                <div v-if="getWidget(field) === 'checkbox-component'">
-                                    <checkboxes-component :field="field" :value="(getFieldValue(field.name) || {}).list"
+                                <div v-if="['checkboxes-component', 'dropdown-component'].includes(getWidget(field))">
+                                    <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
                                         :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
                                         :read-only="!field.editable" context="context" @update="handleUpdateField" />
                                 </div>
                                 <component :is="getWidget(field)"
                                     v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled"
-                                    visual-style="explorer" :field="field" :value="getFieldValue(field.name)"
+                                    visual-style="explorer" :field="field" :value="getFieldValue(field.name, false)"
                                     :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
                                     :read-only="!field.editable" context="context"
                                     :show-quantity="workflow.grid.forms.strategy.value === 'grid'"
@@ -163,15 +165,25 @@ export default {
                 return field.suggested_widget + '-component';
             }
         },
-        getFieldValue(name) {
-            return this.selectedAlgorithm
-                && this.selectedAlgorithm.forms
-                && this.selectedAlgorithm.forms[name]
-                ? this.selectedAlgorithm.forms[name].value : null;
+        getFieldValue(name, checkboxes) {
+            
+            if (checkboxes) {
+                return this.selectedAlgorithm
+                    && this.selectedAlgorithm.forms
+                    && this.selectedAlgorithm.forms[name]
+                    && this.selectedAlgorithm.forms[name].value
+                    ? this.selectedAlgorithm.forms[name].value.list : null
+            } else {
+                return this.selectedAlgorithm
+                    && this.selectedAlgorithm.forms
+                    && this.selectedAlgorithm.forms[name]
+                    ? this.selectedAlgorithm.forms[name].value : null;
+            }
+            
         },
         handleUpdateField(field, value, label) {
             if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
-                const newValue = {type: 'list', list: value.filter(a => a !== '')};
+                const newValue = {list: value, type: 'list'};//{type: 'list', list: value.filter(a => a !== '')};
                 this.selectedAlgorithm.forms[field.name] = { value: newValue, label, internalValue: newValue };
             } else {
                 this.selectedAlgorithm.forms[field.name] = { value: value, label, internalValue: value };
