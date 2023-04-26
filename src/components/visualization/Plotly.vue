@@ -77,13 +77,13 @@ export default {
             this.react();
         }, { deep: !this.watchShallow });
         */
-        
+
         this.$watch('options', (a, b) => {
             console.debug(a, b)
             //this.react()
         }, { deep: !this.watchShallow });
         this.$watch('layout', (a, newValue) => {
-            this.internalLayout = {... newValue};
+            this.internalLayout = { ...newValue };
             this.react();
         }, { deep: true || !this.watchShallow });
     },
@@ -144,12 +144,14 @@ export default {
         },
         getOptions() {
             let el = this.$refs.container;
-            let opts = {... this.options};
-            // if width/height is not specified for toImageButton, default to el.clientWidth/clientHeight
-            if (!opts) opts = {};
-            if (!opts.toImageButtonOptions) opts.toImageButtonOptions = {};
-            if (!opts.toImageButtonOptions.width) opts.toImageButtonOptions.width = el.clientWidth;
-            if (!opts.toImageButtonOptions.height) opts.toImageButtonOptions.height = el.clientHeight;
+            let opts = { ... this.options, responsive: this.autoResize };
+            if (el) {
+                // if width/height is not specified for toImageButton, default to el.clientWidth/clientHeight
+                if (!opts) opts = {};
+                if (!opts.toImageButtonOptions) opts.toImageButtonOptions = {};
+                if (!opts.toImageButtonOptions.width) opts.toImageButtonOptions.width = el.clientWidth;
+                if (!opts.toImageButtonOptions.height) opts.toImageButtonOptions.height = el.clientHeight;
+            }
             return opts;
         },
         newPlot() {
@@ -157,14 +159,16 @@ export default {
             return Plotly.newPlot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
         },
         react() {
-            console.debug('Plotly react:', this.layout.title);
-            const fig = Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
-            if (this.frames) {
-                Plotly.addFrames(this.$refs.container, this.frames);
-            } else {
-                Plotly.deleteFrames(this.$refs.container);
+            //console.debug('Plotly react:', this.layout.title);
+            if (this.$refs.container) {
+                const fig = Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+                if (this.frames) {
+                    Plotly.addFrames(this.$refs.container, this.frames);
+                } else {
+                    Plotly.deleteFrames(this.$refs.container);
+                }
+                return fig;
             }
-            return fig;
         }
     }
 };

@@ -83,7 +83,7 @@ export default {
             count: 10,
             distribution: 'uniform',
             type: 'list',
-            internalValue: {}
+            internalValue: { distribution: null, list: [], max: null, min: null, quantity: null, type: 'list' }
         }
     },
     computed: {
@@ -103,15 +103,19 @@ export default {
             this.internalValue = { list: this.value, type: 'list' };
         } else if (this.value && this.value.list) {
             this.internalValue = this.value || {};
-        } else if (this.value){
-            this.internalValue = {list: [this.value], type: 'list'};
+        } else if (this.value) {
+            this.internalValue = { list: [this.value], type: 'list' };
         } else {
-            this.internalValue = {list: [], type: 'list'}
+            this.internalValue = { list: [], type: 'list' }
         }
-        if (typeof this.internalValue.type === 'undefined' 
-                && !(this.internalValue.type)) {
+        if (typeof this.internalValue.type === 'undefined'
+            && !(this.internalValue.type)) {
             this.internalValue.type = 'list';
         }
+        this.internalValue = {
+            distribution: 'uniform', list: [], max: null, min: null, quantity: null, type: 'list',
+            ... this.internalValue
+        };
     },
     methods: {
         handleKeyUp(ev) {
@@ -119,12 +123,12 @@ export default {
                 ev.target.value = ev.target.value.replace(/[^0-9]/g, '');
         },
         handleInput() {
-            /*
-                switch (this.inputType) {
-                    case 'integer':
-                        //this.internalValue = this.internalValue.map(v => parseInt(v));
-                }
-                */
+            switch (this.inputType.type) {
+                case 'number':
+                    this.internalValue.list = this.internalValue.list.map(v => parseFloat(v));
+            }
+
+            console.debug(this.message, this.field.name, this.internalValue)
             this.triggerUpdateEvent(this.message, this.field, this.internalValue);
         }
     },

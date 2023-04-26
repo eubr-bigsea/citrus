@@ -86,13 +86,15 @@
                         <!-- Chart -->
                         <div class="col-9 mt-2">
                             <b-card border-variant="primary">
-                                <Plotly v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' "
+                                <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' " style="height: 250px">
+                                <Plotly 
                                         ref="plotly"
                                         :data="scatterData"
                                         :layout="scatterLayout"
                                         :display-mode-bar="true"
                                         :auto-resize="true"
                                         :options="{displayModeBar: false}" />
+                                </div>
                                 <div v-else>
                                     {{selectedJob.status_text}}
                                     <pre><code>{{selectedJob.exception_stack}}</code></pre>
@@ -351,7 +353,7 @@ export default {
                     values: [this.finalReport.content.train_size, this.finalReport.content.test_size,],
                     labels: ['Treino', 'Teste'],
                     type: 'pie',
-                    hole: .7,
+                    hole: .5, textposition: 'inside',
                 }] : [{}]
         },
         scatterData() {
@@ -399,7 +401,7 @@ export default {
     },
     methods: {
         groupedResults(job) {
-            return Object.values(job.groupedResults).filter((result) =>  result[0].type !== 'OTHER');
+            return Object.values(job.groupedResults).filter((result) => result[0].type !== 'OTHER');
         },
 
         selectFirst() {
@@ -415,25 +417,25 @@ export default {
         getClassesForDecor(value) {
             let result = [];
             switch (value) {
-            case 'ERROR':
-                result.push("fa fa-times-circle text-danger");
-                break;
-            case 'PENDING':
-                result.push("fa fa-pause-circle text-warning");
-                break;
-            case 'CANCELED':
-                result.push("fa fa-stop-circle text-secondary");
-                break;
-            case 'RUNNING':
-                result.push("fa fa-sync fa-spin text-primary");
-                break;
-            case 'COMPLETED':
-                result.push("fa fa-check-circle text-success");
-                break;
-            case 'INTERRUPTED':
-                result.push("fa fa-stop text-danger");
-                break;
-            default:
+                case 'ERROR':
+                    result.push("fa fa-times-circle text-danger");
+                    break;
+                case 'PENDING':
+                    result.push("fa fa-pause-circle text-warning");
+                    break;
+                case 'CANCELED':
+                    result.push("fa fa-stop-circle text-secondary");
+                    break;
+                case 'RUNNING':
+                    result.push("fa fa-sync fa-spin text-primary");
+                    break;
+                case 'COMPLETED':
+                    result.push("fa fa-check-circle text-success");
+                    break;
+                case 'INTERRUPTED':
+                    result.push("fa fa-stop text-danger");
+                    break;
+                default:
             }
             result.push(value.toLowerCase());
             return result.join(' ');
@@ -442,53 +444,53 @@ export default {
 }
 </script>
 <style scoped>
-    .result {
-        position: relative;
-    }
+.result {
+    position: relative;
+}
 
-    .result>div {
-        color: #495057;
-        font-size: .85em;
-        padding: 5px 15px;
-    }
+.result>div {
+    color: #495057;
+    font-size: .85em;
+    padding: 5px 15px;
+}
 
-    .result>div:hover {
-        color: rgb(0, 136, 204)
-    }
+.result>div:hover {
+    color: rgb(0, 136, 204)
+}
 
-    .result div:not(:last-child) {
-        border-bottom: 1px solid #eee;
-    }
+.result div:not(:last-child) {
+    border-bottom: 1px solid #eee;
+}
 
-    .job-title {
-        padding-top: 3px;
-        font-size: .9em;
-        /*color: #495057;*/
-        font-weight: bold;
-    }
+.job-title {
+    padding-top: 3px;
+    font-size: .9em;
+    /*color: #495057;*/
+    font-weight: bold;
+}
 
-    .result:last-child {
-        padding-bottom: 5px;
-    }
+.result:last-child {
+    padding-bottom: 5px;
+}
 
-    .best {
-        color: rgb(250, 189, 56);
-    }
+.best {
+    color: rgb(250, 189, 56);
+}
 
-    .bg-primary .fa {
-        color: white;
-    }
+.bg-primary .fa {
+    color: white;
+}
 
-    h6.result {
-        color: rgb(0, 136, 204);
-        border-bottom: 1px solid rgb(0, 136, 204)
-    }
+h6.result {
+    color: rgb(0, 136, 204);
+    border-bottom: 1px solid rgb(0, 136, 204)
+}
 
-    .table-result {
-        font-size: .9em
-    }
+.table-result {
+    font-size: .9em
+}
 
-    .table-training {
-        font-size: .8em;
-    }
+.table-training {
+    font-size: .8em;
+}
 </style>

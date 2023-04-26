@@ -4,73 +4,54 @@
             <div class="col-md-3">
                 <h5>Algoritmos</h5>
                 <small>Informe os parâmetros para a execução do algoritmo. <u>Nenhum parâmetro é
-                    obrigatório.</u></small>
+                        obrigatório.</u></small>
                 <hr>
                 <b-list-group>
-                    <b-list-group-item v-for="alg in algorithms"
-                                       :key="alg.id"
-                                       class="p-0 pl-2"
-                                       :class="{'bg-light': selectedAlgorithm === alg }">
-                        <div class="d-flex w-100 p-1"
-                             role="button"
-                             @click="handleSelectAlgorithm(alg)">
-                            <b-form-checkbox v-model="alg.enabled"
-                                             switch />
-                            {{alg.operation.name}}
+                    <b-list-group-item v-for="alg in algorithms" :key="alg.id" class="p-0 pl-2"
+                        :class="{ 'bg-light': selectedAlgorithm === alg }">
+                        <div class="d-flex w-100 p-1" role="button" @click="handleSelectAlgorithm(alg)">
+                            <b-form-checkbox v-model="alg.enabled" switch />
+                            {{ alg.operation.name }}
                         </div>
                     </b-list-group-item>
                 </b-list-group>
                 <hr>
                 <div v-if="false && selectedAlgorithm && selectedAlgorithm.operation">
-                    {{selectedAlgorithm.forms}}
+                    {{ selectedAlgorithm.forms }}
                 </div>
             </div>
             <div class="col-md-9 border p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
-                    <h6>{{selectedAlgorithm.operation.name}}</h6>
+                    <h6>{{ selectedAlgorithm.operation.name }}</h6>
                     <hr>
                     <template v-for="form in selectedAlgorithm.operation.forms">
-                        <div v-for="field in form.fields"
-                             :key="field.name"
-                             class="mb-2 property clearfix"
-                             :data-name="field.name">
+                        <div v-for="field in form.fields" :key="field.name" class="mb-2 property clearfix"
+                            :data-name="field.name">
                             <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}-->
+                            {{ getFieldValue(field.name) }}
                             <keep-alive>
                                 <div v-if="getWidget(field) === 'checkbox-component'">
-                                    <checkboxes-component :field="field"
-                                                          :value="getFieldValue(field.name)"
-                                                          :language="$root.$i18n.locale"
-                                                          :type="field.suggested_widget"
-                                                          :small="true"
-                                                          :read-only="!field.editable"
-                                                          context="context"
-                                                          @update="handleUpdateField" />
+                                    <checkboxes-component :field="field" :value="getFieldValue(field.name)"
+                                        :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
+                                        :read-only="!field.editable" context="context" @update="handleUpdateField" />
                                 </div>
                                 <component :is="getWidget(field)"
-                                           v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled"
-                                           visual-style="explorer"
-                                           :field="field"
-                                           :value="getFieldValue(field.name)"
-                                           :language="$root.$i18n.locale"
-                                           :type="field.suggested_widget"
-                                           :small="true"
-                                           :read-only="!field.editable"
-                                           context="context"
-                                           :show-quantity="workflow.grid.forms.strategy.value === 'grid' "
-                                           @update="handleUpdateField" />
+                                    v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled"
+                                    visual-style="explorer" :field="field" :value="getFieldValue(field.name)"
+                                    :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
+                                    :read-only="!field.editable" context="context"
+                                    :show-quantity="workflow.grid.forms.strategy.value === 'grid'"
+                                    @update="handleUpdateField" />
                                 <div v-else />
                             </keep-alive>
                         </div>
-                        <button :key="form.id"
-                                class="btn btn-sm btn-outline-secondary"
-                                @click.prevent="handleCleanAll">
+                        <button :key="form.id" class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">
                             Limpar
                             parâmetros
                         </button>
                     </template>
                 </div>
-                <div v-else
-                     class="text-center text-secondary mt-5 pt-5">
+                <div v-else class="text-center text-secondary mt-5 pt-5">
                     <h4>Selecione e habilite um algoritmo à esquerda para editar seus parâmetros.</h4>
                 </div>
             </div>
@@ -184,12 +165,17 @@ export default {
         },
         getFieldValue(name) {
             return this.selectedAlgorithm
-                    && this.selectedAlgorithm.forms
-                    && this.selectedAlgorithm.forms[name]
+                && this.selectedAlgorithm.forms
+                && this.selectedAlgorithm.forms[name]
                 ? this.selectedAlgorithm.forms[name].value : null;
         },
         handleUpdateField(field, value, label) {
-            this.selectedAlgorithm.forms[field.name] = { value: value, label, internalValue: value };
+            if (field.suggested_widget === 'checkbox') {
+                const newValue = {type: 'list', list: value};
+                this.selectedAlgorithm.forms[field.name] = { value: newValue, label, internalValue: newValue };
+            } else {
+                this.selectedAlgorithm.forms[field.name] = { value: value, label, internalValue: value };
+            }
 
             /*if (this.conditionalFields.has(field.name)) {
                     this.conditionalFields.get(field.name).forEach(field => {
@@ -208,8 +194,8 @@ export default {
 }
 </script>
 <style scoped>
-    .algorithm {
-        height: 75vh;
-        overflow: auto;
-    }
+.algorithm {
+    height: 75vh;
+    overflow: auto;
+}
 </style>
