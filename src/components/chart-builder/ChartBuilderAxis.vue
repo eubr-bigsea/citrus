@@ -268,7 +268,7 @@
                     <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.y.value"
                         :move="handleYAxisDrag" direction="horizontal" @start="drag = true" @end="drag = false"
                         class="draggable-area">
-                        <div v-for="(y, i) in ySeries" :key="i" class="drag-handle">
+                        <div v-for="(y, i) in ySeries" :key="i" class="drag-handle" :data-test="`y-series-${i}`">
 
                             <b-dropdown size="sm" ref="yDimensionDD" class="mt-2 mr-1 pull-right"
                                 :variant="'outline-secondary small-dd-title ' + (y.enabled ? '' : 'disabled')">
@@ -437,7 +437,7 @@
                         </div>
                     </draggable>
                     <b-button v-if="canAddYDimension" size="sm" variant="success small-dd-title" class="mt-2 float-left"
-                        @click="handleAddY">
+                        @click="handleAddY" data-test="add-y">
                         <font-awesome-icon prefix="fa" icon="plus" />
                     </b-button>
                 </div>
@@ -511,7 +511,8 @@
 
                         <div v-for="(x, i) in xSeries" :key="i" class="drag-handle">
                             <b-dropdown size="sm small-dd-title" ref="xDimensionDD" class="mt-2 mr-1 pull-right"
-                                :variant="x.attribute ? 'outline-secondary' : 'outline-danger'">
+                                :variant="x.attribute ? 'outline-secondary' : 'outline-danger'"
+                                :id="`x-series-${i}`">
                                 <template #button-content>
                                     {{ getDisplayXDimensionLabel(x, 'Selecione...', 'grupos', 'tamanho', 'Categórico') }}
                                 </template>
@@ -684,7 +685,7 @@
                         </div>
                     </draggable>
                     <b-button v-if="canAddXDimension" size="sm" variant="success small-dd-title"
-                        class="mt-2 float-left clearfix" @click="handleAddX">
+                        class="mt-2 float-left clearfix" @click="handleAddX" data-test="add-x">
                         <font-awesome-icon prefix="fa" icon="plus" />
                     </b-button>
                 </div>

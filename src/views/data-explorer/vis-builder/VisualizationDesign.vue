@@ -46,11 +46,11 @@
                             <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar
                                 ...</b-dropdown-item>
                         </b-dropdown>
-                        <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow">
+                        <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow" data-test="save">
                             <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                         </b-button>
                         <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
-                            @click.prevent="loadData">
+                            @click.prevent="loadData" data-test="refresh">
                             <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                         </b-button>
                         <!--
