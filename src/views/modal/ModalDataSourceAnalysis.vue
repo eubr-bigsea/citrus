@@ -1,13 +1,13 @@
 <template>
     <b-modal id="modal" title="Adicionar Análise">
         <label for="exampleFormControlSelect1">Atributos</label>
-        <select id="exampleFormControlSelect1" v-model="selectedAtributte" class="form-control">
+        <select id="exampleFormControlSelect1" v-model="atributte" class="form-control">
             <option v-for="attr in atributtes" :key="attr.name" :value="attr.name">
                 {{attr.name}}
             </option>
         </select>
         <label for="exampleFormControlSelect1">Tipo</label>
-        <select id="analysis_type" v-model="selected" class="form-control">
+        <select id="analysis_type" v-model="type" class="form-control">
             <option value="unidimensional">
                 Unidimensional
             </option>
@@ -27,8 +27,8 @@
                 Séries temporais
             </option>
         </select>
-        <b-form-group v-if="selected != null" label="Análises:">
-            <b-form-checkbox-group v-model="selectedGraphs" stacked>
+        <b-form-group v-if="type != null" label="Análises:">
+            <b-form-checkbox-group v-model="graphs" stacked>
                 <b-form-checkbox v-for="option in selectedAnalysisOptions" :key="option" :value="option">
                     {{option}}
                 </b-form-checkbox>
@@ -57,9 +57,9 @@ export default {
     emits: ['cards'],
     data() {
         return {
-            selected: null,
-            selectedAtributte: null,
-            selectedGraphs: [],
+            type: null,
+            atributte: null,
+            graphs: [],
             analysisTypes: {
                 unidimensional: ['Histograma', 'Quantile Table', 'Frequency Table', 'Summary Stats', 'Box Plot', 'Cumulative distribution function'],
                 bidimensional: ['Mosaic Plot', 'Scatter Plot', 'Histogram', 'Frequency Table', 'Box Plot', 'Summary Test'],
@@ -69,8 +69,8 @@ export default {
     },
     computed: {
         selectedAnalysisOptions() {
-            if (this.selected) {
-                return this.analysisTypes[this.selected];
+            if (this.type) {
+                return this.analysisTypes[this.type];
             }
             else {
                 return [];
@@ -80,14 +80,15 @@ export default {
     methods: {
         addCard() {
             let cardInfo = {
-                analysisType: this.selected,
-                atributte: this.selectedAtributte,
-                graphs: this.selectedGraphs
+                analysisType: this.type,
+                atributte: this.atributte,
+                graphs: this.graphs
             };
             this.$emit('cards', cardInfo);
-            this.selected = null;
-            this.selectedAtributte = null;
-            this.selectedGraphs = [];
+            //Reset Modal
+            this.type = null;
+            this.atributte = null;
+            this.graphs = [];
         }
     }
 };
