@@ -17,19 +17,31 @@
             </div>
 
             <div class="col-md-8">
-                <div class="analysis">
+                <div>
                     <h4>Unidimensional</h4>
-                    <div class="analysis_box">
-                        <data-source-card v-for="card in cards" 
+                    <div class="analysisBox">
+                        <data-source-card v-for="card in unidimensionalCards" 
                                           :key="card" 
                                           :info="card"
                                           @action="deleteCard" />
                     </div>
                 </div>
-                <div class="analysis">
+                <div>
                     <h4>Bidimensional</h4>
-                    <div class="analysis_box">
-
+                    <div class="analysisBox">
+                        <data-source-card v-for="card in bidimensionalCards" 
+                                          :key="card" 
+                                          :info="card"
+                                          @action="deleteCard" />
+                    </div>
+                </div>
+                <div>
+                    <h4>Multidimensional</h4>
+                    <div class="analysisBox">
+                        <data-source-card v-for="card in multidimensionalCards" 
+                                          :key="card" 
+                                          :info="card"
+                                          @action="deleteCard" />
                     </div>
                 </div>
             </div>
@@ -65,7 +77,9 @@ export default {
         return {
             dataSource: null,
             choice: null,
-            cards: [],
+            unidimensionalCards: [],
+            bidimensionalCards: [],
+            multidimensionalCards: [],
             atributtes: null
         };
     },
@@ -90,11 +104,34 @@ export default {
                     atributte: info.atributte,
                     analysis: info.graphs[i]
                 };
-                this.cards.push(card);
+                if (card.type == 'unidimensional')
+                {
+                    this.unidimensionalCards.push(card);
+                }
+                if (card.type == 'bidimensional')
+                {
+                    this.bidimensionalCards.push(card);
+                }
+                if (card.type == 'multidimensional')
+                {
+                    this.multidimensionalCards.push(card);
+                }
             }
         },
-        deleteCard(info) {
-            this.cards.splice(this.cards.indexOf(info), 1);
+        deleteCard(card) {
+            switch (card.type) {
+            case 'unidimensional':
+                this.unidimensionalCards.splice(this.unidimensionalCards.indexOf(card), 1);
+                break;
+            case 'bidimensional':
+                this.bidimensionalCards.splice(this.bidimensionalCards.indexOf(card), 1);
+                break;
+            case 'multidimensional':
+                this.multidimensionalCards.splice(this.multidimensionalCards.indexOf(card), 1);
+                break;
+            default:
+                break;
+            }
         }
     },
 
@@ -102,11 +139,6 @@ export default {
 </script>
 
 <style scoped>
-.analisys {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
 
 .header {
   display: flex;
@@ -116,7 +148,7 @@ export default {
   padding: 0 10% 0 0;
 }
 
-.analysis_box {
+.analysisBox {
   display: flex;
   flex-direction: row;
   height: 60vh;
