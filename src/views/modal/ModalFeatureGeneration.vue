@@ -13,7 +13,7 @@
                                 <label for="typeModal">Tipo: </label>
                                 <select name="selectModal" id="selectLabelModal">
                                     <option v-for="types in editType" :key="types.value">
-                                        {{ types.name }}
+                                        {{ types.value }}
                                     </option>
                                 </select>
                             </div>
@@ -41,17 +41,20 @@
 <script>
 
 export default {
-    data(){
-        return{
+    data() {
+        return {
             editType: [
-                {name: 'min', value: 'A'},
-                {name: 'max', value: 'B'},
-                {name: 'avg', value: 'C'},
-                {name: 'sum', value: 'D'},
-                {name: 'mode', value: 'E'},
-                {name: 'cout', value: 'F'},
-                {name: 'unique', value: 'G'}
-       
+                { value: 'Soma' },
+                { value: 'Média' },
+                { value: 'Mínimo' },
+                { value: 'Máximo' },
+                { value: 'Mediana' },
+                { value: 'Dia' },
+                { value: 'Mês' },
+                { value: 'Ano' },
+                { value: 'Semana' },
+                { value: 'Hora' },
+                { value: 'Minuto' }
             ]
         }
     },
