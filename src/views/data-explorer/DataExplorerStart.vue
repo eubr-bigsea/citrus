@@ -20,10 +20,13 @@
                         <template #no-options="{ }">
                             <small>Digite parte do nome pesquisar ...</small>
                         </template>
-                        <template #default="option">
+                        <template #option="option">
                             <div class="d-center">
-                                <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
+                                <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
                             </div>
+                        </template>
+                        <template #default="options">
+                                {{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
                         </template>
                         <template #selected-option="option">
                             <div class="selected d-center">
@@ -67,7 +70,7 @@ export default {
             try {
                 const workflow = Workflow.buildDataExplorer(
                     this.name,
-                    {value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name},
+                    { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name },
                     this)
                 const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
                 const workflowResp = resp.data;
