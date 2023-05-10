@@ -4,65 +4,69 @@
             <div>
                 <h6>Construtor de visualizações</h6>
                 <form class="clearfix visualization-form">
-                    <label>{{ $tc('common.name') }}:</label>
-                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                        :placeholder="$tc('common.name')" maxlength="100">
+                    <div data-test="basic-options-section">
+                        <label>{{ $tc('common.name') }}:</label>
+                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
+                            :placeholder="$tc('common.name')" maxlength="100">
 
-                    <label for="">Fonte de dados:</label> &nbsp;
-                    <vue-select v-if="workflowObj && workflowObj.readData"
-                        v-model="workflowObj.readData.forms.data_source.value" :filterable="false" :options="dataSourceList"
-                        :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList" @input="getAttributeList">
-                        <template #no-options="{}">
-                            <small>Digite parte do nome pesquisar ...</small>
-                        </template>
-                        <template #option="option">
-                            <div class="d-center">
-                                <span class="span-id">{{ option.id }}</span> - {{ option.name }}
-                            </div>
-                        </template>
-                        <template #selected-option="option">
-                            <div class="selected d-center">
-                                {{ option.id }} - {{ option.name }}
-                            </div>
-                        </template>
-                    </vue-select>
-
-                    <label>{{ $tc('titles.cluster') }}: </label>
-                    <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                        :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
-                        <template #option="{ description, name }">
-                            {{ name }}<br>
-                            <small><em>{{ description }}</em></small>
-                        </template>
-                    </v-select>
-                    <div class="mt-2 ">
-                        <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-right"
-                            size="sm" no-caret>
-                            <template #button-content>
-                                <font-awesome-icon icon="ellipsis-h"></font-awesome-icon>
+                        <label for="">Fonte de dados:</label> &nbsp;
+                        <vue-select v-if="workflowObj && workflowObj.readData"
+                            v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
+                            :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
+                            @input="getAttributeList">
+                            <template #no-options="{}">
+                                <small>Digite parte do nome pesquisar ...</small>
                             </template>
-                            <b-dropdown-item href="#"><font-awesome-icon icon="chart-line" /> Adicionar ao
-                                dashboard...</b-dropdown-item>
-                            <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar
-                                ...</b-dropdown-item>
-                        </b-dropdown>
-                        <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow" data-test="save">
-                            <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
-                        </b-button>
-                        <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
-                            @click.prevent="loadData" data-test="refresh">
-                            <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
-                        </b-button>
-                        <!--
+                            <template #option="option">
+                                <div class="d-center">
+                                    <span class="span-id">{{ option.id }}</span> - {{ option.name }}
+                                </div>
+                            </template>
+                            <template #selected-option="option">
+                                <div class="selected d-center">
+                                    {{ option.id }} - {{ option.name }}
+                                </div>
+                            </template>
+                        </vue-select>
+
+                        <label>{{ $tc('titles.cluster') }}: </label>
+                        <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
+                            :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
+                            <template #option="{ description, name }">
+                                {{ name }}<br>
+                                <small><em>{{ description }}</em></small>
+                            </template>
+                        </v-select>
+                        <div class="mt-2 ">
+                            <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-right"
+                                size="sm" no-caret>
+                                <template #button-content>
+                                    <font-awesome-icon icon="ellipsis-h"></font-awesome-icon>
+                                </template>
+                                <b-dropdown-item href="#"><font-awesome-icon icon="chart-line" /> Adicionar ao
+                                    dashboard...</b-dropdown-item>
+                                <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar
+                                    ...</b-dropdown-item>
+                            </b-dropdown>
+                            <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"
+                                data-test="save">
+                                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                            </b-button>
+                            <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
+                                @click.prevent="loadData" data-test="refresh">
+                                <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
+                            </b-button>
+                            <!--
                         <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
                             :title="i18n.$t('actions.back')">
                             {{ i18n.$t('actions.back') }}
                         </router-link>
                         -->
+                        </div>
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top scroll-area">
                         <chart-builder-options v-model="options" :attributes="attributes" @update-chart="updateChart"
-                            :chartType="visualizationObj.type.value" />
+                            :chartType="visualizationObj.type.value" data-test="options-section" />
                     </div>
                 </form>
             </div>
@@ -73,10 +77,10 @@
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 75vh">
                     <div v-if="display && plotlyData" ref="chart">
-                        <plotly :options="chartOptions" :data="plotlyData.data"
-                            :layout="plotlyData.layout" :frames="plotlyData.frames"
-                            :key="plotVersion" ref="plotly" :watchShallow="true"/>
-                            <!--
+                        <plotly :options="chartOptions" :data="plotlyData.data" :layout="plotlyData.layout"
+                            :frames="plotlyData.frames" :key="plotVersion" ref="plotly" :watchShallow="true"
+                            data-test="visualization" />
+                        <!--
                         <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData.layout }}</small>
                             -->
                     </div>
@@ -368,9 +372,9 @@ const loadClusters = async () => {
 const saveWorkflow = async () => {
     workflowObj.value.visualization.forms = visualizationObj.value;
     let cloned = structuredClone(workflowObj.value);
-    
-    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null 
-            || cloned.visualization.forms.filter.value.length === 0) {
+
+    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null
+        || cloned.visualization.forms.filter.value.length === 0) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
     } else {
         // Copy filter from visualization to correct operation
@@ -422,8 +426,8 @@ const loadData = async () => {
     cloned.platform_id = cloned.platform.id; //FIXME: review
     const filterTask = cloned.tasks.find(t => t.operation.slug === 'filter');
     const visualizationTask = cloned.tasks.find(t => t.operation.slug === 'visualization');
-    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null 
-            || cloned.visualization.forms.filter.value.length === 0) {
+    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null
+        || cloned.visualization.forms.filter.value.length === 0) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
     } else {
         // Copy filter from visualization to correct operation

@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.notification', 2)}}</h1>
+                        <h1>{{ $tc('titles.notification', 2) }}</h1>
                     </div>
                     <hr>
                     <div class="row">
@@ -12,33 +12,35 @@
                             <div class="card">
                                 <div class="card-body">
                                     <v-server-table ref="listTable" :columns="columns" :options="options"
-                                                    name="notificationList">
+                                        name="notificationList">
                                         <template #type="props">
                                             <span class="badge"
-                                                  :class="{'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'badge-danger': props.row.type === 'ERROR'}">
-                                                &nbsp;{{$t('titles.' + props.row.type.toLowerCase()).toUpperCase()}}
+                                                :class="{ 'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'badge-danger': props.row.type === 'ERROR' }">
+                                                &nbsp;{{ $t('titles.' + props.row.type.toLowerCase()).toUpperCase() }}
                                             </span>
                                         </template>
                                         <template #text="props">
-                                            <span :class="{'font-weight-bold': props.row.status === 'UNREAD'}"
-                                                  v-html="props.row.text" />
+                                            <span :class="{ 'font-weight-bold': props.row.status === 'UNREAD' }"
+                                                v-html="props.row.text" />
                                         </template>
                                         <template #created="props">
-                                            {{props.row.created | formatJsonDate}}
+                                            <div style="width:100px">{{ props.row.created | timeFromNow(user.locale) }}</div>
                                         </template>
                                         <template #actions="props">
-                                            <button class="btn btn-sm btn-light border" @click="remove(props.row.id)">
-                                                <font-awesome-icon icon="trash" />
-                                            </button>
-                                            <button v-if="props.row.status === 'UNREAD'"
-                                                    class="btn btn-sm btn-light ml-1 border"
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-danger " @click="remove(props.row.id)">
+                                                    <font-awesome-icon icon="trash" />
+                                                </button>
+                                                <button v-if="props.row.status === 'UNREAD'"
+                                                    class="btn btn-secondary btn-sm btn-success "
                                                     @click="markAsRead(props.row.id)">
-                                                <font-awesome-icon icon="check" />
-                                            </button>
-                                            <a v-if="props.row.link" :href="props.row.link"
-                                               class="btn btn-sm btn-light ml-1 border">
-                                                <font-awesome-icon icon="fa fa-external-link-alt" />
-                                            </a>
+                                                    <font-awesome-icon icon="check" />
+                                                </button>
+                                                <a v-if="props.row.link" :href="props.row.link"
+                                                    class="btn btn-sm btn-light btn-outline-secondary ">
+                                                    <font-awesome-icon icon="fa fa-external-link-alt" />
+                                                </a>
+                                            </div>
                                         </template>
                                     </v-server-table>
                                 </div>
@@ -54,7 +56,7 @@
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
-
+import { mapGetters } from 'vuex';
 const thornUrl = import.meta.env.VITE_THORN_URL;
 
 export default {
@@ -78,10 +80,10 @@ export default {
                 sortable: ['created'],
                 filterable: ['text', 'type', 'status'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ml-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
@@ -125,6 +127,9 @@ export default {
                 },
             }
         };
+    },
+    computed: {
+        ...mapGetters(['user']),
     },
     /* Methods */
     methods: {

@@ -15,8 +15,7 @@
                             <div class="form-group">
                                 <label for="email">{{$t('common.email')}} / {{$t('common.user.login')}}:</label>
                                 <input v-model="email" required type="text" class="form-control"
-                                       placeholder="Name"
-                                       autofocus autocomplete="username">
+                                       placeholder="Name" autofocus autocomplete="username" name="username">
                             </div>
 
                             <div class="form-group">
@@ -28,7 +27,7 @@
                                 <div style="position:relative">
                                     <input v-model="password" :type="showingPassword ? 'text' : 'password'"
                                            class="form-control" required style="padding-right: 60px;"
-                                           placeholder="Password" autocomplete="current-password">
+                                           placeholder="Password" autocomplete="current-password" name="password">
                                     <input id="passeye-0" type="hidden">
                                     <div class="show-password btn btn-primary btn btn-sm"
                                          @click="showingPassword = !showingPassword" v-text="passwordShowText" />
@@ -44,7 +43,7 @@
                             </div>
 
                             <div class="form-group no-margin text-center">
-                                <button type="submit" class="btn btn-primary col-md-4">
+                                <button type="submit" class="btn btn-primary col-md-4" name="login">
                                     {{$t('common.login')}}
                                 </button>
                             </div>
@@ -69,7 +68,7 @@
                     </div>
                 </div>
                 <div class="footer text-center">
-                    <small>Copyright © 2017-2021 — Lemonade Project</small>
+                    <small>Copyright © 2017-2023 — Lemonade Project</small>
                 </div>
             </div>
         </div>

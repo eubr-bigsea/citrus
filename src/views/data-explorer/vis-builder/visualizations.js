@@ -42,7 +42,8 @@ export default {
         { name: "histogram2d", label: "Density Heatmap", },
         { name: "parcoords", label: "Coordenadas Paralelas", },
         { name: "histogram2dcontour", label: "2D Histogram Contour", },
-        { name: "heatmap", label: "Mapa de Calor (Heatmap)", },
+        { name: "heatmap", label: "Mapa de Calor (Heatmap)", objectives: ['comparação',
+            'correlação', 'distribuição', 'tendência']},
         /*{name: "dots",label: "Pontos",
                 image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
             },*/

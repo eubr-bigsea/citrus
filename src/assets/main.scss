@@ -919,3 +919,19 @@ h1 {
     width: 40%;
     z-index: 101;
 }
+
+/* Sorting */
+.sort-up::before {
+    content: "⬇️";
+}
+
+.sort-down::before {
+    content: "⬆️";
+}
+
+.sort-is::before {
+    content: "⇵";
+}
+
+.sort-base::before {
+}
