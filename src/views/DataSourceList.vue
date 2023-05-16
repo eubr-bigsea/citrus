@@ -31,6 +31,10 @@
                                :title="$t('actions.download')" target="_blank">
                                 <font-awesome-icon icon="download" />
                             </a>
+                            <a v-if="props.row.format === 'PARQUET'" :href="getDownloadLink(props.row, true)" class="btn btn-sm btn-secondary"
+                               :title="$t('actions.download') + ' CSV'" target="_blank">
+                                <font-awesome-icon icon="download" /> CSV
+                            </a>
                             <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
                                     @click="remove(props.row.id)">
                                 <font-awesome-icon icon="trash" />
@@ -162,11 +166,12 @@ export default {
                 }
             );
         }
-        const getDownloadLink = (row) => {
-            return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}`;
+        const getDownloadLink = (row, toCSV) => {
+            return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}` + 
+                (toCSV ? '&to_csv=true' : '');
         }
         const visualizable = (ds) => {
-            return ['JDBC', 'CSV', 'HIVE'].includes(ds.format);
+            return ['JDBC', 'CSV', 'HIVE', 'PARQUET'].includes(ds.format);
         }
 
         return {

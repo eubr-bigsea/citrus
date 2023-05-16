@@ -9,10 +9,15 @@ export default class DataTableBuilder {
             saveState: true,
             filterByColumn: false,
             sortIcon: {
+                /*
                 base: 'fa fas',
                 is: 'fa-sort ml-10',
                 up: 'fa-sort-amount-up',
-                down: 'fa-sort-amount-down'
+                down: 'fa-sort-amount-down'*/
+                base: 'sort-base',
+                is: 'sort-is ml-10',
+                up: 'sort-up',
+                down: 'sort-down'
             },
             texts: {
                 filter: $t('common.filter'),
