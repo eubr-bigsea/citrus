@@ -60,7 +60,6 @@ export default {
     methods: {
         endSortSteps({ originalEvent }) { // eslint-disable-line no-unused-vars
             let elem = null;
-            console.debug(this.workflow);
             this.workflow.tasks.forEach((task, i) => {
                 task.display_order = i;
                 if (task.previewable) {

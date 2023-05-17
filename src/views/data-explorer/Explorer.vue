@@ -7,8 +7,7 @@
                     <h6>{{ $t('dataExplorer.title') }}</h6>
                     <div>
                         <small>{{ $tc('common.name') }}</small>
-                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                            maxlength="50">
+                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm" maxlength="50">
                     </div>
                     <div class="mb-">
                         <small>{{ $tc('titles.cluster') }}</small>
@@ -92,8 +91,8 @@
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true"
-                @close="stats = null" @ok="stats = null">
+            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true" @close="stats = null"
+                @ok="stats = null">
                 <table v-if="stats && stats.attribute === null"
                     class="table table-bordered table-stats table-striped table-sm">
                     <thead>
@@ -124,20 +123,22 @@
                     <b-tabs>
                         <b-tab title="Estatísticas" title-link-class="small-nav-link">
                             <div v-if="stats && stats.message" class="row">
-                                <div v-if="stats && stats.message.histogram" :class="stats.message.numeric ? 'col-9' : 'col-12'">
+                                <div v-if="stats && stats.message.histogram"
+                                    :class="stats.message.numeric ? 'col-9' : 'col-12'">
                                     <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
                                         showlegend: false,
                                         margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
-                                        xaxis: { tickangle: 45, tickfont: {size: 11}, 
+                                        xaxis: {
+                                            tickangle: 45, tickfont: { size: 11 },
                                             type: stats.message.numeric ? null : 'category'
                                         },
-                                        yaxis: {domain: [0.2]},
+                                        yaxis: { domain: [0.2] },
                                         yaxis2: {
                                             domain: [0.8],
                                             visible: false,
                                         },
                                         legend: { traceorder: 'reversed' },
-                                        height: stats.message.numeric ? 200 : 300, width:  stats.message.numeric? 600: 750, 
+                                        height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
                                         autosize: true,
                                     }" :data="getStatData2()" :options="{ displayModeBar: false }" />
 
@@ -168,13 +169,13 @@
                                     <table class="table table-sm table-stats">
                                         <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
                                             <td class="col-8">
-                                                {{ t[0]}}
+                                                {{ t[0] }}
                                                 <div class="top-bar"
                                                     :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
                                             </td>
                                             <td class="col-4 text-right">
-                                                {{ t[1]}}
-                                                ({{(100 * t[1] / stats.message.stats.count).toFixed(2)}})%
+                                                {{ t[1] }}
+                                                ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
                                             </td>
                                         </tr>
                                     </table>
@@ -190,8 +191,7 @@
                             <form action="" class="form-inline">
                                 <div class="form-group mb-2">
                                     <label for="similarity">Similaridade:</label> &nbsp;
-                                    <select v-model.number="similarity" name="similarity"
-                                        class="form-control-sm ml-3 mr-3">
+                                    <select v-model.number="similarity" name="similarity" class="form-control-sm ml-3 mr-3">
                                         <option value="0.5">
                                             0.5 (menos semelhantes)
                                         </option>
@@ -375,10 +375,14 @@ export default {
 
         await this.loadClusters();
         await this.loadOperations();
-        await this.loadWorkflow();
+        const workflowOk = await this.loadWorkflow();
 
         this.connectWebSocket();
-        await this.loadData();
+        if (workflowOk) {
+            await this.loadData();
+        } else {
+            this.loadingData = false;
+        }
     },
     beforeUnmount() {
         this.disconnectWebSocket();
@@ -487,20 +491,24 @@ export default {
                 this.dataSourceLabel = `${readerTask.forms.data_source.value} - ${readerTask.forms.data_source.labelValue}`;
 
                 const hasUnsupported = workflow.platform.slug !== 'meta'; //tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
+                let hasProblems = false;
                 if (hasUnsupported || readerTask?.operation?.slug !== 'read-data') {
-                    self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format.' });
+                    self.error(self.$tc('dataExplorer.invalidWorkflow'), 10000);
                     self.$router.push({ name: 'index-explorer' });
-                    return;
+                    hasProblems = true;
                 }
                 if (sampleTask?.operation?.slug !== 'sample') {
                     const op = this.operationLookup.get(2110); // FIXME;
-                    const sample = Workflow.createSampleTask(1, op, this.$tc);
-                    self.warning('FIXME: Invalid workflow. Tried to fix it.');
+                    const sample = Workflow.createSampleTask(1, op, this);
+                    self.warning(self.$tc('dataExplorer.invalidWorkflow'), 10000);
                     this.workflowObj.tasks.splice(1, 0, sample);
+                    hasProblems = true;
                 }
-                self.loadingData = false;
+                this.workflowObj.tasks.forEach((t, inx) => t.display_order = inx)
+                this.loadingData = false;
                 document.getElementById('tahiti-script').setAttribute(
                     'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.workflowObj.platform.id}`);
+                return !hasProblems;
 
             } catch (e) {
                 console.debug(e);
@@ -513,7 +521,7 @@ export default {
                     this.isDirty = false;
                 });
             }
-            //self.loadData();
+            return true;
         },
         async loadData() {
             const self = this;
@@ -865,7 +873,7 @@ export default {
                     options.selected, options.fields);
                 this.isDirty = true;
                 //this.loadData();
-                Vue.nextTick(() => {this.$refs.stepList.scrollToStep()});
+                Vue.nextTick(() => { this.$refs.stepList.scrollToStep() });
             } else {
                 console.log(`Unknown action: ${options.action}`);
             }

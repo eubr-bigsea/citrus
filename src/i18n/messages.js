@@ -277,6 +277,7 @@ export default {
             },
             informNewName: 'Informe o novo nome',
             invalid: 'Inválido',
+            invalidWorkflow: 'O experimento estava com problemas e uma tentativa de correção foi feita. Por favor, confira se as etapas estão OK.',
             missing: 'Ausente',
             newStep: 'Nova etapa',
             noStep: 'Nenhuma etapa. Adicione uma nova usando as opções dos menus',

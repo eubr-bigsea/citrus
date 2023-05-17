@@ -90,7 +90,7 @@ class Workflow {
         };
         const realOp = op || new Operation({ id: 2110 });
         return realOp.createTask({
-            name: i18n.$tc('dataExplorer.sampelData') || realOp.name,
+            name: i18n.$tc('dataExplorer.sampleData') || realOp.name,
             forms, display_order
         });
     }

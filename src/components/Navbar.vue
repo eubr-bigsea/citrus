@@ -216,6 +216,7 @@ export default {
     mounted() {
         this.room = `users/${this.user.id}`;
 
+        /*
         const opts = { upgrade: true };
         if (standSocketIoPath !== '') {
             opts['path'] = standSocketIoPath;
@@ -243,7 +244,7 @@ export default {
         socket.on('disconnect', () => {
             console.debug('You are not connected');
         });
-
+        */
         axios.get(`${thornUrl}/notifications/summary`)
             .then(resp => {
                 this.unreadNotifications = resp.data.unread;
