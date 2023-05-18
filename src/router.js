@@ -313,7 +313,7 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/data-sources/storage/:id',
+            path: '/data-sources/analysis/:id',
             name: 'dataSourceAnalysis',
             component: DataSourceAnalysis,
             meta: {

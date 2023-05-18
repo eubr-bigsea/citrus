@@ -1,45 +1,48 @@
 <template>
     <b-modal id="modal" title="Adicionar Análise">
-        <label for="exampleFormControlSelect1">Atributos</label>
-        <select id="exampleFormControlSelect1" v-model="atributte" class="form-control">
-            <option v-for="attr in atributtes" :key="attr.name" :value="attr.name">
-                {{attr.name}}
-            </option>
-        </select>
-        <label for="exampleFormControlSelect1">Tipo</label>
+        <label for="exampleFormControlSelect1">{{ $tc('common.type') }}:</label>
         <select id="analysis_type" v-model="type" class="form-control">
             <option value="unidimensional">
-                Unidimensional
+                {{ $t('dataSource.analysis.unidimensional') }}
             </option>
             <option value="bidimensional">
-                Bidimensional
+                {{ $t('dataSource.analysis.bidimensional') }}
             </option>
             <option value="multidimensional">
-                Multidimensional
+                {{ $t('dataSource.analysis.multidimensional') }}
             </option>
+            <!--
             <option value="testes_estatisticos">
-                Testes Estatísticos
+                {{$t('dataSource.analysis.statisticalTests')}}
             </option>
             <option value="ajustar_fit">
-                Ajustar (fit) a uma distribuição
+                {{$t('dataSource.analysis.fitCurvesAndDistributions')}}
             </option>
             <option value="series_temporais">
-                Séries temporais
+                {{$t('dataSource.analysis.timeSeriesAnalysis')}}
             </option>
+        -->
         </select>
-        <b-form-group v-if="type != null" label="Análises:">
+        <b-form-group v-if="type != null" :label="`${$tc('titles.analysis', 2)}:`">
             <b-form-checkbox-group v-model="graphs" stacked>
                 <b-form-checkbox v-for="option in selectedAnalysisOptions" :key="option" :value="option">
-                    {{option}}
+                    {{ $t(`dataSource.analysis.${option}`)}}
                 </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>
+        <label for="exampleFormControlSelect1">{{ $tc('common.attribute', 2) }}:</label>
+        {{ attribute }}
+        <select id="exampleFormControlSelect1" v-model="attribute" class="form-control">
+            <option v-for="attr in attributes" :key="attr.name" :value="attr.name">
+                {{ attr.name }}
+            </option>
+        </select>
         <template #modal-footer>
-            <b-button variant="primary" @click="[addCard(), $bvModal.hide('modal')]">
-                Ok
+            <b-button variant="primary" size="sm" @click="[addCard(), $bvModal.hide('modal')]">
+                {{ $t('common.ok') }}
             </b-button>
-            <b-button variant="secondary" @click="$bvModal.hide('modal')">
-                Cancel
+            <b-button variant="secondary" size="sm" @click="$bvModal.hide('modal')">
+                {{ $t('actions.cancel') }}
             </b-button>
         </template>
     </b-modal>
@@ -49,7 +52,7 @@
 
 export default {
     props: {
-        atributtes: {
+        attributes: {
             type: Array,
             default: null
         }
@@ -58,12 +61,15 @@ export default {
     data() {
         return {
             type: null,
-            atributte: null,
+            attribute: null,
             graphs: [],
             analysisTypes: {
-                unidimensional: ['Histograma', 'Quantile Table', 'Frequency Table', 'Summary Stats', 'Box Plot', 'Cumulative distribution function'],
-                bidimensional: ['Mosaic Plot', 'Scatter Plot', 'Histogram', 'Frequency Table', 'Box Plot', 'Summary Test'],
-                multidimensional: ['PCA', 'Correlação', '...']
+                unidimensional: [
+                    'histogram', 'quantile_table', 'frequency_table',
+                    'summary_stats', 'box_plot', 'cdf'],
+                bidimensional: ['mosaic_plot', 'scatter_plot', 'histogram',
+                    'frequency_table', 'box_plot', 'summary_test'],
+                multidimensional: ['pca', 'correlation']
             }
         };
     },
@@ -81,13 +87,13 @@ export default {
         addCard() {
             let cardInfo = {
                 analysisType: this.type,
-                atributte: this.atributte,
+                attribute: this.attribute,
                 graphs: this.graphs
             };
             this.$emit('cards', cardInfo);
             //Reset Modal
             this.type = null;
-            this.atributte = null;
+            this.attribute = null;
             this.graphs = [];
         }
     }

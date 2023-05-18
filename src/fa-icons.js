@@ -138,6 +138,7 @@ import {
     faArrowUp,
     faCaretLeft,
     faCaretRight,
+    faMaximize,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -227,6 +228,7 @@ library.add(
     faLock,
     faLockOpen,
     faMagic,
+    faMaximize,
     faMedal,
     faMicroscope,
     faMinusCircle,
