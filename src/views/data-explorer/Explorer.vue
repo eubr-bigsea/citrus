@@ -49,7 +49,7 @@
                     <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
-                    <b-button :disabled="pendingSteps || loadingData" size="sm" variant="outline-secondary"
+                    <b-button :disabled="loadingData" size="sm" variant="outline-secondary"
                         class="float-right mt-2 mr-1" @click="loadData">
                         <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
@@ -589,7 +589,9 @@ export default {
             const self = this;
             // Platform is always META_OPERATION_ID
             try {
-                const resp = await axios.get(`${tahitiUrl}/operations?platform=${META_PLATFORM_ID}`);
+                const resp = await axios.get(
+                    `${tahitiUrl}/operations?platform=${META_PLATFORM_ID}&lang=${this.$root.$i18n.locale}`
+                );
                 const operations = resp.data.data;
                 const menuCategories = new Map();
                 this.operations = operations;

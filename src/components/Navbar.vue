@@ -33,7 +33,7 @@
             <b-navbar-nav class="pt-1">
                 <b-nav-item-dropdown v-if="isAdmin" right>
                     <template #button-content>
-                        <font-awesome-icon icon="fa fa-user-lock" class="text-success" />
+                        <font-awesome-icon icon="fa fa-lock" class="text-success" />
                         {{ $tc('titles.administration', 2) }}
                     </template>
                     <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
@@ -70,6 +70,8 @@
                         Test Websocket
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
+            </b-navbar-nav>
+            <b-navbar-nav class="ml-auto">
                 <b-nav-item-dropdown ref="dropdown" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
@@ -101,8 +103,6 @@
                         </p>
                     </b-dropdown-form>
                 </b-nav-item-dropdown>
-            </b-navbar-nav>
-            <b-navbar-nav class="ml-auto">
                 <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications" no-caret>
                     <template slot="button-content">
                         <font-awesome-icon icon="fa fa-bell" />
@@ -116,7 +116,8 @@
                         <div class="notification border-bottom pb-2">
                             <div><font-awesome-icon v-bind="getIcon(notification)" /></div>
                             <div :class="{ 'font-weight-bold': notification.status === 'UNREAD' }"
-                                v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&hellip;':'')"></div>
+                                v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&h e llip;' : '')">
+                            </div>
                         </div>
                     </b-dropdown-item>
                     <b-dropdown-item
@@ -216,35 +217,35 @@ export default {
     mounted() {
         this.room = `users/${this.user.id}`;
 
-        /*
-        const opts = { upgrade: true };
-        if (standSocketIoPath !== '') {
-            opts['path'] = standSocketIoPath;
-        }
-        const socket = io(
-            `${standSocketServer}${standNamespace}`, opts);
-
-        self.socket = socket;
-        socket.on('connect', () => {
-            //console.debug("Notification connected to room " + this.room);
-            socket.emit('join', { room: this.room });
-            self.socket = socket;
-        });
-        socket.on('notifications', (msg) => {
-            this.unreadNotifications = msg.unread;
-            msg.notification && this.notifications.unshift(msg.notification);
-            if (this.$route.name === 'notifications') {
-                //this.$router.go();
+        if (true) {
+            const opts = { upgrade: true };
+            if (standSocketIoPath !== '') {
+                opts['path'] = standSocketIoPath;
             }
-        });
-        socket.on('connect_error', () => {
-            console.debug('Web socket server offline');
-        });
+            const socket = io(
+                `${standSocketServer}${standNamespace}`, opts);
 
-        socket.on('disconnect', () => {
-            console.debug('You are not connected');
-        });
-        */
+            self.socket = socket;
+            socket.on('connect', () => {
+                //console.debug("Notification connected to room " + this.room);
+                socket.emit('join', { room: this.room });
+                self.socket = socket;
+            });
+            socket.on('notifications', (msg) => {
+                this.unreadNotifications = msg.unread;
+                msg.notification && this.notifications.unshift(msg.notification);
+                if (this.$route.name === 'notifications') {
+                    //this.$router.go();
+                }
+            });
+            socket.on('connect_error', () => {
+                console.debug('Web socket server offline');
+            });
+
+            socket.on('disconnect', () => {
+                console.debug('You are not connected');
+            });
+        }
         axios.get(`${thornUrl}/notifications/summary`)
             .then(resp => {
                 this.unreadNotifications = resp.data.unread;

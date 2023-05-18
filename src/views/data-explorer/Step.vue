@@ -4,9 +4,9 @@
         <div class="float-left text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
-        <div v-if="hasProblems" class="pulse-item text-warning">
-            <font-awesome-icon icon="fa fa-exclamation-circle"
-                title="Existem problemas na configuração. Edite para corrigir." />
+        <div v-if="hasProblems" class="pulse-item text-danger" title="Existem problemas na configuração. Edite para corrigir.">
+            <font-awesome-icon icon="fa fa-question-circle"/>
+            {{ hasProblems.label }}
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
@@ -123,8 +123,9 @@ export default {
             const self = this;
             const executionForm = this.step.operation.forms.find(f => f.category === 'execution');
             return executionForm && executionForm.fields.find(field => {
-                return (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value));
-            }) !== undefined;
+                return field.enabled && 
+                    (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value));
+            });
         },
         // attributes that may be selected based on their type
         // validAttributes() {
@@ -330,9 +331,10 @@ export default {
 }
 
 .pulse-item {
-    position: absolute;
-    left: 5px;
     bottom: 10px;
+    font-size: 9pt !important;
+    left: 5px;
+    position: absolute;
 }
 
 .editing-step {
