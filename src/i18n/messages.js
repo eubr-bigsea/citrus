@@ -328,10 +328,10 @@ export default {
             alternativeUseDatabase:
                 'Recomenda-se esta opção apenas se você está seguro que a conexão ao servidor de banco de dados está corretamente configurada.',
             analysis: {
-                bidimensional: 'Bidimensional',
-                multidimensional: 'Multidimensional',
+                bivariate: 'Bivariada',
+                multivariate: 'Multivariada',
+                univariate: 'Univariada',
                 noAnalysis: 'Não há análise',
-                unidimensional: 'Unidimensional',
                 statisticalTests: 'Testes estatísticos',
                 fitCurvesAndDistributions: 'Ajustar (fit) curvas e distribuições',
                 timeSeriesAnalysis: 'Análise de séries temporais',

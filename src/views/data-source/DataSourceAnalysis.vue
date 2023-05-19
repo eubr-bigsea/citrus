@@ -4,7 +4,7 @@
             <div class="title col-md">
                 <h1>{{ $tc('titles.dataSource', 1) }} {{ dataSource?.name }}</h1>
             </div>
-            <b-button variant="success" class="btn btn-primary" @click="$bvModal.show('modal')">
+            <b-button :disabled="loading" variant="success" class="btn btn-primary" @click="$bvModal.show('modal')">
                 <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
             </b-button>
             <modal :attributes="attributes" @cards="addCard" />
@@ -18,33 +18,33 @@
             <div class="col-md-10">
                 <b-card>
                     <div class="mb-4">
-                        <h4>{{$t('dataSource.analysis.unidimensional')}}</h4>
-                        <div v-if="unidimensionalCards && unidimensionalCards.length" class="analysisBox scroll-area">
-                            <data-source-card v-for="card, inx in unidimensionalCards" :key="inx" :info="card"
-                                @action="deleteCard" />
+                        <h4>{{ $t('dataSource.analysis.univariate') }}</h4>
+                        <div v-if="univariateCards && univariateCards.length" class="analysisBox scroll-area">
+                            <data-source-card v-for="[attr, value] in groupedUnivariate" :key="attr"
+                                :info="{ attr, value }" @action="deleteCard" />
                         </div>
                         <div v-else>
-                            <small>{{$t('dataSource.analysis.noAnalysis')}}</small>
+                            <small>{{ $t('dataSource.analysis.noAnalysis') }}</small>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <h4>{{$t('dataSource.analysis.bidimensional')}}</h4>
-                        <div v-if="bidimensionalCards && bidimensionalCards.length" class="analysisBox scroll-area">
-                            <data-source-card v-for="card, inx in bidimensionalCards" :key="inx" :info="card"
+                        <h4>{{ $t('dataSource.analysis.bivariate') }}</h4>
+                        <div v-if="bivariateCards && bivariateCards.length" class="analysisBox scroll-area">
+                            <data-source-card v-for="card, inx in bivariateCards" :key="inx" :info="card"
                                 @action="deleteCard" />
                         </div>
                         <div v-else>
-                            <small>{{$t('dataSource.analysis.noAnalysis')}}</small>
+                            <small>{{ $t('dataSource.analysis.noAnalysis') }}</small>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <h4>{{$t('dataSource.analysis.multidimensional')}}</h4>
-                        <div v-if="multidimensionalCards && multidimensionalCards.length" class="analysisBox scroll-area">
-                            <data-source-card v-for="card, inx in multidimensionalCards" :key="inx" :info="card"
+                        <h4>{{ $t('dataSource.analysis.multivariate') }}</h4>
+                        <div v-if="multivariateCards && multivariateCards.length" class="analysisBox scroll-area">
+                            <data-source-card v-for="card, inx in multivariateCards" :key="inx" :info="card"
                                 @action="deleteCard" />
                         </div>
                         <div v-else>
-                            <small>{{$t('dataSource.analysis.noAnalysis')}}</small>
+                            <small>{{ $t('dataSource.analysis.noAnalysis') }}</small>
                         </div>
                     </div>
                 </b-card>
@@ -83,11 +83,20 @@ export default {
         return {
             dataSource: null,
             choice: null,
-            unidimensionalCards: [],
-            bidimensionalCards: [],
-            multidimensionalCards: [],
+            loading: false,
+            univariateCards: [],
+            bivariateCards: [],
+            multivariateCards: [],
             attributes: null
         };
+    },
+    computed: {
+        groupedUnivariate() {
+            return this.univariateCards.reduce(
+                (entryMap, e) => entryMap.set(e.attribute, [...entryMap.get(e.attribute) || [], e]),
+                new Map()
+            );
+        }
     },
     mounted() {
         this.load();
@@ -110,14 +119,12 @@ export default {
                     attribute: info.attribute,
                     analysis: info.graphs[i]
                 };
-                if (card.type == 'unidimensional') {
-                    this.unidimensionalCards.push(card);
-                }
-                if (card.type == 'bidimensional') {
-                    this.bidimensionalCards.push(card);
-                }
-                if (card.type == 'multidimensional') {
-                    this.multidimensionalCards.push(card);
+                if (card.type == 'univariate') {
+                    this.univariateCards.push(card);
+                } else if (card.type == 'bivariate') {
+                    this.bivariateCards.push(card);
+                } else if (card.type == 'multivariate') {
+                    this.multivariateCards.push(card);
                 }
             }
         },
@@ -125,14 +132,14 @@ export default {
             this.confirm(this.$t('actions.delete'), 'Excluir esta análise?',
                 () => {
                     switch (card.type) {
-                        case 'unidimensional':
-                            this.unidimensionalCards.splice(this.unidimensionalCards.indexOf(card), 1);
+                        case 'univariate':
+                            this.univariateCards.splice(this.univariateCards.indexOf(card), 1);
                             break;
-                        case 'bidimensional':
-                            this.bidimensionalCards.splice(this.bidimensionalCards.indexOf(card), 1);
+                        case 'bivariate':
+                            this.bivariateCards.splice(this.bivariateCards.indexOf(card), 1);
                             break;
-                        case 'multidimensional':
-                            this.multidimensionalCards.splice(this.multidimensionalCards.indexOf(card), 1);
+                        case 'multivariate':
+                            this.multivariateCards.splice(this.multivariateCards.indexOf(card), 1);
                             break;
                         default:
                             break;
@@ -157,7 +164,7 @@ export default {
 .analysisBox {
     display: flex;
     flex-direction: row;
-    height: 60vh;
+    /*height: 60vh;*/
     border: 1px solid #d9dadb;
     border-radius: 4px;
     overflow: auto;

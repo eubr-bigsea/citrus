@@ -1,15 +1,21 @@
 <template>
     <b-modal id="modal" title="Adicionar Análise">
+        <label>{{ $tc('common.attribute', 2) }}:</label>
+        <select v-model="attribute" class="form-control">
+            <option v-for="attr in attributes" :key="attr.name" :value="attr.name">
+                {{ attr.name }}
+            </option>
+        </select>
         <label for="exampleFormControlSelect1">{{ $tc('common.type') }}:</label>
         <select id="analysis_type" v-model="type" class="form-control">
-            <option value="unidimensional">
-                {{ $t('dataSource.analysis.unidimensional') }}
+            <option value="univariate">
+                {{ $t('dataSource.analysis.univariate') }}
             </option>
-            <option value="bidimensional">
-                {{ $t('dataSource.analysis.bidimensional') }}
+            <option value="bivariate">
+                {{ $t('dataSource.analysis.bivariate') }}
             </option>
-            <option value="multidimensional">
-                {{ $t('dataSource.analysis.multidimensional') }}
+            <option value="multivariate">
+                {{ $t('dataSource.analysis.multivariate') }}
             </option>
             <!--
             <option value="testes_estatisticos">
@@ -30,13 +36,6 @@
                 </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>
-        <label for="exampleFormControlSelect1">{{ $tc('common.attribute', 2) }}:</label>
-        {{ attribute }}
-        <select id="exampleFormControlSelect1" v-model="attribute" class="form-control">
-            <option v-for="attr in attributes" :key="attr.name" :value="attr.name">
-                {{ attr.name }}
-            </option>
-        </select>
         <template #modal-footer>
             <b-button variant="primary" size="sm" @click="[addCard(), $bvModal.hide('modal')]">
                 {{ $t('common.ok') }}
@@ -64,12 +63,12 @@ export default {
             attribute: null,
             graphs: [],
             analysisTypes: {
-                unidimensional: [
+                univariate: [
                     'histogram', 'quantile_table', 'frequency_table',
                     'summary_stats', 'box_plot', 'cdf'],
-                bidimensional: ['mosaic_plot', 'scatter_plot', 'histogram',
+                bivariate: ['mosaic_plot', 'scatter_plot', 'histogram',
                     'frequency_table', 'box_plot', 'summary_test'],
-                multidimensional: ['pca', 'correlation']
+                multivariate: ['pca', 'correlation']
             }
         };
     },
