@@ -54,6 +54,12 @@
                     </b-link>
                 </li>
                 <li class="list-group-item">
+                    <b-link class="mr-2" :to="{ name: 'codeList' }">
+                        <font-awesome-icon icon="fa fa-file-code" size="lg" />
+                        Code List
+                    </b-link>
+                </li>
+                <li class="list-group-item">
                     <b-link class="  mr-2" :to="{ name: 'admin-openid' }">
                         <font-awesome-icon icon="fa fa-key" size="lg" fixed-width />
                         OpenId Sandbox
