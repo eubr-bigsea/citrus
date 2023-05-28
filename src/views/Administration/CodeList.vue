@@ -7,6 +7,7 @@
                         <h1>Listagem Arquivos</h1>
                         <router-link :to="{name: 'codeAdd'}"
                                      class="btn btn-sm btn-outline-primary">
+                            Adicionar Código
                         </router-link>
                     </div>
                     <hr>
