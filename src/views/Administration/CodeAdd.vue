@@ -36,14 +36,14 @@
 
                 <div class="row mt-4 mb-2">
                     <div class="col-md-10">
-                        <input id="" type="file" name="" :change="addFile">
+                        <input id="" type="file" name="" @change="addFile">
                     </div>
                 </div>
                 
                 <div class="row">
                     <div class="col-md-12 pt-2">
                         <hr>
-                        <button class="btn btn-primary mr-1 btn-spinner" :on-click="addCode">
+                        <button class="btn btn-primary mr-1 btn-spinner" @click="addCode">
                             <font-awesome-icon icon="spinner" pulse class="icon" />
                             <font-awesome-icon icon="fa fa-save" />
                             {{$tc('actions.save')}}
@@ -72,11 +72,10 @@ export default {
     },
     methods: {
         addFile(e) {
-            this.codeFile = e.target.files;
+            this.codeFile = e.target.files[0];
         },
         addCode() {
-            // console.log(this.codeName, this.codeStatus, this.codeDescription, this.codeFile);
-            console.log("Oi");
+            console.log(this.codeName, this.codeStatus, this.codeDescription, this.codeFile);
         }
     }
 };
