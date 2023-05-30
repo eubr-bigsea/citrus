@@ -147,6 +147,7 @@ import {
     faA,
     faMapLocationDot,
     faFileExport,
+    faMaximize,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -242,6 +243,7 @@ library.add(
     faLockOpen,
     faMagic,
     faMapLocationDot,
+    faMaximize,
     faMedal,
     faMicroscope,
     faMinusCircle,

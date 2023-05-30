@@ -57,6 +57,7 @@ export default {
             joinData: 'Juntar dados',
             keep: 'Manter',
             limit: 'Limitar',
+            maximize: 'Maximizar',
             move: 'Mover',
             moveDown: 'Mover para baixo',
             moveUp: 'Mover para cima',
@@ -327,6 +328,30 @@ export default {
         dataSource: {
             alternativeUseDatabase:
                 'Recomenda-se esta opção apenas se você está seguro que a conexão ao servidor de banco de dados está corretamente configurada.',
+            analysis: {
+                bivariate: 'Bivariada',
+                multivariate: 'Multivariada',
+                univariate: 'Univariada',
+                noAnalysis: 'Não há análise',
+                statisticalTests: 'Testes estatísticos',
+                fitCurvesAndDistributions: 'Ajustar (fit) curvas e distribuições',
+                timeSeriesAnalysis: 'Análise de séries temporais',
+
+                histogram: 'Histograma',
+                quantile_table: 'Tabela de quantis',
+                frequency_table: 'Tabela de frequência',
+                summary_stats: 'Sumário estatístico',
+                box_plot: 'Gráfico de caixa (box plot)',
+                cdf: 'Função de distribuição cumulativa',
+
+                mosaic_plot: 'Gráfico de mosaico',
+                scatter_plot: 'Gráfico de dispersão (scatter)',
+                summary_test: 'Sumário de testes',
+
+                pca: 'Análise do componente principal (PCA)',
+                correlation: 'Correlação',
+
+            },
             attribute: 'Atributo | Atributos',
             attributeDelimiter: 'Delimitador de atributos (apenas CSV)',
             basicInformation: 'Informação básica',
@@ -911,6 +936,7 @@ export default {
             joinData: 'Join data',
             keep: 'Keep',
             limit: 'Limit',
+            maximize: 'Maximize',
             move: 'Move',
             moveDown: 'Move down',
             moveUp: 'Move up',
