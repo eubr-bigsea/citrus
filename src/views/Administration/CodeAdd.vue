@@ -43,13 +43,12 @@
                 <div class="row">
                     <div class="col-md-12 pt-2">
                         <hr>
-                        <button class="btn btn-primary mr-1 btn-spinner" @click="addCode">
-                            <font-awesome-icon icon="spinner" pulse class="icon" />
+                        <button class="btn btn-primary mr-1 btn-spinner" @click="[addCode(), reset()]">
                             <font-awesome-icon icon="fa fa-save" />
                             {{$tc('actions.save')}}
                         </button>
-                        <router-link :to="{name: 'storages'}"
-                                     class="btn btn-secondary mr-1">
+                        <router-link :to="{name: 'codeLibrary'}"
+                                    class="btn btn-secondary mr-1">
                             {{$tc('actions.cancel')}}
                         </router-link>
                     </div>
@@ -76,11 +75,13 @@ export default {
         },
         addCode() {
             console.log(this.codeName, this.codeStatus, this.codeDescription, this.codeFile);
+        },
+        reset() {
+            this.codeName = "";
+            this.codeStatus = null;
+            this.codeDescription = "";
+            this.codeFile = null;
         }
     }
 };
 </script>
-
-<style scoped>
-
-</style>

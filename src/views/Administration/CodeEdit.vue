@@ -19,15 +19,28 @@
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="card">
-                                <div class="col-md-12 border-bottom pt-3 pb-3">
-                                    File Name
+                                <div class="d-flex justify-content-between col-md-12 border-bottom pt-3 pb-3">
+                                    <h4>File Name</h4> 
+                                    <div>
+                                        <button class="btn btn-success mr-1 btn-spinner"
+                                                @click.stop="save">
+                                            <font-awesome-icon icon="spinner"
+                                                               pulse
+                                                               class="icon" />
+                                            <font-awesome-icon icon="fa fa-save" />
+                                            {{$tc('actions.save')}}
+                                        </button>
+                                        <router-link :to="{name: 'codeLibrary'}"
+                                                     class="btn btn-secondary mr-1">
+                                            {{$tc('actions.cancel')}}
+                                        </router-link>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                  <pre class="language-py">
-                                      <code>for a in range(5):
-                                        
-                                      </code>
-                                  </pre>
+                                    <code>
+                                        <textarea class="codeEditor" id="" name="" columns="100" rows="10" />
+
+                                    </code>
                                 </div>
                             </div>
                         </div>
@@ -55,6 +68,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 
 </style>
