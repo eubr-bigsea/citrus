@@ -19,14 +19,18 @@
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="card">
-                                <div class="col-md-12 border-bottom pt-3 pb-3">
-                                    File Name
+                                <div class="d-flex justify-content-between col-md-12 border-bottom pt-3 pb-3">
+                                    <h4>File Name</h4> 
+                                    <router-link class="btn btn-success btn-sm" :to="{name: 'codeLibrary'}">
+                                      Salvar
+                                    </router-link>
                                 </div>
                                 <div class="card-body">
-                                  <pre class="language-py">
-                                      <code>for a in range(5):
-                                        
-                                      </code>
+                                  <pre>
+                                    <code>
+                                      <textarea name="" id="" cols="200" rows="10"></textarea>
+
+                                    </code>
                                   </pre>
                                 </div>
                             </div>

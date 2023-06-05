@@ -54,9 +54,9 @@
                     </b-link>
                 </li>
                 <li class="list-group-item">
-                    <b-link class="mr-2" :to="{ name: 'codeList' }">
+                    <b-link class="mr-2" :to="{ name: 'codeLibrary' }">
                         <font-awesome-icon icon="fa fa-file-code" size="lg" />
-                        Code List
+                        Code Library
                     </b-link>
                 </li>
                 <li class="list-group-item">

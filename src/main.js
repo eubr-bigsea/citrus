@@ -22,6 +22,9 @@ import { ClientTable, ServerTable } from 'vue-tables-2';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons.js';
 
+import Prism from 'prismjs';
+
+
 /* Widgets */
 
 import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'

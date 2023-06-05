@@ -52,7 +52,7 @@ const UserEdit = () => import(/* webpackChunkName: "group-user" */ './views/Admi
 
 const CodeAdd = () => import('./views/Administration/CodeAdd.vue');
 const CodeEdit = () => import('./views/Administration/CodeEdit.vue');
-const CodeList = () => import('./views/Administration/CodeList.vue');
+const CodeLibrary = () => import('./views/Administration/CodeLibrary.vue');
 
 const ClusterList = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterList.vue');
 const ClusterEdit = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterEdit.vue');
@@ -217,8 +217,8 @@ let router = new VueRouter({
         },
         {
             path: '/administration/code',
-            name: 'codeList',
-            component: CodeList,
+            name: 'codeLibrary',
+            component: CodeLibrary,
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
