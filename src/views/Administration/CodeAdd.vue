@@ -44,12 +44,11 @@
                     <div class="col-md-12 pt-2">
                         <hr>
                         <button class="btn btn-primary mr-1 btn-spinner" @click="[addCode(), reset()]">
-                            <font-awesome-icon icon="spinner" pulse class="icon" />
                             <font-awesome-icon icon="fa fa-save" />
                             {{$tc('actions.save')}}
                         </button>
                         <router-link :to="{name: 'codeLibrary'}"
-                                     class="btn btn-secondary mr-1">
+                                    class="btn btn-secondary mr-1">
                             {{$tc('actions.cancel')}}
                         </router-link>
                     </div>
@@ -86,7 +85,3 @@ export default {
     }
 };
 </script>
-
-<style scoped>
-
-</style>
