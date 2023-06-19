@@ -1,6 +1,6 @@
 <template>
     <main role="main">
-        <div class="row">
+        <div class="row codeEdit">
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
@@ -37,10 +37,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <code>
-                                        <textarea class="codeEditor" id="" name="" columns="100" rows="10" />
-
-                                    </code>
+                                    <textarea id="" name="" cols="1000" rows="10"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -69,5 +66,23 @@ export default {
 </script>
 
 <style>
+.codeEdit textarea {
+  width: 100%;
+  resize: none;
+  background-color: unset;
+  border: none;
+  tab-size: 8;
+  outline: none;
+  overflow: auto hidden;
+  font-size: 12px;
+  line-height: 20px;
+  overflow-wrap: normal;
+  /* white-space: pre; */
+  /* caret-color: transparent; */
+}
+
+
+
+
 
 </style>
