@@ -1,5 +1,5 @@
 <template>
-    <main role="main">
+    <main role="main" class="codeAdd">
         <div class="card">
             <div class="card-body d-flex justify-content-between flex-column ">
                 <div>
@@ -48,7 +48,7 @@
                             {{$tc('actions.save')}}
                         </button>
                         <router-link :to="{name: 'codeLibrary'}"
-                                    class="btn btn-secondary mr-1">
+                                     class="btn btn-secondary mr-1">
                             {{$tc('actions.cancel')}}
                         </router-link>
                     </div>
@@ -85,3 +85,11 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.codeAdd textarea {
+  resize: none;
+}
+
+
+</style>
