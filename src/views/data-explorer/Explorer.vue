@@ -49,8 +49,8 @@
                     <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
-                    <b-button :disabled="loadingData" size="sm" variant="outline-secondary"
-                        class="float-right mt-2 mr-1" @click="loadData">
+                    <b-button :disabled="loadingData" size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
+                        @click="loadData">
                         <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
                     <!--
@@ -244,9 +244,8 @@
                 </div>
             </b-modal>
         </div>
-        <modal-save-data v-if="internalWorkflowId" name="save-data" 
-            ref="modalSaveData" :workflow-id="internalWorkflowId" 
-            @confirm="handleConfirmSaveData"/>
+        <modal-save-data v-if="internalWorkflowId" name="save-data" ref="modalSaveData" :workflow-id="internalWorkflowId"
+            @confirm="handleConfirmSaveData" />
     </div>
 </template>
 <script>
@@ -527,7 +526,7 @@ export default {
             }
             return true;
         },
-        async loadData(callback=null, success=null, save=false) {
+        async loadData(callback = null, success = null, save = false) {
             if (save) {
                 this.saveWorkflow();
             }
@@ -637,13 +636,24 @@ export default {
             }
 
         },
-        handleConfirmSaveData(params){
+        handleConfirmSaveData(params) {
             const SAVE_OPERATION_ID = 2164;
+            const SAMPLE_OPERATION_ID = 2110;
+
             const callback = (cloned) => {
                 const { name, path, tags, description, storage, data_source_id } = params;
+                if (params.complete) {
+                    cloned.tasks.every((t) => {
+                        if (t.operation.id === SAMPLE_OPERATION_ID) {
+                            t.enabled = false;
+                            return false;
+                        }
+                        return true;
+                    });
+                }
                 cloned.tasks.push(
                     {
-                        operation: {id: SAVE_OPERATION_ID},
+                        operation: { id: SAVE_OPERATION_ID },
                         display_order: cloned.tasks.length,
                         enabled: true,
                         environment: 'DESIGN',
