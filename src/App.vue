@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!--web-socket / -->
         <vue-snotify />
         <l-navbar v-if="isLoggedIn" />
         <div id="wrapperx">
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+import WebSocket from './components/WebSocket.vue';
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import axios from 'axios';
@@ -27,7 +29,7 @@ export default {
     components: {
         'l-navbar': Navbar,
         'l-footer': Footer,
-        SideBar,
+        SideBar, WebSocket
     },
     computed: {
         isLoggedIn() {

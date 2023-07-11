@@ -174,7 +174,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
 import axios from 'axios';
 import io from 'socket.io-client';
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
@@ -217,7 +216,7 @@ export default {
     mounted() {
         this.room = `users/${this.user.id}`;
 
-        if (true) {
+        if (false) {
             const opts = { upgrade: true };
             if (standSocketIoPath !== '') {
                 opts['path'] = standSocketIoPath;

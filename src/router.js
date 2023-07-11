@@ -705,7 +705,7 @@ let router = new VueRouter({
             component: WebSocketPing,
             meta: {
                 requiresAuth: true,
-                title: ['titles.admin', 1]
+                title: ['titles.administration', 1]
             }
         },
         {
@@ -714,7 +714,7 @@ let router = new VueRouter({
             component: JsPlumbSandbox,
             meta: {
                 requiresAuth: true,
-                title: ['titles.admin', 1]
+                title: ['titles.administration', 1]
             }
         },
         {
@@ -723,7 +723,7 @@ let router = new VueRouter({
             component: OpenIdSandbox,
             meta: {
                 requiresAuth: false,
-                title: ['titles.admin', 1]
+                title: ['titles.administration', 1]
             }
         },
         {

@@ -244,6 +244,9 @@
                 </div>
             </b-modal>
         </div>
+        <modal-save-data v-if="internalWorkflowId" name="save-data" 
+            ref="modalSaveData" :workflow-id="internalWorkflowId" 
+            @confirm="handleConfirmSaveData"/>
     </div>
 </template>
 <script>
@@ -261,6 +264,7 @@ import Notifier from '../../mixins/Notifier.js';
 import { Workflow, Operation, Task, Constants } from './entities.js';
 import ModalExport from './ModalExport.vue';
 import Plotly from '../../components/visualization/Plotly.vue';
+import ModalSaveData from './data-explorer/ModalSaveData.vue';
 
 jsep.addBinaryOp(">=", 1);
 jsep.removeBinaryOp('^');
@@ -301,7 +305,7 @@ export default {
     components: {
         Plotly,
         Preview, draggable,
-        StepList, Step, PreviewMenu, ModalExport,
+        StepList, Step, PreviewMenu, ModalExport, ModalSaveData,
         TahitiSuggester: () => {
             return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                 const script = document.createElement('script');
@@ -368,7 +372,7 @@ export default {
         }
     },
     async mounted() {
-        this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
+        this.internalWorkflowId = (this.$route) ? parseInt(this.$route.params.id) : 0;
 
         const job_id = WORKFLOW_OFFSET + parseInt(this.internalWorkflowId);
         this.job = { id: job_id };
@@ -448,7 +452,7 @@ export default {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
                 this.success(this.$t('messages.savedWithSuccess',
-                    { what: this.$tc('titles.workflow') }));
+                    { what: this.$tc('titles.workflow') }), 2000);
             } catch (e) {
                 this.error(e);
             }
@@ -523,7 +527,10 @@ export default {
             }
             return true;
         },
-        async loadData() {
+        async loadData(callback=null, success=null, save=false) {
+            if (save) {
+                this.saveWorkflow();
+            }
             const self = this;
             // if (self.pendingSteps) {
             //     self.warning("Existe(m) etapa(s) com pendências. Faça as correções antes de executar o experimento.", 5000);
@@ -540,6 +547,9 @@ export default {
                 task.operation = { id: task.operation.id };
                 delete task.version;
             });
+            if (callback) {
+                callback(cloned);
+            }
 
             const body = {
                 workflow: cloned,
@@ -562,6 +572,9 @@ export default {
                 self.job = response.data.data;
                 self.page = 1;
                 self.connectWebSocket();
+                if (success) {
+                    success();
+                }
             } catch (ex) {
                 if (ex.data) {
                     self.error(ex.data.message);
@@ -624,7 +637,34 @@ export default {
             }
 
         },
-
+        handleConfirmSaveData(params){
+            const SAVE_OPERATION_ID = 2164;
+            const callback = (cloned) => {
+                const { name, path, tags, description, storage, data_source_id } = params;
+                cloned.tasks.push(
+                    {
+                        operation: {id: SAVE_OPERATION_ID},
+                        display_order: cloned.tasks.length,
+                        enabled: true,
+                        environment: 'DESIGN',
+                        id: Operation.generateTaskId(),
+                        name: 'Save data',
+                        forms: {
+                            data_source_id, name, path, tags, description,
+                            format: 'PARQUET',
+                            mode: 'error',
+                            header: false,
+                            storage
+                        }
+                    }
+                );
+            };
+            const success = () => {
+                this.success(this.$t('messages.savedWithSuccess',
+                    { what: this.$tc('titles.dataSource') }), 3500);
+            }
+            this.loadData(callback, success, true);
+        },
         handleStepDrag(e) {
             // Disable some steps to be dragged
             return (e?.relatedContext?.element?.display_order > 1);
@@ -869,6 +909,9 @@ export default {
         handleTrigger(options) {
             if (options.action === 'export') {
                 this.$refs.modalExport.show();
+            } else if (options?.params[0]?.slug === 'save') {
+                this.$refs.modalSaveData.show();
+                console.debug(options)
             } else if (options.action === 'menu') {
                 const newTask = this.workflowObj.addTask(
                     this.operationLookup.get(options.params[0].id),

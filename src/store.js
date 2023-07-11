@@ -1,6 +1,56 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import io from 'socket.io-client';
+
+const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
+
+const initializeSocketPlugin = (store) => {
+    const room = `users/${store.getters.user.id}`;
+    const opts = {
+        upgrade: true,
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5
+    };
+
+    if (standSocketIoPath !== '') {
+        opts['path'] = standSocketIoPath;
+    }
+    if (false) {
+        const socket = io(`${standSocketServer}${standNamespace}`, opts);
+
+        socket.on('connect', () => {
+            console.debug("Connected. Moving to room " + room);
+            socket.emit('join', { room: room });
+            store.commit('set_connected', true);
+        });
+        socket.on('message', (msg) => {
+            console.debug(msg);
+        });
+        socket.on('connect_error', () => {
+            console.debug('Web socket server offline');
+            store.commit('set_connected', false);
+        });
+
+        socket.on('disconnect', () => {
+            console.debug('You are not connected');
+            store.commit('set_connected', false);
+        });
+        store.commit('set_socket', socket);
+    }
+
+    // Handle emitMessage mutation to send messages to the server
+    store.subscribe((mutation) => {
+        if (mutation.type === 'emit_message') {
+            const { eventName, message } = mutation.payload;
+            socket.emit(eventName, message);
+        }
+    });
+};
 
 Vue.use(Vuex);
 const FEATURES_PERMISSIONS = {
@@ -19,6 +69,7 @@ const FEATURES_PERMISSIONS = {
         'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
 }
 const dataExplorerModule = {
+    /*
     namespaced: true,
     state: () => (
         {
@@ -89,17 +140,52 @@ const dataExplorerModule = {
             return state.name;
         }
     }
+    */
 };
 export default new Vuex.Store({
+    plugins: [initializeSocketPlugin],
     modules: {
-        dataExplorer: dataExplorerModule
+        //dataExplorer: dataExplorerModule
     },
     state: () => ({
+        /* Auth state*/
         status: '',
         token: localStorage.getItem('token') || '',
-        user: JSON.parse(localStorage.getItem('user') || '{}')
+        user: JSON.parse(localStorage.getItem('user') || '{}'),
+        /* web socket state*/
+        socket: null,
+        connected: false,
+        eventListeners: []
     }),
     mutations: {
+        set_connected(state, value) {
+            state.connected = value;
+        },
+        set_socket(state, socket) {
+            state.socket = socket;
+        },
+        add_event_listener(state, listener) {
+            // listener must have an "event" property
+            if (listener.event && listener.callback) {
+                state.eventListeners.push(listener);
+            } else {
+                console.debug(
+                    'Listener does not have event or callback property. Ignoring it.');
+            }
+            state.socket.on(listener.event, listener.callback);
+        },
+        remove_event_listener(state, eventName) {
+            const index = state.eventListeners.findIndex(
+                listener => listener.event === eventName);
+            if (index !== -1) {
+                state.eventListeners.splice(index, 1);
+            }
+        },
+        emit_message(state, payload) {
+            // Mutation to emit messages to the server
+            state.socket.emit(payload.eventName, payload.message);
+        },
+
         auth_request(state) {
             state.status = 'loading';
         },
@@ -138,14 +224,26 @@ export default new Vuex.Store({
             state.status = 'success';
             state.user = user;
             localStorage.setItem('user', JSON.stringify(user));
-            if (token){
+            if (token) {
                 this.state.token = token;
                 localStorage.setItem('token', token);
             }
         }
     },
     actions: {
-        setUser({commit}, {user, token}){
+        registerEventListener({ commit }, listener) {
+            commit('add_event_listener', listener);
+        },
+        removeEventListener({ commit, state }, eventName) {
+            const listener = state.eventListeners.find(listener => listener.event === eventName);
+            if (listener) {
+                state.socket.off(listener.event, listener.callback);
+                commit('remove_event_listener', eventName);
+            }
+        },
+
+
+        setUser({ commit }, { user, token }) {
             commit('change_profile_success', { user, token });
         },
         changeProfile({ commit }, params) {

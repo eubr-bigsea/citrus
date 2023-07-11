@@ -20,7 +20,7 @@
                     <div class="mb-4">
                         <h4>{{ $t('dataSource.analysis.univariate') }}</h4>
                         <div v-if="univariateCards && univariateCards.length" class="analysisBox scroll-area">
-                            <data-source-card v-for="[attr, value] in groupedUnivariate" :key="attr"
+                            <data-source-card v-for="[attr, value] in groupedUnivariate" :key="attr.name"
                                 :info="{ attr, value }" @action="deleteCard" />
                         </div>
                         <div v-else>
@@ -113,11 +113,11 @@ export default {
             this.choice = option;
         },
         addCard(info) {
-            for (let i = 0; i < info.graphs.length; i++) {
+            for (let i = 0; i < info.analysis.length; i++) {
                 let card = {
                     type: info.analysisType,
                     attribute: info.attribute,
-                    analysis: info.graphs[i]
+                    analysis: info.analysis[i]
                 };
                 if (card.type == 'univariate') {
                     this.univariateCards.push(card);

@@ -1,8 +1,8 @@
 <template>
     <b-modal id="modal" title="Adicionar Análise">
-        <label>{{ $tc('common.attribute', 2) }}:</label>
-        <select v-model="attribute" class="form-control">
-            <option v-for="attr in attributes" :key="attr.name" :value="attr.name">
+        <label>{{ $tc('common.attribute', 1) }}:</label>
+        <select v-model="attribute" class="form-control" @change="analysis = []">
+            <option v-for="attr in attributes" :key="attr.name" :value="attr">
                 {{ attr.name }}
             </option>
         </select>
@@ -30,14 +30,17 @@
         -->
         </select>
         <b-form-group v-if="type != null" :label="`${$tc('titles.analysis', 2)}:`">
-            <b-form-checkbox-group v-model="graphs" stacked>
-                <b-form-checkbox v-for="option in selectedAnalysisOptions" :key="option" :value="option">
-                    {{ $t(`dataSource.analysis.${option}`)}}
+            <b-form-checkbox-group v-model="analysis" stacked>
+                <b-form-checkbox v-for="option in selectedAnalysisOptions"
+                    :disabled="!(currentAttributeIsNumeric && option.numeric || !currentAttributeIsNumeric && option.categorical)" 
+                        :key="option.name" :value="option.name">
+                    {{ $t(`dataSource.analysis.${option.name}`) }}
                 </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>
         <template #modal-footer>
-            <b-button variant="primary" size="sm" @click="[addCard(), $bvModal.hide('modal')]">
+            <b-button :disabled="analysis.length === 0" variant="primary" size="sm"
+                @click="[addCard(), $bvModal.hide('modal')]">
                 {{ $t('common.ok') }}
             </b-button>
             <b-button variant="secondary" size="sm" @click="$bvModal.hide('modal')">
@@ -48,6 +51,7 @@
 </template>
 
 <script>
+import { isNumeric } from '../../data-types.js';
 
 export default {
     props: {
@@ -61,18 +65,35 @@ export default {
         return {
             type: null,
             attribute: null,
-            graphs: [],
+            analysis: [],
             analysisTypes: {
                 univariate: [
-                    'histogram', 'quantile_table', 'frequency_table',
-                    'summary_stats', 'box_plot', 'cdf'],
-                bivariate: ['mosaic_plot', 'scatter_plot', 'histogram',
-                    'frequency_table', 'box_plot', 'summary_test'],
-                multivariate: ['pca', 'correlation']
+                    { numeric: true, categorical: true, name: 'histogram' },
+                    { numeric: true, categorical: false, name: 'quantile_table' },
+                    { numeric: false, categorical: true, name: 'frequency_table' },
+                    { numeric: true, categorical: true, name: 'summary_stats' },
+                    { numeric: true, categorical: false, name: 'box_plot' },
+                    { numeric: true, categorical: false, name: 'cdf' }
+                ],
+                bivariate: [
+                    {numeric: true, categorical: true, name: 'mosaic_plot'},
+                    {numeric: false, categorical: false, name: 'scatter_plot'},
+                    {numeric: true, categorical: true, name: 'histogram'},
+                    {numeric: true, categorical: true, name: 'frequency_table'},
+                    {numeric: false, categorical: false, name: 'box_plot'},
+                    {numeric: false, categorical: false, name: 'summary_test'},
+                ],
+                multivariate: [
+                    {numeric: true, categorical: false, name: 'pca'},
+                    {numeric: true, categorical: false, name: 'correlation'},
+                ]
             }
         };
     },
     computed: {
+        currentAttributeIsNumeric() {
+            return this.attribute !== null && isNumeric(this.attribute.type);
+        },
         selectedAnalysisOptions() {
             if (this.type) {
                 return this.analysisTypes[this.type];
@@ -87,13 +108,13 @@ export default {
             let cardInfo = {
                 analysisType: this.type,
                 attribute: this.attribute,
-                graphs: this.graphs
+                analysis: this.analysis
             };
             this.$emit('cards', cardInfo);
             //Reset Modal
             this.type = null;
             this.attribute = null;
-            this.graphs = [];
+            this.analysis = [];
         }
     }
 };

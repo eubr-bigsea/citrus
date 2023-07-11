@@ -64,7 +64,7 @@ export default {
                             this.$t('errors.notFound'), this.$t('titles.error'),
                             { timeout: timeout || 5000, bodyMaxLength: bodyMaxLength || 150 }
                         );
-                        this.$router.push({name: 'home'});
+                        //this.$router.push({name: 'home'});
                     } else if (e.response.status === 401) {
                         this.$snotify.error(
                             this.$t('errors.accessDenied'), this.$t('titles.error'),
