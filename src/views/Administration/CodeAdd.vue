@@ -5,7 +5,7 @@
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>
-                            Adicionar Código
+                            {{$t('actions.addSourceCode')}}
                         </h1>
                     </div>
                     <hr>
@@ -18,16 +18,16 @@
                                required maxlength="100">
                     </div>
                     <div class="col-md-6">
-                        <label for="enabled" class="font-weight-bold">Status:</label>
+                        <label for="enabled" class="font-weight-bold">{{$tc('common.status')}}:</label>
                         <b-form-checkbox id="enabled" v-model="codeStatus">
-                            Habilitado
+                            {{$tc('common.enabled')}}
                         </b-form-checkbox>
                     </div>
                 </div>
 
                 <div class="row mt-2">
                     <div class="col-md-6">
-                        <label class="font-weight-bold">Descrição:</label>
+                        <label class="font-weight-bold">{{$tc('common.description')}}:</label>
                         <br>
                         <textarea id="" v-model="codeDescription" name="" class="form-control" 
                                   rows="3" />

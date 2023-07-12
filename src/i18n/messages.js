@@ -629,7 +629,7 @@ export default {
             lemonade: 'Lemonade',
             lemonadePlatform: 'Plataforma Lemonade',
             login: 'Entrar',
-            list: 'Lista de {what}',
+            list: 'Lista de {elem}',
             model: 'Modelo | Modelos',
             news: 'Novidades e Dicas',
             notebook: 'Notebook | Notebooks',
