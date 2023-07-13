@@ -50,7 +50,7 @@
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
                     <b-button :disabled="loadingData" size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
-                        @click="loadData">
+                        @click="loadData(null, null, false)">
                         <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
                     <!--
@@ -382,7 +382,7 @@ export default {
 
         this.connectWebSocket();
         if (workflowOk) {
-            await this.loadData();
+            await this.loadData(null, null, false);;
         } else {
             this.loadingData = false;
         }
@@ -807,7 +807,7 @@ export default {
         handleToggleStep(task) {
             task.enabled = !task.enabled;
             this.isDirty = true;
-            this.loadData();
+            this.loadData(null, null, false);
         },
         duplicate(step) {
             // Clone tasks instance
@@ -830,7 +830,7 @@ export default {
                 }
             });
             this.isDirty = true;
-            this.loadData();
+            this.loadData(null, null, false);
         },
         handleUpdateStep(step) {
             const task = this.workflowObj.tasks.find(t => t.id === step.id);
@@ -839,13 +839,13 @@ export default {
                 task.editing = false;
                 this.updateAttributeSuggestion();
                 this.isDirty = true;
-                this.loadData();
+                this.loadData(null, null, false);
             }
         },
         handleDeleteStep(task) {
             this.workflowObj.deleteTask(task);
             if (task.previewable) {
-                this.loadData();
+                this.loadData(null, null, false);
             }
             this.$refs.stepList.setEdition(true);
             this.isDirty = true;
@@ -981,7 +981,7 @@ export default {
             });
             this.isDirty = true;
             this.previewUntilHere(elem);
-            this.loadData();
+            this.loadData(null, null, false);
         },
 
         handleAnalyse(selected) {
