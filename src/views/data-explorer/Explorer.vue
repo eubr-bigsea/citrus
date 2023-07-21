@@ -62,7 +62,9 @@
                     <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]"
                         @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
                         @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
-                        :suggestion-event="getSuggestions" />
+                        @end-sort-steps="endSortSteps"
+                        :suggestion-event="getSuggestions" :extended-suggestion-event="getExtendedSuggestions" 
+                        />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -386,6 +388,7 @@ export default {
         } else {
             this.loadingData = false;
         }
+        this.updateAttributeSuggestion();
     },
     beforeUnmount() {
         this.disconnectWebSocket();
@@ -706,9 +709,9 @@ export default {
             );
         },
         /* Attribute suggestion */
-        _queryDataSource(id, callback) {
+        async _queryDataSource(id, callback) {
+            console.debug(`Querying data source ${id}.`)
             let attributes = null;
-            let self = this;
             id = parseInt(id);
             if (window.TahitiAttributeSuggester.cached === undefined) {
                 window.TahitiAttributeSuggester.cached = {};
@@ -717,23 +720,21 @@ export default {
                 attributes = window.TahitiAttributeSuggester.cached[id];
                 callback(attributes);
             } else {
-                let url = `${limoneroUrl}/datasources/${id}`;
-                axios.get(url).then(
-                    (response) => {
-                        //console.debug(response.data)
-                        let ds = response.data;
-                        attributes = ds.attributes.map(function (attr) { return attr.name; });
-                        window.TahitiAttributeSuggester.cached[id] = attributes;
-                        callback(attributes);
-                    },
-                    () => {
-                        self.warning(self.$t('errors.invalidDataSource'));
-                        callback([]);
-                    }
-                );
+                try {
+                    const response = await axios.get(`${limoneroUrl}/datasources/${id}?attributes_name=true`);
+                    //console.debug(response.data) 
+                    let ds = response.data;
+                    attributes = ds.attributes.map(function (attr) { return attr.name; });
+                    window.TahitiAttributeSuggester.cached[id] = attributes;
+                    callback(attributes);
+                } catch (ex) {
+                    this.warning(self.$t('errors.invalidDataSource'));
+                    callback([]);
+                }
             }
         },
         updateAttributeSuggestion() {
+            console.debug('Updating attribute suggestion.')
             const self = this;
             let attributeSuggestion = {};
             try {
@@ -765,20 +766,32 @@ export default {
             return Array.from(new Set(data));
         },
         getSuggestions(taskId) {
-            return this.tableData.attributes.map(a => a.label);
-            // const extendedSuggestions = this.getExtendedSuggestions(taskId);
-            // return extendedSuggestions;
-            /*
-                if (extendedSuggestions && extendedSuggestions.inputs?.length) {
-                    return this._unique(Array.prototype.concat.apply([],
-                        extendedSuggestions.inputs.map(
-                            (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
-                } else {
-                    return [];
-                }
-                */
+            //return this.tableData.attributes.map(a => a.label);
+            const extendedSuggestions = this.getExtendedSuggestions(taskId);
+            if (extendedSuggestions && extendedSuggestions.inputs?.length) {
+                return this._unique(Array.prototype.concat.apply([],
+                    extendedSuggestions.inputs.map(
+                        (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
+            } else {
+                return [];
+            }
         },
         getExtendedSuggestions(taskId) {
+            if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
+                if (window.TahitiAttributeSuggester.processed === undefined
+                    || this.attributeSuggestion[taskId] === undefined
+                    || Object.keys(this.attributeSuggestion[taskId]).length === 0 
+                    || this.attributeSuggestion[taskId].length === 0) {
+                    this.updateAttributeSuggestion();
+                }
+                if (this.attributeSuggestion[taskId]) {
+                    const suggestions = this.attributeSuggestion[taskId];
+                    return suggestions;
+                } else {
+                    return {};
+                }
+            }
+            return [];
             const allSuggestions = new Set();
             const self = this;
             if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
@@ -982,6 +995,7 @@ export default {
             this.isDirty = true;
             this.previewUntilHere(elem);
             this.loadData(null, null, false);
+            this.updateAttributeSuggestion();
         },
 
         handleAnalyse(selected) {

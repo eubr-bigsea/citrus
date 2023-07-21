@@ -65,7 +65,7 @@
                             {{$t('widgets.join.nameCollision')}}
                         </div>
                         <div ref="selection">
-                            <div class="row side">
+                            <div class="row">
                                 <JoinSelect ref="firstSelect"
                                             class="col-md-6"
                                             :selected="valueObject.firstSelect"
@@ -144,12 +144,17 @@ export default {
         }
         if (this.extendedSuggestionEvent) {
             const suggestions = this.extendedSuggestionEvent();
-            const inputs = suggestions.inputs.sort((a, b) => a.order - b.order);
+            try {
+                const inputs = suggestions.inputs.sort((a, b) => a.order - b.order);
 
-            if (inputs[0])
-                this.suggestions1 = inputs[0].attributes;
-            if (inputs[1])
-                this.suggestions2 = inputs[1].attributes;
+                if (inputs[0])
+                    this.suggestions1 = inputs[0].attributes;
+                if (inputs[1])
+                    this.suggestions2 = inputs[1].attributes;
+            } catch(e) {
+                this.suggestions1 = suggestions;
+                this.suggestions2 = suggestions;
+            }
         }
         if (this.valueObject === '') {
             this.valueObject = {
