@@ -83,7 +83,6 @@
                             <font-awesome-icon icon="fa fa-trash" />
                         </b-button>
                     </b-button-group>
-                    <button class="btn btn-sm" @click.prevent="obterSugestao">Obter sugestão</button>
                 </div>
             </div>
         </div>

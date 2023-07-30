@@ -46,10 +46,10 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow">
+                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow" :disabled="editing">
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
-                    <b-button :disabled="loadingData" size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
+                    <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
                         @click="loadData(null, null, false)">
                         <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
@@ -62,9 +62,8 @@
                     <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]"
                         @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
                         @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
-                        @end-sort-steps="endSortSteps"
-                        :suggestion-event="getSuggestions" :extended-suggestion-event="getExtendedSuggestions" 
-                        />
+                        @end-sort-steps="endSortSteps" :suggestion-event="getSuggestions"
+                        :extended-suggestion-event="getExtendedSuggestions" />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -366,9 +365,12 @@ export default {
         };
     },
     computed: {
-        pendingSteps() {
+        editing() {
             return (this.workflowObj && this.workflowObj.tasks &&
                 this.workflowObj.tasks.find(t => t.editing) !== undefined)
+        },
+        pendingSteps() {
+            return this.editing
                 || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
         }
     },
@@ -724,24 +726,23 @@ export default {
                     const response = await axios.get(`${limoneroUrl}/datasources/${id}?attributes_name=true`);
                     //console.debug(response.data) 
                     let ds = response.data;
-                    attributes = ds.attributes.map(function (attr) { return attr.name; });
+                    attributes = ds.attributes.map(function (attr) { return attr.name; }).sort();
                     window.TahitiAttributeSuggester.cached[id] = attributes;
                     callback(attributes);
                 } catch (ex) {
-                    this.warning(self.$t('errors.invalidDataSource'));
+                    this.warning(this.$t('errors.invalidDataSource'));
                     callback([]);
                 }
             }
         },
         updateAttributeSuggestion() {
-            console.debug('Updating attribute suggestion.')
-            const self = this;
             let attributeSuggestion = {};
             try {
                 // Add sequential flows to compute attribute suggestion
-                const clonedWorkflow = JSON.parse(JSON.stringify(self.workflowObj));
+                const clonedWorkflow = JSON.parse(JSON.stringify(this.workflowObj));
                 clonedWorkflow.flows = [];
-                clonedWorkflow.tasks = clonedWorkflow.tasks.sort((a, b) => a.display_order - b.display_order);
+                clonedWorkflow.tasks = clonedWorkflow.tasks
+                    .sort((a, b) => a.display_order - b.display_order);
                 let task = clonedWorkflow.tasks[0];
                 for (let i = 1; i < clonedWorkflow.tasks.length; i++) {
                     clonedWorkflow.flows.push({
@@ -755,8 +756,21 @@ export default {
                         Object.keys(result).forEach(key => {
                             attributeSuggestion[key] = result[key].uiPorts;
                         });
-                        Object.assign(self.attributeSuggestion, attributeSuggestion);
+                        Object.assign(this.attributeSuggestion, attributeSuggestion);
                         window.TahitiAttributeSuggester.processed = true;
+
+                        // Update with last valid suggestion if previous step is disabled
+                        /*let lastValid = null;
+                        const totalOfSteps = this.workflowObj.tasks.length;
+                        this.workflowObj.tasks.forEach((t, i) => {
+                            if (i < totalOfSteps && !t.enabled) {
+                                if (this.workflowObj.tasks[i + 1]?.enabled) {
+                                    this.attributeSuggestion[this.workflowObj.tasks[i + 1].id] = lastValid;
+                                }
+                            } else if (t.enabled) {
+                                lastValid = this.attributeSuggestion[t.id]
+                            }
+                        });*/
                     });
             } catch (e) {
                 console.log(e);
@@ -780,7 +794,7 @@ export default {
             if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                 if (window.TahitiAttributeSuggester.processed === undefined
                     || this.attributeSuggestion[taskId] === undefined
-                    || Object.keys(this.attributeSuggestion[taskId]).length === 0 
+                    || Object.keys(this.attributeSuggestion[taskId]).length === 0
                     || this.attributeSuggestion[taskId].length === 0) {
                     this.updateAttributeSuggestion();
                 }
@@ -792,29 +806,6 @@ export default {
                 }
             }
             return [];
-            const allSuggestions = new Set();
-            const self = this;
-            if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
-                if (window.TahitiAttributeSuggester.processed === undefined
-                    || this.attributeSuggestion[taskId] === undefined
-                    || this.attributeSuggestion[taskId].length === 0) {
-                    this.updateAttributeSuggestion();
-                }
-                Object.keys(this.attributeSuggestion).forEach(key => {
-                    self.attributeSuggestion[key] &&
-                        self.attributeSuggestion[key].output.forEach(v => allSuggestions.add(v));
-                });
-                Object.keys(this.schemas).forEach(key => {
-                    self.schemas[key] &&
-                        self.schemas[key].forEach(v => allSuggestions.add(v.name));
-                });
-                /*if (this.attributeSuggestion[taskId]) {
-                        return this.attributeSuggestion[taskId];
-                    } else {
-                        return [];
-                    }*/
-                return Array.from(allSuggestions).sort(this._caseInsensitiveComparator);
-            }
         },
         /* Trigged by the step action */
         handleToggleStep(task) {

@@ -67,6 +67,7 @@ export default {
             removeSelected: 'Remover',
             removeValue: 'Remover valor',
             rename: 'Renomear',
+            renameSelected: 'Renomear selecionados',
             replace: 'Substituir',
             restart: 'Reiniciar {what}',
             restore: 'Restaurar',

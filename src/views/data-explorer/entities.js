@@ -261,7 +261,11 @@ class Operation {
         this.fieldsMap = new Map();
         newForms.forEach(form => form.fields.forEach(field => {
             if (field.values) {
-                field.values = JSON.parse(field.values);
+                try {
+                    field.values = JSON.parse(field.values);
+                }catch(e){
+                    console.error(e, field);
+                }
             }
             this.fieldsMap.set(field.name, field);
         }));

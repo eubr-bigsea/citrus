@@ -3,37 +3,48 @@
         <div class="text-center font-weight-bold">
             {{ label }}
         </div>
-        <b-form-group>
-            <b-radio v-model.number="innerSelectionType" value="1">
-                {{ $t('widgets.join.allAttributesWithPrefix') }}
-            </b-radio>
-            <input v-if="innerSelectionType === 1" v-model="selectionPrefix" type="text" class="form-control">
-            <b-radio v-model.number="innerSelectionType" class="mt-2" value="3">
-                {{ $t('widgets.join.noAttributes') }}
-            </b-radio>
-            <b-radio v-model.number="innerSelectionType" class="mt-2" value="2">
-                {{ $t('widgets.join.selectAttributes') }}
-            </b-radio>
-        </b-form-group>
+        <div>
+            <b-form-group>
+                <b-radio v-model.number="innerSelectionType" value="1">
+                    {{ $t('widgets.join.allAttributesWithPrefix') }}
+                </b-radio>
+                <input v-if="innerSelectionType === 1" v-model="selectionPrefix" type="text" class="form-control">
+                <b-radio v-model.number="innerSelectionType" class="mt-2" value="3">
+                    {{ $t('widgets.join.noAttributes') }}
+                </b-radio>
+                <b-radio v-model.number="innerSelectionType" class="mt-2" value="2">
+                    {{ $t('widgets.join.selectAttributes') }}
+                </b-radio>
+            </b-form-group>
+            <div v-if="innerSelectionType === 2" class="text-center">
+                <small>
+                    <a class="mt-0 mb-0" href="" @click.prevent="toggle(false)">Limpar seleção</a> |
+                    <a class="mt-0 mb-0" href="" @click.prevent="toggle(true)">Marcar todos</a>
+                </small>
+            </div>
+        </div>
         <div class="selection scroll-area">
             <table v-if="innerSelectionType === 2" class="table table-sm table-borderless">
-                <tbody>
+                <thead>
                     <tr class="table-secondary">
                         <th style="width: 10px">
-                            <input type="checkbox" class="checkbox" :checked="allSelected" @change="toggleChecks">
+                            <input type="checkbox" class="checkbox custom-checkbox" :checked="allSelected"
+                                @change="toggleChecks">
                         </th>
                         <th style="width: 100%">
                             <input ref="prefix" type="text" maxlength="20" class="form-control"
-                                placeholder="Rename selected" :disabled="checked.length === 0"
+                                :placeholder="$t('actions.renameSelected')" :disabled="checked.length === 0"
                                 @keyup="changePrefix($event)">
                         </th>
                         <th style="max-width: 20px">
                             <small>Use</small>
                         </th>
                     </tr>
+                </thead>
+                <tbody>
                     <tr v-for="(s, index) in selectList" :key="index" class="inputs">
                         <td>
-                            <input v-model="checked" type="checkbox" class="checkbox" :value="index"
+                            <input v-model="checked" type="checkbox" class="checkbox custom-checkbox" :value="index"
                                 :title="$t('actions.edit')">
                         </td>
                         <td>
@@ -121,6 +132,11 @@ export default {
             }
             this.allSelected = !this.allSelected;
         },
+        toggle(value) {
+            this.selectList.forEach(item => {
+                item.select = value;
+            });
+        },
         uncheck(value) {
             this.checked = this.checked.filter(item => item !== value);
         },
@@ -147,7 +163,21 @@ input {
     height: 55vh;
     overflow: auto;
 }
+
+.selection>>>input {
+    margin-bottom: 0 !important;
+}
+
+.selection>>>td {
+    line-height: 10pt !important
+}
+
 .selection>>>small {
     font-size: 7pt;
+}
+
+.custom-checkbox {
+    color: green;
+    accent-color: currentcolor;
 }
 </style>

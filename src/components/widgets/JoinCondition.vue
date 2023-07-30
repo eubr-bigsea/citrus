@@ -40,6 +40,7 @@
                                     selected>
                                 =
                             </option>
+                            <!--
                             <option value="ne">
                                 ≠
                             </option>
@@ -55,6 +56,7 @@
                             <option value="le">
                                 ≤
                             </option>
+                            -->
                         </select>
                     </td>
                     <td>

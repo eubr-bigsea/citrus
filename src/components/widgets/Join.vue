@@ -285,6 +285,7 @@ export default {
     }
 
     .zoom80 {
+        zoom: .9;
         font-size: .9em;
     }
 </style>
