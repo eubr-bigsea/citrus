@@ -66,7 +66,7 @@
                                         <option value="gridon">Grid habilitada</option>
                                         -->
                             </select>
-                            <template v-if="['bubble', 'scatter'].includes(chartType)">
+                            <template v-if="['bubble', 'scatter', 'pointcloud'].includes(chartType)">
                                 <label>Atributo usado para cor:</label>
                                 <v-select v-model="editableVisualization.color_attribute.value" :options="attributes"
                                     label="name" value="name" :append-to-body="true" data-test="color_attribute"></v-select>
@@ -563,7 +563,7 @@ const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
 );
 const continuousColors = computed(() => {
-    return ['sunburst', 'treemap'].includes(props.chartType);
+    return ['sunburst', 'treemap', 'histogram2dcontour', 'parcoords', 'scattergeo', 'histogram2d'].includes(props.chartType);
 });
 const discreteColors = computed(() => {
     return !continuousColors.value;
