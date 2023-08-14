@@ -16,6 +16,7 @@ import VueRouter from 'vue-router';
 const ChangePassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ChangePassword.vue');
 const Login = () => import(/* webpackChunkName: "group-user-profile" */  './views/Login.vue');
 const Logout = () => import(/* webpackChunkName: "group-user-profile" */  './views/Logout.vue');
+const Disconnected = () => import(/* webpackChunkName: "group-user-profile" */  './views/Disconnected.vue');
 const Register = () => import(/* webpackChunkName: "group-user-profile" */  './views/Register.vue');
 const ResetPassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ResetPassword.vue');
 const Profile = () => import(/* webpackChunkName: "group-user-profile" */  './views/Profile.vue');
@@ -531,6 +532,11 @@ let router = new VueRouter({
             path: '/logout',
             name: 'logout',
             component: Logout
+        },
+        {
+            path: '/disconnected',
+            name: 'disconnected',
+            component: Disconnected
         },
         {
             path: '/register',

@@ -204,12 +204,12 @@
             </template>
             <template v-else>
                 <div class="clearfix">
-                    <b-dropdown size="sm" ref="axis" class="mt-2 mr-1 float-left"
+                    <b-dropdown v-if="hasAxis" size="sm" ref="axis" class="mt-2 mr-1 float-left"
                         variant="outline-secondary small-dd-title">
                         <template #button-content>
                             <font-awesome-icon class="mr-2" prefix="fa" icon="y" />
                         </template>
-                        <b-dropdown-form v-if="!['pie', 'donut', 'indicator'].includes(chartType)"
+                        <b-dropdown-form v-if="hasAxis"
                             form-class="down-drop-form">
                             <div class="row axis-form">
                                 <div class="col-12">
@@ -264,6 +264,7 @@
                             <div>O tipo de gráfico não possui configurações para o eixo.</div>
                         </b-dropdown-form>
                     </b-dropdown>
+                    <div v-else class="axis-label">Exibir</div>
 
                     <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.y.value"
                         :move="handleYAxisDrag" direction="horizontal" @start="drag = true" @end="drag = false"
@@ -442,12 +443,12 @@
                     </b-button>
                 </div>
                 <div class="clearfix">
-                    <b-dropdown size="sm" ref="axis" class="mt-2 mr-1 float-left"
+                    <b-dropdown v-if="hasAxis" size="sm" ref="axis" class="mt-2 mr-1 float-left"
                         variant="outline-secondary small-dd-title">
                         <template #button-content>
                             <font-awesome-icon class="mr-2" prefix="fa" icon="x" />
                         </template>
-                        <b-dropdown-form v-if="!['pie', 'donut', 'indicator'].includes(chartType)"
+                        <b-dropdown-form v-if="hasAxis"
                             form-class="down-drop-form">
                             <div class="row axis-form">
                                 <div class="col-12">
@@ -505,6 +506,7 @@
                         </b-dropdown-form>
 
                     </b-dropdown>
+                    <div v-else class="axis-label">Por</div>
                     <draggable ghost-class="ghost" handle=".drag-handle" :list="editableVisualization.x.value"
                         :move="handleYAxisDrag" direction="horizontal" @start="drag = true" @end="drag = false"
                         class="draggable-area">
@@ -749,11 +751,15 @@ editableVisualization.value = structuredClone(props.value);
 
 
 /* Computed */
+
 const mapFamily = computed(() =>
     ['scattermapbox'].includes(props.chartType)
 );
 const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
+);
+const hasAxis = computed(() => 
+    !['pie', 'donut', 'indicator'].includes(props.chartType)
 );
 const xSeries = computed(() =>
     editableVisualization.value.x.value.slice(0, limitXDimension.value)
@@ -910,5 +916,10 @@ watch(
 
 .select2-small {
     zoom: .8
+}
+.axis-label {
+    float: left;
+    width: 60px;
+    margin-top: 8px;
 }
 </style>

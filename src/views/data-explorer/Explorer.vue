@@ -46,11 +46,12 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow" :disabled="editing">
+                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"
+                        :disabled="editing">
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
-                    <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
-                        @click="loadData(null, null, false)">
+                    <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary"
+                        class="float-right mt-2 mr-1" @click="loadData(null, null, false)">
                         <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
                     <!--
@@ -94,154 +95,162 @@
 
             <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true" @close="stats = null"
                 @ok="stats = null">
-                <table v-if="stats && stats.attribute === null"
-                    class="table table-bordered table-stats table-striped table-sm">
-                    <thead>
-                        <tr v-if="stats.message" class="text-center">
-                            <td v-for="k in stats.message.columns" :key="k.name">
-                                {{ k.name }}
-                            </td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(v, row) in stats.message.columns[0].values" :key="row">
-                            <td v-for="(attr, col) in stats.message.columns" :key="col"
-                                :class="{ 'font-weight-bold': col === 0 }">
-                                {{ stats.message.columns[col].values[row] || '-' }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div v-else>
-                    <span v-if="stats">
-                        <select @change.prevent="handleSelectAttributeStat" class="form-control-sm mb-2"
-                            ref="selectAttributeStat">
-                            <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{
-                                name
-                            }}</option>
-                        </select>
-                    </span>
-                    <b-tabs>
-                        <b-tab title="Estatísticas" title-link-class="small-nav-link">
-                            <div v-if="stats && stats.message" class="row">
-                                <div v-if="stats && stats.message.histogram"
-                                    :class="stats.message.numeric ? 'col-9' : 'col-12'">
-                                    <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
-                                        showlegend: false,
-                                        margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
-                                        xaxis: {
-                                            tickangle: 45, tickfont: { size: 11 },
-                                            type: stats.message.numeric ? null : 'category'
-                                        },
-                                        yaxis: { domain: [0.2] },
-                                        yaxis2: {
-                                            domain: [0.8],
-                                            visible: false,
-                                        },
-                                        legend: { traceorder: 'reversed' },
-                                        height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
-                                        autosize: true,
-                                    }" :data="getStatData2()" :options="{ displayModeBar: false }" />
+                <div class="stats-div p-1">
+                    <div v-if="stats && stats.attribute === null">
+                        <h5>Estatísticas do resultado</h5>
+                        <b-checkbox>Mostrar apenas para atributos numéricos</b-checkbox>
+                        <b-checkbox>Calcular para todos os registros, ignorando a opção de amostrar (pode demorar, se muitos registros).</b-checkbox>
+
+                        <table class="table table-bordered table-stats table-striped table-sm">
+                            <thead>
+                                <tr v-if="stats.message" class="text-center">
+                                    <td v-for="k in stats.message.columns" :key="k.name">
+                                        {{ k.name }}
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(v, row) in stats.message.columns[0].values" :key="row">
+                                    <td v-for="(attr, col) in stats.message.columns" :key="col"
+                                        :class="{ 'font-weight-bold': col === 0 }">
+                                        {{ stats.message.columns[col].values[row] || '-' }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-else>
+                        <span v-if="stats">
+                            <select @change.prevent="handleSelectAttributeStat" class="form-control-sm mb-2"
+                                ref="selectAttributeStat">
+                                <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{
+                                    name
+                                }}</option>
+                            </select>
+                        </span>
+                        <b-tabs>
+                            <b-tab title="Estatísticas" title-link-class="small-nav-link">
+                                <div v-if="stats && stats.message" class="row">
+                                    <div v-if="stats && stats.message.histogram"
+                                        :class="stats.message.numeric ? 'col-9' : 'col-12'">
+                                        <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
+                                            showlegend: false,
+                                            margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
+                                            xaxis: {
+                                                tickangle: 45, tickfont: { size: 11 },
+                                                type: stats.message.numeric ? null : 'category'
+                                            },
+                                            yaxis: { domain: [0.2] },
+                                            yaxis2: {
+                                                domain: [0.8],
+                                                visible: false,
+                                            },
+                                            legend: { traceorder: 'reversed' },
+                                            height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
+                                            autosize: true,
+                                        }" :data="getStatData2()" :options="{ displayModeBar: false }" />
 
 
-                                </div>
-                                <div v-if="stats.message.numeric" class="col-3">
-                                    <div v-if="stats.message.outliers && stats.message.outliers.length">
-                                        <span>Valores atípicos (outliers)*</span>
+                                    </div>
+                                    <div v-if="stats.message.numeric" class="col-3">
+                                        <div v-if="stats.message.outliers && stats.message.outliers.length">
+                                            <span>Valores atípicos (outliers)*</span>
+                                            <table class="table table-sm table-stats">
+                                                <tr v-for="t, i in stats.message.outliers" :key="i">
+                                                    <td>{{ t }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div v-else>Não há valores atípicos (outliers)</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <span>Estatísticas (exclui nulos)</span>
                                         <table class="table table-sm table-stats">
-                                            <tr v-for="t, i in stats.message.outliers" :key="i">
-                                                <td>{{ t }}</td>
+                                            <tr v-for="value, stat in stats.message.stats" :key="stat">
+                                                <td class="text-capitalize">{{ stat }}</td>
+                                                <td>{{ value }}</td>
                                             </tr>
                                         </table>
                                     </div>
-                                    <div v-else>Não há valores atípicos (outliers)</div>
-                                </div>
-                                <div class="col-4">
-                                    <span>Estatísticas (exclui nulos)</span>
-                                    <table class="table table-sm table-stats">
-                                        <tr v-for="value, stat in stats.message.stats" :key="stat">
-                                            <td class="text-capitalize">{{ stat }}</td>
-                                            <td>{{ value }}</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                                <div v-if="stats.message.top20" class="col-8">
-                                    <span>Top valores *</span>
-                                    <table class="table table-sm table-stats">
-                                        <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
-                                            <td class="col-8">
-                                                {{ t[0] }}
-                                                <div class="top-bar"
-                                                    :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
-                                            </td>
-                                            <td class="col-4 text-right">
-                                                {{ t[1] }}
-                                                ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
+                                    <div v-if="stats.message.top20" class="col-8">
+                                        <span>Top valores *</span>
+                                        <table class="table table-sm table-stats">
+                                            <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
+                                                <td class="col-8">
+                                                    {{ t[0] }}
+                                                    <div class="top-bar"
+                                                        :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                                </td>
+                                                <td class="col-4 text-right">
+                                                    {{ t[1] }}
+                                                    ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
 
-                                <div class="col-12 text-right">
-                                    <small><em>*limitados a 10</em></small>
+                                    <div class="col-12 text-right">
+                                        <small><em>*limitados a 10</em></small>
+                                    </div>
                                 </div>
-                            </div>
-                        </b-tab>
-                        <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
-                            :title-link-class="'small-nav-link'">
-                            <form action="" class="form-inline">
-                                <div class="form-group mb-2">
-                                    <label for="similarity">Similaridade:</label> &nbsp;
-                                    <select v-model.number="similarity" name="similarity" class="form-control-sm ml-3 mr-3">
-                                        <option value="0.5">
-                                            0.5 (menos semelhantes)
-                                        </option>
-                                        <option>0.6</option>
-                                        <option>0.7</option>
-                                        <option>0.8</option>
-                                        <option value="0.9">
-                                            0.9 (mais semelhantes)
-                                        </option>
-                                    </select>
+                            </b-tab>
+                            <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
+                                :title-link-class="'small-nav-link'">
+                                <form action="" class="form-inline">
+                                    <div class="form-group mb-2">
+                                        <label for="similarity">Similaridade:</label> &nbsp;
+                                        <select v-model.number="similarity" name="similarity"
+                                            class="form-control-sm ml-3 mr-3">
+                                            <option value="0.5">
+                                                0.5 (menos semelhantes)
+                                            </option>
+                                            <option>0.6</option>
+                                            <option>0.7</option>
+                                            <option>0.8</option>
+                                            <option value="0.9">
+                                                0.9 (mais semelhantes)
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <button class="btn btn-secondary btn-sm" @click.prevent="handleComputeCluster">
+                                            Computar grupos
+                                        </button>
+                                        <button class="btn btn-success btn-sm ml-2" @click.prevent="handleComputeCluster">
+                                            Mesclar selecionados
+                                        </button>
+                                    </div>
+                                </form>
+                                <div style="height: 500px; overflow-y:auto">
+                                    <table v-if="valuesClusters && valuesClusters.length > 0"
+                                        class="table table-sm table-smallest mt-4">
+                                        <tr>
+                                            <th />
+                                            <th class="col-6">
+                                                Grupo
+                                            </th>
+                                            <th class="col-6">
+                                                Substituir por
+                                            </th>
+                                        </tr>
+                                        <tr v-for="values in valuesClusters" :key="values[0]">
+                                            <td>
+                                                <input type="checkbox" class="checkbox">
+                                            </td>
+                                            <td>
+                                                <span v-for="v, k in values" :key="k" style="white-space: pre"
+                                                    :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm w-100"
+                                                    :value="values[0]">
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
-                                <div class="form-group mb-2">
-                                    <button class="btn btn-secondary btn-sm" @click.prevent="handleComputeCluster">
-                                        Computar grupos
-                                    </button>
-                                    <button class="btn btn-success btn-sm ml-2" @click.prevent="handleComputeCluster">
-                                        Mesclar selecionados
-                                    </button>
-                                </div>
-                            </form>
-                            <div style="height: 500px; overflow-y:auto">
-                                <table v-if="valuesClusters && valuesClusters.length > 0"
-                                    class="table table-sm table-smallest mt-4">
-                                    <tr>
-                                        <th />
-                                        <th class="col-6">
-                                            Grupo
-                                        </th>
-                                        <th class="col-6">
-                                            Substituir por
-                                        </th>
-                                    </tr>
-                                    <tr v-for="values in valuesClusters" :key="values[0]">
-                                        <td>
-                                            <input type="checkbox" class="checkbox">
-                                        </td>
-                                        <td>
-                                            <span v-for="v, k in values" :key="k" style="white-space: pre"
-                                                :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm w-100"
-                                                :value="values[0]">
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </b-tab>
-                    </b-tabs>
+                            </b-tab>
+                        </b-tabs>
+                    </div>
                 </div>
             </b-modal>
         </div>
@@ -1356,5 +1365,10 @@ export default {
 .top-bar {
     height: 4px;
     background: rgb(49, 130, 189)
+}
+
+.stats-div {
+    max-height: 65vh;
+    overflow-y: auto;
 }
 </style>
