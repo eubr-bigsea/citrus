@@ -15,8 +15,10 @@
 
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
+import VueI18n from 'vue-i18n';
+import { createI18n } from 'vue-i18n-bridge'
 import router from './../../src/router.js';
-
+import messages from './../../src/i18n/messages.js';
 
 // Import commands.js using ES2015 syntax:
 import './commands.js';
@@ -48,6 +50,15 @@ Vue.use(BootstrapVue);
 Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
 Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 
-
-
+Vue.use(VueI18n, { bridge: true });
+const i18nComposition = createI18n({
+    allowComposition: true,
+    globalInjection: true,
+    global: true,
+    legacy: false,
+    locale: 'pt',
+    fallbackLocale: 'en',
+    messages
+}, VueI18n);
+Vue.use(i18nComposition);
 
