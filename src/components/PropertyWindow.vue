@@ -34,9 +34,7 @@
                 <div>
                     <form>
                         <b-card no-body
-                                class="scrollable">
-                            <VuePerfectScrollbar ref="scrollBar"
-                                                 use-both-wheel-axes="true">
+                                class="scroll-area scrollable">
                                 <b-tabs v-model="tabIndex"
                                         card>
                                     <b-tab v-for="(form, index) in forms"
@@ -61,7 +59,8 @@
                                                            :read-only="!field.editable"
                                                            :lookups-method="getLookups"
                                                            :lookups="lookups"
-                                                           context="context" />
+                                                           context="context" 
+                                                           @update-form-field-value="updateField"/>
                                             </keep-alive>
                                         </div>
                                     </b-tab>
@@ -77,7 +76,6 @@
                                         </button>
                                     </b-tab>
                                 </b-tabs>
-                            </VuePerfectScrollbar>
                         </b-card>
                     </form>
                     <div class="card-body">
@@ -210,6 +208,7 @@ export default {
         publishingEnabled: {type: Boolean, default: () => false},
         variables: { type: Array, default: () => [] }
     },
+    emit: ['update-form-field-value'],
     data() {
         return {
             allFields: new Map(),
@@ -239,7 +238,7 @@ export default {
     mounted() {
         const self = this;
         this.update();
-        self.$root.$on('update-form-field-value', this.toggleFields);
+        //self.$root.$on('update-form-field-value', this.toggleFields);
     },
     methods: {
         getWidget(field) {
@@ -277,6 +276,7 @@ export default {
             return function () {
                 try{
                     return eval(js);
+                    return true;
                 } catch(pass){
                     return false;
                 }
@@ -342,8 +342,9 @@ export default {
             }
             this.tabIndex = 0;
             callback();
+            
         },
-        toggleFields(field, value){
+        updateField(field, value, labelValue){
             const self = this;
             field.internalValue = value;
             const f = self.allFields[field.name];
@@ -366,6 +367,7 @@ export default {
                     });
                 }
             }
+            this.$emit('update-form-field-value', field, value, labelValue)
         }
     }
 }
@@ -398,8 +400,9 @@ export default {
         zoom: 100%;
         font-size: .75rem
     }
-    .scrollable {
+    .scrollable{
         max-height: calc(100vh - 420px);
+        overflow-y: auto;
     }
 </style>
 <style>

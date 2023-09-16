@@ -67,6 +67,7 @@ import {
     faHistory,
     faHome,
     faImage,
+    faInfo,
     faInfoCircle,
     faItalic,
     faLaptopCode,
@@ -140,9 +141,19 @@ import {
     faArrowUp,
     faCaretLeft,
     faCaretRight,
+    faY,
+    faX,
+    faXmarkCircle,
+    faHatWizard,
+    faDroplet,
+    faA,
+    faMapLocationDot,
+    faFileExport,
+    faMaximize,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
+    faA,
     faAngleDoubleRight,
     faAngleDown,
     faAngleRight,
@@ -192,6 +203,7 @@ library.add(
     faDatabase,
     faDollarSign,
     faDownload,
+    faDroplet,
     faEdit,
     faEquals,
     faEllipsisH,
@@ -200,6 +212,7 @@ library.add(
     faExclamation,
     faExclamationCircle,
     faExclamationTriangle,
+    faFileExport,
     faExternalLinkAlt,
     faEye,
     faEyeSlash,
@@ -214,9 +227,11 @@ library.add(
     faGripVertical,
     faHandPaper,
     faHashtag,
+    faHatWizard,
     faHistory,
     faHome,
     faImage,
+    faInfo,
     faInfoCircle,
     faItalic,
     faKey,
@@ -230,6 +245,8 @@ library.add(
     faLock,
     faLockOpen,
     faMagic,
+    faMapLocationDot,
+    faMaximize,
     faMedal,
     faMicroscope,
     faMinusCircle,
@@ -283,10 +300,13 @@ library.add(
     faVial,
     faVials,
     faWarehouse,
+    faX,
+    faXmarkCircle,
+    faY,
 
 );
 /**
  * Allows DOM to change <i> tags to SVG for more features like layering
  * https://fontawesome.com/how-to-use/on-the-web/styling/layering
  */
-dom.watch();
+//dom.watch();

@@ -32,9 +32,10 @@ export default {
     props: {
         history: { type: Array, default: () => [] },
     },
+    emit: ['onrestore-workflow'],
     methods: {
         restore(version) {
-            this.$root.$emit('onrestore-workflow', version);
+            this.$emit('onrestore-workflow', version);
         },
         show() {
             this.$refs.modal.show();

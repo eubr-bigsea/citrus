@@ -5,6 +5,7 @@ class Constants {
     };
 }
 const META_PLATFORM_ID = 1000;
+const MODEL_BUILDER_CATEGORY = 2113;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null, $meta = null } = {}) {
 
@@ -37,7 +38,7 @@ class Workflow {
         let forms = {};
 
         // Operations that handle 'attributes' in a different field
-        let ignoreDefault = false;
+        let ignoreDefault = !!op.categories.filter(c => c.id == MODEL_BUILDER_CATEGORY);
         if (attrs && attrs.length && attrs[0]) {
             if (op.slug === 'sort') {
                 ignoreDefault = true;
@@ -89,7 +90,7 @@ class Workflow {
         };
         const realOp = op || new Operation({ id: 2110 });
         return realOp.createTask({
-            name: i18n.$tc('dataExplorer.sampelData') || realOp.name,
+            name: i18n.$tc('dataExplorer.sampleData') || realOp.name,
             forms, display_order
         });
     }
@@ -125,14 +126,14 @@ class Workflow {
         const workflow = new Workflow({
             $meta: { method, task_type: taskType },
             name: name,
-            tasks: [dataReader],
+            tasks: [dataReader,],
             type: 'MODEL_BUILDER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             forms: { $meta: { value: { label: labelAttribute, method, taskType } } }
         });
         return workflow;
     }
-    static buildVisualizationBuilder(name, ds, method, i18n) {
+    static buildVisualizationBuilder(name, ds, type, method, i18n) {
         const dataReader = new Task({
             name: i18n.$tc('dataExplorer.readData'),
             operation: new Operation({ id: 2100 }),
@@ -140,11 +141,18 @@ class Workflow {
         });
         dataReader.setProperty('data_source', ds);
         dataReader.setProperty('display_sample', '0');
+        const visualization = new Task({
+            name: 'visualization',
+            operation: new Operation({ id: 2370 }),
+            display_order: 5,
+        });
+        visualization.setProperty('type', { value: type });
+
 
         const workflow = new Workflow({
             $meta: { method },
             name: name,
-            tasks: [dataReader],
+            tasks: [dataReader, visualization],
             type: 'VIS_BUILDER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             forms: { $meta: { value: { method } } }
@@ -198,23 +206,38 @@ class VisualizationBuilderWorkflow extends Workflow {
         //
         this.readData = null;
         this.filter = null;
-        this.group = null;
+        this.sort = null;
         this.sample = null;
         this.visualization = null;
 
-        const pairs = new Map([
-            ['filter', 'filter'],
-            ['group', 'group'],
+        // Default tasks to be included
+        const keyPairs = [
             ['read-data', 'readData'],
+            ['filter', 'filter'],
+            ['sort', 'sort'],
             ['sample', 'sample'],
             ['visualization', 'visualization'],
-        ]);
+        ];
+        const pairs = new Map(keyPairs);
+        this.tasks = this.tasks.filter(task => {
+            return pairs.has(task.operation.slug)
+        });
         this.tasks.forEach((task) => {
             if (pairs.has(task.operation.slug)) {
                 this[pairs.get(task.operation.slug)] = task;
                 task.operation = operations.get(task.operation.slug);
             }
         });
+
+        keyPairs.forEach((kp, i) => {
+            const [slug, prop] = kp;
+            if (!this[prop]) {
+                this[prop] = this.addTask(operations.get(slug));
+            }
+            this[prop].display_order = i;
+        });
+        this.tasks.sort((a, b) => a.display_order - b.display_order);
+
         for (let [slug, prop] of pairs.entries()) {
             // recreate the tasks
             if (this[prop] === null) {
@@ -238,7 +261,11 @@ class Operation {
         this.fieldsMap = new Map();
         newForms.forEach(form => form.fields.forEach(field => {
             if (field.values) {
-                field.values = JSON.parse(field.values);
+                try {
+                    field.values = JSON.parse(field.values);
+                }catch(e){
+                    console.error(e, field);
+                }
             }
             this.fieldsMap.set(field.name, field);
         }));
@@ -414,19 +441,162 @@ class Flow {
         }
     }
 }
-/*
-module.exports = {
-    Workflow,
-    Platform,
-    Operation,
-    OperationList,
-    Task,
-    Form,
-    FormField,
-    Constants,
-    ModelBuilderWorkflow,
-    VisualizationBuilderWorkflow,
-}*/
+class Visualization {
+    constructor({ type = { value: null }, display_legend = { value: 'HIDE' },
+        smoothing = { value: true }, palette = { value: null },
+        color_scale = { value: null },
+        x = { value: [] }, y = { value: [] },
+        x_axis = null, y_axis = null, title = { value: null },
+        hole = null, text_position = null, text_info = null,
+        right_margin = null, left_margin = 0, top_margin = 0, bottom_margin = 0,
+        auto_margin = { value: true }, template = { value: null },
+        blackWhite = { value: false },
+        subgraph = { value: null },
+        subgraph_orientation = { value: 'v' },
+        animation = { value: null },
+        opacity = { value: 1 },
+        height = { value: null }, width = { value: null },
+        scatter_color = { value: null },
+        scatter_size = { value: null },
+        fill_opacity = { value: 255 },
+        number_format = { value: null },
+        paper_color = { value: null },
+
+        size_attribute = { value: null },
+        text_attribute = { value: null },
+        color_attribute = { value: null },
+        style = { value: null },
+
+        color_aggregation = { value: null },
+
+        tooltip_info = { value: null },
+        zoom = { value: null },
+        center_latitude = { value: null },
+        center_longitude = { value: null },
+        latitude = { value: null },
+        longitude = { value: null },
+        marker_size = { value: null },
+
+        limit = { value: null },
+        filter = { value: null },
+
+    },
+    ) {
+        this.filter = filter;
+        this.limit = limit;
+
+        this.marker_size = marker_size;
+        this.center_latitude = center_latitude;
+        this.center_longitude = center_longitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.zoom = zoom;
+        this.style = style;
+        this.tooltip_info = tooltip_info;
+        this.number_format = number_format;
+        this.display_legend = display_legend; //right, left, top, bottom, hide, in_chart
+        this.smoothing = smoothing;
+        this.palette = palette;
+        this.color_scale = color_scale;
+        this.title = title;
+        this.color_attribute = color_attribute;
+        this.color_aggregation = color_aggregation;
+        this.size_attribute = size_attribute;
+        this.text_attribute = text_attribute;
+        this.fill_opacity = fill_opacity;
+
+        this.paper_color = paper_color;
+        this.x = x;
+        this.y = y;
+        this.type = type;
+        this.x_axis = (x_axis && x_axis.value) ? x_axis : { value: new Axis({}) };
+        this.y_axis = (y_axis && y_axis.value) ? y_axis : { value: new Axis({}) };
+
+        this.hole = hole;
+        this.text_info = text_info;
+        this.text_position = text_position;
+        this.right_margin = right_margin;
+        this.left_margin = left_margin;
+        this.top_margin = top_margin;
+        this.bottom_margin = bottom_margin;
+        this.auto_margin = auto_margin;
+        this.template = template;
+        this.blackWhite = blackWhite;
+        this.subgraph = subgraph;
+        this.subgraph_orientation = subgraph_orientation;
+        this.animation = animation;
+        this.height = height;
+        this.width = width;
+        this.opacity = opacity;
+        this.scatter_color = scatter_color;
+        this.scatter_size = scatter_size;
+
+    }
+    /*
+    toJSON() {
+        return JSON.stringify(this);
+    }*/
+}
+class XDimension {
+    constructor({ binning = 'EQUAL_INTERVAL', bins = 20, binSize = 10,
+        emptyBins = 'ZEROS', multiplier = null, decimal_places = 2,
+        prefix = null, suffix = null, label = null, max_displayed = null,
+        group_others = true, sorting = 'NATURAL' }) {
+        this.binning = binning;  // equal_interval, fixed_size, none, categorical
+        this.bins = bins;
+        this.binSize = binSize;
+        this.emptyBins = emptyBins; //zeros, link, interrupt
+        this.multiplier = multiplier; // A number to multiply by
+        this.decimal_places = decimal_places;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.label = label;
+        this.max_displayed = (binning === 'CATEGORICAL') ? max_displayed || 20 : max_displayed;
+        this.group_others = group_others;
+        this.sorting = sorting; //natural, yAsc, yDesc
+    }
+}
+class YDimension {
+    constructor({ attribute = '*', aggregation = 'COUNT', compute = null, displayOn = 'left',
+        multiplier = null, decimal_places = 2,
+        prefix = null, suffix = null, label = null,
+        strokeSize = 0, stroke = null, color = null, marker = null,
+        enabled = true }) {
+
+        this.attribute = attribute;
+        this.aggregation = aggregation; //count, countd, max, min, avg, sum
+        this.compute = compute; //percent, ration_to_avg, cum_values, cum_percent, differential
+        this.displayOn = displayOn; // left, right
+
+        this.multiplier = multiplier; // A number to multiply by
+        this.decimal_places = decimal_places;
+        this.prefix = prefix;
+        this.suffix = suffix;
+        this.label = label;
+        this.strokeSize = strokeSize;
+        this.stroke = stroke;
+        this.color = color;
+        this.marker = marker;
+        this.enabled = enabled;
+    }
+}
+class Axis {
+    constructor({ lowerBound = null, upperBound = null, logScale = false, display = true,
+        displayLabel = true, label = null, multiplier = null, decimal_places = 2,
+        prefix = null, suffix = null }) {
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+        this.logScale = logScale;
+        this.display = display;
+        this.displayLabel = displayLabel;
+        this.label = label;
+        this.multiplier = multiplier;
+        this.decimal_places = decimal_places;
+        this.prefix = prefix;
+        this.suffix = suffix;
+    }
+}
+
 export {
     Workflow,
     Platform,
@@ -437,5 +607,7 @@ export {
     FormField,
     Constants,
     ModelBuilderWorkflow,
+    Visualization,
     VisualizationBuilderWorkflow,
+    YDimension, XDimension, Axis
 };

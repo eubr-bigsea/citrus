@@ -1,25 +1,22 @@
 <template>
-    <div class="xmyview"
-         style="margin-top: 15px;">
+    <div class="xmyview" style="margin-top: 15px;">
         <p v-if="loading">
-            <font-awesome-icon icon="spinner"
-                               pulse
-                               class="icon" /> {{$t('common.loading')}}
+            <font-awesome-icon icon="spinner" pulse class="icon" /> {{ $t('common.loading') }}
         </p>
 
         <div v-if="error">
-            <div class="alert alert-danger"
-                 role="alert">
-                {{errorMessage}}
+            <div class="alert alert-danger" role="alert">
+                {{ errorMessage }}
             </div>
-            {{$t('visualization.tryRefresh')}}
+            {{ $t('visualization.tryRefresh') }}
         </div>
 
-        <component :is="visualizationComponent"
-                   class="myview"
-                   :visualization-data="visualizationData"
-                   :public-route="publicRoute"
-                   :height="height" />
+        <component v-if="visualizationComponent !== 'plotly'" :is="visualizationComponent"
+            :visualization-data="visualizationData" :public-route="publicRoute" :height="height" />
+        <div v-else>
+            <plotly :data="visualizationData.data.data" :display-mode-bar="true" :auto-resize="true"
+                :layout="{ ...visualizationData.data.layout, autosize: true, height: height }" />
+        </div>
     </div>
 </template>
 
@@ -48,6 +45,8 @@ import Markdown from "../visualization/Markdown.vue";
 import PieChart from "../visualization/PieChart.vue";
 import Treemap from "../visualization/Treemap.vue";
 import Html from '../visualization/Html.vue';
+import Plotly from '../visualization/Plotly.vue';
+
 
 let highchartsDefaultLang = undefined;
 
@@ -85,7 +84,6 @@ const getVisualizationData = function (responseData) {
             }))
         }))
     }
-
     return responseData;
 }
 
@@ -114,14 +112,15 @@ export default {
         'iframe-panel': IFrame,
         'markdown': Markdown,
         'treemap': Treemap,
-        'html-display': Html
+        'html-display': Html,
+        'plotly': Plotly,
     },
     props: {
         dataSourceType: { default: () => 'caipirinha', type: String },
-        publicRoute: { default: () => true , type: Boolean },
-        task: {default: () => null, type: Object},
-        url: {default: () => null, type: String},
-        height: { default: 450, type: Number}
+        publicRoute: { default: () => true, type: Boolean },
+        task: { default: () => null, type: Object },
+        url: { default: () => null, type: String },
+        height: { default: 450, type: Number }
     },
     data() {
         return {
@@ -144,7 +143,11 @@ export default {
                     this.visualizationComponent = this.getVisualizationComponent(
                         response.data.type.id
                     );
-                    this.visualizationData = getVisualizationData(response.data);
+                    if (response.data.type.id === 145) {
+                        this.visualizationData = getVisualizationData(response);
+                    } else {
+                        this.visualizationData = getVisualizationData(response.data);
+                    }
                     this.loading = false;
                 })
                 .catch(response => {
@@ -157,46 +160,48 @@ export default {
     methods: {
         getVisualizationComponent(typeId) {
             switch (typeId) {
-            case 1:
-                return "html-display";
-            case 35:
-                return "caipirinha-visualization-table";
-            case 68:
-                return "caipirinha-visualization-line";
-            case 69:
-                return "caipirinha-visualization-bar";
-            case 70:
-                return "caipirinha-visualization-pie";
-            case 71:
-                return "caipirinha-visualization-area";
-            case 72:
-                return "caipirinha-visualization-markdown";
-            case 87:
-                return "caipirinha-visualization-scatter";
-            case 88:
-                return "caipirinha-visualization-map";
-            case 89:
-                return "caipirinha-visualization-donut";
-            case 123:
-                return "caipirinha-visualization-boxplot";
-            case 124:
-                return "caipirinha-visualization-histogram";
-            case 130:
-                return "indicator";
-            case 131:
-                return "markdown";
-            case 133:
-                return "heatmap";
-            case 134:
-                return "bubble-chart";
-            case 1350:
-                return "force-direct";
-            case 136:
-                return "iframe-panel";
-            case 137:
-                return "treemap";
-            default:
-                throw new TypeError(this.$t("errors.invalidVisualizationId"));
+                case 1:
+                    return "html-display";
+                case 35:
+                    return "caipirinha-visualization-table";
+                case 68:
+                    return "caipirinha-visualization-line";
+                case 69:
+                    return "caipirinha-visualization-bar";
+                case 70:
+                    return "caipirinha-visualization-pie";
+                case 71:
+                    return "caipirinha-visualization-area";
+                case 72:
+                    return "caipirinha-visualization-markdown";
+                case 87:
+                    return "caipirinha-visualization-scatter";
+                case 88:
+                    return "caipirinha-visualization-map";
+                case 89:
+                    return "caipirinha-visualization-donut";
+                case 123:
+                    return "caipirinha-visualization-boxplot";
+                case 124:
+                    return "caipirinha-visualization-histogram";
+                case 130:
+                    return "indicator";
+                case 131:
+                    return "markdown";
+                case 133:
+                    return "heatmap";
+                case 134:
+                    return "bubble-chart";
+                case 1350:
+                    return "force-direct";
+                case 136:
+                    return "iframe-panel";
+                case 137:
+                    return "treemap";
+                case 145:
+                    return "plotly";
+                default:
+                    throw new TypeError(this.$t("errors.invalidVisualizationId"));
             }
         },
         setLang() {
@@ -220,9 +225,9 @@ export default {
 </script>
 
 <style>
-    div.myview {
-        height: 95%;
-        margin: 0 1px;
-        width: 98% !important;
-    }
+div.myview {
+    height: 95%;
+    margin: 0 1px;
+    width: 98% !important;
+}
 </style>

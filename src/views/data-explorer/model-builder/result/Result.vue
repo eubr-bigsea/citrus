@@ -7,7 +7,7 @@
                     <b-list-group-item v-for="job in jobs"
                                        :key="job.id"
                                        class="flex-column align-items-start p-0"
-                                       @click="handleClick(job)">
+                                       @click="handleClick(job)" role="button">
                         <div class="d-flex w-100 justify-content-between p-1"
                              :class="(selectedJob && (selectedJob.id === job.id)) ? 'bg-secondary text-white': 'bg-light' ">
                             <span class="mb-1 job-title">{{$tc('titles.job')}} #{{job.id}}</span>
@@ -50,8 +50,7 @@
                 </div>
             </div>
             <div class="col-md-8 col-lg-9">
-                <b-card v-if="selectedJob"
-                        variant="primary">
+                <b-card v-if="selectedJob"  variant="primary">
                     <template #header>
                         <b>{{$tc('titles.job')}} #{{selectedJob.id}}</b>
                         <span class="pull-right float-right">
@@ -86,13 +85,15 @@
                         <!-- Chart -->
                         <div class="col-9 mt-2">
                             <b-card border-variant="primary">
-                                <Plotly v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' "
+                                <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' " style="height: 250px">
+                                <Plotly 
                                         ref="plotly"
                                         :data="scatterData"
                                         :layout="scatterLayout"
                                         :display-mode-bar="true"
                                         :auto-resize="true"
                                         :options="{displayModeBar: false}" />
+                                </div>
                                 <div v-else>
                                     {{selectedJob.status_text}}
                                     <pre><code>{{selectedJob.exception_stack}}</code></pre>
@@ -120,9 +121,8 @@
                             </div>
                             -->
                     </div>
-                    <div v-for="(results, key) in selectedGroupedResults"
-                         :key="key"
-                         class="row">
+                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type !== 'OTHER'"
+                         :key="key" class="row">
                         <div v-if="results && results.length > 0"
                              class="col-12">
                             <h6 class="result">
@@ -144,7 +144,10 @@
                                 <th class="col-3">
                                     Resultado da métrica
                                 </th>
-                                <th class="col-8">
+                                <th class="col-2">
+                                    Mais informações
+                                </th>
+                                <th class="col-6">
                                     Saída
                                 </th>
                                 <th class="col-1">
@@ -161,19 +164,41 @@
                                         <font-awesome-icon v-if="result.winner"
                                                            icon="fa fa-trophy best" />
                                         <span v-for="(value, param) in result.content.params"
-                                              :key="param">
-                                            {{param}} = {{value}}<br>
+                                        :key="param">
+                                        {{param}} = {{value}}<br>
                                         </span>
                                     </td>
                                     <td>
                                         <span v-if="result.content.metric">
-                                            {{result.content.metric.name}} = {{result.content.metric.value}}
+                                            {{result.content.metric.name}} = {{parseFloat(result.content.metric.value).toFixed(4)}}
                                         </span>
+                                    </td>
+                                    <td>
+                                        <template v-if="result.content.feature_importance">
+                                            <!--
+                                            <b-link :id="`popover-${counter}`" href="#" size="sm" variant="info">
+                                                <font-awesome-icon icon="info-circle"/>
+                                            </b-link>
+                                            <b-popover :target="`popover-${counter}`" variant="" triggers="focus">
+                                            -->
+                                                <b>Importância dos atributos</b>
+                                                <div v-for="fi, inx in result.content.feature_importance">
+                                                    <template v-if="features[inx]">
+                                                        {{features[inx].name}}: {{parseFloat(fi).toFixed(4)}}
+                                                    </template>
+                                                    <template v-else>
+                                                        {{inx}}: {{parseFloat(fi).toFixed(2)}}
+                                                    </template>
+                                                </div>
+                                                <!--
+                                            </b-popover>
+                                        -->
+                                        </template>
                                     </td>
                                     <td>
                                         {{result.content.error || result.content.message}}
                                     </td>
-                                    <td>{{result.content.t}}</td>
+                                    <td>{{parseFloat(result.content.t).toFixed(4)}}</td>
                                     <!--
                                     <div class="col-3">Atributos mais importantes</div>
                                     -->
@@ -272,7 +297,8 @@ export default {
     components: { Plotly },
     props: {
         jobs: { required: true, type: Array, default: () => [] },
-        numberOfFeatures: { type: Number, default: () => 0 }
+        numberOfFeatures: { type: Number, default: () => 0 },
+        features: {type: Array, default: () => []}
     },
     emits: ['delete-job'],
     data() {
@@ -351,7 +377,7 @@ export default {
                     values: [this.finalReport.content.train_size, this.finalReport.content.test_size,],
                     labels: ['Treino', 'Teste'],
                     type: 'pie',
-                    hole: .7,
+                    hole: .5, textposition: 'inside',
                 }] : [{}]
         },
         scatterData() {
@@ -378,8 +404,12 @@ export default {
             return series;
         },
         selectedGroupedResults() {
-            return Object.entries(this.selectedJob.groupedResults).filter(
-                (v) => v.length && v[0].type !== 'OTHER');
+            if (this.selectedJob.groupedResults) {
+                return Object.entries(this.selectedJob.groupedResults).filter(
+                    (v) => v.length && v[0].type !== 'OTHER');
+            } else {
+                return [];
+            }
         },
     },
     watch: {
@@ -399,7 +429,11 @@ export default {
     },
     methods: {
         groupedResults(job) {
-            return Object.values(job.groupedResults).filter((result) =>  result[0].type !== 'OTHER');
+            if (job.groupedResults) {
+                return Object.values(job.groupedResults).filter((result) => result[0].type !== 'OTHER');
+            } else {
+                return [];
+            }
         },
 
         selectFirst() {
@@ -415,25 +449,25 @@ export default {
         getClassesForDecor(value) {
             let result = [];
             switch (value) {
-            case 'ERROR':
-                result.push("fa fa-times-circle text-danger");
-                break;
-            case 'PENDING':
-                result.push("fa fa-pause-circle text-warning");
-                break;
-            case 'CANCELED':
-                result.push("fa fa-stop-circle text-secondary");
-                break;
-            case 'RUNNING':
-                result.push("fa fa-sync fa-spin text-primary");
-                break;
-            case 'COMPLETED':
-                result.push("fa fa-check-circle text-success");
-                break;
-            case 'INTERRUPTED':
-                result.push("fa fa-stop text-danger");
-                break;
-            default:
+                case 'ERROR':
+                    result.push("fa fa-times-circle text-danger");
+                    break;
+                case 'PENDING':
+                    result.push("fa fa-pause-circle text-warning");
+                    break;
+                case 'CANCELED':
+                    result.push("fa fa-stop-circle text-secondary");
+                    break;
+                case 'RUNNING':
+                    result.push("fa fa-sync fa-spin text-primary");
+                    break;
+                case 'COMPLETED':
+                    result.push("fa fa-check-circle text-success");
+                    break;
+                case 'INTERRUPTED':
+                    result.push("fa fa-stop text-danger");
+                    break;
+                default:
             }
             result.push(value.toLowerCase());
             return result.join(' ');
@@ -442,53 +476,53 @@ export default {
 }
 </script>
 <style scoped>
-    .result {
-        position: relative;
-    }
+.result {
+    position: relative;
+}
 
-    .result>div {
-        color: #495057;
-        font-size: .85em;
-        padding: 5px 15px;
-    }
+.result>div {
+    color: #495057;
+    font-size: .85em;
+    padding: 5px 15px;
+}
 
-    .result>div:hover {
-        color: rgb(0, 136, 204)
-    }
+.result>div:hover {
+    color: rgb(0, 136, 204)
+}
 
-    .result div:not(:last-child) {
-        border-bottom: 1px solid #eee;
-    }
+.result div:not(:last-child) {
+    border-bottom: 1px solid #eee;
+}
 
-    .job-title {
-        padding-top: 3px;
-        font-size: .9em;
-        /*color: #495057;*/
-        font-weight: bold;
-    }
+.job-title {
+    padding-top: 3px;
+    font-size: .9em;
+    /*color: #495057;*/
+    font-weight: bold;
+}
 
-    .result:last-child {
-        padding-bottom: 5px;
-    }
+.result:last-child {
+    padding-bottom: 5px;
+}
 
-    .best {
-        color: rgb(250, 189, 56);
-    }
+.best {
+    color: rgb(250, 189, 56);
+}
 
-    .bg-primary .fa {
-        color: white;
-    }
+.bg-primary .fa {
+    color: white;
+}
 
-    h6.result {
-        color: rgb(0, 136, 204);
-        border-bottom: 1px solid rgb(0, 136, 204)
-    }
+h6.result {
+    color: rgb(0, 136, 204);
+    border-bottom: 1px solid rgb(0, 136, 204)
+}
 
-    .table-result {
-        font-size: .9em
-    }
+.table-result {
+    font-size: .9em
+}
 
-    .table-training {
-        font-size: .8em;
-    }
+.table-training {
+    font-size: .8em;
+}
 </style>

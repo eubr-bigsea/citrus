@@ -23,8 +23,9 @@
                     :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
                     <Step ref="steps" :step="task" :language="language" :attributes="attributes" :index="inx"
                         :protected="inx <= 1" :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null"
-                        @edit="editStep(task)" @cancel="cancelEdit(task)" @update="update(task)"
-                        @preview="preview(task)" :suggestion-event="suggestionEvent" v-on="$listeners" />
+                        @edit="editStep(task)" @cancel="cancelEdit(task)" @update="update(task)" @preview="preview(task)"
+                        :suggestion-event="suggestionEvent" :extended-suggestion-event="extendedSuggestionEvent"
+                        v-on="$listeners" />
                 </div>
             </draggable>
         </div>
@@ -43,24 +44,17 @@ export default {
         attributes: { type: Array, required: true },
         language: { type: String, required: true },
         suggestionEvent: { type: Function, default: () => null },
+        extendedSuggestionEvent: { required: true, type: Function, default: () => null },
     },
-    emits: ['changed', 'delete-many', 'update'],
+    emits: ['changed', 'delete-many', 'update', 'end-sort-steps'],
     data() {
         return {
             lastPreviewableStep: null,
         };
     },
-    computed: {
-    },
-    async mounted() {
-
-    },
-    beforeUnmount() {
-    },
     methods: {
         endSortSteps({ originalEvent }) { // eslint-disable-line no-unused-vars
             let elem = null;
-            console.debug(this.workflow);
             this.workflow.tasks.forEach((task, i) => {
                 task.display_order = i;
                 if (task.previewable) {
@@ -69,6 +63,7 @@ export default {
                 }
             });
             this.isDirty = true;
+            this.$emit('end-sort-steps', { originalEvent });
             // this.previewUntilHere(elem);
             // this.loadData();
         },

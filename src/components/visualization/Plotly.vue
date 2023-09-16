@@ -50,25 +50,42 @@ export default {
         },
         layout: {
             type: Object, default: () => null
+        },
+        frames: {
+            type: Array, default: () => null
+        },
+        watchShallow: {
+            type: Boolean, default: () => true
         }
     },
     data() {
         return {
-            internalLayout: {
-                ...this.layout,
+            internalLayout: this.layout,
+            xinternalLayout: {
+                ...structuredClone(this.layout),
                 datarevision: 1
             }
         };
     },
+
     mounted() {
         this.react();
         this.initEvents();
+        /*
         this.$watch('data', () => {
             this.internalLayout.datarevision++;
             this.react();
         }, { deep: !this.watchShallow });
-        this.$watch('options', this.react, { deep: !this.watchShallow });
-        this.$watch('layout', this.relayout, { deep: !this.watchShallow });
+        */
+
+        this.$watch('options', (a, b) => {
+            console.debug(a, b)
+            //this.react()
+        }, { deep: !this.watchShallow });
+        this.$watch('layout', (a, newValue) => {
+            this.internalLayout = { ...newValue };
+            this.react();
+        }, { deep: true || !this.watchShallow });
     },
     beforeUnmount() {
         window.removeEventListener('resize', this.__resizeListener);
@@ -78,10 +95,11 @@ export default {
     methods: {
         initEvents() {
             if (this.autoResize) {
-                this.__resizeListener = () => {
+                this.__resizeListener = debounce(() => {
                     this.internalLayout.datarevision++;
-                    debounce(this.react, 200);
-                };
+                    console.debug(this, 'resize')
+                    this.react();
+                }, 200);
                 window.addEventListener('resize', this.__resizeListener);
             }
             this.__generalListeners = events.map((eventName) => {
@@ -118,27 +136,40 @@ export default {
             return Plotly.downloadImage(this.$refs.container, opts);
         },
         plot() {
-            return Plotly.plot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+            const fig = Plotly.plot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+            if (this.frames) {
+                Plotly.addFrames(this.frames);
+            }
+            return fig;
         },
         getOptions() {
             let el = this.$refs.container;
-            let opts = this.options;
-            // if width/height is not specified for toImageButton, default to el.clientWidth/clientHeight
-            if (!opts) opts = {};
-            if (!opts.toImageButtonOptions) opts.toImageButtonOptions = {};
-            if (!opts.toImageButtonOptions.width) opts.toImageButtonOptions.width = el.clientWidth;
-            if (!opts.toImageButtonOptions.height) opts.toImageButtonOptions.height = el.clientHeight;
+            let opts = { ... this.options, responsive: this.autoResize };
+            if (el) {
+                // if width/height is not specified for toImageButton, default to el.clientWidth/clientHeight
+                if (!opts) opts = {};
+                if (!opts.toImageButtonOptions) opts.toImageButtonOptions = {};
+                if (!opts.toImageButtonOptions.width) opts.toImageButtonOptions.width = el.clientWidth;
+                if (!opts.toImageButtonOptions.height) opts.toImageButtonOptions.height = el.clientHeight;
+            }
             return opts;
         },
         newPlot() {
+            console.debug('Plotly newPlot');
             return Plotly.newPlot(this.$refs.container, this.data, this.internalLayout, this.getOptions());
         },
         react() {
-            return Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+            //console.debug('Plotly react:', this.layout.title);
+            if (this.$refs.container) {
+                const fig = Plotly.react(this.$refs.container, this.data, this.internalLayout, this.getOptions());
+                if (this.frames) {
+                    Plotly.addFrames(this.$refs.container, this.frames);
+                } else {
+                    Plotly.deleteFrames(this.$refs.container);
+                }
+                return fig;
+            }
         }
     }
 };
 </script>
-<style>
-
-</style>

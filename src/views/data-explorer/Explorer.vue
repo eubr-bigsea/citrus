@@ -7,8 +7,7 @@
                     <h6>{{ $t('dataExplorer.title') }}</h6>
                     <div>
                         <small>{{ $tc('common.name') }}</small>
-                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                            maxlength="50">
+                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm" maxlength="50">
                     </div>
                     <div class="mb-">
                         <small>{{ $tc('titles.cluster') }}</small>
@@ -47,11 +46,12 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow">
+                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"
+                        :disabled="editing">
                         <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
-                    <b-button :disabled="pendingSteps || loadingData" size="sm" variant="outline-secondary"
-                        class="float-right mt-2 mr-1" @click="loadData">
+                    <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary"
+                        class="float-right mt-2 mr-1" @click="loadData(null, null, false)">
                         <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
                     <!--
@@ -63,7 +63,8 @@
                     <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]"
                         @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
                         @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
-                        :suggestion-event="getSuggestions" />
+                        @end-sort-steps="endSortSteps" :suggestion-event="getSuggestions"
+                        :extended-suggestion-event="getExtendedSuggestions" />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -92,158 +93,169 @@
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true"
-                @close="stats = null" @ok="stats = null">
-                <table v-if="stats && stats.attribute === null"
-                    class="table table-bordered table-stats table-striped table-sm">
-                    <thead>
-                        <tr v-if="stats.message" class="text-center">
-                            <td v-for="k in stats.message.columns" :key="k.name">
-                                {{ k.name }}
-                            </td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(v, row) in stats.message.columns[0].values" :key="row">
-                            <td v-for="(attr, col) in stats.message.columns" :key="col"
-                                :class="{ 'font-weight-bold': col === 0 }">
-                                {{ stats.message.columns[col].values[row] || '-' }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div v-else>
-                    <span v-if="stats">
-                        <select @change.prevent="handleSelectAttributeStat" class="form-control-sm mb-2"
-                            ref="selectAttributeStat">
-                            <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{
-                                name
-                            }}</option>
-                        </select>
-                    </span>
-                    <b-tabs>
-                        <b-tab title="Estatísticas" title-link-class="small-nav-link">
-                            <div v-if="stats && stats.message" class="row">
-                                <div v-if="stats && stats.message.histogram" :class="stats.message.numeric ? 'col-9' : 'col-12'">
-                                    <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
-                                        showlegend: false,
-                                        margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
-                                        xaxis: { tickangle: 45, tickfont: {size: 11}, 
-                                            type: stats.message.numeric ? null : 'category'
-                                        },
-                                        yaxis: {domain: [0.2]},
-                                        yaxis2: {
-                                            domain: [0.8],
-                                            visible: false,
-                                        },
-                                        legend: { traceorder: 'reversed' },
-                                        height: stats.message.numeric ? 200 : 300, width:  stats.message.numeric? 600: 750, 
-                                        autosize: true,
-                                    }" :data="getStatData2()" :options="{ displayModeBar: false }" />
+            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true" @close="stats = null"
+                @ok="stats = null">
+                <div class="stats-div p-1">
+                    <div v-if="stats && stats.attribute === null">
+                        <h5>Estatísticas do resultado</h5>
+                        <b-checkbox>Mostrar apenas para atributos numéricos</b-checkbox>
+                        <b-checkbox>Calcular para todos os registros, ignorando a opção de amostrar (pode demorar, se muitos registros).</b-checkbox>
+
+                        <table class="table table-bordered table-stats table-striped table-sm">
+                            <thead>
+                                <tr v-if="stats.message" class="text-center">
+                                    <td v-for="k in stats.message.columns" :key="k.name">
+                                        {{ k.name }}
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(v, row) in stats.message.columns[0].values" :key="row">
+                                    <td v-for="(attr, col) in stats.message.columns" :key="col"
+                                        :class="{ 'font-weight-bold': col === 0 }">
+                                        {{ stats.message.columns[col].values[row] || '-' }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div v-else>
+                        <span v-if="stats">
+                            <select @change.prevent="handleSelectAttributeStat" class="form-control-sm mb-2"
+                                ref="selectAttributeStat">
+                                <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{
+                                    name
+                                }}</option>
+                            </select>
+                        </span>
+                        <b-tabs>
+                            <b-tab title="Estatísticas" title-link-class="small-nav-link">
+                                <div v-if="stats && stats.message" class="row">
+                                    <div v-if="stats && stats.message.histogram"
+                                        :class="stats.message.numeric ? 'col-9' : 'col-12'">
+                                        <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
+                                            showlegend: false,
+                                            margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
+                                            xaxis: {
+                                                tickangle: 45, tickfont: { size: 11 },
+                                                type: stats.message.numeric ? null : 'category'
+                                            },
+                                            yaxis: { domain: [0.2] },
+                                            yaxis2: {
+                                                domain: [0.8],
+                                                visible: false,
+                                            },
+                                            legend: { traceorder: 'reversed' },
+                                            height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
+                                            autosize: true,
+                                        }" :data="getStatData2()" :options="{ displayModeBar: false }" />
 
 
-                                </div>
-                                <div v-if="stats.message.numeric" class="col-3">
-                                    <div v-if="stats.message.outliers && stats.message.outliers.length">
-                                        <span>Valores atípicos (outliers)*</span>
+                                    </div>
+                                    <div v-if="stats.message.numeric" class="col-3">
+                                        <div v-if="stats.message.outliers && stats.message.outliers.length">
+                                            <span>Valores atípicos (outliers)*</span>
+                                            <table class="table table-sm table-stats">
+                                                <tr v-for="t, i in stats.message.outliers" :key="i">
+                                                    <td>{{ t }}</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div v-else>Não há valores atípicos (outliers)</div>
+                                    </div>
+                                    <div class="col-4">
+                                        <span>Estatísticas (exclui nulos)</span>
                                         <table class="table table-sm table-stats">
-                                            <tr v-for="t, i in stats.message.outliers" :key="i">
-                                                <td>{{ t }}</td>
+                                            <tr v-for="value, stat in stats.message.stats" :key="stat">
+                                                <td class="text-capitalize">{{ stat }}</td>
+                                                <td>{{ value }}</td>
                                             </tr>
                                         </table>
                                     </div>
-                                    <div v-else>Não há valores atípicos (outliers)</div>
-                                </div>
-                                <div class="col-4">
-                                    <span>Estatísticas (exclui nulos)</span>
-                                    <table class="table table-sm table-stats">
-                                        <tr v-for="value, stat in stats.message.stats" :key="stat">
-                                            <td class="text-capitalize">{{ stat }}</td>
-                                            <td>{{ value }}</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                                <div v-if="stats.message.top20" class="col-8">
-                                    <span>Top valores *</span>
-                                    <table class="table table-sm table-stats">
-                                        <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
-                                            <td class="col-8">
-                                                {{ t[0]}}
-                                                <div class="top-bar"
-                                                    :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
-                                            </td>
-                                            <td class="col-4 text-right">
-                                                {{ t[1]}}
-                                                ({{(100 * t[1] / stats.message.stats.count).toFixed(2)}})%
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
+                                    <div v-if="stats.message.top20" class="col-8">
+                                        <span>Top valores *</span>
+                                        <table class="table table-sm table-stats">
+                                            <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
+                                                <td class="col-8">
+                                                    {{ t[0] }}
+                                                    <div class="top-bar"
+                                                        :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                                </td>
+                                                <td class="col-4 text-right">
+                                                    {{ t[1] }}
+                                                    ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
 
-                                <div class="col-12 text-right">
-                                    <small><em>*limitados a 10</em></small>
+                                    <div class="col-12 text-right">
+                                        <small><em>*limitados a 10</em></small>
+                                    </div>
                                 </div>
-                            </div>
-                        </b-tab>
-                        <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
-                            :title-link-class="'small-nav-link'">
-                            <form action="" class="form-inline">
-                                <div class="form-group mb-2">
-                                    <label for="similarity">Similaridade:</label> &nbsp;
-                                    <select v-model.number="similarity" name="similarity"
-                                        class="form-control-sm ml-3 mr-3">
-                                        <option value="0.5">
-                                            0.5 (menos semelhantes)
-                                        </option>
-                                        <option>0.6</option>
-                                        <option>0.7</option>
-                                        <option>0.8</option>
-                                        <option value="0.9">
-                                            0.9 (mais semelhantes)
-                                        </option>
-                                    </select>
+                            </b-tab>
+                            <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
+                                :title-link-class="'small-nav-link'">
+                                <form action="" class="form-inline">
+                                    <div class="form-group mb-2">
+                                        <label for="similarity">Similaridade:</label> &nbsp;
+                                        <select v-model.number="similarity" name="similarity"
+                                            class="form-control-sm ml-3 mr-3">
+                                            <option value="0.5">
+                                                0.5 (menos semelhantes)
+                                            </option>
+                                            <option>0.6</option>
+                                            <option>0.7</option>
+                                            <option>0.8</option>
+                                            <option value="0.9">
+                                                0.9 (mais semelhantes)
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <button class="btn btn-secondary btn-sm" @click.prevent="handleComputeCluster">
+                                            Computar grupos
+                                        </button>
+                                        <button class="btn btn-success btn-sm ml-2" @click.prevent="handleComputeCluster">
+                                            Mesclar selecionados
+                                        </button>
+                                    </div>
+                                </form>
+                                <div style="height: 500px; overflow-y:auto">
+                                    <table v-if="valuesClusters && valuesClusters.length > 0"
+                                        class="table table-sm table-smallest mt-4">
+                                        <tr>
+                                            <th />
+                                            <th class="col-6">
+                                                Grupo
+                                            </th>
+                                            <th class="col-6">
+                                                Substituir por
+                                            </th>
+                                        </tr>
+                                        <tr v-for="values in valuesClusters" :key="values[0]">
+                                            <td>
+                                                <input type="checkbox" class="checkbox">
+                                            </td>
+                                            <td>
+                                                <span v-for="v, k in values" :key="k" style="white-space: pre"
+                                                    :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control form-control-sm w-100"
+                                                    :value="values[0]">
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
-                                <div class="form-group mb-2">
-                                    <button class="btn btn-secondary btn-sm" @click.prevent="handleComputeCluster">
-                                        Computar grupos
-                                    </button>
-                                    <button class="btn btn-success btn-sm ml-2" @click.prevent="handleComputeCluster">
-                                        Mesclar selecionados
-                                    </button>
-                                </div>
-                            </form>
-                            <div style="height: 500px; overflow-y:auto">
-                                <table v-if="valuesClusters && valuesClusters.length > 0"
-                                    class="table table-sm table-smallest mt-4">
-                                    <tr>
-                                        <th />
-                                        <th class="col-6">
-                                            Grupo
-                                        </th>
-                                        <th class="col-6">
-                                            Substituir por
-                                        </th>
-                                    </tr>
-                                    <tr v-for="values in valuesClusters" :key="values[0]">
-                                        <td>
-                                            <input type="checkbox" class="checkbox">
-                                        </td>
-                                        <td>
-                                            <span v-for="v, k in values" :key="k" style="white-space: pre"
-                                                :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control form-control-sm w-100"
-                                                :value="values[0]">
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </b-tab>
-                    </b-tabs>
+                            </b-tab>
+                        </b-tabs>
+                    </div>
                 </div>
             </b-modal>
         </div>
+        <modal-save-data v-if="internalWorkflowId" name="save-data" ref="modalSaveData" :workflow-id="internalWorkflowId"
+            @confirm="handleConfirmSaveData" />
     </div>
 </template>
 <script>
@@ -261,6 +273,7 @@ import Notifier from '../../mixins/Notifier.js';
 import { Workflow, Operation, Task, Constants } from './entities.js';
 import ModalExport from './ModalExport.vue';
 import Plotly from '../../components/visualization/Plotly.vue';
+import ModalSaveData from './data-explorer/ModalSaveData.vue';
 
 jsep.addBinaryOp(">=", 1);
 jsep.removeBinaryOp('^');
@@ -301,7 +314,7 @@ export default {
     components: {
         Plotly,
         Preview, draggable,
-        StepList, Step, PreviewMenu, ModalExport,
+        StepList, Step, PreviewMenu, ModalExport, ModalSaveData,
         TahitiSuggester: () => {
             return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                 const script = document.createElement('script');
@@ -361,24 +374,32 @@ export default {
         };
     },
     computed: {
-        pendingSteps() {
+        editing() {
             return (this.workflowObj && this.workflowObj.tasks &&
                 this.workflowObj.tasks.find(t => t.editing) !== undefined)
+        },
+        pendingSteps() {
+            return this.editing
                 || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
         }
     },
     async mounted() {
-        this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
+        this.internalWorkflowId = (this.$route) ? parseInt(this.$route.params.id) : 0;
 
         const job_id = WORKFLOW_OFFSET + parseInt(this.internalWorkflowId);
         this.job = { id: job_id };
 
         await this.loadClusters();
         await this.loadOperations();
-        await this.loadWorkflow();
+        const workflowOk = await this.loadWorkflow();
 
         this.connectWebSocket();
-        await this.loadData();
+        if (workflowOk) {
+            await this.loadData(null, null, false);;
+        } else {
+            this.loadingData = false;
+        }
+        this.updateAttributeSuggestion();
     },
     beforeUnmount() {
         this.disconnectWebSocket();
@@ -444,7 +465,7 @@ export default {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
                 this.success(this.$t('messages.savedWithSuccess',
-                    { what: this.$tc('titles.workflow') }));
+                    { what: this.$tc('titles.workflow') }), 2000);
             } catch (e) {
                 this.error(e);
             }
@@ -487,20 +508,24 @@ export default {
                 this.dataSourceLabel = `${readerTask.forms.data_source.value} - ${readerTask.forms.data_source.labelValue}`;
 
                 const hasUnsupported = workflow.platform.slug !== 'meta'; //tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
+                let hasProblems = false;
                 if (hasUnsupported || readerTask?.operation?.slug !== 'read-data') {
-                    self.error({ message: 'FIXME: Invalid workflow. It is not compatible with data explorer format.' });
+                    self.error(self.$tc('dataExplorer.invalidWorkflow'), 10000);
                     self.$router.push({ name: 'index-explorer' });
-                    return;
+                    hasProblems = true;
                 }
                 if (sampleTask?.operation?.slug !== 'sample') {
                     const op = this.operationLookup.get(2110); // FIXME;
-                    const sample = Workflow.createSampleTask(1, op, this.$tc);
-                    self.warning('FIXME: Invalid workflow. Tried to fix it.');
+                    const sample = Workflow.createSampleTask(1, op, this);
+                    self.warning(self.$tc('dataExplorer.invalidWorkflow'), 10000);
                     this.workflowObj.tasks.splice(1, 0, sample);
+                    hasProblems = true;
                 }
-                self.loadingData = false;
+                this.workflowObj.tasks.forEach((t, inx) => t.display_order = inx)
+                this.loadingData = false;
                 document.getElementById('tahiti-script').setAttribute(
                     'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.workflowObj.platform.id}`);
+                return !hasProblems;
 
             } catch (e) {
                 console.debug(e);
@@ -513,9 +538,12 @@ export default {
                     this.isDirty = false;
                 });
             }
-            //self.loadData();
+            return true;
         },
-        async loadData() {
+        async loadData(callback = null, success = null, save = false) {
+            if (save) {
+                this.saveWorkflow();
+            }
             const self = this;
             // if (self.pendingSteps) {
             //     self.warning("Existe(m) etapa(s) com pendências. Faça as correções antes de executar o experimento.", 5000);
@@ -532,6 +560,9 @@ export default {
                 task.operation = { id: task.operation.id };
                 delete task.version;
             });
+            if (callback) {
+                callback(cloned);
+            }
 
             const body = {
                 workflow: cloned,
@@ -554,6 +585,9 @@ export default {
                 self.job = response.data.data;
                 self.page = 1;
                 self.connectWebSocket();
+                if (success) {
+                    success();
+                }
             } catch (ex) {
                 if (ex.data) {
                     self.error(ex.data.message);
@@ -581,7 +615,9 @@ export default {
             const self = this;
             // Platform is always META_OPERATION_ID
             try {
-                const resp = await axios.get(`${tahitiUrl}/operations?platform=${META_PLATFORM_ID}`);
+                const resp = await axios.get(
+                    `${tahitiUrl}/operations?platform=${META_PLATFORM_ID}&lang=${this.$root.$i18n.locale}`
+                );
                 const operations = resp.data.data;
                 const menuCategories = new Map();
                 this.operations = operations;
@@ -614,7 +650,45 @@ export default {
             }
 
         },
+        handleConfirmSaveData(params) {
+            const SAVE_OPERATION_ID = 2164;
+            const SAMPLE_OPERATION_ID = 2110;
 
+            const callback = (cloned) => {
+                const { name, path, tags, description, storage, data_source_id } = params;
+                if (params.complete) {
+                    cloned.tasks.every((t) => {
+                        if (t.operation.id === SAMPLE_OPERATION_ID) {
+                            t.enabled = false;
+                            return false;
+                        }
+                        return true;
+                    });
+                }
+                cloned.tasks.push(
+                    {
+                        operation: { id: SAVE_OPERATION_ID },
+                        display_order: cloned.tasks.length,
+                        enabled: true,
+                        environment: 'DESIGN',
+                        id: Operation.generateTaskId(),
+                        name: 'Save data',
+                        forms: {
+                            data_source_id, name, path, tags, description,
+                            format: 'PARQUET',
+                            mode: 'error',
+                            header: false,
+                            storage
+                        }
+                    }
+                );
+            };
+            const success = () => {
+                this.success(this.$t('messages.savedWithSuccess',
+                    { what: this.$tc('titles.dataSource') }), 3500);
+            }
+            this.loadData(callback, success, true);
+        },
         handleStepDrag(e) {
             // Disable some steps to be dragged
             return (e?.relatedContext?.element?.display_order > 1);
@@ -646,9 +720,9 @@ export default {
             );
         },
         /* Attribute suggestion */
-        _queryDataSource(id, callback) {
+        async _queryDataSource(id, callback) {
+            console.debug(`Querying data source ${id}.`)
             let attributes = null;
-            let self = this;
             id = parseInt(id);
             if (window.TahitiAttributeSuggester.cached === undefined) {
                 window.TahitiAttributeSuggester.cached = {};
@@ -657,30 +731,27 @@ export default {
                 attributes = window.TahitiAttributeSuggester.cached[id];
                 callback(attributes);
             } else {
-                let url = `${limoneroUrl}/datasources/${id}`;
-                axios.get(url).then(
-                    (response) => {
-                        //console.debug(response.data)
-                        let ds = response.data;
-                        attributes = ds.attributes.map(function (attr) { return attr.name; });
-                        window.TahitiAttributeSuggester.cached[id] = attributes;
-                        callback(attributes);
-                    },
-                    () => {
-                        self.warning(self.$t('errors.invalidDataSource'));
-                        callback([]);
-                    }
-                );
+                try {
+                    const response = await axios.get(`${limoneroUrl}/datasources/${id}?attributes_name=true`);
+                    //console.debug(response.data) 
+                    let ds = response.data;
+                    attributes = ds.attributes.map(function (attr) { return attr.name; }).sort();
+                    window.TahitiAttributeSuggester.cached[id] = attributes;
+                    callback(attributes);
+                } catch (ex) {
+                    this.warning(this.$t('errors.invalidDataSource'));
+                    callback([]);
+                }
             }
         },
         updateAttributeSuggestion() {
-            const self = this;
             let attributeSuggestion = {};
             try {
                 // Add sequential flows to compute attribute suggestion
-                const clonedWorkflow = JSON.parse(JSON.stringify(self.workflowObj));
+                const clonedWorkflow = JSON.parse(JSON.stringify(this.workflowObj));
                 clonedWorkflow.flows = [];
-                clonedWorkflow.tasks = clonedWorkflow.tasks.sort((a, b) => a.display_order - b.display_order);
+                clonedWorkflow.tasks = clonedWorkflow.tasks
+                    .sort((a, b) => a.display_order - b.display_order);
                 let task = clonedWorkflow.tasks[0];
                 for (let i = 1; i < clonedWorkflow.tasks.length; i++) {
                     clonedWorkflow.flows.push({
@@ -694,8 +765,21 @@ export default {
                         Object.keys(result).forEach(key => {
                             attributeSuggestion[key] = result[key].uiPorts;
                         });
-                        Object.assign(self.attributeSuggestion, attributeSuggestion);
+                        Object.assign(this.attributeSuggestion, attributeSuggestion);
                         window.TahitiAttributeSuggester.processed = true;
+
+                        // Update with last valid suggestion if previous step is disabled
+                        /*let lastValid = null;
+                        const totalOfSteps = this.workflowObj.tasks.length;
+                        this.workflowObj.tasks.forEach((t, i) => {
+                            if (i < totalOfSteps && !t.enabled) {
+                                if (this.workflowObj.tasks[i + 1]?.enabled) {
+                                    this.attributeSuggestion[this.workflowObj.tasks[i + 1].id] = lastValid;
+                                }
+                            } else if (t.enabled) {
+                                lastValid = this.attributeSuggestion[t.id]
+                            }
+                        });*/
                     });
             } catch (e) {
                 console.log(e);
@@ -705,49 +789,38 @@ export default {
             return Array.from(new Set(data));
         },
         getSuggestions(taskId) {
-            return this.tableData.attributes.map(a => a.label);
-            // const extendedSuggestions = this.getExtendedSuggestions(taskId);
-            // return extendedSuggestions;
-            /*
-                if (extendedSuggestions && extendedSuggestions.inputs?.length) {
-                    return this._unique(Array.prototype.concat.apply([],
-                        extendedSuggestions.inputs.map(
-                            (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
-                } else {
-                    return [];
-                }
-                */
+            //return this.tableData.attributes.map(a => a.label);
+            const extendedSuggestions = this.getExtendedSuggestions(taskId);
+            if (extendedSuggestions && extendedSuggestions.inputs?.length) {
+                return this._unique(Array.prototype.concat.apply([],
+                    extendedSuggestions.inputs.map(
+                        (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
+            } else {
+                return [];
+            }
         },
         getExtendedSuggestions(taskId) {
-            const allSuggestions = new Set();
-            const self = this;
             if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                 if (window.TahitiAttributeSuggester.processed === undefined
                     || this.attributeSuggestion[taskId] === undefined
+                    || Object.keys(this.attributeSuggestion[taskId]).length === 0
                     || this.attributeSuggestion[taskId].length === 0) {
                     this.updateAttributeSuggestion();
                 }
-                Object.keys(this.attributeSuggestion).forEach(key => {
-                    self.attributeSuggestion[key] &&
-                        self.attributeSuggestion[key].output.forEach(v => allSuggestions.add(v));
-                });
-                Object.keys(this.schemas).forEach(key => {
-                    self.schemas[key] &&
-                        self.schemas[key].forEach(v => allSuggestions.add(v.name));
-                });
-                /*if (this.attributeSuggestion[taskId]) {
-                        return this.attributeSuggestion[taskId];
-                    } else {
-                        return [];
-                    }*/
-                return Array.from(allSuggestions).sort(this._caseInsensitiveComparator);
+                if (this.attributeSuggestion[taskId]) {
+                    const suggestions = this.attributeSuggestion[taskId];
+                    return suggestions;
+                } else {
+                    return {};
+                }
             }
+            return [];
         },
         /* Trigged by the step action */
         handleToggleStep(task) {
             task.enabled = !task.enabled;
             this.isDirty = true;
-            this.loadData();
+            this.loadData(null, null, false);
         },
         duplicate(step) {
             // Clone tasks instance
@@ -770,7 +843,7 @@ export default {
                 }
             });
             this.isDirty = true;
-            this.loadData();
+            this.loadData(null, null, false);
         },
         handleUpdateStep(step) {
             const task = this.workflowObj.tasks.find(t => t.id === step.id);
@@ -779,13 +852,13 @@ export default {
                 task.editing = false;
                 this.updateAttributeSuggestion();
                 this.isDirty = true;
-                this.loadData();
+                this.loadData(null, null, false);
             }
         },
         handleDeleteStep(task) {
             this.workflowObj.deleteTask(task);
             if (task.previewable) {
-                this.loadData();
+                this.loadData(null, null, false);
             }
             this.$refs.stepList.setEdition(true);
             this.isDirty = true;
@@ -859,13 +932,16 @@ export default {
         handleTrigger(options) {
             if (options.action === 'export') {
                 this.$refs.modalExport.show();
+            } else if (options?.params[0]?.slug === 'save') {
+                this.$refs.modalSaveData.show();
+                console.debug(options)
             } else if (options.action === 'menu') {
                 const newTask = this.workflowObj.addTask(
                     this.operationLookup.get(options.params[0].id),
                     options.selected, options.fields);
                 this.isDirty = true;
                 //this.loadData();
-                Vue.nextTick(() => {this.$refs.stepList.scrollToStep()});
+                Vue.nextTick(() => { this.$refs.stepList.scrollToStep() });
             } else {
                 console.log(`Unknown action: ${options.action}`);
             }
@@ -918,7 +994,8 @@ export default {
             });
             this.isDirty = true;
             this.previewUntilHere(elem);
-            this.loadData();
+            this.loadData(null, null, false);
+            this.updateAttributeSuggestion();
         },
 
         handleAnalyse(selected) {
@@ -1261,12 +1338,12 @@ export default {
 .step-scroll-area {
     position: relative;
     margin: auto;
-    height: 70vh;
+    height: 65vh;
 
 }
 
 .fill-height {
-    height: 75vh
+    height: 65vh
 }
 
 /*
@@ -1288,5 +1365,10 @@ export default {
 .top-bar {
     height: 4px;
     background: rgb(49, 130, 189)
+}
+
+.stats-div {
+    max-height: 65vh;
+    overflow-y: auto;
 }
 </style>

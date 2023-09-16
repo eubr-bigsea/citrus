@@ -90,7 +90,8 @@
                                         <Algorithms ref="algorithms"
                                                     :operations="algorithmOperation"
                                                     :workflow="workflowObj"
-                                                    :operation-map="operationsMap" />
+                                                    :operation-map="operationsMap" 
+                                                    />
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <Grid :grid="workflowObj.grid" />
@@ -112,7 +113,8 @@
                         <Result ref="results"
                                 :jobs="jobs"
                                 :number-of-features="numberOfFeatures"
-                                @delete-job="handleDeleteJob" />
+                                @delete-job="handleDeleteJob" 
+                                :features="features"/>
                     </b-tab>
                 </b-tabs>
             </div>
@@ -145,6 +147,9 @@ const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
+
 const META_PLATFORM_ID = 1000;
 
 export default {
@@ -200,6 +205,10 @@ export default {
         },
         numberOfFeatures() {
             return this.workflowObj?.features?.forms?.features?.value?.length || 0;
+        },
+        features() {
+            console.debug(this.workflowObj?.features?.forms?.features)
+            return this.workflowObj?.features?.forms?.features?.value || [];
         }
     },
     watch: {
@@ -209,7 +218,7 @@ export default {
                     enabled: 'true',
                     platform: 1, //FIXME
                     category: this.taskType,
-                    lang: this.$locale,
+                    lang: this.$locale || 'pt',
                 }
                 await axios.get(
                     `${tahitiUrl}/operations`, { params });
@@ -239,7 +248,13 @@ export default {
         connectWebSocket() {
             const self = this;
             if (self.socket === null) {
-                const socket = io(standNamespace, { upgrade: true, });
+                const opts = { upgrade: true };
+                if (standSocketIoPath !== '') {
+                    opts['path'] = standSocketIoPath;
+                }
+
+                const socket = io(
+                    `${standSocketServer}${standNamespace}`, opts);
                 self.socket = socket;
 
                 socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
@@ -276,7 +291,7 @@ export default {
                 self.changeRoom(self.job.id);
             }
         },
-        validate(){
+        validate() {
             const self = this;
             const errors = [];
             if (this.dataSourceId === null) {
@@ -294,27 +309,27 @@ export default {
                 }
             });
 
-            if (! hasLabel) {
+            if (!hasLabel) {
                 errors.push('Nenhum atributo alvo (rótulo) foi especificado.');
             }
-            if (! hasFeature) {
+            if (!hasFeature) {
                 errors.push('Nenhum atributo preditor foi especificado.');
             }
             const atLeastOneAlgorithm = self.workflowObj.tasks.find(a => {
                 return a.enabled
-                        && self.operationsMap.has(a.operation.slug)
-                        && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm')
+                    && self.operationsMap.has(a.operation.slug)
+                    && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm')
             });
-            if (! atLeastOneAlgorithm) {
+            if (!atLeastOneAlgorithm) {
                 errors.push('É necessário habilitar pelo menos um algoritmo.');
             }
-            if (self.workflowObj.preferred_cluster_id === null){
+            if (self.workflowObj.preferred_cluster_id === null) {
                 errors.push("Você deve escolher um ambiente de processamento para a execução.")
             }
             if (errors.length > 0) {
                 this.html(
                     'Existe ao menos uma  inconsistência no fluxo que precisa ser resolvida antes de iniciar o treino: <br/><ul>' +
-                        errors.map(e => `<li>${e}</li>`).join("") + '</ul>',
+                    errors.map(e => `<li>${e}</li>`).join("") + '</ul>',
                     'Inconsistência(s) detectada(s)', 10000)
                 return false;
             }
@@ -323,7 +338,7 @@ export default {
         async handleTraining() {
             const self = this;
             // Validation
-            if (! this.validate()){
+            if (!this.validate()) {
                 return;
             }
 
@@ -435,8 +450,8 @@ export default {
                     let best = result0.content.metric ? result0.content.metric.value : 0;
                     results.forEach(r => {
                         if (r.content.metric &&
-                                (isLargerBetter && r.content.metric.value > best
-                                    || !isLargerBetter && r.content.metric.value < best)) {
+                            (isLargerBetter && r.content.metric.value > best
+                                || !isLargerBetter && r.content.metric.value < best)) {
                             best = r.content.metric.value;
                         }
                     });
@@ -457,7 +472,8 @@ export default {
         async loadOperations() {
             const params = {
                 category: 'model-builder', platform: META_PLATFORM_ID,
-                fields: 'id,forms,categories,name,slug'
+                fields: 'id,forms,categories,name,slug',
+                lang: this.$locale || 'pt',
             };
 
             const resp = await axios.get(`${tahitiUrl}/operations`, { params });
@@ -536,7 +552,7 @@ export default {
             this.workflowObj.forms.$meta.value.target = target;
         },
         async handleDeleteJob(job_id) {
-            this.confirm(
+            /*this.confirm(
                 this.$t('actions.delete'),
                 this.$tc('titles.job') + "?",
                 async () => {
@@ -544,7 +560,10 @@ export default {
                     this.loadJobs();
                     this.$refs.results.selectFirst();
                 },
-            );
+            );*/
+            await axios.delete(`${standUrl}/jobs/${job_id}`);
+            this.loadJobs();
+            this.$refs.results.selectFirst();
         },
         handleStopTrain() {
             const confirm = () => {
@@ -567,47 +586,47 @@ export default {
 </script>
 
 <style scoped>
-    .custom-card {
-        padding: 0 5px;
-    }
+.custom-card {
+    padding: 0 5px;
+}
 
-    h5 {
-        font-size: 14pt;
-    }
+h5 {
+    font-size: 14pt;
+}
 
-    h5,
-    h6 {
-        color: #888;
-    }
+h5,
+h6 {
+    color: #888;
+}
 
-    form {
-        font-size: 11pt;
-    }
+form {
+    font-size: 11pt;
+}
 
-    .editor {
-        border-bottom: 1px dashed;
-        border-color: #888;
-    }
+.editor {
+    border-bottom: 1px dashed;
+    border-color: #888;
+}
 
-    .parameters label {
-        margin-top: 10px;
-    }
+.parameters label {
+    margin-top: 10px;
+}
 
-    .scroll-area {
-        xborder: 1px solid #ccc;
-        max-height: calc(100vh - 320px);
-        padding: 10px 15px 10px 10px;
-    }
+.scroll-area {
+    xborder: 1px solid #ccc;
+    max-height: calc(100vh - 320px);
+    padding: 10px 15px 10px 10px;
+}
 
-    .active-item {
-        background-color: #e7f3ff
-    }
+.active-item {
+    background-color: #e7f3ff
+}
 
-    .size-full>div {
-        height: calc(100vh - 220px);
-    }
+.size-full>div {
+    height: calc(100vh - 220px);
+}
 
-    .expand {
-        display: table;
-    }
+.expand {
+    display: table;
+}
 </style>

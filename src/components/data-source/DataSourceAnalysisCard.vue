@@ -1,28 +1,47 @@
 <template>
-    <div class="analysis_card">
-        <div class="analysis_card_header">
-            <h6>{{info.atributte}}</h6>
-            <b-dropdown id="dropdown-right" right class="m-2" variant="outline-dark">
+    <b-card class="analysis_card border">
+        <template #header>
+            <div class="float-left">
+                <h6 class="mb-0">{{ info.attr.name }}</h6>
+            </div>
+            <div class="float-right text-right">
+                <button class="btn btn-link btn-sm m-0 p-0 pr-1" @click="deleteCard"><font-awesome-icon icon="edit"
+                        :title="$t('actions.edit')" /></button>
+                <button class="btn btn-link btn-sm m-0 p-0 pr-1" @click="deleteCard"><font-awesome-icon icon="trash"
+                        :title="$t('actions.delete')" /></button>
+                <button class="btn btn-link btn-sm m-0 p-0 pr-1" @click="deleteCard"><font-awesome-icon icon="refresh"
+                        :title="$t('actions.refresh')" /></button>
+                <button class="btn btn-link btn-sm m-0 p-0" @click="deleteCard"><font-awesome-icon icon="maximize"
+                        :title="$t('actions.maximize')" /></button>
+            </div>
+            <!--
+            <b-dropdown id="dropdown-right" right class="m-2 float-right" variant="outline-dark" size="sm">
                 <b-dropdown-item href="#" @click="deleteCard">
-                    Excluir
+                    <font-awesome-icon icon="trash" /> {{ $t('actions.delete') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#">
-                    Editar
+                    <font-awesome-icon icon="edit" /> {{ $t('actions.edit') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#">
-                    Atualizar
+                    <font-awesome-icon icon="refresh" /> {{ $t('actions.refresh') }}
+                </b-dropdown-item>
+                <b-dropdown-item href="#">
+                    <font-awesome-icon icon="maximize" /> {{ $t('actions.maximize') }}
                 </b-dropdown-item>
             </b-dropdown>
+        -->
+        </template>
+        <div v-for="analysis in info.value" class="bg-light border-bottom mb-2">
+            <strong>{{ $t(`dataSource.analysis.${analysis.analysis}`) }}</strong>
+            <ul class="measurements">
+                <li>Max:</li>
+                <li>Min:</li>
+                <li>Avg:</li>
+                <li>Std:</li>
+                <li>Median:</li>
+            </ul>
         </div>
-        <h6>{{info.analysis}}</h6>
-        <ul class="measurements">
-            <li>Max:</li>
-            <li>Min:</li>
-            <li>Avg:</li>
-            <li>Std:</li>
-            <li>Median:</li>
-        </ul>
-    </div>
+    </b-card>
 </template>
 
 <script>
@@ -30,11 +49,14 @@ export default {
     props: {
         info: {
             type: Object,
-            default: null
+            default: {}
         }
     },
     emits: ['action'],
     methods: {
+        editCard() {
+
+        },
         deleteCard() {
             this.$emit('action', this.info);
         }
@@ -45,31 +67,30 @@ export default {
 
 <style scoped>
 .analysis_card {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-width: 350px;
-  border-right: 1px solid #d9dadb;
-  padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-width: 350px;
+    max-width: 400px;
+    border-right: 1px solid #d9dadb;
+    margin: 10px 5px;
 }
 
 .analysis_card>h6 {
-  text-align: center;
+    text-align: center;
 }
 
 .analysis_card_header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .measurements {
-  height: fit-content;
-  width: 100%;
-  text-decoration: none;
-  list-style: none;
-  text-align: start;
-  padding: 0 0 0 0;
-}
-</style>
+    height: fit-content;
+    width: 100%;
+    text-decoration: none;
+    list-style: none;
+    text-align: start;
+    padding: 0 0 0 0;
+}</style>

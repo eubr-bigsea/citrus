@@ -62,7 +62,7 @@
                         <table class="table table-sm expression-table">
                             <thead>
                                 <th> {{ $t('property.expression.title') }}</th>
-                                <th v-if="values.alias !== false">
+                                <th v-if="values.alias !== false && showAlias">
                                     {{ $t('property.expression.alias') }}
                                 </th>
                                 <th style="width:12%" />
@@ -85,7 +85,7 @@
                                         <small class="label text-danger" v-html="row.error" />
                                         <!-- <small>{{row}}</small> -->
                                     </td>
-                                    <td v-if="values.alias !== false" style="width: 20%">
+                                    <td v-if="values.alias !== false && showAlias" style="width: 20%">
                                         <input class="form-control" :value="row.alias" required
                                             @change="updated($event, row, 'alias')">
                                     </td>
@@ -165,6 +165,7 @@ export default {
     props: {
         addOperators: { type: Function, default: () => null },
         removeOperators: { type: Function, default: () => null },
+        showAlias: { type: Boolean, default: () => true },
     },
     data() {
         return {
@@ -189,7 +190,7 @@ export default {
             const self = this;
             if (this.value && this.value.map) {
                 return this.value.map((v) => {
-                    if (self.values && self.values.alias !== false) {
+                    if (self.values && self.values.alias !== false && self.showAlias) {
                         return `${v.alias} = ${v.expression}`
                     } else {
                         return v.expression;
@@ -275,7 +276,7 @@ export default {
             }).length == 0;
         },
         okClicked() {
-            const result = this.$refs.form && this.$refs.form.reportValidity() & this.validate();
+            const result = !this.field.required || this.$refs.form && this.$refs.form.reportValidity() & this.validate();
             if (result) {
                 this.triggerUpdateEvent(this.message, this.field,
                     this.expressionList);

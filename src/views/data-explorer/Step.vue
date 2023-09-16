@@ -1,17 +1,17 @@
 <template>
     <div style="display: flex;" class="step" :class="stepClass">
-        <!-- <div style="width:4px" :style="{ 'background-color': step.forms?.color?.value || '#ccc' }" class="mr-1" /> -->
         <div class="float-left text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
-        <div v-if="hasProblems" class="pulse-item text-warning">
-            <font-awesome-icon icon="fa fa-exclamation-circle"
-                title="Existem problemas na configuração. Edite para corrigir." />
+        <div v-if="hasProblems" class="pulse-item text-danger"
+            title="Existem problemas na configuração. Edite para corrigir.">
+            <font-awesome-icon icon="fa fa-question-circle" />
+            {{ hasProblems.label }}
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
                 <input v-if="!locked && index > 0" v-model="editableStep.selected" type="checkbox">&nbsp;
-                <span class="step-number">#{{ index + 1}}</span> -
+                <span class="step-number">#{{ index + 1 }}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
@@ -27,9 +27,10 @@
                         :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
                     </b-button>
+
                     <b-button variant="light" size="sm" class="text-secondary" :title="$t('common.previewUntilHere')"
                         @click="$emit('preview', step)">
-                        <span class="fa" :class="{ 'fa-eye': step.previewable, 'fa-eye-slash': !step.previewable }" />
+                        <font-awesome-icon :icon="`fa ${step.previewable ? 'fa-eye' : 'fa-eye-slash'}`" />
                     </b-button>
 
                     <b-button v-if="index > 0" variant="light" size="sm" class="text-secondary"
@@ -37,8 +38,7 @@
                         <font-awesome-icon icon="fa fa-trash" />
                     </b-button>
                     <b-button v-if="index > 0" variant="light" size="sm"
-                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')"
-                        @click="$emit('toggle', step)">
+                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')" @click="$emit('toggle', step)">
                         <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success" />
                         <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
                     </b-button>
@@ -64,7 +64,9 @@
                                 <component :is="getWidget(field)" v-if="field.editable && field.enabled !== false"
                                     :field="field" :value="getValue(field.name)" :language="language"
                                     :type="field.suggested_widget" :read-only="!field.editable" context="context"
-                                    :suggestion-event="suggestionEvent" @update="updateField" />
+                                    :suggestion-event="() => suggestionEvent(step.id)" @update="updateField" 
+                                    :extended-suggestion-event="() => extendedSuggestionEvent(step.id)"
+                                    />
                             </div>
                         </template>
                     </div>
@@ -87,11 +89,9 @@
     </div>
 </template>
 <script>
-import Pulse from '../../components/Pulse.vue';
 import Vue from 'vue';
 export default {
     name: 'StepComponent',
-    components: { Pulse, },
     props: {
         attributes: { type: Array, required: true },
         index: { type: Number, required: true },
@@ -99,6 +99,8 @@ export default {
         locked: { type: Boolean, default: false },
         step: { type: Object, required: true },
         suggestionEvent: { type: Function, default: () => null },
+        extendedSuggestionEvent: { type: Function, default: () => null },
+
     },
     emits: ['preview', 'delete', 'toggle', 'duplicate', 'update', 'cancel', 'select', 'edit',],
     data() {
@@ -122,18 +124,10 @@ export default {
             const self = this;
             const executionForm = this.step.operation.forms.find(f => f.category === 'execution');
             return executionForm && executionForm.fields.find(field => {
-                return (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value));
-            }) !== undefined;
+                return field.enabled &&
+                    (field.required && (!self.step.forms[field.name] || !self.step.forms[field.name].value));
+            });
         },
-        // attributes that may be selected based on their type
-        // validAttributes() {
-        //     switch (this.functionName) {
-        //     case 'round':
-        //         return this.attributes.filter(attr => attr.type === 'Decimal');
-        //     default:
-        //         return this.attributes;
-        //     }
-        // },
         suggestedAttributes() {
             return this.attributes.map(a => a.key);
         },
@@ -148,6 +142,9 @@ export default {
         this.enableDisableFields();
     },
     methods: {
+        obterSugestao(){
+            console.debug(this.suggestionEvent(this.step.id));
+        },
         _evalInContext(js, context) {
             return new Function(`return ${js};`).call(context);
         },
@@ -181,7 +178,6 @@ export default {
                 f.fields.forEach((field) => {
                     field.category = f.category;
                     Vue.set(field, "enabled", true);
-                    //field.enabled = true;
                     if (field.enable_conditions) {
                         if (field.enable_conditions === 'false') {
                             field.enabled = false;
@@ -207,9 +203,6 @@ export default {
                 ? this.editableStep.forms[name].value : null;
         },
         getWidget(field) {
-            //if (field.suggested_widget === 'attribute-selector') {
-            //    return 'text-component'
-            //} else
             if (field.suggested_widget.endsWith(':read-only')) {
                 const s = field.suggested_widget;
                 return s.substring(0, s.length - 10) + '-component';
@@ -329,9 +322,10 @@ export default {
 }
 
 .pulse-item {
-    position: absolute;
-    left: 5px;
     bottom: 10px;
+    font-size: 9pt !important;
+    left: 5px;
+    position: absolute;
 }
 
 .editing-step {

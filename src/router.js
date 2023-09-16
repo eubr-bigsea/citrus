@@ -16,6 +16,7 @@ import VueRouter from 'vue-router';
 const ChangePassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ChangePassword.vue');
 const Login = () => import(/* webpackChunkName: "group-user-profile" */  './views/Login.vue');
 const Logout = () => import(/* webpackChunkName: "group-user-profile" */  './views/Logout.vue');
+const Disconnected = () => import(/* webpackChunkName: "group-user-profile" */  './views/Disconnected.vue');
 const Register = () => import(/* webpackChunkName: "group-user-profile" */  './views/Register.vue');
 const ResetPassword = () => import(/* webpackChunkName: "group-user-profile" */  './views/ResetPassword.vue');
 const Profile = () => import(/* webpackChunkName: "group-user-profile" */  './views/Profile.vue');
@@ -347,7 +348,7 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/data-sources/storage/:id',
+            path: '/data-sources/analysis/:id',
             name: 'dataSourceAnalysis',
             component: DataSourceAnalysis,
             meta: {
@@ -567,6 +568,11 @@ let router = new VueRouter({
             component: Logout
         },
         {
+            path: '/disconnected',
+            name: 'disconnected',
+            component: Disconnected
+        },
+        {
             path: '/register',
             name: 'register',
             component: Register,
@@ -739,7 +745,7 @@ let router = new VueRouter({
             component: WebSocketPing,
             meta: {
                 requiresAuth: true,
-                title: ['titles.admin', 1]
+                title: ['titles.administration', 1]
             }
         },
         {
@@ -748,7 +754,7 @@ let router = new VueRouter({
             component: JsPlumbSandbox,
             meta: {
                 requiresAuth: true,
-                title: ['titles.admin', 1]
+                title: ['titles.administration', 1]
             }
         },
         {
@@ -757,7 +763,7 @@ let router = new VueRouter({
             component: OpenIdSandbox,
             meta: {
                 requiresAuth: false,
-                title: ['titles.admin', 1]
+                title: ['titles.administration', 1]
             }
         },
         {

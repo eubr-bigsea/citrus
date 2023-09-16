@@ -126,6 +126,9 @@
                             <font-awesome-icon :icon="getIcon(props.row)" />
                             {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
+                        <template #user="props">
+                            {{props.row.user.name}}
+                        </template>
                         <template #name="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER' "
                                          :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
@@ -170,6 +173,7 @@ export default {
             columns: [
                 'id',
                 'name',
+                'user',
                 'type',
                 'updated',
                 'version',
@@ -185,6 +189,7 @@ export default {
                 headings: {
                     id: 'ID',
                     name: this.$tc('common.name'),
+                    user: this.$tc('common.user.name'),
                     type: this.$tc('common.type'),
                     updated: this.$tc('common.updated'),
                     version: this.$tc('common.version'),
@@ -206,7 +211,7 @@ export default {
                     self.$refs.searchBtn.classList.remove('btn-spinner');
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
-                    data.size = 5;
+                    data.size = 10;
                     data.name = self.searchFilter //data.query;
                     data.platform = META_PLATFORM_SLUG;
                     if (self.typeFilter) {

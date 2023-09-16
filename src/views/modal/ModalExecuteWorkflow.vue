@@ -68,17 +68,18 @@ export default {
         validationErrors: { type: Array, default: () => null },
         workflow: { type: Object, default: () => { } },
     },
+    emits: ['onexecute-workflow', 'onchange-cluster'],
     methods: {
         changeCluster() {
             const cluster = this.clusters.find((c) => c.id === this.clusterInfo.id);
-            this.$root.$emit("onchange-cluster", cluster);
+            this.$emit("onchange-cluster", cluster);
         },
         close() {
             this.$refs.modal.hide();
         },
         execute(event) {
             event.target.disabled = true;
-            this.$root.$emit("onexecute-workflow");
+            this.$emit("onexecute-workflow");
         },
         show() {
             this.$refs.modal.show();

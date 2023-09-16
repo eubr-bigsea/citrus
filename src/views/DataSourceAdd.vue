@@ -25,14 +25,14 @@
                                 </div>
                                 <div class="card-footer text-center">
                                     <p>
-                                        <select v-model="storage[option.prop]" class="form-control">
+                                        <select v-model="storage[option.prop]" class="form-control" :name="`storage-${option.prop}`">
                                             <option v-for="s in storages[option.items]" :key="s.id" :value="s.id">
                                                 {{s.name}}
                                             </option>
                                         </select>
                                     </p>
                                     <button class="btn btn-success" :disabled="storage[option.prop] === null"
-                                            @click="handleChoose(option.value)">
+                                            @click="handleChoose(option.value)" :name="`btn-${option.prop}`">
                                         {{$t('actions.choose')}}
                                     </button>
                                 </div>
@@ -50,7 +50,7 @@
                                 <div class="resumable-drop"
                                      :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
                                     {{$t('dataSource.dropFilesHere')}}
-                                    <a ref="browseElem" class="resumable-browse">
+                                    <a ref="browseElem" class="resumable-browse" id="select-from-computer">
                                         <u>{{$t('dataSource.selectFromComputer')}}</u>
                                     </a>.
                                     <br>

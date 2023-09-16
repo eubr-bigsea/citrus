@@ -1,7 +1,7 @@
 <template>
     <div>
         <h3 class="border-bottom mb-3">
-            Test web socket (server: {{standSocketIoPath}} namespace {{namespace}})
+            Test web socket (server: {{ standSocketIoPath }} namespace {{ namespace }})
         </h3>
         <div class="row">
             <div class="col-md-3">
@@ -30,12 +30,30 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
-                <button class="btn btn-sm btn-warning mt-3" @click="responses=[]">
-                    Clear messages
-                </button>
-                <pre class="pre-code"><code v-for="m in responses"
-                                            :key="m">{{m}} <br></code></pre>
+            <div class="col-md-6">
+                <div class=" border mt-1 p-2">
+                    <strong>Messages from this page's socket</strong>
+                    <br />
+                    <button class="btn btn-sm btn-warning mt-3" @click="responses = []">
+                        Clear messages
+                    </button>
+                    <pre class="pre-code"><code v-for="m, x in responses"
+                                            :key="x">{{ m }} <br></code></pre>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class=" border mt-1 p-2">
+                    <strong>Messages from store's socket (room users/{{ user.id }})</strong>
+                    <br />
+                    <button class="btn btn-sm btn-warning mt-3" @click="responsesFromStore = []">
+                        Clear messages
+                    </button>
+                    <!--button class="btn btn-sm btn-secondary ml-2 mt-3" @click="emitFromStore">
+                        Send hello from store
+                    </button -->
+                    <pre class="pre-code"><code v-for="m, x in responsesFromStore"
+                                            :key="x">{{ m }} <br></code></pre>
+                </div>
             </div>
         </div>
     </div>
@@ -46,6 +64,7 @@ import io from 'socket.io-client';
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
+import { mapGetters } from 'vuex';
 
 export default {
     data() {
@@ -53,6 +72,7 @@ export default {
             type: 'echo',
             message: '',
             responses: [],
+            responsesFromStore: [],
             newRoom: 'echo',
             room: 'echo',
             socket: null,
@@ -60,10 +80,13 @@ export default {
             standSocketIoPath,
         };
     },
+    computed: {
+        ...mapGetters(['user']),
+    },
     mounted() {
         const self = this;
-        const opts = {upgrade: true};
-        if (standSocketIoPath !== ''){
+        const opts = { upgrade: true };
+        if (standSocketIoPath !== '') {
             opts['path'] = standSocketIoPath;
         }
         const socket = io(
@@ -100,6 +123,12 @@ export default {
         socket.on('response', (msg) => {
             this.responses.push(msg.message);
         });
+        this.$store.dispatch('registerEventListener',
+            {
+                event: 'echo2', callback: (msg, a) => {
+                    this.responsesFromStore.push(msg);
+                }
+            });
     },
     beforeUnmount() {
         if (this.socket) {
@@ -109,6 +138,12 @@ export default {
     },
 
     methods: {
+        emitFromStore() {
+            this.$store.commit('emitMessage', {
+                eventName: 'echo',
+                message: 'Hello, from the store!'
+            });
+        },
         disconnect() {
             this.socket.disconnect();
         },
@@ -124,11 +159,12 @@ export default {
 };
 </script>
 <style scoped>
-    .pre-code {
-        margin-top: 15px;
-        font-size: 10pt;
-        border: 1px solid #aaa;
-        height: 60vh;
-        overflow: auto;
-    }
+.pre-code {
+    margin-top: 15px;
+    padding: 1px;
+    font-size: 8pt;
+    border: 1px solid #aaa;
+    height: 60vh;
+    overflow: auto;
+}
 </style>

@@ -22,10 +22,6 @@ import { ClientTable, ServerTable } from 'vue-tables-2';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons.js';
 
-
-
-
-
 /* Widgets */
 
 import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
@@ -275,6 +271,7 @@ openIdService.loadConfig(store).then(() => {
     const i18nComposition = createI18n({
         allowComposition: true,
         globalInjection: true,
+        global: true,
         legacy: false,
         locale: user ? user.locale : 'pt',
         fallbackLocale: 'en',

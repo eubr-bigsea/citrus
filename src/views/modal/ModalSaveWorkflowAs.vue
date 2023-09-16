@@ -53,7 +53,7 @@ export default {
         },
         okClicked() {
             if (this.newName && this.newName.trim()) {
-                this.$root.$emit('onsave-workflow-as', this.saveOption, this.newName);
+                this.$emit('onsave-workflow-as', this.saveOption, this.newName);
                 this.$refs.saveAsModal.hide();
             } else {
                 this.warning(this.$tc('titles.validationErrors', 2));

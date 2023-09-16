@@ -1,12 +1,11 @@
 <template>
     <div>
+        <!--web-socket / -->
         <vue-snotify />
-        <!--
         <l-navbar v-if="isLoggedIn" />
-        -->
-        <div id="wrapper">
-            <side-bar ref="sidebar" />
-            <div id="page-content-wrapper">
+        <div id="wrapperx">
+            <!--<side-bar ref="sidebar" />-->
+            <div id="page-content-wrapperx">
                 <div class="container-fluid main-container">
                     <router-view />
 
@@ -19,7 +18,8 @@
 </template>
 
 <script>
-//import Navbar from './components/Navbar.vue';
+import WebSocket from './components/WebSocket.vue';
+import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import axios from 'axios';
 import SideBar from './components/SideBar.vue';
@@ -27,9 +27,9 @@ import SideBar from './components/SideBar.vue';
 export default {
     name: 'App',
     components: {
-        //'l-navbar': Navbar,
+        'l-navbar': Navbar,
         'l-footer': Footer,
-        SideBar,
+        SideBar, WebSocket
     },
     computed: {
         isLoggedIn() {

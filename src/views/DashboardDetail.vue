@@ -6,26 +6,26 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="header-pretitle">
-                                {{$tc('titles.dashboard', 1)}}
+                                {{ $tc('titles.dashboard', 1) }}
                             </h6>
                             <h2 v-if="publicRoute">
-                                {{dashboard.title}}
+                                {{ dashboard.title }}
                             </h2>
                             <InputHeader v-else v-model="dashboard.title" />
                         </div>
                         <div class="d-print-none">
                             <div v-if="isLoggedIn" class="btn-group float-right" role="group">
                                 <button class="btn btn-sm btn-outline-dark" @click.stop="save">
-                                    <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
+                                    <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                                 </button>
                                 <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
-                                        @click.prevent="showProperties">
+                                    @click.prevent="showProperties">
                                     <font-awesome-icon icon="fa fa-cogs" />
                                 </button>
                             </div>
                             <button v-if="!publicRoute" class="btn btn-sm btn-success mr-2"
-                                    :title="$t('actions.showProperties')" @click.prevent="addText">
-                                <font-awesome-icon icon="fa fa-plus" /> {{$t('dashboard.markupVisualization')}}
+                                :title="$t('actions.showProperties')" @click.prevent="addText">
+                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('dashboard.markupVisualization') }}
                             </button>
                         </div>
                     </div>
@@ -35,13 +35,13 @@
                             <div class="card ">
                                 <div class="card-body">
                                     <div v-if="layout">
-                                        <grid-layout :layout="layout" :col-num="12" :row-height="30"
-                                                     :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
-                                                     :is-responsive="true" :vertical-compact="true" :margin="[10, 10]"
-                                                     :use-css-transforms="true" :prevent-collision="false"
-                                                     @layout-updated="layoutUpdatedEvent">
+                                        <grid-layout :layout="layout" :col-num="12" :row-height="30" ref="grid"
+                                            :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
+                                            :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
+                                            :use-css-transforms="true" :prevent-collision="false"
+                                            @layout-updated="layoutUpdatedEvent">
                                             <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
-                                                       :w="item.w" :h="item.h" :i="item.i">
+                                                :w="item.w" :h="item.h" :i="item.i" @move="moveEvent" @moved="movedEvent">
                                                 <caipirinha-visualization :url="item.url" :public-route="publicRoute" />
                                             </grid-item>
                                         </grid-layout>
@@ -52,24 +52,29 @@
                     </div>
                 </div>
                 <div v-else>
-                    <h2>{{$tc('common.noData')}}</h2>
+                    <h2>{{ $tc('common.noData') }}</h2>
                 </div>
             </div>
         </div>
-        <b-modal id="dashboardProperties" ref="dashboardProperties" size="md" button-size="sm"
-                 :title="$tc('titles.property', 2)" :ok-only="true">
+        <b-modal id="dashboardProperties" ref="dashboardProperties" size="lg" button-size="sm"
+            :title="$tc('titles.property', 2)" :ok-only="true">
             <b-form @submit="save">
                 <b-form-group :label="$tc('common.title', 1) + ':'">
                     <b-form-input v-model="dashboard.title" required />
                 </b-form-group>
                 <b-form-checkbox v-model="dashboard.is_public">
-                    {{$t('dashboard.public')}}
+                    {{ $t('dashboard.public') }}
                     <br>
-                    <small><em>{{$t('dashboard.publicExplanation')}}</em></small>
+                    <small><em>{{ $t('dashboard.publicExplanation') }}</em></small>
                 </b-form-checkbox>
-                <div v-if="dashboard.is_public">
-                    {{dashboard.hash}}
-                </div>
+                <b-input-group class="mt-3" v-if="dashboard.is_public">
+                    <template #append>
+                        <b-input-group-text role="button" @click="copyLink">
+                            <font-awesome-icon icon="copy" />
+                        </b-input-group-text>
+                    </template>
+                    <b-form-input :value="link" readonly />
+                </b-input-group>
             </b-form>
         </b-modal>
     </main>
@@ -100,7 +105,8 @@ export default {
             errorState: false,
             configuration: {},
             dashboard: { title: '', is_public: false, hash: '' },
-            layout: []
+            layout: [],
+
         };
     },
     computed: {
@@ -109,6 +115,9 @@ export default {
         },
         publicRoute() {
             return this.$route.name === 'publicDashboard';
+        },
+        link() {
+            return `${location.protocol}//${location.host}/public/dashboard/${this.dashboard.hash}`;
         }
     },
     beforeUnmount() {
@@ -158,6 +167,19 @@ export default {
         });
     },
     methods: {
+        moveEvent() {
+            this.$refs.grid.$el.classList.add('grid');
+        },
+        movedEvent() {
+            this.$refs.grid.$el.classList.remove('grid');
+        },
+        copyLink() {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(this.link).then(() => {
+                    this.success('Link copiado!');
+                });
+            }
+        },
         load() {
             const path = this.publicRoute ? 'public/dashboard' : 'dashboards';
             const param = this.publicRoute ? this.$route.params.hash : this.$route.params.id;
@@ -254,8 +276,10 @@ export default {
                         jobId: vis.job_id || 0,
                         taskId: vis.task_id || 0,
                         vizId: vis.id,
-                        x: 0, y: 10000, width: 12
+                        x: 0, y: 0, width: 3
                     };
+                } else {
+                    this.configuration[vis.id]['vizId'] = vis.id;
                 }
                 allVisIds.add(vis.id);
             });
@@ -276,7 +300,7 @@ export default {
                     w: width,
                     h: height,
                     i: parseInt(vizId),
-                    url: `${caipirinhaUrl}/${path}/${jobId}/${taskId}/${vizId}`
+                    url: `${caipirinhaUrl}/${path}/${jobId || 0}/${taskId || 0}/${vizId}`
                 };
             }).filter(v => allVisIds.has(v.i));
             return result;
@@ -312,22 +336,38 @@ export default {
 </script>
 
 <style>
-    .vue-grid-item.vue-grid-placeholder {
-        background-color: rgb(255, 127, 42);
-    }
+.vue-grid-item.vue-grid-placeholder {
+    background-color: rgb(255, 127, 42);
+}
 
-    .vue-grid-item>div {
-        overflow: auto;
-    }
+.vue-grid-item>div {
+    overflow: auto;
+}
 
-    .vue-grid-item {
-        padding: 0 5px 5px 5px;
-    }
+.vue-grid-item {
+    padding: 0 5px 5px 5px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.grid::before {
+    content: '';
+    background-size: calc(calc(100% - 5px) / 12) 40px;
+    background-image: linear-gradient(to right,
+            lightgrey 1px,
+            transparent 1px),
+        linear-gradient(to bottom, lightgrey 1px, transparent 1px);
+    height: calc(100% - 5px);
+    width: calc(100% - 5px);
+    position: absolute;
+    background-repeat: repeat;
+    margin: 5px;
+}
 </style>
 <style scoped>
-    .scroll-area {
-        width: 100%;
-        height: 82vh;
-        overflow-y: auto;
-    }
+.scroll-area {
+    width: 100%;
+    height: 82vh;
+    overflow-y: auto;
+}
 </style>

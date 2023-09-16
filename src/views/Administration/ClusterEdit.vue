@@ -102,8 +102,8 @@ import Vue from 'vue';
 import axios from 'axios';
 import VueSelect from 'vue-select';
 
-let standUrl = process.env.VUE_APP_STAND_URL;
-let tahitiUrl = process.env.VUE_APP_TAHITI_URL;
+const standUrl = import.meta.env.VITE_STAND_URL;
+const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {

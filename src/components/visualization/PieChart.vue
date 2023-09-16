@@ -26,7 +26,7 @@ export default {
     mounted() {
         const self = this;
         this.__resizeListener = debounce(() => {
-            self.$refs.plotly.relayout({
+            self.$refs.plotly && self.$refs.plotly.relayout({
                 width: self.$el.clientWidth,
                 height: self.$el.parentElement.parentElement.clientHeight - 20,
             });

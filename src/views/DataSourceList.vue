@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{$tc('titles.dataSource', 2)}}</h1>
             <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" :to="{ name: 'addDataSource' }"
-                         class="btn btn-primary btn-lemonade-primary">
+                class="btn btn-success" id="add-data-source">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </router-link>
         </div>
@@ -30,6 +30,10 @@
                             <a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info"
                                :title="$t('actions.download')" target="_blank">
                                 <font-awesome-icon icon="download" />
+                            </a>
+                            <a v-if="props.row.format === 'PARQUET'" :href="getDownloadLink(props.row, true)" class="btn btn-sm btn-secondary"
+                               :title="$t('actions.download') + ' CSV'" target="_blank">
+                                <font-awesome-icon icon="download" /> CSV
                             </a>
                             <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
                                     @click="remove(props.row.id)">
@@ -162,11 +166,12 @@ export default {
                 }
             );
         }
-        const getDownloadLink = (row) => {
-            return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}`;
+        const getDownloadLink = (row, toCSV) => {
+            return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}` + 
+                (toCSV ? '&to_csv=true' : '');
         }
         const visualizable = (ds) => {
-            return ['JDBC', 'CSV', 'HIVE'].includes(ds.format);
+            return ['JDBC', 'CSV', 'HIVE', 'PARQUET'].includes(ds.format);
         }
 
         return {

@@ -77,7 +77,8 @@ export default {
                     self.showSuccess = true;
                 })
                 .catch(err => {
-                    self.error(err.response.data.message);
+                    self.error(err.response?.data?.message);
+                    alert(JSON.stringify(err))
                     self.showSuccess = false;
                 });
         }
