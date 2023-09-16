@@ -1,4 +1,5 @@
 # citrus
+This README outlines the details of the new User Interface
 
 ## Prerequisites
 
@@ -7,6 +8,7 @@ You will need the following things properly installed on your computer/VM.
 * [Node.js](https://nodejs.org/) (version >= 16)
 * [Yarn](https://yarnpkg.com/)
 * [Vue-cli](https://cli.vuejs.org/guide/installation.html)
+* [Vite](https://vitejs.dev/)
 * [Google Chrome](https://google.com/chrome/)
 
 
@@ -14,6 +16,7 @@ You will need the following things properly installed on your computer/VM.
 ```
 * git clone https://github.com/eubr-bigsea/citrus.git
 * cd citrus
+* git checkout develop
 ```
 
 ## Development environment configuration
@@ -23,7 +26,12 @@ In order to have Citrus running on a developer machine, you must follow these st
 
 ```$ sudo pip install nodeenv ```
 
-2. Create the NodeJS virtual environment and activate it. If it works, something like `(venv)` will appear in your command prompt:
+or
+
+```$ sudo apt-get update (update packages) ```
+```$ sudo apt-get install nodeenv ```
+
+2. (Optional) Create the NodeJS virtual environment and activate it. If it works, something like `(venv)` will appear in your command prompt:
 ```
 * Create new environment:
 
@@ -36,14 +44,11 @@ In order to have Citrus running on a developer machine, you must follow these st
 
 3. Install project dependencies
 
-
-## Project setup
-
 * Downloading and installing Node.js and npm:
 ```
-
 npm install
 npm install -g npm
+npm add core-js
 ```
 * Checking your version of npm and Node.js
 ```
@@ -61,10 +66,25 @@ yarn add vite
 
 ```
 
-### Compiles and minifies for production
+### Open the file "env.development", copy and paste the following text:
+``` VITE_LIMONERO_URL=http://www.lemonade.org.br/limonero
+VITE_STAND_URL=http://www.lemonade.org.br/stand
+VITE_TAHITI_URL=http://www.lemonade.org.br/tahiti
+VITE_THORN_URL=http://www.lemonade.org.br/thorn
+VITE_CAIPIRINHA_URL=http://www.lemonade.org.br/caipirinha
+VITE_SEED_URL=http://www.lemonade.org.br/seed
+
+VITE_STAND_NAMESPACE="/stand"
+VITE_STAND_SOCKET_IO_PATH="/socket.io"
+VITE_STAND_SOCKET_IO_SERVER=""
+VITE_REFERENCE_BASE_URL=http://www.lemonade.org.br/reference
 ```
-npm run dev
-```
+
+### To start developing in the LEMONADE environment
+> npm run dev
+
+--> Make sure the port allocated to LEMONADE is free to use <--
+
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
