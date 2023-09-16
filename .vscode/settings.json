@@ -2,10 +2,11 @@
 {
     // https://stackoverflow.com/a/55527190/1646932
     "files.watcherExclude": {
-        "**/.git/objects/**": true,
+        "**/.git/**": true,
         "**/node_modules/**": true,
         "**/dist/**": true,
         "**/coverage/**": true,
+        "**/venv/**": true,
     },
     //"editor.renderWhitespace": "all",
     "editor.selectionClipboard": true,

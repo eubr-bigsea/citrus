@@ -1,9 +1,11 @@
-import { createVuePlugin } from 'vite-plugin-vue2';
+//import { createVuePlugin } from 'vite-plugin-vue2';
+import vue from '@vitejs/plugin-vue2'
 import path from 'path';
 
 export default {
     plugins: [
-        createVuePlugin(/* options */)
+        //createVuePlugin(/* options */)
+        vue()
     ],
     resolve: {
         alias: [
