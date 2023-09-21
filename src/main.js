@@ -208,7 +208,7 @@ Vue.component('VStyle', {
 });
 
 // Highcharts
-
+/*
 import Highcharts from 'highcharts';
 import HighchartsVue from 'highcharts-vue';
 import exporting from 'highcharts/modules/exporting';
@@ -216,13 +216,14 @@ import offlineExporting from 'highcharts/modules/offline-exporting';
 import exportdata from 'highcharts/modules/export-data';
 import highchartsMore from 'highcharts/highcharts-more';
 
+
 exporting(Highcharts);
 exportdata(Highcharts);
 offlineExporting(Highcharts);
 highchartsMore(Highcharts);
 
 Vue.use(HighchartsVue);
-
+*/
 
 // Leaflet
 //import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
