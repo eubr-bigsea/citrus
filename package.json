@@ -65,7 +65,7 @@
     "@storybook/addon-actions": "^6.5.15",
     "@storybook/addon-essentials": "^7.4.3",
     "@storybook/addon-interactions": "^6.5.15",
-    "@storybook/addon-links": "^6.5.15",
+    "@storybook/addon-links": "^7.4.3",
     "@storybook/testing-library": "^0.0.13",
     "@storybook/vue": "^7.4.3",
     "@vitejs/plugin-vue2": "^2.2.0",
