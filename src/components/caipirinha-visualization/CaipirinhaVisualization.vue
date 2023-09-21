@@ -22,7 +22,7 @@
 
 <script>
 import axios from "axios"
-import Highcharts from 'highcharts'
+//import Highcharts from 'highcharts'
 
 import CaipirinhaVisualizationHtml from "./CaipirinhaVisualizationHtml.vue"
 import CaipirinhaVisualizationMarkdown from "./CaipirinhaVisualizationMarkdown.vue"
@@ -205,6 +205,7 @@ export default {
             }
         },
         setLang() {
+            return      
             if (highchartsDefaultLang === undefined)
                 highchartsDefaultLang = {
                     ...Highcharts.getOptions().lang
