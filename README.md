@@ -17,6 +17,7 @@ You will need the following things properly installed on your computer/VM.
 * git clone https://github.com/eubr-bigsea/citrus.git
 * cd citrus
 * git checkout develop
+* git checkout -b Issue_#number
 ```
 
 ## Development environment configuration

@@ -79,7 +79,7 @@
     "sass": "^1.57.1",
     "vite": "^4.4.9",
     "vite-plugin-vue2": "^2.0.3",
-    "vitest": "^0.27.1",
+    "vitest": "^0.27.3",
     "vue-eslint-parser": "^9.1.0",
     "vue-loader": "^15.10.1"
   },
