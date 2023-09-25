@@ -33,7 +33,7 @@
     "leaflet": "^1.8.0",
     "leaflet.heat": "^0.2.0",
     "oidc-client": "^1.11.5",
-    "plotly.js-dist-min": "^2.18.1",
+    "plotly.js-dist-min": "^2.26.1",
     "prismjs": "^1.23.0",
     "resumablejs": "^1.1.0",
     "snarkdown": "^2.0.0",
