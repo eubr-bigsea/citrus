@@ -51,6 +51,10 @@ const UserList = () => import(/* webpackChunkName: "group-user" */ './views/Admi
 const UserAdd = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserAdd.vue');
 const UserEdit = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserEdit.vue');
 
+const CodeAdd = () => import('./views/Administration/CodeAdd.vue');
+const CodeEdit = () => import('./views/Administration/CodeEdit.vue');
+const CodeLibrary = () => import('./views/Administration/CodeLibrary.vue');
+
 const ClusterList = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterList.vue');
 const ClusterEdit = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterEdit.vue');
 
@@ -206,6 +210,36 @@ let router = new VueRouter({
             path: '/administration/users/:id/edit',
             name: 'AdministrationEditUser',
             component: UserEdit,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.user', 1]
+            }
+        },
+        {
+            path: '/administration/code',
+            name: 'codeLibrary',
+            component: CodeLibrary,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.user', 1]
+            }
+        },
+        {
+            path: '/administration/code/add',
+            name: 'codeAdd',
+            component: CodeAdd,
+            meta: {
+                requiresAuth: true,
+                requiresRole: true,
+                title: ['titles.user', 1]
+            }
+        },
+        {
+            path: '/administration/code/edit',
+            name: 'codeEdit',
+            component: CodeEdit,
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
