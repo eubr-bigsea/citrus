@@ -32,6 +32,9 @@ export default {
         include: [
             'tests/**/*.spec.js',
         ],
+        deps: {
+            inline: [/vue/]
+        }
     },
     build: {
         rollupOptions:{
