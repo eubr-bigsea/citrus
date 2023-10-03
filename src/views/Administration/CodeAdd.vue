@@ -5,7 +5,11 @@
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>
+<<<<<<< HEAD
                             Adicionar Código
+=======
+                            {{$t('actions.addSourceCode')}}
+>>>>>>> 4606f7434d675a736e564ef7405a50db67455518
                         </h1>
                     </div>
                     <hr>
@@ -18,16 +22,26 @@
                                required maxlength="100">
                     </div>
                     <div class="col-md-6">
+<<<<<<< HEAD
                         <label for="enabled" class="font-weight-bold">Status:</label>
                         <b-form-checkbox id="enabled" v-model="codeStatus">
                             Habilitado
+=======
+                        <label for="enabled" class="font-weight-bold">{{$tc('common.status')}}:</label>
+                        <b-form-checkbox id="enabled" v-model="codeStatus">
+                            {{$tc('common.enabled')}}
+>>>>>>> 4606f7434d675a736e564ef7405a50db67455518
                         </b-form-checkbox>
                     </div>
                 </div>
 
                 <div class="row mt-2">
                     <div class="col-md-6">
+<<<<<<< HEAD
                         <label class="font-weight-bold">Descrição:</label>
+=======
+                        <label class="font-weight-bold">{{$tc('common.description')}}:</label>
+>>>>>>> 4606f7434d675a736e564ef7405a50db67455518
                         <br>
                         <textarea id="" v-model="codeDescription" name="" class="form-control" 
                                   rows="3" />
