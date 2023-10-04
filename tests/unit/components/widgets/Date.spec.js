@@ -14,13 +14,13 @@ describe('Date', () => {
     });
 
     it('tests max date', () => {
-        const range = shallowMount(Date, {
+        const wrapper = shallowMount(Date, {
             propsData: {
                 value: maxDate
             }
         });
 
-        expect(range.props().value).toBe(maxDate);
+        expect(wrapper.props().value).toBe(maxDate);
     });
 
 });
