@@ -695,6 +695,7 @@ export default {
             workflow: 'Fluxo de trabalho | Fluxos de trabalho',
             lemon: 'Lemon',
             add: 'Adicionar',
+            lemonConfig: 'Configuração do Lemon',
             lemonHistory: 'Histórico de Execuções'
         },
         track: {
@@ -1404,6 +1405,7 @@ export default {
             workflow: 'Workflow | Workflows',
             lemon: 'Lemon',
             add: 'Add',
+            lemonConfig: 'Lemon Configuration',
             lemonHistory: 'Executions History'
         },
         track: {
