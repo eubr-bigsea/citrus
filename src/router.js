@@ -91,6 +91,9 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
 const Lemon = () => import('./views/Lemon.vue');
+const LemonHistory = () => import('./views/LemonHistory.vue');
+
+
 /* Experiments */
 const Explorer = () => import('./views/data-explorer/Explorer.vue');
 const DataExplorerStart = () => import('./views/data-explorer/DataExplorerStart.vue');
@@ -855,6 +858,15 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.lemon', 1]
+            }
+        },
+        {
+            path: '/lemon/history',
+            name: 'lemon-history',
+            component: LemonHistory,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.lemonHistory', 1]
             }
         },
         {
