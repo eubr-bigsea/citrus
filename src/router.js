@@ -90,6 +90,7 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
+const Lemon = () => import('./views/Lemon.vue');
 /* Experiments */
 const Explorer = () => import('./views/data-explorer/Explorer.vue');
 const DataExplorerStart = () => import('./views/data-explorer/DataExplorerStart.vue');
@@ -848,6 +849,15 @@ let router = new VueRouter({
             }
         },
         {
+            path: '/lemon',
+            name: 'lemon',
+            component: Lemon,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.lemon', 1]
+            }
+        },
+        {
             path: '*',
             name: 'not-found',
             component: PageNotFound,
@@ -860,7 +870,7 @@ let router = new VueRouter({
 });
 router.onError(error => {
     if (/loading chunk \d* failed./i.test(error.message)) {
-        window.location.reload()
+        window.location.reload();
     }
 });
 export default router;

@@ -694,6 +694,7 @@ export default {
             whatIfModel: 'What if model?',
             workflow: 'Fluxo de trabalho | Fluxos de trabalho',
             lemon: 'Lemon',
+            add: 'Adicionar',
         },
         track: {
             status: 'Status',
@@ -1401,6 +1402,7 @@ export default {
             whatIfModel: 'What if model?',
             workflow: 'Workflow | Workflows',
             lemon: 'Lemon',
+            add: 'Add',
         },
         track: {
             status: 'Status',
