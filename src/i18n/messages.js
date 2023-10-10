@@ -692,7 +692,8 @@ export default {
             warning: 'Aviso',
             welcome: 'Bem-vindo(a) ao Lemonade!',
             whatIfModel: 'What if model?',
-            workflow: 'Fluxo de trabalho | Fluxos de trabalho'
+            workflow: 'Fluxo de trabalho | Fluxos de trabalho',
+            lemon: 'Lemon',
         },
         track: {
             status: 'Status',
@@ -1398,7 +1399,8 @@ export default {
             warning: 'Warning',
             welcome: 'Welcome to Lemonade!',
             whatIfModel: 'What if model?',
-            workflow: 'Workflow | Workflows'
+            workflow: 'Workflow | Workflows',
+            lemon: 'Lemon',
         },
         track: {
             status: 'Status',
