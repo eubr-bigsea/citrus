@@ -128,7 +128,7 @@ export default {
                     this.internalValue.list = this.internalValue.list.map(v => parseFloat(v));
             }
 
-            console.debug(this.message, this.field.name, this.internalValue)
+            //console.debug(this.message, this.field.name, this.internalValue)
             this.triggerUpdateEvent(this.message, this.field, this.internalValue);
         }
     },

@@ -29,10 +29,10 @@
                             :data-name="field.name">
                             <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}
                                 ||{{ getWidget(field) }}||
+                                {{getFieldValue(field.name, false)}} (({{ field.suggested_widget }}))
                             -->
-                            {{getFieldValue(field.name, false)}}
                             <keep-alive>
-                                <div v-if="['checkboxes-component', 'dropdown-component'].includes(getWidget(field))">
+                                <div v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
                                     <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
                                         :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
                                         :read-only="!field.editable" context="context" @update="handleUpdateField" />
@@ -166,13 +166,13 @@ export default {
             }
         },
         getFieldValue(name, checkboxes) {
-            
+           
             if (checkboxes) {
                 return this.selectedAlgorithm
-                    && this.selectedAlgorithm.forms
-                    && this.selectedAlgorithm.forms[name]
-                    && this.selectedAlgorithm.forms[name].value
-                    ? this.selectedAlgorithm.forms[name].value.list : null
+                    && this.selectedAlgorithm?.forms
+                    && this.selectedAlgorithm?.forms[name]
+                    && this.selectedAlgorithm?.forms[name]?.value
+                    ? this.selectedAlgorithm?.forms[name]?.value?.list : null
             } else {
                 return this.selectedAlgorithm
                     && this.selectedAlgorithm.forms
