@@ -3,8 +3,8 @@
 </template>
 <script>
 /* (c) https://github.com/statnett/vue-plotly/blob/master/src/Plotly.vue */
-//import Plotly from 'plotly.js-dist-min';
-const Plotly = await import(/* webpackChunkName: "plotly" */ "plotly.js-dist-min")
+import Plotly from 'plotly.js-dist-min';
+//const Plotly = await import(/* webpackChunkName: "plotly" */ "plotly.js-dist-min")
 import { debounce } from '../../util.js';
 
 const events = [
