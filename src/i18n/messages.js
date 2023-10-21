@@ -696,7 +696,12 @@ export default {
             lemon: 'Lemon',
             add: 'Adicionar',
             lemonConfig: 'Configuração do Lemon',
-            lemonHistory: 'Histórico de Execuções'
+            lemonHistory: 'Histórico de Execuções',
+            metafluxo: 'Metafluxo',
+            landingZone: 'Landing Zone',
+            raw: 'Raw',
+            stage: 'Stage',
+            dataset: 'Dataset'
         },
         track: {
             status: 'Status',
@@ -1406,7 +1411,12 @@ export default {
             lemon: 'Lemon',
             add: 'Add',
             lemonConfig: 'Lemon Configuration',
-            lemonHistory: 'Executions History'
+            lemonHistory: 'Executions History',
+            metafluxo: 'Metafluxo',
+            landingZone: 'Landing Zone',
+            raw: 'Raw',
+            stage: 'Stage',
+            dataset: 'Dataset'
         },
         track: {
             status: 'Status',

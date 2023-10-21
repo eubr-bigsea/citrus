@@ -150,6 +150,7 @@ import {
     faMapLocationDot,
     faFileExport,
     faMaximize,
+    faClock,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -303,7 +304,7 @@ library.add(
     faX,
     faXmarkCircle,
     faY,
-
+    faClock
 );
 /**
  * Allows DOM to change <i> tags to SVG for more features like layering
