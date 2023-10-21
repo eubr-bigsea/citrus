@@ -1,18 +1,38 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center py-2 mb-2 border-bottom">
-            <h1 class="page-title">
+        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
+            <h1 class="historyPage-title">
                 Histórico de Execuções
             </h1>
-            <!-- <button class="page-button-header" @click="salvar">
-                <font-awesome-icon icon="fa fa-plus" /> Salvar
-            </button> -->
         </div> 
 
 
-        <div class="page-card">
-            <div class="card-body-lemon">
-                <v-client-table class="card-table" :data="tableData" :columns="columns" :options="options" />
+        <div class="historyPage-body">
+            <div class="historyPage-container">
+                <v-client-table v-model="data" class="historyPage-table" :columns="columns" :options="options">
+                    <template #id="props">
+                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
+                            {{props.row.id}}
+                        </router-link>
+                    </template>
+                    <template #coletor="props">
+                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
+                            {{props.row.coletor}}
+                        </router-link>
+                    </template>
+                    <template #status="props">
+                        <div class="lemonPage-status-ultima" :class="props.row.status.toLowerCase()">
+                            {{props.row.status}}
+                        </div>
+                    </template>
+                    <template #log>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-spinner btn-primary btn-sm">
+                                <font-awesome-icon icon="fa-eye" />
+                            </button>
+                        </div>
+                    </template>
+                </v-client-table>
             </div>
         </div>
     </div>
@@ -24,44 +44,26 @@ export default {
         return {
             columns: [
                 'id',
-                'metafluxos',
-                'inicio_exec',
-                'intervalo',
-                'fim_exec',
-                'status_ultima',
-                'data_cria',
+                'coletor',
+                'data_ult_exec',
                 'status',
-                'acoes',
+                'log',
             ],
-            tableData: [
-                { id: 100, metafluxos: "Anac", inicio_exec: '24/08/2023', intervalo: '30 dias', fim_exec: '30/12/2023', status_ultima: 'Sucesso', data_cria: '24/08/2023', status: 'Concluído', acoes: "Ordenar | Excluir" },
-                { id: 101, metafluxos: "Licitações", inicio_exec: '05/10/2021', intervalo: '6 horas', fim_exec: '---', status_ultima: 'Erro', data_cria: '24/08/2023', status: 'Concluído', acoes: "Ordenar | Excluir" },
-                { id: 102, metafluxos: "Copasa", inicio_exec: '13/05/2022', intervalo: '7 dias', fim_exec: '30/12/2023', status_ultima: 'Sucesso', data_cria: '24/08/2023', status: 'Não Concluído', acoes: "Ordenar | Excluir" },
-                { id: 103, metafluxos: "Consumidor Gov", inicio_exec: '08/10/2010', intervalo: '3 dias', fim_exec: '30/12/2023', status_ultima: 'Sucesso', data_cria: '24/08/2023', status: 'Concluído', acoes: "Ordenar | Excluir" },
-                { id: 104, metafluxos: "Endereço", inicio_exec: '07/05/2021', intervalo: '6 horas', fim_exec: '---', status_ultima: 'Sucesso', data_cria: '24/08/2023', status: 'Não Concluído', acoes: "Ordenar | Excluir" },
-                { id: 105, metafluxos: "Fakenews", inicio_exec: '24/08/2023', intervalo: '30 dias', fim_exec: '---', status_ultima: 'Sucesso', data_cria: '24/08/2023', status: 'Concluído', acoes: "Ordenar | Excluir" },
-                { id: 106, metafluxos: "Ibge", inicio_exec: '24/08/2023', intervalo: '30 dias', fim_exec: '30/12/2023', status_ultima: 'Pendente', data_cria: '24/08/2023', status: 'Concluído', acoes: "Ordenar | Excluir" },
-                { id: 107, metafluxos: "Anac", inicio_exec: '24/08/2023', intervalo: '30 dias', fim_exec: '30/12/2023', status_ultima: 'Sucesso', data_cria: '24/08/2023', status: 'Concluído', acoes: "Ordenar | Excluir" },
-                { id: 108, metafluxos: "Inss", inicio_exec: '24/08/2023', intervalo: '30 dias', fim_exec: '30/12/2023', status_ultima: 'Erro', data_cria: '24/08/2023', status: 'Concluído', acoes: "Ordenar | Excluir" },
-            ],
+            data: getData(),
             options: {
                 // debounce: 800,
                 skin: 'table-sm table table-hover',
-                dateColumns: ['inicio_exec', 'fim_exec', 'data_cria'],
+                dateColumns: ['data_ult_exec'],
                 columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',
-                    metafluxos: 'Identificador',
-                    inicio_exec: 'Início de Execução',
-                    intervalo: 'Intervalo',
-                    fim_exec: 'Fim de Execução',
-                    status_ultima: 'Status da Última Execução',
-                    data_cria: 'Data de Criação',
+                    coletor: 'Coletor',
+                    data_ult_exec: 'Data da última execução',
                     status: 'Status',
-                    acoes: 'Ações',
+                    log: 'Log de execução',
                 },
-                sortable: ['id','metafluxos','inicio_exec','intervalo','fim_exec','status_ultima','data_cria','status','acoes'],
-                filterable: ['id','metafluxos','inicio_exec','intervalo','fim_exec','status_ultima','data_cria','status','acoes'],
+                sortable: ['id','coletor','data_ult_exec','status','log'],
+                filterable: ['id','coletor','data_ult_exec','status','log'],
                 sortIcon: {
                     base: 'sort-base',
                     is: 'sort-is ml-10',
@@ -89,22 +91,210 @@ export default {
         }
     }
 };
+
+function getData() {
+    return [
+        { 
+            id: 100, 
+            coletor: "Anac", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 101, 
+            coletor: "Licitações", 
+            data_ult_exec: '05/10/2021',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 102, 
+            coletor: "Copasa", 
+            data_ult_exec: '13/05/2022',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 103, 
+            coletor: "Consumidor Gov", 
+            data_ult_exec: '08/10/2010',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 104, 
+            coletor: "Endereço", 
+            data_ult_exec: '07/05/2021',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 105, 
+            coletor: "Fakenews", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 106, 
+            coletor: "Ibge", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 107, 
+            coletor: "Anac", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 108, 
+            coletor: "Inss", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 100, 
+            coletor: "Anac", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 101, 
+            coletor: "Licitações", 
+            data_ult_exec: '05/10/2021',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 102, 
+            coletor: "Copasa", 
+            data_ult_exec: '13/05/2022',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 103, 
+            coletor: "Consumidor Gov", 
+            data_ult_exec: '08/10/2010',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 104, 
+            coletor: "Endereço", 
+            data_ult_exec: '07/05/2021',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 105, 
+            coletor: "Fakenews", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 106, 
+            coletor: "Ibge", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 107, 
+            coletor: "Anac", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 108, 
+            coletor: "Inss", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 100, 
+            coletor: "Anac", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 101, 
+            coletor: "Licitações", 
+            data_ult_exec: '05/10/2021',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 102, 
+            coletor: "Copasa", 
+            data_ult_exec: '13/05/2022',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 103, 
+            coletor: "Consumidor Gov", 
+            data_ult_exec: '08/10/2010',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 104, 
+            coletor: "Endereço", 
+            data_ult_exec: '07/05/2021',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 105, 
+            coletor: "Fakenews", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 106, 
+            coletor: "Ibge", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 107, 
+            coletor: "Anac", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 108, 
+            coletor: "Inss", 
+            data_ult_exec: '24/08/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+    ];
+}
 </script>
 
 <style>
-.page-header {
-    border-bottom: 1px solid #dee2e6;
-    /* margin-bottom: 0.5rem; */
-    display: flex;
-    justify-content: space-between;
-}
 
-.page-title {
+.historyPage-title {
     color: #333;
-    /* margin: 10px 0px; */
+    margin: 10px 0px;
 }
 
-.page-card {
+.historyPage-body {
     width: 100%;
     background-color: #fff;
     /* padding: 10px; */
@@ -112,76 +302,14 @@ export default {
     border-radius: 3px;
 }
 
-.card-body-lemon {
+.historyPage-container {
     border: 1px solid #dee2e6;
     padding: 16px;
     border-radius: 3px;
 }
 
-.card-table {
+.historyPage-table {
     background-color: #FFF;
 }
 
-.page-label {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.page-input {
-    width: 60%;
-    height: fit-content;
-    padding: 12px 20px;
-    margin-bottom: 25px;
-    border-radius: 16px;
-    border: none;
-    background-color: #eff0f6;
-}
-
-.page-textarea {
-    width: 60%;
-    height: fit-content;
-    padding: 12px 20px;
-    margin-bottom: 25px;
-    border-radius: 16px;
-    border: none;
-    background-color: #eff0f6;
-}
-
-.page-button-header {
-    background-color: transparent;
-    color: #610bef;
-    font-weight: bold;
-    border: 1px solid #610bef;
-    cursor: pointer;
-    border-radius: 12px;
-    padding: 0px 20px;
-}
-
-.page-button-body {
-    background-color: #610bef;
-    color: #fff;
-    padding: 12px 25px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    border-radius: 12px;
-}
-
-.page-button-header:hover {
-    background-color: #d1d1d1
-}
-
-.page-button-body:hover {
-    background-color: #4b08b6;
-}
-
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-li {
-    margin-bottom: 10px;
-}
 </style>
