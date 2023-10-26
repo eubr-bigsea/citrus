@@ -18,31 +18,55 @@
         </div>
 
         <div class="editPage-body">
-            <div class="editPage-tabs">
-                <b-tabs nav-class="custom-tab mb-0">
-                    <b-tab active class="editPage-tab" :title="$tc('titles.metafluxo')">
-                        <div class="edit-lemon-div-tab">
-                            Metafluxo
-                        </div>
-                    </b-tab>
-                    <b-tab class="editPage-tab" :title="$tc('titles.landingZone')">
-                        Landing Zone
-                    </b-tab>
-                    <b-tab class="editPage-tab" :title="$tc('titles.raw')">
-                        Raw
-                    </b-tab>
-                    <b-tab class="editPage-tab" :title="$tc('titles.stage')">
-                        Stage
-                    </b-tab>
-                    <b-tab class="editPage-tab" :title="$tc('titles.dataset')">
-                        Dataset
-                    </b-tab>
-                </b-tabs>
-            </div>
             <div class="editPage-container">
+                <div class="editPage-tabs">
+                    <b-tabs nav-class="custom-lemon-tabs mb-0">
+                        <b-tab active class="editPage-tab" :title="$tc('titles.metafluxo')">
+                            <div>
+                                <draggable v-model="etapasMetafluxo" :options="dragOptions">
+                                    <div v-for="(etapa, index) in etapasMetafluxo" :key="etapa.id" class="editPage-dragDiv">
+                                        <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
+                                        # {{index + 1}} - {{etapa.nome}}
+                                    </div>
+                                </draggable>
+                            </div>
+                        </b-tab>
+                        <b-tab class="editPage-tab" :title="$tc('titles.landingZone')">
+                            <div class="editPage-tab-header">
+                                <div>
+                                    <font-awesome-icon icon="fa fa-plus" />
+                                    Adicionar operação
+                                </div>
+                                <div class="editPage-tab-header-add">
+                                    <font-awesome-icon icon="fa fa-clock" />
+                                    Adicionar fonte de dados
+                                </div>
+                            </div>
+                            <draggable v-model="etapasLanding" :options="dragOptions">
+                                <div v-for="(etapa, index) in etapasLanding" :key="etapa.id" class="editPage-dragDiv">
+                                    <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
+                                    # {{index + 1}} - {{etapa.nome}}
+                                    <button class="ml-2 btn btn-sm btn-danger absolute top-0">
+                                        <font-awesome-icon icon="trash" />
+                                    </button>
+                                </div>
+                            </draggable>
+                        </b-tab>
+                        <b-tab class="editPage-tab" :title="$tc('titles.raw')">
+                            Raw
+                        </b-tab>
+                        <b-tab class="editPage-tab" :title="$tc('titles.stage')">
+                            Stage
+                        </b-tab>
+                        <b-tab class="editPage-tab" :title="$tc('titles.dataset')">
+                            Dataset
+                        </b-tab>
+                    </b-tabs>
+                </div>
                 <div class="editPage-agendador">
                     <div class="editPage-agendador-title">
-                        Agendador de tarefas
+                        <font-awesome-icon class="editPage-agendadorIcon" icon="fa fa-calendar-alt" />
+                        <span class="ml-2">Agendador de tarefas</span>
                     </div>
                     <div class="editPage-agendador-body">
                         <div class="editPage-agendador-box">
@@ -93,17 +117,103 @@
                         </div>  
                     </div>
                 </div>
+                <!-- <div class="editPage-status" :class="props.row.status.toLowerCase()" /> -->
+                <div class="editPage-historico">
+                    <div class="editPage-historico-title">
+                        <font-awesome-icon icon="fa fa-history" />
+                        <span class="ml-2">Histórico de Execuções</span>
+                    </div>
+                    <div class="editPage-historico-body">
+                        <v-client-table v-model="data" class="editPage-historico-table" :columns="columns" :options="options">
+                            <template #id="props">
+                                {{props.row.id}}
+                            </template>
+                            <template #status="props">
+                                <div class="editPage-status" :class="props.row.status.toLowerCase()">
+                                    {{props.row.status}}
+                                </div>
+                            </template>
+                            <template #log>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-spinner btn-primary btn-sm">
+                                        <font-awesome-icon icon="fa-eye" />
+                                    </button>
+                                </div>
+                            </template>
+                        </v-client-table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import draggable from 'vuedraggable';
+
 export default {
+    components: {
+        draggable
+    },
+    props: {
+        
+    },
     data() {
         return {
             radios: 'radios',
-            dias: 'dias'
+            dias: 'dias',
+            etapasMetafluxo: [
+                { id: 1, nome: 'Landing Zone' },
+                { id: 2, nome: 'Raw' },
+                { id: 3, nome: 'Stage_1' },
+                { id: 4, nome: 'Dataset' },
+            ],
+            etapasLanding: [
+                { id: 1, nome: 'Coletor' },
+                { id: 2, nome: 'Conversão_1' },
+                { id: 3, nome: 'Conversão_2' },
+                { id: 4, nome: 'Pré-Processamento' },
+            ],
+            dragOptions: {
+                animation: 200,
+                group: 'description',
+                disabled: false,
+                ghostClass: 'ghost'
+            },
+            columns: [
+                'id',
+                'data_exec',
+                'status',
+                'log',
+            ],
+            data: getData(),
+            options: {
+                skin: 'table-sm table table-hover',
+                dateColumns: ['data_exec'],
+                columnClasses: { actions: 'th-10' },
+                headings: {
+                    id: 'ID',
+                    data_exec: 'Data da execução',
+                    status: 'Status',
+                    log: 'Log de execução',
+                },
+                sortable: ['id','data_exec','status','log'],
+                filterable: ['id','data_exec','status','log'],
+                sortIcon: {
+                    base: 'sort-base',
+                    is: 'sort-is ml-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
+                },
+                texts: {
+                    filter: this.$tc('common.filter'),
+                    count: this.$t('common.pagerShowing'),
+                    limit: this.$t('common.limit'),
+                    noResults: this.$t('common.noData'),
+                    loading: this.$t('common.loading'),
+                    filterPlaceholder: this.$t('common.filterPlaceholder')
+                }
+            }
         };
     },
     methods: {
@@ -120,6 +230,83 @@ export default {
         }
     }
 };
+
+function getData() {
+    return [
+        { 
+            id: 1,  
+            data_exec: '10/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 2,  
+            data_exec: '07/05/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 3,  
+            data_exec: '15/10/2022',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 4,  
+            data_exec: '24/10/2023',   
+            status: 'Em_execucao',   
+            log: "" 
+        },
+        { 
+            id: 5,  
+            data_exec: '10/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 6,  
+            data_exec: '07/05/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 7,  
+            data_exec: '15/10/2022',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 8,  
+            data_exec: '24/10/2023',   
+            status: 'Em_execucao',   
+            log: "" 
+        },
+        { 
+            id: 9,  
+            data_exec: '10/08/2023',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 10,  
+            data_exec: '07/05/2023',   
+            status: 'Erro',   
+            log: "" 
+        },
+        { 
+            id: 11,  
+            data_exec: '15/10/2022',   
+            status: 'Sucesso',   
+            log: "" 
+        },
+        { 
+            id: 12,  
+            data_exec: '24/10/2023',   
+            status: 'Em_execucao',   
+            log: "" 
+        },
+    ];
+}
 </script>
 
 <style lang="scss">
@@ -137,26 +324,70 @@ export default {
     display: flex;
     flex-direction: row;
     gap: 40px;
-    height: 100%;
+    height: fit-content;
+    padding-bottom: 20px;
 }
 
 .editPage-tabs {
     display: flex;
     flex-direction: column;
-    width: 40%;
+    width: fit-content;
+    height: fit-content;
+    min-height: 400px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
 }
 
 .editPage-tab {
     display: flex;
-    padding: 10px 0px;
+    position: relative;
+    padding: 20px;
+}
 
+.editPage-tab-header {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    border: 2px solid #86B94B;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.editPage-tab-header-add {
+    border-left: 1px solid #86B94B;
+    padding-left: 10px;
+    height: 100%;
+}
+
+.editPage-dragDiv {
+    display: flex;
+    position: relative;
+    border: 2px solid #dfdfdf;
+    padding: 15px 30px;
+    margin-bottom: -2px;
+    font-weight: 700;
+    border-radius: 3px;
+
+    &:hover {
+        cursor: grab;
+    }
+}
+
+.editPage-dragIcon {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    color: #212529;
+    width: 8px;
 }
 
 .editPage-container {
     display: flex;
     flex-direction: row;
-    width: 50%;
-    padding: 20px;
+    justify-content: center;
+    /* padding: 20px; */
+    gap: 20px;
+    width: 100%;
 }
 
 .editPage-agendador {
@@ -168,10 +399,19 @@ export default {
 .editPage-agendador-title {
     display: flex;
     justify-content: center;
+    align-items: center;
+    position: relative;
     background-color: #86B94B;
-    padding: 10px;
+    padding: 20px;
     font-weight: 700;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
+
+/* .editPage-agendadorIcon {
+    position: absolute;
+
+} */
 
 .editPage-agendador-body {
     display: flex;
@@ -180,6 +420,8 @@ export default {
     align-items: start;
     gap: 40px;
     border: 1px solid #cccccc;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .editPage-agendador-box {
@@ -205,6 +447,38 @@ export default {
     flex-direction: row;
     gap: 30px;
     width: 100%;
+}
+
+.editPage-historico {
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.editPage-historico-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #86B94B;
+    padding: 20px;
+    font-weight: 700;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.editPage-historico-body {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 30px;
+    align-items: start;
+    gap: 40px;
+    border: 1px solid #cccccc;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.editPage-historico-table {
+    width: 600px;
 }
 
 .editPage-label {
