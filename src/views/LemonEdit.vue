@@ -8,13 +8,35 @@
                 <button class="btn btn-outline-secondary float-left ml-2" @click="agendamentos">
                     <font-awesome-icon icon="fa fa-clock" /> Agendamentos
                 </button>
-                <button class="btn btn-outline-secondary float-left ml-2" @click="execucoes">
+                <button class="btn btn-outline-secondary float-left ml-2" @click="abrirHistoryModal">
                     <font-awesome-icon icon="fa fa-history" /> Execuções
                 </button>
                 <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="salvar">
                     <font-awesome-icon icon="fa fa-check" /> Salvar
                 </button>
             </div>
+            <b-modal ref="historyModal" title="Histórico de Execuções" ok-only
+                     size="xl" scrollable>
+                <div class="editPage-historico-body">
+                    <v-client-table v-model="data" class="editPage-historico-table" :columns="columns" :options="options">
+                        <template #id="props">
+                            {{props.row.id}}
+                        </template>
+                        <template #status="props">
+                            <div class="editPage-status" :class="props.row.status.toLowerCase()">
+                                {{props.row.status}}
+                            </div>
+                        </template>
+                        <template #log>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-spinner btn-primary btn-sm">
+                                    <font-awesome-icon icon="fa-eye" />
+                                </button>
+                            </div>
+                        </template>
+                    </v-client-table>
+                </div>
+            </b-modal>
         </div>
 
         <div class="editPage-body">
@@ -117,32 +139,6 @@
                         </div>  
                     </div>
                 </div>
-                <!-- <div class="editPage-status" :class="props.row.status.toLowerCase()" /> -->
-                <div class="editPage-historico">
-                    <div class="editPage-historico-title">
-                        <font-awesome-icon icon="fa fa-history" />
-                        <span class="ml-2">Histórico de Execuções</span>
-                    </div>
-                    <div class="editPage-historico-body">
-                        <v-client-table v-model="data" class="editPage-historico-table" :columns="columns" :options="options">
-                            <template #id="props">
-                                {{props.row.id}}
-                            </template>
-                            <template #status="props">
-                                <div class="editPage-status" :class="props.row.status.toLowerCase()">
-                                    {{props.row.status}}
-                                </div>
-                            </template>
-                            <template #log>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-spinner btn-primary btn-sm">
-                                        <font-awesome-icon icon="fa-eye" />
-                                    </button>
-                                </div>
-                            </template>
-                        </v-client-table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -150,13 +146,12 @@
 
 <script>
 import draggable from 'vuedraggable';
+import { BModal } from 'bootstrap-vue';
 
 export default {
     components: {
-        draggable
-    },
-    props: {
-        
+        draggable,
+        BModal
     },
     data() {
         return {
@@ -182,6 +177,7 @@ export default {
             },
             columns: [
                 'id',
+                'etapa',
                 'data_exec',
                 'status',
                 'log',
@@ -193,12 +189,13 @@ export default {
                 columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',
+                    etapa: 'Etapa',
                     data_exec: 'Data da execução',
                     status: 'Status',
                     log: 'Log de execução',
                 },
-                sortable: ['id','data_exec','status','log'],
-                filterable: ['id','data_exec','status','log'],
+                sortable: ['id','etapa','data_exec','status','log'],
+                filterable: ['id','etapa','data_exec','status','log'],
                 sortIcon: {
                     base: 'sort-base',
                     is: 'sort-is ml-10',
@@ -228,79 +225,94 @@ export default {
         salvar() {
             alert("Salvo.");
         }
+        abrirHistoryModal() {
+            this.$refs.historyModal.show();
+        },
     }
 };
 
 function getData() {
     return [
         { 
-            id: 1,  
+            id: 1, 
+            etapa: 'Landing', 
             data_exec: '10/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
-            id: 2,  
+            id: 2, 
+            etapa: 'Landing', 
             data_exec: '07/05/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
-            id: 3,  
+            id: 3, 
+            etapa: 'Landing', 
             data_exec: '15/10/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
-            id: 4,  
+            id: 4, 
+            etapa: 'Landing', 
             data_exec: '24/10/2023',   
             status: 'Em_execucao',   
             log: "" 
         },
         { 
-            id: 5,  
+            id: 5, 
+            etapa: 'Landing', 
             data_exec: '10/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
-            id: 6,  
+            id: 6, 
+            etapa: 'Landing', 
             data_exec: '07/05/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
-            id: 7,  
+            id: 7, 
+            etapa: 'Landing', 
             data_exec: '15/10/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
-            id: 8,  
+            id: 8, 
+            etapa: 'Landing', 
             data_exec: '24/10/2023',   
             status: 'Em_execucao',   
             log: "" 
         },
         { 
-            id: 9,  
+            id: 9, 
+            etapa: 'Landing', 
             data_exec: '10/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
-            id: 10,  
+            id: 10,
+            etapa: 'Landing',  
             data_exec: '07/05/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
-            id: 11,  
+            id: 11,
+            etapa: 'Landing',  
             data_exec: '15/10/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
-            id: 12,  
+            id: 12,
+            etapa: 'Landing',  
             data_exec: '24/10/2023',   
             status: 'Em_execucao',   
             log: "" 
@@ -468,17 +480,23 @@ function getData() {
 
 .editPage-historico-body {
     display: flex;
-    flex-direction: column;
-    padding: 30px 30px;
+    width: 100%;
+    flex-direction: row;
+    padding: 5px;
     align-items: start;
-    gap: 40px;
-    border: 1px solid #cccccc;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
 
 .editPage-historico-table {
-    width: 600px;
+    width: 100%;
+}
+
+.editPage-historico-table th {
+    text-align: center;
+}
+
+.editPage-historico-table td {
+    text-align: center;
+    /* border-left: 1px solid black; */
 }
 
 .editPage-label {
