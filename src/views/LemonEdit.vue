@@ -5,9 +5,9 @@
                 Metafluxo
             </h1>
             <div>
-                <button class="btn btn-outline-secondary float-left ml-2" @click="agendamentos">
+                <!-- <button class="btn btn-outline-secondary float-left ml-2" @click="agendamentos">
                     <font-awesome-icon icon="fa fa-clock" /> Agendamentos
-                </button>
+                </button> -->
                 <button class="btn btn-outline-secondary float-left ml-2" @click="abrirHistoryModal">
                     <font-awesome-icon icon="fa fa-history" /> Execuções
                 </button>
@@ -44,35 +44,45 @@
                 <div class="editPage-tabs">
                     <b-tabs nav-class="custom-lemon-tabs mb-0">
                         <b-tab active class="editPage-tab" :title="$tc('titles.metafluxo')">
-                            <div>
-                                <draggable v-model="etapasMetafluxo" :options="dragOptions">
-                                    <div v-for="(etapa, index) in etapasMetafluxo" :key="etapa.id" class="editPage-dragDiv">
-                                        <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
-                                        # {{index + 1}} - {{etapa.nome}}
-                                    </div>
-                                </draggable>
-                            </div>
-                        </b-tab>
-                        <b-tab class="editPage-tab" :title="$tc('titles.landingZone')">
                             <div class="editPage-tab-header">
-                                <div>
+                                <b-button class="editPage-tab-button" variant="dark" @click="abrirAddOpModal">
                                     <font-awesome-icon icon="fa fa-plus" />
                                     Adicionar operação
-                                </div>
-                                <div class="editPage-tab-header-add">
+                                </b-button>
+                                <b-button class="editPage-tab-button" variant="dark" @click="abrirAddSourceModal">
                                     <font-awesome-icon icon="fa fa-clock" />
                                     Adicionar fonte de dados
-                                </div>
+                                </b-button>
                             </div>
-                            <draggable v-model="etapasLanding" :options="dragOptions">
-                                <div v-for="(etapa, index) in etapasLanding" :key="etapa.id" class="editPage-dragDiv">
+                            <b-modal ref="addOpModal" title="Adicionar operação">
+                                <p>Conteúdo do Modal</p>
+                            </b-modal>
+                            <b-modal ref="addSourceModal" title="Adicionar fonte de dados">
+                                <p>Conteúdo do Modal</p>
+                            </b-modal>
+                            <draggable v-model="etapasMetafluxo" :options="dragOptions">
+                                <div v-for="(etapa, index) in etapasMetafluxo" :key="etapa.id" class="editPage-dragDiv">
                                     <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
-                                    # {{index + 1}} - {{etapa.nome}}
-                                    <button class="ml-2 btn btn-sm btn-danger absolute top-0">
+                                    # {{index + 1}} -
+                                    <button class="editPage-stepButton" @click="abrirModal">
+                                        {{etapa.nome}}
+                                    </button>
+
+
+                                    <button class="editPage-trashIcon ml-2 btn btn-sm btn-danger" @click="abrirDeleteModal">
                                         <font-awesome-icon icon="trash" />
                                     </button>
                                 </div>
                             </draggable>
+                            <b-modal ref="modal" title="Título do Modal">
+                                <p>Conteúdo do Modal</p>
+                            </b-modal>
+                            <b-modal ref="deleteModal" title="Confirmação de exclusão" @ok="respostaUsuario">
+                                <p>Deseja excluir esta etapa?</p>
+                            </b-modal>
+                        </b-tab>
+                        <b-tab class="editPage-tab" :title="$tc('titles.landingZone')">
+                            Landing Zone
                         </b-tab>
                         <b-tab class="editPage-tab" :title="$tc('titles.raw')">
                             Raw
@@ -88,16 +98,10 @@
                 <div class="editPage-agendador">
                     <div class="editPage-agendador-title">
                         <font-awesome-icon class="editPage-agendadorIcon" icon="fa fa-calendar-alt" />
-                        <span class="ml-2">Agendador de tarefas</span>
+                        <span class="ml-2">Agendador de fluxo</span>
                     </div>
                     <div class="editPage-agendador-body">
                         <div class="editPage-agendador-box">
-                            <div class="editPage-agendador-group">
-                                <label class="editPage-label" for="identificador">Metafluxo: </label>
-                                <input id="identificador" class="editPage-input" type="text"
-                                       placeholder="Text input label">
-                            </div>
-
                             <div class="editPage-agendador-group">
                                 <label class="editPage-label" for="descricao">Descrição: </label>
                                 <textarea id="descricao" class="editPage-textarea" type="text"
@@ -106,7 +110,7 @@
                         </div>
                         <div class="editPage-agendador-box">
                             <p class="font-weight-bold">
-                                Quando deseja que sua tarefa seja inicializada?
+                                Quando deseja que seu fluxo seja inicializado?
                             </p>
                             <b-form-radio-group>
                                 <b-form-radio value="uma-vez">
@@ -155,6 +159,7 @@ export default {
     },
     data() {
         return {
+            deleteResponse: null,
             radios: 'radios',
             dias: 'dias',
             etapasMetafluxo: [
@@ -162,12 +167,7 @@ export default {
                 { id: 2, nome: 'Raw' },
                 { id: 3, nome: 'Stage_1' },
                 { id: 4, nome: 'Dataset' },
-            ],
-            etapasLanding: [
-                { id: 1, nome: 'Coletor' },
-                { id: 2, nome: 'Conversão_1' },
-                { id: 3, nome: 'Conversão_2' },
-                { id: 4, nome: 'Pré-Processamento' },
+                { id: 5, nome: 'MDM' },
             ],
             dragOptions: {
                 animation: 200,
@@ -214,19 +214,27 @@ export default {
         };
     },
     methods: {
-        agendamentos() {
-            alert("Agendamentos.");
-        },
-
-        execucoes() {
-            alert("Execuções.");
-        },
-
         salvar() {
             alert("Salvo.");
-        }
+        },
+        abrirAddOpModal() {
+            this.$refs.addOpModal.show();
+        },
+        abrirAddSourceModal() {
+            this.$refs.addSourceModal.show();
+        },
+        abrirModal() {
+            this.$refs.modal.show();
+        },
+        abrirDeleteModal() {
+            this.$refs.deleteModal.show();
+        },
         abrirHistoryModal() {
             this.$refs.historyModal.show();
+        },
+        respostaUsuario() {
+            // Lógica para capturar a resposta do usuário
+            console.log('Resposta do usuário: ' + this.deleteResponse);
         },
     }
 };
@@ -359,16 +367,19 @@ function getData() {
 .editPage-tab-header {
     display: flex;
     flex-direction: row;
-    padding: 10px;
-    border: 2px solid #86B94B;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 5px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #dfdfdf;
+    padding-bottom: 10px;
 }
 
-.editPage-tab-header-add {
-    border-left: 1px solid #86B94B;
-    padding-left: 10px;
-    height: 100%;
+.editPage-tab-button {
+    background-color: #86B94B;
+    border: 0px;
+
+    &:hover {
+        background-color: #618c31;
+    }
 }
 
 .editPage-dragDiv {
@@ -385,12 +396,29 @@ function getData() {
     }
 }
 
+.editPage-stepButton {
+    background-color: transparent;
+    border: 0px;
+    color: #007bff;
+    font-weight: 700;
+
+    &:hover {
+        color: #0056b3;
+    }
+}
+
 .editPage-dragIcon {
     position: absolute;
     left: 4px;
     top: 4px;
     color: #212529;
     width: 8px;
+}
+
+.editPage-trashIcon {
+    position: absolute;
+    right: 8px;
+    top: 12px;
 }
 
 .editPage-container {
@@ -419,11 +447,6 @@ function getData() {
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
-
-/* .editPage-agendadorIcon {
-    position: absolute;
-
-} */
 
 .editPage-agendador-body {
     display: flex;
