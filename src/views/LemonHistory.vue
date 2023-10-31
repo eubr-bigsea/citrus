@@ -45,7 +45,7 @@ export default {
             columns: [
                 'id',
                 'coletor',
-                'data_ult_exec',
+                'ultima_exec',
                 'status',
                 'log',
             ],
@@ -53,17 +53,17 @@ export default {
             options: {
                 // debounce: 800,
                 skin: 'table-sm table table-hover',
-                dateColumns: ['data_ult_exec'],
+                dateColumns: ['ultima_exec'],
                 columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',
                     coletor: 'Coletor',
-                    data_ult_exec: 'Data da última execução',
+                    ultima_exec: 'Última Execução',
                     status: 'Status',
-                    log: 'Log de execução',
+                    log: 'Log de Execução',
                 },
-                sortable: ['id','coletor','data_ult_exec','status','log'],
-                filterable: ['id','coletor','data_ult_exec','status','log'],
+                sortable: ['id','coletor','ultima_exec','status','log'],
+                filterable: ['id','coletor','ultima_exec','status','log'],
                 sortIcon: {
                     base: 'sort-base',
                     is: 'sort-is ml-10',
@@ -97,189 +97,189 @@ function getData() {
         { 
             id: 100, 
             coletor: "Anac", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 101, 
             coletor: "Licitações", 
-            data_ult_exec: '05/10/2021',   
+            ultima_exec: '05/10/2021',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 102, 
             coletor: "Copasa", 
-            data_ult_exec: '13/05/2022',   
+            ultima_exec: '13/05/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 103, 
             coletor: "Consumidor Gov", 
-            data_ult_exec: '08/10/2010',   
+            ultima_exec: '08/10/2010',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 104, 
             coletor: "Endereço", 
-            data_ult_exec: '07/05/2021',   
+            ultima_exec: '07/05/2021',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 105, 
             coletor: "Fakenews", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 106, 
             coletor: "Ibge", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 107, 
             coletor: "Anac", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 108, 
             coletor: "Inss", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 100, 
             coletor: "Anac", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 101, 
             coletor: "Licitações", 
-            data_ult_exec: '05/10/2021',   
+            ultima_exec: '05/10/2021',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 102, 
             coletor: "Copasa", 
-            data_ult_exec: '13/05/2022',   
+            ultima_exec: '13/05/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 103, 
             coletor: "Consumidor Gov", 
-            data_ult_exec: '08/10/2010',   
+            ultima_exec: '08/10/2010',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 104, 
             coletor: "Endereço", 
-            data_ult_exec: '07/05/2021',   
+            ultima_exec: '07/05/2021',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 105, 
             coletor: "Fakenews", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 106, 
             coletor: "Ibge", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 107, 
             coletor: "Anac", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 108, 
             coletor: "Inss", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 100, 
             coletor: "Anac", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 101, 
             coletor: "Licitações", 
-            data_ult_exec: '05/10/2021',   
+            ultima_exec: '05/10/2021',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 102, 
             coletor: "Copasa", 
-            data_ult_exec: '13/05/2022',   
+            ultima_exec: '13/05/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 103, 
             coletor: "Consumidor Gov", 
-            data_ult_exec: '08/10/2010',   
+            ultima_exec: '08/10/2010',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 104, 
             coletor: "Endereço", 
-            data_ult_exec: '07/05/2021',   
+            ultima_exec: '07/05/2021',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 105, 
             coletor: "Fakenews", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 106, 
             coletor: "Ibge", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 107, 
             coletor: "Anac", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 108, 
             coletor: "Inss", 
-            data_ult_exec: '24/08/2023',   
+            ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
