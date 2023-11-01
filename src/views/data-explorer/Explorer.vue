@@ -95,29 +95,55 @@
 
             <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true" @close="stats = null"
                 @ok="stats = null">
-                <div class="stats-div p-1">
+                <div class="p-2">
                     <div v-if="stats && stats.attribute === null">
                         <h5>Estatísticas do resultado</h5>
-                        <b-checkbox>Mostrar apenas para atributos numéricos</b-checkbox>
-                        <b-checkbox>Calcular para todos os registros, ignorando a opção de amostrar (pode demorar, se muitos registros).</b-checkbox>
-
-                        <table class="table table-bordered table-stats table-striped table-sm">
-                            <thead>
-                                <tr v-if="stats.message" class="text-center">
-                                    <td v-for="k in stats.message.columns" :key="k.name">
-                                        {{ k.name }}
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(v, row) in stats.message.columns[0].values" :key="row">
-                                    <td v-for="(attr, col) in stats.message.columns" :key="col"
-                                        :class="{ 'font-weight-bold': col === 0 }">
-                                        {{ stats.message.columns[col].values[row] || '-' }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <b-checkbox v-model="numericOnlyStats" class="mt-3 mb-4">Mostrar apenas para atributos numéricos</b-checkbox>
+                        <b-tabs>
+                            <b-tab title="Estatísticas básicas" title-link-class="small-nav-link tab-small">
+                                <div class="scrollable" style="max-height: 450px;overflow:auto">
+                                    <table class="table table-bordered table-stats table-striped table-sm">
+                                        <thead>
+                                            <tr v-if="stats.message && stats.message.table" class="text-center">
+                                                <td v-for="k in stats.message.table.columns" :key="k.name">
+                                                    {{ k.name }}
+                                                </td>
+                                            </tr>
+                                        </thead>
+                                        <tbody name="slide" is="transition-group">
+                                            <tr v-for="(v, row) in stats.message.table.columns[0].values" 
+                                                    v-if="!numericOnlyStats || stats.message.table.columns[1].values[row] " :key="row">
+                                                <td v-for="(attr, col) in stats.message.table.columns" :key="col"
+                                                    :class="{ 'font-weight-bold': col === 0 }">
+                                                    {{ stats.message.table.columns[col].values[row] || '-' }} 
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </b-tab>
+                            <b-tab title="Correlação" title-link-class="small-nav-link tab-small">
+                                <table class="table table-bordered table-stats table-striped table-sm w-auto mt-3">
+                                    <thead>
+                                        <tr class="text-center">
+                                            <td></td>
+                                            <th v-for="v in stats.message.numeric" :key="v" style="width: 75px">
+                                                {{ v }}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody name="slide" is="transition-group">
+                                        <tr v-for="(v, row) in stats.message.correlation" :key="row">
+                                            <th>{{stats.message.numeric[row]}}</th>
+                                            <td v-for="(attr, col) in v" :key="col" 
+                                                :style="{backgroundColor: _heatMapColorforValue(attr), color: attr === 1 ? 'white': 'black'}" class="text-center">
+                                                {{ attr }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </b-tab>
+                        </b-tabs>
                     </div>
                     <div v-else>
                         <span v-if="stats">
@@ -371,6 +397,8 @@ export default {
             stats: null,
             valuesClusters: [],
             similarity: 0.8,
+
+            numericOnlyStats: false,
         };
     },
     computed: {
@@ -1103,7 +1131,10 @@ export default {
             }
             return result;
         },
-
+        _heatMapColorforValue(value) {
+            var h = (1.0 - (value + 1) / 2) * 240;
+            return "hsl(" + h + ", 100%, 50%, .5)";
+        },
         /* WebSocket Handling */
         connectWebSocket() {
             const self = this;
@@ -1278,6 +1309,7 @@ export default {
 };
 </script>
 <style scoped>
+
 .flex_container {
     display: flex;
     width: 100%;
@@ -1367,8 +1399,5 @@ export default {
     background: rgb(49, 130, 189)
 }
 
-.stats-div {
-    max-height: 65vh;
-    overflow-y: auto;
-}
+
 </style>
