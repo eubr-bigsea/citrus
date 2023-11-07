@@ -93,7 +93,7 @@
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="lg" :ok-only="true" :hide-header="true" @close="stats = null"
+            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true" :hide-header="true" @close="stats = null"
                 @ok="stats = null">
                 <div class="p-2">
                     <div v-if="stats && stats.attribute === null">
@@ -101,7 +101,7 @@
                         <b-checkbox v-model="numericOnlyStats" class="mt-3 mb-4">Mostrar apenas para atributos numéricos</b-checkbox>
                         <b-tabs>
                             <b-tab title="Estatísticas básicas" title-link-class="small-nav-link tab-small">
-                                <div class="scrollable" style="max-height: 450px;overflow:auto">
+                                <div class="scrollable stats">
                                     <table class="table table-bordered table-stats table-striped table-sm">
                                         <thead>
                                             <tr v-if="stats.message && stats.message.table" class="text-center">
@@ -123,25 +123,27 @@
                                 </div>
                             </b-tab>
                             <b-tab title="Correlação" title-link-class="small-nav-link tab-small">
-                                <table class="table table-bordered table-stats table-striped table-sm w-auto mt-3">
-                                    <thead>
-                                        <tr class="text-center">
-                                            <td></td>
-                                            <th v-for="v in stats.message.numeric" :key="v" style="width: 75px">
-                                                {{ v }}
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody name="slide" is="transition-group">
-                                        <tr v-for="(v, row) in stats.message.correlation" :key="row">
-                                            <th>{{stats.message.numeric[row]}}</th>
-                                            <td v-for="(attr, col) in v" :key="col" 
-                                                :style="{backgroundColor: _heatMapColorforValue(attr), color: attr === 1 ? 'white': 'black'}" class="text-center">
-                                                {{ attr }}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="scrollable stats">
+                                    <table class="table table-bordered table-stats table-striped table-sm w-auto mt-3">
+                                        <thead>
+                                            <tr class="text-center correlation">
+                                                <td></td>
+                                                <th v-for="v in stats.message.numeric" :key="v">
+                                                    {{ v }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody name="slide" is="transition-group">
+                                            <tr v-for="(v, row) in stats.message.correlation" :key="row">
+                                                <th>{{stats.message.numeric[row]}}</th>
+                                                <td v-for="(attr, col) in v" :key="col" 
+                                                    :style="{backgroundColor: _heatMapColorforValue(attr), color: attr === 1 ? 'white': 'black'}" class="text-center">
+                                                    {{ attr }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </b-tab>
                         </b-tabs>
                     </div>
@@ -1399,5 +1401,13 @@ export default {
     background: rgb(49, 130, 189)
 }
 
-
+div.stats {
+    max-height: 450px;
+    overflow:auto
+}
+tr.correlation > th {
+    writing-mode: vertical-lr;
+    background-color: pink;
+    width: 60px !important;
+}
 </style>
