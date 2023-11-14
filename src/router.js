@@ -92,7 +92,7 @@ const OperationList = () => import(/* webpackChunkName: "group-operation" */ './
 
 const Lemon = () => import('./views/Lemon.vue');
 const LemonEdit = () => import('./views/LemonEdit.vue');
-const LemonConfig = () => import('./views/LemonConfig.vue');
+const LemonTemplates = () => import('./views/LemonTemplates.vue');
 const LemonHistory = () => import('./views/LemonHistory.vue');
 
 
@@ -872,12 +872,12 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/lemon/configuration',
-            name: 'lemon-configuration',
-            component: LemonConfig,
+            path: '/lemon/templates',
+            name: 'lemon-templates',
+            component: LemonTemplates,
             meta: {
                 requiresAuth: false,
-                title: ['titles.lemonConfig', 1]
+                title: ['titles.lemonTemplates', 1]
             }
         },
         {

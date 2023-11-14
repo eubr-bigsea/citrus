@@ -72,6 +72,10 @@
                     <b-dropdown-item :to="{ name: 'webSocketPing' }">
                         Test Websocket
                     </b-dropdown-item>
+                    <b-dropdown-divider />
+                    <b-dropdown-item :to="{ name: 'lemon-templates' }">
+                        Template Pipeline
+                    </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
