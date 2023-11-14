@@ -43,5 +43,7 @@ describe('SampleLookup.vue', () => {
 
         expect(axios.get).toHaveBeenCalledWith(limoneroUrl)
         expect(users).toStrictEqual(usersMock)
+
+        
     })
 })
