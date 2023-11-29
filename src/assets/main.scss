@@ -941,24 +941,27 @@ ul.b-form-tags-list {
 }
 
 .lemonPage-status-ultima {
-
     display: flex;
-    width: 50%;
+    margin: 0;
+    width: 30%;
     justify-content: center;
     font-weight: 500;
     padding: 5px 0px;
-    border-radius: 5px;
+    border-radius: 25px;
+    font-size: 0.8em;
+    color: white;
 
     &.sucesso {
-        background-color: #cbffae;
+        background-color: #2ecc40;
     }
 
     &.erro {
-        background-color: #ffabe8;
+        background-color: #ff4136;
     }
 
     &.pendente {
-        background-color: #ffe6b0;
+        background-color: #ffdc00;
+        color: black;
     }
 }
 
@@ -981,15 +984,18 @@ ul.b-form-tags-list {
         background-color: #ff4136;
     }
 }
+
+.lemonPage-habilitado {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    margin: 0 auto;
 
-    &.concluido {
+    &.sim {
         background-color: #008a00;
     }
 
-    &.nao_concluido {
+    &.não {
         background-color: #ca024f;
     }
 }
