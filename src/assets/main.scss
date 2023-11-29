@@ -996,46 +996,25 @@ ul.b-form-tags-list {
 
 .editPage-status {
     display: flex;
-    width: 80%;
+    width: 50%;
     justify-content: center;
-    font-weight: 700;
+    font-weight: 500;
     padding: 5px 0px;
-    border-radius: 5px;
+    border-radius: 25px;
+    font-size: 0.8em;
+    color: white;
+    margin: 0;
 
     &.sucesso {
-        background-color: #cbffae
+        background-color: #2ecc40
     }
 
     &.erro {
-        background-color: #ffabe8;
+        background-color: #ff4136;
     }
 
     &.em_execucao {
-        background-color: #ffe6b0;
+        background-color: #ffdc00;
+        color: black;
     }
-}
-
-.custom-lemon-tabs {
-    background-color: #86B94B;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-
-.custom-lemon-tabs div {
-    border: 1px solid red;
-}
-
-.custom-lemon-tabs a {
-    color: black;
-    font-weight: 700;
-    font-size: medium;
-    padding: 20px;
-    
-    &:hover {
-        background-color: #668d39;
-    }
-}
-
-.custom-lemon-tabs a active {
-    background-color: #668d39;
 }

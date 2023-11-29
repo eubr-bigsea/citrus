@@ -25,6 +25,7 @@ import {
     faCheckSquare,
     faChevronCircleDown,
     faChevronCircleUp,
+    faChevronUp,
     faChevronDown,
     faChevronLeft,
     faChevronRight,
@@ -151,6 +152,9 @@ import {
     faFileExport,
     faMaximize,
     faClock,
+    faCircleXmark,
+    faFolder,
+    faFile
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -187,6 +191,7 @@ library.add(
     faCheckSquare,
     faChevronCircleDown,
     faChevronCircleUp,
+    faChevronUp,
     faChevronDown,
     faChevronLeft,
     faChevronRight,
@@ -304,7 +309,10 @@ library.add(
     faX,
     faXmarkCircle,
     faY,
-    faClock
+    faClock,
+    faCircleXmark,
+    faFolder,
+    faFile
 );
 /**
  * Allows DOM to change <i> tags to SVG for more features like layering
