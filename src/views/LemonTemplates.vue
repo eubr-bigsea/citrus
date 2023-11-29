@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
-            <h1 class="configPage-title">
+            <h1 class="templatePage-title">
                 Templates para Pipeline
             </h1>
             <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="abrirAddTemplateModal">
@@ -9,30 +9,44 @@
             </button>
         </div>
 
-        <b-modal ref="addTemplateModal" title="Criação de template" size="md" @ok="criarTemplate">
-            <div class="configPage-card-modal">
+        <b-modal ref="addTemplateModal" title="Criação de template" size="lg" scrollable
+                 @ok="criarTemplate">
+            <div class="templatePage-card-modal">
                 <div>
-                    <label class="configPage-label" for="identificador">Identificador</label>
-                    <input id="identificador" v-model="novoTemplate.identificador" class="configPage-input" type="text"
+                    <label class="templatePage-label" for="identificador">Identificador</label>
+                    <input id="identificador" v-model="novoTemplate.identificador" class="templatePage-input" type="text"
                            placeholder="Identificador do template">
                 </div>
 
                 <div>
-                    <label class="configPage-label" for="descricao">Descrição</label>
-                    <textarea id="descricao" v-model="novoTemplate.descricao" class="configPage-textarea" type="text"
+                    <label class="templatePage-label" for="descricao">Descrição</label>
+                    <textarea id="descricao" v-model="novoTemplate.descricao" class="templatePage-textarea" type="text"
                               placeholder="Descrição do template" />
                 </div>
                 <div>
-                    <label class="configPage-label" for="descricao">Etapas</label>
-                    <div>
-                        <div v-for="(input, index) in stepsInputs" :key="index" class="configPage-input-box">
-                            <input v-model="input.identificador" placeholder="Identificador da etapa" class="configPage-input" :class="stepInput">
-                            <input v-model="input.descricao" placeholder="Descrição da etapa" class="configPage-input" :class="stepInput">
-                            <button class="btn btn-sm btn-danger" @click="removeInput(index)">
-                                <font-awesome-icon icon="trash" />
-                            </button>
-                        </div>
-                        <button class="btn btn-sm btn-primary" @click="addInput">
+                    <label class="templatePage-label" for="descricao">
+                        Etapas
+                        <button id="popover-trigger" class="templatePage-tab-button">
+                            <font-awesome-icon icon="info-circle" />
+                        </button>
+                        <b-popover target="popover-trigger" triggers="hover">
+                            Segure e arraste as etapas abaixo para reordená-las.
+                        </b-popover>
+                    </label>
+                    <div class="templatePage-input-container">
+                        <draggable :options="dragOptions">
+                            <div v-for="(input, index) in stepsInputs" :key="index" class="templatePage-input-box">
+                                <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
+                                <input v-model="input.identificador" placeholder="Identificador da etapa" class="templatePage-input" maxlength="50"
+                                       :class="stepInput">
+                                <textarea v-model="input.descricao" placeholder="Descrição da etapa" class="templatePage-textarea" maxlength="200"
+                                          :class="stepTextarea" />
+                                <button class="btn btn-sm btn-danger" @click="removeInput(index)">
+                                    <font-awesome-icon icon="trash" />
+                                </button>
+                            </div>
+                        </draggable>
+                        <button class="btn btn-sm btn-primary mt-2" @click="addInput">
                             <font-awesome-icon icon="plus" />
                         </button>
                     </div>
@@ -40,10 +54,10 @@
             </div>
         </b-modal>
 
-        <div class="configPage-body">
-            <div class="configPage-card-right">
-                <div class="configPage-card-body">
-                    <v-client-table v-model="data" class="configPage-table" :columns="columns" :options="options">
+        <div class="templatePage-body">
+            <div class="templatePage-card-right">
+                <div class="templatePage-card-body">
+                    <v-client-table v-model="data" class="templatePage-table" :columns="columns" :options="options">
                         <template #id="props">
                             {{props.row.id}}
                         </template>
@@ -58,7 +72,7 @@
                                 <template #title>
                                     Etapas
                                 </template>
-                                <div v-for="(etapa, index) in props.row.etapas" :key="etapa.identificador" class="configPage-popover">
+                                <div v-for="(etapa, index) in props.row.etapas" :key="etapa.identificador" class="templatePage-popover">
                                     <span class="font-weight-bold">#{{index + 1}} -</span> {{etapa.identificador}}
                                 </div>
                             </b-popover>
@@ -71,30 +85,43 @@
                                 <button class="ml-2 btn btn-sm btn-danger" title="Excluir template" @click="abrirDeleteModal">
                                     <font-awesome-icon icon="trash" />
                                 </button>
-                                <b-modal ref="editModal" title="Editar template">
-                                    <div class="configPage-card-modal">
+                                <b-modal ref="editModal" title="Editar template" size="lg">
+                                    <div class="templatePage-card-modal">
                                         <div>
-                                            <label class="configPage-label" for="identificador">Identificador</label>
-                                            <input id="identificador" v-model="novoTemplate.identificador" class="configPage-input" type="text" 
-                                                   placeholder="Identificador do template">
+                                            <label class="templatePage-label" for="identificador">Identificador</label>
+                                            <input id="identificador" v-model="novoTemplate.identificador" class="templatePage-input" type="text" 
+                                                   maxlength="50" placeholder="Identificador do template">
                                         </div>
 
                                         <div>
-                                            <label class="configPage-label" for="descricao">Descrição</label>
-                                            <textarea id="descricao" v-model="novoTemplate.descricao" class="configPage-textarea" type="text"
-                                                      placeholder="Descrição do template" />
+                                            <label class="templatePage-label" for="descricao">Descrição</label>
+                                            <textarea id="descricao" v-model="novoTemplate.descricao" class="templatePage-textarea" type="text" 
+                                                      maxlength="200" placeholder="Descrição do template" />
                                         </div>
                                         <div>
-                                            <label class="configPage-label" for="descricao">Etapas</label>
-                                            <div>
-                                                <div v-for="(input, index) in stepsInputs" :key="index" class="configPage-input-box">
-                                                    <input v-model="input.identificador" placeholder="Identificador da etapa" class="configPage-input" :class="stepInput">
-                                                    <input v-model="input.descricao" placeholder="Descrição da etapa" class="configPage-input" :class="stepInput">
-                                                    <button class="btn btn-sm btn-danger" @click="removeInput(index)">
-                                                        <font-awesome-icon icon="trash" />
-                                                    </button>
-                                                </div>
-                                                <button class="btn btn-sm btn-primary" @click="addInput">
+                                            <label class="templatePage-label" for="descricao">
+                                                Etapas
+                                                <button id="popover-trigger" class="templatePage-tab-button">
+                                                    <font-awesome-icon icon="info-circle" />
+                                                </button>
+                                                <b-popover target="popover-trigger" triggers="hover">
+                                                    Segure e arraste as etapas abaixo para reordená-las.
+                                                </b-popover>
+                                            </label>
+                                            <div class="templatePage-input-container">
+                                                <draggable :options="dragOptions">
+                                                    <div v-for="(input, index) in stepsInputs" :key="index" class="templatePage-input-box">
+                                                        <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
+                                                        <input v-model="input.identificador" placeholder="Identificador da etapa" class="templatePage-input" maxlength="50"
+                                                               :class="stepInput">
+                                                        <textarea v-model="input.descricao" placeholder="Descrição da etapa" class="templatePage-textarea" maxlength="200"
+                                                                  :class="stepTextarea" />
+                                                        <button class="btn btn-sm btn-danger" @click="removeInput(index)">
+                                                            <font-awesome-icon icon="trash" />
+                                                        </button>
+                                                    </div>
+                                                </draggable>
+                                                <button class="btn btn-sm btn-primary mt-2" @click="addInput">
                                                     <font-awesome-icon icon="plus" />
                                                 </button>
                                             </div>
@@ -115,17 +142,26 @@
 
 <script>
 import { BModal } from 'bootstrap-vue';
+import draggable from 'vuedraggable';
 
 export default {
     components: {
+        draggable,
         BModal
     },
     data() {
         return {
             stepInput: 'stepInput',
+            stepTextarea: 'stepTextarea',
             stepsInputs: [
                 { identificador: '', descricao: '' }
             ],
+            dragOptions: {
+                animation: 200,
+                group: 'description',
+                disabled: false,
+                ghostClass: 'ghost'
+            },
             columns: [
                 'id',
                 'identificador',
@@ -138,7 +174,7 @@ export default {
                 // debounce: 800,
                 skin: 'table-sm table table-hover',
                 columnsClasses: { 
-                    id: 'text-center',
+                    id: 'text-start',
                     identificador: 'text-start',
                     descricao: 'text-start',
                     etapas: 'text-start',
@@ -151,14 +187,14 @@ export default {
                     etapas: 'Etapas',
                     acoes: 'Ações',
                 },
-                sortable: ['id', 'identificador', 'descricao', 'etapas', 'acoes'],
+                sortable: ['id', 'identificador', 'descricao'],
                 filterable: true,
                 limitable: true,
                 sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ml-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
+                    base: 'fa fas',
+                    is: 'fa-sort ml-10',
+                    up: 'fa-sort-amount-up',
+                    down: 'fa-sort-amount-down'
                 },
             },
             novoTemplate: { identificador: '', descricao: ''}
@@ -247,41 +283,39 @@ function getData() {
 
 <style lang="scss">
 
-.configPage-title {
+.templatePage-title {
     color: #333;
     margin: 10px 0px;
 }
 
-.configPage-body {
-    /* display: flex; */
-    /* flex-direction: row; */
+.templatePage-body {
     background-color: #fff;
-    /* width: 100%; */
     border-radius: 3px;
     border: 1px solid #dee2e6;
     padding: 16px;
     gap: 10px;
 }
 
-.configPage-card-modal {
+.templatePage-card-modal {
     width: 100%;
     background-color: #fff;
     padding: 10px;
 }
 
-.configPage-table {
+.templatePage-table {
     background-color: #FFF;
     width: 100%;
 }
 
-.configPage-label {
+.templatePage-label {
     display: block;
     margin-bottom: 10px;
     font-size: 18px;
     font-weight: 700;
+    align-items: center;
 }
 
-.configPage-input {
+.templatePage-input {
     width: 100%;
     height: fit-content;
     padding: 12px 20px;
@@ -292,13 +326,11 @@ function getData() {
 
     &.stepInput {
         margin-bottom: 0px;
-        width: 45%;
         font-size: 14px;
-        padding: 7px 10px;
     }
 }
 
-.configPage-textarea {
+.templatePage-textarea {
     width: 100%;
     height: fit-content;
     padding: 12px 20px;
@@ -306,17 +338,50 @@ function getData() {
     border-radius: 4px;
     border: none;
     background-color: #eff0f6;
+    max-height: 100px;
+
+    &.stepTextarea {
+        margin-bottom: 0px;
+        height: 45px;
+    }
 }
 
-.configPage-input-box {
+.templatePage-input-container {
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+.templatePage-input-box {
     display: flex;
-    margin: 10px 0px;
-    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: -2px;
+    border-bottom: 2px solid #eff0f6;
+    padding: 10px 0px;
+    padding-right: 10px;
+    border-radius: 3px;
+    align-items: center;
+    font-weight: 500;
+
+    &:hover {
+        cursor: grab;
+    }
 }
 
-.configPage-popover {
+.templatePage-popover {
     padding: 0px;
     font-weight: 400;
+}
+
+.templatePage-tab-button {
+    background-color: transparent;
+    border: 0px;
+    color: black;
+    font-size: 15px;
+}
+
+.templatePage-dragIcon {
+    color: #212529;
+    width: 12px;
 }
 
 </style>
