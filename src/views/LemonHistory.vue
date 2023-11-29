@@ -15,22 +15,32 @@
                             {{props.row.id}}
                         </router-link>
                     </template>
-                    <template #coletor="props">
+                    <template #pipeline="props">
                         <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
-                            {{props.row.coletor}}
+                            {{props.row.pipeline}}
                         </router-link>
                     </template>
                     <template #status="props">
-                        <div class="lemonPage-status-ultima" :class="props.row.status.toLowerCase()">
+                        <div class="historyPage-status" :class="props.row.status.toLowerCase()">
                             {{props.row.status}}
                         </div>
                     </template>
                     <template #log>
                         <div class="btn-group" role="group">
-                            <button class="btn btn-spinner btn-primary btn-sm">
+                            <button class="btn btn-spinner btn-primary btn-sm" title="Exibir Log" @click="abrirLogModal">
                                 <font-awesome-icon icon="fa-eye" />
                             </button>
                         </div>
+                        <b-modal ref="logModal" size="lg" title="Log de execução da pipeline" hide-footer>
+                            <b-card class="historyPage-logCard">
+                                <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
+                                <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
+                                <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
+                                <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
+                                <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
+                                <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
+                            </b-card>
+                        </b-modal>
                     </template>
                 </v-client-table>
             </div>
@@ -39,41 +49,47 @@
 </template>
 
 <script>
+import { BModal } from 'bootstrap-vue';
+
 export default {
+    components: {
+        BModal
+    },
     data() {
         return {
             columns: [
                 'id',
-                'coletor',
+                'pipeline',
                 'ultima_exec',
                 'status',
                 'log',
             ],
             data: getData(),
             options: {
-                // debounce: 800,
                 skin: 'table-sm table table-hover',
                 dateColumns: ['ultima_exec'],
-                columnClasses: { actions: 'th-10' },
+                columnsClasses: { 
+                    id: 'text-start',
+                    pipeline: 'text-start',
+                    ultima_exec: 'text-start',
+                    status: 'text-start',
+                    log: 'text-start',
+                },
                 headings: {
                     id: 'ID',
-                    coletor: 'Coletor',
-                    ultima_exec: 'Última Execução',
+                    pipeline: 'Pipeline',
+                    ultima_exec: 'Última execução',
                     status: 'Status',
-                    log: 'Log de Execução',
+                    log: 'Log de execução',
                 },
-                sortable: ['id','coletor','ultima_exec','status','log'],
-                filterable: ['id','coletor','ultima_exec','status','log'],
+                sortable: ['id','pipeline','ultima_exec'],
+                filterable: ['id','pipeline','ultima_exec'],
                 sortIcon: {
-                    base: 'sort-base',
-                    is: 'sort-is ml-10',
-                    up: 'sort-up',
-                    down: 'sort-down'
+                    base: 'fa fas',
+                    is: 'fa-sort ml-10',
+                    up: 'fa-sort-amount-up',
+                    down: 'fa-sort-amount-down'
                 },
-                // preserveState: true,
-                // saveState: true,
-                // customFilters: false,
-                // filterByColumn: false,
                 texts: {
                     filter: this.$tc('common.filter'),
                     count: this.$t('common.pagerShowing'),
@@ -86,9 +102,9 @@ export default {
         };
     },
     methods: {
-        historico() {
-            alert("Histórico.");
-        }
+        abrirLogModal() {
+            this.$refs.logModal.show();
+        },
     }
 };
 
@@ -96,189 +112,189 @@ function getData() {
     return [
         { 
             id: 100, 
-            coletor: "Anac", 
+            pipeline: "Anac", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 101, 
-            coletor: "Licitações", 
+            pipeline: "Licitações", 
             ultima_exec: '05/10/2021',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 102, 
-            coletor: "Copasa", 
+            pipeline: "Copasa", 
             ultima_exec: '13/05/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 103, 
-            coletor: "Consumidor Gov", 
+            pipeline: "Consumidor Gov", 
             ultima_exec: '08/10/2010',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 104, 
-            coletor: "Endereço", 
+            pipeline: "Endereço", 
             ultima_exec: '07/05/2021',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 105, 
-            coletor: "Fakenews", 
+            pipeline: "Fakenews", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 106, 
-            coletor: "Ibge", 
+            pipeline: "Ibge", 
             ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 107, 
-            coletor: "Anac", 
+            pipeline: "Anac", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 108, 
-            coletor: "Inss", 
+            pipeline: "Inss", 
             ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 100, 
-            coletor: "Anac", 
+            pipeline: "Anac", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 101, 
-            coletor: "Licitações", 
+            pipeline: "Licitações", 
             ultima_exec: '05/10/2021',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 102, 
-            coletor: "Copasa", 
+            pipeline: "Copasa", 
             ultima_exec: '13/05/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 103, 
-            coletor: "Consumidor Gov", 
+            pipeline: "Consumidor Gov", 
             ultima_exec: '08/10/2010',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 104, 
-            coletor: "Endereço", 
+            pipeline: "Endereço", 
             ultima_exec: '07/05/2021',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 105, 
-            coletor: "Fakenews", 
+            pipeline: "Fakenews", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 106, 
-            coletor: "Ibge", 
+            pipeline: "Ibge", 
             ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 107, 
-            coletor: "Anac", 
+            pipeline: "Anac", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 108, 
-            coletor: "Inss", 
+            pipeline: "Inss", 
             ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 100, 
-            coletor: "Anac", 
+            pipeline: "Anac", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 101, 
-            coletor: "Licitações", 
+            pipeline: "Licitações", 
             ultima_exec: '05/10/2021',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 102, 
-            coletor: "Copasa", 
+            pipeline: "Copasa", 
             ultima_exec: '13/05/2022',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 103, 
-            coletor: "Consumidor Gov", 
+            pipeline: "Consumidor Gov", 
             ultima_exec: '08/10/2010',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 104, 
-            coletor: "Endereço", 
+            pipeline: "Endereço", 
             ultima_exec: '07/05/2021',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 105, 
-            coletor: "Fakenews", 
+            pipeline: "Fakenews", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 106, 
-            coletor: "Ibge", 
+            pipeline: "Ibge", 
             ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
         },
         { 
             id: 107, 
-            coletor: "Anac", 
+            pipeline: "Anac", 
             ultima_exec: '24/08/2023',   
             status: 'Sucesso',   
             log: "" 
         },
         { 
             id: 108, 
-            coletor: "Inss", 
+            pipeline: "Inss", 
             ultima_exec: '24/08/2023',   
             status: 'Erro',   
             log: "" 
@@ -310,6 +326,16 @@ function getData() {
 
 .historyPage-table {
     background-color: #FFF;
+}
+
+.historyPage-logCard {
+    background-color: #f6f6f6;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    color: #767676;
+    text-align: justify;
 }
 
 </style>

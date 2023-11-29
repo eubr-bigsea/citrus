@@ -962,7 +962,25 @@ ul.b-form-tags-list {
     }
 }
 
-.lemonPage-status {
+.historyPage-status {
+    display: flex;
+    margin: 0;
+    width: 50%;
+    justify-content: center;
+    font-weight: 500;
+    padding: 5px 0px;
+    border-radius: 25px;
+    font-size: 0.8em;
+    color: white;
+
+    &.sucesso {
+        background-color: #2ecc40;
+    }
+
+    &.erro {
+        background-color: #ff4136;
+    }
+}
     width: 12px;
     height: 12px;
     border-radius: 50%;
