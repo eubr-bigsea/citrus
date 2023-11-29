@@ -8,12 +8,124 @@
                 <router-link :to="{name: 'lemon-history'}" class="btn btn-outline-secondary float-left ml-2">
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </router-link>
-                <router-link :to="{name: 'lemon-configuration'}" class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="abrirAddModal">
                     <font-awesome-icon icon="fa fa-plus" /> Adicionar
-                </router-link>
+                </button>
             </div>
         </div> 
 
+        <b-modal ref="addModal" title="Criação de pipeline" size="lg" hide-footer
+                 scrollable>
+            <div class="lemonPage-wizard">
+                <div v-if="wizardStep === 1" class="lemonPage-wizard-stepBox">
+                    <div class="lemonPage-wizard-header">
+                        <div class="lemonPage-wizard-title">
+                            <font-awesome-icon class="mr-1" icon="fa fa-file" />
+                            Informações gerais
+                        </div>
+                        <div>
+                            Etapa 1 de 2
+                        </div>
+                    </div>
+                    <label class="lemonPage-label" for="identificador">Identificador</label>
+                    <input id="identificador" class="lemonPage-input" type="text"
+                           maxlength="100" placeholder="Identificador da pipeline">
+
+                    <label class="lemonPage-label" for="descricao">Descrição</label>
+                    <textarea id="descricao" class="lemonPage-textarea" type="text"
+                              maxlength="200" placeholder="Descrição da pipeline	" />
+
+                    <div class="lemonPage-wizard-stepBox-buttons" :class="first">
+                        <b-button size="sm" variant="secondary" @click="wizardStep = 2">
+                            Avançar
+                        </b-button>
+                    </div>
+                </div>
+                <div v-if="wizardStep === 2" class="lemonPage-wizard-stepBox">
+                    <div class="lemonPage-wizard-header">
+                        <div class="lemonPage-wizard-title">
+                            <font-awesome-icon class="mr-1" icon="fa fa-folder" />
+                            Template
+                        </div>
+                        <div>
+                            Etapa 2 de 2
+                        </div>
+                    </div>
+                    
+                    Deseja utilizar algum template de pipeline?
+                    <b-form-select v-model="selectedTemplate" :options="selectTemplates" class="mt-1 mb-1" />
+
+                    <div v-if="selectedTemplate !== null">
+                        <b-card class="lemonPage-infos">
+                            <div class="lemonPage-infos-body">
+                                <div class="lemonPage-infos-body-column">
+                                    <span class="left">Identificador:</span><span class="right">Template Teste</span>
+                                </div>
+                                <div class="lemonPage-infos-body-column">
+                                    <span class="left">Descrição:</span><span class="right-description">Descrição Template Teste.</span>
+                                </div>
+                                <div class="lemonPage-infos-body-column">
+                                    <span class="left">Etapas:</span> 
+                                    <div class="lemonPage-etapas-table">
+                                        <div class="lemonPage-etapas-header">
+                                            <div class="lemonPage-etapas-header-column">
+                                                Ordem da Etapa
+                                            </div>
+                                            <div class="lemonPage-etapas-header-column">
+                                                Identificador
+                                            </div>
+                                            <div class="lemonPage-etapas-header-column">
+                                                Descrição
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div v-for="(etapa, index) in etapasPipeline" :key="etapa.id" class="lemonPage-dragDiv">
+                                                <div class="lemonPage-drag-column" :class="ordem">
+                                                    # {{index + 1}}
+                                                </div>
+                                                <div class="lemonPage-drag-column" :class="ident">
+                                                    {{etapa.nome}}
+                                                </div>
+                                                <div class="lemonPage-drag-column" :class="ident">
+                                                    {{etapa.descricao}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </b-card>
+                    </div>
+    
+                    <div class="lemonPage-wizard-stepBox-buttons">
+                        <b-button size="sm" variant="secondary" @click="wizardStep = 1">
+                            Voltar
+                        </b-button>
+                        <b-button size="sm" variant="secondary" @click="wizardStep = 3">
+                            Avançar
+                        </b-button>
+                    </div>
+                </div>
+                <div v-if="wizardStep === 3" class="lemonPage-wizard-stepBox">
+                    <div class="lemonPage-wizard-header">
+                        <div class="lemonPage-wizard-title">
+                            <font-awesome-icon class="mr-1" icon="fa fa-square-check" />
+                            Processo de criação da pipeline finalizada.
+                        </div>
+                    </div>
+    
+                    <div>
+                        Ao fechar este modal, você será redirecionado para a página da pipeline criada.
+                    </div>
+    
+                    <div class="lemonPage-wizard-stepBox-buttons">
+                        <b-button size="sm" variant="primary" @click="closeAddModal">
+                            Fechar
+                        </b-button>
+                    </div>
+                </div>
+            </div>
+        </b-modal>
 
         <div class="lemonPage-body">
             <div class="lemonPage-container">
@@ -561,6 +673,53 @@ function getData() {
     border-radius: 2px;
     border: none;
     background-color: #eff0f6;
+}
+
+.lemonPage-wizard {
+    min-height: 500px;
+    position: relative;
+}
+
+.lemonPage-wizard-header {
+    padding: 5px 10px;
+    background-color: #6c757d;
+    border-radius: 0.25rem;
+    font-weight: 700;
+    font-size: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px 10px;
+}
+
+.lemonPage-wizard-title {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    color: #fff;
+    text-align: justify;
+}
+
+.lemonPage-wizard-stepBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.lemonPage-wizard-stepBox-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 20px;
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+
+    &.first {
+        justify-content: end;
+    }
 }
 
 .lemonPage-tab-button {
