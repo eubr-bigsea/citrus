@@ -9,6 +9,8 @@ $snotify-width: 600px !default;
     --secondary-color: #A8CA57;
     --font-color: #4B4E51;
     --font-color-rgb: 75, 78, 81;
+    --red: #ff0000;
+    --blue: #0000ff;
 }
 
 .modal-footer .btn {
@@ -939,6 +941,32 @@ h1 {
 ul.b-form-tags-list {
     padding-top: 0.5rem !important;
 }
+
+.tab-small {
+    font-size: 10pt
+}
+/* Vue transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 2s
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0
+}
+.slide-leave-active,
+.slide-enter-active {
+  transition: opacity 0.2s ease;
+}
+.slide-enter {
+    opacity: 0
+}
+.slide-leave-to {
+    opacity: 0
+}
+
+/* Lemon */
 
 .lemonPage-status-ultima {
     display: flex;

@@ -71,7 +71,8 @@ export default {
     },
     methods: {
         handleCheckboxChange(v, ev) {
-            this.triggerUpdateEvent(this.message, this.field, ev.filter(v => v !== null));
+            this.triggerUpdateEvent(this.message, this.field, 
+                ev.filter(v => v !== null && v !== ''));
         },
     }
 }
