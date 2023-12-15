@@ -249,6 +249,15 @@ class VisualizationBuilderWorkflow extends Workflow {
         return super.addTask(op, null, null);
     }
 }
+class SqlBuilderWorkflow extends Workflow {
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
+        version = null, user = null, forms = null } = {}, operations) {
+        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+    }
+    addTask(op) {
+        return super.addTask(op, null, null);
+    }
+}
 class Platform {
     constructor({ id = null, slug = null, name = null } = {}) {
         Object.assign(this, { id, name, slug });
@@ -607,6 +616,7 @@ export {
     FormField,
     Constants,
     ModelBuilderWorkflow,
+    SqlBuilderWorkflow,
     Visualization,
     VisualizationBuilderWorkflow,
     YDimension, XDimension, Axis
