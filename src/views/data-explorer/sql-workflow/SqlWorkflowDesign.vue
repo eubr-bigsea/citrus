@@ -2,19 +2,18 @@
     <div class="options-container  source-code-pro-font" ref="visualizationDesigner">
         <div class="options-visualization mt-1">
             <div>
-                <h6>Fluxo de trabalho em SQL</h6>
+                <h5>Fluxo de trabalho em SQL</h5>
                 <form class="clearfix visualization-form">
                     <div data-test="basic-options-section">
                         <label>{{ $tc('common.name') }}:</label>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                             :placeholder="$tc('common.name')" maxlength="100">
 
-                        <label for="">Fontes de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
                             v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
                             :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
                             @input="getAttributeList">
-                            <template #no-options="{}">
+                            <template #no-options="{ }">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
@@ -29,7 +28,7 @@
                             </template>
                         </vue-select>
 
-                        <label>{{ $tc('titles.cluster') }}: </label>
+                        <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
                         <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
                             :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
@@ -37,6 +36,20 @@
                                 <small><em>{{ description }}</em></small>
                             </template>
                         </v-select>
+                        <label for="" class="mt-3">Fontes de dados:</label> &nbsp;
+                        <ul class="list-group">
+                            <li v-for="dataSource in workflowObj.dataSources" class="list-group-item">
+                                {{ dataSource.forms.data_source.labelValue }}
+                                <br />
+                                <small>Apelindo: {{ dataSource.name }}</small>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="border-top mt-2">
+                        <b-button variant="primary" size="sm" class="mt-2" @click="saveWorkflow"
+                            data-test="save">
+                            <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                        </b-button>
                     </div>
                 </form>
             </div>
@@ -44,17 +57,26 @@
         <div class="options-main pt-2">
             <h4>Comandos</h4>
             <div>
-                <div v-for="sql in sqls" class="mb-4">
-                    <div>
-                        <sql-editor :command="sql.command"/>
-                        {{ sql.command }}
+                <div v-for="sql, i in workflowObj.sqls" class="mb-4">
+                    <div class="btn-group" role="group">
+                        <button v-if="i < workflowObj.sqls.length - 1" class="btn btn-sm btn-secondary"
+                            :title="$t('actions.moveDown')"><font-awesome-icon icon="fa fa-caret-down" /></button>
+                        <div class="alert alert-dark m-0 px-0"></div>
+                        <button v-if="i > 0" class="btn btn-sm btn-secondary"
+                            :title="$t('actions.moveUp')"><font-awesome-icon icon="fa fa-caret-up" /></button>
+                        <div class="alert alert-dark m-0 px-0"></div>
+                        <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"><font-awesome-icon
+                                icon="fa fa-times" /></button>
+                        <div class="alert alert-dark m-0 px-0"></div>
+                        <button class="btn btn-sm btn-primary" :title="$t('actions.add')"><font-awesome-icon
+                                icon="fa fa-plus" /></button>
+                        <div class="alert alert-dark m-0 px-0"></div>
+                        <button class="btn btn-sm btn-success" :title="$t('actions.execute')"><font-awesome-icon
+                                icon="fa fa-play" /></button>
                     </div>
-                    <div class="pt-2 pb-1">
-                        <button class="btn btn-sm btn-primary mr-1">Move</button>
-                        <button class="btn btn-sm btn-primary mr-1">Move</button>
-                        <button class="btn btn-sm btn-primary mr-1">Remove</button>
-                        <button class="btn btn-sm btn-primary mr-1">Add</button>
-                        <button class="btn btn-sm btn-primary mr-1">Execute</button>
+                    <div>
+                        <sql-editor :command="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"/>
+                        {{ sql.forms.query.value }}
                     </div>
                 </div>
             </div>
@@ -123,9 +145,9 @@ const cluster = ref(null)
 const visualizationDesigner = ref(ref)
 
 const sqls = ref([
-    {command: "select * from tb"},
-    {command: "select max(id) from tb2"},
-    {command: "select now()"},
+    { command: "select * from tb" },
+    { command: "select max(id) from tb2" },
+    { command: "select now()" },
 ]);
 
 
@@ -161,7 +183,7 @@ const load = async () => {
             return;
         }
         //await loadDataSource(dataSourceId.value); //FIXME
-        
+
         loadClusters();
         loaded.value = true;
 
@@ -208,20 +230,8 @@ const loadClusters = async () => {
     }
 };
 const saveWorkflow = async () => {
-    workflowObj.value.visualization.forms = visualizationObj.value;
     let cloned = structuredClone(workflowObj.value);
 
-    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null
-        || cloned.visualization.forms.filter.value.length === 0) {
-        cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
-    } else {
-        // Copy filter from visualization to correct operation
-        cloned.filter.forms.formula = structuredClone(cloned.visualization.forms.filter);
-    }
-    if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
-        cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
-    }
-    //cloned.forms = { $meta: { plot: plotlyData.value } };
     let url = `${tahitiUrl}/workflows/${cloned.id}`;
 
     cloned.platform_id = META_PLATFORM_ID;
@@ -232,14 +242,14 @@ const saveWorkflow = async () => {
         delete task.step;
         delete task.status;
     });
-    delete cloned.readData;
-    delete cloned.sort;
-    delete cloned.visualization;
-    delete cloned.sample;
-    delete cloned.filter;
+    delete cloned._tasksLookup;
+    cloned.tasks = [... cloned.dataSources, ... cloned.sqls];
+    delete cloned.dataSources;
+    delete cloned.sqls;
 
     try {
-        await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
+        //await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
+        console.debug(cloned)
         isDirty.value = false;
         success(i18n.$t('messages.savedWithSuccess', { what: i18n.$t('titles.workflow') }));
     } catch (e) {
@@ -352,6 +362,11 @@ const connectWebSocket = () => {
 
 </script>
 
+<style>
+.cm-content {
+    border: 1px #ddd solid;
+}
+</style>
 <style scoped lang="scss">
 .options-visualization {
     flex: 0 0 250px;

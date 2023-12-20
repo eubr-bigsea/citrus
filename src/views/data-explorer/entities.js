@@ -252,9 +252,14 @@ class VisualizationBuilderWorkflow extends Workflow {
 class SqlBuilderWorkflow extends Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
         version = null, user = null, forms = null } = {}, operations) {
-        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+            super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+        this.dataSources = this.tasks.filter(t => t.operation.slug === 'read-data');
+        this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
     }
-    addTask(op) {
+    addSql(op){
+        
+    }
+    addDataSource(op) {
         return super.addTask(op, null, null);
     }
 }

@@ -5,83 +5,193 @@
 </template>
  
 <script>
-/*
-import CodeMirror from "codemirror";
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/neo.css";
-import "codemirror/theme/panda-syntax.css";
-import "codemirror/mode/sql/sql.js";
- 
-import "codemirror/addon/hint/show-hint.js";
-import "codemirror/addon/hint/show-hint.css";
-//import "./sql-hint.css";
-import "codemirror/addon/hint/sql-hint.js";
-*/
 
-import { EditorState } from '@codemirror/state';
 import { sql } from '@codemirror/lang-sql'
-import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
+import { autocompletion, completionKeymap, completeFromList } from '@codemirror/autocomplete'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
-import { bracketMatching, defaultHighlightStyle, foldGutter, foldKeymap, indentOnInput, syntaxHighlighting } from '@codemirror/language'
-import { lintKeymap } from '@codemirror/lint'
-import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
-import { crosshairCursor, drawSelection, dropCursor, EditorView, highlightActiveLine, highlightActiveLineGutter, highlightSpecialChars, keymap, lineNumbers, rectangularSelection } from '@codemirror/view'
-
+import { defaultHighlightStyle, foldKeymap, indentOnInput, syntaxHighlighting } from '@codemirror/language'
+import { searchKeymap } from '@codemirror/search'
+import { EditorView, ViewUpdate, keymap, lineNumbers } from '@codemirror/view'
+import { debounce } from "../../../util.js";
 
 export default {
+    emits: ['update'],
     name: "SqlEditor",
     props: {
         command: { type: String, default: () => '' },
     },
-
 
     data() {
         return {
             editor: null,
             //autocompletion: the dictionary of all possible keywords
             //[list complete of reserved keyword for MSSQL](https://docs.microsoft.com/en-us/sql/t-sql/language-elements/reserved-keywords-transact-sql?view=sql-server-2017)
-            dico: [
-                { className: "sql", text: "SELECT" },
-                { className: "sql", text: "FROM" },
-                { className: "sql", text: "WHERE" },
-                { className: "sql", text: "INNER" },
-                { className: "sql", text: "JOIN" },
-                { className: "sql", text: "UNION" },
-                { className: "sql", text: "EXEC" },
-                { className: "sql", text: "INSERT" },
-                { className: "sql", text: "INTO" },
-                { className: "sql", text: "VALUES" },
-                { className: "sql", text: "UPDATE" },
-                { className: "sql", text: "DELETE" },
-                { className: "sql", text: "GROUP" },
-                { className: "sql", text: "BY" },
-                { className: "sql", text: "HAVING" },
-                { className: "sql", text: "IS" },
-                { className: "sql", text: "DISTINCT" },
-                { className: "sql", text: "OUTER" },
-                { className: "sql", text: "TOP" },
-                { className: "sql", text: "EXISTS" },
-                { className: "sql", text: "WHEN" },
-                { className: "sql", text: "CASE" },
-                { className: "sql", text: "CAST" },
-                { className: "sql", text: "IN" },
-                { className: "sql", text: "NULL" },
-                { className: "table", text: "te_cash_exchange_new" },
-                { className: "table", text: "ParamsAtos" },
-                { className: "table", text: "te_client_transfers" },
-                { className: "column", text: "status_cash" },
-                { className: "column", text: "datet" },
-                { className: "column", text: "ammount" },
-                { className: "column", text: "cash_exchange_id_start" },
-                { className: "column", text: "cash_exchange_id_end" },
-                { className: "pf", text: "AddParamAtos" },
-                { className: "pf", text: "verify_backoffice_user" },
-                { className: "pf", text: "checkAllowOperation" },
-                { className: "pf", text: "addMoneyIn_01" }
+            sqlKeywords: ['ABS', 'ALL', 'AND', 'APPROXIMATE', 'AS', 'ASC',
+                'AVG', 'BETWEEN', 'BY', 'CACHE', 'CASE', 
+                'DELETE', 'DESC',
+                'DISTINCT', 'END', 'EXCEPT', 'EXISTS', 'FALSE', 'FIRST', 'FROM', 
+                'FULL',
+                'GROUP',
+                'HAVING', 'IF', 'IN', 'INNER', 'INSERT', 'INTERSECT', 'INTO', 'IS',
+                'JOIN', 'LAST', 'LEFT', 'LIKE', 'LIMIT',  'NOT', 'NULL', 'ON', 'OR', 
+                'ORDER', 'OUTER', 'OVERWRITE', 'REGEXP',
+                'RIGHT', 'SELECT', 'SEMI', 'STRING',
+                'TABLE', 'THEN', 'TIMESTAMP', 'TRUE', 'UNCACHE',
+                'UNION', 'UPDATE', 'VALUES', 'WHEN', 'WHERE'],
+            functions: [
+                'abs', 'acos', 'acosh', 'add_months', 'aes_decrypt',
+                'aes_encrypt', 'aggregate', 'and', 'any', 'any_value',
+                'approx_count_distinct', 'approx_percentile', 'array',
+                'array_agg', 'array_append', 'array_compact', 'array_contains',
+                'array_distinct', 'array_except', 'array_insert',
+                'array_intersect', 'array_join', 'array_max', 'array_min',
+                'array_position', 'array_prepend', 'array_remove',
+                'array_repeat', 'array_size', 'array_sort', 'array_union',
+                'arrays_overlap', 'arrays_zip', 'ascii', 'asin', 'asinh',
+                'between', 'bigint', 'bin', 'binary', 'bit_and', 'bit_count',
+                'bit_get', 'bit_length', 'bit_or', 'bit_xor',
+                'bitmap_bit_position', 'bitmap_bucket_number',
+                'bitmap_construct_agg', 'bitmap_count', 'bitmap_or_agg',
+                'bool_and', 'bool_or', 'boolean', 'bround', 'btrim',
+                'cardinality', 'case', 'cast', 'cbrt', 'ceil',
+                'ceiling', 'char', 'char_length', 'character_length',
+                'chr', 'coalesce', 'collect_list', 'collect_set',
+                'concat', 'concat_ws', 'contains', 'conv',
+                'convert_timezone', 'corr', 'cos', 'cosh', 'cot',
+                'count', 'count_if', 'count_min_sketch', 'covar_pop',
+                'covar_samp', 'crc32', 'csc', 'cume_dist', 'curdate',
+                'current_catalog', 'current_database', 'current_date',
+                'current_schema', 'current_timestamp',
+                'current_timezone', 'current_user', 'date', 'date_add',
+                'date_diff', 'date_format', 'date_from_unix_date',
+                'date_part', 'date_sub', 'date_trunc', 'dateadd',
+                'datediff', 'datepart', 'day', 'dayofmonth', 'dayofweek',
+                'dayofyear', 'decimal', 'decode', 'degrees', 'dense_rank',
+                'div', 'double', 'e', 'element_at', 'elt', 'encode',
+                'endswith', 'equal_null', 'every', 'exists', 'exp',
+                'explode', 'explode_outer', 'expm1', 'extract', 'factorial',
+                'filter', 'find_in_set', 'first', 'first_value', 'flatten',
+                'float', 'floor', 'forall', 'format_number', 'format_string',
+                'from_csv', 'from_json', 'from_unixtime', 'from_utc_timestamp',
+                'get', 'get_json_object', 'getbit', 'greatest', 'grouping',
+                'grouping_id', 'hash', 'hex', 'histogram_numeric',
+                'hll_sketch_agg', 'hll_sketch_estimate', 'hll_union',
+                'hll_union_agg', 'hour', 'hypot', 'if', 'ifnull', 'ilike',
+                'in', 'initcap', 'inline', 'inline_outer',
+                'input_file_block_length', 'input_file_block_start',
+                'input_file_name', 'instr', 'int', 'isnan', 'isnotnull',
+                'isnull', 'java_method', 'json_array_length',
+                'json_object_keys', 'json_tuple', 'kurtosis', 'lag',
+                'last', 'last_day', 'last_value', 'lcase', 'lead',
+                'least', 'left', 'len', 'length', 'levenshtein', 'like',
+                'ln', 'localtimestamp', 'locate', 'log', 'log10', 'log1p',
+                'log2', 'lower', 'lpad', 'ltrim', 'luhn_check', 'make_date',
+                'make_dt_interval', 'make_interval', 'make_timestamp',
+                'make_timestamp_ltz', 'make_timestamp_ntz',
+                'make_ym_interval', 'map', 'map_concat', 'map_contains_key',
+                'map_entries', 'map_filter', 'map_from_arrays',
+                'map_from_entries', 'map_keys', 'map_values', 'map_zip_with',
+                'mask', 'max', 'max_by', 'md5', 'mean', 'median', 'min',
+                'min_by', 'minute', 'mod', 'mode',
+                'monotonically_increasing_id', 'month', 'months_between',
+                'named_struct', 'nanvl', 'negative', 'next_day', 'not', 'now',
+                'nth_value', 'ntile', 'nullif', 'nvl', 'nvl2', 'octet_length',
+                'or', 'overlay', 'parse_url', 'percent_rank', 'percentile',
+                'percentile_approx', 'pi', 'pmod', 'posexplode',
+                'posexplode_outer', 'position', 'positive', 'pow', 'power',
+                'printf', 'quarter', 'radians', 'raise_error', 'rand', 'randn',
+                'random', 'rank', 'reduce', 'reflect', 'regexp', 'regexp_count',
+                'regexp_extract', 'regexp_extract_all', 'regexp_instr',
+                'regexp_like', 'regexp_replace', 'regexp_substr', 'regr_avgx',
+                'regr_avgy', 'regr_count', 'regr_intercept', 'regr_r2',
+                'regr_slope', 'regr_sxx', 'regr_sxy', 'regr_syy', 'repeat',
+                'replace', 'reverse', 'right', 'rint', 'rlike', 'round',
+                'row_number', 'rpad', 'rtrim', 'schema_of_csv', 'schema_of_json',
+                'sec', 'second', 'sentences', 'sequence', 'session_window',
+                'sha', 'sha1', 'sha2', 'shiftleft', 'shiftright',
+                'shiftrightunsigned', 'shuffle', 'sign', 'signum', 'sin',
+                'sinh', 'size', 'skewness', 'slice', 'smallint', 'some',
+                'sort_array', 'soundex', 'space', 'spark_partition_id',
+                'split', 'split_part', 'sqrt', 'stack', 'startswith', 'std',
+                'stddev', 'stddev_pop', 'stddev_samp', 'str_to_map', 'string',
+                'struct', 'substr', 'substring', 'substring_index', 'sum',
+                'tan', 'tanh', 'timestamp', 'timestamp_micros',
+                'timestamp_millis', 'timestamp_seconds', 'tinyint', 'to_binary',
+                'to_char', 'to_csv', 'to_date', 'to_json', 'to_number',
+                'to_timestamp', 'to_timestamp_ltz', 'to_timestamp_ntz',
+                'to_unix_timestamp', 'to_utc_timestamp', 'to_varchar',
+                'transform', 'transform_keys', 'transform_values', 'translate',
+                'trim', 'trunc', 'try_add', 'try_aes_decrypt', 'try_avg',
+                'try_divide', 'try_element_at', 'try_multiply', 'try_subtract',
+                'try_sum', 'try_to_binary', 'try_to_number', 'try_to_timestamp',
+                'typeof', 'ucase', 'unbase64', 'unhex', 'unix_date',
+                'unix_micros', 'unix_millis', 'unix_seconds', 'unix_timestamp',
+                'upper', 'url_decode', 'url_encode', 'user', 'uuid', 'var_pop',
+                'var_samp', 'variance', 'version', 'weekday', 'weekofyear',
+                'when', 'width_bucket', 'window', 'window_time', 'xpath',
+                'xpath_boolean', 'xpath_double', 'xpath_float', 'xpath_int',
+                'xpath_long', 'xpath_number', 'xpath_short', 'xpath_string',
+                'xxhash64', 'year', 'zip_with',
             ]
+
         };
     },
     methods: {
+        sqlCompletion(context) {
+            const completions = [];
+            let before = context.matchBefore(/[\w\.]+/)
+            const columns = ['sales.nome', 'cnpj', 'endereco', 'telefone']
+            for (const col of columns) {
+                completions.push({
+                    label: col,
+                    detail: "coluna",
+                    type: 'property', //'method'
+                });
+            }
+            function apply(ctx, f){
+                return (view, completion, from, to) => {
+                    // Se a sugestão for do tipo method, insira os parênteses e coloque o cursor dentro deles
+                    if (completion.type === 'method') {
+                        return view.dispatch({
+                        changes: {
+                            from: from,
+                            to: to,
+                            insert: `${f}()`
+                        },
+                        selection: {anchor: from + f.length + 1}
+                        })
+                    }
+                    // Se não for do tipo method, use o comportamento padrão de inserção
+                    return autocompletion.apply(view, from, to, completion);
+                }
+            }
+            for (const f of this.functions) {
+                completions.push({
+                    label: f,
+                    detail: "função",
+                    type: 'method',
+                    apply: apply(context, f)
+                });
+            }
+            for (const keyword of this.sqlKeywords) {
+                //if (keyword.startsWith(before.string)) {
+                completions.push({
+                    label: keyword,
+                    detail: "palavra-chave",
+                    type: 'keyword'
+                });
+                //}
+            }
+            // If completion wasn't explicitly started and there
+            // is no word before the cursor, don't open completions.
+            if (!context.explicit && !before) return null
+            return {
+                from: before ? before.from : context.pos,
+                options: completions,
+                validFor: /^\w*$/
+            }
+        }
+        ,
         /*
         Return a list of suggestion base on the searchString (the current word that user is typing).
         Each suggestion is an object {text, displayText, className}. See https://codemirror.net/doc/manual.html#addon_show-hint
@@ -140,10 +250,26 @@ export default {
         }
     },
     mounted() {
-        debugger
+
+        let myTheme = EditorView.baseTheme({
+            "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground": {
+                backgroundColor: "purple",
+            },
+            ".cm-selectionBackground": {
+                backgroundColor: "yellow",
+            },
+            ".cm-completionDetail": {
+                fontStyle: "normal",
+                fontSize: "8pt",
+                float: "right",
+                marginTop: "2px"
+            }
+        });
+
         this.editor = new EditorView({
             doc: this.command,
             extensions: [
+                myTheme,
                 lineNumbers(),
                 //highlightActiveLineGutter(),
                 //highlightSpecialChars(),
@@ -154,7 +280,6 @@ export default {
                 //EditorState.allowMultipleSelections.of(true),
                 //indentOnInput(),//???
                 syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-                autocompletion(),
                 //highlightActiveLine(),
                 //highlightSelectionMatches(),
                 keymap.of([
@@ -166,38 +291,29 @@ export default {
                     ...completionKeymap,
                     //...lintKeymap,
                 ]),
-                sql(
-                    {'upperCaseKeywords⁠': true}
-                ),
+                autocompletion({ override: [this.sqlCompletion] }),
+                sql(),
+
+                EditorView.updateListener.of(debounce((v) => {
+                    this.$emit('update', v.state.doc.text.join('\n'));
+                }, 200))
             ],
             parent: this.$refs.txt
-        })
+        });
+
         return
 
-        this.editor = CodeMirror.fromTextArea(this.$refs.txt, {
-            tabSize: 4,
-            mode: "text/x-mysql",
-            theme: "panda-syntax",
-            lineNumbers: true,
-            line: true,
-            lineWrapping: true,
-            hintOptions: {
-                completeSingle: false,
-                hint: this.hint
-            },
-            extraKeys: {
-                "Ctrl-Space": editor => {
-                    editor.showHint();
-                }
-            }
-        });
-        this.editor.on("keypress", editor => {
-            editor.showHint();
-        });
     }
 };
 </script>
  
+<style>
+.cm-s-completion.cm-hint,
+.cm-completion-active {
+    background-color: #f0f0f0;
+    /* Change this to your desired background color */
+}
+</style>
 <style scoped>
 .txt {
     width: 100%;
