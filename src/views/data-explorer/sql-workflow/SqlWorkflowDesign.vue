@@ -41,13 +41,12 @@
                             <li v-for="dataSource in workflowObj.dataSources" class="list-group-item">
                                 {{ dataSource.forms.data_source.labelValue }}
                                 <br />
-                                <small>Apelindo: {{ dataSource.name }}</small>
+                                <small>Apelido: <span class="text-info">{{ dataSource.name }}</span></small>
                             </li>
                         </ul>
                     </div>
                     <div class="border-top mt-2">
-                        <b-button variant="primary" size="sm" class="mt-2" @click="saveWorkflow"
-                            data-test="save">
+                        <b-button variant="primary" size="sm" class="mt-2" @click="saveWorkflow" data-test="save">
                             <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                         </b-button>
                     </div>
@@ -57,26 +56,27 @@
         <div class="options-main pt-2">
             <h4>Comandos</h4>
             <div>
-                <div v-for="sql, i in workflowObj.sqls" class="mb-4">
+                <div v-for="sql, i in workflowObj.sqls" class="mb-4" :key="sql.id">
                     <div class="btn-group" role="group">
                         <button v-if="i < workflowObj.sqls.length - 1" class="btn btn-sm btn-secondary"
-                            :title="$t('actions.moveDown')"><font-awesome-icon icon="fa fa-caret-down" /></button>
+                            :title="$t('actions.moveDown')" @click="handleMoveSql(i, 'down')"><font-awesome-icon
+                                icon="fa fa-caret-down" /></button>
                         <div class="alert alert-dark m-0 px-0"></div>
-                        <button v-if="i > 0" class="btn btn-sm btn-secondary"
-                            :title="$t('actions.moveUp')"><font-awesome-icon icon="fa fa-caret-up" /></button>
+                        <button v-if="i > 0" class="btn btn-sm btn-secondary" :title="$t('actions.moveUp')"
+                            @click="handleMoveSql(i, 'up')"><font-awesome-icon icon="fa fa-caret-up" /></button>
                         <div class="alert alert-dark m-0 px-0"></div>
-                        <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"><font-awesome-icon
-                                icon="fa fa-times" /></button>
+                        <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"
+                            @click="handleRemoveSql(i)"><font-awesome-icon icon="fa fa-times" /></button>
                         <div class="alert alert-dark m-0 px-0"></div>
-                        <button class="btn btn-sm btn-primary" :title="$t('actions.add')"><font-awesome-icon
-                                icon="fa fa-plus" /></button>
+                        <button class="btn btn-sm btn-primary" :title="$t('actions.add')" @click="handleAddSql(i)">
+                            <font-awesome-icon icon="fa fa-plus" /></button>
                         <div class="alert alert-dark m-0 px-0"></div>
-                        <button class="btn btn-sm btn-success" :title="$t('actions.execute')"><font-awesome-icon
-                                icon="fa fa-play" /></button>
+                        <button class="btn btn-sm btn-success" :title="$t('actions.execute')">
+                            <font-awesome-icon icon="fa fa-play" /></button>
                     </div>
-                    <div>
-                        <sql-editor :command="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"/>
-                        {{ sql.forms.query.value }}
+                    <div style="width:75vw; overflow-x: hidden;">
+                        <sql-editor :command="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
+                            ref="codeEditor" :tables="getDataSourceNames"/>
                     </div>
                 </div>
             </div>
@@ -142,14 +142,7 @@ const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } 
 
 // Elements refs
 const cluster = ref(null)
-const visualizationDesigner = ref(ref)
-
-const sqls = ref([
-    { command: "select * from tb" },
-    { command: "select max(id) from tb2" },
-    { command: "select now()" },
-]);
-
+const codeEditor = ref()
 
 const dataSourceId = computed({
     get() { return workflowObj.value.readData.forms.data_source.value; },
@@ -221,6 +214,11 @@ const loadDataSource = async (id) => {
     });
     dataSourceList.value = [dataSource.value];
 };
+const getDataSourceNames = computed({
+    get: () => {
+        return workflowObj.value.dataSources.map(d => d.name);
+    }
+})
 const loadClusters = async () => {
     try {
         const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${targetPlatform.value}`);
@@ -243,7 +241,7 @@ const saveWorkflow = async () => {
         delete task.status;
     });
     delete cloned._tasksLookup;
-    cloned.tasks = [... cloned.dataSources, ... cloned.sqls];
+    cloned.tasks = [...cloned.dataSources, ...cloned.sqls];
     delete cloned.dataSources;
     delete cloned.sqls;
 
@@ -359,7 +357,21 @@ const connectWebSocket = () => {
         //self.socket.emit('join', { room: self.job.id });
     }
 };
-
+/**Events */
+const handleAddSql = (index) => {
+    workflowObj.value.addSqlTask(index);
+    Vue.nextTick(() => {
+        codeEditor.value.slice(-1)[0].focus()
+    });
+}
+const handleRemoveSql = (index) => {
+    if (confirm(i18n.$t('messages.doYouWantToDelete'))) {
+        workflowObj.value.removeSqlTask(index);
+    }
+}
+const handleMoveSql = (index, direction) => {
+    workflowObj.value.moveSqlTask(index, direction);
+}
 </script>
 
 <style>

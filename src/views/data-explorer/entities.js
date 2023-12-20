@@ -252,15 +252,40 @@ class VisualizationBuilderWorkflow extends Workflow {
 class SqlBuilderWorkflow extends Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
         version = null, user = null, forms = null } = {}, operations) {
-            super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+        this.updateLists()
+    }
+    updateLists() {
         this.dataSources = this.tasks.filter(t => t.operation.slug === 'read-data');
         this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
     }
-    addSql(op){
-        
+    addSqlTask(inx) {
+        const forms = { query: { value: '' } };
+        const task = new Task({
+            id: Operation.generateTaskId(),
+            name: 'execute sql',
+            operation: new Operation({ id: 93, slug: 'execute-sql' }),
+            display_order: this.tasks.length,
+            forms
+        });
+        this.tasks.splice(inx + 1, 0, task);
+        this.updateLists();
+    }
+    removeSqlTask(inx) {
+        this.tasks.splice(inx, 1);
+        this.updateLists();
     }
     addDataSource(op) {
         return super.addTask(op, null, null);
+    }
+    moveSqlTask(inx, direction) {
+        const newPosition = direction === 'up' ? inx - 1 : inx + 1;
+        const arr = this.tasks;
+        
+        const [movedElement] = arr.splice(inx, 1);
+        arr.splice(newPosition, 0, movedElement);
+
+        this.updateLists();
     }
 }
 class Platform {
@@ -277,7 +302,7 @@ class Operation {
             if (field.values) {
                 try {
                     field.values = JSON.parse(field.values);
-                }catch(e){
+                } catch (e) {
                     console.error(e, field);
                 }
             }

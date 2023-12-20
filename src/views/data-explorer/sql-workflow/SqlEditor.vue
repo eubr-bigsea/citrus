@@ -13,12 +13,16 @@ import { defaultHighlightStyle, foldKeymap, indentOnInput, syntaxHighlighting } 
 import { searchKeymap } from '@codemirror/search'
 import { EditorView, ViewUpdate, keymap, lineNumbers } from '@codemirror/view'
 import { debounce } from "../../../util.js";
+import {indentWithTab} from "@codemirror/commands"
+import { indentUnit } from "@codemirror/language";
+
 
 export default {
     emits: ['update'],
     name: "SqlEditor",
     props: {
         command: { type: String, default: () => '' },
+        tables: { type:Array, default: () => [] }
     },
 
     data() {
@@ -137,6 +141,9 @@ export default {
         };
     },
     methods: {
+        focus(){
+            this.editor.focus();
+        },
         sqlCompletion(context) {
             const completions = [];
             let before = context.matchBefore(/[\w\.]+/)
@@ -173,6 +180,13 @@ export default {
                     apply: apply(context, f)
                 });
             }
+            for (const t of this.tables) {
+                completions.push({
+                    label: t,
+                    detail: "tabela",
+                    type: 'class'
+                });
+            }
             for (const keyword of this.sqlKeywords) {
                 //if (keyword.startsWith(before.string)) {
                 completions.push({
@@ -192,72 +206,9 @@ export default {
             }
         }
         ,
-        /*
-        Return a list of suggestion base on the searchString (the current word that user is typing).
-        Each suggestion is an object {text, displayText, className}. See https://codemirror.net/doc/manual.html#addon_show-hint
-        - keywords start with the searchString appears first in the suggestion list
-        */
-        suggest(searchString) {
-            /*
-            we will score which suggesion should appears first, the higer the score, the higer is the appearance order
-            */
-            let token = searchString;
-            if (searchString.startsWith(".")) token = searchString.substring(1);
-            else token = searchString.toLowerCase();
-            let resu = [];
-            let N = this.dico.length;
-
-            //init scoring: only retains and score suggestions which contain the searchString
-            for (let i = 0; i < N; i++) {
-                let keyword = this.dico[i].text.toLowerCase();
-                let suggestion = null;
-                //the base score of all the suggestion is N-i (it means we respect the order in the dico)
-                if (keyword.startsWith(token)) {
-                    //add N to the score of keywords which begin with the token to make them raise up in the suggestion list
-                    suggestion = Object.assign({ score: N + (N - i) }, this.dico[i]);
-                } else if (keyword.includes(token)) {
-                    suggestion = Object.assign({ score: N - i }, this.dico[i]);
-                }
-                if (suggestion) resu.push(suggestion);
-            }
-
-            //case suggestion for "."
-            if (searchString.startsWith(".")) {
-                //raise score of columns, decrease the score of sql keyword
-                resu.forEach(s => {
-                    if (s.className == "column") s.score += N;
-                    else if (s.className == "sql") s.score -= N;
-                    return s;
-                });
-            }
-
-            //console.log(searchString);
-            return resu.sort((a, b) => b.score - a.score);
-        },
-        /*
-        [hint implementation for codemirror](https://codemirror.net/doc/manual.html#addon_show-hint):
-        take an editor instance and options object, and return a {list, from, to} object, where list is an array of strings or objects (the completions), and from and to give the start and end of the token that is being completed as {line, ch} objects. 
-         */
-        hint(editor) {
-            let cur = editor.getCursor();
-            let token = editor.getTokenAt(cur);
-            let searchString = token.string;
-            return {
-                list: this.suggest(searchString),
-                from: CodeMirror.Pos(cur.line, token.start),
-                to: CodeMirror.Pos(cur.line, token.end)
-            };
-        }
     },
     mounted() {
-
         let myTheme = EditorView.baseTheme({
-            "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground": {
-                backgroundColor: "purple",
-            },
-            ".cm-selectionBackground": {
-                backgroundColor: "yellow",
-            },
             ".cm-completionDetail": {
                 fontStyle: "normal",
                 fontSize: "8pt",
@@ -265,11 +216,12 @@ export default {
                 marginTop: "2px"
             }
         });
-
         this.editor = new EditorView({
             doc: this.command,
             extensions: [
                 myTheme,
+                keymap.of([indentWithTab]),
+                indentUnit.of("    "),
                 lineNumbers(),
                 //highlightActiveLineGutter(),
                 //highlightSpecialChars(),
