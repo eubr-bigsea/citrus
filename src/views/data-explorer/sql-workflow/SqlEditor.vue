@@ -1,19 +1,17 @@
 <template>
-    <div ref="txt">
-
-    </div>
+    <div ref="txt"></div>
 </template>
  
 <script>
 
 import { sql } from '@codemirror/lang-sql'
-import { autocompletion, completionKeymap, completeFromList } from '@codemirror/autocomplete'
+import { autocompletion, completionKeymap } from '@codemirror/autocomplete'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
-import { defaultHighlightStyle, foldKeymap, indentOnInput, syntaxHighlighting } from '@codemirror/language'
+import { defaultHighlightStyle, foldKeymap, syntaxHighlighting } from '@codemirror/language'
 import { searchKeymap } from '@codemirror/search'
-import { EditorView, ViewUpdate, keymap, lineNumbers } from '@codemirror/view'
+import { EditorView, keymap, lineNumbers } from '@codemirror/view'
 import { debounce } from "../../../util.js";
-import {indentWithTab} from "@codemirror/commands"
+import { indentWithTab } from "@codemirror/commands"
 import { indentUnit } from "@codemirror/language";
 
 
@@ -22,7 +20,7 @@ export default {
     name: "SqlEditor",
     props: {
         command: { type: String, default: () => '' },
-        tables: { type:Array, default: () => [] }
+        tables: { type: Array, default: () => [] }
     },
 
     data() {
@@ -31,13 +29,13 @@ export default {
             //autocompletion: the dictionary of all possible keywords
             //[list complete of reserved keyword for MSSQL](https://docs.microsoft.com/en-us/sql/t-sql/language-elements/reserved-keywords-transact-sql?view=sql-server-2017)
             sqlKeywords: ['ABS', 'ALL', 'AND', 'APPROXIMATE', 'AS', 'ASC',
-                'AVG', 'BETWEEN', 'BY', 'CACHE', 'CASE', 
+                'AVG', 'BETWEEN', 'BY', 'CACHE', 'CASE',
                 'DELETE', 'DESC',
-                'DISTINCT', 'END', 'EXCEPT', 'EXISTS', 'FALSE', 'FIRST', 'FROM', 
+                'DISTINCT', 'END', 'EXCEPT', 'EXISTS', 'FALSE', 'FIRST', 'FROM',
                 'FULL',
                 'GROUP',
                 'HAVING', 'IF', 'IN', 'INNER', 'INSERT', 'INTERSECT', 'INTO', 'IS',
-                'JOIN', 'LAST', 'LEFT', 'LIKE', 'LIMIT',  'NOT', 'NULL', 'ON', 'OR', 
+                'JOIN', 'LAST', 'LEFT', 'LIKE', 'LIMIT', 'NOT', 'NULL', 'ON', 'OR',
                 'ORDER', 'OUTER', 'OVERWRITE', 'REGEXP',
                 'RIGHT', 'SELECT', 'SEMI', 'STRING',
                 'TABLE', 'THEN', 'TIMESTAMP', 'TRUE', 'UNCACHE',
@@ -141,34 +139,24 @@ export default {
         };
     },
     methods: {
-        focus(){
+        focus() {
             this.editor.focus();
         },
         sqlCompletion(context) {
             const completions = [];
             let before = context.matchBefore(/[\w\.]+/)
-            const columns = ['sales.nome', 'cnpj', 'endereco', 'telefone']
-            for (const col of columns) {
-                completions.push({
-                    label: col,
-                    detail: "coluna",
-                    type: 'property', //'method'
-                });
-            }
-            function apply(ctx, f){
+             function apply(ctx, f) {
                 return (view, completion, from, to) => {
-                    // Se a sugestão for do tipo method, insira os parênteses e coloque o cursor dentro deles
                     if (completion.type === 'method') {
                         return view.dispatch({
-                        changes: {
-                            from: from,
-                            to: to,
-                            insert: `${f}()`
-                        },
-                        selection: {anchor: from + f.length + 1}
+                            changes: {
+                                from: from,
+                                to: to,
+                                insert: `${f}()`
+                            },
+                            selection: { anchor: from + f.length + 1 }
                         })
                     }
-                    // Se não for do tipo method, use o comportamento padrão de inserção
                     return autocompletion.apply(view, from, to, completion);
                 }
             }
@@ -182,10 +170,17 @@ export default {
             }
             for (const t of this.tables) {
                 completions.push({
-                    label: t,
+                    label: t.alias,
                     detail: "tabela",
                     type: 'class'
                 });
+                for(const a of t.attributes){
+                    completions.push({
+                        label: `${t.alias}.${a}`,
+                        detail: "coluna",
+                        type: 'property'
+                    })
+                }
             }
             for (const keyword of this.sqlKeywords) {
                 //if (keyword.startsWith(before.string)) {
@@ -223,29 +218,17 @@ export default {
                 keymap.of([indentWithTab]),
                 indentUnit.of("    "),
                 lineNumbers(),
-                //highlightActiveLineGutter(),
-                //highlightSpecialChars(),
                 history(),
-                //foldGutter(),
-                //drawSelection(),
-                //dropCursor(),
-                //EditorState.allowMultipleSelections.of(true),
-                //indentOnInput(),//???
                 syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-                //highlightActiveLine(),
-                //highlightSelectionMatches(),
                 keymap.of([
-                    //...closeBracketsKeymap,
                     ...defaultKeymap,
                     ...searchKeymap,
                     ...historyKeymap,
                     ...foldKeymap,
                     ...completionKeymap,
-                    //...lintKeymap,
                 ]),
                 autocompletion({ override: [this.sqlCompletion] }),
                 sql(),
-
                 EditorView.updateListener.of(debounce((v) => {
                     this.$emit('update', v.state.doc.text.join('\n'));
                 }, 200))
@@ -259,16 +242,3 @@ export default {
 };
 </script>
  
-<style>
-.cm-s-completion.cm-hint,
-.cm-completion-active {
-    background-color: #f0f0f0;
-    /* Change this to your desired background color */
-}
-</style>
-<style scoped>
-.txt {
-    width: 100%;
-    height: 100%;
-}
-</style>

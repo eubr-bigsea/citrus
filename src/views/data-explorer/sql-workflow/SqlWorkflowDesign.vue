@@ -76,7 +76,8 @@
                     </div>
                     <div style="width:75vw; overflow-x: hidden;">
                         <sql-editor :command="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
-                            ref="codeEditor" :tables="getDataSourceNames"/>
+                            ref="codeEditor" :tables="dataSources" />
+
                     </div>
                 </div>
             </div>
@@ -90,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
+import { ref, computed, onBeforeMount } from "vue";
 import SqlEditor from './SqlEditor.vue';
 
 import { debounce } from "../../../util.js";
@@ -104,7 +105,7 @@ import { getCurrentInstance } from 'vue';
 import useNotifier from '../../../composables/useNotifier.js';
 import useDataSource from '../../../composables/useDataSource.js';
 
-import { Operation, Workflow, SqlBuilderWorkflow } from '../entities.js';
+import { Operation, SqlBuilderWorkflow } from '../entities.js';
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
@@ -128,8 +129,8 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
 const clusters = ref([]);
+const dataSources = ref([]);
 const clusterId = ref(null);
-const dataSources = ref(null);
 const internalWorkflowId = ref(null);
 const isDirty = ref(false);
 const job = ref(null);
@@ -144,10 +145,6 @@ const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } 
 const cluster = ref(null)
 const codeEditor = ref()
 
-const dataSourceId = computed({
-    get() { return workflowObj.value.readData.forms.data_source.value; },
-    set(newValue) { workflowObj.value.readData.forms.data_source.value = newValue; }
-});
 const { getAttributeList, asyncLoadDataSourceList } = useDataSource();
 
 const loadDataSourceList = debounce(async function (search, loading) {
@@ -167,7 +164,6 @@ const load = async () => {
     loadingData.value = true;
     progress.start();
     try {
-        await loadOperations();
         let resp = await axios.get(`${tahitiUrl}/workflows/${internalWorkflowId.value}`);
         workflowObj.value = new SqlBuilderWorkflow(resp.data, operationsMap.value);
         if (workflowObj.value.type !== 'SQL') {
@@ -175,7 +171,15 @@ const load = async () => {
             router.push({ name: 'index-explorer' });
             return;
         }
-        //await loadDataSource(dataSourceId.value); //FIXME
+        for (let ds of workflowObj.value.dataSources) {
+            const dataSource = await loadDataSource(ds.forms.data_source.value); //FIXME
+            dataSources.value.push(
+                {
+                    name: dataSource.name,
+                    alias: ds.name,
+                    attributes: dataSource.attributes.map(a => a.name),
+                });
+        }
 
         loadClusters();
         loaded.value = true;
@@ -191,28 +195,13 @@ const load = async () => {
         });
     }
 };
-const loadOperations = async () => {
-    const params = {
-        category: 'visualization-builder', platform: META_PLATFORM_ID,
-        fields: 'id,forms,categories,name,slug'
-    };
 
-    const resp = await axios.get(`${tahitiUrl}/operations`, { params });
-    resp.data.data.forEach(op => operationsMap.value.set(op.slug, new Operation(op)));
-};
 const dataSourceList = ref([]);
 
 const loadDataSource = async (id) => {
-    const resp = await axios.get(`${limoneroUrl}/datasources/${id}`);
-    dataSource.value = resp.data;
-    attributes.value = dataSource.value.attributes.sort((a, b) => a.name.localeCompare(b.name));
-    attributes.value.forEach(a => {
-        a.attribute = a.name;
-        a.numeric = ['DECIMAL', 'INTEGER', 'DOUBLE', 'FLOAT', 'LONG']
-            .includes(a.type);
-        a.integerType = ['INTEGER', 'LONG'].includes(a.type);
-    });
-    dataSourceList.value = [dataSource.value];
+    const f = 'id,name,attributes';
+    const resp = await axios.get(`${limoneroUrl}/datasources/${id}?fields=${f}`);
+    return resp.data;
 };
 const getDataSourceNames = computed({
     get: () => {
@@ -246,8 +235,7 @@ const saveWorkflow = async () => {
     delete cloned.sqls;
 
     try {
-        //await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
-        console.debug(cloned)
+        await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
         isDirty.value = false;
         success(i18n.$t('messages.savedWithSuccess', { what: i18n.$t('titles.workflow') }));
     } catch (e) {
