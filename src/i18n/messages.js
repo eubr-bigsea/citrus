@@ -611,7 +611,7 @@ export default {
                 (ex. {ex1}) e chamadas a funções (ex. {ex2}). Para mais informações, 
                 consulte o Guia de referência do Lemonade ou as funções existentes na plataforma Apache Spark. `
             },
-            function: 'Função',
+            function: 'Função | Funções',
             help: 'Ajuda',
             informAttributeName: 'Não está na lista? Informe um nome',
             multipleTimes: 'Um mesmo atributo poderá ser selecionado várias vezes, mas neste caso, é necessário informar um novo nome.',
@@ -677,6 +677,7 @@ export default {
             start: 'Início',
             storage: 'Armazenamento | Armazenamentos',
             success: 'Sucesso',
+            sqlWorkflow: 'Fluxo de trabalho com SQL',
             systemVariables: 'Variável de sistema | Variáveis de sistema',
             tasks: 'Tarefa | Tarefas',
             template: 'Modelo | Modelos',

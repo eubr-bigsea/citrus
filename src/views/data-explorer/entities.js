@@ -259,8 +259,8 @@ class SqlBuilderWorkflow extends Workflow {
         this.dataSources = this.tasks.filter(t => t.operation.slug === 'read-data');
         this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
     }
-    addSqlTask(inx) {
-        const forms = { query: { value: '' } };
+    addSqlTask(taskId, command) {
+        const forms = { query: { value: command } };
         const task = new Task({
             id: Operation.generateTaskId(),
             name: 'execute sql',
@@ -268,24 +268,49 @@ class SqlBuilderWorkflow extends Workflow {
             display_order: this.tasks.length,
             forms
         });
-        this.tasks.splice(inx + 1, 0, task);
+        if (taskId) {
+            const inx = this.tasks.findIndex(t => t.id === taskId);
+            if (inx > -1) {
+                this.tasks.splice(inx + 1, 0, task);
+                this.updateLists();
+            }
+        } else {
+            this.tasks.push(task);
+            this.updateLists();
+        }
+    }
+    removeTask(taskId) {
+        const inx = this.tasks.findIndex(t => t.id === taskId);
+        if (inx > -1) {
+            this.tasks.splice(inx, 1);
+            this.updateLists();
+        }
+    }
+    addDataSourceTask(dataSourceId, labelValue) {
+        const forms = {
+            data_source: { value: dataSourceId, labelValue }
+        };
+        const task = new Task({
+            id: Operation.generateTaskId(),
+            name: labelValue.replaceAll(/\W/gi, '_').substring(0, 10),
+            operation: new Operation({ id: 2100, slug: 'read-data' }),
+            display_order: this.dataSources.length,
+            forms
+        });
+        this.tasks.push(task);
         this.updateLists();
     }
-    removeSqlTask(inx) {
-        this.tasks.splice(inx, 1);
-        this.updateLists();
-    }
-    addDataSource(op) {
-        return super.addTask(op, null, null);
-    }
-    moveSqlTask(inx, direction) {
-        const newPosition = direction === 'up' ? inx - 1 : inx + 1;
-        const arr = this.tasks;
-        
-        const [movedElement] = arr.splice(inx, 1);
-        arr.splice(newPosition, 0, movedElement);
+    moveSqlTask(taskId, direction) {
+        const inx = this.tasks.findIndex(t => t.id === taskId);
+        if (inx > -1) {
+            const newPosition = direction === 'up' ? inx - 1 : inx + 1;
+            const arr = this.tasks;
 
-        this.updateLists();
+            const [movedElement] = arr.splice(inx, 1);
+            arr.splice(newPosition, 0, movedElement);
+
+            this.updateLists();
+        }
     }
 }
 class Platform {

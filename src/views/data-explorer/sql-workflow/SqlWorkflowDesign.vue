@@ -1,99 +1,127 @@
 <template>
-    <div class="options-container  source-code-pro-font" ref="visualizationDesigner">
-        <div class="options-visualization mt-1">
-            <div>
-                <h5>Fluxo de trabalho em SQL</h5>
-                <form class="clearfix visualization-form">
-                    <div data-test="basic-options-section">
-                        <label>{{ $tc('common.name') }}:</label>
-                        <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                            :placeholder="$tc('common.name')" maxlength="100">
-
-                        <vue-select v-if="workflowObj && workflowObj.readData"
-                            v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
-                            :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
-                            @input="getAttributeList">
-                            <template #no-options="{ }">
-                                <small>Digite parte do nome pesquisar ...</small>
-                            </template>
-                            <template #option="option">
-                                <div class="d-center">
-                                    <span class="span-id">{{ option.id }}</span> - {{ option.name }}
-                                </div>
-                            </template>
-                            <template #selected-option="option">
-                                <div class="selected d-center">
-                                    {{ option.id }} - {{ option.name }}
-                                </div>
-                            </template>
-                        </vue-select>
-
-                        <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
-                        <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                            :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
-                            <template #option="{ description, name }">
-                                {{ name }}<br>
-                                <small><em>{{ description }}</em></small>
-                            </template>
-                        </v-select>
-                        <label for="" class="mt-3">Fontes de dados:</label> &nbsp;
-                        <ul class="list-group">
-                            <li v-for="dataSource in workflowObj.dataSources" class="list-group-item">
-                                {{ dataSource.forms.data_source.labelValue }}
-                                <br />
-                                <small>Apelido: <span class="text-info">{{ dataSource.name }}</span></small>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="border-top mt-2">
-                        <b-button variant="primary" size="sm" class="mt-2" @click="saveWorkflow" data-test="save">
-                            <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
-                        </b-button>
-                    </div>
-                </form>
-            </div>
+    <main role="main">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.sqlWorkflow') }}</h1>
+            <b-button variant="primary" size="sm" class="mt-2 pu" @click="saveWorkflow" data-test="save">
+                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+            </b-button>
         </div>
-        <div class="options-main pt-2">
-            <h4>Comandos</h4>
-            <div>
-                <div v-for="sql, i in workflowObj.sqls" class="mb-4" :key="sql.id">
-                    <div class="btn-group" role="group">
-                        <button v-if="i < workflowObj.sqls.length - 1" class="btn btn-sm btn-secondary"
-                            :title="$t('actions.moveDown')" @click="handleMoveSql(i, 'down')"><font-awesome-icon
-                                icon="fa fa-caret-down" /></button>
-                        <div class="alert alert-dark m-0 px-0"></div>
-                        <button v-if="i > 0" class="btn btn-sm btn-secondary" :title="$t('actions.moveUp')"
-                            @click="handleMoveSql(i, 'up')"><font-awesome-icon icon="fa fa-caret-up" /></button>
-                        <div class="alert alert-dark m-0 px-0"></div>
-                        <button class="btn btn-sm btn-danger" :title="$t('actions.delete')"
-                            @click="handleRemoveSql(i)"><font-awesome-icon icon="fa fa-times" /></button>
-                        <div class="alert alert-dark m-0 px-0"></div>
-                        <button class="btn btn-sm btn-primary" :title="$t('actions.add')" @click="handleAddSql(i)">
-                            <font-awesome-icon icon="fa fa-plus" /></button>
-                        <div class="alert alert-dark m-0 px-0"></div>
-                        <button class="btn btn-sm btn-success" :title="$t('actions.execute')">
-                            <font-awesome-icon icon="fa fa-play" /></button>
-                    </div>
-                    <div style="width:75vw; overflow-x: hidden;">
-                        <sql-editor :command="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
-                            ref="codeEditor" :tables="dataSources" />
+        <div class="layout-container source-code-pro-font">
+            <div class="layout">
+                <div>
+                    <form class="clearfix">
+                        <div data-test="basic-options-section">
+                            <label>{{ $tc('common.name') }}:</label>
+                            <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
+                                :placeholder="$tc('common.name')" maxlength="100">
 
+                            <b-form-checkbox v-model="workflowObj.forms.$meta.value.use_hwc" class="mt-3" value="true"
+                                unchecked-value="false">
+                                Usar o Hive Warehouse Connector
+                            </b-form-checkbox>
+                            <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
+                            <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
+                                :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
+                                <template #option="{ description, name }">
+                                    {{ name }}<br>
+                                    <small><em>{{ description }}</em></small>
+                                </template>
+                            </v-select>
+                            <label for="" class="mt-3">{{ $tc('titles.dataSource', 2) }} ({{ workflowObj.dataSources?.length
+                            }}):</label> &nbsp;
+                            <button class="btn btn-sm btn-secondary mt-2 float-right" :title="$t('actions.add')"
+                                @click.prevent="handleAddDataSource" :disabled="addingDataSource">
+                                <font-awesome-icon icon="fa fa-plus" /> {{ $tc('titles.dataSource', 1) }}</button>
+                            <div v-if="addingDataSource" class="mt-2">
+                                <label>Escolha uma fonte de dados</label>
+                                <vue-select :filterable="false" :options="dataSourceList" :reduce="(opt) => opt.id"
+                                    label="name" @search="loadDataSourceList" @input="handleAddDataSource">
+                                    <template #no-options="{ }">
+                                        <small>Digite parte do nome pesquisar ...</small>
+                                    </template>
+                                    <template #option="option">
+                                        <div class="d-center">
+                                            <span class="span-id">{{ option.id }}</span> - {{ option.name }}
+                                        </div>
+                                    </template>
+                                    <template #selected-option="option">
+                                        <div class="selected d-center">
+                                            {{ option.id }} - {{ option.name }}
+                                        </div>
+                                    </template>
+                                </vue-select>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm ml-1 btn-secondary" :title="$t('actions.cancel')"
+                                        @click.prevent="addingDataSource = false"> {{ $t('actions.cancel') }}</button>
+                                </div>
+                            </div>
+                            <ul class="list-group data-sources mt-2 scroll-area">
+                                <li v-for="dataSource in workflowObj.dataSources" class="list-group-item p-2 pb-1 pt-1">
+                                    <div class="mb-2 truncate" :title="dataSource.forms.data_source.labelValue">{{
+                                        dataSource.forms.data_source.labelValue }}</div>
+                                    <small>Apelido:</small>
+                                    <input type="text" class="form-control form-control-sm w-75 float-right mb-1"
+                                        v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
+                                    <div class="float-left">
+                                        <button class="btn btn-sm text-danger" :title="$t('actions.delete')"
+                                            @click.prevent="handleRemoveDataSource(dataSource.id)"><font-awesome-icon
+                                                icon="fa fa-times" /></button>
+                                        <button :title="$t('common.preview')" class="btn btn-sm"
+                                            @click.prevent="handlePreview(dataSource.forms.data_source.value)">
+                                            <font-awesome-icon icon="fa-eye" />
+                                        </button>
+                                        <button title="Criar SELECT para fonte de dados" class="btn btn-sm btn-light"
+                                            @click.prevent="handleAddSqlFromDataSource('select', dataSource.forms.data_source.value)">
+                                            SELECT
+                                        </button>
+                                        <button title="Criar INSERT para fonte de dados" class="btn btn-sm btn-light ml-1"
+                                            @click.prevent="handleAddSqlFromDataSource('insert', dataSource.forms.data_source.value)">
+                                            INSERT
+                                        </button>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="layout-center pt-2">
+                <h4>Comandos ({{ workflowObj.sqls?.length }})</h4>
+                <div class="scroll-area commands">
+                    <div v-for="sql, i in workflowObj.sqls" class="mb-1 editors" :key="sql.id">
+                        <div class="button-toolbar">
+                            <sql-editor-toolbar :task-id="sql.id" :show-move-up="i > 0"
+                                :show-move-down="i < workflowObj.sqls.length - 1" @on-move="handleMoveSql"
+                                @on-remove="handleRemoveSql" @on-add="handleAddSql" />
+                        </div>
+                        <div class="editor">
+                            <sql-editor :command="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
+                                ref="codeEditor" :tables="dataSources" :functions="functions" />
+                        </div>
                     </div>
                 </div>
             </div>
-
+            <div class="layout-help">
+                <h4>{{ $t('common.help') }}</h4>
+                <sql-editor-help :data-sources="dataSources" :functions="sparkFunctions"
+                    :custom-functions="customFunctions" />
+            </div>
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
                 {{ i18n.$t('common.wait') }}
             </div>
+            <modal-preview-data-source ref="previewWindow" />
         </div>
-    </div>
+    </main>
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, onBeforeMount } from "vue";
 import SqlEditor from './SqlEditor.vue';
-
+import SqlEditorHelp from './SqlEditorHelp.vue';
+import SqlEditorToolbar from './SqlEditorToolbar.vue';
+import ModalPreviewDataSource from '../../modal/ModalPreviewDataSource.vue';
 import { debounce } from "../../../util.js";
 import Vue from 'vue';
 import axios from 'axios';
@@ -105,7 +133,7 @@ import { getCurrentInstance } from 'vue';
 import useNotifier from '../../../composables/useNotifier.js';
 import useDataSource from '../../../composables/useDataSource.js';
 
-import { Operation, SqlBuilderWorkflow } from '../entities.js';
+import { SqlBuilderWorkflow } from '../entities.js';
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
@@ -130,9 +158,9 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 const META_PLATFORM_ID = 1000;
 const clusters = ref([]);
 const dataSources = ref([]);
+const cachedDataSources = ref([]);
 const clusterId = ref(null);
 const internalWorkflowId = ref(null);
-const isDirty = ref(false);
 const job = ref(null);
 const jobStatus = ref(null);
 const loaded = ref(false);
@@ -141,17 +169,72 @@ const socketIo = ref(null); // used by socketio (web sockets)
 const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 
-// Elements refs
-const cluster = ref(null)
-const codeEditor = ref()
+const sparkFunctions = [
+    'abs', 'add_months', 'approx_count_distinct', 'approx_percentile', 'bround',
+    'cast', 'ceil', 'avg',
+    'char_length', 'coalesce', 'collect_list', 'collect_set',
+    'count',
+    'concat', 'concat_ws', 'contains', 'current_date',
+    'current_timestamp', 'date_add',
+    'date_diff', 'date_format', 'date_from_unix_date',
+    'date_part', 'date_sub', 'date_trunc',
+    'day', 'dayofmonth', 'dayofweek',
+    'dayofyear', 'endswith', 'exp',
+    'floor', 'format_number', 'format_string',
+    'from_unixtime', 'from_utc_timestamp',
+    'ifnull', 'ilike',
+    'initcap', 'instr', 'int', 'isnan', 'isnotnull',
+    'isnull', 'last', 'last_day', 'lcase', 'lead',
+    'least', 'left', 'len', 'length',
+    'ln', 'localtimestamp', 'locate', 'log', 'log10',
+    'log2', 'lower', 'lpad', 'ltrim',
+    'mask', 'max', 'max_by', 'md5', 'mean', 'median', 'min',
+    'min_by', 'minute', 'mod', 'mode',
+    'month', 'months_between',
+    'next_day', 'now', 'nullif', 'pi',
+    'power', 'quarter', 'radians', 'rand', 'randn',
+    'random', 'regexp', 'regexp_count',
+    'regexp_extract', 'regexp_extract_all', 'regexp_instr',
+    'regexp_like', 'regexp_replace', 'regexp_substr', 'repeat',
+    'replace', 'reverse', 'right', 'rint', 'rlike', 'round',
+    'row_number', 'rpad', 'rtrim', 'sec', 'second', 'sequence',
+    'sha', 'sign', 'signum', 'size', 'soundex',
+    'split', 'split_part', 'sqrt', 'startswith',
+    'substring', 'substring_index', 'sum',
+    'timestamp',
+    'timestamp_millis', 'timestamp_seconds',
+    'to_timestamp', 'to_timestamp_ltz', 'to_timestamp_ntz',
+    'to_unix_timestamp', 'to_utc_timestamp', 'translate',
+    'trim', 'trunc', 'ucase', 'unix_date',
+    'unix_millis', 'unix_seconds', 'unix_timestamp',
+    'upper', 'url_decode', 'url_encode', 'weekday', 'weekofyear',
+    'when', 'year', 'zip_with',];
 
-const { getAttributeList, asyncLoadDataSourceList } = useDataSource();
+const customFunctions = ['trata_cnpj', 'remove_acento'];
+const functions = [...customFunctions, ...sparkFunctions]
 
-const loadDataSourceList = debounce(async function (search, loading) {
-    if (search) {
-        dataSourceList.value = await asyncLoadDataSourceList(search, loading);
+/* Control dirty state */
+const isDirty = ref(false);
+const confirmMsg = i18n.$t('warnings.dirtyCheck');
+
+window.onbeforeunload = function () {
+    if (isDirty.value) {
+        return confirmMsg;
     }
-}, 800);
+}
+router.beforeEach(function (to, from, next) {
+    if (!isDirty.value || (confirm(confirmMsg))) {
+        isDirty.value = false;
+        next();
+    } else {
+        next(false);
+    }
+});
+
+// Elements refs
+const cluster = ref(null);
+const codeEditor = ref();
+const previewWindow = ref();
 
 onBeforeMount(async () => {
     disconnectWebSocket();
@@ -159,6 +242,35 @@ onBeforeMount(async () => {
     await load();
 });
 
+const updateDataSources = async (useCached) => {
+    dataSources.value = [];
+    if (useCached) {
+        for (let wfDs of workflowObj.value.dataSources) {
+            const dataSource = cachedDataSources.value.find(d => d.id === wfDs.forms.data_source.value);
+            dataSources.value.push(
+                {
+                    id: wfDs.id,
+                    dataSourceId: wfDs.forms.data_source.value,
+                    name: dataSource.name,
+                    alias: wfDs.name,
+                    attributes: dataSource.attributes,
+                });
+        }
+    } else {
+        for (let wfDs of workflowObj.value.dataSources) {
+            const dataSource = await loadDataSource(wfDs.forms.data_source.value);
+            dataSources.value.push(
+                {
+                    id: wfDs.id,
+                    dataSourceId: wfDs.forms.data_source.value,
+                    name: dataSource.name,
+                    alias: wfDs.name,
+                    attributes: dataSource.attributes,
+                });
+            cachedDataSources.value.push(dataSource);
+        }
+    }
+}
 
 const load = async () => {
     loadingData.value = true;
@@ -171,16 +283,7 @@ const load = async () => {
             router.push({ name: 'index-explorer' });
             return;
         }
-        for (let ds of workflowObj.value.dataSources) {
-            const dataSource = await loadDataSource(ds.forms.data_source.value); //FIXME
-            dataSources.value.push(
-                {
-                    name: dataSource.name,
-                    alias: ds.name,
-                    attributes: dataSource.attributes.map(a => a.name),
-                });
-        }
-
+        updateDataSources(false);
         loadClusters();
         loaded.value = true;
 
@@ -196,18 +299,6 @@ const load = async () => {
     }
 };
 
-const dataSourceList = ref([]);
-
-const loadDataSource = async (id) => {
-    const f = 'id,name,attributes';
-    const resp = await axios.get(`${limoneroUrl}/datasources/${id}?fields=${f}`);
-    return resp.data;
-};
-const getDataSourceNames = computed({
-    get: () => {
-        return workflowObj.value.dataSources.map(d => d.name);
-    }
-})
 const loadClusters = async () => {
     try {
         const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${targetPlatform.value}`);
@@ -242,68 +333,7 @@ const saveWorkflow = async () => {
         error(e);
     }
 };
-const handleUpdateFilter = (field, value) => {
-    workflowObj.value.filter.forms.formula.value = value;
-};
-const loadData = async () => {
-    if (!workflowObj.value.preferred_cluster_id) {
-        error(`${i18n.$t('errors.missingRequiredValue')}: ${i18n.$t('workflow.preferredCluster')}`);
-        return;
-    }
-    loadingData.value = true;
-    Object.assign(workflowObj.value.visualization.forms, visualizationObj.value);
-    if (workflowObj.value.sort.forms.order_by.value === 'asc' ||
-        workflowObj.value.sort.forms.order_by.value === null) {
-        workflowObj.value.sort.enabled = false;
-    }
-    const cloned = JSON.parse(JSON.stringify(workflowObj.value));
-    cloned.platform_id = cloned.platform.id; //FIXME: review
-    const filterTask = cloned.tasks.find(t => t.operation.slug === 'filter');
-    const visualizationTask = cloned.tasks.find(t => t.operation.slug === 'visualization');
-    if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null
-        || cloned.visualization.forms.filter.value.length === 0) {
-        cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
-    } else {
-        // Copy filter from visualization to correct operation
-        filterTask.forms.formula = structuredClone(visualizationTask.forms.filter);
-    }
 
-    cloned.tasks.forEach((task) => {
-        // Remove unnecessary attributes from operation
-        task.operation = { id: task.operation.id };
-        delete task.version;
-    });
-
-    const body = {
-        workflow: cloned,
-        cluster: { id: cloned.preferred_cluster_id },
-        name: `## vis explorer ${workflowObj.value.id} ##`,
-        user: store.getters.user, //: { id: user.id, login: user.login, name: user.name },
-        persist: false, // do not save the job in db.
-        app_configs: {
-            verbosity: 0,
-            target_platform: 'scikit-learn',
-            variant: 'polars'
-        },
-    };
-
-    try {
-        const response = await axios.post(`${standUrl}/jobs`, body,
-            { headers: { 'Locale': i18n.locale, } });
-        job.value = response.data.data;
-        connectWebSocket();
-    } catch (ex) {
-        if (ex.data) {
-            error(ex.data.message);
-        } else if (ex.status === 0) {
-            this.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
-        } else {
-            error(`Unhandled error: ${ex}`);
-        }
-    } finally {
-        progress.finish();
-    }
-};
 /* WebSocket Handling */
 const disconnectWebSocket = () => {
     if (socketIo.value) {
@@ -346,43 +376,150 @@ const connectWebSocket = () => {
     }
 };
 /**Events */
-const handleAddSql = (index) => {
-    workflowObj.value.addSqlTask(index);
+const handleAddSql = (taskId, command) => {
+    workflowObj.value.addSqlTask(taskId, command);
     Vue.nextTick(() => {
         codeEditor.value.slice(-1)[0].focus()
     });
+    isDirty.value = true;
 }
-const handleRemoveSql = (index) => {
+const handleRemoveSql = (taskId) => {
     if (confirm(i18n.$t('messages.doYouWantToDelete'))) {
-        workflowObj.value.removeSqlTask(index);
+        workflowObj.value.removeTask(taskId);
+        isDirty.value = true;
     }
 }
-const handleMoveSql = (index, direction) => {
-    workflowObj.value.moveSqlTask(index, direction);
+const handleMoveSql = (taskId, direction) => {
+    workflowObj.value.moveSqlTask(taskId, direction);
+}
+/* Data source related */
+const addingDataSource = ref(false);
+const dataSourceList = ref([]);
+const loadDataSource = async (id) => {
+    const f = 'id,name,attributes';
+    const resp = await axios.get(`${limoneroUrl}/datasources/${id}?fields=${f}`);
+    return resp.data;
+};
+const { asyncLoadDataSourceList } = useDataSource();
+
+const loadDataSourceList = debounce(async function (search, loading) {
+    if (search) {
+        dataSourceList.value = await asyncLoadDataSourceList(search, loading);
+    }
+}, 800);
+
+const handleAddDataSource = async (dataSourceId) => {
+    if (addingDataSource.value) {
+        const ds = await loadDataSource(dataSourceId);
+        workflowObj.value.addDataSourceTask(dataSourceId, ds.name);
+        updateDataSources(true);
+        isDirty.value = true;
+    }
+    addingDataSource.value = !addingDataSource.value;
+}
+const handleRemoveDataSource = (taskId) => {
+    if (confirm(i18n.$t('messages.doYouWantToDelete'))) {
+        workflowObj.value.removeTask(taskId);
+        dataSources.value = dataSources.value.filter(ds => ds.id !== taskId);
+    }
+    isDirty.value = true;
+}
+const handlePreview = (dataSourceId) => {
+    previewWindow.value.show(dataSourceId);
+}
+const handleAddSqlFromDataSource = (type, dataSourceId) => {
+    const ds = dataSources.value.find(ds => ds.dataSourceId === dataSourceId);
+    if (ds && ds.attributes.length > 0) {
+        const cmd = [];
+        if (type === 'select') {
+            cmd.push('SELECT')
+            for (const attr of ds.attributes.slice(0, -1)) {
+                cmd.push(`   ${ds.alias}.${attr.name},`)
+            }
+            cmd.push(`   ${ds.alias}.${ds.attributes.slice(-1)[0].name}`);
+            cmd.push(`FROM ${ds.alias}`)
+        } else if (type === 'insert') {
+            cmd.push(`INSERT INTO ${ds.alias}(`)
+            for (const attr of ds.attributes.slice(0, -1)) {
+                cmd.push(`   ${attr.name},`)
+            }
+            cmd.push(`   ${ds.attributes.slice(-1)[0].name}`);
+            cmd.push(')')
+            cmd.push('VALUES()')
+        }
+        handleAddSql(null, cmd.join('\n'));
+    }
+}
+const handleChangeAlias = () => {
+    isDirty.value = true;
+    updateDataSources(true);
 }
 </script>
 
-<style>
-.cm-content {
-    border: 1px #ddd solid;
-}
-</style>
 <style scoped lang="scss">
-.options-visualization {
-    flex: 0 0 250px;
-    background-color: #fff;
-    padding: 0px;
-}
-
-.options-container {
+.layout-container {
     display: flex;
-    flex-wrap: wrap;
-    margin: 0 auto;
     gap: 10px;
-    height: 92vh;
+    /*height: 85vh;*/
 }
 
-.options-main {
-    flex: 3;
+.layout,
+.layout-help {
+    flex: 0 0 300px;
+    background-color: #fcfcfc;
+    padding: 15px;
+    border: 1px solid #dfdfdf;
+    border-radius: 2px;
+    margin-top: 10px;
+}
+
+.layout-center {
+    margin-top: 10px;
+    border: 1px solid #dfdfdf;
+    border-radius: 2px;
+    display: block;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    align-self: auto;
+    order: 0;
+    padding: 10px;
+}
+
+.commands {
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+.data-sources {
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.button-toolbar {
+    background-color: #f3f3f3;
+    border-radius: 2px;
+    display: flex;
+    justify-content: end;
+    padding-bottom: 5px;
+}
+
+.truncate {
+    width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: .9em;
+}
+
+.editors {
+    background-color: #f3f3f3;
+    padding: 5px;
+}
+
+.editors .editor {
+    background: white;
+    width: 100%;
+    overflow-x: hidden;
 }
 </style>

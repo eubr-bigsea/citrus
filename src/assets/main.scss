@@ -935,8 +935,7 @@ h1 {
     content: "⇵";
 }
 
-.sort-base::before {
-}
+.sort-base::before {}
 
 ul.b-form-tags-list {
     padding-top: 0.5rem !important;
@@ -945,23 +944,35 @@ ul.b-form-tags-list {
 .tab-small {
     font-size: 10pt
 }
+
 /* Vue transitions */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 2s
+    transition: opacity 2s
 }
 
 .fade-enter,
 .fade-leave-to {
-  opacity: 0
+    opacity: 0
 }
+
 .slide-leave-active,
 .slide-enter-active {
-  transition: opacity 0.2s ease;
+    transition: opacity 0.2s ease;
 }
+
 .slide-enter {
     opacity: 0
 }
+
 .slide-leave-to {
     opacity: 0
+}
+
+.table-smallest {
+    font-size: 0.8em;
+}
+
+.table-smallest td {
+    white-space: nowrap;
 }
