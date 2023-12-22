@@ -253,14 +253,33 @@ class SqlBuilderWorkflow extends Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
         version = null, user = null, forms = null } = {}, operations) {
         super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
-        this.updateLists()
+        this.updateLists();
+        this.sqls.forEach(sql => {
+            sql.forms = {
+                save: { value: false },
+                new_name: { value: '' },
+                path: { value: '' },
+                description: { value: '' },
+                storage: { value: null },
+                tags: { value: [] },
+                ...sql.forms
+            }
+        });
     }
     updateLists() {
         this.dataSources = this.tasks.filter(t => t.operation.slug === 'read-data');
         this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
     }
     addSqlTask(taskId, command) {
-        const forms = { query: { value: command } };
+        const forms = {
+            query: { value: command },
+            save: { value: false },
+            new_name: { value: '' },
+            path: { value: '' },
+            description: { value: '' },
+            storage: { value: null },
+            tags: { value: [] }
+        };
         const task = new Task({
             id: Operation.generateTaskId(),
             name: 'execute sql',

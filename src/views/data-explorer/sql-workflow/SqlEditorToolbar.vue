@@ -1,30 +1,41 @@
 <template>
-    <div class="float-right" role="group">
-        <button v-if="showMoveDown" class="btn btn-sm" :title="$t('actions.moveDown')"
-        @click="emit('on-move', taskId, 'down')"><font-awesome-icon icon="fa fa-caret-down" /></button>
-        <button v-if="showMoveUp" class="btn btn-sm" :title="$t('actions.moveUp')"
-        @click="emit('on-move', taskId, 'up')"><font-awesome-icon icon="fa fa-caret-up" /></button>
-        <button class="btn btn-sm" :title="$t('actions.delete')"
-        @click="emit('on-remove', taskId)"><font-awesome-icon icon="fa fa-times" /></button>
-        <button class="btn btn-sm" :title="$t('actions.add')" 
-        @click="emit('on-add', taskId)">
-        <font-awesome-icon icon="fa fa-plus" /></button>
-        <button class="btn btn-sm btn-success" :title="$t('actions.execute')"
-            @click="emit('on-execute', taskId)">
-            <font-awesome-icon icon="fa fa-caret-right" /></button>
+    <div class="w-100">
+        <div class="float-left">
+            <button class="btn btn-sm btn-light" :title="$t('actions.save')"
+                @click="handleShowModal"><font-awesome-icon icon="fa fa-save" />
+                {{ $t('actions.saveAs') }}
+            </button>
+        </div>
+        <div class="float-right" role="group">
+            <button v-if="showMoveDown" class="btn btn-sm" :title="$t('actions.moveDown')"
+                @click="emit('on-move', task.id, 'down')"><font-awesome-icon icon="fa fa-caret-down" /></button>
+            <button v-if="showMoveUp" class="btn btn-sm" :title="$t('actions.moveUp')"
+                @click="emit('on-move', task.id, 'up')"><font-awesome-icon icon="fa fa-caret-up" /></button>
+            <button class="btn btn-sm" :title="$t('actions.delete')" @click="emit('on-remove', task.id)"><font-awesome-icon
+                    icon="fa fa-times" /></button>
+            <button class="btn btn-sm" :title="$t('actions.add')" @click="emit('on-add', task.id)">
+                <font-awesome-icon icon="fa fa-plus" /></button>
+            <button class="btn btn-sm btn-success" :title="$t('actions.execute')" @click="emit('on-execute', task.id)">
+                <font-awesome-icon icon="fa fa-caret-right" /></button>
+        </div>
+        <sql-editor-save-as-modal ref="modal" :task="task"/>
     </div>
 </template>
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { ref } from 'vue';
+import SqlEditorSaveAsModal from './SqlEditorSaveAsModal.vue';
 
 const emit = defineEmits(['on-add', 'on-remove', 'on-move', 'on-execute']);
 const props = defineProps({
-    showMoveUp: {type: Boolean, default: true},
-    showMoveDown: {type: Boolean, default: true},
-    taskId: {type: String, required: true},
+    showMoveUp: { type: Boolean, default: true },
+    showMoveDown: { type: Boolean, default: true },
+    task: { type: Object, required: true },
 });
 
-</script>
-<style scoped>
+const modal = ref();
+const handleShowModal = () => {
+    modal.value.show()
+}
 
-</style>
+</script>
+<style scoped></style>

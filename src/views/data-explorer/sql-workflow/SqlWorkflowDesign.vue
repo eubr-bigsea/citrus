@@ -90,8 +90,11 @@
                 <h4>Comandos ({{ workflowObj.sqls?.length }})</h4>
                 <div class="scroll-area commands">
                     <div v-for="sql, i in workflowObj.sqls" class="mb-1 editors" :key="sql.id">
+                        <div>
+                            Nome: <input class="form-control form-control-sm mb-1" maxlength="50" v-model="sql.name"/>
+                        </div>
                         <div class="button-toolbar">
-                            <sql-editor-toolbar :task-id="sql.id" :show-move-up="i > 0"
+                            <sql-editor-toolbar :task="sql" :show-move-up="i > 0"
                                 :show-move-down="i < workflowObj.sqls.length - 1" @on-move="handleMoveSql"
                                 @on-remove="handleRemoveSql" @on-add="handleAddSql" />
                         </div>
@@ -157,6 +160,7 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
 const clusters = ref([]);
+const storages = ref([]);
 const dataSources = ref([]);
 const cachedDataSources = ref([]);
 const clusterId = ref(null);
@@ -517,7 +521,7 @@ const handleChangeAlias = () => {
 
 .editors {
     background-color: #f3f3f3;
-    padding: 5px;
+    padding: 10px;
 }
 
 .editors .editor {
