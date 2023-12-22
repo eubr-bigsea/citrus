@@ -276,7 +276,8 @@ export default {
             experiments: {
                 DATA_EXPLORER: 'Análise de dados',
                 MODEL_BUILDER: 'Criação de modelos',
-                VIS_BUILDER: 'Criação de visualizações'
+                VIS_BUILDER: 'Criação de visualizações',
+                SQL: 'Fluxo com SQL',
             },
             informNewName: 'Informe o novo nome',
             invalid: 'Inválido',

@@ -15,7 +15,7 @@
                             <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                                 :placeholder="$tc('common.name')" maxlength="100">
 
-                            <b-form-checkbox v-model="workflowObj.forms.$meta.value.use_hwc" class="mt-3" value="true"
+                            <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc" class="mt-3" value="true"
                                 unchecked-value="false">
                                 Usar o Hive Warehouse Connector
                             </b-form-checkbox>
@@ -282,6 +282,9 @@ const load = async () => {
             error(null, i18n.$t('modelBuilder.invalidType')); //FIXME: add message
             router.push({ name: 'index-explorer' });
             return;
+        }
+        if (!workflowObj.value.forms){
+            workflowObj.value.forms = {'$meta': {value: {}}};
         }
         updateDataSources(false);
         loadClusters();
