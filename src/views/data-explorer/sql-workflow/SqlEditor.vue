@@ -7,21 +7,25 @@
 
 import { sql } from '@codemirror/lang-sql'
 import { autocompletion, completionKeymap } from '@codemirror/autocomplete'
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
+import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands'
 import { defaultHighlightStyle, foldKeymap, syntaxHighlighting } from '@codemirror/language'
 import { searchKeymap } from '@codemirror/search'
 import { EditorView, keymap, lineNumbers } from '@codemirror/view'
 import { debounce } from "../../../util.js";
-import { indentWithTab } from "@codemirror/commands"
 import { indentUnit } from "@codemirror/language";
-import { ref, reactive, defineAsyncComponent, computed, watch, onMounted, 
-    defineExpose, defineProps, defineEmits } from "vue";
+import {
+    ref, reactive, defineAsyncComponent, computed, watch, onMounted,
+    defineExpose, defineProps, defineEmits
+} from "vue";
+
+import { format } from 'sql-formatter';
 
 const emit = defineEmits(['update']);
 const props = defineProps({
-    command: { type: String, default: () => '' },
+    query: { type: String, default: () => '' },
     tables: { type: Array, default: () => [] },
-    functions: {type: Array, default: () => []}
+    functions: { type: Array, default: () => [] },
+    format: {type: Object, default: () => {language: 'sql'}},
 });
 
 const container = ref();
@@ -60,7 +64,7 @@ const sqlCompletion = (context) => {
         }
     }
     for (const f of props.functions) {
-        if (f === undefined){
+        if (f === undefined) {
             continue;
         }
         completions.push({
@@ -100,6 +104,13 @@ const sqlCompletion = (context) => {
         validFor: /^\w*$/
     }
 }
+const indent = () => {
+    const formatted = format(props.query, props.format);
+    editor.value.dispatch({
+        changes: {from: 0, to: editor.value.state.doc.length, insert: formatted}
+    });
+  
+}
 
 /* Events */
 onMounted(() => {
@@ -112,7 +123,7 @@ onMounted(() => {
         }
     });
     editor.value = new EditorView({
-        doc: props.command,
+        doc: props.query,
         extensions: [
             myTheme,
             keymap.of([indentWithTab]),
@@ -136,7 +147,7 @@ onMounted(() => {
         parent: container.value
     });
 });
-defineExpose({focus})
+defineExpose({ focus, indent })
 
 
 </script>

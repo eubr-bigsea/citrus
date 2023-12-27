@@ -15,6 +15,8 @@
                     icon="fa fa-times" /></button>
             <button class="btn btn-sm" :title="$t('actions.add')" @click="emit('on-add', task.id)">
                 <font-awesome-icon icon="fa fa-plus" /></button>
+            <button class="btn btn-sm" :title="$t('actions.indent')" @click="emit('on-indent', task.id)">
+                <font-awesome-icon icon="fa fa-indent" /></button>
             <button class="btn btn-sm btn-success" :title="$t('actions.execute')" @click="emit('on-execute', task.id)">
                 <font-awesome-icon icon="fa fa-caret-right" /></button>
         </div>

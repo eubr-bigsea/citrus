@@ -96,11 +96,12 @@
                         <div class="button-toolbar">
                             <sql-editor-toolbar :task="sql" :show-move-up="i > 0"
                                 :show-move-down="i < workflowObj.sqls.length - 1" @on-move="handleMoveSql"
-                                @on-remove="handleRemoveSql" @on-add="handleAddSql" />
+                                @on-remove="handleRemoveSql" @on-add="handleAddSql" @on-indent="handleIndent(i)" />
                         </div>
                         <div class="editor">
-                            <sql-editor :command="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
-                                ref="codeEditor" :tables="dataSources" :functions="functions" />
+                            <sql-editor :query="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
+                                ref="codeEditor" :tables="dataSources" :functions="functions" 
+                                :format="{language: 'spark',  tabWidth: 2,  keywordCase: 'upper', linesBetweenQueries: 2}"/>
                         </div>
                     </div>
                 </div>
@@ -121,6 +122,8 @@
 
 <script setup>
 import { ref, onBeforeMount } from "vue";
+import { format } from 'sql-formatter';
+
 import SqlEditor from './SqlEditor.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
@@ -461,6 +464,13 @@ const handleChangeAlias = () => {
     isDirty.value = true;
     updateDataSources(true);
 }
+const handleIndent = (index) =>{
+    //const task = workflowObj.value.getTaskById(taskId);
+    //if (task) {
+    //    task.forms.query.value = format(task.forms.query.value, { language: 'sql' });
+    //}
+    codeEditor.value[index].indent();
+}
 </script>
 
 <style scoped lang="scss">
@@ -528,5 +538,5 @@ const handleChangeAlias = () => {
     background: white;
     width: 100%;
     overflow-x: hidden;
-}
+    }
 </style>

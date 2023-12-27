@@ -54,6 +54,7 @@ export default {
             filter: 'Filtrar',
             groupData: 'Agrupar dados',
             import: 'Importar',
+            indent: 'Formatar código',
             info: 'Informações',
             joinData: 'Juntar dados',
             keep: 'Manter',
