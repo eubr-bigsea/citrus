@@ -32,7 +32,7 @@
                                         </select>
                                     </p>
                                     <button class="btn btn-success" :disabled="storage[option.prop] === null"
-                                            @click="handleChoose(option.value)" :name="`btn-${option.prop}`">
+                                            :name="`btn-${option.prop}`" @click="handleChoose(option.value)">
                                         {{$t('actions.choose')}}
                                     </button>
                                 </div>
@@ -50,7 +50,7 @@
                                 <div class="resumable-drop"
                                      :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
                                     {{$t('dataSource.dropFilesHere')}}
-                                    <a ref="browseElem" class="resumable-browse" id="select-from-computer">
+                                    <a id="select-from-computer" ref="browseElem" class="resumable-browse">
                                         <u>{{$t('dataSource.selectFromComputer')}}</u>
                                     </a>.
                                     <br>
@@ -201,7 +201,7 @@ export default {
                     fileInfo.message.status.toLowerCase() === 'error'
                 ? 'danger'
                 : 'success';
-        }
+        };
 
         const handleChoose = (method) => {
             if (method === 'sql') {
@@ -220,13 +220,13 @@ export default {
                 step.value = 2;
                 dataSource.value.format = 'UNKNOWN';
                 dataSource.value.storage_id = storage.value.fsStorage;
-                storageType.value = 'FS'
+                storageType.value = 'FS';
                 /* Setup resumable */
                 Vue.nextTick(() => {
                     setupResumable();
                 });
             }
-        }
+        };
         /*
             const copyTableName = () => {
                 this.dataSource.command = (this.dataSource.command ? this.dataSource.command + ' ' : '') + this.selectedTable;
@@ -332,7 +332,7 @@ export default {
                 fileRef.message = JSON.parse(message);
                 showPause.value = false;
                 showProgress.value = false;
-            }
+            };
             resumable.on('error', handleError);
             resumable.on('fileError', handleError);
 
@@ -346,27 +346,27 @@ export default {
                             Math.floor(resumable.progress() * 100) + '%';
                 }
             });
-        }
+        };
         const handleSave = async (event) => {
-            const url = `${limoneroUrl}/datasources`
-            event.target.setAttribute('disabled', 'disabled')
-            event.target.classList.add('btn-spinner')
+            const url = `${limoneroUrl}/datasources`;
+            event.target.setAttribute('disabled', 'disabled');
+            event.target.classList.add('btn-spinner');
             try {
                 const resp = await axios.post(url, dataSource.value);
                 isDirty.value = false;
                 notifier.success(
                     t('messages.savedWithSuccess',
-                        { what: t('titles.dataSource', 1) }))
+                        { what: t('titles.dataSource', 1) }));
                 router.push({
                     name: 'editDataSource', params: { 'id': resp.data.data.id }
-                })
+                });
             } catch (e) {
                 notifier.error(e);
             } finally {
-                event.target.removeAttribute('disabled')
-                event.target.classList.remove('btn-spinner')
+                event.target.removeAttribute('disabled');
+                event.target.classList.remove('btn-spinner');
             }
-        }
+        };
 
         const storages = ref({
             fsStorages: [],

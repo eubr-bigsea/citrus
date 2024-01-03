@@ -85,20 +85,21 @@
                     </div>
                 </div>
             </form>
-            <div slot="modal-footer"
-                 class="w-100 text-right">
-                <b-button variant="primary"
-                          class="mr-1"
-                          size="sm"
-                          @click.prevent.stop="okClicked">
-                    {{$t('common.ok')}}
-                </b-button>
-                <b-btn variant="secondary"
-                       size="sm"
-                       @click="cancelClicked">
-                    {{$t('actions.cancel')}}
-                </b-btn>
-            </div>
+            <template #modal-footer>
+                <div class="w-100 text-right">
+                    <b-button variant="primary"
+                              class="mr-1"
+                              size="sm"
+                              @click.prevent.stop="okClicked">
+                        {{$t('common.ok')}}
+                    </b-button>
+                    <b-btn variant="secondary"
+                           size="sm"
+                           @click="cancelClicked">
+                        {{$t('actions.cancel')}}
+                    </b-btn>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
@@ -130,7 +131,7 @@ export default {
                     conditions: [], firstSelect: [], secondSelect: []
                 }
 
-        }
+        };
     },
     computed: {
         hasNameCollision() {
@@ -222,7 +223,7 @@ export default {
 
             let select = [firstSelect, secondSelect].filter(v => v).join(', \n\t');
             if (select === ', ') {
-                select = '?'
+                select = '?';
             }
             if (condition === '') {
                 condition = '?';
@@ -260,7 +261,7 @@ export default {
                 this.valueObject.secondSelect = this.$refs.secondSelect.getSelectList();
                 this.valueObject.secondPrefix = null;
             } else {
-                this.valueObject.secondSelect = null
+                this.valueObject.secondSelect = null;
                 this.valueObject.secondPrefix = this.$refs.secondSelect.getPrefix();
             }
             this.valueObject.conditions = this.$refs.condition.getConditions();
@@ -274,7 +275,7 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style scoped>
     .side {

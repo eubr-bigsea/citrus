@@ -14,27 +14,27 @@
                 </div>
             </div>
             <b-link variant="sm" @click.prevent="openModal">
-                {{ $t('actions.chooseOption') }}
+                {{$t('actions.chooseOption')}}
             </b-link>
             |
             <b-link variant="sm" @click.prevent="clear">
-                {{ $t('actions.clear') }}
+                {{$t('actions.clear')}}
             </b-link>
         </span>
-        <span v-else>{{ displayValue }}</span>
-        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" no-fade>
+        <span v-else>{{displayValue}}</span>
+        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label"
+                 :hide-header="true"
+                 :cancel-title="$t('actions.cancel')" no-fade>
             <p>
-                {{ field.label || field.name }}
+                {{field.label || field.name}}
             </p>
             <b-tabs>
                 <b-tab title="Matplotlib">
-
                     <div class="color-select">
                         <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix"
-                            @click="select(inx, 'palettes')">
+                             @click="select(inx, 'palettes')">
                             <div class="palette-name">
-                                {{ palette[0] }}
+                                {{palette[0]}}
                             </div>
                             <div v-for="color in palette[1]" :key="color">
                                 <div class="color" :style="{'background-color': color}" />
@@ -45,9 +45,9 @@
                 <b-tab title="Color blind">
                     <div class="color-select">
                         <div v-for="(palette, inx) in colorBlindPalettes" :key="palette[0]" class="palette clearfix"
-                            @click="select(inx, 'colorBlindPalettes')">
+                             @click="select(inx, 'colorBlindPalettes')">
                             <div class="palette-name">
-                                {{ palette[0] }}
+                                {{palette[0]}}
                             </div>
                             <div v-for="color in palette[1]" :key="color">
                                 <div class="color" :style="{'background-color': color}" />
@@ -58,9 +58,9 @@
                 <b-tab title="Wes Anderson Palettes">
                     <div class="color-select">
                         <div v-for="(palette, inx) in wesAndersonPalettes" :key="palette[0]" class="palette clearfix"
-                            @click="select(inx, 'wesAndersonPalettes')">
+                             @click="select(inx, 'wesAndersonPalettes')">
                             <div class="palette-name">
-                                {{ palette[0] }}
+                                {{palette[0]}}
                             </div>
                             <div v-for="color in palette[1]" :key="color">
                                 <div class="color" :style="{'background-color': color}" />
@@ -72,7 +72,7 @@
             <template #modal-footer>
                 <div class="w-100 text-right">
                     <b-btn variant="secondary" class="btn-sm " @click="cancelClicked">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-btn>
                 </div>
             </template>
@@ -144,7 +144,7 @@ const palettes = [
     ['T10_r', ['#BAB0AC', '#9D755D', '#FF9DA6', '#B279A2', '#EECA3B', '#54A24B', '#72B7B2', '#E45756', '#F58518', '#4C78A8']],
     ['Vivid', ['#e58606', '#5d69b1', '#52bca3', '#99c945', '#cc61b0', '#24796c', '#daa51b', '#2f8ac4', '#764e9f', '#ed645a', '#a5aa99']],
     ['Vivid_r', ['#a5aa99', '#ed645a', '#764e9f', '#2f8ac4', '#daa51b', '#24796c', '#cc61b0', '#99c945', '#52bca3', '#5d69b1', '#e58606']],
-]
+];
 const colorBlindPalettes = [
     ['ibm', ['#648fff', '#785ef0', '#dc267f', '#fe6100', '#ffb000', '#000000', '#ffffff']],
     ['ggplot.cbPalette', ["#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"]],
@@ -171,7 +171,7 @@ const colorBlindPalettes = [
     ['PairedColor12Steps', ['#FFBF7F', '#FF7F00', '#FFFF99', '#FFFF32', '#B2FF8C', '#32FF00', '#A5EDFF', '#19B2FF', '#CCBFFF', '#654CFF', '#FF99BF', '#E51932']],
     ['SteppedSequential5Steps', ['#990F0F', '#B22C2C', '#CC5151', '#E57E7E', '#FFB2B2', '#99540F', '#B26F2C', '#CC8E51', '#E5B17E', '#FFD8B2', '#6B990F', '#85B22C', '#A3CC51', '#C3E57E', '#E5FFB2', '#0F6B99', '#2C85B2', '#51A3CC', '#7EC3E5', '#B2E5FF', '#260F99', '#422CB2', '#6551CC', '#8F7EE5', '#BFB2FF']]
     */
-]
+];
 
 export default {
     components: {LabelComponent},
@@ -189,7 +189,7 @@ export default {
             displayValue: '',
             internalValue: null,
             palettes, wesAndersonPalettes, colorBlindPalettes,
-        }
+        };
     },
     mounted() {
         this.displayValue = this.value;
@@ -219,7 +219,7 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style scoped>
 div.palette {

@@ -247,15 +247,15 @@ export default {
                 })
                 .catch(() => {
                     vm.error(vm.data);
-                })
+                });
         }, 350),
         save(event) {
             let self = this;
             let url = `${thornUrl}/roles/${this.role.id}`;
-            let axiosCall = axios.patch
+            let axiosCall = axios.patch;
             if (self.add) {
                 url = `${thornUrl}/roles`;
-                axiosCall = axios.post
+                axiosCall = axios.post;
             }
 
             event.target.setAttribute('disabled', 'disabled');

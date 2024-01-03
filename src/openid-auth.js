@@ -32,7 +32,7 @@ class AuthService {
             silent_redirect_uri: 'https://localhost:8800/static/silent-renew.html',
             accessTokenExpiringNotificationTime: 10,
             monitorSession: false,
-        }
+        };
         this.enabled = false;
         this.userManager = null;
         const resp = await axios.get(`${thornUrl}/public/configurations/OPENID_CONFIG`);
@@ -62,7 +62,7 @@ class AuthService {
      * Initate the login process.
      */
     login() {
-        return this.userManager.signinRedirect()
+        return this.userManager.signinRedirect();
         //.catch(error => console.log(error))
     }
 
@@ -77,7 +77,7 @@ class AuthService {
                 console.log(error);
                 this.userManager.removeUser();
                 this.vueStore && this.vueStore.dispatch('logout');
-            })
+            });
     }
 
     /**
@@ -85,14 +85,14 @@ class AuthService {
      */
     handleLoginRedirect() {
         // Returns a promise
-        return this.userManager.signinRedirectCallback()
+        return this.userManager.signinRedirectCallback();
     }
 
     /**
      * Handles the redirect from the OAuth server after a user logged out.
      */
     handleLogoutRedirect() {
-        return this.userManager.signoutRedirectCallback()
+        return this.userManager.signoutRedirectCallback();
     }
 
     /**
@@ -105,12 +105,12 @@ class AuthService {
             this.userManager.getUser()
                 .then(user => {
                     if (user === null) {
-                        resolve(false)
+                        resolve(false);
                     }
-                    resolve(true)
+                    resolve(true);
                 })
-                .catch(error => reject(error))
-        })
+                .catch(error => reject(error));
+        });
     }
 
     /**
@@ -123,12 +123,12 @@ class AuthService {
             this.userManager.getUser()
                 .then(user => {
                     if (user === null) {
-                        resolve(null)
+                        resolve(null);
                     }
-                    resolve(user.profile)
+                    resolve(user.profile);
                 })
-                .catch(error => reject(error))
-        })
+                .catch(error => reject(error));
+        });
     }
 
     /**
@@ -140,10 +140,10 @@ class AuthService {
         return new Promise((resolve, reject) => {
             this.userManager.getUser()
                 .then(user => {
-                    resolve(user? user.access_token: null)
+                    resolve(user? user.access_token: null);
                 })
-                .catch(error => reject(error))
-        })
+                .catch(error => reject(error));
+        });
     }
 }
 export const openIdService = new AuthService();

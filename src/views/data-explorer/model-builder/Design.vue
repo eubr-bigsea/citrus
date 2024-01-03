@@ -64,21 +64,25 @@
                                                     :data-source="dataSource"
                                                     :sample="workflowObj.sample"
                                                     @search-data-source="loadDataSourceList"
-                                                    @retrieve-attributes="handleRetrieveAttributes" />
+                                                    @retrieve-attributes="handleRetrieveAttributes" 
+                                                    @update-value="(v) => workflowObj.sample = v" />
                                     </template>
                                     <template v-if="selected === 'data'">
-                                        <TrainTest :split="workflowObj.split" />
+                                        <TrainTest :split="workflowObj.split" 
+                                                   @update-value="(v) => workflowObj.split = v" />
                                     </template>
                                     <template v-if="selected === 'metric'">
                                         <Metric :evaluator="workflowObj.evaluator"
-                                                :attributes="attributes" />
+                                                :attributes="attributes" 
+                                                @update-value="(v) => {workflowObj.evaluator = v; taskType = v.forms.task_type.value ;}" />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
                                         <FeatureSelection :attributes="attributes"
                                                           :features="workflowObj.features"
                                                           :target="workflowObj.forms.$meta.value.target"
                                                           :supervisioned="supervisioned"
-                                                          @update-target="handleUpdateTarget" />
+                                                          @update-target="handleUpdateTarget" 
+                                                          @update-value="(v) => workflowObj.features = v" />
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
@@ -90,8 +94,7 @@
                                         <Algorithms ref="algorithms"
                                                     :operations="algorithmOperation"
                                                     :workflow="workflowObj"
-                                                    :operation-map="operationsMap" 
-                                                    />
+                                                    :operation-map="operationsMap" />
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <Grid :grid="workflowObj.grid" />
@@ -101,7 +104,8 @@
                                     </template>
                                     <template v-if="selected === 'runtime'">
                                         <Runtime :clusters="clusters"
-                                                 :workflow="workflowObj" />
+                                                 :workflow="workflowObj" 
+                                                 @update-value="(v) => workflowObj.preferred_cluster_id = v" />
                                     </template>
                                 </form>
                             </div>
@@ -113,8 +117,8 @@
                         <Result ref="results"
                                 :jobs="jobs"
                                 :number-of-features="numberOfFeatures"
-                                @delete-job="handleDeleteJob" 
-                                :features="features"/>
+                                :features="features" 
+                                @delete-job="handleDeleteJob" />
                     </b-tab>
                 </b-tabs>
             </div>
@@ -183,7 +187,7 @@ export default {
 
             //FIXME: hard-coded. It'd be best defined in Tahiti
             unsupportedParameters: new Set(['perform_cross_validation', 'cross_validation', 'one_vs_rest'])
-        }
+        };
     },
     computed: {
         algorithmOperation() {
@@ -192,22 +196,26 @@ export default {
         },
         dataSourceId: {
             get() { return this.workflowObj.tasks[0].forms.data_source.value; },
-            set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
+            set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue; }
         },
         supervisioned() {
-            return this.taskType === 'regression' || this.taskType === 'classification';
+            return this.taskType === 'regression'
+                || this.taskType === 'binary-classification'
+                || this.taskType === 'multiclass-classification'
+            ;
         },
         taskType: {
             get() { return this.workflowObj.forms.$meta.value.taskType; },
             set(newValue) {
-                return this.$store.dispatch('dataExplorer/setTaskName', newValue)
+                this.workflowObj.forms.$meta.value.taskType = newValue;
+                //return this.$store.dispatch('dataExplorer/setTaskName', newValue);
             }
         },
         numberOfFeatures() {
             return this.workflowObj?.features?.forms?.features?.value?.length || 0;
         },
         features() {
-            console.debug(this.workflowObj?.features?.forms?.features)
+            console.debug(this.workflowObj?.features?.forms?.features);
             return this.workflowObj?.features?.forms?.features?.value || [];
         }
     },
@@ -219,7 +227,7 @@ export default {
                     platform: 1, //FIXME
                     category: this.taskType,
                     lang: this.$locale || 'pt',
-                }
+                };
                 await axios.get(
                     `${tahitiUrl}/operations`, { params });
                 //this.algorithms = resp.data;
@@ -230,6 +238,7 @@ export default {
     async created() {
         this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
         await this.load();
+        this.taskType = this.workflowObj.evaluator.forms.task_type.value;
     },
     beforeUnmount() {
         this.disconnectWebSocket();
@@ -267,7 +276,7 @@ export default {
                         title: msg.title,
                         type: msg.type,
                         content: msg.message
-                    })
+                    });
                     this.jobs[0].groupedResults = this.jobs[0].results.reduce((rv, x) => {
                         const key = `${x.task_id}:${x.title}`;
                         (rv[key] = rv[key] || []).push(x);
@@ -318,19 +327,19 @@ export default {
             const atLeastOneAlgorithm = self.workflowObj.tasks.find(a => {
                 return a.enabled
                     && self.operationsMap.has(a.operation.slug)
-                    && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm')
+                    && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm');
             });
             if (!atLeastOneAlgorithm) {
                 errors.push('É necessário habilitar pelo menos um algoritmo.');
             }
             if (self.workflowObj.preferred_cluster_id === null) {
-                errors.push("Você deve escolher um ambiente de processamento para a execução.")
+                errors.push("Você deve escolher um ambiente de processamento para a execução.");
             }
             if (errors.length > 0) {
                 this.html(
                     'Existe ao menos uma  inconsistência no fluxo que precisa ser resolvida antes de iniciar o treino: <br/><ul>' +
                     errors.map(e => `<li>${e}</li>`).join("") + '</ul>',
-                    'Inconsistência(s) detectada(s)', 10000)
+                    'Inconsistência(s) detectada(s)', 10000);
                 return false;
             }
             return true;
@@ -363,10 +372,10 @@ export default {
                 persist: true,
                 type: 'MODEL_BUILDER',
                 app_configs: { verbosity: 0 },
-            }
+            };
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body,
-                    { headers: { 'Locale': self.$root.$i18n.locale, } })
+                    { headers: { 'Locale': self.$root.$i18n.locale, } });
                 self.jobs.splice(0, 0, response.data.data);
                 self.job = response.data.data;
                 self.success('Construção dos modelos foi iniciada.');
@@ -387,14 +396,14 @@ export default {
         },
         async load() {
             this.loadingData = true;
-            this.$Progress.start()
+            this.$Progress.start();
             try {
                 await this.loadOperations();
-                let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`)
+                let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
                 this.workflowObj = new ModelBuilderWorkflow(resp.data, this.operationsMap);
                 if (this.workflowObj.type !== 'MODEL_BUILDER') {
                     this.error(null, this.$tc('modelBuilder.invalidType'));
-                    this.$router.push({ name: 'index-explorer' })
+                    this.$router.push({ name: 'index-explorer' });
                     return;
                 }
                 await this.loadDataSource(this.dataSourceId);
@@ -411,7 +420,7 @@ export default {
                 this.loaded = true;
             } catch (e) {
                 this.error(e);
-                this.$router.push({ name: 'index-explorer' })
+                this.$router.push({ name: 'index-explorer' });
             } finally {
                 Vue.nextTick(() => {
                     this.$Progress.finish();
@@ -486,7 +495,7 @@ export default {
         },
         async loadClusters() {
             try {
-                const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${this.targetPlatform}`)
+                const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${this.targetPlatform}`);
                 this.clusters = resp.data.data;
             } catch (ex) {
                 this.error(ex);
@@ -522,7 +531,7 @@ export default {
                     strategy: this.workflowObj.grid.forms.strategy?.value,
                     max_iterations: this.workflowObj.grid.forms.max_iterations?.value,
                 }
-            }
+            };
 
             try {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
@@ -582,7 +591,7 @@ export default {
             );
         },
     }
-}
+};
 </script>
 
 <style scoped>
@@ -613,7 +622,6 @@ form {
 }
 
 .scroll-area {
-    xborder: 1px solid #ccc;
     max-height: calc(100vh - 320px);
     padding: 10px 15px 10px 10px;
 }

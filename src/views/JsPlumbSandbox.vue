@@ -42,7 +42,7 @@ export default {
         return {
             instance: null,
             sequential: 1
-        }
+        };
     },
     mounted() {
         this.instance = jsPlumb.getInstance(
@@ -87,14 +87,14 @@ export default {
                 if (i === 2 || i === 3) {
                     this.instance.addToGroup(groupId, task);
                 }
-                task.style.left = posX[i] + 'px'
-                task.style.top = posY[i] + 'px'
+                task.style.left = posX[i] + 'px';
+                task.style.top = posY[i] + 'px';
             }
-            this.instance.connect({ uuids: ['seq_2_out', 'seq_4_in'] })
-            this.instance.connect({ uuids: ['seq_3_out', 'seq_5_in'] })
-            this.instance.connect({ uuids: ['seq_4_out', 'seq_6_in'] })
-            this.instance.connect({ uuids: ['seq_5_out', 'seq_7_in'] })
-            this.instance.repaintEverything()
+            this.instance.connect({ uuids: ['seq_2_out', 'seq_4_in'] });
+            this.instance.connect({ uuids: ['seq_3_out', 'seq_5_in'] });
+            this.instance.connect({ uuids: ['seq_4_out', 'seq_6_in'] });
+            this.instance.connect({ uuids: ['seq_5_out', 'seq_7_in'] });
+            this.instance.repaintEverything();
         },
         addElement() {
             const elem = document.createElement('div');
@@ -140,7 +140,7 @@ export default {
         }
     }
 
-}
+};
 </script>
 <style>
     #diagram {

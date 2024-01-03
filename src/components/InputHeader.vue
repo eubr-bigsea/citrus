@@ -19,7 +19,7 @@ export default {
             return (this.value || '').length;
         }
     }
-}
+};
 </script>
 
 <style scoped>

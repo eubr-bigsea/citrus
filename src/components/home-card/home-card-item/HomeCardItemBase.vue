@@ -21,7 +21,7 @@
 
 export default {
     name: 'HomeCardItemBase',
-}
+};
 </script>
 
 <style scoped>

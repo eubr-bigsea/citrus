@@ -67,7 +67,7 @@ const FEATURES_PERMISSIONS = {
     WORKFLOW_PERMISSIONS: ['WORKFLOW_EDIT', 'WORKFLOW_LIST',
         'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
         'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
-}
+};
 const dataExplorerModule = {
     /*
     namespaced: true,

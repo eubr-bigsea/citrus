@@ -112,7 +112,7 @@ const task = new Task({
 const replacements = ['\\d+', '\\w+', '\\s+', '[abc]', '^test'];
 const tasks = [];
 for (let i = 0; i < 10; i++) {
-    const t = structuredClone(task)
+    const t = structuredClone(task);
     tasks.push(t);
     t.id = '' + i;
     t.index = i;

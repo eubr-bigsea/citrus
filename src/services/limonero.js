@@ -17,7 +17,7 @@ export default {
                 (response) => {
                     //console.debug(response.data)
                     let ds = response.data;
-                    attributes = ds.attributes.map(function (attr) { return attr.name });
+                    attributes = ds.attributes.map(function (attr) { return attr.name; });
                     window.TahitiAttributeSuggester.cached[id] = attributes;
                     callback(attributes);
                 },
@@ -28,4 +28,4 @@ export default {
             );
         }
     },
-}
+};

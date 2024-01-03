@@ -17,7 +17,7 @@ export default {
             return snarkdown(this.text || '');
         },
     }
-}
+};
 </script>
 <style lang="scss" scoped>
     .markdown-area {

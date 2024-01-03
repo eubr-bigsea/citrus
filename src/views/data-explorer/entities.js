@@ -220,7 +220,7 @@ class VisualizationBuilderWorkflow extends Workflow {
         ];
         const pairs = new Map(keyPairs);
         this.tasks = this.tasks.filter(task => {
-            return pairs.has(task.operation.slug)
+            return pairs.has(task.operation.slug);
         });
         this.tasks.forEach((task) => {
             if (pairs.has(task.operation.slug)) {

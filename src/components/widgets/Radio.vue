@@ -20,7 +20,7 @@
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 export default {
     name: 'RadioComponent',
@@ -63,7 +63,7 @@ export default {
         }
     },
 
-}
+};
 </script>
 <style scoped>
     /deep/ .item label {

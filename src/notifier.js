@@ -14,12 +14,12 @@ export default class {
                     text: 'Yes', action: () => callback()
                 },
                 buttons: [
-                    { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id) }, },
+                    { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id); }, },
                     { text: this.$t('common.no'), action: (toast) => { console.log('Clicked: No'); this.$snotify.remove(toast.id); }, bold: true },
                 ],
                 closeOnClick: true
             }
-        )
+        );
     }
     success(msg, timeout, bodyMaxLength) {
         this.$snotify.success(

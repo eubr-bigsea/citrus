@@ -35,7 +35,7 @@ const chart1 = {
         "color": "#3FA8AD"
     }],
     "pie_type": "pie"
-}
+};
 
 export default {
     title: 'Visualization/PieChart',

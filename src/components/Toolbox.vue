@@ -1,116 +1,115 @@
 <template>
     <div class="lemonade-toolbox">
-       
-            <div>
-                <ul class="list-group">
-                    <li class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                        <input v-model="search"
-                               type="text"
-                               class="form-control"
-                               :placeholder="$tc('actions.search')"
-                               @input="searchOperation">
-                    </li>
-                    <li v-if="loading"
-                        class="text-center m-2">
-                        <font-awesome-icon icon="spinner"
-                                           pulse
-                                           class="fa-2x icon" />
-                    </li>
-                    <div v-if="search === ''"
-                         class="menu">
-                        <div v-for="(group, index) in groupedOperations"
-                             :key="group.group"
-                             :title="group.order"
-                             class="unstyled"
-                             :data-category="JSON.stringify(group)">
-                            <!-- https://github.com/bootstrap-vue/bootstrap-vue/issues/5352 -->
-                            <b-button v-b-toggle="'submenu' + index"
-                                      draggable="false"
-                                      data-parent="submenus"
-                                      class="list-group-item truncate list-group-item-action flex-column align-items-start">
-                                <span class="when-closed"><font-awesome-icon icon="fa fa-angle-right" /></span>
-                                <span class="when-opened"><font-awesome-icon icon="fa fa-angle-down" /></span>
-                                <strong>
-                                    {{group.group}}
-                                </strong>
-                            </b-button>
+        <div>
+            <ul class="list-group">
+                <li class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
+                    <input v-model="search"
+                           type="text"
+                           class="form-control"
+                           :placeholder="$tc('actions.search')"
+                           @input="searchOperation">
+                </li>
+                <li v-if="loading"
+                    class="text-center m-2">
+                    <font-awesome-icon icon="spinner"
+                                       pulse
+                                       class="fa-2x icon" />
+                </li>
+                <div v-if="search === ''"
+                     class="menu">
+                    <div v-for="(group, index) in groupedOperations"
+                         :key="group.group"
+                         :title="group.order"
+                         class="unstyled"
+                         :data-category="JSON.stringify(group)">
+                        <!-- https://github.com/bootstrap-vue/bootstrap-vue/issues/5352 -->
+                        <b-button v-b-toggle="'submenu' + index"
+                                  draggable="false"
+                                  data-parent="submenus"
+                                  class="list-group-item truncate list-group-item-action flex-column align-items-start">
+                            <span class="when-closed"><font-awesome-icon icon="fa fa-angle-right" /></span>
+                            <span class="when-opened"><font-awesome-icon icon="fa fa-angle-down" /></span>
+                            <strong>
+                                {{group.group}}
+                            </strong>
+                        </b-button>
 
-                            <b-collapse :id="'submenu' + index"
-                                        data-parent="submenus">
-                                <div v-if="group.operations">
-                                    <span v-for="op in group.operations"
-                                          :key="op.operation.id"
-                                          :title="op.operation.name">
-                                        <a class="list-group-item truncate list-group-item-action text-dark OLE"
+                        <b-collapse :id="'submenu' + index"
+                                    data-parent="submenus">
+                            <div v-if="group.operations">
+                                <span v-for="op in group.operations"
+                                      :key="op.operation.id"
+                                      :title="op.operation.name">
+                                    <a class="list-group-item truncate list-group-item-action text-dark OLE"
+                                       draggable="true"
+                                       :data-id="op.operation.id"
+                                       href="javascript:void(0)"
+                                       @dblclick.prevent="dbClickAddTask"
+                                       @dragstart="startDrag"
+                                       @dragend="stopDrag">
+                                        <span :data-id="op.operation.id"
+                                              :title="op.operation.name"
+                                              v-text="op.operation.name" />
+                                        <font-awesome-icon icon="fa fa-bars fa-1x"
+                                                           class="float-right" />
+                                    </a>
+                                </span>
+                            </div>
+                            <div v-else>
+                                <div v-for="(subGroup, index2) in group.subGroups"
+                                     :key="subGroup.subGroup">
+                                    <b-button v-b-toggle="`subsubmenu_${index}+${index2}`"
+                                              draggable="false"
+                                              class="list-group-item truncate list-group-item-action flex-column align-items-start">
+                                        <font-awesome-icon icon="fa fa-angle-right"
+                                                           class="when-closed " />
+                                        <font-awesome-icon icon="fa fa-angle-down"
+                                                           class="when-opened" />
+                                        <span class="menu-collapsed pl-2">
+                                            <strong> {{subGroup.subGroup}}</strong>
+                                        </span>
+                                    </b-button>
+                                    <b-collapse v-for="op in subGroup.operations"
+                                                :id="`subsubmenu_${index}+${index2}`"
+                                                :key="op.operation.id"
+                                                :title="op.operation.name">
+                                        <a class="list-group-item truncate list-group-item-action bg-white text-dark"
                                            draggable="true"
                                            :data-id="op.operation.id"
-                                           href="javascript:void(0)"
-                                           @dblclick.prevent="dbClickAddTask"
+                                           href="#"
+                                           @dblclick="dbClickAddTask"
                                            @dragstart="startDrag"
                                            @dragend="stopDrag">
                                             <span :data-id="op.operation.id"
-                                                  :title="op.operation.name"
+                                                  class="ml-3"
                                                   v-text="op.operation.name" />
                                             <font-awesome-icon icon="fa fa-bars fa-1x"
                                                                class="float-right" />
                                         </a>
-                                    </span>
+                                    </b-collapse>
                                 </div>
-                                <div v-else>
-                                    <div v-for="(subGroup, index2) in group.subGroups"
-                                         :key="subGroup.subGroup">
-                                        <b-button v-b-toggle="`subsubmenu_${index}+${index2}`"
-                                                  draggable="false"
-                                                  class="list-group-item truncate list-group-item-action flex-column align-items-start">
-                                            <font-awesome-icon icon="fa fa-angle-right"
-                                                               class="when-closed " />
-                                            <font-awesome-icon icon="fa fa-angle-down"
-                                                               class="when-opened" />
-                                            <span class="menu-collapsed pl-2">
-                                                <strong> {{subGroup.subGroup}}</strong>
-                                            </span>
-                                        </b-button>
-                                        <b-collapse v-for="op in subGroup.operations"
-                                                    :id="`subsubmenu_${index}+${index2}`"
-                                                    :key="op.operation.id"
-                                                    :title="op.operation.name">
-                                            <a class="list-group-item truncate list-group-item-action bg-white text-dark"
-                                               draggable="true"
-                                               :data-id="op.operation.id"
-                                               href="#"
-                                               @dblclick="dbClickAddTask"
-                                               @dragstart="startDrag"
-                                               @dragend="stopDrag">
-                                                <span :data-id="op.operation.id"
-                                                      class="ml-3"
-                                                      v-text="op.operation.name" />
-                                                <font-awesome-icon icon="fa fa-bars fa-1x"
-                                                                   class="float-right" />
-                                            </a>
-                                        </b-collapse>
-                                    </div>
-                                </div>
-                            </b-collapse>
-                        </div>
+                            </div>
+                        </b-collapse>
                     </div>
-                    <div v-else>
-                        <span v-for="op in filteredOperations"
-                              :key="op.id">
-                            <b-link class="list-group-item truncate list-group-item-action flex-column align-items-start"
-                                    draggable="true"
-                                    :data-id="op.id"
-                                    @dblclick="dbClickAddTask"
-                                    @dragstart="startDrag"
-                                    @dragend="stopDrag">
-                                {{op.name}}
-                                <font-awesome-icon icon="fa fa-bars fa-1x"
-                                                   class="float-right" />
-                            </b-link>
-                        </span>
-                    </div>
-                </ul>
-            </div>
-            <!-- <div class="mr-2 mt-4">
+                </div>
+                <div v-else>
+                    <span v-for="op in filteredOperations"
+                          :key="op.id">
+                        <b-link class="list-group-item truncate list-group-item-action flex-column align-items-start"
+                                draggable="true"
+                                :data-id="op.id"
+                                @dblclick="dbClickAddTask"
+                                @dragstart="startDrag"
+                                @dragend="stopDrag">
+                            {{op.name}}
+                            <font-awesome-icon icon="fa fa-bars fa-1x"
+                                               class="float-right" />
+                        </b-link>
+                    </span>
+                </div>
+            </ul>
+        </div>
+        <!-- <div class="mr-2 mt-4">
                 <ul class="list-group">
                     <li
                         class="list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed bg-dark text-white">
@@ -128,7 +127,6 @@
     </div>
 </template>
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import ToolboxMixin from '../mixins/Toolbox.js';
 import { debounce } from '../util.js';
 
@@ -143,9 +141,7 @@ const groupBy = function (xs, keySelector) {
 
 export default {
     name: 'ToolboxComponent',
-    components: {
-        VuePerfectScrollbar
-    },
+    
     mixins: [ToolboxMixin],
     props: {
         loading: {

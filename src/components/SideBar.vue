@@ -128,7 +128,7 @@ export default {
                 'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
                 'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
 
-        }
+        };
     },
     computed: {
         ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user'])
@@ -140,7 +140,7 @@ export default {
         }
     },
     mounted() {
-        this.toggle()
+        this.toggle();
         this.icon = 'fa-bars';
     },
 
@@ -150,7 +150,7 @@ export default {
             this.icon = this.icon === 'fa-bars' ? 'fa-times' : 'fa-bars';
         }
     }
-}
+};
 </script>
 <style>
     :root {

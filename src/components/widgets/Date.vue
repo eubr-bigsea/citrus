@@ -21,7 +21,7 @@
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 import { format, parse } from 'date-fns';
 import { debounce } from '../../util.js';
@@ -42,7 +42,7 @@ export default {
         }
     },
     mounted() {
-        const value = (this.field['default'] ? this.field['default'] : null)
+        const value = (this.field['default'] ? this.field['default'] : null);
         if (this.field.values) {
             const values = JSON.parse(this.field.values);
             this.useDatetimeLocal = values['use-datetime-local'] === true;
@@ -64,5 +64,5 @@ export default {
             this.triggerUpdateEvent(this.message, this.field, e.target.value);
         }, 500)
     },
-}
+};
 </script>

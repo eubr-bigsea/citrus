@@ -97,7 +97,7 @@
 </template>
 <script>
 import axios from 'axios';
-import Notifier from '../mixins/Notifier.js'
+import Notifier from '../mixins/Notifier.js';
 
 export default {
     name: 'ProfileView',
@@ -106,12 +106,12 @@ export default {
         return {
             changePassword: false,
             user: {}
-        }
+        };
     },
     computed: {
         isPasswordChangeable() {
             return this.user.authentication_type !== 'LDAP'
-                    && this.user.authentication_type !== 'OPENID'
+                    && this.user.authentication_type !== 'OPENID';
         },
     },
     mounted() {
@@ -152,7 +152,7 @@ export default {
                         self.$Progress.finish();
                         self.error({ message: e.response.data.message });
                     } else {
-                        self.error(e)
+                        self.error(e);
                     }
 
                 });

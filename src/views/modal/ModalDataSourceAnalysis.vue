@@ -1,21 +1,21 @@
 <template>
     <b-modal id="modal" title="Adicionar Análise">
-        <label>{{ $tc('common.attribute', 1) }}:</label>
+        <label>{{$tc('common.attribute', 1)}}:</label>
         <select v-model="attribute" class="form-control" @change="analysis = []">
             <option v-for="attr in attributes" :key="attr.name" :value="attr">
-                {{ attr.name }}
+                {{attr.name}}
             </option>
         </select>
-        <label for="exampleFormControlSelect1">{{ $tc('common.type') }}:</label>
+        <label for="exampleFormControlSelect1">{{$tc('common.type')}}:</label>
         <select id="analysis_type" v-model="type" class="form-control">
             <option value="univariate">
-                {{ $t('dataSource.analysis.univariate') }}
+                {{$t('dataSource.analysis.univariate')}}
             </option>
             <option value="bivariate">
-                {{ $t('dataSource.analysis.bivariate') }}
+                {{$t('dataSource.analysis.bivariate')}}
             </option>
             <option value="multivariate">
-                {{ $t('dataSource.analysis.multivariate') }}
+                {{$t('dataSource.analysis.multivariate')}}
             </option>
             <!--
             <option value="testes_estatisticos">
@@ -32,19 +32,19 @@
         <b-form-group v-if="type != null" :label="`${$tc('titles.analysis', 2)}:`">
             <b-form-checkbox-group v-model="analysis" stacked>
                 <b-form-checkbox v-for="option in selectedAnalysisOptions"
-                    :disabled="!(currentAttributeIsNumeric && option.numeric || !currentAttributeIsNumeric && option.categorical)" 
-                        :key="option.name" :value="option.name">
-                    {{ $t(`dataSource.analysis.${option.name}`) }}
+                                 :key="option.name" 
+                                 :disabled="!(currentAttributeIsNumeric && option.numeric || !currentAttributeIsNumeric && option.categorical)" :value="option.name">
+                    {{$t(`dataSource.analysis.${option.name}`)}}
                 </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>
         <template #modal-footer>
             <b-button :disabled="analysis.length === 0" variant="primary" size="sm"
-                @click="[addCard(), $bvModal.hide('modal')]">
-                {{ $t('common.ok') }}
+                      @click="[addCard(), $bvModal.hide('modal')]">
+                {{$t('common.ok')}}
             </b-button>
             <b-button variant="secondary" size="sm" @click="$bvModal.hide('modal')">
-                {{ $t('actions.cancel') }}
+                {{$t('actions.cancel')}}
             </b-button>
         </template>
     </b-modal>

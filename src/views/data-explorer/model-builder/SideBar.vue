@@ -78,7 +78,7 @@ export default {
             this.$emit('edit', item);
         }
     }
-}
+};
 </script>
 <style scoped>
     .model-builder-sidebar>>>.nav-item {
@@ -89,7 +89,6 @@ export default {
     .model-builder-sidebar>>>.nav-item a {
         color: #444;
         padding: 1px 0px 1px 10px;
-        xborder: 1px solid #222;
         margin: 3px 0;
         font-size: .85em;
     }

@@ -3,37 +3,38 @@
         <span v-if="!readOnly">
             <LabelComponent :field="field" :value="value" />
             <div v-if="displayValue" class="scale clearfix">
-                <div class="gradient" :style="getColorScale(displayValue)"></div>
+                <div class="gradient" :style="getColorScale(displayValue)" />
             </div>
             <p>
                 <b-link variant="sm" @click.prevent="openModal">
-                    {{ $t('actions.chooseOption') }}
+                    {{$t('actions.chooseOption')}}
                 </b-link>
             </p>
         </span>
-        <span v-else>{{ displayValue }}</span>
-        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" no-fade>
+        <span v-else>{{displayValue}}</span>
+        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label"
+                 :hide-header="true"
+                 :cancel-title="$t('actions.cancel')" no-fade>
             <p>
                 <em>Color scale</em>
             </p>
             <div class="color-select">
                 <div v-for="(scale, inx) in scales" :key="scale[0]" class="scale clearfix" @click="select(inx)">
                     <div class="scale-name">
-                        {{ scale[0] }}
+                        {{scale[0]}}
                     </div>
-                    <div class="gradient color" :style="getColorScale(scale[1])"></div>
+                    <div class="gradient color" :style="getColorScale(scale[1])" />
                 </div>
             </div>
             <template #modal-footer>
                 <div class="w-100 text-right">
                     <b-btn variant="secondary" class="btn-sm " @click="cancelClicked">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-btn>
                 </div>
             </template>
         </b-modal>
-</div>
+    </div>
 </template>
 <script>
 import LabelComponent from './Label.vue';
@@ -171,7 +172,7 @@ const scales = [
     ['thermal_r', ['#e7fa5a', '#f6d346', '#fbad3c', '#f68b45', '#e17161', '#c16479', '#9e5987', '#7e4d8f', '#5d3e99', '#35329b', '#0d3064', '#032333']],
     ['turbid', ['#e8f5ab', '#dcdb89', '#d1c16b', '#c7a853', '#ba8f42', '#aa793c', '#97673a', '#815738', '#684835', '#503b2e', '#392d25', '#221e1b']],
     ['turbid_r', ['#221e1b', '#392d25', '#503b2e', '#684835', '#815738', '#97673a', '#aa793c', '#ba8f42', '#c7a853', '#d1c16b', '#dcdb89', '#e8f5ab']],
-]
+];
 export default {
     components: { LabelComponent },
     mixins: [Widget],
@@ -187,7 +188,7 @@ export default {
         return {
             displayValue: '',
             scales
-        }
+        };
     },
     mounted() {
         this.displayValue = this.value;
@@ -213,7 +214,7 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style scoped>
 div.gradient {

@@ -18,8 +18,8 @@
              role="group">
             <button class="btn btn-sm btn-outline-success"
                     :title="$t('actions.save')"
-                    @click.prevent="saveWorkflow" :disabled="!isDirty">
-                <font-awesome-icon icon="fa fa-save"/> {{$t('actions.save')}}
+                    :disabled="!isDirty" @click.prevent="saveWorkflow">
+                <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
             </button>
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.saveAs')"
@@ -98,19 +98,19 @@ export default {
         workflow: {type: Object, default: () => null},
         isDirty: {type: Boolean, default: () => false}
     },
-    computed: {
-        ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
-    },
-    emit: ['onsave-workflow', 'onsaveas-workflow', 'onshow-history',
+    emits: ['onsave-workflow', 'onsaveas-workflow', 'onshow-history',
         'onclick-execute', 'onclick-export', 'onshow-properties', 'onshow-executions',
         'onshow-variables', 'onselect-image'
     ],
+    computed: {
+        ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
+    },
     methods: {
         saveWorkflow() {
-            this.$emit('onsave-workflow')
+            this.$emit('onsave-workflow');
         },
         saveWorkflowAs() {
-            this.$emit('onsaveas-workflow')
+            this.$emit('onsaveas-workflow');
         },
         showHistory() {
             this.$emit('onshow-history');
@@ -122,17 +122,17 @@ export default {
             this.$emit('onclick-export', format);
         },
         showProperties() {
-            this.$emit('onshow-properties')
+            this.$emit('onshow-properties');
         },
         showExecutions() {
-            this.$emit('onshow-executions')
+            this.$emit('onshow-executions');
         },
         showVariables() {
-            this.$emit('onshow-variables')
+            this.$emit('onshow-variables');
         },
         selectImage() {
             this.$emit('onselect-image');
         }
     }
-}
+};
 </script>

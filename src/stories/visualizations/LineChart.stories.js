@@ -132,7 +132,7 @@ const chart1 = {
         }]
     }],
     "using_date": true
-}
+};
 
 const chart2 = {
     "title": "Line chart 2",
@@ -179,7 +179,7 @@ const chart2 = {
         }))
     }],
     "using_date": false
-}
+};
 
 export default {
     title: 'Visualization/LineChart',

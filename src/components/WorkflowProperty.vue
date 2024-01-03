@@ -15,21 +15,21 @@
     </div>
 </template>
 <script>
-import AttributeFunctionComponent from './widgets/AttributeFunction.vue'
-import AttributeSelectorComponent from './widgets/AttributeSelector2.vue'
-import CheckboxComponent from './widgets/Checkbox.vue'
-import CodeComponent from './widgets/Code.vue'
-import ColorComponent from './widgets/Color.vue'
-import DecimalComponent from './widgets/Decimal.vue'
-import DropDownComponent from './widgets/DropDown.vue'
-import ExpressionComponent from './widgets/ExpressionEditor.vue'
-import IntegerComponent from './widgets/Integer.vue'
-import LookupComponent from './widgets/Lookup.vue'
-import RangeComponent from './widgets/Range.vue'
-import Select2Component from './widgets/Select2.vue'
-import TagComponent from './widgets/Select2.vue'
-import TextComponent from './widgets/Text.vue'
-import TextAreaComponent from './widgets/TextArea.vue'
+import AttributeFunctionComponent from './widgets/AttributeFunction.vue';
+import AttributeSelectorComponent from './widgets/AttributeSelector2.vue';
+import CheckboxComponent from './widgets/Checkbox.vue';
+import CodeComponent from './widgets/Code.vue';
+import ColorComponent from './widgets/Color.vue';
+import DecimalComponent from './widgets/Decimal.vue';
+import DropDownComponent from './widgets/DropDown.vue';
+import ExpressionComponent from './widgets/ExpressionEditor.vue';
+import IntegerComponent from './widgets/Integer.vue';
+import LookupComponent from './widgets/Lookup.vue';
+import RangeComponent from './widgets/Range.vue';
+import Select2Component from './widgets/Select2.vue';
+import TagComponent from './widgets/Select2.vue';
+import TextComponent from './widgets/Text.vue';
+import TextAreaComponent from './widgets/TextArea.vue';
 
 export default {
     components: {
@@ -65,7 +65,7 @@ export default {
                 ? this.workflow.forms[name].value : null;
         },
     }
-}
+};
 </script>
 <style>
     .property {

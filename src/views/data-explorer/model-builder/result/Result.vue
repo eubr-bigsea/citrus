@@ -7,7 +7,7 @@
                     <b-list-group-item v-for="job in jobs"
                                        :key="job.id"
                                        class="flex-column align-items-start p-0"
-                                       @click="handleClick(job)" role="button">
+                                       role="button" @click="handleClick(job)">
                         <div class="d-flex w-100 justify-content-between p-1"
                              :class="(selectedJob && (selectedJob.id === job.id)) ? 'bg-secondary text-white': 'bg-light' ">
                             <span class="mb-1 job-title">{{$tc('titles.job')}} #{{job.id}}</span>
@@ -50,13 +50,12 @@
                 </div>
             </div>
             <div class="col-md-8 col-lg-9">
-                <b-card v-if="selectedJob"  variant="primary">
+                <b-card v-if="selectedJob" variant="primary">
                     <template #header>
                         <b>{{$tc('titles.job')}} #{{selectedJob.id}}</b>
                         <span class="pull-right float-right">
-                            <small>Iniciada em {{selectedJob.started | formatJsonDate}}</small>
-                            <small v-if="selectedJob.finished"> / Terminada em {{selectedJob.finished |
-                                formatJsonDate}}</small>
+                            <small>Iniciada em {{$filters.formatJsonDate(selectedJob.started)}}</small>
+                            <small v-if="selectedJob.finished"> / Terminada em {{$filters.formatJsonDate(selectedJob.finished)}}</small>
                         </span>
                     </template>
                     <div class="row pt-1 pb-4">
@@ -86,13 +85,12 @@
                         <div class="col-9 mt-2">
                             <b-card border-variant="primary">
                                 <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED' " style="height: 250px">
-                                <Plotly 
-                                        ref="plotly"
-                                        :data="scatterData"
-                                        :layout="scatterLayout"
-                                        :display-mode-bar="true"
-                                        :auto-resize="true"
-                                        :options="{displayModeBar: false}" />
+                                    <Plotly ref="plotly"
+                                            :data="scatterData"
+                                            :layout="scatterLayout"
+                                            :display-mode-bar="true"
+                                            :auto-resize="true"
+                                            :options="{displayModeBar: false}" />
                                 </div>
                                 <div v-else>
                                     {{selectedJob.status_text}}
@@ -121,8 +119,8 @@
                             </div>
                             -->
                     </div>
-                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type !== 'OTHER'"
-                         :key="key" class="row">
+                    <div v-for="(results, key) in selectedGroupedResultsNotOther" :key="key"
+                         class="row">
                         <div v-if="results && results.length > 0"
                              class="col-12">
                             <h6 class="result">
@@ -164,8 +162,8 @@
                                         <font-awesome-icon v-if="result.winner"
                                                            icon="fa fa-trophy best" />
                                         <span v-for="(value, param) in result.content.params"
-                                        :key="param">
-                                        {{param}} = {{value}}<br>
+                                              :key="param">
+                                            {{param}} = {{value}}<br>
                                         </span>
                                     </td>
                                     <td>
@@ -181,16 +179,16 @@
                                             </b-link>
                                             <b-popover :target="`popover-${counter}`" variant="" triggers="focus">
                                             -->
-                                                <b>Importância dos atributos</b>
-                                                <div v-for="fi, inx in result.content.feature_importance">
-                                                    <template v-if="features[inx]">
-                                                        {{features[inx].name}}: {{parseFloat(fi).toFixed(4)}}
-                                                    </template>
-                                                    <template v-else>
-                                                        {{inx}}: {{parseFloat(fi).toFixed(2)}}
-                                                    </template>
-                                                </div>
-                                                <!--
+                                            <b>Importância dos atributos</b>
+                                            <div v-for="fi, inx in result.content.feature_importance" :key="inx">
+                                                <template v-if="features[inx]">
+                                                    {{features[inx].name}}: {{parseFloat(fi).toFixed(4)}}
+                                                </template>
+                                                <template v-else>
+                                                    {{inx}}: {{parseFloat(fi).toFixed(2)}}
+                                                </template>
+                                            </div>
+                                            <!--
                                             </b-popover>
                                         -->
                                         </template>
@@ -298,7 +296,7 @@ export default {
     props: {
         jobs: { required: true, type: Array, default: () => [] },
         numberOfFeatures: { type: Number, default: () => 0 },
-        features: {type: Array, default: () => []}
+        features: { type: Array, default: () => [] }
     },
     emits: ['delete-job'],
     data() {
@@ -367,7 +365,7 @@ export default {
                     borderwidth: 2
                 }
             }
-        }
+        };
     },
     computed: {
 
@@ -378,10 +376,10 @@ export default {
                     labels: ['Treino', 'Teste'],
                     type: 'pie',
                     hole: .5, textposition: 'inside',
-                }] : [{}]
+                }] : [{}];
         },
         scatterData() {
-            const series = []
+            const series = [];
             if (this.selectedJob && this.selectedJob.groupedResults) {
                 Object.entries(this.selectedJob.groupedResults).forEach(([k, results]) => { // eslint-disable-line no-unused-vars
                     let x = [];
@@ -398,7 +396,7 @@ export default {
                     series.push({
                         x, y, mode: 'markers', type: 'scatter',
                         text, marker: { size: 8 }, name: results[0].title
-                    })
+                    });
                 });
             }
             return series;
@@ -411,6 +409,9 @@ export default {
                 return [];
             }
         },
+        selectedGroupedResultsNotOther() {
+            return selectedGroupedResults.filter((results) => results[1][0].type !== 'OTHER');
+        }
     },
     watch: {
         selectedJob(newValue) {
@@ -449,31 +450,31 @@ export default {
         getClassesForDecor(value) {
             let result = [];
             switch (value) {
-                case 'ERROR':
-                    result.push("fa fa-times-circle text-danger");
-                    break;
-                case 'PENDING':
-                    result.push("fa fa-pause-circle text-warning");
-                    break;
-                case 'CANCELED':
-                    result.push("fa fa-stop-circle text-secondary");
-                    break;
-                case 'RUNNING':
-                    result.push("fa fa-sync fa-spin text-primary");
-                    break;
-                case 'COMPLETED':
-                    result.push("fa fa-check-circle text-success");
-                    break;
-                case 'INTERRUPTED':
-                    result.push("fa fa-stop text-danger");
-                    break;
-                default:
+            case 'ERROR':
+                result.push("fa fa-times-circle text-danger");
+                break;
+            case 'PENDING':
+                result.push("fa fa-pause-circle text-warning");
+                break;
+            case 'CANCELED':
+                result.push("fa fa-stop-circle text-secondary");
+                break;
+            case 'RUNNING':
+                result.push("fa fa-sync fa-spin text-primary");
+                break;
+            case 'COMPLETED':
+                result.push("fa fa-check-circle text-success");
+                break;
+            case 'INTERRUPTED':
+                result.push("fa fa-stop text-danger");
+                break;
+            default:
             }
             result.push(value.toLowerCase());
             return result.join(' ');
         },
     }
-}
+};
 </script>
 <style scoped>
 .result {

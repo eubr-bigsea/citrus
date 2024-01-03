@@ -144,7 +144,7 @@
                             </router-link>
                         </template>
                         <template #updated="props">
-                            {{props.row.updated | formatJsonDate}}
+                            {{$filters.formatJsonDate(props.row.updated)}}
                         </template>
                     </v-server-table>
                     <div v-show="totalRecords === 0">
@@ -212,7 +212,7 @@ export default {
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = 10;
-                    data.name = self.searchFilter //data.query;
+                    data.name = self.searchFilter; //data.query;
                     data.platform = META_PLATFORM_SLUG;
                     if (self.typeFilter) {
                         data.types = self.typeFilter;
@@ -257,10 +257,10 @@ export default {
     },
     methods: {
         search() {
-            this.$refs.workflowList.refresh()
+            this.$refs.workflowList.refresh();
         },
         navigate(name) {
-            this.$router.push({ name })
+            this.$router.push({ name });
         },
         clearFilters() {
             this.$refs.workflowList.setFilter('');
@@ -274,7 +274,7 @@ export default {
             }[row.type];
         }
     },
-}
+};
 </script>
 <style scoped>
     .custom-table>>>.VueTables .row:first-child {

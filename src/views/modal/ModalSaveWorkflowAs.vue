@@ -41,11 +41,12 @@
 import Notifier from '../../mixins/Notifier.js';
 export default {
     mixins: [Notifier],
+    emits: ['onsave-workflow-as'],
     data() {
         return {
             newName: '',
             saveOption: 'new',
-        }
+        };
     },
     methods: {
         close() {
@@ -64,5 +65,5 @@ export default {
             this.$refs.saveAsModal.show();
         }
     }
-}
+};
 </script>

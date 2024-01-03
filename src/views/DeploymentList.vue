@@ -29,7 +29,7 @@
                     {{$t(`model.status_${props.row.current_status}`)}}
                 </template>
                 <template #updated="props">
-                    {{props.row.updated | formatJsonDate}}
+                    {{$filters.formatJsonDate(props.row.updated)}}
                 </template>
                 <template #actions="props">
                     <div v-if="loggedUserIsOwnerOrAdmin(props.row)">
@@ -60,8 +60,8 @@
                     <div class="col-12 small">
                         <strong>{{$tc('common.description')}}: </strong> {{currentRow.description}} <br>
                         <strong>{{$tc('deployment.model')}}:</strong> {{currentRow.model_name}} <br>
-                        <strong>{{$tc('common.created')}}:</strong> {{currentRow.created | formatJsonDate}}<br>
-                        <strong>{{$tc('common.updated')}}:</strong> {{currentRow.updated | formatJsonDate}}<br>
+                        <strong>{{$tc('common.created')}}:</strong> {{$filters.formatJsonDate(currentRow.created)}}<br>
+                        <strong>{{$tc('common.updated')}}:</strong> {{$filters.formatJsonDate(currentRow.updated)}}<br>
                     </div>
                 </div>
                 <div class="col-12 mt-4">
@@ -74,7 +74,7 @@
                         <tbody>
                             <tr v-for="log in logs" :key="log.id">
                                 <td class="text-nowrap">
-                                    {{log.date | formatJsonDate}}
+                                    {{$filters.formatJsonDate(log.date)}}
                                 </td>
                                 <td>{{log.status}}</td>
                                 <td>{{log.log}}</td>
@@ -198,9 +198,9 @@ export default {
             case 'DEPLOYED':
                 return 'text-success';
             case 'PENDING':
-                return 'text-warning'
+                return 'text-warning';
             case 'ERROR':
-                return 'text-danger'
+                return 'text-danger';
             }
         },
         loggedUserIsOwnerOrAdmin(deployment) {

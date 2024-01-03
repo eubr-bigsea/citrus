@@ -29,20 +29,20 @@ export default {
 
         const addClass = (className) => {
             visualItem.value.classList.add(className);
-        }
+        };
         const removeClass = (className) => {
             visualItem.value.classList.remove(className);
-        }
+        };
         const handleClick = () => {
             emit('click', { addClass, removeClass });
-        }
+        };
         expose({ addClass, removeClass });
         return {
             visualItem,
             handleClick,
             addClass,
             removeClass
-        }
+        };
     },
 
     xwatch: {
@@ -63,7 +63,7 @@ export default {
                                 self.item.top = elem.offsetTop;
                             },
                             stop() {
-                                //self.$root.$emit('onset-isDirty', true);
+                                //self.$root.$emit('onset-is-dirty', true);
                             }
                         });
                         const endpointOptions = {
@@ -112,7 +112,7 @@ export default {
             }
         }
     }
-}
+};
 </script>
 <style scoped>
     /* ----------------------------------------------------------------------------------------------------- */

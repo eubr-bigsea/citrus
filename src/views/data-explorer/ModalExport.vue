@@ -40,12 +40,13 @@ export default {
         name: { type: String, required: true },
         isDirty: { type: Boolean }
     },
+    emits: ['ok'],
     data() {
         return {
             newName: null,
             exportDisabled: true,
             platform: 'spark'
-        }
+        };
     },
     mounted() {
         this.newName = this.name;
@@ -58,5 +59,5 @@ export default {
             this.$emit("ok", { newName: this.newName, platform: this.platform, exportDisabled: this.exportDisabled });
         }
     }
-}
+};
 </script>

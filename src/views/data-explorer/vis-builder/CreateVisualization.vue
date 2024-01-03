@@ -6,44 +6,51 @@
                     <b-card>
                         <div><b>Informe os detalhes e escolha o tipo da visualização</b></div>
                         <label class="" for="name">Nome do experimento:</label>
-                        <input id="name" v-model="name" v-focus type="text" class="form-control" maxlength="100">
+                        <input id="name" v-model="name" v-focus type="text"
+                               class="form-control" maxlength="100">
 
                         <label class="mt-2">Escolha a fonte de dados:</label>
                         <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList" label="name"
-                            @search="loadDataSourceList" @input="retrieveAttributes">
+                                    @search="loadDataSourceList" @input="retrieveAttributes">
                             <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
+                                    <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
                                 </div>
                             </template>
                         </vue-select>
                         <hr>
                         <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-outline-secondary mr-2">
-                            {{ $t('actions.back') }}
+                            {{$t('actions.back')}}
                         </router-link>
-                        <button class="btn btn-primary btn-sm" @click="create" :disabled="!valid">
-                            {{ $t('actions.create', { type: 'experimento' }) }}
+                        <button class="btn btn-primary btn-sm" :disabled="!valid" @click="create">
+                            {{$t('actions.create', { type: 'experimento' })}}
                         </button>
                     </b-card>
                 </div>
                 <div class="col-md-9">
                     <div class=" vis-type-container scrollable-area">
                         <div v-for="type in visualizations.types" :key="type.name" class="vis-type" role="button"
-                            @click="selectType(type)" :class="{ 'selected-type': selectedType === type }">
-                            <h6 class="mb-2">{{ type.label }}</h6>
+                             :class="{ 'selected-type': selectedType === type }" @click="selectType(type)">
+                            <h6 class="mb-2">
+                                {{type.label}}
+                            </h6>
                             <div class="mb-4">
-                                <img :src="getChartIcon(type.name)" style="width:60px; height: 60px;" />
+                                <img :src="getChartIcon(type.name)" style="width:60px; height: 60px;">
                             </div>
-                            <div v-for="obj in type.objectives" :key="obj" class="badge badge-info ml-1 small-badge">{{ obj }}</div>
-                            <div v-for="dt in type.dataTypes" :key="dt" class="badge badge-secondary ml-1 small-badge">{{ dt }}</div>
+                            <div v-for="obj in type.objectives" :key="obj" class="badge badge-info ml-1 small-badge">
+                                {{obj}}
+                            </div>
+                            <div v-for="dt in type.dataTypes" :key="dt" class="badge badge-secondary ml-1 small-badge">
+                                {{dt}}
+                            </div>
                         </div>
                     </div>
                     <!--
@@ -84,9 +91,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
-
-            </div>
+            <div class="col-md-12" />
         </div>
     </main>
 </template>
@@ -141,7 +146,7 @@ export default {
             }
         },
     }
-}
+};
 </script>
 <style scoped>
 .custom-card {

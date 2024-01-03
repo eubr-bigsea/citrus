@@ -62,21 +62,22 @@
                            class="form-control">
                 </div>
             </div>
-            <div slot="modal-footer"
-                 class="w-100">
-                <b-btn variant="primary"
-                       size="sm"
-                       class="ml-1 float-right"
-                       @click="closeModal">
-                    {{$t('common.ok')}}
-                </b-btn>
-                <b-btn variant="outline-primary"
-                       size="sm"
-                       class="float-right"
-                       @click="removeValue">
-                    {{$t('actions.removeValue')}}
-                </b-btn>
-            </div>
+            <template #modal-footer>
+                <div class="w-100">
+                    <b-btn variant="primary"
+                           size="sm"
+                           class="ml-1 float-right"
+                           @click="closeModal">
+                        {{$t('common.ok')}}
+                    </b-btn>
+                    <b-btn variant="outline-primary"
+                           size="sm"
+                           class="float-right"
+                           @click="removeValue">
+                        {{$t('actions.removeValue')}}
+                    </b-btn>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
@@ -94,7 +95,7 @@ export default {
                 height: 3,
                 width: 12,
             }
-        }
+        };
     },
     computed: {
         label(){
@@ -122,6 +123,6 @@ export default {
             this.$refs.modal.hide();
         },
     },
-}
+};
 
 </script>

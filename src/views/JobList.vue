@@ -38,8 +38,7 @@
                         </div>
                     </template>
                     <template #created="props">
-                        {{props.row.created |
-                            formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.created)}}
                     </template>
                     <template #workflow="props">
                         <router-link v-if="props.row.type !== 'MODEL_BUILDER'"

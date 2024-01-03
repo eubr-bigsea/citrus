@@ -13,7 +13,7 @@
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 import { debounce } from '../../util.js';
 export default {
@@ -21,12 +21,12 @@ export default {
     components: { LabelComponent },
     mixins: [Widget],
     mounted() {
-        const value = (this.field['default'] ? this.field['default']: null)
+        const value = (this.field['default'] ? this.field['default']: null);
         this.$root.$emit(this.message,
             this.field, this.value || value);
     },
     methods: {
         updated: debounce(function (e) { this.$root.$emit(this.message, this.field, e.target.value); }, 500)
     },
-}
+};
 </script>

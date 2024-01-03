@@ -22,11 +22,11 @@
                         </template>
                         <template #option="option">
                             <div class="d-center">
-                                <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
+                                <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
                             </div>
                         </template>
-                        <template #default="options">
-                                {{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
+                        <template #default="{}">
+                            <span>{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
                         </template>
                         <template #selected-option="option">
                             <div class="selected d-center">
@@ -71,7 +71,7 @@ export default {
                 const workflow = Workflow.buildDataExplorer(
                     this.name,
                     { value: this.selectedDataSource.id, labelValue: this.selectedDataSource.name },
-                    this)
+                    this);
                 const resp = await axios.post(`${tahitiUrl}/workflows`, workflow);
                 const workflowResp = resp.data;
                 this.$router.push({ name: 'data-explorer-panel', params: { id: workflowResp.id } });
@@ -81,7 +81,7 @@ export default {
 
         }
     },
-}
+};
 </script>
 <style lang="">
 

@@ -54,7 +54,7 @@ export default {
         this.__resizeListener();
     },
     beforeUnmount() {
-        window.removeEventListener('resize', this.__resizeListener)
+        window.removeEventListener('resize', this.__resizeListener);
     },
     methods: {
         getData() {
@@ -84,9 +84,9 @@ export default {
                         yValues.push(value.y);
                     });
             });
-            console.debug(series)
+            console.debug(series);
             return series;
         }
     },
-}
+};
 </script>

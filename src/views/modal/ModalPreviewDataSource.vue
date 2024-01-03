@@ -19,7 +19,7 @@ export default {
         return {
             samples: { type: Array, default: () => [] },
             attributes: { type: Array, default: () => [] }
-        }
+        };
     },
     methods: {
         show(dataSourceId) {
@@ -39,5 +39,5 @@ export default {
                 });
         },
     }
-}
+};
 </script>

@@ -4,18 +4,18 @@
         <div class="flex_container">
             <div class="flex_item_left noselect step-list p-1">
                 <div class="p-2">
-                    <h6>{{ $t('dataExplorer.title') }}</h6>
+                    <h6>{{$t('dataExplorer.title')}}</h6>
                     <div>
-                        <small>{{ $tc('common.name') }}</small>
+                        <small>{{$tc('common.name')}}</small>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm" maxlength="50">
                     </div>
                     <div class="mb-">
-                        <small>{{ $tc('titles.cluster') }}</small>
+                        <small>{{$tc('titles.cluster')}}</small>
                         <v-select v-model="clusterId" :options="clusters" label="name" :reduce="(opt) => opt.id"
-                            :taggable="false" :close-on-select="true" :filterable="false">
+                                  :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{ name }}<br>
-                                <small><em>{{ description }}</em></small>
+                                {{name}}<br>
+                                <small><em>{{description}}</em></small>
                             </template>
                         </v-select>
                     </div>
@@ -46,13 +46,13 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"
-                        :disabled="editing">
-                        <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                    <b-button variant="primary" size="sm" class="float-right mt-2" :disabled="editing"
+                              @click="saveWorkflow">
+                        <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                     </b-button>
                     <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary"
-                        class="float-right mt-2 mr-1" @click="loadData(null, null, false)">
-                        <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
+                              class="float-right mt-2 mr-1" @click="loadData(null, null, false)">
+                        <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                     </b-button>
                     <!--
                     <b-button @click="loadingData = !loadingData" class="btn btn-sm">OK</b-button>
@@ -61,15 +61,16 @@
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]"
-                        @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
-                        @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
-                        @end-sort-steps="endSortSteps" :suggestion-event="getSuggestions"
-                        :extended-suggestion-event="getExtendedSuggestions" />
+                               :suggestion-event="getSuggestions" :extended-suggestion-event="getExtendedSuggestions" @toggle="handleToggleStep"
+                               @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
+                               @preview="previewUntilHere" @update="handleUpdateStep"
+                               @end-sort-steps="endSortSteps" 
+                               @duplicate-step="duplicateStep" />
 
                     <div class="text-secondary">
-                        <small>{{ jobStatus }} (p. {{ page }})</small>
-                        <br />
-                        <small>Data size: {{ dataSize }} kb.</small>
+                        <small>{{jobStatus}} (p. {{page}})</small>
+                        <br>
+                        <small>Data size: {{dataSize}} kb.</small>
                         <br>
                         <!--
 
@@ -86,19 +87,22 @@
             <div class="flex_item_right mt-3">
                 <PreviewMenu :selected="selected" :menus="menus" @trigger="handleTrigger" @analyse="handleAnalyse" />
                 <Preview ref="preview" :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
-                    :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
-                    @select="handleSelectAttribute" @drop="handleTrigger" @context-menu="handleContextMenu"
-                    @scroll="handleScroll" />
+                         :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
+                         @select="handleSelectAttribute" @drop="handleTrigger" @context-menu="handleContextMenu"
+                         @scroll="handleScroll" />
             </div>
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true" :hide-header="true" @close="stats = null"
-                @ok="stats = null">
+            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true"
+                     :hide-header="true" @close="stats = null"
+                     @ok="stats = null">
                 <div class="p-2">
                     <div v-if="stats && stats.attribute === null">
                         <h5>Estatísticas do resultado</h5>
-                        <b-checkbox v-model="numericOnlyStats" class="mt-3 mb-4">Mostrar apenas para atributos numéricos</b-checkbox>
+                        <b-checkbox v-model="numericOnlyStats" class="mt-3 mb-4">
+                            Mostrar apenas para atributos numéricos
+                        </b-checkbox>
                         <b-tabs>
                             <b-tab title="Estatísticas básicas" title-link-class="small-nav-link tab-small">
                                 <div class="scrollable stats">
@@ -106,19 +110,18 @@
                                         <thead>
                                             <tr v-if="stats.message && stats.message.table" class="text-center">
                                                 <td v-for="k in stats.message.table.columns" :key="k.name">
-                                                    {{ k.name }}
+                                                    {{k.name}}
                                                 </td>
                                             </tr>
                                         </thead>
-                                        <tbody name="slide" is="transition-group">
-                                            <tr v-for="(v, row) in stats.message.table.columns[0].values" 
-                                                    v-if="!numericOnlyStats || stats.message.table.columns[1].values[row] " :key="row">
+                                        <transition-group name="slide" tag="tbody">
+                                            <tr v-for="(v, row) in numericStats" :key="row">
                                                 <td v-for="(attr, col) in stats.message.table.columns" :key="col"
                                                     :class="{ 'font-weight-bold': col === 0 }">
-                                                    {{ stats.message.table.columns[col].values[row] || '-' }} 
+                                                    {{stats.message.table.columns[col].values[row] || '-'}} 
                                                 </td>
                                             </tr>
-                                        </tbody>
+                                        </transition-group>
                                     </table>
                                 </div>
                             </b-tab>
@@ -127,21 +130,21 @@
                                     <table class="table table-bordered table-stats table-striped table-sm w-auto mt-3">
                                         <thead>
                                             <tr class="text-center correlation">
-                                                <td></td>
+                                                <td />
                                                 <th v-for="v in stats.message.numeric" :key="v">
-                                                    {{ v }}
+                                                    {{v}}
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody name="slide" is="transition-group">
+                                        <transition-group name="slide" tag="tbody">
                                             <tr v-for="(v, row) in stats.message.correlation" :key="row">
                                                 <th>{{stats.message.numeric[row]}}</th>
                                                 <td v-for="(attr, col) in v" :key="col" 
                                                     :style="{backgroundColor: _heatMapColorforValue(attr), color: attr === 1 ? 'white': 'black'}" class="text-center">
-                                                    {{ attr }}
+                                                    {{attr}}
                                                 </td>
                                             </tr>
-                                        </tbody>
+                                        </transition-group>
                                     </table>
                                 </div>
                             </b-tab>
@@ -149,54 +152,55 @@
                     </div>
                     <div v-else>
                         <span v-if="stats">
-                            <select @change.prevent="handleSelectAttributeStat" class="form-control-sm mb-2"
-                                ref="selectAttributeStat">
-                                <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{
-                                    name
-                                }}</option>
+                            <select ref="selectAttributeStat" class="form-control-sm mb-2"
+                                    @change.prevent="handleSelectAttributeStat">
+                                <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{name}}</option>
                             </select>
                         </span>
                         <b-tabs>
                             <b-tab title="Estatísticas" title-link-class="small-nav-link">
                                 <div v-if="stats && stats.message" class="row">
                                     <div v-if="stats && stats.message.histogram"
-                                        :class="stats.message.numeric ? 'col-9' : 'col-12'">
+                                         :class="stats.message.numeric ? 'col-9' : 'col-12'">
                                         <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
-                                            showlegend: false,
-                                            margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
-                                            xaxis: {
-                                                tickangle: 45, tickfont: { size: 11 },
-                                                type: stats.message.numeric ? null : 'category'
-                                            },
-                                            yaxis: { domain: [0.2] },
-                                            yaxis2: {
-                                                domain: [0.8],
-                                                visible: false,
-                                            },
-                                            legend: { traceorder: 'reversed' },
-                                            height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
-                                            autosize: true,
-                                        }" :data="getStatData2()" :options="{ displayModeBar: false }" />
-
-
+                                                    showlegend: false,
+                                                    margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
+                                                    xaxis: {
+                                                        tickangle: 45, tickfont: { size: 11 },
+                                                        type: stats.message.numeric ? null : 'category'
+                                                    },
+                                                    yaxis: { domain: [0.2] },
+                                                    yaxis2: {
+                                                        domain: [0.8],
+                                                        visible: false,
+                                                    },
+                                                    legend: { traceorder: 'reversed' },
+                                                    height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
+                                                    autosize: true,
+                                                }"
+                                                :data="getStatData2()" :options="{ displayModeBar: false }" />
                                     </div>
                                     <div v-if="stats.message.numeric" class="col-3">
                                         <div v-if="stats.message.outliers && stats.message.outliers.length">
                                             <span>Valores atípicos (outliers)*</span>
                                             <table class="table table-sm table-stats">
                                                 <tr v-for="t, i in stats.message.outliers" :key="i">
-                                                    <td>{{ t }}</td>
+                                                    <td>{{t}}</td>
                                                 </tr>
                                             </table>
                                         </div>
-                                        <div v-else>Não há valores atípicos (outliers)</div>
+                                        <div v-else>
+                                            Não há valores atípicos (outliers)
+                                        </div>
                                     </div>
                                     <div class="col-4">
                                         <span>Estatísticas (exclui nulos)</span>
                                         <table class="table table-sm table-stats">
                                             <tr v-for="value, stat in stats.message.stats" :key="stat">
-                                                <td class="text-capitalize">{{ stat }}</td>
-                                                <td>{{ value }}</td>
+                                                <td class="text-capitalize">
+                                                    {{stat}}
+                                                </td>
+                                                <td>{{value}}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -205,13 +209,13 @@
                                         <table class="table table-sm table-stats">
                                             <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
                                                 <td class="col-8">
-                                                    {{ t[0] }}
+                                                    {{t[0]}}
                                                     <div class="top-bar"
-                                                        :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                                         :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
                                                 </td>
                                                 <td class="col-4 text-right">
-                                                    {{ t[1] }}
-                                                    ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
+                                                    {{t[1]}}
+                                                    ({{(100 * t[1] / stats.message.stats.count).toFixed(2)}})%
                                                 </td>
                                             </tr>
                                         </table>
@@ -223,12 +227,12 @@
                                 </div>
                             </b-tab>
                             <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
-                                :title-link-class="'small-nav-link'">
+                                   :title-link-class="'small-nav-link'">
                                 <form action="" class="form-inline">
                                     <div class="form-group mb-2">
                                         <label for="similarity">Similaridade:</label> &nbsp;
                                         <select v-model.number="similarity" name="similarity"
-                                            class="form-control-sm ml-3 mr-3">
+                                                class="form-control-sm ml-3 mr-3">
                                             <option value="0.5">
                                                 0.5 (menos semelhantes)
                                             </option>
@@ -251,7 +255,7 @@
                                 </form>
                                 <div style="height: 500px; overflow-y:auto">
                                     <table v-if="valuesClusters && valuesClusters.length > 0"
-                                        class="table table-sm table-smallest mt-4">
+                                           class="table table-sm table-smallest mt-4">
                                         <tr>
                                             <th />
                                             <th class="col-6">
@@ -267,11 +271,11 @@
                                             </td>
                                             <td>
                                                 <span v-for="v, k in values" :key="k" style="white-space: pre"
-                                                    :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
+                                                      :class="{ 'text-secondary': k !== 0 }">{{v}} <br></span>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control form-control-sm w-100"
-                                                    :value="values[0]">
+                                                       :value="values[0]">
                                             </td>
                                         </tr>
                                     </table>
@@ -282,8 +286,8 @@
                 </div>
             </b-modal>
         </div>
-        <modal-save-data v-if="internalWorkflowId" name="save-data" ref="modalSaveData" :workflow-id="internalWorkflowId"
-            @confirm="handleConfirmSaveData" />
+        <modal-save-data v-if="internalWorkflowId" ref="modalSaveData" name="save-data" :workflow-id="internalWorkflowId"
+                         @confirm="handleConfirmSaveData" />
     </div>
 </template>
 <script>
@@ -292,10 +296,8 @@ import jsep from 'jsep';
 import io from 'socket.io-client';
 import axios from 'axios';
 import { debounce } from '../../util.js';
-import draggable from 'vuedraggable';
 import Preview from './Preview.vue';
 import PreviewMenu from './PreviewMenu.vue';
-import Step from './Step.vue';
 import StepList from './StepList.vue';
 import Notifier from '../../mixins/Notifier.js';
 import { Workflow, Operation, Task, Constants } from './entities.js';
@@ -341,8 +343,8 @@ export default {
     name: "DataExplorer",
     components: {
         Plotly,
-        Preview, draggable,
-        StepList, Step, PreviewMenu, ModalExport, ModalSaveData,
+        Preview, 
+        StepList, PreviewMenu, ModalExport, ModalSaveData,
         TahitiSuggester: () => {
             return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                 const script = document.createElement('script');
@@ -406,11 +408,15 @@ export default {
     computed: {
         editing() {
             return (this.workflowObj && this.workflowObj.tasks &&
-                this.workflowObj.tasks.find(t => t.editing) !== undefined)
+                this.workflowObj.tasks.find(t => t.editing) !== undefined);
         },
         pendingSteps() {
             return this.editing
                 || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
+        },
+        numericStats() {
+            return this.stats.message.table.columns[0].values.filter((v, inx) => 
+                !this.numericOnlyStats || this.stats.message.numeric.includes(v)); 
         }
     },
     async mounted() {
@@ -551,7 +557,7 @@ export default {
                     this.workflowObj.tasks.splice(1, 0, sample);
                     hasProblems = true;
                 }
-                this.workflowObj.tasks.forEach((t, inx) => t.display_order = inx)
+                this.workflowObj.tasks.forEach((t, inx) => t.display_order = inx);
                 this.loadingData = false;
                 document.getElementById('tahiti-script').setAttribute(
                     'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.workflowObj.platform.id}`);
@@ -584,7 +590,7 @@ export default {
             cloned.platform_id = cloned.platform.id; //FIXME: review
             cloned.preferred_cluster_id = self.clusterId;
 
-            cloned.tasks = cloned.tasks.filter(task => task.enabled && task.previewable)
+            cloned.tasks = cloned.tasks.filter(task => task.enabled && task.previewable);
             cloned.tasks.forEach((task) => {
                 // Remove unnecessary attributes from operation
                 task.operation = { id: task.operation.id };
@@ -716,7 +722,7 @@ export default {
             const success = () => {
                 this.success(this.$t('messages.savedWithSuccess',
                     { what: this.$tc('titles.dataSource') }), 3500);
-            }
+            };
             this.loadData(callback, success, true);
         },
         handleStepDrag(e) {
@@ -751,7 +757,7 @@ export default {
         },
         /* Attribute suggestion */
         async _queryDataSource(id, callback) {
-            console.debug(`Querying data source ${id}.`)
+            console.debug(`Querying data source ${id}.`);
             let attributes = null;
             id = parseInt(id);
             if (window.TahitiAttributeSuggester.cached === undefined) {
@@ -964,14 +970,14 @@ export default {
                 this.$refs.modalExport.show();
             } else if (options?.params[0]?.slug === 'save') {
                 this.$refs.modalSaveData.show();
-                console.debug(options)
+                console.debug(options);
             } else if (options.action === 'menu') {
                 const newTask = this.workflowObj.addTask(
                     this.operationLookup.get(options.params[0].id),
                     options.selected, options.fields);
                 this.isDirty = true;
                 //this.loadData();
-                Vue.nextTick(() => { this.$refs.stepList.scrollToStep() });
+                Vue.nextTick(() => { this.$refs.stepList.scrollToStep(); });
             } else {
                 console.log(`Unknown action: ${options.action}`);
             }
@@ -1012,6 +1018,16 @@ export default {
                 this.socket.emit('leave', { room: this.job.id });
                 this.socket.close();
             }
+        },
+        duplicateStep(step){
+            // Clone tasks instance
+            const cloned = new Task(JSON.parse(JSON.stringify(step)));
+            cloned.id = Operation.generateTaskId();
+            this.workflow.tasks.splice(step.display_order, 0, cloned);
+            // Update the display_order
+            this.workflow.tasks.slice(step.display_order + 1).forEach(
+                (task) => task.display_order++);
+            this.isDirty = true;
         },
         endSortSteps({ originalEvent }) { // eslint-disable-line no-unused-vars
             let elem = null;
@@ -1100,7 +1116,7 @@ export default {
             const x = this.stats.message.histogram[1];
             const customdata = this.stats.message.numeric ?
                 x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`) : x;
-            const result = []
+            const result = [];
 
             if (this.stats.message.numeric) {
                 result.push({
@@ -1154,7 +1170,7 @@ export default {
                 socket.on('exported result', (msg) => {
                     console.debug(msg);
                 });
-                socket.on('analysis', (msg, callback) => { // eslint-disable-line no-unused-vars
+                socket.on('analysis', (msg) => { // eslint-disable-line no-unused-vars
                     if (msg.analysis_type !== 'cluster') {
                         this.stats = msg;
                         this.$refs.statsModal?.show();
@@ -1171,7 +1187,7 @@ export default {
                     if (task) {
                         task.error = (msg.status === 'ERROR') ? msg.message : '';
                     }
-
+                    
                     if (msg.type === 'OBJECT') {
                         if (msg.meaning === 'sample') {
                             Vue.nextTick(() => {
@@ -1192,7 +1208,7 @@ export default {
                                     self.loadingData = false;
                                     attributes.forEach((attr, i) => {
                                         attr.type = msg.message.types[i]; // Polars cast to Int32 when generating JSON
-                                        attr.generic_type = type2Generic.get(attr.type) || attr.type
+                                        attr.generic_type = type2Generic.get(attr.type) || attr.type;
                                     });
                                     // console.debug(attributes)
 
@@ -1204,9 +1220,9 @@ export default {
                                     const columnValues = messageJson.columns.map(col => col.values);
 
                                     // Transpose the columns to rows
-                                    const rows = []
+                                    const rows = [];
                                     for (let i = 0; i < columnValues[0].length; i++) {
-                                        const row = []
+                                        const row = [];
                                         for (let j = 0; j < columnValues.length; j++) {
                                             // Test if it is a list
                                             if (columnValues[j][i] && columnValues[j][i].values) {
@@ -1217,18 +1233,18 @@ export default {
                                                 row.push(columnValues[j][i]);
                                             }
                                         }
-                                        rows.push(row)
+                                        rows.push(row);
                                     }
 
                                     // Create the row-oriented JSON
-                                    const rowOriented = { rows: [] }
+                                    const rowOriented = { rows: [] };
                                     rows.forEach(row => {
-                                        const rowObject = {}
+                                        const rowObject = {};
                                         for (let i = 0; i < attributeNames.length; i++) {
-                                            rowObject[attributeNames[i]] = row[i]
+                                            rowObject[attributeNames[i]] = row[i];
                                         }
-                                        rowOriented.rows.push(rowObject)
-                                    })
+                                        rowOriented.rows.push(rowObject);
+                                    });
 
                                     if (messageJson.page === 1) {
                                         // Update selected attribute (may have its time changed during processing)
@@ -1302,6 +1318,9 @@ export default {
                         self.jobStatus = msg.message;
                         self.loadingData = false;
                     }
+                });
+                socket.on('*', (msg) => { 
+                    console.debug(msg, 'teste');
                 });
             } else {
                 //self.socket.emit('join', { room: self.job.id });

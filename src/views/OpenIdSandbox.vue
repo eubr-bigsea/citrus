@@ -64,7 +64,7 @@ export default {
             token: null,
             parsedToken: null,
             api: null
-        }
+        };
     },
     mounted() {
         this.authService = openIdService;
@@ -77,7 +77,7 @@ export default {
                 userStore: new WebStorageStateStore()
             }).signinRedirectCallback().then(function (user) {
                 console.log("signin response success", user);
-                console.debug(self.authService.getProfile())
+                console.debug(self.authService.getProfile());
                 //window.location.href = '../';
             }).catch(function (err) {
                 console.log(err);
@@ -96,12 +96,12 @@ export default {
             });
         },
         callApi() {
-            const headers = { 'Authorization': this.token }
+            const headers = { 'Authorization': this.token };
             axios.get('/api/v1/thorn/users/me', { headers }).then(resp => {
                 this.api = JSON.stringify(resp.data);
             }).catch(error => {
                 console.debug('Error', error);
-            })
+            });
         },
         logout() {
             this.authService.logout();
@@ -110,5 +110,5 @@ export default {
             this.query = null;
         }
     }
-}
+};
 </script>

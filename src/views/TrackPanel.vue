@@ -66,15 +66,17 @@
                         <div v-else class="col-md-12">
                             <v-server-table ref="trackPanelList" :columns="columns" :options="options"
                                             name="trackPanelList" @pagination="paginate">
-                                <div slot="beforeTable" class="ml-2">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
+                                <template #beforeTable>
+                                    <div class="ml-2">
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
+                                            </div>
+                                            <input v-model="search" v-focus type="text" class="form-control"
+                                                   :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
                                         </div>
-                                        <input v-model="search" v-focus type="text" class="form-control"
-                                               :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
                                     </div>
-                                </div>
+                                </template>
                                 <template #id="props">
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                         {{props.row.id}}
@@ -94,8 +96,7 @@
                                     <small v-if="props.row.description" class="break-word"><br>{{props.row.description}}</small>
                                 </template>
                                 <template #updated="props">
-                                    {{props.row.updated |
-                                        formatJsonDate}}
+                                    {{$filters.formatJsonDate(props.row.updated)}}
                                 </template>
                                 <!--
                                 <template slot="actions" slot-scope="props">
@@ -225,7 +226,7 @@ export default {
                     loading: this.$t('common.loading'),
                     filterPlaceholder: this.$t('common.filterPlaceholder')
                 }
-            }
+            };
         }
     },
     mounted() {

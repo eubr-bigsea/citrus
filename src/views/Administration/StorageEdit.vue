@@ -111,7 +111,7 @@ export default {
                 axios
                     .get(url)
                     .then(resp => {
-                        this.storage = resp.data.data[0]
+                        this.storage = resp.data.data[0];
                     })
                     .catch(
                         function (e){
@@ -130,7 +130,7 @@ export default {
 
             if (self.add){
                 url = `${limoneroUrl}/storages`;
-                axiosCall = axios.post
+                axiosCall = axios.post;
             }
             event.target.setAttribute('disabled', 'disabled');
             event.target.classList.remove('btn-spinner');
