@@ -42,30 +42,31 @@
                         </div>
                     </template>
                 </v-client-table>
-                <div slot="modal-footer"
-                     class="w-100">
-                    <b-btn variant="secondary"
-                           size="sm"
-                           class="btn-sm ml-1 float-right"
-                           @click="closeModal">
-                        {{$t('actions.cancel')}}
-                    </b-btn>
-                    <b-btn variant="outline-primary"
-                           size="sm"
-                           class="btn-sm float-right"
-                           @click="removeValue">
-                        {{$t('actions.removeValue')}}
-                    </b-btn>
-                </div>
+                <template #modal-footer>
+                    <div class="w-100">
+                        <b-btn variant="secondary"
+                               size="sm"
+                               class="btn-sm ml-1 float-right"
+                               @click="closeModal">
+                            {{$t('actions.cancel')}}
+                        </b-btn>
+                        <b-btn variant="outline-primary"
+                               size="sm"
+                               class="btn-sm float-right"
+                               @click="removeValue">
+                            {{$t('actions.removeValue')}}
+                        </b-btn>
+                    </div>
+                </template>
             </b-modal>
         </div>
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
-import axios from 'axios'
+import LabelComponent from './Label.vue';
+import axios from 'axios';
 import Widget from '../../mixins/Widget.js';
-let limoneroUrl = import.meta.env.VITE_LIMONERO_URL
+let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 export default {
     name: 'LookupComponent',
     components: { LabelComponent },
@@ -100,7 +101,7 @@ export default {
                     tags: this.$tc('common.tag', 2)
                 },
             }
-        }
+        };
     },
     computed: {
         pairOptionValueList() {
@@ -126,7 +127,7 @@ export default {
             axios.get(url).then(
                 (resp) => {
                     self.selected = self.value;
-                    let data = resp.data.data || resp.data
+                    let data = resp.data.data || resp.data;
                     this.lookupOptions = data.map((v) => {
                         return {
                             "key": v.id, "value": v.name,
@@ -135,7 +136,7 @@ export default {
                     });
                     if (self.value) {
                         const sel = this.lookupOptions.find((item) => {
-                            return Number(item.key) === Number(self.value)
+                            return Number(item.key) === Number(self.value);
                         });
                         this.label = sel ? sel.value : '';
                     } else {
@@ -158,14 +159,14 @@ export default {
             this.closeModal();
         },
         closeModal() {
-            this.$refs.modal.hide()
+            this.$refs.modal.hide();
         },
         replacer(tpl, data) {
             let re = /(\$\{(.+)\})/g;
             let match = null;
             while ((match = re.exec(tpl))) {
                 if (data[match[2]]) {
-                    tpl = tpl.replace(match[1], data[match[2]])
+                    tpl = tpl.replace(match[1], data[match[2]]);
                 }
                 re.lastIndex = 0;
             }
@@ -176,7 +177,7 @@ export default {
             this.label = newValue.value;
             this.triggerUpdateEvent(this.message, this.field, this.selected,
                 this.label);
-            this.closeModal()
+            this.closeModal();
         }
     },
     ready: function () {
@@ -186,7 +187,7 @@ export default {
         }
     },
 
-}
+};
 
 </script>
 <style scoped>

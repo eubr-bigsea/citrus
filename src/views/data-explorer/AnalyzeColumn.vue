@@ -418,14 +418,14 @@ export default {
                 }
             }
 
-        }
+        };
     },
     methods: {
         show() {
             this.$refs.modal.show();
         }
     },
-}
+};
 </script>
 <style>
     .analyze-modal {

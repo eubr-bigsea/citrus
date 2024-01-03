@@ -7,7 +7,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <h1>{{$tc('titles.track', 2)}}</h1>
                             <div>
-                                <router-link :to="{name: 'addTrack'}"
+                                <router-link :to="{ name: 'addTrack' }"
                                              class="btn btn-primary btn-lemonade-primary float-left ml-2">
                                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                                 </router-link>
@@ -16,12 +16,12 @@
                     </div>
                     <v-server-table ref="workflowList" :columns="columns" :options="options" name="workflowList">
                         <template #id="props">
-                            <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                            <router-link :to="{ name: 'editWorkflow', params: { id: props.row.id, platform: props.row.platform.id } }">
                                 {{props.row.id}}
                             </router-link>
                         </template>
                         <template #name="props">
-                            <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
+                            <router-link :to="{ name: 'editWorkflow', params: { id: props.row.id, platform: props.row.platform.id } }">
                                 {{props.row.name}}
                             </router-link>
                             <small v-if="props.row.description" class="break-word"><br>{{props.row.description}}</small>
@@ -32,14 +32,16 @@
                             </span>
                         </template>
                         <template #updated="props">
-                            {{props.row.updated | formatJsonDate}}
+                            {{$filters.formatJsonDate(props.row.updated)}}
                         </template>
-                        <div slot="afterFilter" class="ml-2 mt-4">
-                            <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
-                                    @click="clearFilters">
-                                {{$tc('actions.clearFilters')}}
-                            </button>
-                        </div>
+                        <template #afterFilters>
+                            <div class="ml-2 mt-4">
+                                <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
+                                        @click="clearFilters">
+                                    {{$tc('actions.clearFilters')}}
+                                </button>
+                            </div>
+                        </template>
                     </v-server-table>
                 </div>
             </div>

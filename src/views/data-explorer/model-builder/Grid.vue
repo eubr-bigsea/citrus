@@ -7,18 +7,16 @@
             <form class="form">
                 <div class="mb-3 mt-2">
                     <label>Estratégia:</label>
-                    <select v-model="grid.forms.strategy.value"
-                            class="form-control form-control-sm">
-                        <option v-for="opt in grid.operation.fieldsMap.get('strategy').values"
-                                :key="opt.key"
+                    <select v-model="copy.forms.strategy.value" class="form-control form-control-sm">
+                        <option v-for="opt in grid.operation.fieldsMap.get('strategy').values" :key="opt.key"
                                 :value="opt.key">
                             {{opt.pt}}
                         </option>
                     </select>
                 </div>
 
-                <div v-if="grid.forms.strategy.value === 'grid'">
-                    <b-checkbox v-model="grid.forms.random_grid.value">
+                <div v-if="copy.forms.strategy.value === 'grid'">
+                    <b-checkbox v-model="copy.forms.random_grid.value">
                         Aleatorizar a busca na grade
                     </b-checkbox>
                     <small>Aleatoriza a grade antes de realizar a busca</small>
@@ -27,12 +25,8 @@
                 <div class="row">
                     <div class="col-12 mt-2">
                         <label>Número máximo de iterações:</label>
-                        <input v-model.number="grid.forms.max_iterations.value"
-                               class="form-control form-control-sm w-25"
-                               type="number"
-                               min="0"
-                               maxlength="4"
-                               max="9999">
+                        <input v-model.number="copy.forms.max_iterations.value" class="form-control form-control-sm w-25"
+                               type="number" min="0" maxlength="4" max="9999">
                         <small>
                             Número máximo de iterações (buscas na grade). 0 significa ilimitado para estratégia de grade
                             e 20
@@ -41,33 +35,22 @@
                     </div>
                     <div class="col-12 mt-2">
                         <label>Semente para números aleatórios (seed):</label>
-                        <input v-model.number="grid.forms.seed.value"
-                               class="form-control form-control-sm w-25"
-                               type="number"
-                               min="0"
-                               maxlength="12">
+                        <input v-model.number="copy.forms.seed.value" class="form-control form-control-sm w-25"
+                               type="number" min="0" maxlength="12">
                         <small>Semente usada para aleatorizar a grade, permitindo repetir experimentos.
                             Se vazio, usa uma semente definida durante a execução.</small>
                     </div>
-                    <div v-if="false"
-                         class="col-6">
+                    <div v-if="false" class="col-6">
                         <label>Max search time:</label>
-                        <input v-model.number="grid.forms.max_search_time.value"
-                               class="form-control form-control-sm w-25"
-                               type="number"
-                               min="0"
-                               maxlength="10">
+                        <input v-model.number="copy.forms.max_search_time.value" class="form-control form-control-sm w-25"
+                               type="number" min="0" maxlength="10">
                         <small>
                             Maximum number of minutes for the grid search. 0 means unlimited.
                         </small>
                         <br>
                         <label>Parallelism:</label>
-                        <input v-model="grid.forms.parallelism.value"
-                               class="form-control form-control-sm w-25"
-                               type="number"
-                               min="0"
-                               max="999"
-                               maxlength="3">
+                        <input v-model="copy.forms.parallelism.value" class="form-control form-control-sm w-25"
+                               type="number" min="0" max="999" maxlength="3">
                         <small>
                             0 means auto.
                         </small>
@@ -78,7 +61,7 @@
         <div class="col-6">
             {{errors}}
             <ul class="list-unstyled mt-3">
-                <li v-if="grid.forms.strategy.value === 'grid'">
+                <li v-if="copy.forms.strategy.value === 'grid'">
                     <strong>Grade (grid): </strong>
                     Estratégia de otimização de parâmetros onde, para cada hiperparâmetro,
                     é especificada um conjunto ou faixa de valores a serem testados (veja a seção de parâmetros para
@@ -101,7 +84,7 @@
                     quando você quer interromper a busca (seja por limite de iterações ou por tempo).
                 </li>
 
-                <li v-if="grid.forms.strategy.value === 'random' ">
+                <li v-if="copy.forms.strategy.value === 'random'">
                     <strong>Aleatório (random): </strong>
                     <div class="alert alert-danger">
                         <font-awesome-icon icon="fa fa-info-circle" /> Esta opção está em estágio de testes nesta
@@ -149,25 +132,33 @@ export default {
     props: {
         grid: { type: Object, required: true }
     },
-    data(){
+    emits: ['update-value'],
+    data() {
         return {
-            errors: {}
-        }
+            errors: {},
+            copy: { ... this.grid }
+        };
     },
+
     computed: {
         validation() {
             return this.errors;
         }
     },
     watch: {
-        'grid.forms.seed.value'(){
-            console.debug(this.grid.forms.seed.value)
-            if (!this.grid.forms.seed.value){
-                this.errors['seed'] = {error: 'required'}
+        copy: {
+            deep: true,
+            handler(newValues) {
+                this.$emit('update-value', newValues);
+            }
+        },
+        'copy.forms.seed.value'() {
+            if (!this.copy.forms.seed.value) {
+                this.errors['seed'] = { error: 'required' };
             } else {
                 delete this.errors['seed'];
             }
         }
     }
-}
+};
 </script>

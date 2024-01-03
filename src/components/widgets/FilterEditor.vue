@@ -230,15 +230,16 @@
                     </div>
                 </div>
             </div>
-            <div slot="modal-footer"
-                 class="w-100 text-right">
-                <b-btn variant="primary"
-                       size="sm"
-                       class="mr-1 pl-5 pr-5"
-                       @click="okClicked">
-                    {{$t('common.ok')}}
-                </b-btn>
-            </div>
+            <template #modal-footer>
+                <div class="w-100 text-right">
+                    <b-btn variant="primary"
+                           size="sm"
+                           class="mr-1 pl-5 pr-5"
+                           @click="okClicked">
+                        {{$t('common.ok')}}
+                    </b-btn>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
@@ -274,7 +275,7 @@ export default {
                 'STATIC_TEXT',
                 'BOOLEAN',
             ],
-        }
+        };
     },
     computed: {
         parameters() {
@@ -320,7 +321,7 @@ export default {
                 ['user', ' ? '],
             ]);
             if (v) {
-                this.displayValue = v.map((v) => (v.name || '') + (ops.get(v.operator) || '') + "?").join('\n')
+                this.displayValue = v.map((v) => (v.name || '') + (ops.get(v.operator) || '') + "?").join('\n');
             } else {
                 this.displayValue = '';
             }
@@ -366,7 +367,7 @@ export default {
             return r;
         }
     },
-}
+};
 </script>
 <style>
     div.values {

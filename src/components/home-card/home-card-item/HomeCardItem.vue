@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import HomeCardItemDashboard from './HomeCardItemDashboard.vue'
-import HomeCardItemDataSource from './HomeCardItemDataSource.vue'
-import HomeCardItemJob from './HomeCardItemJob.vue'
-import HomeCardItemWorkflow from './HomeCardItemWorkflow.vue'
-import HomeCardItemApp from './HomeCardItemApp.vue'
+import HomeCardItemDashboard from './HomeCardItemDashboard.vue';
+import HomeCardItemDataSource from './HomeCardItemDataSource.vue';
+import HomeCardItemJob from './HomeCardItemJob.vue';
+import HomeCardItemWorkflow from './HomeCardItemWorkflow.vue';
+import HomeCardItemApp from './HomeCardItemApp.vue';
 
 export default {
     name: 'HomeCardItem',
@@ -31,5 +31,5 @@ export default {
         type: {type: String, default: ()=> null},
         item: {type: Object, default: ()=> null}
     }
-}
+};
 </script>

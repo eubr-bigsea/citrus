@@ -34,8 +34,8 @@ export default {
             }
             let rect = elem.getBoundingClientRect();
 
-            let offsetLeft = rect.left + 250 //Math.floor(Math.random() * 300);
-            let offsetTop = rect.top //Math.floor(Math.random() * 50);
+            let offsetLeft = rect.left + 250; //Math.floor(Math.random() * 300);
+            let offsetTop = rect.top; //Math.floor(Math.random() * 50);
 
             dataTransfer.setData('id', target.dataset.id);
             diagram.dispatchEvent(
@@ -48,4 +48,4 @@ export default {
             return false;
         }
     },
-}
+};

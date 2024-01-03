@@ -32,7 +32,7 @@ const functionsTree = {
         }));
         return {name: f.name, opened: false, children};
     })
-}
+};
 
 const onUpdateFieldAction = action('onUpdateField');
 
@@ -56,7 +56,7 @@ const Template = (args, { argTypes }) => ({
     },
     methods: {
         selected(item) {
-            console.debug(item)
+            console.debug(item);
             action("click")(item);
         },
         onUpdateField: onUpdateFieldAction

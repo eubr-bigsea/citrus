@@ -55,7 +55,7 @@
                                                         {{job.status_text}}
                                                     </div>
 
-                                                    <div v-for="step in job.steps" v-if="step.status!='PENDING'"
+                                                    <div v-for="step in notPendingSteps"
                                                          :key="step.id" class="job-step"
                                                          :class="{'disabled': selectedTask.id && selectedTask.id !== step.task.id}">
                                                         <div class="label"
@@ -76,8 +76,7 @@
                                                                     }"></span>
                                                                     -->
 
-                                                                <span class="date">{{log.date |
-                                                                    formatJsonHourMinute}}</span>
+                                                                <span class="date">{{$filters.formatJsonHourMinute(log.date)}}</span>
                                                                 <span class="info">{{log.message}}</span>
                                                             </p>
                                                         </div>
@@ -121,7 +120,7 @@
                                             <b-tab :title="$tc('job.details', 2)">
                                                 <dl>
                                                     <dt>{{$t('common.date')}}</dt>
-                                                    <dd>{{job.created | formatJsonDate}}</dd>
+                                                    <dd>{{$filters.formatJsonDate(job.created)}}</dd>
                                                     <dt>{{$t('common.user.name')}}</dt>
                                                     <dd>{{job.user.name}} ({{job.user.login}})</dd>
                                                     <dt>{{$tc('titles.cluster')}}</dt>
@@ -240,6 +239,7 @@
                                                             <div v-if="result.value.logs.find(s => s.type === 'OBJECT')"
                                                                  :header="result.value.task.name" class="mt-2"
                                                                  header-bg-variant="light" border-variant="info">
+                                                                <h1>Objeto</h1>
                                                                 <div v-for="log in result.value.logs" :key="log.id"
                                                                      class="pl-5 mt-2">
                                                                     <span v-if="log.type === 'OBJECT' && log.message.attributes">
@@ -247,10 +247,10 @@
                                                                                         :data="log.message.rows"
                                                                                         :columns="log.message.attributes.map(a=>a.label)"
                                                                                         :options="sampleOptions">
-                                                                            <span v-for="header in log.message.attributes.map(a=>a.label)"
-                                                                                  :key="header" :slot="`h__${header}`">
-                                                                                {{header}}
-                                                                            </span>
+                                                                            <template v-for="header in log.message.attributes.map(a=>a.label)" 
+                                                                                      #[`h__${header}`]="{}">
+                                                                                <span :key="header">{{header}}</span>
+                                                                            </template>
                                                                         </v-client-table>
                                                                     </span>
                                                                 </div>
@@ -381,6 +381,9 @@ export default {
         };
     },
     computed: {
+        notPendingSteps() {
+            return this.job.steps.filter(step => step.status!='PENDING');
+        },
         sortedLogs() {
             let logs = [];
             this.job.steps.forEach(step => {
@@ -490,7 +493,7 @@ export default {
                             if (log.message.rows) { // Sample table
                                 const attributeNames = log.message.attributes.map(attr => attr.key);
                                 log.message.rows = log.message.rows.map(
-                                    row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                                    row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] }; })));
                             }
                         }
 
@@ -517,7 +520,7 @@ export default {
     },
     methods: {
         ttype(v) {
-            return typeof (v)
+            return typeof (v);
         },
         stop(jobId) {
             this.confirm(
@@ -610,7 +613,7 @@ export default {
                             message = JSON.parse(message);
                             const attributeNames = message.attributes.map(attr => attr.key);
                             message.rows = message.rows.map(
-                                row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] } })))
+                                row => Object.assign(...attributeNames.map((attr, i) => { return { [attr]: row[i] }; })));
                         }
                         if (found.length === 0) {
                             step.logs.push({

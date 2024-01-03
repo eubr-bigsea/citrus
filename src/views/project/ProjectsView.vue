@@ -65,7 +65,7 @@ export default {
             } catch (e) {
                 Vue.prototype.$snotify.error(e);
             }
-        }
+        };
         const dtBuilder = new DataTableBuilder(t)
             .headings({
                 id: 'ID',
@@ -81,7 +81,7 @@ export default {
         return {
             ...dtBuilder.build(),
             t
-        }
+        };
     }
 };
 </script>

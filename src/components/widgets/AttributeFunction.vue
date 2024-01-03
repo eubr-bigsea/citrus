@@ -171,7 +171,7 @@ export default {
             ok: this.okClicked,
             cancel: this.cancelClicked,
             suggestions: [],
-        }
+        };
     },
     computed: {
         parameters() {
@@ -203,11 +203,11 @@ export default {
             if (v?.map) {
                 this.displayValue = v.map((v) => {
                     if (this.parameters.options.show_alias) {
-                        return `${v.alias} = ${v.f}(${v.attribute})`
+                        return `${v.alias} = ${v.f}(${v.attribute})`;
                     } else {
-                        return `${v.f}(${v.attribute})`
+                        return `${v.f}(${v.attribute})`;
                     }
-                }).join('\n')
+                }).join('\n');
             } else {
                 this.displayValue = '';
             }
@@ -222,7 +222,7 @@ export default {
             if (this.valueList === null) {
                 this.valueList = [];
             }
-            this.valueList.push({ alias: '', attribute: '', f: '' })
+            this.valueList.push({ alias: '', attribute: '', f: '' });
         },
         remove(e, index) {
             this.valueList.splice(index, 1);
@@ -232,13 +232,13 @@ export default {
         },
         moveUp(e, index) {
             let tmp = this.valueList.splice(index, 1)[0];
-            this.valueList.splice(index - 1, 0, tmp)
+            this.valueList.splice(index - 1, 0, tmp);
             e.stopPropagation();
             return false;
         },
         moveDown(e, index) {
-            let tmp = this.valueList.splice(index, 1)[0]
-            this.valueList.splice(index + 1, 0, tmp)
+            let tmp = this.valueList.splice(index, 1)[0];
+            this.valueList.splice(index + 1, 0, tmp);
             e.stopPropagation();
             return false;
         },
@@ -252,7 +252,7 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style scoped>
     .help-functions {

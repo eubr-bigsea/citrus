@@ -2,8 +2,8 @@
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{$tc('titles.dataSource', 2)}}</h1>
-            <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" :to="{ name: 'addDataSource' }"
-                class="btn btn-success" id="add-data-source">
+            <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" id="add-data-source"
+                         :to="{ name: 'addDataSource' }" class="btn btn-success">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </router-link>
         </div>
@@ -42,7 +42,7 @@
                         </div>
                     </template>
                     <template #created="props">
-                        {{props.row.created | formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.created)}}
                     </template>
                     <template #tags="props">
                         <div v-if="props.row.tags">
@@ -101,7 +101,7 @@ export default {
             } catch (e) {
                 Vue.prototype.$snotify.error(e);
             }
-        }
+        };
 
         const columns = [
             'id',
@@ -135,15 +135,15 @@ export default {
         const handlePreview = (dataSource) => {
             /**/
             previewWindow.value.show(dataSource);
-        }
+        };
         //#endregion
         const loggedUserIsOwnerOrAdmin = (dataSource) => {
             return dataSource.user_id === user.id || isAdmin;
-        }
+        };
         const getPermissions = (permissions) => {
             return (
                 (permissions || []).map(p => { return p.permission; }).join(', ') || 'ALL');
-        }
+        };
 
         const dataSourceList = ref(null);
         const remove = (dataSourceId) => {
@@ -165,14 +165,14 @@ export default {
                     }
                 }
             );
-        }
+        };
         const getDownloadLink = (row, toCSV) => {
             return `${limoneroUrl}/datasources/public/${row.id}/download?token=${row.download_token}` + 
                 (toCSV ? '&to_csv=true' : '');
-        }
+        };
         const visualizable = (ds) => {
             return ['JDBC', 'CSV', 'HIVE', 'PARQUET'].includes(ds.format);
-        }
+        };
 
         return {
             ...dtBuilder.build(),

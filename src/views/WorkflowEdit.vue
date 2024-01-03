@@ -6,63 +6,63 @@
 
                 <div class="title">
                     <div class="float-right">
-                        <workflow-toolbar v-if="loaded" :workflow="workflow" :isDirty="isDirty"
-                            @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
-                            @onshow-executions="$refs.executionsModal.show()"
-                            @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
-                            @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
-                            @onclick-execute="showExecuteWindow" @onclick-export="(format) => this.exportWorkflow(format)"
-                            @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
-                            @onsave-as-image="saveAsImage" 
-                            />
+                        <workflow-toolbar v-if="loaded" :workflow="workflow" :is-dirty="isDirty"
+                                          @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
+                                          @onshow-executions="$refs.executionsModal.show()"
+                                          @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
+                                          @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
+                                          @onclick-execute="showExecuteWindow" @onclick-export="(format) => exportWorkflow(format)"
+                                          @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
+                                          @onsave-as-image="saveAsImage" />
                     </div>
 
                     <h6 class="header-pretitle">
-                        {{ $tc('titles.workflow', 1) }} #{{ workflow.id }}
+                        {{$tc('titles.workflow', 1)}} #{{workflow.id}}
                     </h6>
                     <InputHeader v-model="workflow.name" />
-
                 </div>
 
                 <div v-show="showTasksPanel" class="toolbox">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{ $tc('common.operation', 2) }}
+                                {{$tc('common.operation', 2)}}
                             </h4>
                         </div>
                         <toolbox :operations="operations" :workflow="workflow" :selected-task="selectedTask.task"
-                            :loading="loadingToolbox" />
+                                 :loading="loadingToolbox" />
                     </div>
                 </div>
                 <div v-show="showDataSourcesPanel" class="toolbox datasource-toolbox">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{ $tc('titles.dataSource2', 2) }}
+                                {{$tc('titles.dataSource2', 2)}}
                             </h4>
                         </div>
                         <custom-toolbox :operations="expandableOperations" :workflow="workflow"
-                            :selected-task="selectedTask.task" />
+                                        :selected-task="selectedTask.task" />
                     </div>
                 </div>
 
-                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow" :operations="operations"
-                    :loaded="loaded" :version="workflow.version" tabindex="0"
-                    :use-data-source="expandableOperations.length > 0" @ontoggle-tasksPanel="toggleTasksPanel"
-                    @ontoggle-dataSourcesPanel="toggleDataSourcesPanel" 
-                    @onselect-image="selectImage" @onset-isDirty="setIsDirty" @onzoom="applyZoom" @addTask="addTask"
-                    @onclick-task="clickTask" 
-                    @addFlow="addFlow" @removeFlow="removeFlow"
-                    @onclear-selection="clearSelection" 
-                    @onblur-selection="blurSelection"/>
+                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
+                         :operations="operations"
+                         :loaded="loaded" :version="workflow.version" tabindex="0"
+                         :use-data-source="expandableOperations.length > 0" @ontoggle-tasks-panel="toggleTasksPanel"
+                         @ontoggle-data-sources-panel="toggleDataSourcesPanel" @onselect-image="selectImage"
+                         @onset-is-dirty="setIsDirty" @onzoom="applyZoom" @add-task="addTask" @onclick-task="clickTask"
+                         @add-flow="addFlow" @remove-flow="removeFlow" @onclear-selection="clearSelection"
+                         @onblur-selection="blurSelection" 
+                         @remove-task="removeTask" />
 
                 <div v-if="showProperties" class="diagram-properties">
                     <property-window v-if="selectedTask.task" :task="selectedTask.task"
-                        :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
-                        :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
-                        :publishing-enabled="workflow && workflow.publishing_enabled" 
-                        @update-form-field-value="updateFormFieldValue"/>
+                                     :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
+                                     :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
+                                     :publishing-enabled="workflow && workflow.publishing_enabled"
+                                     @update-form-field-value="updateFormFieldValue" 
+                                     @update-task-name="(name) => selectedTask.task.name = name"
+                                     @toggle-task="(value) => selectedTask.task.enabled = value" />
                 </div>
 
                 <!--
@@ -129,17 +129,18 @@
                     </b-tab>
                 </b-tabs>
                 -->
-                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables" />
+                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"
+                                        @ok="(v) => { workflow.variables = v; isDirty = true }" />
                 <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :cluster-info="clusterInfo"
-                    :validation-errors="validationErrors" :workflow="workflow" @onexecute-workflow="execute"
-                    @onchange-cluster="changeCluster" />
+                                      :validation-errors="validationErrors" :workflow="workflow" @onexecute-workflow="execute"
+                                      @onchange-cluster="changeCluster" @update-value="handleUpdateClusterInfo" />
                 <ModalWorkflowHistory ref="historyModal" :history="history" @onrestore-workflow="restore" />
                 <ModalSaveWorkflowAs ref="saveAsModal" @onsave-workflow-as="saveWorkflowAs" />
                 <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                 <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow"
-                    :clusters="clusters" />
+                                         :clusters="clusters" @update-value="handleUpdateWorkflowProperties" />
                 <!--
-                <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" />
+                <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" @update-value="(v) => workflow.image = v"/>
                 -->
                 <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
             </div>
@@ -151,15 +152,15 @@
 import axios from 'axios';
 import DiagramComponent from '../components/Diagram.vue';
 //import html2canvas from 'html2canvas';
-import {toPng} from 'html-to-image';
+import { toPng } from 'html-to-image';
 import InputHeader from '../components/InputHeader.vue';
-import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue'
-import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue'
-import ModalWorkflowImage from './modal/ModalWorkflowImage.vue'
-import ModalWorkflowVariables from './modal/ModalWorkflowVariables.vue'
-import ModalTaskResults from './modal/ModalTaskResults.vue'
-import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue'
-import ModalExecuteWorkflow from './modal/ModalExecuteWorkflow.vue'
+import ModalSaveWorkflowAs from './modal/ModalSaveWorkflowAs.vue';
+import ModalWorkflowProperties from './modal/ModalWorkflowProperties.vue';
+import ModalWorkflowImage from './modal/ModalWorkflowImage.vue';
+import ModalWorkflowVariables from './modal/ModalWorkflowVariables.vue';
+import ModalTaskResults from './modal/ModalTaskResults.vue';
+import ModalWorkflowHistory from './modal/ModalWorkflowHistory.vue';
+import ModalExecuteWorkflow from './modal/ModalExecuteWorkflow.vue';
 import PropertyWindow from '../components/PropertyWindow.vue';
 import Notifier from '../mixins/Notifier.js';
 import ToolboxComponent from '../components/Toolbox.vue';
@@ -168,9 +169,9 @@ import Vue from 'vue';
 import WorkflowExecution from '../components/WorkflowExecution.vue';
 import WorkflowToolbar from '../components/WorkflowToolbar.vue';
 
-const tahitiUrl = import.meta.env.VITE_TAHITI_URL
-const limoneroUrl = import.meta.env.VITE_LIMONERO_URL
-const standUrl = import.meta.env.VITE_STAND_URL
+const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
+const standUrl = import.meta.env.VITE_STAND_URL;
 const caipirinhaUrl = import.meta.env.VITE_CAIPIRINHA_URL;
 
 export default {
@@ -186,7 +187,6 @@ export default {
         ModalTaskResults,
         ModalWorkflowHistory,
         ModalWorkflowProperties,
-        ModalWorkflowImage,
         ModalWorkflowVariables,
 
         WorkflowExecution,
@@ -197,15 +197,15 @@ export default {
                 script.setAttribute('id', 'tahiti-script');
                 script.async = true;
                 //script.src = `${tahitiUrl}/public/js/tahiti.js`
-                document.head.appendChild(script)
-            })
+                document.head.appendChild(script);
+            });
         }
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
         if (this.isDirty) {
             if (confirm(this.$t('warnings.dirtyCheck'))) {
-                next()
+                next();
             }
         } else {
             next();
@@ -233,21 +233,22 @@ export default {
 
             showTasksPanel: false,
             showDataSourcesPanel: false,
-            resultTask: {step: {}},
+            resultTask: { step: {} },
             saveOption: 'new',
             selectedTab: 0,
-            selectedTask: {task: {operation: {}}},
+            selectedTask: { task: { operation: {} } },
             showPreviousJobs: false,
             showProperties: false,
             validationErrors: [],
-            workflow: {tasks: [], flows: [], platform: {}},
+            workflow: { tasks: [], flows: [], platform: {} },
             performanceModel: {
                 cores: null,
                 setup: null
             },
             expandableOperations: [],
             exportTimeoutHandler: null,
-        }
+            
+        };
     },
     watch: {
         '$route.params.id': function (id) {
@@ -256,10 +257,10 @@ export default {
         }
     },
     created() {
-        window.addEventListener('beforeunload', this.leaving)
+        window.addEventListener('beforeunload', this.leaving);
     },
     mounted() {
-        const self = this
+        const self = this;
         document.getElementById('tahiti-script').setAttribute(
             'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.$route.params.platform}`);
 
@@ -268,20 +269,20 @@ export default {
 
     },
     beforeUnmount() {
-        window.removeEventListener('beforeunload', this.leaving)
+        window.removeEventListener('beforeunload', this.leaving);
     },
     methods: {
         // Forms 
-        updateFormFieldValue(field, value, labelValue){
+        updateFormFieldValue(field, value, labelValue) {
             const self = this;
             if (self.selectedTask.task.forms[field.name]) {
                 if (self.selectedTask.task.forms[field.name].value !== value) {
-                    self.selectedTask.task.forms[field.name].value = value
-                    this.isDirty = true;
+                    self.selectedTask.task.forms[field.name].value = value;
+                    this.setIsDirty(true);
                 }
             } else {
-                this.isDirty = true;
-                self.selectedTask.task.forms[field.name] = {value: value}
+                this.setIsDirty(true);
+                self.selectedTask.task.forms[field.name] = { value: value };
             }
             self._validateTasks([self.selectedTask.task]);
 
@@ -291,48 +292,48 @@ export default {
             }
             let fieldInSelectedTask = self.selectedTask.task.forms[field.name];
             if (fieldInSelectedTask) {
-                fieldInSelectedTask.value = value
+                fieldInSelectedTask.value = value;
             } else {
-                fieldInSelectedTask = {value: value}
+                fieldInSelectedTask = { value: value };
             }
             fieldInSelectedTask.label = field.label;
             if (labelValue) {
-                fieldInSelectedTask.labelValue = labelValue
+                fieldInSelectedTask.labelValue = labelValue;
             } else if (fieldInSelectedTask.labelValue) {
-                delete fieldInSelectedTask.labelValue
+                delete fieldInSelectedTask.labelValue;
             }
         },
-       updateWorkflowFormFieldValue(field, value, labelValue){
+        updateWorkflowFormFieldValue(field, value, labelValue) {
             const self = this;
             if (self.workflow)
                 if (!self.workflow.forms || !(self.workflow.forms instanceof Object)) {
-                    self.workflow.forms = {}
+                    self.workflow.forms = {};
                 }
             try {
                 if (labelValue) {
                     if (self.workflow.forms[field.name].value !== value) {
                         self.workflow.forms[field.name].value = value;
-                        this.isDirty = true;
+                        this.setIsDirty(true);
                     }
                     if (self.workflow.forms[field.name].labelValue !== labelValue) {
                         self.workflow.forms[field.name].labelValue = labelValue;
-                        this.isDirty = true;
+                        this.setIsDirty(true);
                     }
                 } else {
                     if (self.workflow.forms[field.name].value !== value) {
                         self.workflow.forms[field.name].value = value;
-                        this.isDirty = true;
+                        this.setIsDirty(true);
                     }
                 }
                 self.workflow.forms[field.name].label = field.label;
             } catch (e) {
-                console.debug(e)
+                console.debug(e);
             }
         },
         // Selection
         blurSelection() {
             this.showProperties = false;
-            this.selectedTask = {task: {}};
+            this.selectedTask = { task: {} };
         },
         clearSelection() {
             this.selectedTask = {};
@@ -344,14 +345,14 @@ export default {
             const sourceTask = this.workflow.tasks.find((t) => t.id === flow.source_id);
             const targetTask = this.workflow.tasks.find((t) => t.id === flow.target_id);
             if (targetTask.$meta === undefined) {
-                targetTask.$meta = {}
+                targetTask.$meta = {};
             }
             const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
-            targetTask.$meta[inputPort.slug] = {sourceOperationSlug: sourceTask.operation.slug};
+            targetTask.$meta[inputPort.slug] = { sourceOperationSlug: sourceTask.operation.slug };
 
             flow.id = `${flow.source_id}/${flow.source_port}-${flow.target_id}/${flow.target_port}`;
             this.workflow.flows.push(flow);
-            this.isDirty = true;
+            this.setIsDirty(true);
         },
         removeFlow(flowId) {
             const inx = this.workflow.flows.findIndex((n) => {
@@ -362,7 +363,7 @@ export default {
                 const flow = this.workflow.flows[inx];
                 this.workflow.flows.splice(inx, 1);
 
-                this.isDirty = true;
+                this.setIsDirty(true);
 
                 const targetTask = this.workflow.tasks.find((t) => t.id === flow.target_id);
                 const inputPort = targetTask.operation.ports.find(p => p.id == flow.target_port);
@@ -387,7 +388,13 @@ export default {
             task.display_order = this.maxDisplayOrder;
 
             this.workflow.tasks.push(task);
-            this.isDirty = true;
+            this.setIsDirty(true);
+        },
+        removeTask(task) {
+            const inx = this.workflow.tasks.indexOf(task);
+            if (inx >= 0) {
+                this.workflow.tasks.splice(inx, 1);
+            }
         },
 
         applyZoom(zoom) {
@@ -408,25 +415,25 @@ export default {
             this.$refs.taskResultModal.show();
         },
         showJobs() {
-            this.showPreviousJobs = true
+            this.showPreviousJobs = true;
         },
-        toggleTasksPanel() {this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false;},
-        toggleDataSourcesPanel() {this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false;},
+        toggleTasksPanel() { this.showTasksPanel = !this.showTasksPanel; this.showDataSourcesPanel = false; },
+        toggleDataSourcesPanel() { this.showDataSourcesPanel = !this.showDataSourcesPanel; this.showTasksPanel = false; },
         updateSelectedTab(index) {// eslint-disable-line no-unused-vars
             //this.selectedTab = index;
             this.$refs.diagram.repaint();
         },
         _loadOperations(self, workflow, resp, showDisabledOpsAlert) {
-            self.operations = resp.data
+            self.operations = resp.data;
 
             self.operations.forEach((op) => {
-                self.operationsLookup[op.id] = op
-            })
+                self.operationsLookup[op.id] = op;
+            });
             let usingDisabledOp = false;
             workflow.tasks.forEach((task) => {
                 let op = self.operationsLookup[task.operation.id];
                 self.maxDisplayOrder = self.maxDisplayOrder < task.display_order ? task.display_order : self.maxDisplayOrder;
-                task.operation = op || {forms: []};
+                task.operation = op || { forms: [] };
                 task.step = null;
                 usingDisabledOp |= op === undefined || op.enabled === false;
                 if (op === undefined || !op.enabled) {
@@ -437,7 +444,7 @@ export default {
             });
             if (usingDisabledOp && showDisabledOpsAlert) {
                 self.warning(self.$t('messages.usingDisabledOperation',
-                    {what: self.$tc('titles.workflow')}), 60000, 300);
+                    { what: self.$tc('titles.workflow') }), 60000, 300);
             }
             if (!workflow.forms) {
                 workflow.forms = {};
@@ -466,7 +473,7 @@ export default {
                 (resp) => {
                     let workflow = resp.data;
                     workflow.variables = workflow.variables || [];
-                    this.$Progress.start()
+                    this.$Progress.start();
                     const params = {
                         platform: workflow.platform.id, //this.$route.params.platform,
                         subset: workflow.subset ? workflow.subset.id : null,
@@ -474,8 +481,8 @@ export default {
                         disabled: true, // even disabled operations must be returned to keep compatibility,
                         workflow: workflow.id,
                         t: new Date().getTime(), // Force refresh
-                    }
-                    axios.get(`${tahitiUrl}/operations`, {params}).then(
+                    };
+                    axios.get(`${tahitiUrl}/operations`, { params }).then(
                         resp => self._loadOperations(self, workflow, resp.data, true)
                     ).catch(function (e) {
                         this.error(e);
@@ -485,14 +492,14 @@ export default {
                             self.loadingToolbox = true;
                             delete params['workflow'];
                             delete params['t'];
-                            axios.get(`${tahitiUrl}/operations`, {params}).then(
+                            axios.get(`${tahitiUrl}/operations`, { params }).then(
                                 resp => self._loadOperations(self, workflow, resp.data, false)
                             ).catch(function (e) {
                                 this.error(e);
                             });
                         });
                     });
-                    axios.get(`${standUrl}/jobs/latest`, {params})
+                    axios.get(`${standUrl}/jobs/latest`, { params })
                         .then((resp2 => {
                             const job = resp2.data;
                             self.job = job;
@@ -513,7 +520,7 @@ export default {
                                     foundTask.result = result;
                                 }
                             });
-                        })).catch(() => {});
+                        })).catch(() => { });
 
                 }
             ).catch(function (e) {
@@ -521,90 +528,22 @@ export default {
             }.bind(this));
 
         },
-        saveAsImage() {
-            let self = this
-            let $elem = this.$refs.diagram.$el.querySelector('#lemonade-container')
+        async saveAsImage() {
+            let self = this;
+            let $elem = this.$refs.diagram.$el.querySelector('#lemonade-container');
 
             toPng($elem)
                 .then(function (dataUrl) {
                     const link = document.createElement('a');
                     link.setAttribute('download', `workflow_${self.workflow.id}.png`);
                     link.setAttribute('href', dataUrl);
-                    document.getElementsByTagName("body")[0].appendChild(link)
+                    document.getElementsByTagName("body")[0].appendChild(link);
                     link.click();
                     link.remove();
                 });
-            return;/*
-                html2canvas($elem, {
-                    width: 3000, height: 3000, logging: false, allowTaint: false,
-                    onclone(clone) {
-                        let elem = clone.getElementById($elem.id);
-                        elem.parentElement.style.height = '10000px';
-                        elem.style.transform = 'inherit'; // remove zoom
-                        elem.parentElement.scrollTop = 0;
-                    },
-                }).then(
-                    (canvas) => {
-                        //inversed, to get smallest
-                        let x0 = canvas.width, y0 = canvas.height, x1 = 0, y1 = 0;
-                        self.workflow.tasks.forEach((task) => {
-                            let elem = document.getElementById(task.id);
-                            x0 = Math.min(task.left, x0);
-                            x1 = Math.max(task.left + elem.style.width, x1);
-                            y0 = Math.min(task.top, y0);
-                            y1 = Math.max(task.top + elem.style.height, y1);
-                        });
-                        const targetCanvas = document.createElement('canvas');
-                        const targetCtx = targetCanvas.getContext('2d');
-                        const padding = 100;
-                        targetCanvas.width = x1 + 2 * padding;
-                        targetCanvas.height = y1 + 2 * padding;
-                        targetCtx.fillStyle = "white";
-                        // targetCtx.translate(-x0 + 150, -y0 + 150);
-                        targetCtx.drawImage(canvas, 0, 0);
-                        // let ctx = canvas.getContext('2d');
-                        for (let flow of $elem.getElementsByClassName('jtk-connector')) {
-                            const DOMURL = window.URL || window.webkitURL || window;
-                            const xml = `<svg width="${flow.width.baseVal.value}" height="${flow.height.baseVal.value}" xmlns="http://www.w3.org/2000/svg">${flow.innerHTML}</svg>`;
-                            const url = DOMURL.createObjectURL(
-                                new Blob([xml], { type: 'image/svg+xml' }));
-                            const left = parseInt(flow.style.left);
-                            const top = parseInt(flow.style.top);
-                            const img = new Image();
-                            img.onload = () => {
-                                targetCtx.drawImage(img, left, top);
-                                DOMURL.revokeObjectURL(url);
-                            };
-                            img.src = url;
-                        }
-                        window.setTimeout(() => {
-                            targetCtx.fillStyle = "black";
-                            targetCtx.font = "10pt Verdana";
-                            targetCtx.fillText(
-                                `${self.workflow.name}. ${self.$t('workflow.imageGeneratedAt')} ${new Date()}`,
-                                20, targetCanvas.height - 20);
-                            const link = document.createElement('a');
-                            link.setAttribute('download', `workflow_${self.workflow.id}.png`);
-                            link.setAttribute('href', targetCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-                            document.getElementsByTagName("body")[0].appendChild(link)
-                            link.click();
-                            link.remove();
-                            //link.text = "Click"
-                        }, 1000);
-                    });*/
         },
         _generateId() {
             return this.$refs.diagram.generateId();
-            /*
-                const now = (new Date).getTime().toString(16).split('');
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                    if (now.length) {
-                        return now.pop();
-                    } else {
-                        let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                        return v.toString(16);
-                    }
-                });*/
         },
         _downloadAsType(data, contentType, extension) {
             const self = this;
@@ -618,7 +557,7 @@ export default {
             document.body.removeChild(element);
         },
         exportWorkflow(format) {
-            const self = this
+            const self = this;
             if (format === undefined) {
                 self._downloadAsType(JSON.stringify(self.workflow),
                     'application/json', 'json');
@@ -637,44 +576,43 @@ export default {
                             resp => {
                                 self._downloadAsType(resp.data, contentType, extension);
                             }).catch(function (e) {
-                                self.error(e);
-                            });
-                    }, 5000)
+                            self.error(e);
+                        });
+                    }, 5000);
                 }).catch(function (e) {
                     self.error(e);
                 });
             } else {
-                self.warning(self.$t('errors.invalidOperation'))
+                self.warning(self.$t('errors.invalidOperation'));
             }
 
             // self.success(self.$t('messages.exportWorkflow'));
         },
-        saveWorkflowAs(saveOption, newName) {
+        async saveWorkflowAs(saveOption, newName) {
             if (saveOption === 'new') {
-                this.saveWorkflow(true, newName);
+                await this.saveWorkflow(true, newName);
             } else if (saveOption === 'image') {
-                this.saveAsImage();
+                await this.saveAsImage();
             }
         },
-        saveWorkflow(savingCopy, newName) {
-            let self = this
-            let cloned = JSON.parse(JSON.stringify(self.workflow));
+        async saveWorkflow(savingCopy, newName) {
+            let cloned = JSON.parse(JSON.stringify(this.workflow));
             let url = `${tahitiUrl}/workflows`;
-            let headers = {'Content-Type': 'application/json'}
-            let method = 'post'
+            let headers = { 'Content-Type': 'application/json' };
+            let method = 'post';
             if (cloned.id !== 0 && !savingCopy) {
                 url = `${url}/${cloned.id}`;
-                method = 'patch'
+                method = 'patch';
             }
             cloned.platform_id = this.$route.params.platform;
             const oldId2NewId = new Map();
             cloned.tasks.forEach((task) => {
-                task.operation = {id: task.operation.id};
+                task.operation = { id: task.operation.id };
                 delete task.version; //
                 delete task.step;
                 delete task.status;
                 if (savingCopy) {
-                    const newId = self._generateId();
+                    const newId = this._generateId();
                     oldId2NewId[task.id] = newId;
                     task.id = newId;
                 }
@@ -690,26 +628,25 @@ export default {
                     flow.id = `${newSource}/${flow.source_port}-${newTarget}/${flow.target_port}`;
                 });
             }
-            return axios[method](url, cloned, {headers}).then(
-                (resp) => {
-                    self.isDirty = false;
-                    if (!savingCopy) {
-                        let workflow = resp.data.data;
-                        workflow.tasks.forEach((task) => {
-                            task.operation = self.operationsLookup[task.operation.id]
-                        });
-                        self.workflow = workflow;
-                        self.success(self.$t('messages.savedWithSuccess',
-                            {what: self.$tc('titles.workflow')}));
-                        self._validateTasks(self.workflow.tasks);
-                    } else {
-                        self.success(self.$t('workflow.copySavedWithSuccess',
-                            {what: self.$tc('titles.workflow')}));
-                    }
+            try {
+                const resp = await axios[method](url, cloned, { headers });
+                this.setIsDirty(false);
+                if (!savingCopy) {
+                    let workflow = resp.data.data;
+                    workflow.tasks.forEach((task) => {
+                        task.operation = this.operationsLookup[task.operation.id];
+                    });
+                    this.workflow = workflow;
+                    this.success(this.$t('messages.savedWithSuccess',
+                        { what: this.$tc('titles.workflow') }));
+                    this._validateTasks(this.workflow.tasks);
+                } else {
+                    this.success(this.$t('workflow.copySavedWithSuccess',
+                        { what: this.$tc('titles.workflow') }));
                 }
-            ).catch(function (e) {
+            } catch (e) {
                 this.error(e);
-            }.bind(this));
+            }
         },
         restore(version) {
             let self = this;
@@ -719,15 +656,15 @@ export default {
                 () => {
                     self.$refs.diagram.clearWorkflow().then(() => {
                         let url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
-                        axios.post(url, {version})
+                        axios.post(url, { version })
                             .then(() => {
                                 self.isDirty = false;
                                 self.success(self.$t('workflow.versionRestored',
-                                    {version}));
+                                    { version }));
                                 //self.$router.go(self.$router.currentRoute);
                                 self.closeHistory();
                                 self.load();
-                            }).catch((e) => self.error(e))
+                            }).catch((e) => self.error(e));
                     });
                 });
         },
@@ -736,7 +673,7 @@ export default {
             if (extendedSuggestions) {
                 return this._unique(Array.prototype.concat.apply([],
                     extendedSuggestions.inputs.map(
-                        (item) => {return item.attributes;}))).sort(this._caseInsensitiveComparator);
+                        (item) => { return item.attributes; }))).sort(this._caseInsensitiveComparator);
             } else {
                 return [];
             }
@@ -773,10 +710,10 @@ export default {
         },
         showHistory() {
             const self = this;
-            const url = `${tahitiUrl}/workflows/history/${this.workflow.id}`
+            const url = `${tahitiUrl}/workflows/history/${this.workflow.id}`;
             axios.get(url)
                 .then((resp) => {
-                    self.history = resp.data.data
+                    self.history = resp.data.data;
                     if (self.$refs.historyModal) {
                         self.$refs.historyModal.show();
                     }
@@ -806,6 +743,7 @@ export default {
             }
         },
         setIsDirty(flag) {
+            console.debug('Dirty=', flag);
             this.isDirty = flag;
         },
 
@@ -825,15 +763,31 @@ export default {
                 this.$refs.executeModal.show();
             });
         },
-        execute() {
-            this.$Progress.start()
+        async execute() {
+            this.$Progress.start();
             if (this.isDirty) {
-                this.saveWorkflow(false).then(() => {
-                    this._execute();
-                });
+                await this.saveWorkflow(false);
+                await this._execute();
             } else {
-                this._execute();
+                await this._execute();
             }
+        },
+        handleUpdateClusterInfo(updates) {
+            const { id, jobName, description, } = updates;
+            Object.assign(this.clusterInfo, { id, jobName, description });
+        },
+        handleUpdateWorkflowProperties(updatedWorkflow) {
+            let {
+                name, preferred_cluster_id, description,
+                is_template, is_system_template,
+                publishing_enabled, publishing_status
+            } = updatedWorkflow;
+            Object.assign(this.workflow, {
+                name, preferred_cluster_id, description,
+                is_template, is_system_template,
+                publishing_enabled, publishing_status
+            });
+            this.setIsDirty(true);
         },
         _retrieveClusters() {
             const self = this;
@@ -852,47 +806,47 @@ export default {
                     self.error(ex);
                 });
         },
-        _execute() {
+        async _execute() {
             const self = this;
             const cloned = JSON.parse(JSON.stringify(this.workflow));
             cloned.platform_id = cloned.platform.id;
             cloned.tasks.forEach((task) => {
-                task.operation = {id: task.operation.id};
+                task.operation = { id: task.operation.id };
                 delete task.version;
             });
             const user = this.$store.getters.user;
             const body = {
                 workflow: cloned,
-                cluster: {id: self.clusterInfo.id},
+                cluster: { id: self.clusterInfo.id },
                 name: self.clusterInfo.jobName,
                 user: {
                     id: user.id,
                     login: user.login,
                     name: user.name
                 },
-            }
+            };
             const headers = {
                 'Locale': self.$root.$i18n.locale,
             };
-            axios.post(`${standUrl}/jobs`, body, {headers})
-                .then(function (response) {
-                    self.$Progress.finish()
-                    self.$router.push({
-                        name: 'jobDetail',
-                        params: {
-                            id: response.data.data.id,
-                            platform: self.$route.params.platform
-                        }
-                    });
-                }).catch((ex) => {
-                    if (ex.data) {
-                        self.error(ex.data.message);
-                    } else if (ex.status === 0) {
-                        self.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
-                    } else {
-                        self.error(`Unhandled error: ${JSON.stringify(ex)}`);
+            try {
+                const response = await axios.post(`${standUrl}/jobs`, body, { headers });
+                self.$Progress.finish();
+                self.$router.push({
+                    name: 'jobDetail',
+                    params: {
+                        id: response.data.data.id,
+                        platform: self.$route.params.platform
                     }
                 });
+            } catch (ex) {
+                if (ex.data) {
+                    self.error(ex.data.message);
+                } else if (ex.status === 0) {
+                    self.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
+                } else {
+                    self.error(`Unhandled error: ${JSON.stringify(ex)}`);
+                }
+            }
         },
         _validateTasks(tasks) {
             const self = this;
@@ -911,10 +865,10 @@ export default {
                                         if (value === null || value === undefined || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
                                             warning = this.$tc("errors.missingRequiredValue");
                                             self.validationErrors.push({
-                                                id: counter++, task: {id: t.id, name: t.name},
+                                                id: counter++, task: { id: t.id, name: t.name },
                                                 field: field.label,
                                                 message: self.$tc("errors.missingRequiredValue")
-                                            })
+                                            });
                                             result = false;
                                         }
                                     }
@@ -928,7 +882,7 @@ export default {
             return result;
         },
         _unique(data) {
-            return Array.from(new Set(data))
+            return Array.from(new Set(data));
         },
         _queryDataSource(id, callback) {
             let attributes = null;
@@ -946,7 +900,7 @@ export default {
                     (response) => {
                         //console.debug(response.data)
                         let ds = response.data;
-                        attributes = ds.attributes.map(function (attr) {return attr.name});
+                        attributes = ds.attributes.map(function (attr) { return attr.name; });
                         window.TahitiAttributeSuggester.cached[id] = attributes;
                         callback(attributes);
                     },
@@ -958,7 +912,7 @@ export default {
             }
         },
     }
-}
+};
 </script>
 <style scoped>
 body {

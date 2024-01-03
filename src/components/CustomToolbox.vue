@@ -152,7 +152,7 @@ export default {
             let match = null;
             while ((match = re.exec(tpl))) {
                 if (data[match[2]]) {
-                    tpl = tpl.replace(match[1], data[match[2]])
+                    tpl = tpl.replace(match[1], data[match[2]]);
                 }
                 re.lastIndex = 0;
             }

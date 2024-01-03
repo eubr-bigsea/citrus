@@ -3,12 +3,13 @@
         <LabelComponent :field="field" :value="value" />
         <textarea disabled :value="displayValue" class="form-control code" rows="4" />
         <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
-            {{ $t('property.editValue') }}
+            {{$t('property.editValue')}}
         </b-link>
-        <b-modal id="expressionModal" ref="modal" size="xl" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')">
+        <b-modal id="expressionModal" ref="modal" size="xl" :title="field.label"
+                 :hide-header="true"
+                 :cancel-title="$t('actions.cancel')">
             <div class="context-help" :class="{ 'd-none': !help }"
-                :style="{ top: positionTop + 'px', left: positionLeft + 'px' }" v-html="help" />
+                 :style="{ top: positionTop + 'px', left: positionLeft + 'px' }" v-html="help" />
             <div class="row" @click="closeTooltip">
                 <div class="col-md-4 reference">
                     <h6>Referência</h6>
@@ -19,13 +20,13 @@
                                     Todas
                                 </option>
                                 <option v-for="f in treeData" :key="f.key" :value="f.key">
-                                    {{ f.name }}
+                                    {{f.name}}
                                 </option>
                             </select>
                             <select class="form-control shadow-none" size="10" @change="displayFunctionHelp($event)"
-                                @dblclick="copyPasteValue">
+                                    @dblclick="copyPasteValue">
                                 <option v-for="f in displayFunctions" :key="f" :value="f">
-                                    {{ f }}
+                                    {{f}}
                                 </option>
                             </select>
                             <div class="function-help" v-html="currentFunctionHelp" />
@@ -33,7 +34,7 @@
                         <b-tab title="Atributos">
                             <select class="form-control shadow-none" size="18" @dblclick="copyPasteValue">
                                 <option v-for="sg in suggestions" :key="sg">
-                                    {{ sg }}
+                                    {{sg}}
                                 </option>
                             </select>
                         </b-tab>
@@ -42,28 +43,28 @@
                                 <div v-for="(group, groupName) in operators" :key="groupName" style="display: contents">
                                     <tr>
                                         <th colspan="2">
-                                            {{ groupName }}
+                                            {{groupName}}
                                         </th>
                                     </tr>
                                     <tr v-for="(description, op) in group" :key="op">
                                         <td style="width:20px" class="text-center">
-                                            {{ op }}
+                                            {{op}}
                                         </td>
-                                        <td>{{ description }}</td>
+                                        <td>{{description}}</td>
                                     </tr>
                                 </div>
                             </table>
                         </b-tab>
                     </b-tabs>
-                    <small>{{ $t('property.copyAttributeName') }}</small>
+                    <small>{{$t('property.copyAttributeName')}}</small>
                 </div>
                 <div class="col-md-8">
                     <form v-if="expressionList && expressionList.length" ref="form" onsubmit="return false" action="">
                         <table class="table table-sm expression-table">
                             <thead>
-                                <th> {{ $t('property.expression.title') }}</th>
+                                <th> {{$t('property.expression.title')}}</th>
                                 <th v-if="values.alias !== false && showAlias">
-                                    {{ $t('property.expression.alias') }}
+                                    {{$t('property.expression.alias')}}
                                 </th>
                                 <th style="width:12%" />
                             </thead>
@@ -71,15 +72,15 @@
                                 <tr v-for="(row, index) in expressionList" :key="index">
                                     <td class="expression-editor-area autocomplete">
                                         <input ref="expr" v-focus type="text" class="form-control"
-                                            :class="{ 'text-danger': row.error }" :value="row.expression" required
-                                            @keyup="onKeyUp($event, row, 'expression')" @blur="elementBlur(row, $event)"
-                                            @paste="changed($event, row, 'expression')"
-                                            @dblclick="debugExpression(row)">
+                                               :class="{ 'text-danger': row.error }" :value="row.expression" required
+                                               @keyup="onKeyUp($event, row, 'expression')" @blur="elementBlur(row, $event)"
+                                               @paste="changed($event, row, 'expression')"
+                                               @dblclick="debugExpression(row)">
                                         <ul v-show="isOpen" class="autocomplete-results">
                                             <li v-for="(result, i) in suggestionResults" :key="i"
                                                 class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }"
                                                 @click="setResult(result)">
-                                                {{ result }}
+                                                {{result}}
                                             </li>
                                         </ul>
                                         <small class="label text-danger" v-html="row.error" />
@@ -87,11 +88,11 @@
                                     </td>
                                     <td v-if="values.alias !== false && showAlias" style="width: 20%">
                                         <input class="form-control" :value="row.alias" required
-                                            @change="updated($event, row, 'alias')">
+                                               @change="updated($event, row, 'alias')">
                                     </td>
                                     <td style="width:2%" class="text-center">
                                         <a href="#" class="btn btn-danger btn-sm"
-                                            @click.prevent="remove($event, index)">
+                                           @click.prevent="remove($event, index)">
                                             <!-- <font-awesome-icon icon="fa fa-minus-circle text-danger" /> -->
                                             <font-awesome-icon icon="trash" />
                                         </a>
@@ -102,13 +103,13 @@
                     </form>
                     <div v-else class="border pt-5 pb-5 pl-3">
                         <div class="label label-info">
-                            {{ $t('property.noExpressions') }}
+                            {{$t('property.noExpressions')}}
                         </div>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <button class="btn btn-success btn-sm float-right" @click.prevent="add">
-                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.simpleAdd') }}
+                        <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.simpleAdd')}}
                     </button>
                 </div>
                 <!-- <div class="col-md-4 border-left">
@@ -123,7 +124,7 @@
 
 
             <small class="mt-2">
-                {{ $t('property.expression.explanation') }}
+                {{$t('property.expression.explanation')}}
                 <span v-html="$t('property.expression.tip')" />
                 <ul>
                     <li><code>substring(name, instr(name, " "))</code></li>
@@ -141,10 +142,10 @@
             <template #modal-footer>
                 <div class="w-100 text-right">
                     <b-btn variant="primary" class="btn-sm mr-1" @click.prevent="okClicked">
-                        {{ $t('common.ok') }}
+                        {{$t('common.ok')}}
                     </b-btn>
                     <b-btn variant="secondary" class="btn-sm " @click.prevent="cancelClicked">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-btn>
                 </div>
             </template>
@@ -183,7 +184,7 @@ export default {
             operators: [],
             displayFunctions: [],
             currentFunctionHelp: null,
-        }
+        };
     },
     computed: {
         displayValue() {
@@ -191,13 +192,13 @@ export default {
             if (this.value && this.value.map) {
                 return this.value.map((v) => {
                     if (self.values && self.values.alias !== false && self.showAlias) {
-                        return `${v.alias} = ${v.expression}`
+                        return `${v.alias} = ${v.expression}`;
                     } else {
                         return v.expression;
                     }
-                }).join('\n')
+                }).join('\n');
             } else {
-                return ''
+                return '';
             }
         },
         values() {
@@ -243,15 +244,15 @@ export default {
                     jsep.removeBinaryOp('^');
                     const tree = jsep(e.target.value || '');
                     row['error'] = null;
-                    row['tree'] = tree
+                    row['tree'] = tree;
                     if (tree.type.includes("Compound")) {
-                        row['error'] = this.$t('widgets.expressionEditor.unsupportedCompounded')
+                        row['error'] = this.$t('widgets.expressionEditor.unsupportedCompounded');
                     }
                 } catch (e) {
                     const error = e.toString();
                     const pos = error.lastIndexOf("at ");
                     let position = error.substring(pos, error.length);
-                    position = position.replace('at character', this.$t('widgets.expressionEditor.atPosition'))
+                    position = position.replace('at character', this.$t('widgets.expressionEditor.atPosition'));
                     if (error.includes("Unclosed quote")) {
                         row['error'] = this.$t('widgets.expressionEditor.unclosedQuoteAfter') +
                             ' ' + position;
@@ -345,9 +346,9 @@ export default {
                 this.$nextTick(() => {
                     let j = this.expressionList.length - 1;
                     if (this.$refs.expr[j])
-                        this.$refs.expr[j].focus()
-                })
-            })
+                        this.$refs.expr[j].focus();
+                });
+            });
         },
         remove(e, index) {
             const removed = this.expressionList.splice(index, 1);
@@ -375,7 +376,7 @@ export default {
                     v.target.value + el.value.substring(endPos, el.value.length);
                 el.value = value;
                 // this.lastEdited.row.expression = value;
-                this.updated({ target: el }, this.lastEdited.row, 'expression')
+                this.updated({ target: el }, this.lastEdited.row, 'expression');
                 this.lastEdited.el.focus();
             }
         },
@@ -408,7 +409,7 @@ export default {
             console.debug(JSON.stringify(row));
         }
     },
-}
+};
 </script>
 <style>
 .expression-editor-area {

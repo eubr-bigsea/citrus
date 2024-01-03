@@ -48,4 +48,4 @@ export default {
                 image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
             },*/
     ]
-}
+};

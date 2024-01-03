@@ -159,11 +159,11 @@
                     </tr>
                     <tr>
                         <td>{{$tc('common.created', 1)}}:</td>
-                        <td>{{workflow.created|formatJsonDate}}</td>
+                        <td>{{$filters.formatJsonDate(workflow.created)}}</td>
                     </tr>
                     <tr>
                         <td>{{$tc('common.updated', 1)}}:</td>
-                        <td>{{workflow.updated|formatJsonDate}}</td>
+                        <td>{{$filters.formatJsonDate(workflow.updated)}}</td>
                     </tr>
                     <tr>
                         <td>{{$tc('workflow.preferredCluster', 1)}}:</td>
@@ -193,7 +193,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="h in sortedEditFields" v-if="h.help" :key="h.key">
+                    <tr v-for="h in sortedEditFieldsWithHelp" :key="h.key">
                         <td>{{h.label}}</td>
                         <td>{{h.help}}</td>
                     </tr>
@@ -309,12 +309,15 @@ export default {
             statusError: null,
             visualizations: [],
             workflow: {},
-        }
+        };
     },
 
     computed: {
         sortedEditFields() {
             return [...this.editFields].sort((a, b) => a.display_index - b.display_index);
+        },
+        sortedEditFieldsWithHelp() {
+            return this.sortedEditFields.filter(f => f.help);
         }
     },
     beforeUnmount() {
@@ -326,7 +329,7 @@ export default {
     },
     mounted() {
         this.load();
-        this.$root.$on('update-form-field-value', this.updateFieldValue)
+        this.$root.$on('update-form-field-value', this.updateFieldValue);
     },
     methods: {
         updateFieldValue(field, value, labelValue) { // eslint-disable-line no-unused-vars
@@ -471,7 +474,7 @@ export default {
                             login: user.login,
                             name: user.name
                         },
-                    }
+                    };
                     const headers = {
                         'Locale': self.$root.$i18n.locale,
                     };
@@ -482,7 +485,7 @@ export default {
                     self.$refs.form.reportValidity();
                 }
             } catch (ex) {
-                console.debug(ex)
+                console.debug(ex);
                 if (ex.data) {
                     self.error(ex.data.message);
                 } else if (ex.status === 0) {
@@ -498,7 +501,7 @@ export default {
         },
         async load() {
             let self = this;
-            self.$Progress.start()
+            self.$Progress.start();
             try {
                 let workflow = (await axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`)).data;
                 //const query = self.$route.query;
@@ -510,12 +513,12 @@ export default {
                     lang: this.$root.$i18n.locale,
                     workflow: workflow.id,
                     _ts: new Date().getTime(),
-                }
+                };
 
                 const resp = await axios.get(`${tahitiUrl}/operations`, { params });
                 const operations = resp.data.data;
 
-                operations.forEach((op) => { self.operationsLookup[op.id] = op });
+                operations.forEach((op) => { self.operationsLookup[op.id] = op; });
                 workflow.platform_id = workflow.platform.id;
 
                 // Load preferred cluster info
@@ -540,7 +543,7 @@ export default {
                     }
                     if (variable?.parameters?.values?.length > 0) {
                         if (Array.isArray(variable?.parameters?.values)) {
-                            variable.values = variable.parameters.values
+                            variable.values = variable.parameters.values;
                         } else {
                             variable.values = JSON.parse(variable.parameters.values);
                             variable.suggested_widget = 'dropdown';
@@ -553,16 +556,16 @@ export default {
                         }
                     } else if (['INTEGER', 'DECIMAL'].indexOf(variable.type) > -1) {
                         variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : variable.type.toLowerCase();
-                        variable.data_type = 'number'
+                        variable.data_type = 'number';
                     } else if (variable.type === 'DATE') {
                         variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : variable.type.toLowerCase();
-                        variable.data_type = 'date'
+                        variable.data_type = 'date';
                     } else if (variable.type === 'BINARY') {
                         variable.suggested_widget = 'checkbox';
-                        variable.data_type = 'number'
+                        variable.data_type = 'number';
                     } else if (variable.type === 'CHARACTER') {
                         variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : 'text';
-                        variable.data_type = 'text'
+                        variable.data_type = 'text';
                     } else if (variable.type == 'STATIC_TEXT') {
                         variable.hidden = true;
                     } else {
@@ -572,7 +575,7 @@ export default {
                     variable.value = variable.default_value;
                     const field = new EditField(variable, 'variable');
                     field.variable = variable;
-                    this.editFields.push(field)
+                    this.editFields.push(field);
                 });
 
                 self.savedFiltersName = `savedFilters_${self.$route.params.id}`;
@@ -668,7 +671,7 @@ export default {
                                         break;
                                     }
                                 }
-                                this.editFields.push(new EditField(f, 'filter'))
+                                this.editFields.push(new EditField(f, 'filter'));
                             });
                         }
                     }
@@ -682,7 +685,7 @@ export default {
                     //this.execute();
                 }
             } catch (ex) {
-                console.debug(ex)
+                console.debug(ex);
                 self.error(ex);
             } finally {
                 self.$Progress.finish();
@@ -695,10 +698,10 @@ export default {
                     _ts: new Date().getTime(),
 
                 }
-            })
+            });
         },
     },
-}
+};
 </script>
 <style>
 </style>

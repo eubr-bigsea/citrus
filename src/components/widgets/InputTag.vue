@@ -52,7 +52,7 @@ export default {
     data() {
         return {
             internalValue: []
-        }
+        };
     },
     computed: {
         inputType() {
@@ -82,5 +82,5 @@ export default {
             this.triggerUpdateEvent(this.message, this.field, v);
         }
     },
-}
+};
 </script>

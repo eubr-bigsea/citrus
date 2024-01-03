@@ -100,7 +100,7 @@ export default {
     methods: {
         useOpenId() {
             this.$openIdService.login().catch(e =>
-                this.error(e))
+                this.error(e));
         },
         login: function () {
             let thornUrl = import.meta.env.VITE_THORN_URL;

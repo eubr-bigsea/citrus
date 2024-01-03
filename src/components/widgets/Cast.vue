@@ -2,24 +2,26 @@
     <div class="function-editor">
         <span v-if="!readOnly">
             <LabelComponent :field="field" :value="value" />
-            <textarea readonly :value="displayValue" class="form-control" rows="4" @click.prevent="openModal" />
+            <textarea readonly :value="displayValue" class="form-control" rows="4"
+                      @click.prevent="openModal" />
             <b-link variant="sm" @click.prevent="openModal">
-                {{ $t('actions.chooseOption') }}
+                {{$t('actions.chooseOption')}}
             </b-link>
         </span>
-        <span v-else>{{ displayValue }}</span>
-        <b-modal v-if="parameters" id="lookupModal" ref="modal" button-size="sm" size="lg" :title="field.label"
-            :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade centered>
+        <span v-else>{{displayValue}}</span>
+        <b-modal v-if="parameters" id="lookupModal" ref="modal" button-size="sm"
+                 size="lg" :title="field.label"
+                 :hide-header="true" :cancel-title="$t('actions.cancel')" no-fade centered>
             <p>
-                {{ field.label || field.name }}
+                {{field.label || field.name}}
             </p>
             <table v-if="valueList && valueList.length" ref="table" class="table table-sm">
                 <thead>
                     <th class="text-center">
-                        {{ $t('property.attribute') }}
+                        {{$t('property.attribute')}}
                     </th>
                     <th class="text-center">
-                        {{ $t('property.type') }}
+                        {{$t('property.type')}}
                     </th>
                     <th />
                 </thead>
@@ -27,18 +29,18 @@
                     <tr v-for="(row, index) in valueList" :key="index">
                         <td style="width:50%">
                             <v-select :options="suggestions" :multiple="false" :value="row.attribute" :taggable="true"
-                                :close-on-select="true" size="sm" class="vue-select-small"
-                                @input="(v) => attrUpdated(row, 'attribute', v)">
+                                      :close-on-select="true" size="sm" class="vue-select-small"
+                                      @input="(v) => attrUpdated(row, 'attribute', v)">
                                 <slot name="no-options">
-                                    {{ $t('messages.noMatching') }}
+                                    {{$t('messages.noMatching')}}
                                 </slot>
                             </v-select>
                         </td>
                         <td style="width:20%">
                             <select class="form-control form-control-sm" :value="row.type" size="sm"
-                                @change="updated($event, row, 'type')">
+                                    @change="updated($event, row, 'type')">
                                 <option v-for="v in dataTypes" :key="v.key" :value="v.key">
-                                    {{ v.value }}
+                                    {{v.value}}
                                 </option>
                             </select>
                         </td>
@@ -47,11 +49,11 @@
                                 <font-awesome-icon icon="fa fa-minus-circle" />
                             </a>
                             <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')" class="pr-1"
-                                @click="moveUp($event, index)">
+                               @click="moveUp($event, index)">
                                 <font-awesome-icon icon="fa fa-chevron-circle-up" />
                             </a>
                             <a v-if="index !== (valueList.length - 1)" href="#" :title="$t('actions.moveDown')"
-                                @click="moveDown($event, index)">
+                               @click="moveDown($event, index)">
                                 <font-awesome-icon icon="fa fa-chevron-circle-down" />
                             </a>
                         </td>
@@ -60,16 +62,16 @@
             </table>
             <div class="mt-2 border-top pt-2">
                 <button class="btn btn-success btn-sm" @click.prevent="add">
-                    <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </button>
             </div>
             <template #modal-footer>
                 <div class="w-100 text-right">
                     <b-btn variant="primary" size="sm" class="mr-1" @click="okClicked">
-                        {{ $t('common.ok') }}
+                        {{$t('common.ok')}}
                     </b-btn>
                     <b-btn variant="secondary" size="sm" @click="cancelClicked">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-btn>
                 </div>
             </template>
@@ -119,7 +121,7 @@ export default {
                 // { "en": "Object", "value": "Object", "key": "Object", "pt": "Objeto" },
                 // { "en": "Binary", "value": "Binary", "key": "Binary", "pt": "Binário" },
             ]
-        }
+        };
     },
     computed: {
         parameters() {
@@ -143,7 +145,7 @@ export default {
         },
         updateDisplayValue(v) {
             if (v) {
-                this.displayValue = v.map((v) => `${v.attribute} = (${v.type}) ${v.attribute}`).join('\n')
+                this.displayValue = v.map((v) => `${v.attribute} = (${v.type}) ${v.attribute}`).join('\n');
             } else {
                 this.displayValue = '';
             }
@@ -168,13 +170,13 @@ export default {
         },
         moveUp(e, index) {
             let tmp = this.valueList.splice(index, 1)[0];
-            this.valueList.splice(index - 1, 0, tmp)
+            this.valueList.splice(index - 1, 0, tmp);
             e.stopPropagation();
             return false;
         },
         moveDown(e, index) {
-            let tmp = this.valueList.splice(index, 1)[0]
-            this.valueList.splice(index + 1, 0, tmp)
+            let tmp = this.valueList.splice(index, 1)[0];
+            this.valueList.splice(index + 1, 0, tmp);
             e.stopPropagation();
             return false;
         },
@@ -188,7 +190,7 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style>
 .vue-select-small .vs__dropdown-toggle {

@@ -1,40 +1,41 @@
 <template>
     <div v-if="readOnly">
-        <span>{{ value?(multiple? value.join(', '): value): ''}}</span>
+        <span>{{value?(multiple? value.join(', '): value): ''}}</span>
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value" />
         <div v-if="multiple">
             <textarea readonly :value="displayValue" class="form-control pointer" :rows="rows"
-                @click.prevent="openModal" />
-            <b-modal ref="modal" size="xl" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')"
-                no-fade>
+                      @click.prevent="openModal" />
+            <b-modal ref="modal" size="xl" :title="field.label" ok-disabled
+                     :cancel-title="$t('actions.cancel')"
+                     no-fade>
                 <template #default>
                     <div class="row">
                         <div class="col-12">
                             <div class="alert alert-info">
                                 <font-awesome-icon icon="fa fa-info-circle" />
                                 <small>
-                                    {{ $tc('property.clickToMove', 2) }}.
-                                    {{ $tc('property.multipleTimes') }}
+                                    {{$tc('property.clickToMove', 2)}}.
+                                    {{$tc('property.multipleTimes')}}
                                 </small>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <small>{{ $tc('property.availableAttribute', 2) }}:</small>
+                            <small>{{$tc('property.availableAttribute', 2)}}:</small>
                             <div class="left options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in available" :key="suggestion"
-                                    class="border mb-1 p-1 suggested-attr" role="button" :title="suggestion"
-                                    @click="move('right', index)">
-                                    {{ suggestion }}
+                                     class="border mb-1 p-1 suggested-attr" role="button" :title="suggestion"
+                                     @click="move('right', index)">
+                                    {{suggestion}}
                                 </div>
                             </div>
-                            <label class="m-0 mt-2"><small>{{ $t('property.informAttributeName') }}:</small></label>
+                            <label class="m-0 mt-2"><small>{{$t('property.informAttributeName')}}:</small></label>
                             <b-input-group class="">
                                 <b-form-input v-model="extra" class="form-control-sm" maxlength="50" />
                                 <b-input-group-append>
                                     <b-button size="sm" :disabled="extra === null || extra.trim() === ''" @click="add">
-                                        {{ $t('actions.addItem') }}
+                                        {{$t('actions.addItem')}}
                                     </b-button>
                                 </b-input-group-append>
                             </b-input-group>
@@ -54,34 +55,34 @@
                             <div class="row">
                                 <div class="col-6">
                                     <small>
-                                        {{ $tc('property.selectedAttribute', 2) }}:
+                                        {{$tc('property.selectedAttribute', 2)}}:
                                     </small>
                                 </div>
                                 <div class="col-6">
-                                    <small>{{ $tc('property.alias', 2) }}
-                                        ({{ $tc('common.optional') }}):</small>
+                                    <small>{{$tc('property.alias', 2)}}
+                                        ({{$tc('common.optional')}}):</small>
                                 </div>
                                 <div class="col-12">
                                     <div class="options border mt-1 p-2">
-                                        <div class="row" v-for="(item, index) in selected" :key="index">
+                                        <div v-for="(item, index) in selected" :key="index" class="row">
                                             <div class="mb-1 col-6 border-right">
                                                 <div class="border selected-attr" role="button" :title="item.attribute"
-                                                    @click="move('left', index)">
-                                                    {{ item.attribute }}
+                                                     @click="move('left', index)">
+                                                    {{item.attribute}}
                                                 </div>
                                             </div>
-                                            <div class="col-5" :key="index + 'a'">
+                                            <div :key="index + 'a'" class="col-5">
                                                 <input v-model="item.alias" type="text"
-                                                    class="form-control form-control-sm" :placeholder="item.attribute">
+                                                       class="form-control form-control-sm" :placeholder="item.attribute">
                                             </div>
                                             <div>
                                                 <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')"
-                                                    @click.prevent="moveUp($event, index)" class="mr-2">
+                                                   class="mr-2" @click.prevent="moveUp($event, index)">
                                                     <font-awesome-icon icon="fa fa-arrow-up" />
                                                 </a>
                                                 <a v-if="index !== (value.length - 1)" href="#"
-                                                    :title="$t('actions.moveDown')"
-                                                    @click.prevent="moveDown($event, index)">
+                                                   :title="$t('actions.moveDown')"
+                                                   @click.prevent="moveDown($event, index)">
                                                     <font-awesome-icon icon="fa fa-arrow-down" />
                                                 </a>
                                             </div>
@@ -94,20 +95,20 @@
                 </template>
                 <template #modal-footer>
                     <b-btn variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-btn>
                     <b-btn variant="primary mr-1" size="sm" class="float-right" @click="okModal">
-                        {{ $t('common.ok') }}
+                        {{$t('common.ok')}}
                     </b-btn>
                 </template>
             </b-modal>
         </div>
         <div v-else>
             <v-select v-model="select2Value" :options="suggestions" :multiple="false" :taggable="true"
-                :close-on-select="true" @input="updated" />
+                      :close-on-select="true" @input="updated" />
         </div>
         <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
-            {{ $t('property.editValue') }}
+            {{$t('property.editValue')}}
         </b-link>
     </div>
 </template>
@@ -132,7 +133,7 @@ export default {
             originalValue: { default: [] },
             suggestions: [],
             fieldParameters: {}
-        }
+        };
     },
     computed: {
         displayValue() {
@@ -140,7 +141,7 @@ export default {
                 v?.alias ? `${v.attribute} => ${v.alias}` : v.attribute).join('\n') : '';
         },
         multiple() {
-            return this.fieldParameters.multiple !== false
+            return this.fieldParameters.multiple !== false;
         },
         params() {
             return this.fieldParameters;
@@ -165,7 +166,7 @@ export default {
         let value = this.value || [];
         if (value && Array.isArray(value) && value.length && typeof (value[0]) !== 'object') {
             // Handle legacy format
-            value = value.map(v => { return { attribute: v, alias: null } });
+            value = value.map(v => { return { attribute: v, alias: null }; });
         }
         this.updated(value);
         this.originalValue = value;
@@ -199,7 +200,7 @@ export default {
                 let sel = this.value ? [... this.value] : [];
                 this.suggestions.forEach((v) => {
                     if (sel.indexOf(v) === -1)
-                        sel.push({ attribute: v, alias: null })
+                        sel.push({ attribute: v, alias: null });
                 });
                 this.updated(sel);
             } else if (direction === 'all-left') {
@@ -210,7 +211,7 @@ export default {
                 // Prevent duplicated aliases
                 const repetition = this.value.filter(a => a.attribute === attribute || a.alias === attribute).length;
                 if (repetition > 0) {
-                    newItem['alias'] = `${attribute}${repetition}`
+                    newItem['alias'] = `${attribute}${repetition}`;
                 }
                 if (!this.value) {
                     this.updated([newItem]);
@@ -223,26 +224,26 @@ export default {
         },
         moveUp(e, index) {
             const sel = this.value ? [... this.value] : [];
-            const tmp = sel.splice(index, 1)[0]
-            sel.splice(index - 1, 0, tmp)
+            const tmp = sel.splice(index, 1)[0];
+            sel.splice(index - 1, 0, tmp);
             this.updated(sel);
         },
         moveDown(e, index) {
             const sel = this.value ? [... this.value] : [];
-            const tmp = sel.splice(index, 1)[0]
-            sel.splice(index + 1, 0, tmp)
+            const tmp = sel.splice(index, 1)[0];
+            sel.splice(index + 1, 0, tmp);
             this.updated(sel);
         },
         updated(val) {
             if (Array.isArray(val)) {
                 this.triggerUpdateEvent(this.message, this.field, val);
             } else {
-                this.triggerUpdateEvent(this.message, this.field, [val])
+                this.triggerUpdateEvent(this.message, this.field, [val]);
             }
             this.$forceUpdate();
         },
         okModal() {
-            this.originalValue = [... this.value]
+            this.originalValue = [... this.value];
             this.$refs.modal.hide();
         },
         cancelModal() {
@@ -256,7 +257,7 @@ export default {
             this.$refs.modal.show();
         }
     },
-}
+};
 </script>
 <style scoped>
 div.options {

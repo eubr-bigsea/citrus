@@ -21,7 +21,7 @@
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 export default {
     name: 'CheckboxesComponent',
@@ -30,7 +30,7 @@ export default {
     data() {
         return {
             internalValue: []
-        }
+        };
     },
     computed: {
         pairOptionValueList() {
@@ -40,7 +40,7 @@ export default {
                 return [
                     { key: true, value: this.$tc('common.yes') },
                     { key: false, value: this.$tc('common.no') },
-                ]
+                ];
             } else {
                 try {
                     if (typeof this.field.values === 'string' || this.field.values instanceof String) {
@@ -75,5 +75,5 @@ export default {
                 ev.filter(v => v !== null && v !== ''));
         },
     }
-}
+};
 </script>

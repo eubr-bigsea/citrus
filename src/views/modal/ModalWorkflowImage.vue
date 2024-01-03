@@ -19,12 +19,14 @@
                 </div>
             </div>
         </b-form>
-        <div slot="modal-footer">
-            <b-btn variant="primary btn-sm" class="float-right mr-1" :disabled="(workflow.name === '')"
-                   @click="okClicked">
-                {{$t('common.ok')}}
-            </b-btn>
-        </div>
+        <template #modal-footer>
+            <div>
+                <b-btn variant="primary btn-sm" class="float-right mr-1" :disabled="(workflow.name === '')"
+                       @click="okClicked">
+                    {{$t('common.ok')}}
+                </b-btn>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
@@ -36,13 +38,12 @@ export default {
     props: {
         workflow: { type: Object, default: () => { } },
     },
+    emits: ['update-value'],
     data() {
         return {
             query: null,
             results: null,
         };
-    },
-    mounted() {
     },
     methods: {
         async search() {
@@ -67,11 +68,11 @@ export default {
             this.$refs.modal.show();
         },
         select(inx) {
-            this.workflow.image = this.results[inx].urls.small + '#'; //Add author details
+            this.$emit('update-value', this.results[inx].urls.small + '#'); //Add author details
             this.$refs.modal.hide();
         }
     }
-}
+};
 </script>
 <style scoped>
     .thumb {

@@ -18,18 +18,16 @@
 </template>
 
 <script>
-import WebSocket from './components/WebSocket.vue';
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import axios from 'axios';
-import SideBar from './components/SideBar.vue';
+
 
 export default {
     name: 'App',
     components: {
         'l-navbar': Navbar,
-        'l-footer': Footer,
-        SideBar, WebSocket
+        'l-footer': Footer
     },
     computed: {
         isLoggedIn() {

@@ -26,9 +26,9 @@ export default {
                     ${this.$t('visualization.upperQuartile')}: <b>{point.q3}</b><br/>
                     ${this.$t('visualization.median')}: <b>{point.median}</b><br/>
                     ${this.$t('visualization.lowerQuartile')}: <b>{point.q1}</b><br/>
-                    ${this.$t('visualization.minimum')}: <b>{point.low}</b> `
+                    ${this.$t('visualization.minimum')}: <b>{point.low}</b> `;
             if (result['series'].length > 1){
-                result['series'][1]['name'] = this.$tc('visualization.outlier', 2)
+                result['series'][1]['name'] = this.$tc('visualization.outlier', 2);
                 result['series'][1]['tooltip']['headerFormat'] = `<b>${this.$tc('visualization.outlier', 1)}</b><br/>`;
                 result['series'][1]['marker']['lineColor'] = '#888';
             }

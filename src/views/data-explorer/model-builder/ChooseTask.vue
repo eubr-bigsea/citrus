@@ -15,7 +15,7 @@
                             </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{ $t('dataExplorer.task.classification') }}</h6>
+                            <h6>{{$t('dataExplorer.task.classification')}}</h6>
                             <small>
                                 Usar dados passados para predizer novas ocorrências.
                                 Detecção de fraudes, retenção de clientes, chance de venda, etc.
@@ -32,7 +32,7 @@
                             </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{ $t('dataExplorer.task.regression') }}</h6>
+                            <h6>{{$t('dataExplorer.task.regression')}}</h6>
                             <small>
                                 Buscar padrões escondidos nos dados e revelar grupos de itens que compartilham
                                 alguma semelhança no corportamento,
@@ -50,7 +50,7 @@
                             </font-awesome-layers>
                         </div>
                         <div class="col-md-9 text-center">
-                            <h6>{{ $t('dataExplorer.task.clustering') }}</h6>
+                            <h6>{{$t('dataExplorer.task.clustering')}}</h6>
                             <small>
                                 Buscar padrões escondidos nos dados e revelar grupos de itens que compartilham
                                 alguma semelhança no corportamento,
@@ -68,7 +68,6 @@
                                 <font-awesome-icon icon="circle" class="fa-solid fa-stack-2x" />
                                 <font-awesome-icon icon="bug" inverse />
                             </font-awesome-layers>
-
                         </div>
                         <div class="col-md-9 text-center">
                             <h6>Detecção de anomalias</h6>
@@ -120,7 +119,7 @@
             </div>
         </div>
         <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-secondary mt-4 pl-4 pr-4">
-            {{ $t('actions.back') }}
+            {{$t('actions.back')}}
         </router-link>
     </main>
 </template>
@@ -218,5 +217,5 @@ export default {
             this.$router.push({ name, params });
         }
     }
-}
+};
 </script>

@@ -35,10 +35,10 @@
     </b-modal>
 </template>
 <script>
-import axios from 'axios'
-import Notifier from '../mixins/Notifier.js'
+import axios from 'axios';
+import Notifier from '../mixins/Notifier.js';
 
-const standUrl = import.meta.env.VITE_STAND_URL
+const standUrl = import.meta.env.VITE_STAND_URL;
 
 export default {
     mixins: [Notifier],
@@ -85,7 +85,7 @@ export default {
                     filterPlaceholder: this.$t('common.filterPlaceholder')
                 }
             }
-        }
+        };
     },
     methods: {
         show(){
@@ -93,12 +93,12 @@ export default {
         },
         load(params) {
             this.$Progress.start();
-            params.sort = params.orderBy
+            params.sort = params.orderBy;
             params.asc = (params.ascending === 1 && params.orderBy) ? 'true' : 'false';
-            params.size = params.limit
-            params.name = params.query
-            params.workflow_id = this.workflowId
-            params.fields = "id,name,created,status"
+            params.size = params.limit;
+            params.name = params.query;
+            params.workflow_id = this.workflowId;
+            params.fields = "id,name,created,status";
 
             return axios.get(`${standUrl}/jobs`, { params })
                 .then(resp => {
@@ -110,5 +110,5 @@ export default {
         },
     }
 
-}
+};
 </script>

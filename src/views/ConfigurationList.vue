@@ -31,7 +31,7 @@
             </v-server-table>
         </div>
 
-        <b-modal id="modalConfig" ref="modalConfig" :title="currentRow? currentRow.name: ''" size="lg">
+        <b-modal id="modalConfig" ref="modalConfig" :title="currentRow ? currentRow.name : ''" size="lg">
             <div v-if="currentRow" class="row">
                 <div class="col-md-12">
                     <label>{{currentRow.description}}:</label>
@@ -54,14 +54,16 @@
                     </template>
                 </div>
             </div>
-            <div slot="modal-footer" class="w-100 text-right">
-                <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
-                    <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
-                </button>
-                <button class="ml-1 btn btn-sm btn-outline-dark" @click="cancel">
-                    {{$t('actions.cancel')}}
-                </button>
-            </div>
+            <template #modal-footer>
+                <div class="w-100 text-right">
+                    <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
+                        <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
+                    </button>
+                    <button class="ml-1 btn btn-sm btn-outline-dark" @click="cancel">
+                        {{$t('actions.cancel')}}
+                    </button>
+                </div>
+            </template>
         </b-modal>
     </main>
 </template>
@@ -139,7 +141,7 @@ export default {
             },
             editableValue: '',
             currentRow: null,
-        }
+        };
     },
 
     mounted() { },

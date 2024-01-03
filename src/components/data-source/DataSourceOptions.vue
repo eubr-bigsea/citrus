@@ -1,7 +1,9 @@
 <template>
     <b-list-group>
-        <b-list-group-item v-for="opt in options" :to="{ name: opt.route, params: { id: $route.params.id } }"
-            :active="selected === opt.route">{{ $tc(opt.title) }}</b-list-group-item>
+        <b-list-group-item v-for="opt, inx in options" :key="inx" :to="{ name: opt.route, params: { id: $route.params.id } }"
+                           :active="selected === opt.route">
+            {{$tc(opt.title)}}
+        </b-list-group-item>
     </b-list-group>
 </template>
 

@@ -52,7 +52,7 @@
 
                         <template #confirmed_at="props">
                             <div v-if="isConfirmedUser(props.row.confirmed_at)">
-                                {{props.row.confirmed_at | formatJsonDate}}
+                                {{$filters.formatJsonDate(props.row.confirmed_at)}}
                                 <font-awesome-icon icon="check" />
                             </div>
                             <button v-else

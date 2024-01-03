@@ -72,8 +72,8 @@ import Vue from 'vue';
 import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 
-import 'vue-prism-editor/dist/prismeditor.min.css'
-import { PrismEditor } from 'vue-prism-editor'
+import 'vue-prism-editor/dist/prismeditor.min.css';
+import { PrismEditor } from 'vue-prism-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-sql';

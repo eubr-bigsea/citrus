@@ -1,7 +1,7 @@
 <template>
     <div>
         <h3 class="border-bottom mb-3">
-            Test web socket (server: {{ standSocketIoPath }} namespace {{ namespace }})
+            Test web socket (server: {{standSocketIoPath}} namespace {{namespace}})
         </h3>
         <div class="row">
             <div class="col-md-3">
@@ -33,18 +33,18 @@
             <div class="col-md-6">
                 <div class=" border mt-1 p-2">
                     <strong>Messages from this page's socket</strong>
-                    <br />
+                    <br>
                     <button class="btn btn-sm btn-warning mt-3" @click="responses = []">
                         Clear messages
                     </button>
                     <pre class="pre-code"><code v-for="m, x in responses"
-                                            :key="x">{{ m }} <br></code></pre>
+                                                :key="x">{{m}} <br></code></pre>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class=" border mt-1 p-2">
-                    <strong>Messages from store's socket (room users/{{ user.id }})</strong>
-                    <br />
+                    <strong>Messages from store's socket (room users/{{user.id}})</strong>
+                    <br>
                     <button class="btn btn-sm btn-warning mt-3" @click="responsesFromStore = []">
                         Clear messages
                     </button>
@@ -52,7 +52,7 @@
                         Send hello from store
                     </button -->
                     <pre class="pre-code"><code v-for="m, x in responsesFromStore"
-                                            :key="x">{{ m }} <br></code></pre>
+                                                :key="x">{{m}} <br></code></pre>
                 </div>
             </div>
         </div>

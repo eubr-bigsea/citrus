@@ -3,7 +3,7 @@ const setDatetimeOptions =  function(options) {
     options.xAxis.type = 'datetime';
 
     return options;
-}
+};
 
 export {
     setDatetimeOptions

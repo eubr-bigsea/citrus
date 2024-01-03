@@ -71,7 +71,6 @@ const DashboardBuilder = () => import(/* webpackChunkName: "group-dashboard" */ 
 const WebSocketPing = () => import(/* webpackChunkName: "group-util" */'./views/WebSocketPing.vue');
 const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */'./views/JsPlumbSandbox.vue');
 const OpenIdSandbox = () => import(/* webpackChunkName: "group-util" */'./views/OpenIdSandbox.vue');
-const QueryEdit = () => import(/* webpackChunkName: "group-util" */ './views/query/QueryEdit.vue');
 
 const NotificationList = () => import(/* webpackChunkName: "group-notification" */ './views/NotificationList.vue');
 
@@ -133,15 +132,6 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.home', 1]
-            }
-        },
-        {
-            path: '/query',
-            name: 'queryEdit',
-            component: QueryEdit,
-            meta: {
-                requiresAuth: true,
-                title: ['titles.query', 1]
             }
         },
         {
@@ -860,7 +850,7 @@ let router = new VueRouter({
 });
 router.onError(error => {
     if (/loading chunk \d* failed./i.test(error.message)) {
-        window.location.reload()
+        window.location.reload();
     }
 });
 export default router;

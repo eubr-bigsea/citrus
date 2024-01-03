@@ -52,7 +52,7 @@ export default {
                 lang: this.$root.$i18n.locale,
                 disabled: false,
                 ids: idsClassification.concat(idsRegression)
-            }
+            };
             const resp = await axios.get(`${tahitiUrl}/operations`,
                 { params });
             this.operations = new OperationList(resp.data);
@@ -102,7 +102,7 @@ export default {
             sample.setProperty('value', 10000);
             tasks.push(sample);
 
-            flows.push(sample.inputFrom(dataReader, 'input data', 'output data'))
+            flows.push(sample.inputFrom(dataReader, 'input data', 'output data'));
 
             /*
                 const missingCategorical = this.operations.getOperationBySlug('clean-missing')
@@ -122,7 +122,7 @@ export default {
                 tasks.push(missingNumeric);
                 flows.push(missingNumeric.inputFrom(next, 'input data', nextPort));
                 next = missingNumeric;
-                nextPort = 'output result'
+                nextPort = 'output result';
             }
 
 
@@ -151,7 +151,7 @@ export default {
                     .createTask({ name: 'Normalizar números (z-score)' });
 
                 stdScaler.setProperty('attribute', numericFeatures);
-                stdScaler.setProperty('alias', 'feat_num_normalizadas') //numericFeatures.map((n) => n + '_normalized').join(', '));
+                stdScaler.setProperty('alias', 'feat_num_normalizadas'); //numericFeatures.map((n) => n + '_normalized').join(', '));
                 features = features.filter(f => numericFeatures.indexOf(f) === -1);
                 features.push('feat_num_normalizadas');
                 stdScaler.setProperty('with_mean', '1');
@@ -160,7 +160,7 @@ export default {
                 tasks.push(stdScaler);
                 flows.push(stdScaler.inputFrom(next, 'input data', nextPort));
                 next = stdScaler;
-                nextPort = 'output data'
+                nextPort = 'output data';
             }
 
             const splitKFold = this.operations.getOperationBySlug('split-k-fold')
@@ -198,7 +198,7 @@ export default {
 
                 const linearRegressor = this.operations.getOperationBySlug('linear-regression-model')
                     .createTask({ name: 'Regressão linear (regularização R2 - Ridge)' });
-                linearRegressor.setProperty('features', ['features'])
+                linearRegressor.setProperty('features', ['features']);
                 linearRegressor.setProperty('label', [label]);
                 linearRegressor.setProperty('prediction', 'prediction');
                 linearRegressor.setProperty('elastic_net', '1.0');
@@ -211,7 +211,7 @@ export default {
                     .createTask({ name: 'Salvar modelo random forest regressor' });
                 saveRandomForestRegressor.setProperty('storage', defaultStorage);
                 saveRandomForestRegressor.setProperty('name', `random_forest_regressor_35.model`);
-                saveRandomForestRegressor.setProperty('write_mode', 'OVERWRITE')
+                saveRandomForestRegressor.setProperty('write_mode', 'OVERWRITE');
                 tasks.push(saveRandomForestRegressor);
                 flows.push(saveRandomForestRegressor.inputFrom(randomForestRegressor, 'models', 'model'));
 
@@ -219,7 +219,7 @@ export default {
                     .createTask({ name: 'Salvar modelo de regressão linear' });
                 saveLinearRegressor.setProperty('storage', defaultStorage);
                 saveLinearRegressor.setProperty('name', `linear_regressor_35.model`);
-                saveLinearRegressor.setProperty('write_mode', 'OVERWRITE')
+                saveLinearRegressor.setProperty('write_mode', 'OVERWRITE');
                 tasks.push(saveLinearRegressor);
                 flows.push(saveLinearRegressor.inputFrom(linearRegressor, 'models', 'model'));
 
@@ -242,14 +242,14 @@ export default {
                     .createTask({ name: 'Salvar modelo de classificação random forest' });
                 saveRandomForestClassifier.setProperty('storage', defaultStorage);
                 saveRandomForestClassifier.setProperty('name', `logistic_regression_35.model`);
-                saveRandomForestClassifier.setProperty('write_mode', 'OVERWRITE')
+                saveRandomForestClassifier.setProperty('write_mode', 'OVERWRITE');
                 tasks.push(saveRandomForestClassifier);
                 flows.push(saveRandomForestClassifier.inputFrom(randomForestClassifier, 'models', 'model'));
 
 
                 const logisticRegression = this.operations.getOperationBySlug('logistic-regression-classifier-model')
                     .createTask({ name: 'Regressão logística' });
-                logisticRegression.setProperty('features', ['features'])
+                logisticRegression.setProperty('features', ['features']);
                 logisticRegression.setProperty('label', [label]);
                 logisticRegression.setProperty('perform_cross_validation', 'true');
                 logisticRegression.setProperty('prediction', 'prediction');
@@ -263,7 +263,7 @@ export default {
                     .createTask({ name: 'Salvar modelo de regressão logística' });
                 saveLogisticRegression.setProperty('storage', defaultStorage);
                 saveLogisticRegression.setProperty('name', `logistic_regression_35.model`);
-                saveLogisticRegression.setProperty('write_mode', 'OVERWRITE')
+                saveLogisticRegression.setProperty('write_mode', 'OVERWRITE');
                 tasks.push(saveLogisticRegression);
                 flows.push(saveLogisticRegression.inputFrom(logisticRegression, 'models', 'model'));
             }
@@ -275,5 +275,5 @@ export default {
             this.workflow = new Workflow({ id: 1, name: 'Teste com Modelos', platform, tasks, flows });
         }
     },
-}
+};
 </script>

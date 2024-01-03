@@ -34,10 +34,10 @@ export default {
         async getThornProfile() {
             const user = await this.$openIdService.getProfile(); // eslint-disable-line no-unused-vars
             const token = await this.$openIdService.getAccessToken();
-            const headers = { 'Authorization': token }
+            const headers = { 'Authorization': token };
             const resp = await axios.get('/api/v1/thorn/users/me', { headers });
-            this.$store.dispatch('setUser', { user: resp.data.data[0], token })
+            this.$store.dispatch('setUser', { user: resp.data.data[0], token });
         },
     },
-}
+};
 </script>
