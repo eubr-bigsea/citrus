@@ -1,8 +1,8 @@
 <template>
     <div class="w-100">
         <div class="float-left">
-            <button class="btn btn-sm btn-light" :title="$t('actions.save')"
-                @click="handleShowModal"><font-awesome-icon icon="fa fa-save" />
+            <button class="btn btn-sm btn-light" :title="$t('actions.save')" @click="handleShowModal"><font-awesome-icon
+                    icon="fa fa-save" />
                 {{ $t('actions.saveAs') }}
             </button>
         </div>
@@ -16,17 +16,22 @@
             <button class="btn btn-sm" :title="$t('actions.add')" @click="emit('on-add', task.id)">
                 <font-awesome-icon icon="fa fa-plus" /></button>
             <button class="btn btn-sm" :title="$t('actions.indent')" @click="emit('on-indent', task.id)">
-                <font-awesome-icon icon="fa fa-indent" /></button>
+                <font-awesome-icon icon="fa fa-indent" />
+            </button>
             <button class="btn btn-sm btn-success" :title="$t('actions.execute')" @click="emit('on-execute', task.id)">
                 <font-awesome-icon icon="fa fa-caret-right" /></button>
         </div>
-        <sql-editor-save-as-modal ref="modal" :task="task"/>
+        <div v-if="status" class="text-center text-info">
+            <small>{{status}}</small>
+        </div>
+        <sql-editor-save-as-modal ref="modal" :task="task" />
     </div>
 </template>
 <script setup>
 import { ref } from 'vue';
 import SqlEditorSaveAsModal from './SqlEditorSaveAsModal.vue';
 
+const status = ref(false);
 const emit = defineEmits(['on-add', 'on-remove', 'on-move', 'on-execute']);
 const props = defineProps({
     showMoveUp: { type: Boolean, default: true },
@@ -38,6 +43,12 @@ const modal = ref();
 const handleShowModal = () => {
     modal.value.show()
 }
-
+const showStatus = (state) => {
+    status.value = state;
+    setTimeout(() => {
+        status.value = null;
+    }, 2000);
+}
+defineExpose({ showStatus })
 </script>
 <style scoped></style>

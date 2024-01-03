@@ -15,8 +15,8 @@
                             <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                                 :placeholder="$tc('common.name')" maxlength="100">
 
-                            <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc" class="mt-3" value="true"
-                                unchecked-value="false">
+                            <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc" class="mt-3"
+                                value="true" unchecked-value="false">
                                 Usar o Hive Warehouse Connector
                             </b-form-checkbox>
                             <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
@@ -89,21 +89,23 @@
             <div class="layout-center pt-2">
                 <h4>Comandos ({{ workflowObj.sqls?.length }})</h4>
                 <div class="scroll-area commands">
-                    <div v-for="sql, i in workflowObj.sqls" class="mb-1 editors" :key="sql.id">
-                        <div>
-                            Nome: <input class="form-control form-control-sm mb-1" maxlength="50" v-model="sql.name"/>
+                    <transition-group name="fade" @after-enter="handleCodeAppear">
+                        <div v-for="sql, i in workflowObj.sqls" class="mb-1 editors" :key="sql.id">
+                            <div>
+                                Nome: <input class="form-control form-control-sm mb-1" maxlength="50" v-model="sql.name" />
+                            </div>
+                            <div class="button-toolbar">
+                                <sql-editor-toolbar ref="toolbar" :task="sql" :show-move-up="i > 0" :data-task="sql.id"
+                                    :show-move-down="i < workflowObj.sqls.length - 1" @on-move="handleMoveSql"
+                                    @on-remove="handleRemoveSql" @on-add="handleAddSql" @on-indent="handleIndent(sql.id)" />
+                            </div>
+                            <div class="editor">
+                                <sql-editor :query="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
+                                    ref="codeEditor" :tables="dataSources" :functions="functions" :data-task="sql.id"
+                                    :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
+                            </div>
                         </div>
-                        <div class="button-toolbar">
-                            <sql-editor-toolbar :task="sql" :show-move-up="i > 0"
-                                :show-move-down="i < workflowObj.sqls.length - 1" @on-move="handleMoveSql"
-                                @on-remove="handleRemoveSql" @on-add="handleAddSql" @on-indent="handleIndent(i)" />
-                        </div>
-                        <div class="editor">
-                            <sql-editor :query="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
-                                ref="codeEditor" :tables="dataSources" :functions="functions" 
-                                :format="{language: 'spark',  tabWidth: 2,  keywordCase: 'upper', linesBetweenQueries: 2}"/>
-                        </div>
-                    </div>
+                    </transition-group>
                 </div>
             </div>
             <div class="layout-help">
@@ -121,23 +123,22 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from "vue";
-import { format } from 'sql-formatter';
+import { onBeforeMount, ref } from "vue";
 
+import { debounce } from "@/util.js";
+import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
+import axios from 'axios';
+import io from 'socket.io-client';
+import Vue from 'vue';
+import VueSelect from 'vue-select';
 import SqlEditor from './SqlEditor.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
-import ModalPreviewDataSource from '../../modal/ModalPreviewDataSource.vue';
-import { debounce } from "../../../util.js";
-import Vue from 'vue';
-import axios from 'axios';
-import VueSelect from 'vue-select';
-import io from 'socket.io-client';
 
 import { getCurrentInstance } from 'vue';
 
-import useNotifier from '../../../composables/useNotifier.js';
-import useDataSource from '../../../composables/useDataSource.js';
+import useDataSource from '@/composables/useDataSource.js';
+import useNotifier from '@/composables/useNotifier.js';
 
 import { SqlBuilderWorkflow } from '../entities.js';
 
@@ -146,7 +147,7 @@ const router = vm.proxy.$router;
 const route = vm.proxy.$route;
 
 const progress = vm.proxy.$Progress;
-const store = vm.proxy.$store;
+//const store = vm.proxy.$store;
 const i18n = vm.proxy.$i18n.vm;
 
 const { success, error } = useNotifier(vm.proxy);
@@ -290,8 +291,8 @@ const load = async () => {
             router.push({ name: 'index-explorer' });
             return;
         }
-        if (!workflowObj.value.forms){
-            workflowObj.value.forms = {'$meta': {value: {}}};
+        if (!workflowObj.value.forms) {
+            workflowObj.value.forms = { '$meta': { value: {} } };
         }
         updateDataSources(false);
         loadClusters();
@@ -464,12 +465,19 @@ const handleChangeAlias = () => {
     isDirty.value = true;
     updateDataSources(true);
 }
-const handleIndent = (index) =>{
-    //const task = workflowObj.value.getTaskById(taskId);
-    //if (task) {
-    //    task.forms.query.value = format(task.forms.query.value, { language: 'sql' });
-    //}
-    codeEditor.value[index].indent();
+const toolbar = ref();
+
+const handleIndent = (taskId) => {
+    const currentToolbar = toolbar.value.find(el => el.$el.dataset.task === taskId);
+    const currentEditor = codeEditor.value.find(el => el.$el.dataset.task === taskId);
+    if (currentToolbar && currentEditor) {
+        currentToolbar.showStatus('código formatado');
+        currentEditor.indent();
+    }
+}
+const handleCodeAppear = (el, done) => {
+    el.scrollIntoView({ behavior: "smooth" });
+
 }
 </script>
 
@@ -538,5 +546,5 @@ const handleIndent = (index) =>{
     background: white;
     width: 100%;
     overflow-x: hidden;
-    }
+}
 </style>

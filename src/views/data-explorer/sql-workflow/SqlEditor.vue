@@ -5,27 +5,29 @@
  
 <script setup>
 
-import { sql } from '@codemirror/lang-sql'
+import { debounce } from "@/util.js"
 import { autocompletion, completionKeymap } from '@codemirror/autocomplete'
-import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands'
-import { defaultHighlightStyle, foldKeymap, syntaxHighlighting } from '@codemirror/language'
+import {
+    defaultKeymap, history, historyKeymap,
+    indentWithTab
+} from '@codemirror/commands'
+import { sql } from '@codemirror/lang-sql'
+import {
+    defaultHighlightStyle, foldKeymap, indentUnit,
+    syntaxHighlighting
+} from '@codemirror/language'
 import { searchKeymap } from '@codemirror/search'
 import { EditorView, keymap, lineNumbers } from '@codemirror/view'
-import { debounce } from "../../../util.js";
-import { indentUnit } from "@codemirror/language";
-import {
-    ref, reactive, defineAsyncComponent, computed, watch, onMounted,
-    defineExpose, defineProps, defineEmits
-} from "vue";
+import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue"
 
-import { format } from 'sql-formatter';
+import { format } from 'sql-formatter'
 
 const emit = defineEmits(['update']);
 const props = defineProps({
     query: { type: String, default: () => '' },
     tables: { type: Array, default: () => [] },
     functions: { type: Array, default: () => [] },
-    format: {type: Object, default: () => {language: 'sql'}},
+    format: { type: Object, default: () => { language: 'sql' } },
 });
 
 const container = ref();
@@ -107,9 +109,9 @@ const sqlCompletion = (context) => {
 const indent = () => {
     const formatted = format(props.query, props.format);
     editor.value.dispatch({
-        changes: {from: 0, to: editor.value.state.doc.length, insert: formatted}
+        changes: { from: 0, to: editor.value.state.doc.length, insert: formatted }
     });
-  
+
 }
 
 /* Events */
@@ -148,7 +150,5 @@ onMounted(() => {
     });
 });
 defineExpose({ focus, indent })
-
-
 </script>
  

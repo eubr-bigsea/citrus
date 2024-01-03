@@ -4,7 +4,7 @@
             <div class="p-2">
                 <p>
                     Para uma lista mais completa, consulte
-                    <a href="https://spark.apache.org/docs/latest/api/sql/index.html"> a documentação do Apache Spark.</a>
+                    <a href="https://spark.apache.org/docs/latest/api/sql/index.html" target="_blank"> a documentação do Apache Spark.</a>
                 </p>
                 {{ customFunctions }}
                 <!--
@@ -37,7 +37,7 @@
     </b-tabs>
 </template>
 <script setup>
-import { ref, defineProps } from 'vue'
+import { defineProps } from 'vue'
 
 const props = defineProps({
     dataSources: { type: Array, default: () => [] },

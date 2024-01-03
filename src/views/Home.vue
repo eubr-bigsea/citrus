@@ -21,7 +21,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import axios from 'axios';
-import HomeCard from '../components/home-card/HomeCard.vue';
+import HomeCard from '@/components/home-card/HomeCard.vue';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;

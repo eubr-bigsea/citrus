@@ -2,8 +2,7 @@
     <b-modal ref="modal" button-size="sm" size="lg" :title="$t('actions.save')" @ok="handleSubmit" :ok-disabled="!valid">
         <div class="row">
             <div class="col-6">
-                <b-form-checkbox v-model.integer="task.forms.save.value" value="1"
-                    unchecked-value="0">
+                <b-form-checkbox v-model.integer="task.forms.save.value" value="1" unchecked-value="0">
                     Salvar como nova fonte de dados
                 </b-form-checkbox>
                 <div v-if="task.forms.save.value == 1" class="row">
@@ -45,8 +44,8 @@
 </template>
 
 <script setup>
-import { ref, defineExpose, onBeforeMount, defineProps } from 'vue'
-import axios from 'axios'
+import axios from 'axios';
+import { defineExpose, defineProps, onBeforeMount, ref } from 'vue';
 const handleSubmit = () => { }
 const modal = ref({})
 const valid = ref(true);
@@ -54,12 +53,6 @@ const valid = ref(true);
 const props = defineProps({
     task: { type: Object, required: true }
 });
-/*
-const name = ref();
-const storage = ref();
-const path = ref()
-const description = ref()
-const tags = ref([])*/
 
 const storages = ref([])
 const loadStorages = async () => {

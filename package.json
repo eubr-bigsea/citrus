@@ -44,6 +44,7 @@
     "resumablejs": "^1.1.0",
     "snarkdown": "^2.0.0",
     "socket.io-client": "^2.4.0",
+    "sql-formatter": "^15.0.2",
     "vue": "^2.7.14",
     "vue-context-menu": "^2.0.6",
     "vue-grid-layout": "^2.3.12",
