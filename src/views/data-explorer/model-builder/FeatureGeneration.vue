@@ -50,5 +50,5 @@
 <script>
 export default {
 
-}
+};
 </script>

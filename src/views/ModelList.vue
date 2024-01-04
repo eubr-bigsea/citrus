@@ -17,7 +17,7 @@
                     {{$t(`model.status_${props.row.deployment_status}`)}}
                 </template>
                 <template #created="props">
-                    {{props.row.created | formatJsonDate}}
+                    {{$filters.formatJsonDate(props.row.created)}}
                 </template>
                 <template #actions="props">
                     <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
@@ -128,7 +128,7 @@ export default {
             case 'DEPLOYED':
                 return 'text-success';
             case 'PENDING':
-                return 'text-warning'
+                return 'text-warning';
             }
         },
         loggedUserIsOwnerOrAdmin(model) {

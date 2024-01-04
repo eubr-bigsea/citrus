@@ -20,11 +20,13 @@
                 </tr>
             </table>
         </div>
-        <div slot="modal-footer" class="w-100">
-            <b-btn variant="secondary_sm" class="float-right btn-outline-secondary" @click="close">
-                {{$t('actions.cancel')}}
-            </b-btn>
-        </div>
+        <template #modal-footer>
+            <div class="w-100">
+                <b-btn variant="secondary_sm" class="float-right btn-outline-secondary" @click="close">
+                    {{$t('actions.cancel')}}
+                </b-btn>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
@@ -32,7 +34,7 @@ export default {
     props: {
         history: { type: Array, default: () => [] },
     },
-    emit: ['onrestore-workflow'],
+    emits: ['onrestore-workflow',],
     methods: {
         restore(version) {
             this.$emit('onrestore-workflow', version);
@@ -44,5 +46,5 @@ export default {
             this.$refs.modal.hide();
         }
     }
-}
+};
 </script>

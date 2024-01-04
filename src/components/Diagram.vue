@@ -1,26 +1,26 @@
 <template>
     <div :class="'platform-' + platform" class="diagram" oncontextmenu="return false;">
         <diagram-toolbar v-if="showToolbar" class="diagram-toolbar" :selected="selectedElements" :copied-tasks="copiedTasks"
-            :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
-            @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
-            @onremove-tasks="removeSelectedTasks" />
+                         :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
+                         @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
+                         @onremove-tasks="removeSelectedTasks" />
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
-            class="lemonade-container not-selectable" @click="diagramClick">
+             class="lemonade-container not-selectable" @click="diagramClick">
             <!--
                  <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle" />
                 -->
             <div class="scroll-area">
                 <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
-                    :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
-                    @drop="drop" @dragover="allowDrop">
+                     :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
+                     @drop="drop" @dragover="allowDrop">
                     <template v-if="workflow.tasks.length > 0">
                         <task-component v-for="task of workflow.tasks"
-                            :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task" :instance="instance"
-                            :enable-context-menu="editable" :draggable="editable"
-                            :show-decoration="showTaskDecoration || showTaskDecorationInternal" @onstart-flow="startFlow"
-                            @onstop-flow="stopFlow" @onset-isDirty="setDirty" @ontask-ready="taskReady"
-                            @onkeyboard-keyup="keyboardKeyUpHandler" @onclick-task="clickTask" @onshow-result="showResult"
-                            @onremove-task="removeTask" />
+                                        :key="`${$parent.version ? $parent.version : 0}/${task.id}`" :task="task" :instance="instance"
+                                        :enable-context-menu="editable" :draggable="editable"
+                                        :show-decoration="showTaskDecoration || showTaskDecorationInternal" @onstart-flow="startFlow"
+                                        @onstop-flow="stopFlow" @onset-is-dirty="setDirty" @ontask-ready="taskReady"
+                                        @onkeyboard-keyup="keyboardKeyUpHandler" @onclick-task="clickTask" @onshow-result="showResult"
+                                        @onremove-task="removeTask" @onupdate-task="(prop, value) => task[prop] = value" />
                         <div ref="ghostSelect" class="ghost-select">
                             <span />
                         </div>
@@ -30,12 +30,12 @@
                     </template>
                     <div v-else>
                         <div class="no-task-diagram">
-                            {{ $t('workflow.noTasks') }}
+                            {{$t('workflow.noTasks')}}
                         </div>
                     </div>
                 </div>
                 <div v-else>
-                    <font-awesome-icon icon="spinner" pulse class="icon" /> {{ $t('common.loading') }}
+                    <font-awesome-icon icon="spinner" pulse class="icon" /> {{$t('common.loading')}}
                 </div>
             </div>
         </div>
@@ -67,18 +67,6 @@ const DiagramComponent = Vue.extend({
         'task-component': TaskComponent,
         'diagram-toolbar': DiagramToolbar,
     },
-    emit: ['addFlow', 'addTask', 'onblur-selection', 'onclear-selection',
-        'onclick-task', 'onkeyboard-keyup',
-        'onremove-task', 'onset-isDirty', 'onshow-deploy', 'onshow-result',
-        'removeFlow'],
-        /*
-    emit: [
-        'oncopy-tasks', 'onpaste-tasks', 'onremove-tasks',
-        'ontoggle-tasksPanel', 'ontoggle-dataSourcesPanel',
-        'ontoggle-darkMode', 'onzoom',
-        'oncopy-tasks', 'onpaste-tasks', 'onremove-tasks', 'ontoggle-task',
-        'onshow-deploy', 'onclear-selection', 'addTask', 'onclick-task'
-    ],*/
     props: {
         formContainer: {
             type: Boolean,
@@ -141,6 +129,11 @@ const DiagramComponent = Vue.extend({
             type: Boolean,
         }
     },
+    emits: [
+        'onclear-selection', 'addFlow', 'onclear-selection', 'add-task',
+        'onkeyboard-keyup', 'onblur-selection', 'removeFlow', 'onshow-deploy',
+        'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task'
+    ],
 
     data() {
         return {
@@ -172,6 +165,7 @@ const DiagramComponent = Vue.extend({
             darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') == "true" : false
         };
     },
+
     computed: {
         flows() {
             if (this.renderFrom) {
@@ -326,7 +320,7 @@ const DiagramComponent = Vue.extend({
         },
 
         setDirty(value) {
-            this.$emit('onset-isDirty', value);
+            this.$emit('onset-is-dirty', value);
         },
         clickTask(taskComponent, showProperties) {
             if (!this.selectedElements.includes(taskComponent.task.id)) {
@@ -413,7 +407,7 @@ const DiagramComponent = Vue.extend({
                 task.name = `${task.operation.name} ${this.workflow.tasks.length}`;
             }
             task.enabled = true;
-            this.$emit('addTask', task);
+            this.$emit('add-task', task);
         },
 
         removeTask(task) {
@@ -429,10 +423,7 @@ const DiagramComponent = Vue.extend({
 
             //console.debug(this.instance.getConnections());
             this.instance.repaintEverything();
-            const inx = this.workflow.tasks.indexOf(task);
-            if (inx >= 0) {
-                this.workflow.tasks.splice(inx, 1);
-            }
+            this.$emit('remove-task', task);
 
             this.clearSelection();
             this.instance.repaintEverything();
@@ -744,51 +735,51 @@ const DiagramComponent = Vue.extend({
 
 
             switch (ev.code) {
-                case 'Delete':
-                    if (task) {
-                        this.removeTask(task);
-                    } else if (tasks.length) {
-                        this.deleteTasks(tasks);
-                    }
-                    break;
-                case 'ArrowRight':
-                    if (task) {
-                        this.moveTask({task, position: 'right', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'right', inc});
-                    }
-                    break;
-                case 'ArrowLeft':
-                    if (task) {
-                        this.moveTask({task, position: 'left', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'left', inc});
-                    }
-                    break;
-                case 'ArrowUp':
-                    if (task) {
-                        this.moveTask({task, position: 'up', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'up', inc});
-                    }
-                    break;
-                case 'ArrowDown':
-                    if (task) {
-                        this.moveTask({task, position: 'down', inc});
-                    } else if (tasks.length) {
-                        this.moveTasks({tasks, position: 'down', inc});
-                    }
-                    break;
-                case 'KeyC':
-                    if (ev.ctrlKey) {
-                        this._copy();
-                    }
-                    break;
-                case 'KeyV':
-                    if (ev.ctrlKey) {
-                        this._paste();
-                    }
-                    break;
+            case 'Delete':
+                if (task) {
+                    this.removeTask(task);
+                } else if (tasks.length) {
+                    this.deleteTasks(tasks);
+                }
+                break;
+            case 'ArrowRight':
+                if (task) {
+                    this.moveTask({task, position: 'right', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'right', inc});
+                }
+                break;
+            case 'ArrowLeft':
+                if (task) {
+                    this.moveTask({task, position: 'left', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'left', inc});
+                }
+                break;
+            case 'ArrowUp':
+                if (task) {
+                    this.moveTask({task, position: 'up', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'up', inc});
+                }
+                break;
+            case 'ArrowDown':
+                if (task) {
+                    this.moveTask({task, position: 'down', inc});
+                } else if (tasks.length) {
+                    this.moveTasks({tasks, position: 'down', inc});
+                }
+                break;
+            case 'KeyC':
+                if (ev.ctrlKey) {
+                    this._copy();
+                }
+                break;
+            case 'KeyV':
+                if (ev.ctrlKey) {
+                    this._paste();
+                }
+                break;
             }
 
             self.instance.repaintEverything();
@@ -840,26 +831,26 @@ const DiagramComponent = Vue.extend({
             let v = 0;
 
             switch (position) {
-                case 'right':
-                    v = parseInt(elem.style.left, 10) + inc;
-                    elem.style.left = `${v}px`;
-                    task.left = v;
-                    break;
-                case 'left':
-                    v = parseInt(elem.style.left, 10) - inc;
-                    elem.style.left = `${v}px`;
-                    task.left = v;
-                    break;
-                case 'up':
-                    v = parseInt(elem.style.top, 10) - inc;
-                    elem.style.top = `${v}px`;
-                    task.top = v;
-                    break;
-                case 'down':
-                    v = parseInt(elem.style.top, 10) + inc;
-                    elem.style.top = `${v}px`;
-                    task.top = v;
-                    break;
+            case 'right':
+                v = parseInt(elem.style.left, 10) + inc;
+                elem.style.left = `${v}px`;
+                task.left = v;
+                break;
+            case 'left':
+                v = parseInt(elem.style.left, 10) - inc;
+                elem.style.left = `${v}px`;
+                task.left = v;
+                break;
+            case 'up':
+                v = parseInt(elem.style.top, 10) - inc;
+                elem.style.top = `${v}px`;
+                task.top = v;
+                break;
+            case 'down':
+                v = parseInt(elem.style.top, 10) + inc;
+                elem.style.top = `${v}px`;
+                task.top = v;
+                break;
             }
         },
         moveTasks({tasks, position, inc}) {
@@ -883,8 +874,9 @@ const DiagramComponent = Vue.extend({
             copiedTask.z_index = ++self.currentZIndex;
             copiedTask.name = `${copiedTask.operation.name} ${self.workflow.tasks.length}`;
             copiedTask.enabled = true;
-
-            this.$emit('addTask', copiedTask);
+            
+            this.$emit('add-task', copiedTask);
+            
             return copiedTask;
         },
 

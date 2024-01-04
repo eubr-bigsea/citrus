@@ -15,7 +15,7 @@
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 export default {
     name: 'TagComponent',
@@ -60,7 +60,7 @@ export default {
             this.value = this.field['default'];
         }
     },
-}
+};
 
 </script>
 <style scoped>

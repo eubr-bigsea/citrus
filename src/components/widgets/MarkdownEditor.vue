@@ -27,18 +27,19 @@
                     <Markdown :text="code" />
                 </div>
             </div>
-            <div slot="modal-footer"
-                 class="w-100 text-right">
-                <b-btn variant="primary"
-                       class="mr-1"
-                       @click="okClicked">
-                    {{$t('common.ok')}}
-                </b-btn>
-                <b-btn variant="secondary"
-                       @click="cancelClicked">
-                    {{$t('actions.cancel')}}
-                </b-btn>
-            </div>
+            <template #modal-footer>
+                <div class="w-100 text-right">
+                    <b-btn variant="primary"
+                           class="mr-1"
+                           @click="okClicked">
+                        {{$t('common.ok')}}
+                    </b-btn>
+                    <b-btn variant="secondary"
+                           @click="cancelClicked">
+                        {{$t('actions.cancel')}}
+                    </b-btn>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
@@ -55,7 +56,7 @@ export default {
         return {
             displayValue: '',
             code: '',
-        }
+        };
     },
     methods: {
         openModal() {
@@ -70,7 +71,7 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style scoped>
     .editor {

@@ -78,12 +78,12 @@ export default {
                 })
                 .catch(err => {
                     self.error(err.response?.data?.message);
-                    alert(JSON.stringify(err))
+                    alert(JSON.stringify(err));
                     self.showSuccess = false;
                 });
         }
     }
-}
+};
 </script>
 <style scoped>
     label {

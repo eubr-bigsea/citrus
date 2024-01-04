@@ -1,19 +1,19 @@
 <template>
     <div>
         <div class="text-center font-weight-bold">
-            {{ label }}
+            {{label}}
         </div>
         <div>
             <b-form-group>
                 <b-radio v-model.number="innerSelectionType" value="1">
-                    {{ $t('widgets.join.allAttributesWithPrefix') }}
+                    {{$t('widgets.join.allAttributesWithPrefix')}}
                 </b-radio>
                 <input v-if="innerSelectionType === 1" v-model="selectionPrefix" type="text" class="form-control">
                 <b-radio v-model.number="innerSelectionType" class="mt-2" value="3">
-                    {{ $t('widgets.join.noAttributes') }}
+                    {{$t('widgets.join.noAttributes')}}
                 </b-radio>
                 <b-radio v-model.number="innerSelectionType" class="mt-2" value="2">
-                    {{ $t('widgets.join.selectAttributes') }}
+                    {{$t('widgets.join.selectAttributes')}}
                 </b-radio>
             </b-form-group>
             <div v-if="innerSelectionType === 2" class="text-center">
@@ -29,12 +29,12 @@
                     <tr class="table-secondary">
                         <th style="width: 10px">
                             <input type="checkbox" class="checkbox custom-checkbox" :checked="allSelected"
-                                @change="toggleChecks">
+                                   @change="toggleChecks">
                         </th>
                         <th style="width: 100%">
                             <input ref="prefix" type="text" maxlength="20" class="form-control"
-                                :placeholder="$t('actions.renameSelected')" :disabled="checked.length === 0"
-                                @keyup="changePrefix($event)">
+                                   :placeholder="$t('actions.renameSelected')" :disabled="checked.length === 0"
+                                   @keyup="changePrefix($event)">
                         </th>
                         <th style="max-width: 20px">
                             <small>Use</small>
@@ -45,12 +45,12 @@
                     <tr v-for="(s, index) in selectList" :key="index" class="inputs">
                         <td>
                             <input v-model="checked" type="checkbox" class="checkbox custom-checkbox" :value="index"
-                                :title="$t('actions.edit')">
+                                   :title="$t('actions.edit')">
                         </td>
                         <td>
                             <b-form-input v-model="s.alias" required maxlength="100" class="form-control"
-                                @keyup="uncheck(index)" />
-                            <small>{{ s.attribute }}</small>
+                                          @keyup="uncheck(index)" />
+                            <small>{{s.attribute}}</small>
                         </td>
                         <td style="width: 20px">
                             <b-form-checkbox v-model="s.select" name="check-button" switch />
@@ -65,10 +65,10 @@
 import { debounce } from '../../util.js';
 export default {
     props: {
-        suggestions: { type: Array, default: function () { return [] } },
+        suggestions: { type: Array, default: function () { return []; } },
         label: { type: String, default: () => null },
         prefix: { type: String, default: () => null },
-        selected: { type: Array, default: function () { return [] } },
+        selected: { type: Array, default: function () { return []; } },
         selectionType: { type: Number, default: () => 1 },
     },
     data() {
@@ -78,7 +78,7 @@ export default {
             selectList: [],
             selectionPrefix: null,
             innerSelectionType: 1,
-        }
+        };
     },
     mounted() {
         if (this.selected && this.selected.length > 0) {
@@ -150,7 +150,7 @@ export default {
             return this.innerSelectionType;
         }
     },
-}
+};
 </script>
 <style scoped>
 .inputs select,

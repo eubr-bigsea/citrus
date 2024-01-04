@@ -24,7 +24,7 @@
                         </router-link>
                     </template>
                     <template #updated="props">
-                        {{props.row.updated | formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #actions="props">
                         <div>

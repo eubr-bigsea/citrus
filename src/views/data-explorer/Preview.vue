@@ -1,13 +1,13 @@
 <template>
     <div>
         <v-style v-if="rightAlignedAttributes && rightAlignedAttributes.length">
-            {{ rightAlignedAttributes }} {
+            {{rightAlignedAttributes}} {
             text-align: right;
             }
         </v-style>
         <div v-show="loading" class="preview-loading">
             <font-awesome-icon icon="lemon" spin class="text-success" />
-            {{ $t('common.wait') }}
+            {{$t('common.wait')}}
         </div>
         <template v-if="items">
             <div style="position: relative">
@@ -15,23 +15,24 @@
                     <div />
                 </div>
                 <b-table ref="table" :no-border-collapse="false" :items="items" :fields="['#'].concat(attributes)"
-                    tbody-class="body" sticky-header="85vh" table-class="table-preview"
-                    class="border scroll-area table-preview" outlined small hover bordered responsive
-                    @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
+                         tbody-class="body" sticky-header="85vh" table-class="table-preview"
+                         class="border scroll-area table-preview" outlined small hover
+                         bordered responsive
+                         @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
                     <!-- A custom formatted column -->
                     <template #cell(#)="data">
-                        {{ data.index + 1 }}
+                        {{data.index + 1}}
                     </template>
 
                     <template #head()="scope">
-                        <div class="grabbable" draggable="true" @click.prevent="customOpen($event, scope)"
-                            @dragstart="dragStart(scope.field, $event)" @dragend.prevent="dragEnd(scope.field, $event)"
-                            @dragenter="dragEnter(scope.field, $event)" @dragleave="dragLeave(scope.field, $event)"
-                            @dragover.prevent="dragOver(scope.field, $event)" @drop="drop(scope.field, $event)">
+                        <div class="grabbable" draggable="false" @click.prevent="customOpen($event, scope)"
+                             @dragstart="dragStart(scope.field, $event)" @dragend.prevent="dragEnd(scope.field, $event)"
+                             @dragenter="dragEnter(scope.field, $event)" @dragleave="dragLeave(scope.field, $event)"
+                             @dragover.prevent="dragOver(scope.field, $event)" @xdrop="drop(scope.field, $event)">
                             <div style="pointer-events: none;">
                                 <div class="clearfix no-wrap">
                                     <div class="attribute-name mr-2">
-                                        {{ scope.label }}
+                                        {{scope.label}}
                                     </div>
                                     <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
                                     <!--<font-awesome-icon v-else class="right" icon="chevron-down" />-->
@@ -40,11 +41,9 @@
                                     <!--<select>
                         <option v-for="dt in dataTypes" :value="dt" :key="dt">{{dt}}</option>
                     </select>-->
-                                    {{ scope.field.generic_type }}
-                                    <br />
-                                    {{ scope.field.type }}<span v-if="scope.field.inner">({{
-                                        scope.field.inner
-                                    }})</span>
+                                    {{scope.field.generic_type}}
+                                    <br>
+                                    {{scope.field.type}}<span v-if="scope.field.inner">({{scope.field.inner}})</span>
                                     <span v-if="scope.field.truncated">(trunc.)</span>
                                 </div>
                                 <!--
@@ -67,27 +66,27 @@
 
         <!-- FIXME: translation -->
         <context-menu ref="ctxCellMenu" class="menu" @ctx-open="(data) => cellMenuData = data"
-            @ctx-cancel="resetCellCtxLocals">
+                      @ctx-cancel="resetCellCtxLocals">
             <template v-if="cellMenuData">
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('filter', cellMenuData.name, '!=', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-times" class="text-danger" /> <b>Remover</b> registros onde
-                    <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
+                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '!', null)">
                     <font-awesome-icon icon="fa fa-times" class="text-secondary" /> <b>Remover</b> registros onde
-                    <b><code>{{ cellMenuData.name }} é nulo</code></b>
+                    <b><code>{{cellMenuData.name}} é nulo</code></b>
                 </li>
                 <li class="ctx-divider" />
 
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('filter', cellMenuData.name, '==', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-check" class="text-success" /> <b>Manter</b> apenas registros onde
-                    <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
+                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '', null)">
                     <font-awesome-icon icon="fa fa-check text-secondary" /> <b>Manter</b> apenas registros onde
-                    <b><code>{{ cellMenuData.name }} é nulo</code></b>
+                    <b><code>{{cellMenuData.name}} é nulo</code></b>
                 </li>
 
                 <li class="ctx-divider" />
@@ -96,30 +95,30 @@
                     @click="onCellContextMenuAction('flag', cellMenuData.name, '==', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-flag text-primary" />
                     <b>Sinalizar</b> quando
-                    <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
+                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('flag', cellMenuData.name, '!=', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-flag text-danger" />
                     <b>Sinalizar</b> quando
-                    <b><code>{{ cellMenuData.name }} 	&#8800; {{ cellMenuData.value }}</code></b>
+                    <b><code>{{cellMenuData.name}} 	&#8800; {{cellMenuData.value}}</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '', null)">
                     <font-awesome-icon icon="fa fa-flag" calss="text-warning" />
                     <b>Sinalizar</b> quando
-                    <b><code>{{ cellMenuData.name }} é nulo</code></b>
+                    <b><code>{{cellMenuData.name}} é nulo</code></b>
                 </li>
                 <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '!', null)">
                     <font-awesome-icon icon="fa fa-flag" class="text-secondary" />
                     <b>Sinalizar </b> quando
-                    <b><code>{{ cellMenuData.name }} não é nulo</code></b>
+                    <b><code>{{cellMenuData.name}} não é nulo</code></b>
                 </li>
                 <li class="ctx-divider" />
 
                 <li class="ctx-item"
                     @click="onCellContextMenuAction('clean', cellMenuData.name, '==', cellMenuData.value)">
                     <font-awesome-icon icon="fa fa-eraser" class="text-warning" /> <b>Limpar</b> dados do atributo
-                    onde <b><code>{{ cellMenuData.name }}={{ cellMenuData.value }}</code></b>
+                    onde <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
                 </li>
                 <!--
                 <li class="ctx-divider"></li>
@@ -150,6 +149,7 @@ export default {
         serviceBus: { type: Object, default: () => null },
         total: { type: Number, default: () => 0 },
     },
+    emits: ['select', 'scroll', 'context-menu', 'drop'],
     data() {
         return {
             menuData: { field: { label: '', position: -1 } },
@@ -160,7 +160,7 @@ export default {
             rightAlignedAttributes: { type: String },
             dragTimeout: null,
             columnTypes: new Map(),
-        }
+        };
     },
     watch: {
         attributes() {
@@ -217,7 +217,7 @@ export default {
                     }
                 });
                 */
-                this.attributes.forEach(attr => this.columnTypes.set(attr.key, attr.generic_type));
+            this.attributes.forEach(attr => this.columnTypes.set(attr.key, attr.generic_type));
         },
         items() {
             if (!this.scrollEventSet) {
@@ -288,7 +288,7 @@ export default {
             if (this.menuData.field !== data.field) {
                 this.lastHeader = th;
                 this.moveSelectionOverlay(th);
-                this.lastHeader.classList.add('bg-info', 'text-white')
+                this.lastHeader.classList.add('bg-info', 'text-white');
                 this.menuData = data;
                 this.$emit('select', data);
             } else {
@@ -347,8 +347,8 @@ export default {
         _eventModifier(evt, obj) {
             const proxy = new Proxy(evt, {
                 get: (target, prop) => obj[prop] || target[prop]
-            })
-            return new evt.constructor(evt.type, proxy)
+            });
+            return new evt.constructor(evt.type, proxy);
         },
         /**/
         tableContextMenu(item, index, event) {
@@ -365,7 +365,7 @@ export default {
                 } else if (attribute.generic_type === 'Boolean') {
                     value = event.target.innerText === 'true';
                 } else {
-                    value = `"${cellText.substring(0, 40)}"`
+                    value = `"${cellText.substring(0, 40)}"`;
                 }
                 const raw = `"{value}"`;
                 this.$refs.ctxCellMenu.open(this._eventModifier(event, {}),
@@ -375,7 +375,7 @@ export default {
                         value,
                         raw,
                         name: attribute.label,
-                    })
+                    });
             }
         },
         // Cell context menu
@@ -384,8 +384,8 @@ export default {
         },
         dragStart(item, e) {
             e.dataTransfer.setData('position', item.position);
-            e.dataTransfer.dropEffect = 'move'
-            e.dataTransfer.effectAllowed = 'move'
+            e.dataTransfer.dropEffect = 'move';
+            e.dataTransfer.effectAllowed = 'move';
             this.resetMenuData();
         },
         dragEnd(item, e) { // eslint-disable-line no-unused-vars
@@ -395,7 +395,7 @@ export default {
             return true;
         },
         dragEnter(item, e) {// eslint-disable-line no-unused-vars
-            event.dataTransfer.dropEffect = 'move';
+            e.dataTransfer.dropEffect = 'move';
             if (this.dragTimeout) {
                 clearTimeout(this.dragTimeout);
             }
@@ -410,7 +410,9 @@ export default {
         dragLeave(item, e) {
             e.target.style.background = 'inherit';
         },
+        /* TODO: review
         drop(item, e) {
+            debugger
             const position = parseInt(e.dataTransfer.getData('position'));
 
             this.attributes.splice(item.position, 0,
@@ -421,11 +423,11 @@ export default {
             this.$emit('drop', {
                 action: 'move',
                 params: [this.attributes[item.position].label, item.position]
-            })
-        }
+            });
+        }*/
 
     },
-}
+};
 </script>
 <style>
     .null-cell {

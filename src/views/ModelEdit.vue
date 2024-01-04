@@ -80,7 +80,7 @@ export default {
                 'SPARK_MLLIB_CLASSIFICATION',
                 'UNSPECIFIED'
             ]
-        }
+        };
     },
     computed: {
     },
@@ -114,7 +114,7 @@ export default {
         async load() {
             try {
                 const resp = await axios.get(`${limoneroUrl}/models/${this.$route.params.id}`);
-                this.model = resp.data
+                this.model = resp.data;
             } catch (e) {
                 this.error(e);
             }

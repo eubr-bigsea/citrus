@@ -6,26 +6,27 @@
                 <input type="checkbox" @change="handleSelectAll($event)">
             </template>
             <b-dropdown-item @click="handleToggleSelected(true)">
-                {{ $t('dataExplorer.enableSelected') }}
+                {{$t('dataExplorer.enableSelected')}}
             </b-dropdown-item>
             <b-dropdown-item @click="handleToggleSelected(false)">
-                {{ $t('dataExplorer.disableSelected') }}
+                {{$t('dataExplorer.disableSelected')}}
             </b-dropdown-item>
             <b-dropdown-item @click="handleRemoveSelected">
-                {{ $t('dataExplorer.removeSelected') }}
+                {{$t('dataExplorer.removeSelected')}}
             </b-dropdown-item>
         </b-dropdown>
         <div ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
             <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflow.tasks"
-                :move="handleStepDrag" @start="drag = true" @end="endSortSteps">
+                       :move="handleStepDrag" @start="drag = true" @end="endSortSteps">
                 <div v-for="(task, inx) in workflow.tasks" :key="task.id" xv-if="task.operation.slug !== 'read-data'"
-                    class="list-group-item steps clearfix p-0" :title="task.name !== 'unnamed' ? task.name : ''"
-                    :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
-                    <Step ref="steps" :step="task" :language="language" :attributes="attributes" :index="inx"
-                        :protected="inx <= 1" :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null"
-                        @edit="editStep(task)" @cancel="cancelEdit(task)" @update="update(task)" @preview="preview(task)"
-                        :suggestion-event="suggestionEvent" :extended-suggestion-event="extendedSuggestionEvent"
-                        v-on="$listeners" />
+                     class="list-group-item steps clearfix p-0" :title="task.name !== 'unnamed' ? task.name : ''"
+                     :style="{ 'border-left': '4px solid ' + task?.forms?.color?.value }">
+                    <Step ref="steps" :step="task" :language="language" :attributes="attributes"
+                          :index="inx"
+                          :protected="inx <= 1" :schema="inx > 0 && workflow.schema ? workflow.schema[inx - 1] : null"
+                          :suggestion-event="suggestionEvent" :extended-suggestion-event="extendedSuggestionEvent" @edit="editStep(task)" @cancel="cancelEdit(task)"
+                          @update="update(task)" @preview="preview(task)"
+                          v-on="$listeners" />
                 </div>
             </draggable>
         </div>
@@ -46,7 +47,7 @@ export default {
         suggestionEvent: { type: Function, default: () => null },
         extendedSuggestionEvent: { required: true, type: Function, default: () => null },
     },
-    emits: ['changed', 'delete-many', 'update', 'end-sort-steps'],
+    emits: ['changed', 'delete-many', 'update', 'end-sort-steps', 'duplicate-step'],
     data() {
         return {
             lastPreviewableStep: null,
@@ -93,14 +94,7 @@ export default {
 
         /* Trigged by the step action */
         duplicate(step) {
-            // Clone tasks instance
-            const cloned = new Task(JSON.parse(JSON.stringify(step)));
-            cloned.id = Operation.generateTaskId();
-            this.workflow.tasks.splice(step.display_order, 0, cloned);
-            // Update the display_order
-            this.workflow.tasks.slice(step.display_order + 1).forEach(
-                (task) => task.display_order++);
-            this.isDirty = true;
+            this.$emit('duplicate-step', step);
         },
         scrollToStep() {
             const el = this.$refs.stepsArea;

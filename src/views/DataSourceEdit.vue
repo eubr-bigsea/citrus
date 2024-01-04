@@ -8,7 +8,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-2">
-                            <data-source-options selected="editDataSource"/>
+                            <data-source-options selected="editDataSource" />
                         </div>
                         <div v-if="dataSource.id" class="col-md-10 col-xg-10 mx-auto">
                             <b-card no-body>
@@ -44,7 +44,9 @@
                                                         <label>{{$t('common.tags')}}:</label>
                                                         <v-select v-model="customTags" multiple :close-on-select="false"
                                                                   style="width: 100%" :taggable="true" class="custom">
-                                                            <span slot="no-options" />
+                                                            <template #no-options>
+&nbsp;
+                                                            </template>
                                                         </v-select>
                                                     </div>
                                                     <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'HIVE' || dataSource.storage.type === 'HIVE_WAREHOUSE'"
@@ -70,7 +72,9 @@
                                                                 <v-select v-model="dataSource.attribute_delimiter"
                                                                           style="width: 100%" :options="delimiters"
                                                                           :taggable="true">
-                                                                    <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -78,7 +82,9 @@
                                                                 <v-select v-model="dataSource.record_delimiter"
                                                                           style="width: 100%" :options="delimiters"
                                                                           :taggable="true">
-                                                                    <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -86,7 +92,9 @@
                                                                 <v-select v-model="dataSource.text_delimiter"
                                                                           style="width: 100%" :options="textDelimiters"
                                                                           :taggable="true">
-                                                                    <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -94,7 +102,9 @@
                                                                 <v-select v-model="dataSource.encoding"
                                                                           style="width: 100%" :options="encodings"
                                                                           :taggable="true">
-                                                                    <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                         </div>
@@ -143,7 +153,9 @@
                                                     <v-select v-model="customTreatAsMissing" multiple
                                                               :close-on-select="false" style="width: 100%" :taggable="true"
                                                               class="custom">
-                                                        <span slot="no-options">{{$t('messages.noMatching')}}.</span>
+                                                        <template #no-options>
+                                                            {{$t('messages.noMatching')}}.
+                                                        </template>
                                                     </v-select>
                                                 </div>
                                             </div>
@@ -413,11 +425,13 @@
                             <textarea v-if="currentAttribute.attribute_privacy"
                                       v-model="currentAttribute.attribute_privacy.hierarchy" class="form-control" type="text"
                                       rows="5" />
-                            <div slot="modal-footer" class="w-100">
-                                <b-btn variant="primary" class="float-right mr-2" @click="okPrivacy">
-                                    {{$t('actions.close')}}
-                                </b-btn>
-                            </div>
+                            <template #modal-footer>
+                                <div class="w-100">
+                                    <b-btn variant="primary" class="float-right mr-2" @click="okPrivacy">
+                                        {{$t('actions.close')}}
+                                    </b-btn>
+                                </div>
+                            </template>
                         </b-modal>
                     </div>
                 </div>
@@ -450,7 +464,7 @@ export default {
     beforeRouteLeave(to, from, next) {
         if (this.isDirty) {
             if (confirm(this.$tc('warnings.dirtyCheck'))) {
-                next()
+                next();
             }
         } else {
             next();
@@ -492,6 +506,7 @@ export default {
             users: [],
             selectedTable: null,
             tables: [],
+            customTags: []
         };
     },
 
@@ -499,14 +514,7 @@ export default {
         inferableDataSource() {
             return ['CSV', 'JDBC', 'PARQUET'].includes(this.dataSource.format);
         },
-        customTags: {
-            get() {
-                return this.dataSource.tags ? this.dataSource.tags.split(',') : [];
-            },
-            set(value) {
-                this.dataSource.tags = value.join(',');
-            }
-        },
+        
         customTreatAsMissing: {
             get() {
                 return this.dataSource.treat_as_missing
@@ -539,13 +547,18 @@ export default {
                 this.isDirty = true;
             },
             deep: true
-        }
+        },
+        customTags: {
+            handler(value) {
+                this.dataSource.tags = value.join(',');
+            }
+        },
     },
     created() {
         window.addEventListener('beforeunload', this.leaving);
     },
     beforeUnmount() {
-        window.removeEventListener('beforeunload', this.leaving)
+        window.removeEventListener('beforeunload', this.leaving);
     },
     mounted() {
         let self = this;
@@ -553,6 +566,7 @@ export default {
             Vue.nextTick(() => {
                 self.isDirty = false;
                 self.retrieveTables();
+                this.customTags = this.dataSource.tags.split(',');
             });
         });
     },
@@ -570,7 +584,7 @@ export default {
             ~removeIndex && this.dataSource.permissions.splice(removeIndex, 1);
         },
         editPermission(p) {
-            const user = p.user_name.split(' ')
+            const user = p.user_name.split(' ');
             this.permission = p.permission;
             this.userPermission = {
                 login: p.user_login,
@@ -630,7 +644,7 @@ export default {
                         if (this.timeoutHandler) {
                             window.clearTimeout(this.timeoutHandler);
                         }
-                        this.error({ name: '' }, `Copying process reported an error. Try again: ${response.data.result.message}`)
+                        this.error({ name: '' }, `Copying process reported an error. Try again: ${response.data.result.message}`);
                         this.estimatingStep = 0;
                     } else if (response.data.status === 'PROCESSING') {
                         this.timeoutHandler = window.setTimeout(this.checkSchedule, 500);
@@ -747,7 +761,7 @@ export default {
                 })
                 .catch(() => {
                     vm.error(vm.data);
-                })
+                });
         }, 350),
         getUserLabel(opt) {
             return `${opt.first_name}|${opt.last_name}|${opt.email}`;

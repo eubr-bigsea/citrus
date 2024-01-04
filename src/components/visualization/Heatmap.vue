@@ -54,7 +54,7 @@ export default {
         this.__resizeListener();
     },
     beforeUnmount() {
-        window.removeEventListener('resize', this.__resizeListener)
+        window.removeEventListener('resize', this.__resizeListener);
     },
     methods: {
         _getColorScale(){
@@ -63,7 +63,7 @@ export default {
             const ratio = 1.0 / (numColors - 1);
             let colorScale = 'Viridis';
             if (numColors > 0){
-                colorScale = colors.map((c, inx) => [Math.round(inx*ratio*100)/100 , c])
+                colorScale = colors.map((c, inx) => [Math.round(inx*ratio*100)/100 , c]);
             }
             return colorScale;
         },
@@ -80,5 +80,5 @@ export default {
             return [result];
         }
     },
-}
+};
 </script>

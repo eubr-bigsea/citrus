@@ -259,7 +259,7 @@ export default {
                         })
                         .catch(function (e){
                             self.error(e);
-                        })
+                        });
                 });
         },
         saveSubset(subset){
@@ -327,7 +327,7 @@ export default {
         },
         getCategory(op){
             const categ = op.categories.find(c => c.type === 'group');
-            return categ ? categ.name : '-'
+            return categ ? categ.name : '-';
         },
         load(){
             let self = this;
@@ -371,7 +371,7 @@ export default {
                 partial: 1,
                 disabled: true,
                 ts: new Date().getTime(), // disable cache
-            }
+            };
             self[loading] = true;
             return axios
                 .get(url, {params})
@@ -379,7 +379,7 @@ export default {
                     self[target] = resp.data.data;
                     resp.data.data.forEach(op => {
                         if (op.subsets){
-                            op.subsetIds = op.subsets.map(s => s.id)
+                            op.subsetIds = op.subsets.map(s => s.id);
                         } else {
                             op.subset = [];
                         }

@@ -29,7 +29,9 @@
                                   push-tags
                                   select-on-tag
                                   :clear-search-on-blur="({clearSearchOnSelect, multiple}) => handleBlurSelect(clearSearchOnSelect, multiple, 'select1', index)">
-                            <div slot="no-options" />
+                            <template #no-options>
+&nbsp;
+                            </template>
                         </v-select>
                     </td>
                     <td class="text-center">
@@ -68,7 +70,9 @@
                                   push-tags
                                   select-on-tag
                                   :clear-search-on-blur="({clearSearchOnSelect, multiple}) => handleBlurSelect(clearSearchOnSelect, multiple, 'select2', index)">
-                            <div slot="no-options" />
+                            <template #no-options>
+&nbsp;
+                            </template>
                         </v-select>
                     </td>
                     <td>
@@ -95,7 +99,7 @@ export default {
     data() {
         return {
             conditionList: []
-        }
+        };
     },
     mounted() {
         if (this.conditions && this.conditions.length) {
@@ -123,13 +127,13 @@ export default {
         },
         moveUp(e, index) {
             let tmp = this.conditionList.splice(index, 1)[0];
-            this.conditionList.splice(index - 1, 0, tmp)
+            this.conditionList.splice(index - 1, 0, tmp);
             e.stopPropagation();
             return false;
         },
         moveDown(e, index) {
-            let tmp = this.conditionList.splice(index, 1)[0]
-            this.conditionList.splice(index + 1, 0, tmp)
+            let tmp = this.conditionList.splice(index, 1)[0];
+            this.conditionList.splice(index + 1, 0, tmp);
             e.stopPropagation();
             return false;
         },
@@ -140,15 +144,15 @@ export default {
             const elem = this.$refs[selectRefName][index];
             if (elem.searching) {
                 // select currently highlighted value (like pressing Enter)
-                elem.typeAheadSelect()
+                elem.typeAheadSelect();
             }
 
             // return default value
-            return clearSearchOnSelect && !multiple
+            return clearSearchOnSelect && !multiple;
         },
 
     },
-}
+};
 </script>
 <style scoped>
     .inputs select,

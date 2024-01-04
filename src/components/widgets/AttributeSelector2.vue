@@ -1,30 +1,31 @@
 <template>
     <div v-if="readOnly">
-        <span>{{ value?(multiple? value.join(', '): value): ''}}</span>
+        <span>{{value?(multiple? value.join(', '): value): ''}}</span>
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value" />
         <div v-if="multiple">
             <textarea readonly :value="value ? value.join(', ') : ''" class="form-control pointer"
-                :rows="(value && value.length) ? Math.min(value.length / 3, 10) : 2" @click.prevent="openModal" />
-            <b-modal ref="modal" size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')"
-                no-fade>
+                      :rows="(value && value.length) ? Math.min(value.length / 3, 10) : 2" @click.prevent="openModal" />
+            <b-modal ref="modal" size="lg" :title="field.label" ok-disabled
+                     :cancel-title="$t('actions.cancel')"
+                     no-fade>
                 <template #default>
                     <div class="row">
                         <div class="col-md-4 offset-md-1 p-0">
-                            <small>{{ $tc('property.availableAttribute', 2) }}:</small>
+                            <small>{{$tc('property.availableAttribute', 2)}}:</small>
                             <div class="left options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in available" :key="suggestion"
-                                    class="border mb-1 p-1 suggested-attr" @click="move('right', index)">
-                                    {{ suggestion }}
+                                     class="border mb-1 p-1 suggested-attr" @click="move('right', index)">
+                                    {{suggestion}}
                                 </div>
                             </div>
-                            <label class="m-0 mt-2"><small>{{ $t('property.informAttributeName') }}:</small></label>
+                            <label class="m-0 mt-2"><small>{{$t('property.informAttributeName')}}:</small></label>
                             <b-input-group class="">
                                 <b-form-input v-model="extra" class="form-control-sm" />
                                 <b-input-group-append>
                                     <b-button size="sm" :disabled="extra === null || extra.trim() === ''" @click="add">
-                                        {{ $t('actions.addItem') }}
+                                        {{$t('actions.addItem')}}
                                     </b-button>
                                 </b-input-group-append>
                             </b-input-group>
@@ -40,16 +41,16 @@
                                 </b-btn>
                                 <br>
                                 <div class="border border-info">
-                                    {{ $tc('property.clickToMove', 2) }}
+                                    {{$tc('property.clickToMove', 2)}}
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <small>{{ $tc('property.selectedAttribute', 2) }}:</small>
+                            <small>{{$tc('property.selectedAttribute', 2)}}:</small>
                             <div class="options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in value" :key="suggestion"
-                                    class="border mb-1 p-1 selected-attr" @click="move('left', index)">
-                                    {{ suggestion }}
+                                     class="border mb-1 p-1 selected-attr" @click="move('left', index)">
+                                    {{suggestion}}
                                 </div>
                             </div>
                         </div>
@@ -57,17 +58,17 @@
                 </template>
                 <template #modal-footer>
                     <b-btn variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-btn>
                     <b-btn variant="primary mr-1" size="sm" class="float-right" @click="okModal">
-                        {{ $t('common.ok') }}
+                        {{$t('common.ok')}}
                     </b-btn>
                 </template>
             </b-modal>
         </div>
         <div v-else>
             <v-select v-model="select2Value" :options="suggestions" :multiple="false" :taggable="true"
-                :close-on-select="true" @input="updated" />
+                      :close-on-select="true" @input="updated" />
         </div>
     </div>
 </template>
@@ -91,11 +92,11 @@ export default {
             originalValue: { default: [] },
             suggestions: [],
             fieldParameters: {}
-        }
+        };
     },
     computed: {
         multiple() {
-            return this.fieldParameters.multiple !== false
+            return this.fieldParameters.multiple !== false;
         },
         params() {
             return this.fieldParameters;
@@ -144,7 +145,7 @@ export default {
                 let sel = this.value ? [... this.value] : [];
                 this.suggestions.forEach((v) => {
                     if (sel.indexOf(v) === -1)
-                        sel.push(v)
+                        sel.push(v);
                 });
                 this.updated(sel);
             } else if (direction === 'all-left') {
@@ -163,12 +164,12 @@ export default {
             if (Array.isArray(val)) {
                 this.triggerUpdateEvent(this.message, this.field, val);
             } else {
-                this.triggerUpdateEvent(this.message, this.field, [val])
+                this.triggerUpdateEvent(this.message, this.field, [val]);
             }
             this.$forceUpdate();
         },
         okModal() {
-            this.originalValue = [... this.value]
+            this.originalValue = [... this.value];
             this.$refs.modal.hide();
         },
         cancelModal() {
@@ -182,7 +183,7 @@ export default {
             this.$refs.modal.show();
         }
     },
-}
+};
 </script>
 <style scoped>
 div.options {

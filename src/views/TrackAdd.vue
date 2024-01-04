@@ -36,8 +36,7 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        <tr v-for="subset in platform.subsets"
-                                                            v-if="platform.subsets.length" :key="subset.id"
+                                                        <tr v-for="subset in platform.subsets" :key="subset.id"
                                                             class="d-flex">
                                                             <td class="col-12">
                                                                 <b-form-radio-group id="radios2"

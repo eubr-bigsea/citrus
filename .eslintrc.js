@@ -14,6 +14,7 @@ module.exports = {
         //"no-trailing-spaces": "error",
         "semi": ["error",],
         "indent": ["error", 4],
+
         "vue/mustache-interpolation-spacing": ["error", "never"],
         "import/extensions": ["error", "ignorePackages", { "vue": "always" }],
         "vue/no-mutating-props": "warn",
@@ -24,7 +25,7 @@ module.exports = {
         "vue/require-explicit-emits": "warn",
         "vue/no-deprecated-slot-attribute": "warn",
         "vue/no-v-html": "off",
-        "vue/no-deprecated-filter": "off",
+        "vue/no-deprecated-filter": "warn",
         "vue/no-v-for-template-key-on-child": "off",
 
         "vue/html-indent": ["error", 4, /*{

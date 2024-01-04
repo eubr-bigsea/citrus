@@ -38,22 +38,23 @@
                         {{props.row.user.name}}
                     </template>
                     <template #updated="props">
-                        {{props.row.updated |
-                            formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
-                    <div slot="afterFilter" class="ml-2">
-                        <label>{{$tc('common.platform')}}</label>
-                        <select v-model="platform" class="form-control">
-                            <option />
-                            <option v-for="p in platforms" :key="p.id" :value="p.slug">
-                                {{p.name}}
-                            </option>
-                        </select>
-                        <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
-                                @click="clearFilters">
-                            {{$tc('actions.clearFilters')}}
-                        </button>
-                    </div>
+                    <template #afterFilter>
+                        <div class="ml-2">
+                            <label>{{$tc('common.platform')}}</label>
+                            <select v-model="platform" class="form-control">
+                                <option />
+                                <option v-for="p in platforms" :key="p.id" :value="p.slug">
+                                    {{p.name}}
+                                </option>
+                            </select>
+                            <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
+                                    @click="clearFilters">
+                                {{$tc('actions.clearFilters')}}
+                            </button>
+                        </div>
+                    </template>
                     <template #actions="props">
                         <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                             <font-awesome-icon icon="trash" />
@@ -77,14 +78,16 @@
                     </div>
                 </div>
             </b-form-radio-group>
-            <div slot="modal-footer" class="w-100">
-                <b-btn variant="secondary_sm" class="float-right btn-sm btn-outline-secondary" @click="closeImport">
-                    {{$t('actions.cancel')}}
-                </b-btn>
-                <b-btn variant="primary" class="float-right mr-2 btn-sm " @click="importWorkflow">
-                    {{$t('common.ok')}}
-                </b-btn>
-            </div>
+            <template #modal-footer>
+                <div class="w-100">
+                    <b-btn variant="secondary_sm" class="float-right btn-sm btn-outline-secondary" @click="closeImport">
+                        {{$t('actions.cancel')}}
+                    </b-btn>
+                    <b-btn variant="primary" class="float-right mr-2 btn-sm " @click="importWorkflow">
+                        {{$t('common.ok')}}
+                    </b-btn>
+                </div>
+            </template>
         </b-modal>
     </main>
 </template>

@@ -5,7 +5,7 @@
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
-                            <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
+                            <div v-for="(row, index) in itemsCopy" :key="row.name" class="clear-fix item-list"
                                  :class="{selected: selected && selected.index === row.index }"
                                  @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
@@ -134,11 +134,13 @@
             Variáveis podem ser usadas como parâmetros na construção do fluxo de trabalho. Para usar uma variável,
             use a representação <code>${nome-variável}</code> por exemplo nas propriedades das tarefas.
         </p>
-        <div slot="modal-footer" class="w-100 text-right">
-            <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
-                {{$t('common.ok')}}
-            </b-btn>
-        </div>
+        <template #modal-footer>
+            <div class="w-100 text-right">
+                <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
+                    {{$t('common.ok')}}
+                </b-btn>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
@@ -146,6 +148,7 @@ export default {
     props: {
         items: { type: Array, default: () => [], required: true }
     },
+    emits: ['ok'],
     data() {
         return {
             variables: [
@@ -160,13 +163,13 @@ export default {
                 'BINARY',
             ],
             selected: null,
-
+            itemsCopy: this.items
         };
     },
     methods: {
         add() {
-            if (this.items === null) {
-                this.items = [];
+            if (this.itemsCopy === null) {
+                this.itemsCopy = [];
             }
             const value = {
                 name: '', description: '', help: '',
@@ -174,11 +177,11 @@ export default {
                 parameters: { values: [], display_index: null }, index: 0,
             };
             this.selected = value;
-            value.index = this.items.length;
-            this.items.push(value);
+            value.index = this.itemsCopy.length;
+            this.itemsCopy.push(value);
         },
         remove(e, index) {
-            this.items.splice(index, 1);
+            this.itemsCopy.splice(index, 1);
         },
         select(row, index) {
             row.index = index;
@@ -196,10 +199,11 @@ export default {
             this.$refs.modal.show();
         },
         okClicked() {
+            this.$emit('ok', this.itemsCopy);
             this.$refs.modal.hide();
         },
     }
-}
+};
 </script>
 <style>
     div.values {

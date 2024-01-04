@@ -1,21 +1,21 @@
 <template>
     <div :id="task.id" ref="task"
-        :class="classes + (task.enabled !== false ? '' : ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')"
-        class="operation task" :data-operation-id="task.operation.id" :style="getStyle" tabindex="0"
-        :title="task.forms.comment ? task.forms.comment.value : ''" @dblclick.stop="dblClick" @click.stop="click"
-        @contextmenu="openMenu">
+         :class="classes + (task.enabled !== false ? '' : ' disabled ') + (contextMenuOpened ? ' contextMenuOpened ' : '')"
+         class="operation task" :data-operation-id="task.operation.id" :style="getStyle" tabindex="0"
+         :title="task.forms.comment ? task.forms.comment.value : ''" @dblclick.stop="dblClick" @click.stop="click"
+         @contextmenu="openMenu">
         <div class="hide circle" :style="getStyle" />
         <div v-if="!isComment" class="title">
             <!-- <span style="font-size:7pt">{{task.$meta}}</span> -->
-            {{ task.name }}
+            {{task.name}}
         </div>
-        <em v-if="isComment">{{ task.forms.comment ? task.forms.comment.value : '' }}</em>
+        <em v-if="isComment">{{task.forms.comment ? task.forms.comment.value : ''}}</em>
         <div v-if="!isComment && showDecoration" class="right-decor" :class="getDecorationClass">
-            <font-awesome-icon v-if="!isComment && showDecoration"  :icon="getDecorationClass" size="2x"/>
+            <font-awesome-icon v-if="!isComment && showDecoration" :icon="getDecorationClass" size="2x" />
         </div>
 
         <div v-if="!isComment && task.step && task.step.status && !task.warning" class="right-decor"
-            :class="task.step ? task.step.status.toLowerCase() : ''">
+             :class="task.step ? task.step.status.toLowerCase() : ''">
             <font-awesome-icon icon="fa fa-2x" :class="getDecorationClass" />
         </div>
         <div v-if="!isComment && task.warning" class="right-decor">
@@ -27,16 +27,16 @@
         <div v-if="contextMenuOpened && !isComment" ref="right" class="custom-context-menu">
             <ul>
                 <li @click.stop="remove()">
-                    {{ $t('actions.delete') }}
+                    {{$t('actions.delete')}}
                 </li>
                 <li v-if="task.step" @click.stop="showResults()">
-                    {{ $t('actions.showResults') }}
+                    {{$t('actions.showResults')}}
                 </li>
                 <li @click.stop="dblClick">
-                    {{ $tc('titles.property', 2) }}
+                    {{$tc('titles.property', 2)}}
                 </li>
                 <li v-for="(item, index) in contextMenuActions" :key="index" @click="item.action(item.name)">
-                    {{ item.label }}
+                    {{item.label}}
                 </li>
             </ul>
         </div>
@@ -45,16 +45,16 @@
 
 <script>
 import Vue from 'vue';
-import {anchors, endPointOptionsInput, endPointOptionsOutput} from '../jsplumb-const.js';
+import { anchors, endPointOptionsInput, endPointOptionsOutput } from '../jsplumb-const.js';
 const TaskComponent = Vue.extend({
     name: 'TaskComponent',
     props: {
-        draggable: {default: true, type: Boolean},
-        enableContextMenu: {default: true, type: Boolean},
+        draggable: { default: true, type: Boolean },
+        enableContextMenu: { default: true, type: Boolean },
         enablePositioning: {
             default: true, type: Boolean
         },
-        instance: {type: Object, default: () => null},
+        instance: { type: Object, default: () => null },
         showDecoration: {
             default: false, type: Boolean
         },
@@ -62,11 +62,15 @@ const TaskComponent = Vue.extend({
             type: Object,
             'default': () => ({
                 name: '', icon: '', status: '',
-                forms: {color: {value: '#fff'}},
-                operation: {name: '', id: 0, ports: []}
+                forms: { color: { value: '#fff' } },
+                operation: { name: '', id: 0, ports: [] }
             })
         },
     },
+    emits: [
+        'onstart-flow', 'onstop-flow', 'onset-is-dirty', 'ontask-ready',
+        'onkeyboard-keyup', 'onclick-task', 'onshow-result', 'onremove-task',
+        'onupdate-task'],
     data() {
         return {
             contextMenuOpened: false,
@@ -114,16 +118,14 @@ const TaskComponent = Vue.extend({
             return elem && elem._jsPlumbGroup && elem._jsPlumbGroup.id;
         }
     },
-    emit: [
-        'onstart-flow', 'onstop-flow', 'onset-isDirty', 'ontask-ready',
-        'onkeyboard-keyup', 'onclick-task', 'onshow-result', 'onremove-task',],
     mounted() {
         this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
 
         const self = this;
         let operation = this.task.operation;
         let taskId = this.task.id;
-        this.task.name = this.task.name || this.task.operation.name;
+        this.$emit('onupdate-task', 'name',
+            (this.task.name || this.task.operation.name));
 
         let zIndex = this.task['z_index'];
         let inputs = [];
@@ -147,10 +149,10 @@ const TaskComponent = Vue.extend({
                 // return a.order - b.order;
             });
         }
-        const locations = {input: [-1.2, 0], output: [3, -1.1]};
+        const locations = { input: [-1.2, 0], output: [3, -1.1] };
         var lbls = [
             // note the cssClass and id parameters here
-            ["Label", {cssClass: "endpoint-label", label: "", id: "lbl", padding: 0}]
+            ["Label", { cssClass: "endpoint-label", label: "", id: "lbl", padding: 0 }]
         ];
         const cssClass = this.task.operation.css_class ||
             this.task.operation.cssClass;
@@ -161,8 +163,8 @@ const TaskComponent = Vue.extend({
             this.isComment = true;
         }
         [
-            {ports: inputs, type: 'input', options: endPointOptionsInput},
-            {ports: outputs, type: 'output', options: endPointOptionsOutput}
+            { ports: inputs, type: 'input', options: endPointOptionsInput },
+            { ports: outputs, type: 'output', options: endPointOptionsOutput }
         ].forEach((item) => {
 
             let ports = item.ports;
@@ -230,11 +232,11 @@ const TaskComponent = Vue.extend({
                 drag() {
                     // let elem = document.getElementById(self.task.id);
                     let elem = self.$refs.task;
-                    self.task.left = elem.offsetLeft;
-                    self.task.top = elem.offsetTop;
+                    self.$emit('onupdate-task', 'left', elem.offsetLeft);
+                    self.$emit('onupdate-task', 'top', elem.offsetTop);
                 },
                 stop() {
-                    self.$emit('onset-isDirty', true);
+                    self.$emit('onset-is-dirty', true);
                 }
             });
         }
@@ -247,22 +249,22 @@ const TaskComponent = Vue.extend({
         getClassesForDecor(value) {
             let result = [];
             switch (value) {
-                case 'ERROR':
-                    result.push("fa-times-circle");
-                    break;
-                case 'PENDING':
-                    result.push("fa-pause-circle");
-                    break;
-                case 'CANCELED':
-                    result.push("fa-stop-circle");
-                    break;
-                case 'RUNNING':
-                    result.push("fa-sync fa-spin");
-                    break;
-                case 'COMPLETED':
-                    result.push("fa-check-circle");
-                    break;
-                default:
+            case 'ERROR':
+                result.push("fa-times-circle");
+                break;
+            case 'PENDING':
+                result.push("fa-pause-circle");
+                break;
+            case 'CANCELED':
+                result.push("fa-stop-circle");
+                break;
+            case 'RUNNING':
+                result.push("fa-sync fa-spin");
+                break;
+            case 'COMPLETED':
+                result.push("fa-check-circle");
+                break;
+            default:
             }
             result.push(value.toLowerCase());
             return result.join(' ');

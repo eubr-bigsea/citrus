@@ -14,5 +14,5 @@ export default {
         "markdown": MarkdownWidget,
     },
     mixins: [VisualizationMixin]
-}
+};
 </script>

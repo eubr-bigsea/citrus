@@ -5,7 +5,7 @@ const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
-debugger
+debugger;
 const { user } = { ...mapGetters(['user']) };
 
 const room = `users/${user.id}`;

@@ -50,4 +50,4 @@ export default () => {
     };
     return { getAttributeList, loadDataSources, loadDataSourceList, 
         asyncLoadDataSourceList };
-}
+};

@@ -8,7 +8,7 @@
 </template>
 <script>
 
-import Plotly from 'plotly.js-dist-min'
+import Plotly from 'plotly.js-dist-min';
 
 export default {
     components: {},
@@ -28,12 +28,12 @@ export default {
                 },
                 type: undefined
             }
-        }
+        };
     },
     computed: {
     },
     mounted() {
-        this.$root.$on('chartBuilderUpdateChart', this.updateChart)
+        this.$root.$on('chartBuilderUpdateChart', this.updateChart);
         //Plotly.newPlot('chartViewer', this.getFormatedData(), this.getFormatedLayout(), {responsive: true});
     },
     beforeUnmount() {
@@ -48,7 +48,7 @@ export default {
 
             this.chartData[updatedData.type] = updatedData.value;
             if (this.chartIsVisible())
-                Plotly.newPlot('chartViewer', this.getFormatedData(), this.getFormatedLayout(), { responsive: true })
+                Plotly.newPlot('chartViewer', this.getFormatedData(), this.getFormatedLayout(), { responsive: true });
         },
 
         chartIsVisible() {
@@ -69,91 +69,66 @@ export default {
             let data = [];
 
             switch (this.chartData.type) {
-                case "pie":
-                    data.push({
-                        type: this.chartData.type,
-                        labels: this.chartData.axis.x.data[0].data,
-                        values: this.chartData.axis.y.data[0].data,
-                        hole: this.getFormatedLayout().hole
-                    });
-                    break;
+            case "pie":
+                data.push({
+                    type: this.chartData.type,
+                    labels: this.chartData.axis.x.data[0].data,
+                    values: this.chartData.axis.y.data[0].data,
+                    hole: this.getFormatedLayout().hole
+                });
+                break;
 
-                case "bubble":
-                    data.push({
-                        mode: 'markers',
-                        x: this.chartData.axis.x.data[0].data,
-                        y: this.chartData.axis.y.data[0].data,
-                        marker: {
-                            symbol: this.getFormatedLayout().symbol,
-                            size: this.chartData.axis.z.data[0].data,
-                        }
-                    });
-                    break;
-
-                case "scatter":
-                    data.push({
-                        mode: 'markers',
-                        type: this.chartData.type,
-                        x: this.chartData.axis.x.data[0].data,
-                        y: this.chartData.axis.y.data[0].data,
-                        text: this.chartData.axis.z.data[0].data,
-                        marker: {
-                            size: 12,
-                        }
-                    });
-                    break;
-
-                case "filled-area":
-
-                    for (let y of this.chartData.axis.y.data) {
-                        data.push({
-                            name: y.label,
-                            type: 'scatter',
-                            fill: data.length == 0 ? 'tozeroy' : 'tonexty',
-                            x: this.chartData.axis.x.data[0].data,
-                            y: y.data
-                        });
+            case "bubble":
+                data.push({
+                    mode: 'markers',
+                    x: this.chartData.axis.x.data[0].data,
+                    y: this.chartData.axis.y.data[0].data,
+                    marker: {
+                        symbol: this.getFormatedLayout().symbol,
+                        size: this.chartData.axis.z.data[0].data,
                     }
+                });
+                break;
 
-                    break;
-
-                case "bar":
-
-                    for (let y of this.chartData.axis.y.data) {
-                        if (this.getFormatedLayout().orientation == 'h') {
-                            data.push({
-                                orientation: "h",
-                                name: y.label,
-                                type: this.chartData.type,
-                                y: this.chartData.axis.x.data[0].data,
-                                x: y.data
-                            });
-                        } else {
-                            data.push({
-                                name: y.label,
-                                type: this.chartData.type,
-                                x: this.chartData.axis.x.data[0].data,
-                                y: y.data
-                            });
-                        }
+            case "scatter":
+                data.push({
+                    mode: 'markers',
+                    type: this.chartData.type,
+                    x: this.chartData.axis.x.data[0].data,
+                    y: this.chartData.axis.y.data[0].data,
+                    text: this.chartData.axis.z.data[0].data,
+                    marker: {
+                        size: 12,
                     }
+                });
+                break;
 
-                    break;
+            case "filled-area":
 
-                case "line":
-                    for (let y of this.chartData.axis.y.data) {
+                for (let y of this.chartData.axis.y.data) {
+                    data.push({
+                        name: y.label,
+                        type: 'scatter',
+                        fill: data.length == 0 ? 'tozeroy' : 'tonexty',
+                        x: this.chartData.axis.x.data[0].data,
+                        y: y.data
+                    });
+                }
+
+                break;
+
+            case "bar":
+
+                for (let y of this.chartData.axis.y.data) {
+                    if (this.getFormatedLayout().orientation == 'h') {
                         data.push({
-                            line: this.getFormatedLayout().line,
+                            orientation: "h",
                             name: y.label,
                             type: this.chartData.type,
-                            x: this.chartData.axis.x.data[0].data,
-                            y: y.data
+                            y: this.chartData.axis.x.data[0].data,
+                            x: y.data
                         });
-                    }
-                    break;
-
-                default:
-                    for (let y of this.chartData.axis.y.data) {
+                    } else {
                         data.push({
                             name: y.label,
                             type: this.chartData.type,
@@ -161,7 +136,32 @@ export default {
                             y: y.data
                         });
                     }
-                    break;
+                }
+
+                break;
+
+            case "line":
+                for (let y of this.chartData.axis.y.data) {
+                    data.push({
+                        line: this.getFormatedLayout().line,
+                        name: y.label,
+                        type: this.chartData.type,
+                        x: this.chartData.axis.x.data[0].data,
+                        y: y.data
+                    });
+                }
+                break;
+
+            default:
+                for (let y of this.chartData.axis.y.data) {
+                    data.push({
+                        name: y.label,
+                        type: this.chartData.type,
+                        x: this.chartData.axis.x.data[0].data,
+                        y: y.data
+                    });
+                }
+                break;
             }
 
             return data;
@@ -178,7 +178,7 @@ export default {
             return l;
         },
     }
-}
+};
 </script>
 <style scoped lang="scss">
 .chart-builder-visualization {

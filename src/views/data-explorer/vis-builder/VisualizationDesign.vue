@@ -1,60 +1,64 @@
 <template>
-    <div class="options-container  source-code-pro-font" ref="visualizationDesigner">
+    <div ref="visualizationDesigner" class="options-container  source-code-pro-font">
         <div class="options-visualization mt-1">
             <div>
                 <h6>Construtor de visualizações</h6>
                 <form class="clearfix visualization-form">
                     <div data-test="basic-options-section">
-                        <label>{{ $tc('common.name') }}:</label>
+                        <label>{{$tc('common.name')}}:</label>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                            :placeholder="$tc('common.name')" maxlength="100">
+                               :placeholder="$tc('common.name')" maxlength="100">
 
                         <label for="">Fonte de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
-                            v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
-                            :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
-                            @input="getAttributeList">
+                                    v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
+                                    :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
+                                    @input="getAttributeList">
                             <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{ option.id }}</span> - {{ option.name }}
+                                    <span class="span-id">{{option.id}}</span> - {{option.name}}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{ option.id }} - {{ option.name }}
+                                    {{option.id}} - {{option.name}}
                                 </div>
                             </template>
                         </vue-select>
 
-                        <label>{{ $tc('titles.cluster') }}: </label>
+                        <label>{{$tc('titles.cluster')}}: </label>
                         <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                            :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
+                                  :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{ name }}<br>
-                                <small><em>{{ description }}</em></small>
+                                {{name}}<br>
+                                <small><em>{{description}}</em></small>
                             </template>
                         </v-select>
                         <div class="mt-2 ">
                             <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-right"
-                                size="sm" no-caret>
+                                        size="sm" no-caret>
                                 <template #button-content>
-                                    <font-awesome-icon icon="ellipsis-h"></font-awesome-icon>
+                                    <font-awesome-icon icon="ellipsis-h" />
                                 </template>
-                                <b-dropdown-item href="#"><font-awesome-icon icon="chart-line" /> Adicionar ao
-                                    dashboard...</b-dropdown-item>
-                                <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar
-                                    ...</b-dropdown-item>
+                                <b-dropdown-item href="#">
+                                    <font-awesome-icon icon="chart-line" /> Adicionar ao
+                                    dashboard...
+                                </b-dropdown-item>
+                                <b-dropdown-item href="#">
+                                    <font-awesome-icon icon="file-export" /> Exportar
+                                    ...
+                                </b-dropdown-item>
                             </b-dropdown>
-                            <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"
-                                data-test="save">
-                                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                            <b-button variant="primary" size="sm" class="float-right mt-2" data-test="save"
+                                      @click="saveWorkflow">
+                                <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                             </b-button>
                             <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
-                                @click.prevent="loadData" data-test="refresh">
-                                <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
+                                      data-test="refresh" @click.prevent="loadData">
+                                <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                             </b-button>
                             <!--
                         <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
@@ -65,21 +69,21 @@
                         </div>
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top scroll-area">
-                        <chart-builder-options v-model="options" :attributes="attributes" @update-chart="updateChart"
-                            :chartType="visualizationObj.type.value" data-test="options-section" />
+                        <chart-builder-options v-model="options" :attributes="attributes" :chart-type="visualizationObj.type.value"
+                                               data-test="options-section" @update-chart="updateChart" />
                     </div>
                 </form>
             </div>
         </div>
         <div v-if="visualizationObj" class="options-main">
             <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
-                :chartType="visualizationObj.type.value" />
+                                :chart-type="visualizationObj.type.value" />
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 75vh">
                     <div v-if="display && plotlyData" ref="chart">
-                        <plotly :options="chartOptions" :data="plotlyData.data" :layout="plotlyData.layout"
-                            :frames="plotlyData.frames" :key="plotVersion" ref="plotly" :watchShallow="true"
-                            data-test="visualization" />
+                        <plotly :key="plotVersion" ref="plotly" :options="chartOptions"
+                                :data="plotlyData.data" :layout="plotlyData.layout" :frames="plotlyData.frames" :watch-shallow="true"
+                                data-test="visualization" />
                         <!--
                         <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData.layout }}</small>
                             -->
@@ -111,7 +115,7 @@
                     -->
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
-                {{ i18n.$t('common.wait') }}
+                {{i18n.$t('common.wait')}}
             </div>
         </div>
     </div>
@@ -147,7 +151,7 @@ const i18n = vm.proxy.$i18n.vm;
 const { success, error } = useNotifier(vm.proxy);
 
 const plotVersion = ref(0);
-const display = ref(true)
+const display = ref(true);
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
@@ -178,8 +182,8 @@ const visualizationObj = ref(null);
 const chartOptions = ref({ responsive: true, height: 600 });
 
 // Elements refs
-const cluster = ref(null)
-const visualizationDesigner = ref(ref)
+const cluster = ref(null);
+const visualizationDesigner = ref(ref);
 
 
 const dataSourceId = computed({
@@ -201,7 +205,7 @@ const axis = computed({
     }
 });
 
-const plotly = ref()
+const plotly = ref();
 let changeCause = '';
 const options = computed({
     get() {
@@ -233,14 +237,14 @@ const options = computed({
     }
 });
 const handleChangeLayout = (changeCause, value) => {
-    console.debug('ok')
+    console.debug('ok');
     if (changeCause === 'title' && plotlyData.value?.layout?.title) {
         plotlyData.value.layout.title.text = value[changeCause].value;
         //plotly.value.react();
     }
 };
 const updateChart = debounce((value, propertyPath) => {
-    if (!plotlyData || !plotlyData?.value?.layout) {
+    if (!plotlyData.value || !plotlyData?.value?.layout) {
         return;
     }
     /*
@@ -253,7 +257,7 @@ const updateChart = debounce((value, propertyPath) => {
     propertyPath.slice(0, -1).forEach(p => current = current[p]);
     current[propertyPath.slice(-1)] = value;
     plotly.value.layout = plotlyData.value.layout;
-    plotly.value.react()
+    plotly.value.react();
 }, 800);
 
 const { getAttributeList, asyncLoadDataSourceList } = useDataSource();
@@ -285,13 +289,13 @@ const updateThumb = () => {
 };
 const getIcon = (attr) => {
     switch (attr.type) {
-        case 'DECIMAL':
-        case 'INTEGER':
-            return 'hashtag';
-        case 'CHARACTER':
-            return 'font';
-        case 'DATE':
-            return 'calendar';
+    case 'DECIMAL':
+    case 'INTEGER':
+        return 'hashtag';
+    case 'CHARACTER':
+        return 'font';
+    case 'DATE':
+        return 'calendar';
 
     }
 };

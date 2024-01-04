@@ -4,29 +4,29 @@
             <div class="col-md-3">
                 <h5>Algoritmos</h5>
                 <small>Informe os parâmetros para a execução do algoritmo. <u>Nenhum parâmetro é
-                        obrigatório.</u></small>
+                    obrigatório.</u></small>
                 <hr>
                 <b-list-group>
                     <b-list-group-item v-for="alg in algorithms" :key="alg.id" class="p-0 pl-2"
-                        :class="{ 'bg-light': selectedAlgorithm === alg }">
+                                       :class="{ 'bg-light': selectedAlgorithm === alg }">
                         <div class="d-flex w-100 p-1" role="button" @click="handleSelectAlgorithm(alg)">
                             <b-form-checkbox v-model="alg.enabled" switch />
-                            {{ alg.operation.name }}
+                            {{alg.operation.name}}
                         </div>
                     </b-list-group-item>
                 </b-list-group>
                 <hr>
                 <div v-if="false && selectedAlgorithm && selectedAlgorithm.operation">
-                    {{ selectedAlgorithm.forms }}
+                    {{selectedAlgorithm.forms}}
                 </div>
             </div>
             <div class="col-md-9 border p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
-                    <h6>{{ selectedAlgorithm.operation.name }}</h6>
+                    <h6>{{selectedAlgorithm.operation.name}}</h6>
                     <hr>
                     <template v-for="form in selectedAlgorithm.operation.forms">
                         <div v-for="field in form.fields" :key="field.name" class="mb-2 property clearfix"
-                            :data-name="field.name">
+                             :data-name="field.name">
                             <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}
                                 ||{{ getWidget(field) }}||
                                 {{getFieldValue(field.name, false)}} (({{ field.suggested_widget }}))
@@ -34,16 +34,16 @@
                             <keep-alive>
                                 <div v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
                                     <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
-                                        :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
-                                        :read-only="!field.editable" context="context" @update="handleUpdateField" />
+                                                          :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
+                                                          :read-only="!field.editable" context="context" @update="handleUpdateField" />
                                 </div>
                                 <component :is="getWidget(field)"
-                                    v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled"
-                                    visual-style="explorer" :field="field" :value="getFieldValue(field.name, false)"
-                                    :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
-                                    :read-only="!field.editable" context="context"
-                                    :show-quantity="workflow.grid.forms.strategy.value === 'grid'"
-                                    @update="handleUpdateField" />
+                                           v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled"
+                                           visual-style="explorer" :field="field" :value="getFieldValue(field.name, false)"
+                                           :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
+                                           :read-only="!field.editable" context="context"
+                                           :show-quantity="workflow.grid.forms.strategy.value === 'grid'"
+                                           @update="handleUpdateField" />
                                 <div v-else />
                             </keep-alive>
                         </div>
@@ -83,7 +83,7 @@ export default {
             algorithms: [],
             conditionalFields: new Map(),
             selectedAlgorithm: {},
-        }
+        };
     },
     mounted() {
         const algLookup = new Map((this.workflow.tasks || []).map((alg) => [alg.operation.slug, alg]));
@@ -119,7 +119,7 @@ export default {
                 form.fields.forEach(field => {
                     Vue.set(field, "internalValue", alg.forms[field.name].value);
                     Vue.set(field, "enabled", true);
-                })
+                });
             });
             const self = this;
             alg.operation.forms.forEach((f) => {
@@ -172,7 +172,7 @@ export default {
                     && this.selectedAlgorithm?.forms
                     && this.selectedAlgorithm?.forms[name]
                     && this.selectedAlgorithm?.forms[name]?.value
-                    ? this.selectedAlgorithm?.forms[name]?.value?.list : null
+                    ? this.selectedAlgorithm?.forms[name]?.value?.list : null;
             } else {
                 return this.selectedAlgorithm
                     && this.selectedAlgorithm.forms
@@ -203,7 +203,7 @@ export default {
             });
         }
     },
-}
+};
 </script>
 <style scoped>
 .algorithm {

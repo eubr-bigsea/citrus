@@ -260,7 +260,7 @@ export default {
 
                 if (!this.deployment.id) {
                     url = `${seedUrl}/deployments`;
-                    axiosCall = axios.post
+                    axiosCall = axios.post;
                 }
                 event.target.setAttribute('disabled', 'disabled');
                 event.target.classList.remove('btn-spinner');

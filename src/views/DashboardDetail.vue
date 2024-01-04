@@ -6,26 +6,26 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="header-pretitle">
-                                {{ $tc('titles.dashboard', 1) }}
+                                {{$tc('titles.dashboard', 1)}}
                             </h6>
                             <h2 v-if="publicRoute">
-                                {{ dashboard.title }}
+                                {{dashboard.title}}
                             </h2>
                             <InputHeader v-else v-model="dashboard.title" />
                         </div>
                         <div class="d-print-none">
                             <div v-if="isLoggedIn" class="btn-group float-right" role="group">
                                 <button class="btn btn-sm btn-outline-dark" @click.stop="save">
-                                    <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                                    <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                                 </button>
                                 <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
-                                    @click.prevent="showProperties">
+                                        @click.prevent="showProperties">
                                     <font-awesome-icon icon="fa fa-cogs" />
                                 </button>
                             </div>
                             <button v-if="!publicRoute" class="btn btn-sm btn-success mr-2"
-                                :title="$t('actions.showProperties')" @click.prevent="addText">
-                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('dashboard.markupVisualization') }}
+                                    :title="$t('actions.showProperties')" @click.prevent="addText">
+                                <font-awesome-icon icon="fa fa-plus" /> {{$t('dashboard.markupVisualization')}}
                             </button>
                         </div>
                     </div>
@@ -35,13 +35,14 @@
                             <div class="card ">
                                 <div class="card-body">
                                     <div v-if="layout">
-                                        <grid-layout :layout="layout" :col-num="12" :row-height="30" ref="grid"
-                                            :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
-                                            :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
-                                            :use-css-transforms="true" :prevent-collision="false"
-                                            @layout-updated="layoutUpdatedEvent">
+                                        <grid-layout ref="grid" :layout="layout" :col-num="12" :row-height="30"
+                                                     :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
+                                                     :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
+                                                     :use-css-transforms="true" :prevent-collision="false"
+                                                     @layout-updated="layoutUpdatedEvent">
                                             <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
-                                                :w="item.w" :h="item.h" :i="item.i" @move="moveEvent" @moved="movedEvent">
+                                                       :w="item.w" :h="item.h" :i="item.i" @move="moveEvent"
+                                                       @moved="movedEvent">
                                                 <caipirinha-visualization :url="item.url" :public-route="publicRoute" />
                                             </grid-item>
                                         </grid-layout>
@@ -52,22 +53,22 @@
                     </div>
                 </div>
                 <div v-else>
-                    <h2>{{ $tc('common.noData') }}</h2>
+                    <h2>{{$tc('common.noData')}}</h2>
                 </div>
             </div>
         </div>
         <b-modal id="dashboardProperties" ref="dashboardProperties" size="lg" button-size="sm"
-            :title="$tc('titles.property', 2)" :ok-only="true">
+                 :title="$tc('titles.property', 2)" :ok-only="true">
             <b-form @submit="save">
                 <b-form-group :label="$tc('common.title', 1) + ':'">
                     <b-form-input v-model="dashboard.title" required />
                 </b-form-group>
                 <b-form-checkbox v-model="dashboard.is_public">
-                    {{ $t('dashboard.public') }}
+                    {{$t('dashboard.public')}}
                     <br>
-                    <small><em>{{ $t('dashboard.publicExplanation') }}</em></small>
+                    <small><em>{{$t('dashboard.publicExplanation')}}</em></small>
                 </b-form-checkbox>
-                <b-input-group class="mt-3" v-if="dashboard.is_public">
+                <b-input-group v-if="dashboard.is_public" class="mt-3">
                     <template #append>
                         <b-input-group-text role="button" @click="copyLink">
                             <font-awesome-icon icon="copy" />
@@ -125,7 +126,7 @@ export default {
         this.$root.$off('onsave-visualization');
     },
     mounted() {
-        this.load()
+        this.load();
         const self = this;
         this.$root.$on('ondelete-visualization', (visId) => {
             this.confirm(this.$t('actions.delete'),
@@ -145,7 +146,7 @@ export default {
                         .catch(e => {
                             this.error(e);
                         });
-                })
+                });
         });
         this.$root.$on('onsave-visualization', (visualizationId, visualizationData, callback) => {
             const params = { data: visualizationData };
@@ -216,8 +217,8 @@ export default {
                         h: 4,
                         i: response.data.id,
                         url: `${caipirinhaUrl}/visualizations/0/0/${response.data.id}`
-                    }
-                    this.layout.push(newItem)
+                    };
+                    this.layout.push(newItem);
                     this.$refs.dashboardProperties.hide();
                     this.save(null, true);
                 })

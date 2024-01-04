@@ -50,8 +50,8 @@ export default {
                     return {
                         ...data,
                         [columns[i]]: column,
-                    }
-                }, {})
+                    };
+                }, {});
             })
         };
     },

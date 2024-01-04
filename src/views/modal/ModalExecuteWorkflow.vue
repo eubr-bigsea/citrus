@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>{{$tc('titles.cluster')}}:</label>
-                            <select v-model="clusterInfo.id" class="form-control-sm form-control"
+                            <select v-model="clusterInfoCopy.id" class="form-control-sm form-control"
                                     @change="changeCluster">
                                 <option v-for="option in clusters" :key="option.id" :value="option.id">
                                     {{option.name}}
@@ -36,11 +36,11 @@
                         <div class="col-md-8">
                             <label>{{$t('workflow.jobName')}}
                                 ({{$t('common.optional')}}):</label>
-                            <input v-model="clusterInfo.jobName" type="text" class="form-control form-control-sm"
+                            <input v-model="clusterInfoCopy.jobName" type="text" class="form-control form-control-sm"
                                    maxlength="50">
                         </div>
                         <div class="col-md-12">
-                            <small>{{clusterInfo.description}}</small>
+                            <small>{{clusterInfoCopy.description}}</small>
                         </div>
                     </div>
                 </div>
@@ -49,15 +49,17 @@
         <div v-else class="alert alert-danger">
             <font-awesome-icon icon="fa fa-exclamation-circle" /> {{$t("workflow.errorNoCluster")}}
         </div>
-        <div slot="modal-footer" class="w-100 text-right">
-            <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn"
-                    class="btn btn-sm btn-outline-success" @click="execute($event)">
-                <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}
-            </button>
-            <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">
-                {{$t('actions.cancel')}}
-            </button>
-        </div>
+        <template #modal-footer>
+            <div class="w-100 text-right">
+                <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn"
+                        class="btn btn-sm btn-outline-success" @click="execute($event)">
+                    <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}
+                </button>
+                <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">
+                    {{$t('actions.cancel')}}
+                </button>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
@@ -68,10 +70,30 @@ export default {
         validationErrors: { type: Array, default: () => null },
         workflow: { type: Object, default: () => { } },
     },
-    emits: ['onexecute-workflow', 'onchange-cluster'],
+    emits: ['onexecute-workflow', 'onchange-cluster', 'update-value'],
+    data() {
+        return {
+            'clusterInfoCopy': {... this.clusterInfo}
+        };
+    },
+    watch: {
+        clusterInfo: {
+            deep: true,
+            handler(newValues){
+                this.clusterInfoCopy = {... newValues};
+            }
+        },
+        /*
+        clusterInfoCopy: {
+            deep: true,
+            handler(newValues) {
+                this.$emit('update-value', newValues);
+            }
+        }*/
+    },
     methods: {
         changeCluster() {
-            const cluster = this.clusters.find((c) => c.id === this.clusterInfo.id);
+            const cluster = this.clusters.find((c) => c.id === this.clusterInfoCopy.id);
             this.$emit("onchange-cluster", cluster);
         },
         close() {
@@ -79,11 +101,12 @@ export default {
         },
         execute(event) {
             event.target.disabled = true;
+            this.$emit('update-value', this.clusterInfoCopy);
             this.$emit("onexecute-workflow");
         },
         show() {
             this.$refs.modal.show();
         },
     }
-}
+};
 </script>

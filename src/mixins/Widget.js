@@ -43,4 +43,4 @@ export default {
             this.$emit('update', field, value, labelValue);
         }
     },
-}
+};

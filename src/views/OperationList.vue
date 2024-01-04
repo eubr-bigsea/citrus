@@ -14,33 +14,7 @@
                         <div class="col-md-12">
                             <v-server-table ref="jobList" :data="tableData" :columns="columns" :options="options"
                                             name="jobList">
-                                <!--
-                    <template slot="id" v-slot="props">
-                        <router-link :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">{{props.row.id}}</router-link>
-                    </template>
-                    <template slot="name" v-slot="props">
-                        <router-link :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">{{props.row.name}}</router-link>
-                    </template>
-                    <template slot="actions" v-slot="props">
-                        <button class="btn btn-sm danger" @click="remove(props.row)" :title="$t('actions.delete')">
-                            <font-awesome-icon icon="trash"></font-awesome-icon>
-                        </button>
-                    </template>
-                    <template slot="status" v-slot="props">
-                        <div class="lemonade-job" :class="props.row.status.toLowerCase()">
-                            {{props.row.status}}
-                        </div>
-                    </template>
-                    <template slot="created" v-slot="props">
-                        {{props.row.created | formatJsonDate}}
-                    </template>
-                    <template slot="workflow" v-slot="props">
-                        <router-link :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}">
-                            {{props.row.workflow.id}} - {{props.row.workflow.name}}
-                        </router-link>
-                    </template>
-                -->
-                                <template slot="platforms.name" #default="props">
+                                <template #platforms="props">
                                     {{props.row.platforms.map(plat => plat.name).join(", ")}}
                                 </template>
                                 <template #enabled="props">
@@ -160,16 +134,16 @@ export default {
 };
 </script>
 <style scoped>
-    .slide-leave-active,
-    .slide-enter-active {
-        transition: 0.5s;
-    }
+.slide-leave-active,
+.slide-enter-active {
+    transition: 0.5s;
+}
 
-    .slide-enter {
-        transform: translate(0, 100%);
-    }
+.slide-enter {
+    transform: translate(0, 100%);
+}
 
-    .slide-leave-to {
-        transform: translate(0, -100%);
-    }
+.slide-leave-to {
+    transform: translate(0, -100%);
+}
 </style>
