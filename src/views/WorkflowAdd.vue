@@ -4,13 +4,13 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$t('actions.create', {type: $tc('titles.workflow', 1).toLowerCase()})}}</h1>
+                        <h1>{{$t('actions.create', {type: $t('titles.workflow', 1).toLowerCase()})}}</h1>
                     </div>
                     <hr>
                     <b-card>
                         <div class="row">
                             <div class="col-md-4">
-                                <label>{{$tc('common.name')}}:</label>
+                                <label>{{$t('common.name')}}:</label>
                                 <input v-model="name" v-focus class="form-control mb-1">
                             </div>
                             <div class="col-md-12">
@@ -63,13 +63,13 @@
                                             <table v-if="templates && templates.length" class="table">
                                                 <tr class="d-flex">
                                                     <th class="col-3">
-                                                        {{$tc('common.name')}}
+                                                        {{$t('common.name')}}
                                                     </th>
                                                     <th class="col-6">
-                                                        {{$tc('common.description')}}
+                                                        {{$t('common.description')}}
                                                     </th>
                                                     <th class="col-3">
-                                                        {{$tc('titles.platform')}}
+                                                        {{$t('titles.platform')}}
                                                     </th>
                                                 </tr>
                                                 <tr v-for="template in templates" :key="template.id" class="d-flex">

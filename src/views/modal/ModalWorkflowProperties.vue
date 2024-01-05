@@ -1,11 +1,11 @@
 <template>
-    <b-modal ref="modal" size="xl" :title="$tc('titles.property', 2)">
+    <b-modal ref="modal" size="xl" :title="$t('titles.property', 2)">
         <b-form v-if="loaded">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-7">
-                            <label>{{$tc('common.name', 1)}}:</label>
+                            <label>{{$t('common.name', 1)}}:</label>
                             <b-form-input v-model="workflowCopy.name" type="text" required />
                         </div>
                         <div class="col-md-5">
@@ -17,7 +17,7 @@
                             </select>
                         </div>
                         <div class="col-md-12">
-                            <label>{{$tc('common.description', 1)}}:</label>
+                            <label>{{$t('common.description', 1)}}:</label>
                             <b-form-textarea v-model="workflowCopy.description" :rows="3" :max-rows="6" />
                         </div>
                     </div>
@@ -104,7 +104,7 @@ export default {
                 this.$emit('update-value', this.workflowCopy);
                 this.$refs.modal.hide();
             } else {
-                this.warning(this.$tc('titles.validationErrors', 2));
+                this.warning(this.$t('titles.validationErrors', 2));
             }
         },
         show() {

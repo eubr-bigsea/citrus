@@ -26,7 +26,7 @@ export default {
     computed: {
         error() {
             if (this.field.required && (this.value === undefined || this.value === null || this.value === '' || this.value === {})) {
-                return this.$tc('errors.missingRequiredValue');
+                return this.$t('errors.missingRequiredValue');
             }
             return null;
         },

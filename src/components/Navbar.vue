@@ -10,23 +10,23 @@
         <b-collapse id="nav_collapse" is-nav>
             <b-navbar-nav class="pt-1">
                 <b-nav-item v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" :to="{ name: 'dataSources' }">
-                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{$tc('titles.dataSource', 2)}}
+                    <font-awesome-icon icon="fa fa-database" class="text-success" /> {{$t('titles.dataSource', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
-                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{$tc('titles.workflow', 2)}}
+                    <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{$t('titles.workflow', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
                             data-test="experiments-menu">
-                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{$tc('titles.dataExplorer', 2)}}
+                    <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{$t('titles.dataExplorer', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'tracks' }">
-                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{$tc('titles.track', 2)}}
+                    <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{$t('titles.track', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" :to="{ name: 'jobs' }">
-                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{$tc('titles.jobs', 2)}}
+                    <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{$t('titles.jobs', 2)}}
                 </b-nav-item>
                 <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
-                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{$tc('titles.dashboard', 2)}}
+                    <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{$t('titles.dashboard', 2)}}
                 </b-nav-item>
             </b-navbar-nav>
 
@@ -34,33 +34,33 @@
                 <b-nav-item-dropdown v-if="isAdmin" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-lock" class="text-success" />
-                        {{$tc('titles.administration', 2)}}
+                        {{$t('titles.administration', 2)}}
                     </template>
                     <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
-                        {{$tc('titles.user', 2)}}
+                        {{$t('titles.user', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'AdministrationRoleList' }">
-                        {{$tc('titles.role', 2)}}
+                        {{$t('titles.role', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'configuration' }">
-                        {{$tc('titles.configuration', 2)}}
+                        {{$t('titles.configuration', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'clusters' }">
-                        {{$tc('titles.cluster', 2)}}
+                        {{$t('titles.cluster', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'storages' }">
-                        {{$tc('titles.storage', 2)}}
+                        {{$t('titles.storage', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'platforms' }">
-                        {{$tc('titles.platform', 2)}}
+                        {{$t('titles.platform', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'models' }">
-                        {{$tc('titles.model', 2)}}
+                        {{$t('titles.model', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'deployments' }">
-                        {{$tc('titles.deployment', 2)}}
+                        {{$t('titles.deployment', 2)}}
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'admin-openid' }">
@@ -86,7 +86,7 @@
                             <small>{{user.email}}</small>
                         </p>
                         <div class="text-center">
-                            <strong>{{$tc('titles.role', 2)}}</strong><br>
+                            <strong>{{$t('titles.role', 2)}}</strong><br>
                             <div class="mt-2">
                                 <span v-for="role in user.roles" :key="role.id" class="badge badge-info mr-1 p-1">
                                     {{role.label}}
@@ -140,7 +140,7 @@
                             <small>{{user.email}}</small>
                         </p>
                         <div class="text-center">
-                            <strong>{{$tc('titles.role', 2)}}</strong><br>
+                            <strong>{{$t('titles.role', 2)}}</strong><br>
                             <div class="mt-2">
                                 <span v-for="role in user.roles"
                                       :key="role.id"

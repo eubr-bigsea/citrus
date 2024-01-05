@@ -1,12 +1,12 @@
 <template>
     <b-modal id="modal" title="Adicionar Análise">
-        <label>{{$tc('common.attribute', 1)}}:</label>
+        <label>{{$t('common.attribute', 1)}}:</label>
         <select v-model="attribute" class="form-control" @change="analysis = []">
             <option v-for="attr in attributes" :key="attr.name" :value="attr">
                 {{attr.name}}
             </option>
         </select>
-        <label for="exampleFormControlSelect1">{{$tc('common.type')}}:</label>
+        <label for="exampleFormControlSelect1">{{$t('common.type')}}:</label>
         <select id="analysis_type" v-model="type" class="form-control">
             <option value="univariate">
                 {{$t('dataSource.analysis.univariate')}}
@@ -29,7 +29,7 @@
             </option>
         -->
         </select>
-        <b-form-group v-if="type != null" :label="`${$tc('titles.analysis', 2)}:`">
+        <b-form-group v-if="type != null" :label="`${$t('titles.analysis', 2)}:`">
             <b-form-checkbox-group v-model="analysis" stacked>
                 <b-form-checkbox v-for="option in selectedAnalysisOptions"
                                  :key="option.name" 

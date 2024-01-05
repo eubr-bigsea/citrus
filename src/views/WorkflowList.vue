@@ -1,7 +1,7 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$tc('titles.workflow', 2)}}</h1>
+            <h1>{{$t('titles.workflow', 2)}}</h1>
             <div>
                 <button class="btn btn-outline-info float-left" @click.prevent="showImportWorkflow">
                     <font-awesome-icon icon="fa fa-download" />
@@ -30,7 +30,7 @@
                         {{props.row.platform.name}}
                     </template>
                     <template #is_template="props">
-                        {{$tc(props.row.is_template ?
+                        {{$t(props.row.is_template ?
                             'common.yes':
                             'common.no')}}
                     </template>
@@ -42,7 +42,7 @@
                     </template>
                     <template #afterFilter>
                         <div class="ml-2">
-                            <label>{{$tc('common.platform')}}</label>
+                            <label>{{$t('common.platform')}}</label>
                             <select v-model="platform" class="form-control">
                                 <option />
                                 <option v-for="p in platforms" :key="p.id" :value="p.slug">
@@ -51,7 +51,7 @@
                             </select>
                             <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
                                     @click="clearFilters">
-                                {{$tc('actions.clearFilters')}}
+                                {{$t('actions.clearFilters')}}
                             </button>
                         </div>
                     </template>
@@ -64,7 +64,7 @@
             </div>
         </div>
         <b-modal id="importModal" ref="importModal" size="lg"
-                 :title="$t('actions.import') + ' ' + $tc('titles.workflow', 1)" ok-disabled>
+                 :title="$t('actions.import') + ' ' + $t('titles.workflow', 1)" ok-disabled>
             <b-form-radio-group>
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -119,13 +119,13 @@ export default {
                 columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    updated: this.$tc('common.updated'),
-                    platform: this.$tc('common.platform'),
-                    user_name: this.$tc('common.user.name'),
-                    version: this.$tc('common.version'),
-                    is_template: this.$tc('titles.template'),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    updated: this.$t('common.updated'),
+                    platform: this.$t('common.platform'),
+                    user_name: this.$t('common.user.name'),
+                    version: this.$t('common.version'),
+                    is_template: this.$t('titles.template'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['name', 'id', 'updated'],
                 filterable: ['name', 'id'],
@@ -168,7 +168,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -222,7 +222,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: this.$tc('titles.workflow', 1) }));
+                                { what: this.$t('titles.workflow', 1) }));
                             self.$refs.workflowList.refresh();
                         })
                         .catch(e => self.error(e));
@@ -254,7 +254,7 @@ export default {
                 self.closeImport();
 
             } else {
-                this.warning(this.$tc('import.selectFile'));
+                this.warning(this.$t('import.selectFile'));
             }
         },
         closeImport() {

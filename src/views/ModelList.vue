@@ -59,13 +59,13 @@ export default {
                 columnsClasses: { 'actions': 'text-center' },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    class_name: this.$tc('common.class'),
-                    deployment_status: this.$tc('model.deployment_status'),
-                    type: this.$tc('common.type'),
+                    name: this.$t('common.name'),
+                    class_name: this.$t('common.class'),
+                    deployment_status: this.$t('model.deployment_status'),
+                    type: this.$t('common.type'),
                     user_name: this.$t('common.user.name'),
-                    created: this.$tc('common.created'),
-                    actions: this.$tc('common.action', 2)
+                    created: this.$t('common.created'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['id', 'name', 'type', 'created', 'deployment_status'],
                 filterable: ['id', 'name', 'type', 'created'],
@@ -109,7 +109,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -146,7 +146,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: this.$tc('titles.model', 1) }));
+                                { what: this.$t('titles.model', 1) }));
                             self.$refs.listTable.refresh();
                         })
                         .catch(e => self.error(e));

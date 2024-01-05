@@ -4,7 +4,7 @@
             <b-nav v-if="menus">
                 <b-nav-item-dropdown toggle-class="nav-link-custom">
                     <template #button-content>
-                        <font-awesome-icon icon="fa fa-lightbulb" class="text-warning" /> {{$tc('actions.analyse')}}
+                        <font-awesome-icon icon="fa fa-lightbulb" class="text-warning" /> {{$t('actions.analyse')}}
                     </template>
                     <b-dropdown-item @click="$emit('analyse', null)">
                         Estatísticas do resultado
@@ -15,10 +15,10 @@
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown toggle-class="nav-link-custom">
                     <template #button-content>
-                        <font-awesome-icon icon="fa fa-cog" /> {{$tc('actions.export')}}
+                        <font-awesome-icon icon="fa fa-cog" /> {{$t('actions.export')}}
                     </template>
                     <b-dropdown-item @click="trigger('export', null)">
-                        <font-awesome-icon icon="fa fa-flask" /> {{$tc('actions.new')}} {{$tc('titles.workflow')}}
+                        <font-awesome-icon icon="fa fa-flask" /> {{$t('actions.new')}} {{$t('titles.workflow')}}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
                 <b-nav-item-dropdown v-for="menu in menus" :key="menu.menu.id" toggle-class="nav-link-custom"

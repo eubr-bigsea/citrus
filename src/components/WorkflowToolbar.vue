@@ -3,9 +3,9 @@
         <div class="btn-group mr-2"
              role="group">
             <button class="btn btn-sm btn-outline-dark"
-                    :title="$tc('titles.job', 2)"
+                    :title="$t('titles.job', 2)"
                     @click.prevent="showExecutions">
-                <font-awesome-icon icon="fa fa-tasks" /> {{$tc('titles.job', 2)}}
+                <font-awesome-icon icon="fa fa-tasks" /> {{$t('titles.job', 2)}}
             </button>
             <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled"
                     class="btn btn-sm btn-outline-dark"
@@ -80,7 +80,7 @@
                                    class=" text-primary" /> {{$t('actions.execute')}}
             </button>
             <!--
-        <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$tc('actions.stop')"
+        <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$t('actions.stop')"
             variant="danger" id="tlb-restart-wf">
             <font-awesome-icon icon="fa fa-stop red" />
         </button>

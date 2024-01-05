@@ -26,7 +26,7 @@
 
             <div class="row border-top mt-2 pt-2">
                 <div class="offset-md-2 col-md-2">
-                    <label for="row">{{$tc('common.row', 1)}}</label>
+                    <label for="row">{{$t('common.row', 1)}}</label>
                     <input v-model="coordinates.row"
                            type="number"
                            min="0"
@@ -35,7 +35,7 @@
                            class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <label for="column">{{$tc('common.column', 1)}}</label>
+                    <label for="column">{{$t('common.column', 1)}}</label>
                     <input v-model="coordinates.column"
                            type="number"
                            min="0"
@@ -44,7 +44,7 @@
                            class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <label for="width">{{$tc('common.width', 1)}}</label>
+                    <label for="width">{{$t('common.width', 1)}}</label>
                     <input v-model="coordinates.width"
                            type="number"
                            min="1"
@@ -53,7 +53,7 @@
                            class="form-control">
                 </div>
                 <div class="col-md-2">
-                    <label for="height">{{$tc('common.height', 1)}}</label>
+                    <label for="height">{{$t('common.height', 1)}}</label>
                     <input v-model="coordinates.height"
                            type="number"
                            min="1"

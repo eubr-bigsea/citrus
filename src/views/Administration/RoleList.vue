@@ -3,7 +3,7 @@
         <div>
             <div class="title">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$tc('titles.role', 2)}}</h1>
+                    <h1>{{$t('titles.role', 2)}}</h1>
                     <router-link :to="{ name: 'AdministrationAddRole' }" class="btn btn-primary btn-lemonade-primary">
                         <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                     </router-link>
@@ -22,10 +22,10 @@
                     </router-link>
                 </template>
                 <template #enabled="props">
-                    {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                    {{$t(props.row.enabled ? 'common.yes': 'common.no')}}
                 </template>
                 <template #system="props">
-                    {{$tc(props.row.system? 'common.yes': 'common.no')}}
+                    {{$t(props.row.system? 'common.yes': 'common.no')}}
                 </template>
                 <template #actions="props">
                     <button v-if="!props.row.system" class="btn btn-sm btn-light" @click="remove(props.row.id)">
@@ -58,12 +58,12 @@ export default {
                 columnClasses: { actions: 'th-2' },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    description: this.$tc('common.description'),
-                    label: this.$tc('common.label'),
-                    enabled: this.$tc('common.enabled'),
-                    system: this.$tc('common.system'),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    description: this.$t('common.description'),
+                    label: this.$t('common.label'),
+                    enabled: this.$t('common.enabled'),
+                    system: this.$t('common.system'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['name', 'id'],
                 filterable: ['name', 'id', 'description', 'label'],
@@ -105,7 +105,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -135,7 +135,7 @@ export default {
                         .then(() => {
                             self.success(
                                 self.$t('messages.successDeletion', {
-                                    what: this.$tc('titles.role', 1)
+                                    what: this.$t('titles.role', 1)
                                 })
                             );
                             self.$refs.roleList.refresh();
@@ -156,7 +156,7 @@ export default {
                         .then(() => {
                             self.success(
                                 self.$t('messages.successConfirmation', {
-                                    what: this.$tc('titles.role', 1)
+                                    what: this.$t('titles.role', 1)
                                 })
                             );
                             self.$refs.roleList.refresh();

@@ -13,7 +13,7 @@
                 <template #default>
                     <div class="row">
                         <div class="col-md-4 offset-md-1 p-0">
-                            <small>{{$tc('property.availableAttribute', 2)}}:</small>
+                            <small>{{$t('property.availableAttribute', 2)}}:</small>
                             <div class="left options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in available" :key="suggestion"
                                      class="border mb-1 p-1 suggested-attr" @click="move('right', index)">
@@ -41,12 +41,12 @@
                                 </b-btn>
                                 <br>
                                 <div class="border border-info">
-                                    {{$tc('property.clickToMove', 2)}}
+                                    {{$t('property.clickToMove', 2)}}
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <small>{{$tc('property.selectedAttribute', 2)}}:</small>
+                            <small>{{$t('property.selectedAttribute', 2)}}:</small>
                             <div class="options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in value" :key="suggestion"
                                      class="border mb-1 p-1 selected-attr" @click="move('left', index)">

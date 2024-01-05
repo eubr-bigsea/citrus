@@ -31,7 +31,7 @@ export default class {
     info(msg, timeout, bodyMaxLength) {
         this.$snotify.info(
             msg,
-            this.$tc('titles.info', 2),
+            this.$t('titles.info', 2),
             { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }

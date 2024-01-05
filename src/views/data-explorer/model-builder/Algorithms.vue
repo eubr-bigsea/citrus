@@ -24,7 +24,7 @@
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
                     <h6>{{selectedAlgorithm.operation.name}}</h6>
                     <hr>
-                    <template v-for="form in selectedAlgorithm.operation.forms">
+                    <template v-for="form in selectedAlgorithm.operation.forms" :key="form.id">
                         <div v-for="field in form.fields" :key="field.name" class="mb-2 property clearfix"
                              :data-name="field.name">
                             <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}
@@ -47,7 +47,7 @@
                                 <div v-else />
                             </keep-alive>
                         </div>
-                        <button :key="form.id" class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">
+                        <button class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">
                             Limpar
                             parâmetros
                         </button>

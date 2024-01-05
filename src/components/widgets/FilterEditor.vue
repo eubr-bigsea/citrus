@@ -15,12 +15,12 @@
         <span v-else>{{displayValue}}</span>
         <b-modal ref="modal"
                  size="xl"
-                 :title="$tc('common.filter', 2)"
+                 :title="$t('common.filter', 2)"
                  hide-header>
             <div class="p-1">
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
-                        {{$tc('common.filter', 2)}}
+                        {{$t('common.filter', 2)}}
                         <div class="values pb-1 border">
                             <div v-for="(row, index) in valueList"
                                  :key="index"
@@ -90,7 +90,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4">
-                                            <label>{{$tc('variables.operator', 1)}}:</label>
+                                            <label>{{$t('variables.operator', 1)}}:</label>
                                             <select v-model="selected.operator"
                                                     class="form-control"
                                                     tabindex="0">
@@ -204,7 +204,7 @@
                                     O valor de <code>key</code> será atribuído à variável e <code>value</code> é
                                     exibido.
                                 </b-tab>
-                                <b-tab :title="$tc('variables.text', 2)">
+                                <b-tab :title="$t('variables.text', 2)">
                                     <label>{{$t('variables.textBefore')}}:</label>
                                     <textarea v-model="selected.textBefore"
                                               maxlength="300"

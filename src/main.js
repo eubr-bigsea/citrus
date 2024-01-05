@@ -1,4 +1,5 @@
-import Vue from 'vue';
+//import Vue from 'vue';
+import Vue, { createApp } from '@vue/compat';
 import VueProgressBar from 'vue-progressbar';
 import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
@@ -7,8 +8,7 @@ import store from './store.js';
 import { openIdService } from './openid-auth.js';
 
 import 'vue-select/dist/vue-select.css';
-import VueI18n from 'vue-i18n';
-import { createI18n } from 'vue-i18n-bridge';
+import { createI18n } from 'vue-i18n';
 
 import messages from './i18n/messages.js';
 
@@ -18,9 +18,13 @@ import axios from 'axios';
 //import VueAxios from 'vue-axios';
 import VueTheMask from 'vue-the-mask';
 
-import { ClientTable, ServerTable } from 'vue-tables-2';
+import { ClientTable, ServerTable } from 'v-tables-3';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+//import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons.js';
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 /* Widgets */
 
@@ -59,6 +63,7 @@ import Plotly from './components/visualization/Plotly.vue';
 import vSelect from 'vue-select';
 import VueGridLayout from 'vue-grid-layout';
 
+Vue.use(BootstrapVue);
 
 Vue.component('VSelect', vSelect);
 Vue.component('GridItem', VueGridLayout.GridItem);
@@ -127,8 +132,6 @@ Vue.directive('focus', {
 import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoReplaceSvg = 'nest';
 
-Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
-Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 //Vue.use(VueTheMask)
 
 //Vue.use(VueAxios, axios);
@@ -151,7 +154,6 @@ const options = {
     location: 'top',
     inverse: false
 };
-Vue.use(VueI18n, { bridge: true });
 Vue.use(VueProgressBar, options);
 
 // Date-fns
@@ -210,24 +212,6 @@ Vue.component('VStyle', {
     }
 });
 
-// Highcharts
-/*
-import Highcharts from 'highcharts';
-import HighchartsVue from 'highcharts-vue';
-import exporting from 'highcharts/modules/exporting';
-import offlineExporting from 'highcharts/modules/offline-exporting';
-import exportdata from 'highcharts/modules/export-data';
-import highchartsMore from 'highcharts/highcharts-more';
-
-
-exporting(Highcharts);
-exportdata(Highcharts);
-offlineExporting(Highcharts);
-highchartsMore(Highcharts);
-
-Vue.use(HighchartsVue);
-*/
-
 // Leaflet
 //import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
@@ -269,12 +253,7 @@ openIdService.loadConfig(store).then(() => {
     }
 
     // i18n
-    const i18n = new VueI18n({
-        locale: user ? user.locale : 'pt',
-        fallbackLocale: 'en',
-        messages
-    });
-    const i18nComposition = createI18n({
+    const i18n= createI18n({
         allowComposition: true,
         globalInjection: true,
         global: true,
@@ -282,8 +261,7 @@ openIdService.loadConfig(store).then(() => {
         locale: user ? user.locale : 'pt',
         fallbackLocale: 'en',
         messages
-    }, VueI18n);
-    Vue.use(i18nComposition);
+    });
 
     Object.defineProperty(Vue.prototype, '$locale', {
         get: function () {
@@ -296,14 +274,14 @@ openIdService.loadConfig(store).then(() => {
 
     router.beforeEach((to, from, next) => {
         if (to.meta.title) {
-            let title = i18n.tc('titles.lemonade') + ' :: ' +
-                i18n.tc(to.meta.title[0], to.meta.title[1]);
+            let title = i18n.global.t('titles.lemonade') + ' :: ' +
+                i18n.global.t(to.meta.title[0], to.meta.title[1]);
             if (to.params.id) {
                 title += ' #' + to.params.id;
             }
             document.title = title;
         } else {
-            document.title = i18n.tc('titles.lemonade', 2);
+            document.title = i18n.global.t('titles.lemonade', 2);
         }
         if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
             // If OpenId support is enabled in Thorn, use it.
@@ -338,6 +316,7 @@ openIdService.loadConfig(store).then(() => {
         }
     });
 
+    /*
     let newVue = new Vue({
         el: '#app',
         i18n,
@@ -346,6 +325,14 @@ openIdService.loadConfig(store).then(() => {
         store,
         render: h => h(App)
     });
+    */
+    const app = createApp(App);
+    app.use(store);
+    app.use(i18n);
+    app.use(router);
+    app.use(ClientTable, {}, 'bootstrap4');
+    app.use(ServerTable, {}, 'bootstrap4', {}, {});
+    app.mount('#app');
 
     let requestCounter = 0;
     axios.interceptors.request.use(async config => {
@@ -371,7 +358,7 @@ openIdService.loadConfig(store).then(() => {
         return response;
     }, (error) => {
         if (error.response.status === 401) {
-            newVue.$snotify.error(i18n.tc('errors.accessDenied'));
+            newVue.$snotify.error(i18n.global.t('errors.accessDenied'));
             if (openIdService.enabled) {
                 openIdService.logout();
             } else {
@@ -383,5 +370,6 @@ openIdService.loadConfig(store).then(() => {
         throw error;
     });
 }).catch((e) => {
+    console.debug(e);
     alert(e);
 });

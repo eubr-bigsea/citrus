@@ -47,12 +47,12 @@
                             <font-awesome-icon icon="fa fa-ellipsis-h" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="edit('appearance')">
-                            {{$tc('titles.comment')}} &amp;
-                            {{$tc('titles.color').toLowerCase()}}
+                            {{$t('titles.comment')}} &amp;
+                            {{$t('titles.color').toLowerCase()}}
                         </b-dropdown-item>
                         <b-dropdown-item href="#" @click.prevent="$emit('duplicate', step)">
-                            {{$tc('actions.duplicate')}}
-                            {{$tc('dataExplorer.step').toLowerCase()}}
+                            {{$t('actions.duplicate')}}
+                            {{$t('dataExplorer.step').toLowerCase()}}
                         </b-dropdown-item>
                     </b-dropdown>
                 </b-button-group>

@@ -5,9 +5,9 @@
                 <h6>Construtor de visualizações</h6>
                 <form class="clearfix visualization-form">
                     <div data-test="basic-options-section">
-                        <label>{{$tc('common.name')}}:</label>
+                        <label>{{$t('common.name')}}:</label>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                               :placeholder="$tc('common.name')" maxlength="100">
+                               :placeholder="$t('common.name')" maxlength="100">
 
                         <label for="">Fonte de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
@@ -29,7 +29,7 @@
                             </template>
                         </vue-select>
 
-                        <label>{{$tc('titles.cluster')}}: </label>
+                        <label>{{$t('titles.cluster')}}: </label>
                         <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
                                   :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">

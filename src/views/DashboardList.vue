@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col">
                 <div class="title">
-                    <h1>{{$tc('titles.dashboard', 2)}}</h1>
+                    <h1>{{$t('titles.dashboard', 2)}}</h1>
                 </div>
                 <v-server-table ref="listTable" :columns="columns" :options="options" name="dashboardList">
                     <template #id="props">
@@ -58,11 +58,11 @@ export default {
                 dateColumns: ['updated'],
                 headings: {
                     id: 'ID',
-                    is_public: this.$tc('dashboard.public'),
-                    title: this.$tc('common.title'),
-                    'user.name': this.$tc('common.user.name'),
-                    updated: this.$tc('common.updated'),
-                    actions: this.$tc('common.action', 2)
+                    is_public: this.$t('dashboard.public'),
+                    title: this.$t('common.title'),
+                    'user.name': this.$t('common.user.name'),
+                    updated: this.$t('common.updated'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['id', 'title', 'updated', 'user.name'],
                 filterable: ['id', 'title', 'updated', 'user.name'],
@@ -106,7 +106,7 @@ export default {
                         );
                 }.bind(this),
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -143,7 +143,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: self.$tc('titles.dashboard', 1) }));
+                                { what: self.$t('titles.dashboard', 1) }));
                             self.$refs.listTable.getData();
                         })
                         .catch(e => self.error(e));

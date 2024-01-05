@@ -6,7 +6,7 @@
                     <input v-model="search"
                            type="text"
                            class="form-control"
-                           :placeholder="$tc('actions.search')"
+                           :placeholder="$t('actions.search')"
                            @input="searchOperation">
                 </li>
                 <li v-if="loading"

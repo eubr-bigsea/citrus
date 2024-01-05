@@ -5,7 +5,7 @@
                 <div>
                     <div class="title">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h1>{{$tc('titles.user', 2)}}</h1>
+                            <h1>{{$t('titles.user', 2)}}</h1>
                             <div>
                                 <router-link :to="{ name: 'AdministrationAddUser' }"
                                              class="btn btn-primary btn-lemonade-primary float-left ml-2">
@@ -31,7 +31,7 @@
                         </template>
 
                         <template #enabled="props">
-                            {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                            {{$t(props.row.enabled ? 'common.yes': 'common.no')}}
                         </template>
                         <template #email="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
@@ -96,13 +96,13 @@ export default {
                 columnClasses: {actions: 'th-10'},
                 headings: {
                     id: 'ID',
-                    full_name: this.$tc('common.name'),
-                    enabled: this.$tc('common.enabled'),
-                    email: this.$tc('common.email'),
-                    roles: this.$tc('common.roles', 2),
-                    notes: this.$tc('common.user.notes'),
-                    confirmed_at: this.$tc('common.confirmed_at'),
-                    actions: this.$tc('common.action', 2)
+                    full_name: this.$t('common.name'),
+                    enabled: this.$t('common.enabled'),
+                    email: this.$t('common.email'),
+                    roles: this.$t('common.roles', 2),
+                    notes: this.$t('common.user.notes'),
+                    confirmed_at: this.$t('common.confirmed_at'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['full_name', 'id', 'email', 'confirmed_at'],
                 filterable: ['full_name', 'id', 'email'],
@@ -144,7 +144,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -175,7 +175,7 @@ export default {
                         .then(()=> {
                             self.success(
                                 self.$t('messages.successDeletion', {
-                                    what: this.$tc('titles.user', 1)
+                                    what: this.$t('titles.user', 1)
                                 })
                             );
                             self.$refs.userList.refresh();
@@ -196,7 +196,7 @@ export default {
                         .then(()=> {
                             self.success(
                                 self.$t('messages.successConfirmation', {
-                                    what: this.$tc('titles.user', 1)
+                                    what: this.$t('titles.user', 1)
                                 })
                             );
                             self.$refs.userList.refresh();

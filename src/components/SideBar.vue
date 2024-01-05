@@ -14,7 +14,7 @@
             <li :class="{active: path === '/home'}">
                 <b-link :to="{ name: 'home' }"
                         class="text-success-2">
-                    <font-awesome-icon icon="fa fa-home" size="lg" fixed-width /> {{$tc('titles.start', 2)}}
+                    <font-awesome-icon icon="fa fa-home" size="lg" fixed-width /> {{$t('titles.start', 2)}}
                 </b-link>
             </li>
             <li class="mb-1" />
@@ -24,7 +24,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-shapes"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.project', 2)}}
+                                       fixed-width /> {{$t('titles.project', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/data-sources'}">
@@ -33,7 +33,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-database"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.dataSource', 2)}}
+                                       fixed-width /> {{$t('titles.dataSource', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/workflows'}">
@@ -42,7 +42,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-project-diagram"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.workflow',
+                                       fixed-width /> {{$t('titles.workflow',
                                                             2)}}
                 </b-link>
             </li>
@@ -52,7 +52,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-vial"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.dataExplorer', 2)}}
+                                       fixed-width /> {{$t('titles.dataExplorer', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/apps'}">
@@ -61,7 +61,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-microscope"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.track', 2)}}
+                                       fixed-width /> {{$t('titles.track', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/jobs'}">
@@ -70,7 +70,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-tasks"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.jobs', 2)}}
+                                       fixed-width /> {{$t('titles.jobs', 2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/dashboards'}">
@@ -79,7 +79,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-chart-line"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.dashboard', 2)}}
+                                       fixed-width /> {{$t('titles.dashboard', 2)}}
                 </b-link>
             </li>
             <li class="mt-5" />
@@ -90,7 +90,7 @@
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-user-lock"
                                        size="lg"
-                                       fixed-width /> {{$tc('titles.administration',
+                                       fixed-width /> {{$t('titles.administration',
                                                             2)}}
                 </b-link>
             </li>

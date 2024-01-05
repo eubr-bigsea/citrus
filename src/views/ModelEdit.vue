@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.model', 1)}}</h1>
+                        <h1>{{$t('titles.model', 1)}}</h1>
                     </div>
                     <hr>
                     <div class="row">
@@ -12,40 +12,40 @@
                             <b-card>
                                 <div class="row">
                                     <div class="col-md-3">
-                                        <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                         <input v-model="model.name" type="text" class="form-control">
                                     </div>
                                     <div class="col-md-3">
-                                        <label class="font-weight-bold">{{$tc('common.class')}}:</label>
+                                        <label class="font-weight-bold">{{$t('common.class')}}:</label>
                                         <input v-model="model.class_name" disabled class="form-control">
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="font-weight-bold">{{$tc('common.created')}}:</label>
+                                        <label class="font-weight-bold">{{$t('common.created')}}:</label>
                                         <input v-model="model.created" disabled class="form-control">
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="font-weight-bold">{{$tc('common.type')}}:</label>
+                                        <label class="font-weight-bold">{{$t('common.type')}}:</label>
                                         <select v-model="model.type" class="form-control">
                                             <option v-for="fmt in types" :key="fmt" :value="fmt">
-                                                {{$tc('model.type_' + fmt)}}
+                                                {{$t('model.type_' + fmt)}}
                                             </option>
                                         </select>
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="font-weight-bold">{{$tc('model.storage')}}:</label>
+                                        <label class="font-weight-bold">{{$t('model.storage')}}:</label>
                                         <input :value="model.storage.name + ' (' + model.storage.type + ')'" disabled
                                                class="form-control">
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label class="font-weight-bold">{{$tc('common.path')}}:</label>
+                                        <label class="font-weight-bold">{{$t('common.path')}}:</label>
                                         <input v-model="model.path" disabled class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-5 mb-4 border-top pt-2">
                                     <router-link :to="{name: 'models'}" class="btn btn-secondary mr-1">
-                                        {{$tc('actions.cancel')}}
+                                        {{$t('actions.cancel')}}
                                     </router-link>
                                 </div>
                             </b-card>

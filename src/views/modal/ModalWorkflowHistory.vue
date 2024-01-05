@@ -3,10 +3,10 @@
         <div class="historyArea">
             <table class="table table-sm table-striped text-center">
                 <tr>
-                    <th>{{$tc('common.version')}}</th>
-                    <th>{{$tc('common.date')}}</th>
-                    <th>{{$tc('common.author')}}</th>
-                    <th>{{$tc('common.action')}}</th>
+                    <th>{{$t('common.version')}}</th>
+                    <th>{{$t('common.date')}}</th>
+                    <th>{{$t('common.author')}}</th>
+                    <th>{{$t('common.action')}}</th>
                 </tr>
                 <tr v-for="h in history" :key="h.id">
                     <td>{{h.version}}</td>

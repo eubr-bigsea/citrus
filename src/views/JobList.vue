@@ -1,7 +1,7 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$tc('titles.jobs', 2)}}</h1>
+            <h1>{{$t('titles.jobs', 2)}}</h1>
         </div>
         <div class="card">
             <div class="card-body">
@@ -87,8 +87,8 @@ export default {
                 headings: {
                     id: 'ID',
                     created: this.$t('common.created'),
-                    actions: this.$tc('common.action', 2),
-                    name: this.$tc('common.name'),
+                    actions: this.$t('common.action', 2),
+                    name: this.$t('common.name'),
                     'user.name': this.$t('common.user.name')
                 },
                 sortable: ['name', 'id', 'created'],
@@ -103,7 +103,7 @@ export default {
                 filterable: ['name', 'album'],
                 requestFunction: this.load,
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -146,7 +146,7 @@ export default {
                         .then(() => {
                             this.success(
                                 this.$t('messages.successStop', {
-                                    what: this.$tc('titles.job', 1)
+                                    what: this.$t('titles.job', 1)
                                 })
                             );
                             this.$refs.jobList.getData();
@@ -172,7 +172,7 @@ export default {
                         .then(() => {
                             this.success(
                                 this.$t('messages.successDeletion', {
-                                    what: this.$tc('titles.job', 1)
+                                    what: this.$t('titles.job', 1)
                                 })
                             );
                             this.$refs.jobList.getData();

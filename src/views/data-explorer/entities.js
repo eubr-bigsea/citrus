@@ -90,13 +90,13 @@ class Workflow {
         };
         const realOp = op || new Operation({ id: 2110 });
         return realOp.createTask({
-            name: i18n.$tc('dataExplorer.sampleData') || realOp.name,
+            name: i18n.$t('dataExplorer.sampleData') || realOp.name,
             forms, display_order
         });
     }
     static buildDataExplorer(name, ds, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: 2100 }),
             display_order: 0,
         });
@@ -116,7 +116,7 @@ class Workflow {
     }
     static buildModelBuilder(name, ds, labelAttribute, method, taskType, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: 2100 }),
             display_order: 0,
         });
@@ -135,7 +135,7 @@ class Workflow {
     }
     static buildVisualizationBuilder(name, ds, type, method, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: i18n.$t('dataExplorer.readData'),
             operation: new Operation({ id: 2100 }),
             display_order: 0,
         });

@@ -10,7 +10,7 @@
                                        role="button" @click="handleClick(job)">
                         <div class="d-flex w-100 justify-content-between p-1"
                              :class="(selectedJob && (selectedJob.id === job.id)) ? 'bg-secondary text-white': 'bg-light' ">
-                            <span class="mb-1 job-title">{{$tc('titles.job')}} #{{job.id}}</span>
+                            <span class="mb-1 job-title">{{$t('titles.job')}} #{{job.id}}</span>
                             <small>
                                 {{$t('status.' + job.status)}}
                                 <span :class="getClassesForDecor(job.status)" />
@@ -52,7 +52,7 @@
             <div class="col-md-8 col-lg-9">
                 <b-card v-if="selectedJob" variant="primary">
                     <template #header>
-                        <b>{{$tc('titles.job')}} #{{selectedJob.id}}</b>
+                        <b>{{$t('titles.job')}} #{{selectedJob.id}}</b>
                         <span class="pull-right float-right">
                             <small>Iniciada em {{$filters.formatJsonDate(selectedJob.started)}}</small>
                             <small v-if="selectedJob.finished"> / Terminada em {{$filters.formatJsonDate(selectedJob.finished)}}</small>
@@ -243,7 +243,7 @@
                 </b-card>
 
                 <!--
-                    <b-tab :title="$tc('titles.model', 2)">
+                    <b-tab :title="$t('titles.model', 2)">
 
                     </b-tab>
                     -->

@@ -38,8 +38,8 @@ export default {
             if (this.field.suggested_widget === 'checkbox') {
                 // To allow multiple selection of boolean values
                 return [
-                    { key: true, value: this.$tc('common.yes') },
-                    { key: false, value: this.$tc('common.no') },
+                    { key: true, value: this.$t('common.yes') },
+                    { key: false, value: this.$t('common.no') },
                 ];
             } else {
                 try {

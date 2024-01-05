@@ -7,7 +7,7 @@
                         <div>
                             <h1 v-if="loaded" class="header-title">
                                 <h6 class="header-pretitle">
-                                    {{$tc('titles.job', 1)}} #{{job.id}}
+                                    {{$t('titles.job', 1)}} #{{job.id}}
                                 </h6>
                                 {{workflow.name}}
                             </h1>
@@ -18,7 +18,7 @@
                                          class="btn btn-outline-primary d-print-none float-right btn-sm">
                                 <font-awesome-icon icon="fa-chevron-left" />
                                 &nbsp; {{$t('actions.back')}} -
-                                {{$tc('titles.workflow', 1)}} {{job.workflow.id}}
+                                {{$t('titles.workflow', 1)}} {{job.workflow.id}}
                             </router-link>
                             <button v-if="job.status === 'RUNNING' || job.status === 'PENDING' || job.status === 'WAITING' "
                                     class="btn btn-sm btn-outline-danger mr-1 pull-right" :title="$t('actions.stop')"
@@ -29,7 +29,7 @@
                     </div>
                     <div>
                         <b-tabs nav-class="custom-tab mb-0">
-                            <b-tab active :title="$tc('titles.job')" :title-link-class="'small-nav-link'">
+                            <b-tab active :title="$t('titles.job')" :title-link-class="'small-nav-link'">
                                 <div>
                                     <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
                                              :operations="operations" :version="job.id" :show-toolbar="false"
@@ -44,7 +44,7 @@
                                                     <div id="dtl-job-status"
                                                          class="job-status-circle lemonade-job margin-right"
                                                          :class="jobStatus" :title="job.status" />
-                                                    {{$tc('job.logs', 2)}}
+                                                    {{$t('job.logs', 2)}}
                                                 </template>
                                                 <div>
                                                     <div class="alert" :class="{
@@ -117,17 +117,17 @@
                                                     </code>
                                                 </div>
                                             </b-tab>
-                                            <b-tab :title="$tc('job.details', 2)">
+                                            <b-tab :title="$t('job.details', 2)">
                                                 <dl>
                                                     <dt>{{$t('common.date')}}</dt>
                                                     <dd>{{$filters.formatJsonDate(job.created)}}</dd>
                                                     <dt>{{$t('common.user.name')}}</dt>
                                                     <dd>{{job.user.name}} ({{job.user.login}})</dd>
-                                                    <dt>{{$tc('titles.cluster')}}</dt>
+                                                    <dt>{{$t('titles.cluster')}}</dt>
                                                     <dd>{{job.cluster.name}}</dd>
                                                 </dl>
                                             </b-tab>
-                                            <b-tab v-if="job.workflow" :title="$tc('job.parameters', 2)">
+                                            <b-tab v-if="job.workflow" :title="$t('job.parameters', 2)">
                                                 <div v-for="ttask in job.workflow.tasks" :key="ttask.id" class="card">
                                                     <div class="card-body" style="overflow: auto">
                                                         {{ttask.name}} ({{ttask.operation.name}})
@@ -135,8 +135,8 @@
                                                             <thead>
                                                                 <tr />
                                                                 <tr>
-                                                                    <th>{{$tc('job.parameters', 1)}}</th>
-                                                                    <th>{{$tc('job.values', 1)}}</th>
+                                                                    <th>{{$t('job.parameters', 1)}}</th>
+                                                                    <th>{{$t('job.values', 1)}}</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -156,7 +156,7 @@
                                 </div>
                             </b-tab>
                             <!--
-                            <b-tab v-if="false" :title="$tc('job.results', 2)">
+                            <b-tab v-if="false" :title="$t('job.results', 2)">
                                 <div v-for="(step, inx) in job.steps" :key="inx" class="row">
                                     <div class="col-md-12 lemonade">
                                         <div v-if="step.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE' )"
@@ -193,7 +193,7 @@
                             </b-tab>
                             -->
                             <!--
-                            <b-tab v-if="false" v-show="job.results && job.results.length" :title="$tc('job.visualizations', 2)"
+                            <b-tab v-if="false" v-show="job.results && job.results.length" :title="$t('job.visualizations', 2)"
                                 @click="showVisualizations = true">
                                 <div v-for="result in job.results" :key="result.id" class="row">
                                     <div v-if="showVisualizations" class="col-md-8 lemonade offset-2"
@@ -204,7 +204,7 @@
                                 </div>
                             </b-tab>
                             -->
-                            <b-tab :title="$tc('job.results', 2)" :title-link-class="'small-nav-link'">
+                            <b-tab :title="$t('job.results', 2)" :title-link-class="'small-nav-link'">
                                 <div class="row">
                                     <div class="col-md-3 pt-3 result-area">
                                         <b-list-group>
@@ -268,7 +268,7 @@
                                 </div>
                             </b-tab>
 
-                            <b-tab :title="$tc('job.sourceCode')" :title-link-class="'small-nav-link'"
+                            <b-tab :title="$t('job.sourceCode')" :title-link-class="'small-nav-link'"
                                    @click="showSourceCode = 1">
                                 <b-card class="mt-3">
                                     <SourceCode v-if="showSourceCode" :job="job.id" />
@@ -370,7 +370,7 @@ export default {
                 filterable: false, perPageValues: [],
                 sortable: [],
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -533,7 +533,7 @@ export default {
                         .then(() => {
                             this.success(
                                 this.$t('messages.successStop', {
-                                    what: this.$tc('titles.job', 1)
+                                    what: this.$t('titles.job', 1)
                                 })
                             );
                             this.$Progress.finish();

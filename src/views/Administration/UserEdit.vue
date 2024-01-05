@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.user', 1)}}</h1>
+                        <h1>{{$t('titles.user', 1)}}</h1>
                     </div>
                     <hr>
                     <div class="row">
@@ -111,7 +111,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <label>{{$tc('common.user.apiToken')}}</label>
+                                                <label>{{$t('common.user.apiToken')}}</label>
                                                 <div class="input-group mb-3">
                                                     <input type="text"
                                                            class="form-control"
@@ -130,7 +130,7 @@
                                         <div class="form-group row">
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
-                                                    {{$tc('common.user.notes', 2)}}:
+                                                    {{$t('common.user.notes', 2)}}:
                                                 </label>
                                                 <textarea v-model="user.notes"
                                                           rows="4"
@@ -138,7 +138,7 @@
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="col-form-label">
-                                                    {{$tc('common.roles', 2)}}:
+                                                    {{$t('common.roles', 2)}}:
                                                 </label>
                                                 <v-select v-model="user.roles"
                                                           :options="roles"
@@ -164,11 +164,11 @@
                                                                        pulse
                                                                        class="icon" />
                                                     <font-awesome-icon icon="fa fa-save" />
-                                                    {{$tc('actions.save')}}
+                                                    {{$t('actions.save')}}
                                                 </button>
                                                 <router-link :to="{name: 'AdministrationUserList'}"
                                                              class="btn btn-secondary mr-1">
-                                                    {{$tc('actions.cancel')}}
+                                                    {{$t('actions.cancel')}}
                                                 </router-link>
                                             </div>
                                         </div>
@@ -259,7 +259,7 @@ export default {
                     this.$router.push({name: 'AdministrationUserList'});
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.user', 1)
+                            what: this.$t('titles.user', 1)
                         })
                     );
 

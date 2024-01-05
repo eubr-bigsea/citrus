@@ -36,7 +36,7 @@
     </main>
 </template>
 <script>
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
 import Vue from 'vue';
 import axios from 'axios';

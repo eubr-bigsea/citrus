@@ -20,7 +20,7 @@
             </select>
             <a v-if="help"
                :href="help"
-               target="_blank">{{$tc('titles.reference')}} <font-awesome-icon icon="fa fa-external-link-alt" /></a>
+               target="_blank">{{$t('titles.reference')}} <font-awesome-icon icon="fa fa-external-link-alt" /></a>
             <small v-if="optionHelp">{{optionHelp[0]}}</small>
         </div>
         <b-form-tags v-else-if="field.multiplicity === 2 || field.multiplicity === 3"

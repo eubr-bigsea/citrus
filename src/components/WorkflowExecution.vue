@@ -3,7 +3,7 @@
              size="xl"
              :ok-only="true"
              scrollable
-             :title="$tc('titles.job', 2)"
+             :title="$t('titles.job', 2)"
              :hide-footer="true">
         <v-server-table ref="jobList"
                         :data="jobs"
@@ -62,8 +62,8 @@ export default {
                 headings: {
                     id: 'ID',
                     created: this.$t('common.created'),
-                    actions: this.$tc('common.action', 2),
-                    name: this.$tc('common.name'),
+                    actions: this.$t('common.action', 2),
+                    name: this.$t('common.name'),
                     'user.name': this.$t('common.user.name'),
                 },
                 sortable: ['name', 'id', 'created'],
@@ -77,7 +77,7 @@ export default {
                 filterable: [],
                 perPageValues: [],
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),

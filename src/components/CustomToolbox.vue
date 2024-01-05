@@ -5,7 +5,7 @@
                 <ul class="list-group">
                     <!-- <li
                         class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                        <input v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')"
+                        <input v-model="search" type="text" class="form-control" :placeholder="$t('actions.search')"
                             @input="searchOperation" />
                     </li> -->
                     <div>

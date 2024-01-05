@@ -6,7 +6,7 @@
                     <div class="row border-bottom border-primary p-2">
                         <div class="col-md-10">
                             <h2 class="title text-primary">
-                                {{$tc('titles.jobs', 2)}}
+                                {{$t('titles.jobs', 2)}}
                             </h2>
                         </div>
                     </div>
@@ -53,10 +53,10 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    actions: this.$tc('common.action', 2),
-                    name: this.$tc('common.name'),
+                    actions: this.$t('common.action', 2),
+                    name: this.$t('common.name'),
                     'user.name': this.$t('common.user.name'),
-                    'platforms.name': this.$tc('titles.platform', 2)
+                    'platforms.name': this.$t('titles.platform', 2)
                 },
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
@@ -70,7 +70,7 @@ export default {
                 filterable: ['name', 'album'],
                 requestFunction: this.load,
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),

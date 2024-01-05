@@ -3,7 +3,7 @@
         <div>
             <div class="title">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$tc('titles.configuration', 2)}}</h1>
+                    <h1>{{$t('titles.configuration', 2)}}</h1>
                 </div>
             </div>
             <v-server-table ref="configurationList" :columns="table.columns" :options="table.options"
@@ -86,11 +86,11 @@ export default {
                     columnClasses: { actions: 'th-10' },
                     headings: {
                         id: 'ID',
-                        name: this.$tc('common.name'),
-                        category: this.$tc('common.category'),
-                        type: this.$tc('common.description'),
-                        enabled: this.$tc('common.enabled'),
-                        actions: this.$tc('common.action', 2)
+                        name: this.$t('common.name'),
+                        category: this.$t('common.category'),
+                        type: this.$t('common.description'),
+                        enabled: this.$t('common.enabled'),
+                        actions: this.$t('common.action', 2)
                     },
                     sortable: ['name', 'id'],
                     filterable: ['description', 'name'],
@@ -130,7 +130,7 @@ export default {
                             );
                     },
                     texts: {
-                        filter: this.$tc('common.filter'),
+                        filter: this.$t('common.filter'),
                         count: this.$t('common.pagerShowing'),
                         limit: this.$t('common.limit'),
                         noResults: this.$t('common.noData'),
@@ -159,7 +159,7 @@ export default {
                     self.currentRow.value = self.editableValue;
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.configuration', 1)
+                            what: this.$t('titles.configuration', 1)
                         })
                     );
                 })

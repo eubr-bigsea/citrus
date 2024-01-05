@@ -15,11 +15,11 @@
                         <form @submit.prevent="register">
                             <div class="row clear">
                                 <div class="form-group col-md-4">
-                                    <label for="firstName">{{$tc('common.firstName')}}:</label>
+                                    <label for="firstName">{{$t('common.firstName')}}:</label>
                                     <input v-model="firstName" required class="form-control" autofocus="true">
                                 </div>
                                 <div class="form-group col-md-8">
-                                    <label for="lastName">{{$tc('common.lastName')}}:</label>
+                                    <label for="lastName">{{$t('common.lastName')}}:</label>
                                     <input v-model="lastName" required class="form-control" autofocus="true">
                                 </div>
                                 <div class="col-md-12">

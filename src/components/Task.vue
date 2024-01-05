@@ -33,7 +33,7 @@
                     {{$t('actions.showResults')}}
                 </li>
                 <li @click.stop="dblClick">
-                    {{$tc('titles.property', 2)}}
+                    {{$t('titles.property', 2)}}
                 </li>
                 <li v-for="(item, index) in contextMenuActions" :key="index" @click="item.action(item.name)">
                     {{item.label}}

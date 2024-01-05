@@ -7,12 +7,24 @@ import { manualChunksPlugin } from 'vite-plugin-webpackchunkname';
 export default {
     plugins: [
         //createVuePlugin(/* options */)
-        vue(),
+        vue({
+            template: {
+                compilerOptions: {
+                    compatConfig: {
+                        MODE: 2
+                    }
+                }
+            }
+        }),
         visualizer(),
         manualChunksPlugin(),
     ],
     resolve: {
         alias: [
+            {   
+                find: 'vue',
+                replacement: '@vue/compat'
+            },
             {
                 // this is required for the SCSS modules
                 find: /^~(.*)$/,

@@ -70,14 +70,14 @@
                                             class="col-md-6"
                                             :selected="valueObject.firstSelect"
                                             :suggestions="suggestions1"
-                                            :label="$tc('common.input') + ' 1'"
+                                            :label="$t('common.input') + ' 1'"
                                             :selection-type="valueObject.firstSelectionType || 1"
                                             :prefix="valueObject.firstPrefix" />
                                 <JoinSelect ref="secondSelect"
                                             class="col-md-6"
                                             :selected="valueObject.secondSelect"
                                             :suggestions="suggestions2"
-                                            :label="$tc('common.input') +' 2'"
+                                            :label="$t('common.input') +' 2'"
                                             :selection-type="valueObject.secondSelectionType || 1"
                                             :prefix="valueObject.secondPrefix" />
                             </div>
@@ -200,8 +200,8 @@ export default {
             }
         },
         updateDisplayValue(v) {
-            const firstName = this.$tc('common.input') + ' 1';
-            const secondName = this.$tc('common.input') + ' 2';
+            const firstName = this.$t('common.input') + ' 1';
+            const secondName = this.$t('common.input') + ' 2';
 
             let firstSelect;
             let secondSelect;

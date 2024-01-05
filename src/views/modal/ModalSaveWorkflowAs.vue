@@ -57,7 +57,7 @@ export default {
                 this.$emit('onsave-workflow-as', this.saveOption, this.newName);
                 this.$refs.saveAsModal.hide();
             } else {
-                this.warning(this.$tc('titles.validationErrors', 2));
+                this.warning(this.$t('titles.validationErrors', 2));
             }
         },
         show(newName) {

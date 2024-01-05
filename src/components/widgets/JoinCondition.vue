@@ -5,12 +5,12 @@
             <thead>
                 <th class="text-center"
                     style="width:40%">
-                    {{$tc('common.input')}} 1
+                    {{$t('common.input')}} 1
                 </th>
                 <th style="width: 10%;" />
                 <th class="text-center"
                     style="width:40%">
-                    {{$tc('common.input')}} 2
+                    {{$t('common.input')}} 2
                 </th>
                 <th class="text-center"
                     style="width:5%" />
