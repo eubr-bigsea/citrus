@@ -16,13 +16,13 @@
                             <div class="alert alert-info">
                                 <font-awesome-icon icon="fa fa-info-circle" />
                                 <small>
-                                    {{$tc('property.clickToMove', 2)}}.
-                                    {{$tc('property.multipleTimes')}}
+                                    {{$t('property.clickToMove', 2)}}.
+                                    {{$t('property.multipleTimes')}}
                                 </small>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <small>{{$tc('property.availableAttribute', 2)}}:</small>
+                            <small>{{$t('property.availableAttribute', 2)}}:</small>
                             <div class="left options border mt-1 p-2">
                                 <div v-for="(suggestion, index) in available" :key="suggestion"
                                      class="border mb-1 p-1 suggested-attr" role="button" :title="suggestion"
@@ -55,12 +55,12 @@
                             <div class="row">
                                 <div class="col-6">
                                     <small>
-                                        {{$tc('property.selectedAttribute', 2)}}:
+                                        {{$t('property.selectedAttribute', 2)}}:
                                     </small>
                                 </div>
                                 <div class="col-6">
-                                    <small>{{$tc('property.alias', 2)}}
-                                        ({{$tc('common.optional')}}):</small>
+                                    <small>{{$t('property.alias', 2)}}
+                                        ({{$t('common.optional')}}):</small>
                                 </div>
                                 <div class="col-12">
                                     <div class="options border mt-1 p-2">

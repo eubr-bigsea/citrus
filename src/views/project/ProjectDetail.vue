@@ -3,7 +3,7 @@
         <div class="border-bottom">
             <b-nav>
                 <b-nav-item active>
-                    {{$t('titles.list', {what: $tc('titles.project', 2)})}}
+                    {{$t('titles.list', {what: $t('titles.project', 2)})}}
                 </b-nav-item>
                 <b-nav-item>Link</b-nav-item>
                 <b-nav-item>Another Link</b-nav-item>
@@ -14,14 +14,14 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-            <h1>{{$tc('titles.project', 1)}}</h1>
+            <h1>{{$t('titles.project', 1)}}</h1>
         </div>
         <div class="row">
             <div class="col-10">
                 <div class="diagram-limit">
                     <div id="query-diagram-lemonade" class="query-diagram">
                         <template v-for="table in tables" :key="`${table.type}-${table.id}`">
-                            <project-item :key="`${table.type}-${table.id}`" :item="table"
+                            <project-item :item="table"
                                           :jsplumb-instance="jsplumbInstance" @click="handleItemClick" />
                         </template>
                     </div>

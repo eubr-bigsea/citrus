@@ -50,7 +50,7 @@
                                     </div>
                                 </b-tab>
                             
-                                <b-tab v-if="publishingEnabled" :title="$tc('titles.publication')"
+                                <b-tab v-if="publishingEnabled" :title="$t('titles.publication')"
                                        :title-link-class="'small-nav-link'">
                                     <div class="alert alert-info p-2 mt-1 mb-1">
                                         {{$t('workflow.publishingSelect')}}
@@ -67,29 +67,29 @@
                     </div>
                 </div>
             
-                <b-modal ref="publishingModal" size="xl" :title="$tc('titles.publication')" :ok-only="true">
+                <b-modal ref="publishingModal" size="xl" :title="$t('titles.publication')" :ok-only="true">
                     <div class="mt-2 p-2 border">
                         <table class="table table-sm table-bordered">
                             <thead class="thead-light">
                                 <tr>
                                     <th class="text-center" style="width: 1%" />
                                     <th class="text-center" style="width: 14%">
-                                        {{$tc('titles.property')}}
+                                        {{$t('titles.property')}}
                                     </th>
                                     <th class="text-center" style="width: 20%">
-                                        {{$tc('variables.label')}}
+                                        {{$t('variables.label')}}
                                     </th>
                                     <th class="text-center" style="width: 15%">
-                                        {{$tc('titles.actualValue')}}
+                                        {{$t('titles.actualValue')}}
                                     </th>
                                     <th class="text-center" style="width: 8%">
-                                        {{$tc('variables.index')}}
+                                        {{$t('variables.index')}}
                                     </th>
                                     <th class="text-center" style="width: 15%">
-                                        {{$tc('variables.associateTo')}}
+                                        {{$t('variables.associateTo')}}
                                     </th>
                                     <th class="text-center" style="width: 30%">
-                                        {{$tc('variables.associateToLookup')}}
+                                        {{$t('variables.associateToLookup')}}
                                     </th>
                                 </tr>
                             </thead>

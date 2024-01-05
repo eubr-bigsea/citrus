@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="title">
-                        <h1>{{$tc('titles.dataSource', 1)}}</h1>
+                        <h1>{{$t('titles.dataSource', 1)}}</h1>
                     </div>
                     <div class="row">
                         <div class="col-md-2">
@@ -18,12 +18,12 @@
                                             <div class="col-md-9">
                                                 <div class="row">
                                                     <div class="col-md-6">
-                                                        <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                         <input v-model="dataSource.name" type="text"
                                                                class="form-control">
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <label class="font-weight-bold">{{$tc('common.format')}}:</label>
+                                                        <label class="font-weight-bold">{{$t('common.format')}}:</label>
                                                         <select v-model="dataSource.format" class="form-control">
                                                             <option v-for="fmt in formats" :key="fmt" :value="fmt">
                                                                 {{fmt}}
@@ -36,7 +36,7 @@
                                                                disabled class="form-control">
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <label>{{$tc('common.description')}}:</label>
+                                                        <label>{{$t('common.description')}}:</label>
                                                         <textarea v-model="dataSource.description"
                                                                   class="form-control" />
                                                     </div>
@@ -51,7 +51,7 @@
                                                     </div>
                                                     <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'HIVE' || dataSource.storage.type === 'HIVE_WAREHOUSE'"
                                                          class="col-md-8 mt-3 pb-1">
-                                                        <label>{{$tc('common.command')}}:</label>
+                                                        <label>{{$t('common.command')}}:</label>
                                                         <textarea v-model="dataSource.command" class="form-control" />
                                                     </div>
                                                     <div v-if="dataSource.storage.type === 'HIVE'" class="col-md-4">
@@ -149,7 +149,7 @@
                                                     </b-form-checkbox>
                                                 </div>
                                                 <div>
-                                                    <label>{{$tc('dataSource.treatAsNull')}}:</label>
+                                                    <label>{{$t('dataSource.treatAsNull')}}:</label>
                                                     <v-select v-model="customTreatAsMissing" multiple
                                                               :close-on-select="false" style="width: 100%" :taggable="true"
                                                               class="custom">
@@ -161,9 +161,9 @@
                                             </div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :title="$tc('dataSource.attribute', 2)">
+                                    <b-tab :title="$t('dataSource.attribute', 2)">
                                         <h5 class="card-title">
-                                            {{$tc('common.attribute', 2)}}
+                                            {{$t('common.attribute', 2)}}
                                         </h5>
 
                                         <table v-if="dataSource.attributes && dataSource.attributes.length > 0"
@@ -175,27 +175,27 @@
                                                         #
                                                     </th>
                                                     <th class="primary text-center" style="width:30%">
-                                                        {{$tc('common.name')}}
+                                                        {{$t('common.name')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:12%">
-                                                        {{$tc('common.type')}}
+                                                        {{$t('common.type')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:12%">
-                                                        {{$tc('common.format')}}
+                                                        {{$t('common.format')}}
                                                     </th>
 
                                                     <th class="primary text-center" style="width:25%">
-                                                        {{$tc('dataSource.missingRepresentation')}}
+                                                        {{$t('dataSource.missingRepresentation')}}
                                                     </th>
                                                     <th v-if="dataSource.privacy_aware" class="primary text-center"
                                                         style="width:5%">
-                                                        {{$tc('dataSource.privacy')}}
+                                                        {{$t('dataSource.privacy')}}
                                                     </th>
                                                     <!--
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.nullable')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.size')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.precision')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.scale')}}</th>
                           -->
                                                 </tr>
                                             </thead>
@@ -241,7 +241,7 @@
                                                     <td v-if="dataSource.privacy_aware" class="text-center">
                                                         <button class="btn btn-sm btn-outline-success hover-action"
                                                                 @click.prevent="showPrivacyModal(attr)">
-                                                            {{$tc('actions.edit')}}...
+                                                            {{$t('actions.edit')}}...
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -255,24 +255,24 @@
                                     </b-tab>
                                     <b-tab v-if="loggedUserIsOwnerOrAdmin">
                                         <template #title>
-                                            <font-awesome-icon icon="fa fa-link" /> {{$tc('dataSource.relationship', 2)}}
+                                            <font-awesome-icon icon="fa fa-link" /> {{$t('dataSource.relationship', 2)}}
                                         </template>
                                         <p class="pb-1 border-bottom text-right">
                                             <button :disabled="userPermission === null || permission === null"
                                                     class="btn btn-sm btn-primary" @click="addPermission">
                                                 <font-awesome-icon icon="fa fa-link" />
-                                                {{$t('actions.add', {type: $tc('common.sharing', 1)})}}
+                                                {{$t('actions.add', {type: $t('common.sharing', 1)})}}
                                             </button>
                                         </p>
                                     </b-tab>
                                     <b-tab v-if="loggedUserIsOwnerOrAdmin">
                                         <template #title>
-                                            <font-awesome-icon icon="fa fa-share-alt" /> {{$tc('common.sharing', 2)}}
+                                            <font-awesome-icon icon="fa fa-share-alt" /> {{$t('common.sharing', 2)}}
                                         </template>
                                         <div class="row mb-3 mt-3">
                                             <div v-if="loggedUserIsOwnerOrAdmin" class="col-md-4 border-right">
                                                 <div>
-                                                    <label>{{$tc('titles.user', 1)}}:</label>
+                                                    <label>{{$t('titles.user', 1)}}:</label>
                                                     <v-select v-model="userPermission" style="font-size: .9em"
                                                               :options="users" :taggable="false"
                                                               :get-option-label="getUserLabel" :close-on-select="true"
@@ -291,7 +291,7 @@
                                                     </v-select>
                                                 </div>
                                                 <div>
-                                                    <label>{{$tc('common.permission', 1)}}:</label>
+                                                    <label>{{$t('common.permission', 1)}}:</label>
                                                     <select v-model="permission" class="form-control">
                                                         <option value="MANAGE">
                                                             {{$t('permissions.MANAGE')}}
@@ -354,12 +354,12 @@
                                             @click.stop="save">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <font-awesome-icon icon="fa fa-save" />
-                                        {{$tc('actions.save')}}
+                                        {{$t('actions.save')}}
                                     </button>
                                     <button v-if="canInfer && loggedUserIsOwnerOrAdmin"
                                             class="btn btn-primary btn-spinner" @click.stop="infer">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
-                                        {{$tc('dataSource.inferSchema')}}
+                                        {{$t('dataSource.inferSchema')}}
                                     </button>
                                     <button class="btn btn-spinner ml-1 btn-outline-info" :disabled="isDirty"
                                             @click.stop="preview">
@@ -369,7 +369,7 @@
                                         <span v-text="isDirty ? $t('common.saveBeforeToEnableThis', {what: $t('common.preview')}): $t('common.preview')" />
                                     </button>
                                     <router-link :to="{name: 'dataSources'}" class="btn btn-secondary">
-                                        {{$tc('actions.cancel')}}
+                                        {{$t('actions.cancel')}}
                                     </router-link>
                                 </div>
                             </b-card>
@@ -382,7 +382,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label>
-                                        {{$tc('privacy.privacyType')}}:
+                                        {{$t('privacy.privacyType')}}:
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                             v-model="currentAttribute.attribute_privacy.privacy_type" class="form-control">
@@ -394,7 +394,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>
-                                        {{$tc('privacy.anonymizationTechnique')}}:
+                                        {{$t('privacy.anonymizationTechnique')}}:
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                             v-model="currentAttribute.attribute_privacy.anonymization_technique"
@@ -407,7 +407,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>
-                                        {{$tc('privacy.attributePrivacyGroup')}}:
+                                        {{$t('privacy.attributePrivacyGroup')}}:
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                             v-model="currentAttribute.attribute_privacy.attribute_privacy_group_id"
@@ -420,7 +420,7 @@
                                 </div>
                             </div>
                             <label>
-                                {{$tc('privacy.hierarchy')}}:
+                                {{$t('privacy.hierarchy')}}:
                             </label>
                             <textarea v-if="currentAttribute.attribute_privacy"
                                       v-model="currentAttribute.attribute_privacy.hierarchy" class="form-control" type="text"
@@ -463,7 +463,7 @@ export default {
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
         if (this.isDirty) {
-            if (confirm(this.$tc('warnings.dirtyCheck'))) {
+            if (confirm(this.$t('warnings.dirtyCheck'))) {
                 next();
             }
         } else {
@@ -737,7 +737,7 @@ export default {
                     });
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.dataSource', 1)
+                            what: this.$t('titles.dataSource', 1)
                         })
                     );
                 })

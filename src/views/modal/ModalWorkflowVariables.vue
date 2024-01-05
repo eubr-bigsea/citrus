@@ -1,7 +1,7 @@
 <template>
     <b-modal ref="modal" size="xl" hide-header>
         <b-tabs class="filter-field">
-            <b-tab :title="$tc('workflow.variables', 2)">
+            <b-tab :title="$t('workflow.variables', 2)">
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
@@ -107,7 +107,7 @@
                     </div>
                 </div>
             </b-tab>
-            <b-tab :title="$tc('titles.systemVariables', 2)">
+            <b-tab :title="$t('titles.systemVariables', 2)">
                 <div class="col-md-12 mt-1">
                     <table class="table table-sm table-bordered" style="font-size:.8em">
                         <tr v-for="v in variables" :key="v">
@@ -115,7 +115,7 @@
                                 <code v-html="'${' + v + '}'" />
                             </td>
                             <td>
-                                {{$tc('variables.names.' + v)}}
+                                {{$t('variables.names.' + v)}}
                             </td>
                         </tr>
                     </table>

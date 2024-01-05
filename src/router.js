@@ -1,5 +1,6 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+//import VueRouter from 'vue-router';
+import { createWebHistory, createRouter } from 'vue-router';
 
 // import ProjectList from './views/Administration/ProjectList.vue';
 // import ProjectAdd from './views/Administration/ProjectAdd.vue';
@@ -110,11 +111,12 @@ const ProjectsView = () => import('./views/project/ProjectsView.vue');
 const ProjectDetail = () => import('./views/project/ProjectDetail.vue');
 
 
-Vue.use(VueRouter);
+//Vue.use(VueRouter);
 
-let router = new VueRouter({
+let router = createRouter({
     //mode: 'hash',
     mode: 'history',
+    history: createWebHistory(),
     routes: [
         {
             path: '/',
@@ -838,7 +840,7 @@ let router = new VueRouter({
             }
         },
         {
-            path: '*',
+            path: '/:pathMatch(.*)*',
             name: 'not-found',
             component: PageNotFound,
             meta: {

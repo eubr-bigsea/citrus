@@ -84,7 +84,7 @@ export default {
                     actions: 'th-10'
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -92,9 +92,9 @@ export default {
                     filterPlaceholder: this.$t('common.filterPlaceholder')
                 },
                 headings: {
-                    name: this.$tc('common.name'),
-                    email: this.$tc('common.email'),
-                    actions: this.$tc('common.action', 2)
+                    name: this.$t('common.name'),
+                    email: this.$t('common.email'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['full_name', 'email'],
                 sortIcon: {

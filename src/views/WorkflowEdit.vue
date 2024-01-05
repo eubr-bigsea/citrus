@@ -17,7 +17,7 @@
                     </div>
 
                     <h6 class="header-pretitle">
-                        {{$tc('titles.workflow', 1)}} #{{workflow.id}}
+                        {{$t('titles.workflow', 1)}} #{{workflow.id}}
                     </h6>
                     <InputHeader v-model="workflow.name" />
                 </div>
@@ -26,7 +26,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{$tc('common.operation', 2)}}
+                                {{$t('common.operation', 2)}}
                             </h4>
                         </div>
                         <toolbox :operations="operations" :workflow="workflow" :selected-task="selectedTask.task"
@@ -37,7 +37,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{$tc('titles.dataSource2', 2)}}
+                                {{$t('titles.dataSource2', 2)}}
                             </h4>
                         </div>
                         <custom-toolbox :operations="expandableOperations" :workflow="workflow"
@@ -96,7 +96,7 @@
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab :title="$tc('titles.workflow', 1)" title-item-class="tab-order-5">
+                    <b-tab :title="$t('titles.workflow', 1)" title-item-class="tab-order-5">
                         <b-card>
                             <div class="row">
                                 <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
@@ -116,7 +116,7 @@
                             </div>
                         </b-card>
                     </b-tab>
-                    <b-tab :title="$tc('titles.job', 2)" title-item-class="tab-order-6" @click="showJobs">
+                    <b-tab :title="$t('titles.job', 2)" title-item-class="tab-order-6" @click="showJobs">
                         <b-card>
                             <div class="container">
                                 <div class="row">
@@ -444,7 +444,7 @@ export default {
             });
             if (usingDisabledOp && showDisabledOpsAlert) {
                 self.warning(self.$t('messages.usingDisabledOperation',
-                    { what: self.$tc('titles.workflow') }), 60000, 300);
+                    { what: self.$t('titles.workflow') }), 60000, 300);
             }
             if (!workflow.forms) {
                 workflow.forms = {};
@@ -638,11 +638,11 @@ export default {
                     });
                     this.workflow = workflow;
                     this.success(this.$t('messages.savedWithSuccess',
-                        { what: this.$tc('titles.workflow') }));
+                        { what: this.$t('titles.workflow') }));
                     this._validateTasks(this.workflow.tasks);
                 } else {
                     this.success(this.$t('workflow.copySavedWithSuccess',
-                        { what: this.$tc('titles.workflow') }));
+                        { what: this.$t('titles.workflow') }));
                 }
             } catch (e) {
                 this.error(e);
@@ -863,11 +863,11 @@ export default {
                                     if (field.required && field.enable_conditions !== 'false') {
                                         const value = t.forms[field.name] ? t.forms[field.name].value : null;
                                         if (value === null || value === undefined || value === '' || value === {} || (value.length !== undefined && value.length === 0)) {
-                                            warning = this.$tc("errors.missingRequiredValue");
+                                            warning = this.$t("errors.missingRequiredValue");
                                             self.validationErrors.push({
                                                 id: counter++, task: { id: t.id, name: t.name },
                                                 field: field.label,
-                                                message: self.$tc("errors.missingRequiredValue")
+                                                message: self.$t("errors.missingRequiredValue")
                                             });
                                             result = false;
                                         }

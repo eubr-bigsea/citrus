@@ -57,7 +57,7 @@
                         </form>
                         <div v-if="openIdEnabled">
                             <div class="or">
-                                <h2><span>{{$tc('common.or').toUpperCase()}}</span></h2>
+                                <h2><span>{{$t('common.or').toUpperCase()}}</span></h2>
                             </div>
                             <div class="openid-logo" />
                             <button class="btn btn-outline-primary w-100" @click="useOpenId">

@@ -11,16 +11,16 @@
                                         {{$t('model.whatTypeOfModelToAdd')}}
                                     </h4>
                                     <div>
-                                        <label class="font-weight-bold">{{$tc('common.type')}}:</label>
+                                        <label class="font-weight-bold">{{$t('common.type')}}:</label>
                                         <select v-model="model.type" class="form-control" required>
                                             <option />
                                             <option v-for="fmt in types" :key="fmt" :value="fmt">
-                                                {{$tc('model.type_' + fmt)}}
+                                                {{$t('model.type_' + fmt)}}
                                             </option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label>{{$tc('model.storage')}}:</label>
+                                        <label>{{$t('model.storage')}}:</label>
                                         <select v-model="fsStorage" class="form-control" required>
                                             <option />
                                             <option v-for="s in fsStorages" :key="s.id" :value="s.id">
@@ -40,7 +40,7 @@
                         <div v-if="step === 2" class="card animated">
                             <div class="card-body">
                                 <h4 class="card-title">
-                                    {{$tc('titles.model')}}
+                                    {{$t('titles.model')}}
                                 </h4>
 
                                 <div class="col-md-12">
@@ -114,7 +114,7 @@
                                 <h4 class="card-title">
                                     {{$t('model.databaseStorage')}}
                                 </h4>
-                                <label>{{$tc('common.name', 1)}}:</label>
+                                <label>{{$t('common.name', 1)}}:</label>
                                 <input v-model="model.name" type="text" class="form-control">
 
                                 <label>{{$t('model.selectCommand')}}:</label>
@@ -290,7 +290,7 @@ export default {
 
                 this.success(
                     this.$t('messages.savedWithSuccess', {
-                        what: this.$tc('titles.model', 1)
+                        what: this.$t('titles.model', 1)
                     })
                 );
                 setTimeout(() =>

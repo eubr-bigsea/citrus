@@ -6,11 +6,11 @@
                     <h1>Construção de Modelos</h1>
                 </div>
                 <form class="float-right form-inline w-50 d-flex justify-content-end">
-                    <label>{{$tc('common.name')}}:</label>
+                    <label>{{$t('common.name')}}:</label>
                     <input v-model="workflowObj.name"
                            type="text"
                            class="form-control form-control-sm ml-1 w-50"
-                           :placeholder="$tc('common.name')"
+                           :placeholder="$t('common.name')"
                            maxlength="100">
                     <button class="btn btn-sm btn-outline-success ml-1 float-right"
                             @click.prevent="saveWorkflow">
@@ -402,7 +402,7 @@ export default {
                 let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
                 this.workflowObj = new ModelBuilderWorkflow(resp.data, this.operationsMap);
                 if (this.workflowObj.type !== 'MODEL_BUILDER') {
-                    this.error(null, this.$tc('modelBuilder.invalidType'));
+                    this.error(null, this.$t('modelBuilder.invalidType'));
                     this.$router.push({ name: 'index-explorer' });
                     return;
                 }
@@ -536,7 +536,7 @@ export default {
             try {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
-                this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
+                this.success(this.$t('messages.savedWithSuccess', { what: this.$t('titles.workflow') }));
             } catch (e) {
                 this.error(e);
             }
@@ -563,7 +563,7 @@ export default {
         async handleDeleteJob(job_id) {
             /*this.confirm(
                 this.$t('actions.delete'),
-                this.$tc('titles.job') + "?",
+                this.$t('titles.job') + "?",
                 async () => {
                     await axios.delete(`${standUrl}/jobs/${job_id}`);
                     this.loadJobs();

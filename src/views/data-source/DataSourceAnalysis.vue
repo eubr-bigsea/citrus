@@ -2,7 +2,7 @@
     <main role="main">
         <div class="row header">
             <div class="title col-md">
-                <h1>{{$tc('titles.dataSource', 1)}} {{dataSource?.name}}</h1>
+                <h1>{{$t('titles.dataSource', 1)}} {{dataSource?.name}}</h1>
             </div>
             <b-button :disabled="loading" variant="success" class="btn btn-primary" @click="$bvModal.show('modal')">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}

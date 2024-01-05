@@ -176,7 +176,7 @@ export default {
                 attributeIndexes.set(attr.key, inx + 1);
                 /*
                     if (attr.type.toLowerCase() === 'boolean'){
-                        attr.formatter = (v) => v === 0 ? self.$tc('common.no') : self.$tc('common.yes');
+                        attr.formatter = (v) => v === 0 ? self.$t('common.no') : self.$t('common.yes');
                     }
                     */
             });

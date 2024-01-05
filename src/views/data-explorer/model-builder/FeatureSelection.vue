@@ -57,7 +57,7 @@
                             </b-form-group>
 
                             <template v-if="selectedAttributeUsed">
-                                <label for="">{{$tc('common.type')}}:</label>
+                                <label for="">{{$t('common.type')}}:</label>
                                 <b-form-radio-group v-model="selectedAttribute.feature_type" stacked>
                                     <b-form-radio value="categorical">
                                         <font-awesome-icon icon="fa fa-font" />

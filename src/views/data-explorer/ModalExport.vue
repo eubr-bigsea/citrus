@@ -16,7 +16,7 @@
         </div>
         <div class="row mt-2">
             <div class="col-6">
-                <label>{{$tc('titles.platform')}}:</label>
+                <label>{{$t('titles.platform')}}:</label>
                 <select v-model="platform" class="form-control form-control-sm">
                     <option value="spark">
                         Spark

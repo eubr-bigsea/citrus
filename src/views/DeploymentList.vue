@@ -3,7 +3,7 @@
         <div>
             <div class="title">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$tc('titles.deployment', 2)}}</h1>
+                    <h1>{{$t('titles.deployment', 2)}}</h1>
                     <router-link :to="{name: 'addDeployment'}" class="btn btn-primary btn-lemonade-primary">
                         <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                     </router-link>
@@ -46,7 +46,7 @@
                         <button class="ml-1 btn btn-sm btn-outline-info" :title="$t('actions.info')"
                                 @click="showInfo(props.row)">
                             <font-awesome-icon icon="list-alt" />
-                            {{$tc('deployment.log', 2)}}
+                            {{$t('deployment.log', 2)}}
                         </button>
                         <button class="ml-2 btn btn-sm btn-outline-danger" @click="remove(props.row.id)">
                             <font-awesome-icon icon="trash" />
@@ -58,10 +58,10 @@
                      :ok-only="true">
                 <div class="row">
                     <div class="col-12 small">
-                        <strong>{{$tc('common.description')}}: </strong> {{currentRow.description}} <br>
-                        <strong>{{$tc('deployment.model')}}:</strong> {{currentRow.model_name}} <br>
-                        <strong>{{$tc('common.created')}}:</strong> {{$filters.formatJsonDate(currentRow.created)}}<br>
-                        <strong>{{$tc('common.updated')}}:</strong> {{$filters.formatJsonDate(currentRow.updated)}}<br>
+                        <strong>{{$t('common.description')}}: </strong> {{currentRow.description}} <br>
+                        <strong>{{$t('deployment.model')}}:</strong> {{currentRow.model_name}} <br>
+                        <strong>{{$t('common.created')}}:</strong> {{$filters.formatJsonDate(currentRow.created)}}<br>
+                        <strong>{{$t('common.updated')}}:</strong> {{$filters.formatJsonDate(currentRow.updated)}}<br>
                     </div>
                 </div>
                 <div class="col-12 mt-4">
@@ -112,15 +112,15 @@ export default {
                 columnsClasses: { 'actions': 'text-center' },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    current_status: this.$tc('deployment.deployment_status'),
-                    type: this.$tc('common.type'),
+                    name: this.$t('common.name'),
+                    current_status: this.$t('deployment.deployment_status'),
+                    type: this.$t('common.type'),
                     user_name: this.$t('common.user.name'),
-                    model_name: this.$tc('deployment.model'),
-                    address: this.$tc('deployment.address'),
-                    created: this.$tc('common.created'),
-                    updated: this.$tc('common.updated'),
-                    actions: this.$tc('common.action', 2)
+                    model_name: this.$t('deployment.model'),
+                    address: this.$t('deployment.address'),
+                    created: this.$t('common.created'),
+                    updated: this.$t('common.updated'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['id', 'name', 'type', 'created', 'updated', 'current_status'],
                 filterable: ['id', 'description', 'type', 'created'],
@@ -162,7 +162,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -217,7 +217,7 @@ export default {
                 confirmMsg = this.$t('deployment.confirmUndeploy');
             }
             this.confirm(
-                this.$tc('titles.deployment'),
+                this.$t('titles.deployment'),
                 confirmMsg,
                 () => {
                     const params = deploy ? { deploy: true } : { undeploy: true };
@@ -245,7 +245,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: this.$tc('titles.deployment', 1) }));
+                                { what: this.$t('titles.deployment', 1) }));
                             self.$refs.listTable.refresh();
                         })
                         .catch(e => self.error(e));

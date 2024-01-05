@@ -6,13 +6,13 @@
             </em>
             <div v-if="validationErrors.length > 0" class="border p-2">
                 <b class="text-danger">
-                    {{$tc('workflow.validationExplanation', validationErrors.length)}}
+                    {{$t('workflow.validationExplanation', validationErrors.length)}}
                 </b>
                 <table class="table table-sm">
                     <tr>
-                        <th>{{$tc('titles.tasks')}}</th>
-                        <th>{{$tc('titles.property')}}</th>
-                        <th>{{$tc('titles.error')}}</th>
+                        <th>{{$t('titles.tasks')}}</th>
+                        <th>{{$t('titles.property')}}</th>
+                        <th>{{$t('titles.error')}}</th>
                     </tr>
                     <tr v-for="err in validationErrors" :key="err.sequential">
                         <td>{{err.task.name}}</td>
@@ -25,7 +25,7 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-4">
-                            <label>{{$tc('titles.cluster')}}:</label>
+                            <label>{{$t('titles.cluster')}}:</label>
                             <select v-model="clusterInfoCopy.id" class="form-control-sm form-control"
                                     @change="changeCluster">
                                 <option v-for="option in clusters" :key="option.id" :value="option.id">

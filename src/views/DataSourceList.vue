@@ -1,7 +1,7 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$tc('titles.dataSource', 2)}}</h1>
+            <h1>{{$t('titles.dataSource', 2)}}</h1>
             <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" id="add-data-source"
                          :to="{ name: 'addDataSource' }" class="btn btn-success">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
@@ -61,7 +61,7 @@
 
 <script>
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import { mapGetters } from 'vuex';
 
 import Vue from 'vue';

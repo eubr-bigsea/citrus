@@ -92,13 +92,13 @@ export default {
                 },
                 texts: {
                     count: this.$t('common.pagerShowing'),
-                    filter: this.$tc('common.filter', 1),
+                    filter: this.$t('common.filter', 1),
                     limit: this.$t('common.limit'),
                 },
                 headings: {
                     key: 'Id',
                     user: this.$t('common.name'),
-                    tags: this.$tc('common.tag', 2)
+                    tags: this.$t('common.tag', 2)
                 },
             }
         };

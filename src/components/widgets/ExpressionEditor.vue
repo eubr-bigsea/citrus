@@ -113,7 +113,7 @@
                     </button>
                 </div>
                 <!-- <div class="col-md-4 border-left">
-                    <strong>{{$tc('property.expression.availableAttribute', 2)}}:</strong>
+                    <strong>{{$t('property.expression.availableAttribute', 2)}}:</strong>
                     <select class="form-control no-border mt-2" size="10" @dblclick="copyPasteValue"
                         style="font-size:.9em">
                         <option v-for="sg in suggestions">{{sg}}</option>

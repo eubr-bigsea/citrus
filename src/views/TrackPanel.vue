@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.track', 2)}}</h1>
+                        <h1>{{$t('titles.track', 2)}}</h1>
                         <div class="float-right">
                             <!--
                             <router-link :to="{name: 'addTrack'}" v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
@@ -171,10 +171,10 @@ export default {
                 skin: 'table-sm table table-hover',
                 dateColumns: ['updated'],
                 headings: {
-                    image: this.$tc('common.image'),
-                    name: this.$tc('common.name'),
-                    updated: this.$tc('common.updated'),
-                    actions: this.$tc('common.action', 2)
+                    image: this.$t('common.image'),
+                    name: this.$t('common.name'),
+                    updated: this.$t('common.updated'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortIcon: {
                     base: 'fa fas',
@@ -219,7 +219,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),

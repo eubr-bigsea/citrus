@@ -18,7 +18,7 @@
                         </div>
                     </template>
                 </v-select>
-                <label>{{$tc('common.title')}}:</label>
+                <label>{{$t('common.title')}}:</label>
                 <b-form-input v-model="editableVisualization.title.value" maxlength="50" class="form-control-sm"
                               spellcheck="false" data-chart-layout="title" name="title"
                               @input="emit('update-chart', $event, ['title', 'text'])" />
@@ -117,7 +117,7 @@
                                             <b-dropdown-form form-class="down-drop-form">
                                                 <div class="row xseries-form">
                                                     <div class="col-10">
-                                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
+                                                        <b-form-group :label="$t('common.attribute', 1) + ':'"
                                                             label-for="dropdown-form-email">
                                                             <select class="form-control form-control-sm mt-2"
                                                                 v-model="editableVisualization.color_attribute.value">

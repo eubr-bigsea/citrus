@@ -2,14 +2,14 @@
     <div class="toolbar">
         <div class="toolbar-group">
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasksPanel">
-                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {type: $tc('titles.operation').toLowerCase()})}}
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {type: $t('titles.operation').toLowerCase()})}}
             </button>
         </div>
         <div v-if="useDataSource" class="toolbar-group">
             <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleDataSourcesPanel">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {
                     type:
-                        $tc('titles.dataSource2').toLowerCase()
+                        $t('titles.dataSource2').toLowerCase()
                 })}}
             </button>
         </div>

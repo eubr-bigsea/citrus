@@ -5,7 +5,7 @@
                 <div class="card-title">
                     <span v-if="icon"
                           :class="icon" />
-                    {{$tc(`titles.${type}`, 2)}}
+                    {{$t(`titles.${type}`, 2)}}
                 </div>
                 <HomeCardCounter :value="total" />
             </div>

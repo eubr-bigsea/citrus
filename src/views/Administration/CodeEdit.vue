@@ -25,10 +25,10 @@
                                         <button class="btn btn-success mr-1 btn-spinner" @click.stop="save">
                                             <font-awesome-icon icon="spinner" class="icon" />
                                             <font-awesome-icon icon="fa fa-save" />
-                                            {{$tc('actions.save')}}
+                                            {{$t('actions.save')}}
                                         </button>
                                         <router-link :to="{ name: 'codeLibrary' }" class="btn btn-secondary mr-1">
-                                            {{$tc('actions.cancel')}}
+                                            {{$t('actions.cancel')}}
                                         </router-link>
                                     </div>
                                 </div>

@@ -12,22 +12,22 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
                         <br>
                         <input v-model="codeName" type="text" class="form-control"
                                required maxlength="100">
                     </div>
                     <div class="col-md-6">
-                        <label for="enabled" class="font-weight-bold">{{$tc('common.status')}}:</label>
+                        <label for="enabled" class="font-weight-bold">{{$t('common.status')}}:</label>
                         <b-form-checkbox id="enabled" v-model="codeStatus">
-                            {{$tc('common.enabled')}}
+                            {{$t('common.enabled')}}
                         </b-form-checkbox>
                     </div>
                 </div>
 
                 <div class="row mt-2">
                     <div class="col-md-6">
-                        <label class="font-weight-bold">{{$tc('common.description')}}:</label>
+                        <label class="font-weight-bold">{{$t('common.description')}}:</label>
                         <br>
                         <textarea id="" v-model="codeDescription" name="" class="form-control" 
                                   rows="3" />
@@ -45,11 +45,11 @@
                         <hr>
                         <button class="btn btn-primary mr-1 btn-spinner" @click="[addCode(), reset()]">
                             <font-awesome-icon icon="fa fa-save" />
-                            {{$tc('actions.save')}}
+                            {{$t('actions.save')}}
                         </button>
                         <router-link :to="{name: 'codeLibrary'}"
                                      class="btn btn-secondary mr-1">
-                            {{$tc('actions.cancel')}}
+                            {{$t('actions.cancel')}}
                         </router-link>
                     </div>
                 </div>

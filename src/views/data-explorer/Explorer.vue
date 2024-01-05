@@ -6,11 +6,11 @@
                 <div class="p-2">
                     <h6>{{$t('dataExplorer.title')}}</h6>
                     <div>
-                        <small>{{$tc('common.name')}}</small>
+                        <small>{{$t('common.name')}}</small>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm" maxlength="50">
                     </div>
                     <div class="mb-">
-                        <small>{{$tc('titles.cluster')}}</small>
+                        <small>{{$t('titles.cluster')}}</small>
                         <v-select v-model="clusterId" :options="clusters" label="name" :reduce="(opt) => opt.id"
                                   :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
@@ -42,7 +42,7 @@
                             <font-awesome-icon icon="fa fa-cog" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="handleExport">
-                            {{$tc('actions.export')}} ...
+                            {{$t('actions.export')}} ...
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
@@ -76,7 +76,7 @@
 
                             <small v-if="loadedDataSize > 1"
                                 class="text-info">
-                                {{$tc('common.pagerShowing', 0, {from: 1,
+                                {{$t('common.pagerShowing', 0, {from: 1,
                                     to: Math.min(pageSize * page, tableData.total), count: tableData.total
                                 })}}.</small>
                             -->
@@ -356,7 +356,7 @@ export default {
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
-        if (!this.isDirty || (confirm(this.$tc('warnings.dirtyCheck')))) {
+        if (!this.isDirty || (confirm(this.$t('warnings.dirtyCheck')))) {
             next();
         }
     },
@@ -501,7 +501,7 @@ export default {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
                 this.success(this.$t('messages.savedWithSuccess',
-                    { what: this.$tc('titles.workflow') }), 2000);
+                    { what: this.$t('titles.workflow') }), 2000);
             } catch (e) {
                 this.error(e);
             }
@@ -546,14 +546,14 @@ export default {
                 const hasUnsupported = workflow.platform.slug !== 'meta'; //tasks.some((t) => !SUPPORTED_OPERATIONS.includes(t.operation.slug));
                 let hasProblems = false;
                 if (hasUnsupported || readerTask?.operation?.slug !== 'read-data') {
-                    self.error(self.$tc('dataExplorer.invalidWorkflow'), 10000);
+                    self.error(self.$t('dataExplorer.invalidWorkflow'), 10000);
                     self.$router.push({ name: 'index-explorer' });
                     hasProblems = true;
                 }
                 if (sampleTask?.operation?.slug !== 'sample') {
                     const op = this.operationLookup.get(2110); // FIXME;
                     const sample = Workflow.createSampleTask(1, op, this);
-                    self.warning(self.$tc('dataExplorer.invalidWorkflow'), 10000);
+                    self.warning(self.$t('dataExplorer.invalidWorkflow'), 10000);
                     this.workflowObj.tasks.splice(1, 0, sample);
                     hasProblems = true;
                 }
@@ -721,7 +721,7 @@ export default {
             };
             const success = () => {
                 this.success(this.$t('messages.savedWithSuccess',
-                    { what: this.$tc('titles.dataSource') }), 3500);
+                    { what: this.$t('titles.dataSource') }), 3500);
             };
             this.loadData(callback, success, true);
         },
@@ -994,13 +994,13 @@ export default {
                 message: this.$t('dataExplorer.informFormat'),
                 title: this.$t('actions.formatDate'),
                 options: [
-                    { value: 'YEAR', text: this.$tc('common.periods.year') },
-                    { value: 'MONTH', text: this.$tc('common.periods.month') },
-                    { value: 'DAY', text: this.$tc('common.periods.day') },
-                    { value: 'HOUR', text: this.$tc('common.periods.hour') },
-                    { value: 'MINUTE', text: this.$tc('common.periods.minute') },
-                    { value: 'SECOND', text: this.$tc('common.periods.seconds') },
-                    { value: 'WEEK', text: this.$tc('common.periods.week') },
+                    { value: 'YEAR', text: this.$t('common.periods.year') },
+                    { value: 'MONTH', text: this.$t('common.periods.month') },
+                    { value: 'DAY', text: this.$t('common.periods.day') },
+                    { value: 'HOUR', text: this.$t('common.periods.hour') },
+                    { value: 'MINUTE', text: this.$t('common.periods.minute') },
+                    { value: 'SECOND', text: this.$t('common.periods.seconds') },
+                    { value: 'WEEK', text: this.$t('common.periods.week') },
                     //maybe quarter
                 ],
                 value: null,
@@ -1102,7 +1102,7 @@ export default {
             const customdata = x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`);
             return [{
                 type: 'bar',
-                hovertemplate: `%{customdata}: %{y} ${this.$tc("common.records", 2)}<extra></extra>`,
+                hovertemplate: `%{customdata}: %{y} ${this.$t("common.records", 2)}<extra></extra>`,
                 customdata,
                 x,
                 y: this.stats.message.histogram[0],
@@ -1134,7 +1134,7 @@ export default {
 
             result.push({
                 type: 'bar',
-                hovertemplate: `%{customdata}: %{y} ${this.$tc("common.records", 2)}<extra></extra>`,
+                hovertemplate: `%{customdata}: %{y} ${this.$t("common.records", 2)}<extra></extra>`,
                 customdata,
                 x,
                 y: this.stats.message.histogram[0],

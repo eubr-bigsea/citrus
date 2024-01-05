@@ -5,7 +5,7 @@
                 <div>
                     <div class="title">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h1>{{$tc('titles.track', 2)}}</h1>
+                            <h1>{{$t('titles.track', 2)}}</h1>
                             <div>
                                 <router-link :to="{ name: 'addTrack' }"
                                              class="btn btn-primary btn-lemonade-primary float-left ml-2">
@@ -38,7 +38,7 @@
                             <div class="ml-2 mt-4">
                                 <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
                                         @click="clearFilters">
-                                    {{$tc('actions.clearFilters')}}
+                                    {{$t('actions.clearFilters')}}
                                 </button>
                             </div>
                         </template>
@@ -71,10 +71,10 @@ export default {
                 dateColumns: ['updated'],
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    publishing_status: this.$tc('track.status'),
-                    updated: this.$tc('common.updated'),
-                    version: this.$tc('common.version'),
+                    name: this.$t('common.name'),
+                    publishing_status: this.$t('track.status'),
+                    updated: this.$t('common.updated'),
+                    version: this.$t('common.version'),
                 },
                 sortable: ['name', 'id', 'updated'],
                 filterable: ['name', 'id'],
@@ -116,7 +116,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),

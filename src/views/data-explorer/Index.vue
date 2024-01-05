@@ -3,7 +3,7 @@
         <div>
             <div class="d-flex justify-content-between align-items-center">
                 <h1>
-                    <font-awesome-icon icon="fa fa-vial" /> {{$tc('dataExplorer.tagline', 1)}}
+                    <font-awesome-icon icon="fa fa-vial" /> {{$t('dataExplorer.tagline', 1)}}
                 </h1>
             </div>
             <hr>
@@ -80,10 +80,10 @@
                     <h5>Ou você quer editar algo existente?</h5>
 
                     <form class="form-inline">
-                        <label class="sr-only" for="type">{{$tc('common.type')}}</label>
+                        <label class="sr-only" for="type">{{$t('common.type')}}</label>
                         <select v-model="typeFilter" class="form-control w-25 pt-0">
                             <option selected disabled>
-                                {{$tc('actions.choose')}}...
+                                {{$t('actions.choose')}}...
                             </option>
                             <option value="DATA_EXPLORER">
                                 {{$t('dataExplorer.experiments.DATA_EXPLORER')}}
@@ -95,9 +95,9 @@
                                 {{$t('dataExplorer.experiments.VIS_BUILDER')}}
                             </option>
                         </select>
-                        <label class="sr-only" for="search">{{$tc('common.name')}}</label>
+                        <label class="sr-only" for="search">{{$t('common.name')}}</label>
                         <input v-model="searchFilter" type="text" class="form-control m-2 w-25"
-                               :placeholder="$tc('common.name')">
+                               :placeholder="$t('common.name')">
                         <button ref="searchBtn" class="btn btn-secondary btn-sm mb-2 btn-spinner"
                                 @click.prevent="search">
                             <font-awesome-icon icon="fa fa-search default-icon" /> {{$t('actions.search')}}
@@ -188,11 +188,11 @@ export default {
                 dateColumns: ['updated'],
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    user: this.$tc('common.user.name'),
-                    type: this.$tc('common.type'),
-                    updated: this.$tc('common.updated'),
-                    version: this.$tc('common.version'),
+                    name: this.$t('common.name'),
+                    user: this.$t('common.user.name'),
+                    type: this.$t('common.type'),
+                    updated: this.$t('common.updated'),
+                    version: this.$t('common.version'),
                 },
                 sortable: ['name', 'id', 'updated'],
                 //filterable: ['name', 'id'],
@@ -245,7 +245,7 @@ export default {
                         ).finally(() => self.$refs.searchBtn.classList.add('btn-spinner'));
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),

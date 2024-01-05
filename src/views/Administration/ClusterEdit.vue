@@ -5,8 +5,8 @@
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>
-                            {{add ? $t('actions.add', {type: $tc('titles.cluster', 1).toLowerCase()}) :
-                                $t('actions.edit') + ' ' + $tc('titles.cluster', 1).toLowerCase()}}
+                            {{add ? $t('actions.add', {type: $t('titles.cluster', 1).toLowerCase()}) :
+                                $t('actions.edit') + ' ' + $t('titles.cluster', 1).toLowerCase()}}
                         </h1>
                     </div>
                     <hr>
@@ -17,11 +17,11 @@
                                     <form>
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                 <input v-model="cluster.name" type="text" class="form-control">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$tc('common.type')}}:</label>
+                                                <label class="font-weight-bold">{{$t('common.type')}}:</label>
                                                 <select v-model="cluster.type" class="form-control">
                                                     <option v-for="typ in types" :key="typ" :value="typ">
                                                         {{typ}}
@@ -33,17 +33,17 @@
                                                 <input v-model="cluster.address" class="form-control">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$tc('cluster.executors')}}:</label>
+                                                <label class="font-weight-bold">{{$t('cluster.executors')}}:</label>
                                                 <input v-model="cluster.executors" type="number"
                                                        class="form-control w-25">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$tc('cluster.executorCores')}}:</label>
+                                                <label class="font-weight-bold">{{$t('cluster.executorCores')}}:</label>
                                                 <input v-model="cluster.executor_cores" type="number"
                                                        class="form-control w-25">
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="font-weight-bold">{{$tc('cluster.executorMemory')}}:</label>
+                                                <label class="font-weight-bold">{{$t('cluster.executorMemory')}}:</label>
                                                 <input v-model="cluster.executor_memory" class="form-control w-25">
                                             </div>
                                             <div class="col-md-3 mt-3 mb-3 mt-3">
@@ -52,23 +52,23 @@
                                                 </b-form-checkbox>
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{$tc('common.description')}}:</label>
+                                                <label>{{$t('common.description')}}:</label>
                                                 <textarea v-model="cluster.description" class="form-control"
                                                           rows="5" />
                                             </div>
                                             <div class="col-md-6">
-                                                <label>{{$tc('titles.platform', 2)}}:</label>
+                                                <label>{{$t('titles.platform', 2)}}:</label>
                                                 <v-select v-model="cluster.platforms" :options="platforms"
                                                           :multiple="true" item-value="id" label="name"
                                                           :placeholder="$t('actions.chooseOneOrMoreOption')"
                                                           :close-on-select="false"
                                                           :selectable="option => cluster.platforms && !cluster.platforms.includes(option)" />
-                                                <label>{{$tc('cluster.authToken')}}:</label>
+                                                <label>{{$t('cluster.authToken')}}:</label>
                                                 <input v-model="cluster.auth_token" type="password" autocomplete=""
                                                        class="form-control">
                                             </div>
                                             <div class="col-md-12">
-                                                <label>{{$tc('common.parameters', 2)}}:</label>
+                                                <label>{{$t('common.parameters', 2)}}:</label>
                                                 <textarea v-model="cluster.general_parameters" class="form-control"
                                                           rows="8" />
                                             </div>
@@ -79,11 +79,11 @@
                                             <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
-                                                {{$tc('actions.save')}}
+                                                {{$t('actions.save')}}
                                             </button>
                                             <router-link :to="{name: 'clusters'}"
                                                          class="btn btn-outline-secondary mr-1">
-                                                {{$tc('actions.cancel')}}
+                                                {{$t('actions.cancel')}}
                                             </router-link>
                                         </div>
                                     </div>
@@ -200,7 +200,7 @@ export default {
                     });
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.cluster', 1)
+                            what: this.$t('titles.cluster', 1)
                         })
                     );
                     this.$router.push({name: 'clusters'});

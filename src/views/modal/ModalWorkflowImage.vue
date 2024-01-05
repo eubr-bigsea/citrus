@@ -1,5 +1,5 @@
 <template>
-    <b-modal ref="modal" size="lg" :title="$tc('workflow.setImage', 2)">
+    <b-modal ref="modal" size="lg" :title="$t('workflow.setImage', 2)">
         <b-form>
             <div class="card">
                 <div class="card-body">
@@ -61,7 +61,7 @@ export default {
                 this.$root.$emit('onupdate-workflow-properties');
                 this.$refs.modal.hide();
             } else {
-                this.warning(this.$tc('titles.validationErrors', 2));
+                this.warning(this.$t('titles.validationErrors', 2));
             }
         },
         show() {

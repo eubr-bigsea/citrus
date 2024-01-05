@@ -107,7 +107,7 @@
                             <b-dropdown-form form-class="right-drop-form">
                                 <div class="row half-series-form">
                                     <div class="col-12">
-                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
+                                        <b-form-group :label="$t('common.attribute', 1) + ':'"
                                             label-for="dropdown-form-email">
 
                                             <v-select v-model="editableVisualization.color_attribute.value"
@@ -140,7 +140,7 @@
                             <b-dropdown-form form-class="right-drop-form">
                                 <div class="row half-series-form">
                                     <div class="col-12">
-                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
+                                        <b-form-group :label="$t('common.attribute', 1) + ':'"
                                             label-for="dropdown-form-email">
 
                                             <v-select v-model="editableVisualization.size_attribute.value"
@@ -173,7 +173,7 @@
                             <b-dropdown-form form-class="right-drop-form">
                                 <div class="row half-series-form">
                                     <div class="col-12">
-                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
+                                        <b-form-group :label="$t('common.attribute', 1) + ':'"
                                             label-for="dropdown-form-email">
 
                                             <v-select v-model="editableVisualization.text_attribute.value"
@@ -286,7 +286,7 @@
                                 <b-dropdown-form form-class="right-drop-form">
                                     <div class="row series-form">
                                         <div class="col-6">
-                                            <b-form-group :label="$tc('common.attribute', 1) + ':'"
+                                            <b-form-group :label="$t('common.attribute', 1) + ':'"
                                                           label-for="dropdown-form-email">
                                                 <v-select v-model="y.attribute"
                                                           :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]"
@@ -459,7 +459,7 @@
                                         <div class="col-12 border-top pt-2">
                                             <b-button size="sm" variant="danger" class="float-right"
                                                       @click="handleDeleteY(i)">
-                                                {{$tc('actions.delete')}}
+                                                {{$t('actions.delete')}}
                                             </b-button>
                                         </div>
                                     </div>
@@ -555,7 +555,7 @@
                                 <b-dropdown-form form-class="right-drop-form">
                                     <div class="row series-form">
                                         <div class="col-6">
-                                            <b-form-group :label="$tc('common.attribute', 1) + ':'">
+                                            <b-form-group :label="$t('common.attribute', 1) + ':'">
                                                 <v-select v-model="x.attribute" :options="attributes" label="name"
                                                           :reduce="(opt) => opt.name" :searchable="false"
                                                           :selected="handleSelectAttribute(x)"
@@ -733,7 +733,7 @@
                                         <div class="col-12">
                                             <b-button size="sm" variant="danger" class="float-right"
                                                       @click="handleDeleteX(i)">
-                                                {{$tc('actions.delete')}}
+                                                {{$t('actions.delete')}}
                                             </b-button>
                                         </div>
                                     </div>

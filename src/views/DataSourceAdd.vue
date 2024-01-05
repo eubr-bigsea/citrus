@@ -65,7 +65,7 @@
                         <h4 class="card-title">
                             {{$t('dataSource.databaseStorage')}}
                         </h4>
-                        <label>{{$tc('common.name', 1)}}:</label>
+                        <label>{{$t('common.name', 1)}}:</label>
                         <input v-model="dataSource.name" v-focus type="text" class="form-control">
 
                         <label>{{$t('dataSource.selectCommand')}}:</label>
@@ -89,7 +89,7 @@
                         </h4>
                         <div class="row">
                             <div class="col-md-8">
-                                <label>{{$tc('common.name', 1)}}:</label>
+                                <label>{{$t('common.name', 1)}}:</label>
                                 <input v-model="dataSource.name" type="text" class="form-control">
 
                                 <label>{{$t('dataSource.selectCommand')}}:</label>
@@ -173,7 +173,7 @@
 </template>
 <script>
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import { onMounted } from 'vue';
 
 import Notifier from '../notifier.js';

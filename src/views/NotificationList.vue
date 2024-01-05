@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$tc('titles.notification', 2)}}</h1>
+                        <h1>{{$t('titles.notification', 2)}}</h1>
                     </div>
                     <hr>
                     <div class="row">
@@ -73,11 +73,11 @@ export default {
                 skin: 'table-sm table table-hover',
                 dateColumns: ['created'],
                 headings: {
-                    text: this.$tc('common.text'),
-                    type: this.$tc('common.type'),
-                    created: this.$tc('common.created'),
-                    status: this.$tc('common.status'),
-                    actions: this.$tc('common.action', 2)
+                    text: this.$t('common.text'),
+                    type: this.$t('common.type'),
+                    created: this.$t('common.created'),
+                    status: this.$t('common.status'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['created'],
                 filterable: ['text', 'type', 'status'],
@@ -120,7 +120,7 @@ export default {
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -157,7 +157,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: this.$tc('titles.notification', 1) }));
+                                { what: this.$t('titles.notification', 1) }));
                             self.$refs.listTable.refresh();
                         })
                         .catch(e => self.error(e));

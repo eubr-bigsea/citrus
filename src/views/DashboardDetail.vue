@@ -6,7 +6,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="header-pretitle">
-                                {{$tc('titles.dashboard', 1)}}
+                                {{$t('titles.dashboard', 1)}}
                             </h6>
                             <h2 v-if="publicRoute">
                                 {{dashboard.title}}
@@ -53,14 +53,14 @@
                     </div>
                 </div>
                 <div v-else>
-                    <h2>{{$tc('common.noData')}}</h2>
+                    <h2>{{$t('common.noData')}}</h2>
                 </div>
             </div>
         </div>
         <b-modal id="dashboardProperties" ref="dashboardProperties" size="lg" button-size="sm"
-                 :title="$tc('titles.property', 2)" :ok-only="true">
+                 :title="$t('titles.property', 2)" :ok-only="true">
             <b-form @submit="save">
-                <b-form-group :label="$tc('common.title', 1) + ':'">
+                <b-form-group :label="$t('common.title', 1) + ':'">
                     <b-form-input v-model="dashboard.title" required />
                 </b-form-group>
                 <b-form-checkbox v-model="dashboard.is_public">
@@ -137,7 +137,7 @@ export default {
                         .then(() => {
                             this.success(
                                 this.$t('messages.successDeletion', {
-                                    what: this.$tc('titles.visualization')
+                                    what: this.$t('titles.visualization')
                                 })
                             );
                             delete self.configuration[visId];
@@ -155,7 +155,7 @@ export default {
                 .then(response => {
                     this.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.visualization')
+                            what: this.$t('titles.visualization')
                         })
                     );
                     if (callback) {
@@ -206,7 +206,7 @@ export default {
                 .then(response => {
                     this.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('dashboard.markupVisualization')
+                            what: this.$t('dashboard.markupVisualization')
                         })
                     );
                     const maxY = Math.max.apply(null, this.layout.map(l => l.y)) + 1;
@@ -257,7 +257,7 @@ export default {
                     if (!hideMessage) {
                         this.success(
                             this.$t('messages.savedWithSuccess', {
-                                what: this.$tc('titles.dashboard')
+                                what: this.$t('titles.dashboard')
                             })
                         );
                     }

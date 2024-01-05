@@ -59,10 +59,10 @@
                     </VuePerfectScrollbar>
                     -->
                     <div v-else class="text-bold-normal">
-                        <label>{{$tc('common.filter')}}:</label>
+                        <label>{{$t('common.filter')}}:</label>
                         <b-skeleton type="input" width="65%" />
 
-                        <label>{{$tc('common.filter')}}:</label>
+                        <label>{{$t('common.filter')}}:</label>
                         <b-skeleton type="input" width="85%" height="100px" />
                         <br>
                         <b-skeleton type="avatar" width="30px" height="30px" />
@@ -145,34 +145,34 @@
                 -->
             </div>
         </div>
-        <b-modal ref="modalWorkflowInfo" :title="$tc('titles.info', 2)" ok-only size="lg"
+        <b-modal ref="modalWorkflowInfo" :title="$t('titles.info', 2)" ok-only size="lg"
                  button-size="sm">
             <table class="table table-sm small">
                 <tbody>
                     <tr>
-                        <td>{{$tc('titles.workflow', 1)}}:</td>
+                        <td>{{$t('titles.workflow', 1)}}:</td>
                         <td>{{workflow.id}} - {{workflow.name}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('common.author', 1)}}:</td>
+                        <td>{{$t('common.author', 1)}}:</td>
                         <td>{{workflow.user? workflow.user.name: ''}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('common.created', 1)}}:</td>
+                        <td>{{$t('common.created', 1)}}:</td>
                         <td>{{$filters.formatJsonDate(workflow.created)}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('common.updated', 1)}}:</td>
+                        <td>{{$t('common.updated', 1)}}:</td>
                         <td>{{$filters.formatJsonDate(workflow.updated)}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('workflow.preferredCluster', 1)}}:</td>
+                        <td>{{$t('workflow.preferredCluster', 1)}}:</td>
                         <td>{{preferredCluster.name}}</td>
                     </tr>
                 </tbody>
             </table>
         </b-modal>
-        <b-modal ref="modalHelp" :title="$tc('variables.help')" ok-only size="lg"
+        <b-modal ref="modalHelp" :title="$t('variables.help')" ok-only size="lg"
                  button-size="sm">
             <small>
                 Você deve necessariamente informar todos os campos obrigatórios do formulário.
