@@ -85,14 +85,12 @@ export default {
 
                     let url = `${capirinhaUrl}/dashboards`;
 
-                    this.$Progress.start();
                     const self = this;
                     return axios
                         .get(url, {
                             params: data
                         })
                         .then(resp => {
-                            this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -100,7 +98,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.error(e);
                             }.bind(this)
                         );

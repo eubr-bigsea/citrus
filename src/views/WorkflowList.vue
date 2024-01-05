@@ -148,13 +148,11 @@ export default {
                     data.fields = 'id,name,platform,updated,user,version,is_template,description';
 
                     let url = `${tahitiUrl}/workflows?enabled=1&types=WORKFLOW`;
-                    this.$Progress.start();
                     return axios
                         .get(url, {
                             params: data
                         })
                         .then(resp => {
-                            this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -162,7 +160,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                this.$Progress.finish();
                                 this.error(e);
                             }.bind(this)
                         );
@@ -193,14 +190,11 @@ export default {
     },
     async mounted() {
         let url = `${tahitiUrl}/platforms`;
-        this.$Progress.start();
         try {
             const resp = await axios.get(url);
             this.platforms = resp.data.data;
         } catch (e) {
             this.error(e);
-        } finally {
-            this.$Progress.finish();
         }
         this.platform = this.$refs.workflowList.customQueries['platform'];
     },

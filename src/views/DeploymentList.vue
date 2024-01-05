@@ -142,13 +142,11 @@ export default {
 
                     data.fields = 'id,current_status,user_name,user_id,description,created,updated,model_name,name,base_service_url,port';
 
-                    this.$Progress.start();
                     return axios
                         .get(`${seedUrl}/deployments?enabled=true`, {
                             params: data
                         })
                         .then(resp => {
-                            this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -156,7 +154,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.$parent.error(e);
                             }.bind(this)
                         );

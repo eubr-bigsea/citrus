@@ -96,13 +96,11 @@ export default {
                     data.fields = 'id,name,platform,updated,user,version,description,publishing_status';
 
                     let url = `${tahitiUrl}/workflows?enabled=1&track=1`;
-                    //this.$Progress.start();
                     return axios
                         .get(url, {
                             params: data
                         })
                         .then(resp => {
-                            //this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -110,7 +108,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                //this.$Progress.finish();
                                 self.error(e);
                             }.bind(this)
                         );

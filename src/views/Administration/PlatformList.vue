@@ -89,14 +89,11 @@ export default {
                     data['all'] = 'true';
 
                     let url = `${tahitiUrl}/platforms`;
-                    this.$Progress.start();
                     try {
                         const resp = await axios.get(url, { params: data });
                         return resp.data;
                     } catch (e) {
                         this.error(e);
-                    } finally {
-                        this.$Progress.finish();
                     }
 
                 },

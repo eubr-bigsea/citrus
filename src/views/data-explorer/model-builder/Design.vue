@@ -390,13 +390,10 @@ export default {
                 } else {
                     self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                 }
-            } finally {
-                self.$Progress.finish();
             }
         },
         async load() {
             this.loadingData = true;
-            this.$Progress.start();
             try {
                 await this.loadOperations();
                 let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
@@ -423,7 +420,6 @@ export default {
                 this.$router.push({ name: 'index-explorer' });
             } finally {
                 Vue.nextTick(() => {
-                    this.$Progress.finish();
                     this.loadingData = false;
                     this.isDirty = false;
                 });

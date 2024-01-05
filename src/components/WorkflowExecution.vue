@@ -92,7 +92,6 @@ export default {
             this.$refs.modal.show();
         },
         load(params) {
-            this.$Progress.start();
             params.sort = params.orderBy;
             params.asc = (params.ascending === 1 && params.orderBy) ? 'true' : 'false';
             params.size = params.limit;
@@ -102,7 +101,6 @@ export default {
 
             return axios.get(`${standUrl}/jobs`, { params })
                 .then(resp => {
-                    this.$Progress.finish();
                     return { data: resp.data.data, count: resp.data.pagination.total };
                 }).catch(function (e) {
                     this.error(e);

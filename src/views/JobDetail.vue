@@ -426,7 +426,6 @@ export default {
     },
     mounted() {
         let self = this;
-        this.$Progress.start();
         axios
             .get(`${standUrl}/jobs/${this.$route.params.id}`)
             .then(resp => {
@@ -464,12 +463,7 @@ export default {
                         function (e) {
                             this.error(e);
                         }.bind(this)
-                    )
-                    .finally(() => {
-                        Vue.nextTick(() => {
-                            this.$Progress.finish();
-                        });
-                    });
+                    );
 
                 self.sortedSteps = resp.data.steps.sort((s1, s2) => {
                     let result = -1;
@@ -527,7 +521,6 @@ export default {
                 this.$t('actions.stop'),
                 this.$t('messages.doYouWantToStop'),
                 () => {
-                    this.$Progress.start();
                     axios
                         .post(`${standUrl}/jobs/${jobId}/stop`, {})
                         .then(() => {
@@ -536,7 +529,6 @@ export default {
                                     what: this.$t('titles.job', 1)
                                 })
                             );
-                            this.$Progress.finish();
                             this.$router.push({
                                 name: 'editWorkflow',
                                 params: {
@@ -547,7 +539,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                this.$Progress.finish();
                                 this.error(e);
                             }.bind(this)
                         );

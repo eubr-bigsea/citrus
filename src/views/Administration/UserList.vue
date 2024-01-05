@@ -5,20 +5,17 @@
                 <div>
                     <div class="title">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h1>{{$t('titles.user', 2)}}</h1>
+                            <h1>{{ $t('titles.user') }}</h1>
                             <div>
                                 <router-link :to="{ name: 'AdministrationAddUser' }"
-                                             class="btn btn-primary btn-lemonade-primary float-left ml-2">
-                                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+                                    class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                                    <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
                                 </router-link>
                             </div>
                         </div>
                     </div>
-
-                    <v-server-table ref="userList"
-                                    :columns="columns"
-                                    :options="options"
-                                    name="userList">
+                    <!--
+                    <v-server-table ref="userList" :columns="columns" :options="options" name="userList">
                         <template #id="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                 {{props.row.id}}
@@ -69,6 +66,53 @@
                             </button>
                         </template>
                     </v-server-table>
+                -->
+                    <v-server-table :options="options" :columns="columns">
+                        <template #id="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                {{ props.row.id }}
+                            </router-link>
+                        </template>
+                        <template #full_name="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                {{ props.row.full_name }}
+                            </router-link>
+                        </template>
+                        <template #enabled="props">
+                            {{ $t(props.row.enabled ? 'common.yes' : 'common.no') }}
+                        </template>
+                        <template #email="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                {{ props.row.email }}
+                            </router-link>
+                        </template>
+                        <template #roles="props">
+                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                                <span v-for="role in props.row.roles" :key="role.id">
+                                    <div class="badge badge-secondary p-1 mr-1">{{ role.label }}</div>
+                                </span>
+                            </router-link>
+                        </template>
+                        <template #notes="props">
+                            {{ props.row.notes }}
+                        </template>
+
+                        <template #confirmed_at="props">
+                            <div v-if="isConfirmedUser(props.row.confirmed_at)">
+                                {{ $filters.formatJsonDate(props.row.confirmed_at) }}
+                                <font-awesome-icon icon="check" />
+                            </div>
+                            <button v-else class="btn btn-sm btn-success" @click="confirmUser(props.row.id)">
+                                {{ $t('common.confirm') }}
+                            </button>
+                        </template>
+
+                        <template #actions="props">
+                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                                <font-awesome-icon icon="trash" />
+                            </button>
+                        </template>
+                    </v-server-table>
                 </div>
             </div>
         </div>
@@ -77,13 +121,17 @@
 
 <script>
 import axios from 'axios';
-import Notifier from '../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
+//import VServerTable from '@/components/VServerTable.vue';
 let thornUrl = import.meta.env.VITE_THORN_URL;
 
 
 export default {
     mixins: [Notifier],
-    data(){
+    components: {
+        //'v-server-table': VServerTable,
+    },
+    data() {
         const self = this;
         return {
             platform: '',
@@ -93,7 +141,7 @@ export default {
                 debounce: 800,
                 skin: 'table-sm table table-hover',
                 dateColumns: ['updated'],
-                columnClasses: {actions: 'th-10'},
+                columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',
                     full_name: this.$t('common.name'),
@@ -107,42 +155,19 @@ export default {
                 sortable: ['full_name', 'id', 'email', 'confirmed_at'],
                 filterable: ['full_name', 'id', 'email'],
                 sortIcon: {
-                    base: 'fa fas',
+                    /*base: 'fa fas',
                     is: 'fa-sort ml-10',
                     up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    down: 'fa-sort-amount-down',*/
+                    base: 'sort-base',
+                    is: 'sort-is ml-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
                 customFilters: ['platform'],
                 filterByColumn: false,
-                requestFunction: function (data){
-                    data.sort = data.orderBy;
-                    data.asc = data.ascending === 1 ? 'true' : 'false';
-                    data.size = data.limit;
-                    data.name = data.query;
-                    data.fields = 'id,full_name,enabled,email,confirmed_at,roles,notes';
-
-                    const url = `${thornUrl}/users`;
-                    this.$Progress.start();
-                    return axios
-                        .get(url, {
-                            params: data
-                        })
-                        .then(resp => {
-                            this.$Progress.finish();
-                            return {
-                                data: resp.data.data,
-                                count: resp.data.pagination.total
-                            };
-                        })
-                        .catch(
-                            function (e){
-                                self.$Progress.finish();
-                                self.error(e);
-                            }.bind(this)
-                        );
-                },
                 texts: {
                     filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
@@ -150,20 +175,40 @@ export default {
                     noResults: this.$t('common.noData'),
                     loading: this.$t('common.loading'),
                     filterPlaceholder: this.$t('common.filterPlaceholder')
+                },
+                requestFunction: async function (data) {
+                    data.sort = data.orderBy;
+
+                    data.asc = data.ascending === 1 ? 'true' : 'false';
+                    data.size = data.limit;
+                    data.name = data.query;
+                    data.fields = 'id,full_name,enabled,email,confirmed_at,roles,notes';
+
+                    const url = `${thornUrl}/users`;
+                    try {
+                        const resp = await axios.get(url, { params: data });
+                        return {
+                            data: resp.data.data,
+                            count: resp.data.pagination.total
+                        };
+
+                    } catch (e) {
+                        self.error(e);
+                    }
                 }
             }
-        };
+        }
     },
     methods: {
-        clearFilters(){
+        clearFilters() {
             this.$refs.userList.setFilter('');
             this.$refs.userList.customQueries = {};
         },
-        isConfirmedUser(confirmed_at){
+        isConfirmedUser(confirmed_at) {
             return confirmed_at !== undefined &&
-                    confirmed_at !== null && confirmed_at !== '';
+                confirmed_at !== null && confirmed_at !== '';
         },
-        remove(userId){
+        remove(userId) {
             const self = this;
             this.confirm(
                 this.$t('actions.delete'),
@@ -172,7 +217,7 @@ export default {
                     const url = `${thornUrl}/users/${userId}`;
                     axios
                         .delete(url, {})
-                        .then(()=> {
+                        .then(() => {
                             self.success(
                                 self.$t('messages.successDeletion', {
                                     what: this.$t('titles.user', 1)
@@ -184,7 +229,7 @@ export default {
                 }
             );
         },
-        confirmUser(userId){
+        confirmUser(userId) {
             const self = this;
             this.confirm(
                 self.$t('actions.confirm'),
@@ -193,7 +238,7 @@ export default {
                     const url = `${thornUrl}/approve/${userId}`;
                     axios
                         .post(url, {})
-                        .then(()=> {
+                        .then(() => {
                             self.success(
                                 self.$t('messages.successConfirmation', {
                                     what: this.$t('titles.user', 1)

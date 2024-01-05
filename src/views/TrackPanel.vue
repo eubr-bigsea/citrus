@@ -197,7 +197,6 @@ export default {
                     data.fields = LIST_OF_FIELDS;
 
                     let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
-                    self.$Progress.start();
                     return axios
                         .get(url, {
                             params: data
@@ -205,7 +204,6 @@ export default {
                         .then(resp => {
                             self.items = resp.data.data;
                             self.records = resp.data.pagination.total;
-                            self.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -213,7 +211,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.error(e);
                             }.bind(self)
                         );

@@ -120,11 +120,9 @@ export default {
             let url = `${thornUrl}/users`;
             let user = self.user;
 
-            this.$Progress.start();
             return axios
                 .post(url, user)
                 .then(resp => {
-                    this.$Progress.finish();
                     self.success(
                         this.$t('messages.savedWithSuccess', {
                             what: this.$t('titles.user', 1)
@@ -138,7 +136,6 @@ export default {
                 .catch(
                     function (e){
                         var err = e;
-                        this.$Progress.finish();
                         if (e.response.data.message){
                             err = {
                                 message: e.response.data.message

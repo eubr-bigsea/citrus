@@ -252,7 +252,6 @@ export default {
             event.target.setAttribute('disabled', 'disabled');
             event.target.classList.remove('btn-spinner');
 
-            this.$Progress.start();
             return axios
                 .patch(url, user)
                 .then(() => {
@@ -271,7 +270,6 @@ export default {
                 ).finally(() => {
                     event.target.removeAttribute('disabled');
                     event.target.classList.add('btn-spinner');
-                    this.$Progress.finish();
                 });
         },
         update(event){
@@ -291,7 +289,6 @@ export default {
                     ).finally(() => {
                         event.target.removeAttribute('disabled');
                         event.target.classList.add('btn-spinner');
-                        this.$Progress.finish();
                     });
             }
         }

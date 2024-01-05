@@ -149,7 +149,6 @@ export default {
                 })
                 .catch(e => {
                     if (e.response) {
-                        self.$Progress.finish();
                         self.error({ message: e.response.data.message });
                     } else {
                         self.error(e);

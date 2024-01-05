@@ -99,14 +99,11 @@ export default {
 
                     data.fields = 'id,text,status,created,type,link';
 
-                    this.$Progress.start();
                     return axios
                         .get(`${thornUrl}/notifications`, {
                             params: data
                         })
                         .then(resp => {
-                            self.$Progress.finish();
-
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -114,7 +111,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.$parent.error(e);
                             }.bind(this)
                         );

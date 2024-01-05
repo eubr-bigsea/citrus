@@ -224,13 +224,11 @@ export default {
                     data.enabled = 1;
 
                     let url = `${tahitiUrl}/workflows`;
-                    self.$Progress.start();
                     return axios
                         .get(url, {
                             params: data
                         })
                         .then(resp => {
-                            self.$Progress.finish();
                             self.totalRecords = resp.data.pagination.total;
                             return {
                                 data: resp.data.data,
@@ -239,7 +237,6 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.error(e);
                             }.bind(this)
                         ).finally(() => self.$refs.searchBtn.classList.add('btn-spinner'));

@@ -501,7 +501,6 @@ export default {
         },
         async load() {
             let self = this;
-            self.$Progress.start();
             try {
                 let workflow = (await axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`)).data;
                 //const query = self.$route.query;
@@ -687,8 +686,6 @@ export default {
             } catch (ex) {
                 console.debug(ex);
                 self.error(ex);
-            } finally {
-                self.$Progress.finish();
             }
         },
         testar() {
