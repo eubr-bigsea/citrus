@@ -89,13 +89,11 @@ export default {
             data.name = data.query;
             data.fields = FIELDS.join(',');
             data.disabled = 1;
-            this.$Progress.start();
             return axios
                 .get(`${tahitiUrl}/operations`, {
                     params: data
                 })
                 .then(resp => {
-                    this.$Progress.finish();
                     return { data: resp.data.data, count: resp.data.pagination.total };
                 })
                 .catch(
@@ -109,7 +107,6 @@ export default {
                 this.$t('actions.delete'),
                 this.$t('messages.doYouWantToDelete'),
                 () => {
-                    this.$Progress.start();
                     axios
                         .delete(`${tahitiUrl}/jobs/${job.id}`, {})
                         .then(() => {
@@ -119,11 +116,9 @@ export default {
                                 })
                             );
                             this.$refs.jobList.refresh();
-                            this.$Progress.finish();
                         })
                         .catch(
                             function (e) {
-                                this.$Progress.finish();
                                 this.dispatch('error', e);
                             }.bind(this)
                         );

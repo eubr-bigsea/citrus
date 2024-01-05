@@ -9,7 +9,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList">
+                <v-server-table-l ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList">
                     <template #id="props">
                         <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
                             {{props.row.id}}
@@ -52,7 +52,7 @@
                             </div>
                         </div>
                     </template>
-                </v-server-table>
+                </v-server-table-l>
                 <modal-preview-data-source ref="previewWindow" />
             </div>
         </div>
@@ -69,12 +69,13 @@ import axios from 'axios';
 import Notifier from '../notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
 import DataTableBuilder from '../data-table-builder.js';
-
+import VServerTable from '@/components/VServerTable.vue';
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
 export default {
     components: {
-        ModalPreviewDataSource
+        ModalPreviewDataSource,
+        'v-server-table-l': VServerTable,
     },
     setup() {
         const { t } = useI18n();

@@ -10,7 +10,7 @@
                  <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle" />
                 -->
             <div class="scroll-area">
-                <div v-if="loaded" id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
+                <div id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                      :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
                      @drop="drop" @dragover="allowDrop">
                     <template v-if="workflow.tasks.length > 0">
@@ -34,9 +34,11 @@
                         </div>
                     </div>
                 </div>
+                <!--
                 <div v-else>
                     <font-awesome-icon icon="spinner" pulse class="icon" /> {{$t('common.loading')}}
                 </div>
+            -->
             </div>
         </div>
     </div>
@@ -930,6 +932,9 @@ const DiagramComponent = Vue.extend({
             transformOrigin = transformOrigin || [0.5, 0.5];
             //instance = instance || jsPlumb;
             el = el || instance.getContainer();
+            if (!el) {
+                return;
+            }
             var p = ['webkit', 'moz', 'ms', 'o'],
                 s = 'scale(' + zoom + ')',
                 oString =

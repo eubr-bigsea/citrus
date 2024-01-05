@@ -509,7 +509,6 @@ export default {
         async loadWorkflow() {
             const self = this;
             self.loadingData = true;
-            this.$Progress.start();
             try {
                 const resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}?type=DATA_EXPLORER`);
                 const workflow = resp.data;
@@ -569,7 +568,6 @@ export default {
                 self.$router.push({ name: 'index-explorer' });
             } finally {
                 Vue.nextTick(() => {
-                    this.$Progress.finish();
                     this.loadingData = false;
                     this.isDirty = false;
                 });
@@ -632,10 +630,6 @@ export default {
                 } else {
                     self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                 }
-            } finally {
-                Vue.nextTick(() => {
-                    self.$Progress.finish();
-                });
             }
         },
         /* Load auxiliary objects */

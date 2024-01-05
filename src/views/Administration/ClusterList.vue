@@ -82,11 +82,9 @@ export default {
                     data.fields = 'id,name,type,enabled';
 
                     let url = `${standUrl}/clusters`;
-                    this.$Progress.start();
                     return axios
                         .get(url, {params: data})
                         .then(resp => {
-                            this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -94,7 +92,6 @@ export default {
                         })
                         .catch(
                             function (e){
-                                this.$Progress.finish();
                                 this.error(e);
                             }.bind(this)
                         );

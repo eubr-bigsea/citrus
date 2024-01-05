@@ -112,11 +112,9 @@ export default {
                         data.fields = 'id,name,category,description,enabled,value,editor';
 
                         let url = `${thornUrl}/configurations`;
-                        this.$Progress.start();
                         return axios
                             .get(url, { params: data })
                             .then(resp => {
-                                this.$Progress.finish();
                                 return {
                                     data: resp.data.data,
                                     count: resp.data.pagination.total
@@ -124,7 +122,6 @@ export default {
                             })
                             .catch(
                                 function (e) {
-                                    this.$Progress.finish();
                                     this.error(e);
                                 }.bind(this)
                             );
@@ -150,7 +147,6 @@ export default {
         save(event) {
             const self = this;
             const url = `${thornUrl}/configurations`;
-            this.$Progress.start();
             event.target.setAttribute('disabled', 'disabled');
             event.target.classList.remove('btn-spinner');
             axios
@@ -166,7 +162,6 @@ export default {
                 .catch(e => self.error(e))
                 .finally(() => {
                     self.cancel();
-                    self.$Progress.finish();
                     event.target.removeAttribute('disabled');
                     event.target.classList.add('btn-spinner');
                 }

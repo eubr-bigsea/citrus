@@ -3,15 +3,24 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import { visualizer } from "rollup-plugin-visualizer";
 import { manualChunksPlugin } from 'vite-plugin-webpackchunkname';
-
-export default {
+import { defineConfig } from 'vite';
+import { fileURLToPath } from 'url';
+export default defineConfig({
+    define: {
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true'
+    },
     plugins: [
         //createVuePlugin(/* options */)
         vue({
             template: {
                 compilerOptions: {
                     compatConfig: {
-                        MODE: 2
+                        MODE: 2,
+                        ATTR_FALSE_VALUE: false,
+                        WATCH_ARRAY: false,
+                        RENDER_FUNCTION: true,
+                        INSTANCE_SCOPED_SLOTS: true,
+                        
                     }
                 }
             }
@@ -30,10 +39,12 @@ export default {
                 find: /^~(.*)$/,
                 replacement: '$1',
             },
+            /*
             {
-                find: /^\$SRC\/(.*)$/,
+                find: /^\/(.*)$/,
                 replacement: path.resolve(__dirname, './src/$1')
-            }
+            },*/
+            { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
         ],
     },
     test: {
@@ -68,4 +79,5 @@ export default {
             }
         }
     }
-};
+})
+;

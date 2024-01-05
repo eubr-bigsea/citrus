@@ -1,6 +1,17 @@
 //import Vue from 'vue';
+import { configureCompat } from "vue";
+import Vue3EasyDataTable from 'vue3-easy-data-table';
+import 'vue3-easy-data-table/dist/style.css';
+configureCompat({
+    MODE: 2,
+    ATTR_FALSE_VALUE: false,
+    WATCH_ARRAY: false,
+    /*
+    RENDER_FUNCTION: false,*/
+})
+
 import Vue, { createApp } from '@vue/compat';
-import VueProgressBar from 'vue-progressbar';
+import VueProgressBar from "@aacassandra/vue3-progressbar";
 import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 import router from './router.js';
@@ -18,7 +29,8 @@ import axios from 'axios';
 //import VueAxios from 'vue-axios';
 import VueTheMask from 'vue-the-mask';
 
-import { ClientTable, ServerTable } from 'v-tables-3';
+//import { ClientTable, ServerTable } from 'vue-tables-2';
+import VServerTable from '@/components/VServerTable.vue';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 //import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
@@ -62,6 +74,8 @@ import Plotly from './components/visualization/Plotly.vue';
 
 import vSelect from 'vue-select';
 import VueGridLayout from 'vue-grid-layout';
+
+
 
 Vue.use(BootstrapVue);
 
@@ -141,24 +155,10 @@ Vue.component('FontAwesomeLayers', FontAwesomeLayers);
 
 Vue.config.productionTip = false;
 
-const options = {
-    color: '#568f32',
-    failedColor: '#874b4b',
-    thickness: '5px',
-    transition: {
-        speed: '0.5s',
-        opacity: '0.2s',
-        termination: 300
-    },
-    autoRevert: true,
-    location: 'top',
-    inverse: false
-};
-Vue.use(VueProgressBar, options);
 
 // Date-fns
 import { format, formatDistanceStrict, parseISO, fromUnixTime } from 'date-fns';
-import {utcToZonedTime} from 'date-fns-tz';
+import { utcToZonedTime } from 'date-fns-tz';
 import { enUS, ptBR } from 'date-fns/locale';
 
 const locales = { en: enUS, pt: ptBR };
@@ -177,7 +177,7 @@ Vue.prototype.$filters = {
     formatTimestamp(v) {
         if (v) {
             return format(
-                utcToZonedTime(fromUnixTime(v * .000001)), 
+                utcToZonedTime(fromUnixTime(v * .000001)),
                 'dd/MM/yyyy HH:mm:ss');
         }
     },
@@ -185,7 +185,7 @@ Vue.prototype.$filters = {
         return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
             { addSuffix: true, locale: locales[l] });
     },
-    formatJsonHourMinute(v){
+    formatJsonHourMinute(v) {
         if (v) {
             return format(parseISO(v + '.000Z'), 'HH:mm:ss');
         }
@@ -253,7 +253,7 @@ openIdService.loadConfig(store).then(() => {
     }
 
     // i18n
-    const i18n= createI18n({
+    const i18n = createI18n({
         allowComposition: true,
         globalInjection: true,
         global: true,
@@ -327,17 +327,53 @@ openIdService.loadConfig(store).then(() => {
     });
     */
     const app = createApp(App);
+    app.provide('$Progress', {
+        start: () => {},
+        finish: () => {},
+    });
+    app.config.globalProperties.$Progress = {
+        start: () => {},
+        finish: () => {},
+    };
+    Vue.use(VueProgressBar, {
+        color: '#568f32',
+        failedColor: '#874b4b',
+        thickness: '5px',
+        transition: {
+            speed: '0.5s',
+            opacity: '0.2s',
+            termination: 300
+        },
+        autoRevert: true,
+        location: 'top',
+        inverse: false
+    });
+    
+    app.use(VueProgressBar, {
+        color: '#568f32',
+        failedColor: '#874b4b',
+        thickness: '5px',
+        transition: {
+            speed: '0.5s',
+            opacity: '0.2s',
+            termination: 300
+        },
+        autoRevert: true,
+        location: 'top',
+        inverse: false
+    });
     app.use(store);
     app.use(i18n);
     app.use(router);
-    app.use(ClientTable, {}, 'bootstrap4');
-    app.use(ServerTable, {}, 'bootstrap4', {}, {});
+    //Vue.use(ClientTable, {}, false, 'bootstrap4');
+    //Vue.use(ServerTable, {}, false, 'bootstrap4')
+    app.component('VServerTable', VServerTable);
     app.mount('#app');
 
     let requestCounter = 0;
     axios.interceptors.request.use(async config => {
         if (requestCounter === 0) {
-            newVue.$Progress.start();
+            //newVue.$Progress.start();
         }
         const token = localStorage.getItem('token');
         if (token) {
@@ -353,12 +389,13 @@ openIdService.loadConfig(store).then(() => {
     axios.interceptors.response.use(response => {
         requestCounter -= 1;
         if (requestCounter === 0) {
-            newVue.$Progress.finish();
+            //newVue.$Progress.finish();
         }
         return response;
     }, (error) => {
         if (error.response.status === 401) {
-            newVue.$snotify.error(i18n.global.t('errors.accessDenied'));
+            //newVue.$snotify.error(i18n.global.t('errors.accessDenied'));
+            alert(i18n.global.t('errors.accessDenied'));
             if (openIdService.enabled) {
                 openIdService.logout();
             } else {
@@ -366,7 +403,7 @@ openIdService.loadConfig(store).then(() => {
             }
             router.push({ name: 'logout' });
         }
-        newVue.$Progress.finish();
+        //newVue.$Progress.finish();
         throw error;
     });
 }).catch((e) => {

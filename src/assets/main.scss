@@ -905,17 +905,17 @@ h1 {
     margin: 0;
 }
 
-/* Data explorer and vis builder*/
+/* Data explorer and vis builder and listings*/
 
 .preview-loading {
     background: #f3f3f4;
-    border: 1px solid #222;
+    border: 1px solid #ddd;
     font-size: 20pt;
     color: #666;
-    padding: 10px;
+    padding: 30px;
     left: 25%;
     margin: 0 auto;
-    position: absolute;
+    position: fixed;
     text-align: center;
     top: 40%;
     width: 40%;
@@ -923,19 +923,22 @@ h1 {
 }
 
 /* Sorting */
+.sort-up, .sort-down {
+    color: #007bff !important;
+    margin: 0 10px;
+    cursor: pointer;
+}
 .sort-up::before {
-    content: "⬇️";
+    content: "▼";
 }
 
 .sort-down::before {
-    content: "⬆️";
+    content: "▲";
 }
-
-.sort-is::before {
-    content: "⇵";
-}
-
-.sort-base::before {
+.sort-is {
+    cursor: pointer;
+    padding-left: 15px !important;
+    background: url(data:image/gif;base64,R0lGODlhCwALAJEAAAAAAP///xUVFf///yH5BAEAAAMALAAAAAALAAsAAAIUnC2nKLnT4or00PvyrQwrPzUZshQAOw==) no-repeat center left !important
 }
 
 ul.b-form-tags-list {

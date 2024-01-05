@@ -473,7 +473,6 @@ export default {
                 (resp) => {
                     let workflow = resp.data;
                     workflow.variables = workflow.variables || [];
-                    this.$Progress.start();
                     const params = {
                         platform: workflow.platform.id, //this.$route.params.platform,
                         subset: workflow.subset ? workflow.subset.id : null,
@@ -488,7 +487,6 @@ export default {
                         this.error(e);
                     }.bind(this)).finally(() => {
                         Vue.nextTick(() => {
-                            this.$Progress.finish();
                             self.loadingToolbox = true;
                             delete params['workflow'];
                             delete params['t'];
@@ -764,7 +762,6 @@ export default {
             });
         },
         async execute() {
-            this.$Progress.start();
             if (this.isDirty) {
                 await this.saveWorkflow(false);
                 await this._execute();
@@ -830,7 +827,6 @@ export default {
             };
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body, { headers });
-                self.$Progress.finish();
                 self.$router.push({
                     name: 'jobDetail',
                     params: {
