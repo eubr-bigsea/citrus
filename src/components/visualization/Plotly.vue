@@ -62,10 +62,10 @@ export default {
     data() {
         return {
             internalLayout: this.layout,
-            xinternalLayout: {
+            /*internalLayout: {
                 ...structuredClone(this.layout),
                 datarevision: 1
-            }
+            }*/
         };
     },
 
