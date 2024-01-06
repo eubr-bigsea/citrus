@@ -3,7 +3,8 @@
         header-bg-variant="dark" header-text-variant="light">
         <small><strong>*{{ $t('dataSource.previewExplanation', { amount: 40 }) }}</strong></small>
 
-        <v-server-table v-if="loaded" :columns="attributes" :options="options" />
+        <v-server-table v-if="loaded" :columns="attributes" :options="options">
+        </v-server-table>
     </b-modal>
 </template>
 <script>
@@ -21,11 +22,17 @@ export default {
             attributes: { type: Array, default: () => [] },
             options: {
                 perPage: 10,
-                perPageValues: [5,],
+                perPageValues: [],
                 skin: 'table-smallest table-sm table table-striped mt-1',
                 filterable: false,
+                texts: {
+                    count: this.$t('common.pagerShowing'),
+                    limit: this.$t('common.limit'),
+                    noResults: this.$t('common.noData'),
+                    loading: this.$t('common.loading'),
+                },
                 requestFunction: async function (data) {
-                    const {page, limit} = data;
+                    const { page, limit } = data;
                     return {
                         data: self.samples.slice((page - 1) * limit, page * limit),
                         count: self.samples.length

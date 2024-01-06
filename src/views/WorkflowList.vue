@@ -41,7 +41,7 @@
                         {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #afterFilter>
-                        <div class="ml-2">
+                        <div class="form-group float-left ml-3">
                             <label>{{$t('common.platform')}}</label>
                             <select v-model="platform" class="form-control">
                                 <option />
@@ -49,6 +49,8 @@
                                     {{p.name}}
                                 </option>
                             </select>
+                        </div>
+                        <div class="form-group float-left ml-3 mt-4">
                             <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
                                     @click="clearFilters">
                                 {{$t('actions.clearFilters')}}
@@ -99,6 +101,7 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 export default {
     mixins: [Notifier],
     data() {
+        const self = this;
         return {
             platform: '',
             platforms: [],
@@ -144,6 +147,7 @@ export default {
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = data.limit;
                     data.name = data.query;
+                    data.platform = self.platform;
 
                     data.fields = 'id,name,platform,updated,user,version,is_template,description';
 
@@ -183,7 +187,7 @@ export default {
 
             // This works, but it uses internal details of component
             const table = this.$refs.workflowList;
-            table.customQueries['platform'] = v;
+            //table.customQueries['platform'] = v;
             //table.updateState('customQueries', table.customQueries);
             table.getData();
         }
@@ -196,7 +200,7 @@ export default {
         } catch (e) {
             this.error(e);
         }
-        this.platform = this.$refs.workflowList.customQueries['platform'];
+        //this.platform = this.$refs.workflowList.customQueries['platform'];
     },
     /* Methods */
     methods: {

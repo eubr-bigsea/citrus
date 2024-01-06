@@ -1,23 +1,22 @@
 <!-- VServerTable.vue -->
 <template>
     <div class="v-server-table-area">
-        <slot name="filters">
+        <slot v-if="options.filterable" name="filters">
             <div class="filters">
                 <div class="col-md-12">
                     <div class="form-group float-left">
                         <div class="">
                             <label for="filter font-weight-bold">Filtro</label>
-                            <input type="text" placeholder="Busca" name="filter" autocomplete="off" class="form-control"
+                            <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off" class="form-control"
                                 maxlength="50" @input="search($event)" />
                         </div>
                     </div>
-                    <div class="form-group form-inline float-right VueTables__limit">
+                    <slot name="afterFilter">
+                    </slot>
+                    <div v-if="perPageValues && perPageValues.length" class="form-group form-inline float-right">
                         <div class=""><label for="limit">Limite</label>
                             <select name="limit" class="form-control form-control-sm" v-model="perPage">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
+                                <option v-for="value in perPageValues" :value="value" :key="value">{{value}}</option>
                             </select>
                         </div>
                     </div>
@@ -35,7 +34,7 @@
             </tbody>
         </table>
         <section v-if="!loading && !firstLoad">
-            <table :class="options.skin" class="server-table" ref="table">
+            <table v-if="tableData?.length" :class="options.skin" class="server-table" ref="table">
                 <thead>
                     <tr>
                         <th v-for="(heading, index) in columns" :key="index" class="header"
@@ -59,7 +58,7 @@
             </table>
             <slot name="pagination">
                 <div v-if="paginationEnabled" class="pagination-text text-center">
-                    <b-pagination v-model="currentPage" :total-rows="tableCount" :per-page="perPage" align="center"
+                    <b-pagination v-if="tableData?.length" v-model="currentPage" :total-rows="tableCount" :per-page="perPage" align="center"
                         aria-controls="my-table"></b-pagination>
                     <p class="pagination-message">
                         {{ pagerMessage }}
@@ -112,9 +111,13 @@ const sortIcon = ref({
     down: 'sort-down'
     , ... (props.options.sortIcon || {})
 });
+const perPageValues = ref(props.options?.perPageValues || [10,25,50,100]);
 
 const query = ref();
-const setQuery = (value) => { query.value = value };
+const setFilter = (value) => { 
+    query.value = value;
+    populateTable();
+ };
 const search = debounce((ev) => {
     query.value = ev.target.value;
     populateTable();
@@ -188,13 +191,13 @@ const handleSort = (column, event) => {
 onMounted(() => {
     populateTable();
 });
-
+const getData = populateTable;
 
 watch(currentPage, populateTable);
 watch(perPage, populateTable);
 
 defineExpose({
-    setQuery
+    setFilter, getData
 });
 </script>
   
