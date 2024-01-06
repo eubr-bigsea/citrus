@@ -1,11 +1,9 @@
 <template>
-    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only
-             no-stacking button-size="sm"
-             header-bg-variant="dark" header-text-variant="light">
-        <small><strong>*{{$t('dataSource.previewExplanation', {amount: 40})}}</strong></small>
+    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only no-stacking button-size="sm"
+        header-bg-variant="dark" header-text-variant="light">
+        <small><strong>*{{ $t('dataSource.previewExplanation', { amount: 40 }) }}</strong></small>
 
-        <v-client-table :columns="attributes" :data="samples"
-                        :options="{perPage: 10, perPageValues:[5,], skin:'table-smallest table-sm table table-striped mt-1', filterable: false}" />
+        <v-server-table v-if="loaded" :columns="attributes" :options="options" />
     </b-modal>
 </template>
 <script>
@@ -16,27 +14,44 @@ import Notifier from '../../mixins/Notifier.js';
 export default {
     mixins: [Notifier],
     data() {
+        const self = this;
         return {
+            loaded: false,
             samples: { type: Array, default: () => [] },
-            attributes: { type: Array, default: () => [] }
+            attributes: { type: Array, default: () => [] },
+            options: {
+                perPage: 10,
+                perPageValues: [5,],
+                skin: 'table-smallest table-sm table table-striped mt-1',
+                filterable: false,
+                requestFunction: async function (data) {
+                    const {page, limit} = data;
+                    return {
+                        data: self.samples.slice((page - 1) * limit, page * limit),
+                        count: self.samples.length
+                    }
+                }
+            }
         };
     },
     methods: {
-        show(dataSourceId) {
-            const self = this;
-            axios.get(`${limoneroUrl}/datasources/sample/${dataSourceId}?limit=40`, {})
-                .then(resp => {
-                    self.samples = resp.data.data;
-                    if (self.samples.length > 0) {
-                        self.attributes = Object.keys(self.samples[0]);
-                    } else {
-                        self.attributes = [];
-                    }
-                    self.$refs.preview.show();
+        async show(dataSourceId) {
+            try {
+                const resp = await axios.get(`${limoneroUrl}/datasources/sample/${dataSourceId}?limit=40`, {});
+                this.samples = resp.data.data;
+                if (this.samples.length > 0) {
+                    this.attributes = Object.keys(this.samples[0]);
+                } else {
+                    this.attributes = [];
+                }
+                this.$nextTick(() => {
+                    this.loaded = true;
+                    this.$refs.preview.show();
                 })
-                .catch(e => {
-                    self.error(e);
-                });
+            }
+            catch (e) {
+                this.error(e);
+            }
         },
     }
 };

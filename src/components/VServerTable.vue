@@ -24,39 +24,49 @@
                 </div>
             </div>
         </slot>
-        <b-skeleton-table v-if="loading" :rows="10" :columns="columns.length" :table-props="{ bordered: true, striped: true }"></b-skeleton-table>
 
-        <table v-if="!loading" :class="options.skin" class="server-table" ref="table">
-            <thead>
-                <tr>
-                    <th v-for="(heading, index) in columns" :key="index" class="header"
-                        :class="{ [options.sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
-                        @click="handleSort(heading, $event)">
-                        {{ getTableHeader(heading) }}
-                    </th>
-                </tr>
-            </thead>
+        <table v-if="firstLoad" class="table b-table table-striped table-bordered">
             <tbody>
-                <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                    <td v-for="colName in columns" :key="colName" :class="getColumnClass(columnClasses, colName)">
-                        <slot :name="colName" :row="row">
-                            <span :class="`${getColumnClass(columnClasses, colName)}-scoped`">
-                                {{ row[colName] }}
-                            </span>
-                        </slot>
+                <tr v-for="row in 10" :key="row">
+                    <td v-for="col in columns.length">
+                        <div class="b-skeleton b-skeleton-text b-skeleton-animate-wave" style="width: 75%;"></div>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <slot name="pagination">
-            <div v-if="paginationEnabled" class="pagination-text text-center">
-                <b-pagination v-model="currentPage" :total-rows="tableCount" :per-page="perPage" align="center"
-                    aria-controls="my-table"></b-pagination>
-                <p class="pagination-message">
-                    {{ pagerMessage }}
-                </p>
-            </div>
-        </slot>
+        <section v-if="!loading && !firstLoad">
+            <table :class="options.skin" class="server-table" ref="table">
+                <thead>
+                    <tr>
+                        <th v-for="(heading, index) in columns" :key="index" class="header"
+                            :class="{ [sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
+                            @click="handleSort(heading, $event)">
+                            {{ getTableHeader(heading) }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
+                        <td v-for="colName in columns" :key="colName" :class="getColumnClass(columnClasses, colName)">
+                            <slot :name="colName" :row="row">
+                                <span :class="`${getColumnClass(columnClasses, colName)}-scoped`">
+                                    {{ row[colName] }}
+                                </span>
+                            </slot>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <slot name="pagination">
+                <div v-if="paginationEnabled" class="pagination-text text-center">
+                    <b-pagination v-model="currentPage" :total-rows="tableCount" :per-page="perPage" align="center"
+                        aria-controls="my-table"></b-pagination>
+                    <p class="pagination-message">
+                        {{ pagerMessage }}
+                    </p>
+                </div>
+            </slot>
+        </section>
         <div class="text-center preview-loading" v-if="loading" style="background: transparent">
             <b-spinner variant="primary" label="Text Centered"></b-spinner>
         </div>
@@ -72,16 +82,17 @@ const props = defineProps({
     columns: { type: Array, required: true },
     sortColumn: { type: Object, required: false, default: () => { } },
     sortDirection: { type: Object, required: false, default: () => { } },
-    sortIcon: { type: Object, required: false, default: () => { } },
 
     skin: { type: Object, required: false, default: () => { } },
     columnClasses: { type: Object, required: false, default: () => { } },
     saveState: { type: Object, required: false, default: () => { } },
 });
 
-const getTableHeader = (col) => props.options.headings[col] || col;
+const getTableHeader = (col) => ('headings' in props.options && props.options.headings[col])
+    ? props.options.headings[col] : col;
 
 const loading = ref(false);
+const firstLoad = ref(true);
 const paginationEnabled = computed(() => {
     return true;
 });
@@ -94,6 +105,13 @@ const sortableColumns = ref(props.options.sortable || []);
 const sortDirection = ref('asc');
 const sortColumn = ref(props.columns[0]);
 const table = ref();
+const sortIcon = ref({
+    base: 'sort-base',
+    is: 'sort-is ml-10',
+    up: 'sort-up',
+    down: 'sort-down'
+    , ... (props.options.sortIcon || {})
+});
 
 const query = ref();
 const setQuery = (value) => { query.value = value };
@@ -103,9 +121,8 @@ const search = debounce((ev) => {
 }, 500);
 
 const pagerMessage = computed(() => {
-    const parts = (
-        props.options.texts.count || "Showing {from} to {to}, of {count} records{|}{count} records{|}One record")
-        .split(/\|/);
+    const txt = 'texts' in props.options ? props.options.texts.count : "Showing {from} to {to}, of {count} records|{count} records|One record";
+    const parts = (txt).split(/\|/);
 
     if (tableCount.value === 0) {
         return props.options.texts.noResults || 'No records found';
@@ -135,6 +152,7 @@ const populateTable = async () => {
 
         tableData.value = data || [];
         tableCount.value = count;
+        firstLoad.value = false;
     } else {
         console.error('Invalid requestFunction specified in options');
     }
