@@ -1,7 +1,5 @@
 //import Vue from 'vue';
 import { configureCompat } from "vue";
-import Vue3EasyDataTable from 'vue3-easy-data-table';
-import 'vue3-easy-data-table/dist/style.css';
 configureCompat({
     MODE: 2,
     ATTR_FALSE_VALUE: false,
@@ -29,7 +27,6 @@ import axios from 'axios';
 //import VueAxios from 'vue-axios';
 import VueTheMask from 'vue-the-mask';
 
-//import { ClientTable, ServerTable } from 'vue-tables-2';
 import VServerTable from '@/components/VServerTable.vue';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -365,8 +362,6 @@ openIdService.loadConfig(store).then(() => {
     app.use(store);
     app.use(i18n);
     app.use(router);
-    //Vue.use(ClientTable, {}, false, 'bootstrap4');
-    //Vue.use(ServerTable, {}, false, 'bootstrap4')
     app.component('VServerTable', VServerTable);
     app.mount('#app');
 

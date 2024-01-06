@@ -913,7 +913,7 @@ h1 {
     font-size: 20pt;
     color: #666;
     padding: 30px;
-    left: 25%;
+    left: 30%;
     margin: 0 auto;
     position: fixed;
     text-align: center;
@@ -951,7 +951,7 @@ ul.b-form-tags-list {
 /* Vue transitions */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 2s
+  transition: opacity 1s
 }
 
 .fade-enter,

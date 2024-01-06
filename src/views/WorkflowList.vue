@@ -143,6 +143,7 @@ export default {
                 customFilters: ['platform'],
                 filterByColumn: false,
                 requestFunction: function (data) {
+                    self.platform = data.customQueries.platform;
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = data.limit;
@@ -159,7 +160,8 @@ export default {
                         .then(resp => {
                             return {
                                 data: resp.data.data,
-                                count: resp.data.pagination.total
+                                count: resp.data.pagination.total,
+                                customQueries: {platform: self.platform}
                             };
                         })
                         .catch(
@@ -206,7 +208,6 @@ export default {
     methods: {
         clearFilters() {
             this.$refs.workflowList.setFilter('');
-            this.$refs.workflowList.customQueries = {};
             this.platform = '';
         },
         remove(workflowId) {

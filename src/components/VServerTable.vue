@@ -24,7 +24,7 @@
             </div>
         </slot>
 
-        <table v-if="firstLoad" class="table b-table table-striped table-bordered">
+        <table v-show="firstLoad" class="table b-table table-striped table-bordered">
             <tbody>
                 <tr v-for="row in 10" :key="row">
                     <td v-for="col in columns.length">
@@ -33,7 +33,7 @@
                 </tr>
             </tbody>
         </table>
-        <section v-if="!loading && !firstLoad">
+        <section v-show="!firstLoad">
             <table v-if="tableData?.length" :class="options.skin" class="server-table" ref="table">
                 <thead>
                     <tr>
@@ -46,9 +46,9 @@
                 </thead>
                 <tbody>
                     <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                        <td v-for="colName in columns" :key="colName" :class="getColumnClass(columnClasses, colName)">
+                        <td v-for="colName in columns" :key="colName" :class="getColumnClass(options.columnClasses, colName)">
                             <slot :name="colName" :row="row">
-                                <span :class="`${getColumnClass(columnClasses, colName)}-scoped`">
+                                <span :class="`${getColumnClass(options.columnClasses, colName)}-scoped`">
                                     {{ row[colName] }}
                                 </span>
                             </slot>
@@ -66,25 +66,23 @@
                 </div>
             </slot>
         </section>
-        <div class="text-center preview-loading" v-if="loading" style="background: transparent">
-            <b-spinner variant="primary" label="Text Centered"></b-spinner>
+        <div class="text-center preview-loading" v-if="loading" style="border: none;background: transparent">
+            <SpinnerDisplay/>
         </div>
     </div>
 </template>
   
 <script setup>
 import { debounce } from '@/util.js';
+import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
 
 import { ref, onMounted, computed, defineProps, watch } from 'vue';
 const props = defineProps({
     options: { type: Object, required: true },
     columns: { type: Array, required: true },
-    sortColumn: { type: Object, required: false, default: () => { } },
-    sortDirection: { type: Object, required: false, default: () => { } },
-
-    skin: { type: Object, required: false, default: () => { } },
-    columnClasses: { type: Object, required: false, default: () => { } },
-    saveState: { type: Object, required: false, default: () => { } },
+    //sortColumn: { type: Object, required: false, default: () => { } },
+    //sortDirection: { type: Object, required: false, default: () => { } },
+    name: {type: String, required: true},
 });
 
 const getTableHeader = (col) => ('headings' in props.options && props.options.headings[col])
@@ -104,6 +102,8 @@ const sortableColumns = ref(props.options.sortable || []);
 const sortDirection = ref('asc');
 const sortColumn = ref(props.columns[0]);
 const table = ref();
+const tableCustomQueries = ref();
+
 const sortIcon = ref({
     base: 'sort-base',
     is: 'sort-is ml-10',
@@ -121,7 +121,7 @@ const setFilter = (value) => {
 const search = debounce((ev) => {
     query.value = ev.target.value;
     populateTable();
-}, 500);
+}, props.options.debounce || 500);
 
 const pagerMessage = computed(() => {
     const txt = 'texts' in props.options ? props.options.texts.count : "Showing {from} to {to}, of {count} records|{count} records|One record";
@@ -148,9 +148,22 @@ const populateTable = async () => {
             query: query.value,
             fields: null,
             page: currentPage.value,
+            customQueries: tableCustomQueries.value,
         };
         loading.value = true;
-        const { data, count } = await props.options.requestFunction(defaultOptions);
+        const { data, count, customQueries } = await props.options.requestFunction(defaultOptions);
+        
+        if (props.options?.saveState){
+            tableCustomQueries.value = customQueries;
+            const params = {orderBy: {}};
+            params.orderBy.column = sortColumn.value;
+            params.orderBy.ascending = sortDirection.value === 1;
+            params.perPage = perPage.value;
+            params.query = query.value;
+            params.page = currentPage.value;
+            params.customQueries = tableCustomQueries.value;
+            localStorage[`vuetables_${props.name}`] = JSON.stringify(params);
+        }
         loading.value = false;
 
         tableData.value = data || [];
@@ -177,6 +190,7 @@ const handleSort = (column, event) => {
         } else {
             sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
         }
+        populateTable();
         if (sortDirection.value === 'desc') {
             event.currentTarget.classList.add('sort-up');
             event.currentTarget.classList.remove('sort-down');
@@ -185,10 +199,27 @@ const handleSort = (column, event) => {
             event.currentTarget.classList.remove('sort-up');
         }
         event.currentTarget.classList.remove('sort-is');
-        populateTable();
     }
 };
 onMounted(() => {
+    if (props.options?.saveState){
+        const saved = localStorage[`vuetables_${props.name}`];
+        if (saved) {
+            try {
+                const params = JSON.parse(saved);
+                sortColumn.value = params.orderBy?.column;
+                sortDirection.value = params.orderBy.ascending ?  1 : 0,
+                perPage.value = params.perPage,
+                query.value = params.query,
+                currentPage.value = params.page
+                tableCustomQueries.value = params.customQueries;
+
+            } catch(e){
+                console.debug(e);
+                //ignore
+            }
+        }
+    }
     populateTable();
 });
 const getData = populateTable;
