@@ -58,8 +58,7 @@
             </table>
             <slot name="pagination">
                 <div v-if="paginationEnabled" class="pagination-text text-center">
-                    <b-pagination v-if="tableData?.length" v-model="currentPage" :total-rows="tableCount" :per-page="perPage" align="center"
-                        aria-controls="my-table"></b-pagination>
+                    <pager-component v-if="tableCount > 0" :total="tableCount" :per-page="perPage" v-model:current-page="currentPage"/>
                     <p class="pagination-message">
                         {{ pagerMessage }}
                     </p>
@@ -75,6 +74,7 @@
 <script setup>
 import { debounce } from '@/util.js';
 import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
+import PagerComponent from '@/components/PagerComponent.vue';
 
 import { ref, onMounted, computed, defineProps, watch } from 'vue';
 const props = defineProps({
@@ -114,10 +114,14 @@ const sortIcon = ref({
 const perPageValues = ref(props.options?.perPageValues || [10,25,50,100]);
 
 const query = ref();
-const setFilter = (value) => { 
+const setFilter = (value, customQueries) => { 
     query.value = value;
+    tableCustomQueries.value = customQueries;
     populateTable();
  };
+ const setCustomQuery = (value) => {
+    tableCustomQueries.value = value;
+ }
 const search = debounce((ev) => {
     query.value = ev.target.value;
     populateTable();
@@ -168,6 +172,9 @@ const populateTable = async () => {
 
         tableData.value = data || [];
         tableCount.value = count;
+        if ((currentPage.value -1) * perPage.value > tableCount.value){
+            currentPage.value = 1;
+        }
         firstLoad.value = false;
     } else {
         console.error('Invalid requestFunction specified in options');
@@ -228,13 +235,13 @@ watch(currentPage, populateTable);
 watch(perPage, populateTable);
 
 defineExpose({
-    setFilter, getData
+    setFilter, getData, setCustomQuery
 });
 </script>
   
 <style scoped>
-.server-table td,
-.server-table th {
+.server-table>>>td,
+.server-table>>>th {
     padding: 8px 5px;
     font-size: .9em;
 }

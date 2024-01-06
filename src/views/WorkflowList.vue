@@ -142,8 +142,9 @@ export default {
                 saveState: true,
                 customFilters: ['platform'],
                 filterByColumn: false,
+                perPageValues: [5, 10, 20],
                 requestFunction: function (data) {
-                    self.platform = data.customQueries.platform;
+                    self.platform = data.customQueries?.platform;
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = data.limit;
@@ -189,7 +190,7 @@ export default {
 
             // This works, but it uses internal details of component
             const table = this.$refs.workflowList;
-            //table.customQueries['platform'] = v;
+            table.setCustomQuery({platform: this.platform});
             //table.updateState('customQueries', table.customQueries);
             table.getData();
         }
@@ -207,8 +208,8 @@ export default {
     /* Methods */
     methods: {
         clearFilters() {
-            this.$refs.workflowList.setFilter('');
             this.platform = '';
+            this.$refs.workflowList.setFilter('', null);
         },
         remove(workflowId) {
             const self = this;
