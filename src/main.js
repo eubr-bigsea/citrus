@@ -2,13 +2,28 @@
 import { configureCompat } from "vue";
 configureCompat({
     MODE: 2,
-    ATTR_FALSE_VALUE: false,
-    WATCH_ARRAY: false,
-    /*
-    RENDER_FUNCTION: false,*/
+    WATCH_ARRAY: 'suppress-warning',
+    //RENDER_FUNCTION: 'suppress-warning',
+    INSTANCE_LISTENERS: 'suppress-warning',
+    COMPONENT_FUNCTIONAL: 'suppress-warning',
+    OPTIONS_BEFORE_DESTROY: 'suppress-warning',
+    INSTANCE_SCOPED_SLOTS: 'suppress-warning',
+    OPTIONS_DATA_MERGE: 'suppress-warning',
+    COMPONENT_V_MODEL: 'suppress-warning',
+    CUSTOM_DIR: 'suppress-warning',
+    INSTANCE_EVENT_EMITTER: 'suppress-warning',
+    ATTR_FALSE_VALUE: 'suppress-warning',
+    INSTANCE_ATTRS_CLASS_STYLE: 'suppress-warning',
+    GLOBAL_PROTOTYPE: 'suppress-warning',
+    GLOBAL_EXTEND: 'suppress-warning',
+    GLOBAL_MOUNT: 'suppress-warning',
+    OPTIONS_DESTROYED: 'suppress-warning',
+    INSTANCE_DESTROY: 'suppress-warning',
+    COMPONENT_ASYNC: 'suppress-warning'
+    //RENDER_FUNCTION: true,
 })
 
-import Vue, { createApp } from '@vue/compat';
+import Vue, { createApp, h } from '@vue/compat';
 import VueProgressBar from "@aacassandra/vue3-progressbar";
 import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
@@ -70,7 +85,7 @@ import Plotly from './components/visualization/Plotly.vue';
 
 
 import vSelect from 'vue-select';
-import VueGridLayout from 'vue-grid-layout';
+import VueGridLayout from 'vue3-grid-layout-next';
 
 
 
@@ -203,11 +218,6 @@ Vue.filter('formatJsonHourMinute', v => {
         return format(parseISO(v + '.000Z'), 'HH:mm:ss');
     }
 });
-Vue.component('VStyle', {
-    render: function (createElement) {
-        return createElement('style', this.$slots.default);
-    }
-});
 
 // Leaflet
 //import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
@@ -229,6 +239,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 */
+
 Vue.prototype.$openIdService = openIdService;
 Vue.prototype.$legacyStore = store;
 Vue.prototype.$legacyRouter = router;
@@ -325,12 +336,12 @@ openIdService.loadConfig(store).then(() => {
     */
     const app = createApp(App);
     app.provide('$Progress', {
-        start: () => {},
-        finish: () => {},
+        start: () => { },
+        finish: () => { },
     });
     app.config.globalProperties.$Progress = {
-        start: () => {},
-        finish: () => {},
+        start: () => { },
+        finish: () => { },
     };
     Vue.use(VueProgressBar, {
         color: '#568f32',
@@ -345,7 +356,7 @@ openIdService.loadConfig(store).then(() => {
         location: 'top',
         inverse: false
     });
-    
+
     app.use(VueProgressBar, {
         color: '#568f32',
         failedColor: '#874b4b',

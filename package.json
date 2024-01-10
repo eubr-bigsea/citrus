@@ -19,7 +19,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.5",
-    "animated-number-vue": "^1.0.0",
+    "@imengyu/vue3-context-menu": "^1.3.5",
     "axios": "^1.6.3",
     "bootstrap-vue": "npm:@ankurk91/bootstrap-vue@^3.0.2",
     "core-js": "^3.8.3",
@@ -52,7 +52,7 @@
     "vue-the-mask": "^0.11.1",
     "vue2-leaflet": "^2.7.1",
     "vue3-grid-layout-next": "^1.0.6",
-    "vuedraggable": "^2.24.3",
+    "vuedraggable": "^4.1.0",
     "vuex": "4.0.0"
   },
   "devDependencies": {
