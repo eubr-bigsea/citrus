@@ -295,7 +295,7 @@ import Vue from 'vue';
 import jsep from 'jsep';
 import io from 'socket.io-client';
 import axios from 'axios';
-import { debounce } from '../../util.js';
+import { debounce, deepToRaw } from '@/util.js';
 import Preview from './Preview.vue';
 import PreviewMenu from './PreviewMenu.vue';
 import StepList from './StepList.vue';
@@ -486,7 +486,8 @@ export default {
         /* Data loading - Workflow */
         //
         async saveWorkflow() {
-            const cloned = structuredClone(this.workflowObj);
+
+            const cloned = structuredClone(deepToRaw(this.workflowObj));
             const url = `${tahitiUrl}/workflows/${cloned.id}`;
 
             cloned.preferred_cluster_id = this.clusterId;
@@ -613,12 +614,16 @@ export default {
             };
 
             try {
+                this.loadingData = true;
+                console.debug('loading')
                 const response = await axios.post(`${standUrl}/jobs`, body,
                     { headers: { 'Locale': self.$root.$i18n.locale, } });
+                console.debug('loaded')
                 self.$refs.preview && self.$refs.preview.scroll({ top: 0 });
                 self.job = response.data.data;
                 self.page = 1;
                 self.connectWebSocket();
+                this.loadingData = false;
                 if (success) {
                     success();
                 }
@@ -854,7 +859,7 @@ export default {
         },
         duplicate(step) {
             // Clone tasks instance
-            const cloned = new Task(structuredClone(step));
+            const cloned = new Task(structuredClone(deepToRaw(step)));
             cloned.id = Operation.generateTaskId();
             this.workflowObj.tasks.splice(step.display_order, 0, cloned);
             // Update the display_order

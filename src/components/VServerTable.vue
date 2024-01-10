@@ -230,12 +230,13 @@ onMounted(() => {
     populateTable();
 });
 const getData = populateTable;
+const refresh = populateTable;
 
 watch(currentPage, populateTable);
 watch(perPage, populateTable);
 
 defineExpose({
-    setFilter, getData, setCustomQuery
+    setFilter, getData, setCustomQuery, refresh
 });
 </script>
   
