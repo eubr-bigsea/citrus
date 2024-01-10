@@ -4,14 +4,14 @@
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
         <div v-if="hasProblems" class="pulse-item text-danger"
-             title="Existem problemas na configuração. Edite para corrigir.">
+            title="Existem problemas na configuração. Edite para corrigir.">
             <font-awesome-icon icon="fa fa-question-circle" />
-            {{hasProblems.label}}
+            {{ hasProblems.label }}
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
                 <input v-if="!locked && index > 0" v-model="editableStep.selected" type="checkbox">&nbsp;
-                <span class="step-number">#{{index + 1}}</span> -
+                <span class="step-number">#{{ index + 1 }}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
@@ -19,69 +19,88 @@
             </div>
             <div>
                 <font-awesome-icon v-if="step.error" v-b-tooltip.html icon="fa fa-exclamation-circle text-danger"
-                                   :title="step.error" />
+                    :title="step.error" />
 
-                <small v-if="step?.forms?.comment?.value" class="step-comment">{{step?.forms?.comment?.value}}</small>
-                <b-button-group v-if="!editableStep.editing" class="zoom-buttom float-right">
-                    <b-button v-if="editableStep.editable" variant="light" size="sm" class="text-primary"
-                              :title="$t('actions.edit')" @click="edit('execution')">
+                <small v-if="step?.forms?.comment?.value" class="step-comment">{{ step?.forms?.comment?.value }}</small>
+                <div class="btn-group" role="group" aria-label="Step commands">
+                </div>
+                <div v-if="!editableStep.editing" role="group" class="btn-group zoom-buttom float-right">
+                    <button v-if="editableStep.editable" class="btn btn-sm btn-light text-primary"
+                        :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
-                    </b-button>
+                    </button>
 
-                    <b-button variant="light" size="sm" class="text-secondary" :title="$t('common.previewUntilHere')"
-                              @click="$emit('preview', step)">
+                    <button class="btn btn-sm btn-light text-secondary" :title="$t('common.previewUntilHere')"
+                        @click="$emit('preview', step)">
                         <font-awesome-icon :icon="`fa ${step.previewable ? 'fa-eye' : 'fa-eye-slash'}`" />
-                    </b-button>
+                    </button>
 
-                    <b-button v-if="index > 0" variant="light" size="sm" class="text-secondary"
-                              :title="$t('actions.delete')" @click="$emit('delete', step)">
+                    <button v-if="index > 0" class="btn btn-sm btn-light text-secondary" :title="$t('actions.delete')"
+                        @click="$emit('delete', step)">
                         <font-awesome-icon icon="fa fa-trash" />
-                    </b-button>
-                    <b-button v-if="index > 0" variant="light" size="sm"
-                              :title="step.enabled ? $t('actions.disable') : $t('actions.enable')" @click="$emit('toggle', step)">
+                    </button>
+                    <button v-if="index > 0" class="btn btn-sm btn-light"
+                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')" @click="$emit('toggle', step)">
                         <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success" />
                         <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
-                    </b-button>
+                    </button>
+                    <!--
+
+                        <b-dropdown-2 size="lg" variant="light" class="zoom-buttom" no-caret>
+                            <template #button-content>
+                            <font-awesome-icon icon="fa fa-ellipsis-h" />
+                        </template>
+                        <a href="#" @click.prevent="edit('appearance')">
+                            {{ $t('titles.comment') }} &amp;
+                            {{ $t('titles.color').toLowerCase() }}
+                        </a>
+                        <a href="#" @click.prevent="$emit('duplicate', step)">
+                            {{ $t('actions.duplicate') }}
+                            {{ $t('dataExplorer.step').toLowerCase() }}
+                        </a>
+                    </b-dropdown-2>
+                -->
                     <b-dropdown size="lg" variant="light" class="zoom-buttom" no-caret>
                         <template #button-content>
                             <font-awesome-icon icon="fa fa-ellipsis-h" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="edit('appearance')">
-                            {{$t('titles.comment')}} &amp;
-                            {{$t('titles.color').toLowerCase()}}
+                            {{ $t('titles.comment') }} &amp;
+                            {{ $t('titles.color').toLowerCase() }}
                         </b-dropdown-item>
                         <b-dropdown-item href="#" @click.prevent="$emit('duplicate', step)">
-                            {{$t('actions.duplicate')}}
-                            {{$t('dataExplorer.step').toLowerCase()}}
+                            {{ $t('actions.duplicate') }}
+                            {{ $t('dataExplorer.step').toLowerCase() }}
                         </b-dropdown-item>
                     </b-dropdown>
-                </b-button-group>
+                </div>
                 <div v-else ref="form" class="border-top" style="width: 100%; padding: 2px; zoom:90%">
                     <div class="mb-3">
                         <template v-for="form in currentForm">
                             <div v-for="field in form.fields" :key="`${step.id}:${field.name}`"
-                                 class="mb-2 step-properties">
+                                class="mb-2 step-properties">
                                 <component :is="getWidget(field)" v-if="field.editable && field.enabled !== false"
-                                           :field="field" :value="getValue(field.name)" :language="language"
-                                           :type="field.suggested_widget" :read-only="!field.editable" context="context"
-                                           :suggestion-event="() => suggestionEvent(step.id)" :extended-suggestion-event="() => extendedSuggestionEvent(step.id)" 
-                                           @update="updateField" />
+                                    :field="field" :value="getValue(field.name)" :language="language"
+                                    :type="field.suggested_widget" :read-only="!field.editable" context="context"
+                                    :suggestion-event="() => suggestionEvent(step.id)"
+                                    :extended-suggestion-event="() => extendedSuggestionEvent(step.id)"
+                                    @update="updateField" />
                             </div>
                         </template>
                     </div>
 
-                    <b-button-group class="float-right mb-2">
-                        <b-button variant="light text-primary" size="sm" :title="$t('actions.save')" @click="save">
+                    <div class="btn-group float-right mb-2">
+                        <button class="btn btn-sm btn-light text-primary" :title="$t('actions.save')" @click="save">
                             <font-awesome-icon icon="fa fa-save" />
-                        </b-button>
-                        <b-button variant="light" size="sm" :title="$t('actions.cancel')" @click="cancelEdit">
+                        </button>
+                        <button class="btn btn-sm btn-light" :title="$t('actions.cancel')" @click="cancelEdit">
                             <font-awesome-icon icon="fa fa-undo-alt" />
-                        </b-button>
-                        <b-button variant="light" size="sm" class="text-secondary" :title="$t('actions.delete')"
-                                  @click="$emit('delete', step)">
+                        </button>
+                        <button class="btn btn-sm btn-light text-secondary" :title="$t('actions.delete')"
+                            @click="$emit('delete', step)">
                             <font-awesome-icon icon="fa fa-trash" />
-                        </b-button>
-                    </b-button-group>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,8 +108,14 @@
 </template>
 <script>
 import Vue from 'vue';
+import { deepToRaw } from '@/util.js';
+import BDropdown from '@/components/BDropdown.vue';
+
 export default {
     name: 'StepComponent',
+    components: {
+        'b-dropdown-2': BDropdown
+    },
     props: {
         attributes: { type: Array, required: true },
         index: { type: Number, required: true },
@@ -138,11 +163,11 @@ export default {
     },
     mounted() {
         this.functionName = this.step.functionName;
-        this.editableStep = structuredClone(this.step);
+        this.editableStep = structuredClone(deepToRaw(this.step));
         this.enableDisableFields();
     },
     methods: {
-        obterSugestao(){
+        obterSugestao() {
             console.debug(this.suggestionEvent(this.step.id));
         },
         _evalInContext(js, context) {
@@ -177,7 +202,7 @@ export default {
                 });
                 f.fields.forEach((field) => {
                     field.category = f.category;
-                    Vue.set(field, "enabled", true);
+                    field.enabled = true;
                     if (field.enable_conditions) {
                         if (field.enable_conditions === 'false') {
                             field.enabled = false;
@@ -212,7 +237,7 @@ export default {
         },
         cancelEdit() {
             this.editableStep.editing = false;
-            this.editableStep = structuredClone(this.step);
+            this.editableStep = structuredClone(deepToRaw(this.step));
             this.$emit('cancel', this.step);
         },
         edit(category) {

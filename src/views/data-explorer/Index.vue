@@ -110,15 +110,15 @@
                                     name="workflowListDataExperiments">
                         <template #id="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER' "
-                                         :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                         :to="{name: 'data-explorer-panel', params: {id: props.row.id}}">
                                 {{props.row.id}}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER' "
-                                         :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                         :to="{name: 'model-design', params: {id: props.row.id}}">
                                 {{props.row.id}}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER' "
-                                         :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                         :to="{name: 'visualization-design', params: {id: props.row.id}}">
                                 {{props.row.id}}
                             </router-link>
                         </template>
@@ -131,15 +131,15 @@
                         </template>
                         <template #name="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER' "
-                                         :to="{name: 'data-explorer-panel', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                         :to="{name: 'data-explorer-panel', params: {id: props.row.id}}">
                                 {{props.row.name}}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER' "
-                                         :to="{name: 'model-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                         :to="{name: 'model-design', params: {id: props.row.id}}">
                                 {{props.row.name}}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER' "
-                                         :to="{name: 'visualization-design', params: {id: props.row.id, platform: props.row.platform.id}}">
+                                         :to="{name: 'visualization-design', params: {id: props.row.id}}">
                                 {{props.row.name}}
                             </router-link>
                         </template>

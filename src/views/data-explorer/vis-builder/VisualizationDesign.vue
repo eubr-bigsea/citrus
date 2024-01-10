@@ -115,7 +115,7 @@
                     -->
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
-                {{i18n.$t('common.wait')}}
+                {{$t('common.wait')}}
             </div>
         </div>
     </div>
