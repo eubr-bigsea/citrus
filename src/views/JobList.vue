@@ -77,6 +77,7 @@ export default {
             tableData: [],
             showSideBar: false,
             options: {
+                perPageValues: [5, 10, 20],
                 skin: 'table-sm table table-hover',
                 columnsClasses: {
                     name: 'th-20',
