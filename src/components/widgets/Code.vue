@@ -78,7 +78,7 @@ import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-sql';
 import 'prismjs/themes/prism.css';
-//import { debounce } from '../../util.js';
+import { debounce } from '../../util.js';
 
 export default {
     name: 'CodeComponent',
@@ -107,12 +107,10 @@ export default {
         }
     },
     watch: {
-        /*
-            code: debounce(function () {
-                // let content = e.target.value || e.target.textContent;
-                //this.$root.$emit(this.message, this.field, this.code);
-            }, 500)
-            */
+       code: debounce(function () {
+           console.debug(this.code)
+            this.triggerUpdateEvent(this.message, this.field, this.code);
+       }, 500)
     },
     mounted() {
         this.code = this.value || this.field.default || ' ';
@@ -138,7 +136,7 @@ export default {
             }
         },
         okModal() {
-            this.$root.$emit(this.message, this.field, this.code);
+            this.triggerUpdateEvent(this.message, this.field, this.code);
             this.$refs.modal.hide();
         },
         showModal() {
@@ -146,7 +144,7 @@ export default {
         },
         cancelModal() {
             this.code = this.originalCode;
-            this.$root.$emit(this.message, this.field, this.code);
+            this.triggerUpdateEvent(this.message, this.field, this.code);
             this.$refs.modal.hide();
         },
         highlighter() {
