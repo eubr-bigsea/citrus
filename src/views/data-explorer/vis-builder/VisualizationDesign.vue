@@ -145,7 +145,7 @@ import { toPng } from 'html-to-image';
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
 const route = vm.proxy.$route;
-const progress = vm.proxy.$Progress;
+const progress = {start: ()=> {}, finish: ()=> {} }; //vm.proxy.$Progress;
 const store = vm.proxy.$store;
 const i18n = vm.proxy.$i18n.vm;
 const { success, error } = useNotifier(vm.proxy);

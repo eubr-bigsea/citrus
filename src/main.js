@@ -24,8 +24,8 @@ configureCompat({
 })
 
 import Vue, { createApp, h } from '@vue/compat';
-import VueProgressBar from "@aacassandra/vue3-progressbar";
-import BootstrapVue from 'bootstrap-vue';
+//import VueProgressBar from "@aacassandra/vue3-progressbar";
+//import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 import router from './router.js';
 import store from './store.js';
@@ -36,8 +36,12 @@ import { createI18n } from 'vue-i18n';
 
 import messages from './i18n/messages.js';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
+//import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap-vue/dist/bootstrap-vue.css';
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
+
 import axios from 'axios';
 //import VueAxios from 'vue-axios';
 import VueTheMask from 'vue-the-mask';
@@ -89,7 +93,9 @@ import VueGridLayout from 'vue3-grid-layout-next';
 
 
 
-Vue.use(BootstrapVue);
+//Vue.use(BootstrapVue);
+import { BButton } from "bootstrap-vue-next";
+Vue.component('b-button', BButton);
 
 Vue.component('VSelect', vSelect);
 Vue.component('GridItem', VueGridLayout.GridItem);
@@ -161,7 +167,7 @@ config.autoReplaceSvg = 'nest';
 //Vue.use(VueTheMask)
 
 //Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
+//Vue.use(BootstrapVue);
 Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 Vue.component('FontAwesomeLayers', FontAwesomeLayers);
 
@@ -335,6 +341,7 @@ openIdService.loadConfig(store).then(() => {
     });
     */
     const app = createApp(App);
+    /*
     app.provide('$Progress', {
         start: () => { },
         finish: () => { },
@@ -356,20 +363,7 @@ openIdService.loadConfig(store).then(() => {
         location: 'top',
         inverse: false
     });
-
-    app.use(VueProgressBar, {
-        color: '#568f32',
-        failedColor: '#874b4b',
-        thickness: '5px',
-        transition: {
-            speed: '0.5s',
-            opacity: '0.2s',
-            termination: 300
-        },
-        autoRevert: true,
-        location: 'top',
-        inverse: false
-    });
+    */
     app.use(store);
     app.use(i18n);
     app.use(router);

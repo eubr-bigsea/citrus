@@ -5,16 +5,16 @@
         </div>
         <div>
             <b-form-group>
-                <b-radio v-model.number="innerSelectionType" value="1">
+                <b-form-radio v-model.number="innerSelectionType" value="1">
                     {{$t('widgets.join.allAttributesWithPrefix')}}
-                </b-radio>
+                </b-form-radio>
                 <input v-if="innerSelectionType === 1" v-model="selectionPrefix" type="text" class="form-control">
-                <b-radio v-model.number="innerSelectionType" class="mt-2" value="3">
+                <b-form-radio v-model.number="innerSelectionType" class="mt-2" value="3">
                     {{$t('widgets.join.noAttributes')}}
-                </b-radio>
-                <b-radio v-model.number="innerSelectionType" class="mt-2" value="2">
+                </b-form-radio>
+                <b-form-radio v-model.number="innerSelectionType" class="mt-2" value="2">
                     {{$t('widgets.join.selectAttributes')}}
-                </b-radio>
+                </b-form-radio>
             </b-form-group>
             <div v-if="innerSelectionType === 2" class="text-center">
                 <small>

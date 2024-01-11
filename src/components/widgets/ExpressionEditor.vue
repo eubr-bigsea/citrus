@@ -141,12 +141,12 @@
             </small>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-btn variant="primary" class="btn-sm mr-1" @click.prevent="okClicked">
+                    <b-button variant="primary" class="btn-sm mr-1" @click.prevent="okClicked">
                         {{$t('common.ok')}}
-                    </b-btn>
-                    <b-btn variant="secondary" class="btn-sm " @click.prevent="cancelClicked">
+                    </b-button>
+                    <b-button variant="secondary" class="btn-sm " @click.prevent="cancelClicked">
                         {{$t('actions.cancel')}}
-                    </b-btn>
+                    </b-button>
                 </div>
             </template>
         </b-modal>

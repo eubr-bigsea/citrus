@@ -71,9 +71,9 @@
             </b-tabs>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-btn variant="secondary" class="btn-sm " @click="cancelClicked">
+                    <b-button variant="secondary" class="btn-sm " @click="cancelClicked">
                         {{$t('actions.cancel')}}
-                    </b-btn>
+                    </b-button>
                 </div>
             </template>
         </b-modal>

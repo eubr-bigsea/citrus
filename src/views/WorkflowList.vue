@@ -7,7 +7,7 @@
                     <font-awesome-icon icon="fa fa-download" />
                     {{$t('actions.import')}}
                 </button>
-                <router-link :to="{name: 'addWorkflow'}" class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                <router-link :to="{name: 'addWorkflow'}" class="btn btn-primary btn-lemonade-primary float-left ms-2">
                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </router-link>
             </div>
@@ -41,7 +41,7 @@
                         {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #afterFilter>
-                        <div class="form-group float-left ml-3">
+                        <div class="form-group float-left ms-3">
                             <label>{{$t('common.platform')}}</label>
                             <select v-model="platform" class="form-control">
                                 <option />
@@ -50,8 +50,8 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group float-left ml-3 mt-4">
-                            <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
+                        <div class="form-group float-left ms-3 mt-4">
+                            <button type="button" class="btn btn-sm btn-light btn-outline-secondary ms-2"
                                     @click="clearFilters">
                                 {{$t('actions.clearFilters')}}
                             </button>
@@ -82,12 +82,12 @@
             </b-form-radio-group>
             <template #modal-footer>
                 <div class="w-100">
-                    <b-btn variant="secondary_sm" class="float-right btn-sm btn-outline-secondary" @click="closeImport">
+                    <b-button variant="secondary_sm" class="float-right btn-sm btn-outline-secondary" @click="closeImport">
                         {{$t('actions.cancel')}}
-                    </b-btn>
-                    <b-btn variant="primary" class="float-right mr-2 btn-sm " @click="importWorkflow">
+                    </b-button>
+                    <b-button variant="primary" class="float-right me-2 btn-sm " @click="importWorkflow">
                         {{$t('common.ok')}}
-                    </b-btn>
+                    </b-button>
                 </div>
             </template>
         </b-modal>
@@ -134,7 +134,7 @@ export default {
                 filterable: ['name', 'id'],
                 sortIcon: {
                     base: 'sort-base',
-                    is: 'sort-is ml-10',
+                    is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
                 },

@@ -17,8 +17,8 @@ export default {
             options: [
                 { route: 'editDataSource', title: 'titles.configuration' },
                 { route: 'dataSourceStorage', title: 'titles.storage' },
-                { route: 'dataSourceValidation', title: 'titles.validation' },
-                { route: 'dataSourceFeatureGeneration', title: 'dataSource.featureGeneration' },
+                //{ route: 'dataSourceValidation', title: 'titles.validation' },
+                //{ route: 'dataSourceFeatureGeneration', title: 'dataSource.featureGeneration' },
                 { route: 'dataSourceAnalysis', title: 'titles.analysis' },
             ]
         };

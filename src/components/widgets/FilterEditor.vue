@@ -232,12 +232,12 @@
             </div>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-btn variant="primary"
+                    <b-button variant="primary"
                            size="sm"
                            class="mr-1 pl-5 pr-5"
                            @click="okClicked">
                         {{$t('common.ok')}}
-                    </b-btn>
+                    </b-button>
                 </div>
             </template>
         </b-modal>

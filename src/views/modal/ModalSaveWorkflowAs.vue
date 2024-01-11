@@ -27,13 +27,13 @@
             </div>
         </b-form-radio-group>
         <template #modal-footer>
-            <b-btn variant="secondary_sm" size="sm" class="btn-outline-secondary float-right" @click="close">
+            <b-button variant="secondary_sm" size="sm" class="btn-outline-secondary float-right" @click="close">
                 {{$t('actions.cancel')}}
-            </b-btn>
-            <b-btn variant="primary" class="float-right mr-1" size="sm" :disabled="(newName === '')"
+            </b-button>
+            <b-button variant="primary" class="float-right mr-1" size="sm" :disabled="(newName === '')"
                    @click="okClicked">
                 {{$t('actions.save')}}
-            </b-btn>
+            </b-button>
         </template>
     </b-modal>
 </template>
