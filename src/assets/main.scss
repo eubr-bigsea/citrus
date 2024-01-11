@@ -183,22 +183,6 @@ main {
     }
 }
 
-/* .navbar-brand > span {
-  margin: 3px 0 0 5px;
-  display: block;
-  float: right;
-}
-.navbar .nav-item {
-    .nav-link{
-        padding: 2px 15px;
-        display: inline-block;
-    }
-    .nav-link:hover {
-        background-color: #777;
-        border-radius: 50px;
-        
-    }
-} */
 
 /* The side navigation menu */
 
@@ -277,13 +261,13 @@ main {
         font-size: 18px;
     }
 }
-
+/*
 .navbar .divider-vertical {
     height: 40px;
     margin: 0 9px;
     border-left: 1px solid #555;
     border-right: 1px solid #555;
-}
+}*/
 
 .logo {
     border: none;
@@ -967,4 +951,8 @@ ul.b-form-tags-list {
 }
 .slide-leave-to {
     opacity: 0
+}
+/* Hack */
+.modal.fade {
+    opacity: 1 !important;
 }

@@ -44,18 +44,18 @@
                 </v-client-table>
                 <template #modal-footer>
                     <div class="w-100">
-                        <b-btn variant="secondary"
+                        <b-button variant="secondary"
                                size="sm"
                                class="btn-sm ml-1 float-right"
                                @click="closeModal">
                             {{$t('actions.cancel')}}
-                        </b-btn>
-                        <b-btn variant="outline-primary"
+                        </b-button>
+                        <b-button variant="outline-primary"
                                size="sm"
                                class="btn-sm float-right"
                                @click="removeValue">
                             {{$t('actions.removeValue')}}
-                        </b-btn>
+                        </b-button>
                     </div>
                 </template>
             </b-modal>

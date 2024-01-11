@@ -427,9 +427,9 @@
                                       rows="5" />
                             <template #modal-footer>
                                 <div class="w-100">
-                                    <b-btn variant="primary" class="float-right mr-2" @click="okPrivacy">
+                                    <b-button variant="primary" class="float-right mr-2" @click="okPrivacy">
                                         {{$t('actions.close')}}
-                                    </b-btn>
+                                    </b-button>
                                 </div>
                             </template>
                         </b-modal>

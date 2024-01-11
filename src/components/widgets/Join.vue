@@ -93,11 +93,11 @@
                               @click.prevent.stop="okClicked">
                         {{$t('common.ok')}}
                     </b-button>
-                    <b-btn variant="secondary"
+                    <b-button variant="secondary"
                            size="sm"
                            @click="cancelClicked">
                         {{$t('actions.cancel')}}
-                    </b-btn>
+                    </b-button>
                 </div>
             </template>
         </b-modal>

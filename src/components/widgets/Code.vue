@@ -50,18 +50,18 @@
                 </div>
             </template>
             <template #modal-footer>
-                <b-btn variant=""
+                <b-button variant=""
                        size="sm"
                        class="float-right"
                        @click="cancelModal">
                     {{$t('actions.cancel')}}
-                </b-btn>
-                <b-btn variant="success mr-1"
+                </b-button>
+                <b-button variant="success mr-1"
                        size="sm"
                        class="float-right"
                        @click="okModal">
                     {{$t('common.ok')}}
-                </b-btn>
+                </b-button>
             </template>
         </b-modal>
     </div>

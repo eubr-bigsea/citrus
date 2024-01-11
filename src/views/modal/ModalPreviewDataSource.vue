@@ -1,19 +1,23 @@
 <template>
-    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only no-stacking button-size="sm"
-        header-bg-variant="dark" header-text-variant="light">
+    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only no-stacking button-size="sm" centered
+        header-bg-variant="dark" header-text-variant="light" no-fade>
         <small><strong>*{{ $t('dataSource.previewExplanation', { amount: 40 }) }}</strong></small>
 
-        <v-server-table v-if="loaded" :columns="attributes" :options="options">
+        <v-server-table v-if="loaded" :columns="attributes" :options="options" ref="table">
         </v-server-table>
+        <spinner-display v-else/>
+        
     </b-modal>
 </template>
 <script>
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
+import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
 
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
 export default {
     mixins: [Notifier],
+    components: {SpinnerDisplay},
     data() {
         const self = this;
         return {
@@ -25,6 +29,7 @@ export default {
                 perPageValues: [],
                 skin: 'table-smallest table-sm table table-striped mt-1',
                 filterable: false,
+                saveState: false,
                 texts: {
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
@@ -46,14 +51,17 @@ export default {
             try {
                 const resp = await axios.get(`${limoneroUrl}/datasources/sample/${dataSourceId}?limit=40`, {});
                 this.samples = resp.data.data;
+                this.loaded = true;
                 if (this.samples.length > 0) {
                     this.attributes = Object.keys(this.samples[0]);
                 } else {
                     this.attributes = [];
                 }
                 this.$nextTick(() => {
-                    this.loaded = true;
+                    this.$nextTick(()=> {})
                     this.$refs.preview.show();
+                    this.$refs.table.setCurrentPage(1);
+                    this.$refs.table.refresh();
                 })
             }
             catch (e) {

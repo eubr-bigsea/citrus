@@ -2,6 +2,7 @@
 <template>
     <div class="v-server-table-area">
         <slot v-if="options.filterable" name="filters">
+            <!--
             <div class="filters">
                 <div class="col-md-12">
                     <div class="form-group float-left">
@@ -22,13 +23,32 @@
                     </div>
                 </div>
             </div>
+        -->
+            <div class="filters">
+                <form class="mb-4" @submit.prevent="$event.preventDefault()">
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="filter font-weight-bold">Filtro</label>
+                            <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off"
+                                class="form-control form-control-sm" maxlength="50" @input="search($event)" />
+                        </div>
+                        <div class="col-1 xoffset-md-6 text-right">
+                            <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-right">
+                                <label for="limit">Limite</label>
+                                <select name="limit" class="form-select form-select-sm" v-model="perPage">
+                                    <option v-for="value in perPageValues" :value="value" :key="value">{{ value }}</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </slot>
-
-        <table v-show="firstLoad" class="table b-table table-striped table-bordered">
+        <table v-show="showSkeleton && firstLoad" class="table b-table table-striped table-bordered">
             <tbody>
                 <tr v-for="row in 10" :key="row">
                     <td v-for="col in columns.length">
-                        <div class="b-skeleton b-skeleton-text b-skeleton-animate-wave" style="width: 75%;"></div>
+                        <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 75%;"></div>
                     </td>
                 </tr>
             </tbody>
@@ -46,7 +66,8 @@
                 </thead>
                 <tbody>
                     <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                        <td v-for="colName in columns" :key="colName" :class="getColumnClass(options.columnClasses, colName)">
+                        <td v-for="colName in columns" :key="colName"
+                            :class="getColumnClass(options.columnClasses, colName)">
                             <slot :name="colName" :row="row">
                                 <span :class="`${getColumnClass(options.columnClasses, colName)}-scoped`">
                                     {{ row[colName] }}
@@ -58,7 +79,8 @@
             </table>
             <slot name="pagination">
                 <div v-if="paginationEnabled" class="pagination-text text-center">
-                    <pager-component v-if="tableCount > 0" :total="tableCount" :per-page="perPage" v-model:current-page="currentPage"/>
+                    <pager-component v-if="tableCount > 0" :total="tableCount" :per-page="perPage"
+                        v-model:current-page="currentPage" />
                     <p class="pagination-message">
                         {{ pagerMessage }}
                     </p>
@@ -66,7 +88,7 @@
             </slot>
         </section>
         <div class="text-center preview-loading" v-if="loading" style="border: none;background: transparent">
-            <SpinnerDisplay/>
+            <SpinnerDisplay />
         </div>
     </div>
 </template>
@@ -76,13 +98,15 @@ import { debounce } from '@/util.js';
 import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
 import PagerComponent from '@/components/PagerComponent.vue';
 
-import { ref, onMounted, computed, defineProps, watch } from 'vue';
+import { ref, onMounted, computed, defineProps, watch, shallowRef } from 'vue';
+import { onRenderTriggered } from 'vue';
 const props = defineProps({
     options: { type: Object, required: true },
     columns: { type: Array, required: true },
     //sortColumn: { type: Object, required: false, default: () => { } },
     //sortDirection: { type: Object, required: false, default: () => { } },
-    name: {type: String, required: true},
+    name: { type: String, required: false },
+    showSkeleton: { type: Boolean, required: false, default: true },
 });
 
 const getTableHeader = (col) => ('headings' in props.options && props.options.headings[col])
@@ -94,7 +118,7 @@ const paginationEnabled = computed(() => {
     return true;
 });
 const tableHeadings = ref([]);
-const tableData = ref([]);
+const tableData = shallowRef([]);
 const tableCount = ref(0);
 const currentPage = ref(1);
 const perPage = ref(10);
@@ -111,17 +135,17 @@ const sortIcon = ref({
     down: 'sort-down'
     , ... (props.options.sortIcon || {})
 });
-const perPageValues = ref(props.options?.perPageValues || [10,25,50,100]);
+const perPageValues = ref(props.options?.perPageValues || [10, 25, 50, 100]);
 
 const query = ref();
-const setFilter = (value, customQueries) => { 
+const setFilter = (value, customQueries) => {
     query.value = value;
     tableCustomQueries.value = customQueries;
     populateTable();
- };
- const setCustomQuery = (value) => {
+};
+const setCustomQuery = (value) => {
     tableCustomQueries.value = value;
- }
+}
 const search = debounce((ev) => {
     query.value = ev.target.value;
     populateTable();
@@ -156,10 +180,10 @@ const populateTable = async () => {
         };
         loading.value = true;
         const { data, count, customQueries } = await props.options.requestFunction(defaultOptions);
-        
-        if (props.options?.saveState){
+
+        if (props.options?.saveState) {
             tableCustomQueries.value = customQueries;
-            const params = {orderBy: {}};
+            const params = { orderBy: {} };
             params.orderBy.column = sortColumn.value;
             params.orderBy.ascending = sortDirection.value === 1;
             params.perPage = perPage.value;
@@ -172,7 +196,7 @@ const populateTable = async () => {
 
         tableData.value = data || [];
         tableCount.value = count;
-        if ((currentPage.value -1) * perPage.value > tableCount.value){
+        if ((currentPage.value - 1) * perPage.value > tableCount.value) {
             currentPage.value = 1;
         }
         firstLoad.value = false;
@@ -208,35 +232,42 @@ const handleSort = (column, event) => {
         event.currentTarget.classList.remove('sort-is');
     }
 };
-onMounted(() => {
-    if (props.options?.saveState){
-        const saved = localStorage[`vuetables_${props.name}`];
-        if (saved) {
-            try {
-                const params = JSON.parse(saved);
-                sortColumn.value = params.orderBy?.column;
-                sortDirection.value = params.orderBy.ascending ?  1 : 0,
-                perPage.value = params.perPage,
-                query.value = params.query,
-                currentPage.value = params.page
-                tableCustomQueries.value = params.customQueries;
+const load = () => {
+    if (props.options?.saveState) {
+        if (props.options.saveState) {
+            const saved = localStorage[`vuetables_${props.name}`];
+            if (saved) {
+                try {
+                    const params = JSON.parse(saved);
+                    sortColumn.value = params.orderBy?.column;
+                    sortDirection.value = params.orderBy.ascending ? 1 : 0,
+                        perPage.value = params.perPage,
+                        query.value = params.query,
+                        currentPage.value = params.page
+                    tableCustomQueries.value = params.customQueries;
 
-            } catch(e){
-                console.debug(e);
-                //ignore
+                } catch (e) {
+                    console.debug(e);
+                    //ignore
+                }
             }
         }
     }
     populateTable();
-});
+}
+onMounted(() => load())
+//onRenderTriggered(() => load());
 const getData = populateTable;
 const refresh = populateTable;
+const setCurrentPage = (v) => currentPage.value = v;
+const setFirstLoad = (v) => firstLoad.value = v;
+const setLoading = (v) => loading.value = v;
 
 watch(currentPage, populateTable);
 watch(perPage, populateTable);
 
 defineExpose({
-    setFilter, getData, setCustomQuery, refresh
+    setFilter, getData, setCustomQuery, refresh, setCurrentPage, setFirstLoad, setLoading
 });
 </script>
   
@@ -272,12 +303,39 @@ defineExpose({
 .filters {
     background-color: #fafafa;
     padding: 5px;
-    display: flex;
     border-top: 1px solid #eee;
 }
 
 .filters>>>label {
     font-weight: bold;
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.12);
+    cursor: wait;
+    -webkit-mask-image: radial-gradient(white, black);
+    mask-image: radial-gradient(white, black);
+}
+
+.skeleton-animate-wave::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    -webkit-animation: b-skeleton-animate-wave 1.75s linear infinite;
+    animation: b-skeleton-animate-wave 1.75s linear infinite;
 }
 </style>
   

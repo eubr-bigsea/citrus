@@ -5,6 +5,11 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { manualChunksPlugin } from 'vite-plugin-webpackchunkname';
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'url';
+
+import Components from 'unplugin-vue-components/vite'
+import {BootstrapVueNextResolver} from 'unplugin-vue-components/resolvers'
+
+
 export default defineConfig({
     define: {
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true'
@@ -27,6 +32,10 @@ export default defineConfig({
         }),
         visualizer(),
         manualChunksPlugin(),
+        /* for boostrap-vue-next */
+        Components({
+            resolvers: [BootstrapVueNextResolver()],
+          }),
     ],
     resolve: {
         alias: [

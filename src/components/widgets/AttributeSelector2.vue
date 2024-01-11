@@ -32,13 +32,13 @@
                         </div>
                         <div class="col-md-2 text-center mt-5 actions">
                             <div v-if="!single">
-                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-right', null)">
+                                <b-button class="mb-1" variant="" size="sm" @click="move('all-right', null)">
                                     &gt;&gt;
-                                </b-btn>
+                                </b-button>
                                 <br>
-                                <b-btn class="mb-1" variant="" size="sm" @click="move('all-left', null)">
+                                <b-button class="mb-1" variant="" size="sm" @click="move('all-left', null)">
                                     &lt;&lt;
-                                </b-btn>
+                                </b-button>
                                 <br>
                                 <div class="border border-info">
                                     {{$t('property.clickToMove', 2)}}
@@ -57,12 +57,12 @@
                     </div>
                 </template>
                 <template #modal-footer>
-                    <b-btn variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
+                    <b-button variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
                         {{$t('actions.cancel')}}
-                    </b-btn>
-                    <b-btn variant="primary mr-1" size="sm" class="float-right" @click="okModal">
+                    </b-button>
+                    <b-button variant="primary mr-1" size="sm" class="float-right" @click="okModal">
                         {{$t('common.ok')}}
-                    </b-btn>
+                    </b-button>
                 </template>
             </b-modal>
         </div>

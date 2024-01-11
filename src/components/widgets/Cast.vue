@@ -67,12 +67,12 @@
             </div>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-btn variant="primary" size="sm" class="mr-1" @click="okClicked">
+                    <b-button variant="primary" size="sm" class="mr-1" @click="okClicked">
                         {{$t('common.ok')}}
-                    </b-btn>
-                    <b-btn variant="secondary" size="sm" @click="cancelClicked">
+                    </b-button>
+                    <b-button variant="secondary" size="sm" @click="cancelClicked">
                         {{$t('actions.cancel')}}
-                    </b-btn>
+                    </b-button>
                 </div>
             </template>
         </b-modal>

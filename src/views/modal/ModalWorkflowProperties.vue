@@ -60,10 +60,10 @@
         </b-form>
         <template #modal-footer>
             <div>
-                <b-btn variant="primary btn-sm" class="float-right mr-1" :disabled="(workflowCopy.name === '')"
+                <b-button variant="primary btn-sm" class="float-right mr-1" :disabled="(workflowCopy.name === '')"
                        @click="okClicked">
                     {{$t('common.ok')}}
-                </b-btn>
+                </b-button>
             </div>
         </template>
     </b-modal>
