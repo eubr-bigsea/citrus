@@ -1,7 +1,6 @@
 <template>
     <div>
         <!--web-socket / -->
-        <vue-snotify />
         <l-navbar v-if="isLoggedIn" />
         <div id="wrapperx">
             <!--<side-bar ref="sidebar" />-->
@@ -9,7 +8,6 @@
                 <div class="container-fluid main-container">
                     <router-view />
 
-                    <vue-progress-bar />
                     <l-footer v-if="isLoggedIn" />
                 </div>
             </div>

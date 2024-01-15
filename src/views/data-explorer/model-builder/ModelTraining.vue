@@ -36,7 +36,7 @@
                         </template>
 
                         <hr>
-                        <router-link :to="{ name: 'choose-task' }" class="btn btn-sm btn-outline-secondary mr-2">
+                        <router-link :to="{ name: 'choose-task' }" class="btn btn-sm btn-outline-secondary me-2">
                             {{$t('actions.back')}}
                         </router-link>
                         <button v-if="valid" class="btn btn-primary btn-sm" @click="create">

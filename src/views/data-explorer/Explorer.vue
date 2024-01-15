@@ -20,7 +20,7 @@
                         </v-select>
                     </div>
                     <!--
-                    <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split>
+                    <b-dropdown class="more-actions me-1 mt-1 border rounded" size="sm" variant="btn" split>
                         <template #button-content>
                             <input type="checkbox" @change="handleSelectAll($event)">
                         </template>
@@ -37,7 +37,7 @@
                 -->
                     <!-- FIXME
                     <b-dropdown :disabled="false && loadingData" variant="secondary" size="sm"
-                        class="float-right mt-2 ml-1" @click="saveWorkflow">
+                        class="float-right mt-2 ms-1" @click="saveWorkflow">
                         <template #button-content>
                             <font-awesome-icon icon="fa fa-cog" />
                         </template>
@@ -51,7 +51,7 @@
                         <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                     </b-button>
                     <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary"
-                              class="float-right mt-2 mr-1" @click="loadData(null, null, false)">
+                              class="float-right mt-2 me-1" @click="loadData(null, null, false)">
                         <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                     </b-button>
                     <!--
@@ -232,7 +232,7 @@
                                     <div class="form-group mb-2">
                                         <label for="similarity">Similaridade:</label> &nbsp;
                                         <select v-model.number="similarity" name="similarity"
-                                                class="form-control-sm ml-3 mr-3">
+                                                class="form-control-sm ms-3 me-3">
                                             <option value="0.5">
                                                 0.5 (menos semelhantes)
                                             </option>
@@ -248,7 +248,7 @@
                                         <button class="btn btn-secondary btn-sm" @click.prevent="handleComputeCluster">
                                             Computar grupos
                                         </button>
-                                        <button class="btn btn-success btn-sm ml-2" @click.prevent="handleComputeCluster">
+                                        <button class="btn btn-success btn-sm ms-2" @click.prevent="handleComputeCluster">
                                             Mesclar selecionados
                                         </button>
                                     </div>
@@ -291,7 +291,7 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
+;
 import jsep from 'jsep';
 import io from 'socket.io-client';
 import axios from 'axios';
@@ -464,7 +464,7 @@ export default {
             if ((el.srcElement.offsetHeight + el.srcElement.scrollTop) >= el.srcElement.scrollHeight) {
                 if (this.loadedDataSize < this.tableData?.total) {
                     if (this.socket) {
-                        Vue.nextTick(() => {
+                        this.$nextTick(() => {
                             // Fill data with dummy values while waits for real ones.
                             this.addDummyData();
 
@@ -568,7 +568,7 @@ export default {
                 self.error(e);
                 self.$router.push({ name: 'index-explorer' });
             } finally {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.loadingData = false;
                     this.isDirty = false;
                 });
@@ -976,7 +976,7 @@ export default {
                     options.selected, options.fields);
                 this.isDirty = true;
                 //this.loadData();
-                Vue.nextTick(() => { this.$refs.stepList.scrollToStep(); });
+                this.$nextTick(() => { this.$refs.stepList.scrollToStep(); });
             } else {
                 console.log(`Unknown action: ${options.action}`);
             }
@@ -1189,7 +1189,7 @@ export default {
                     
                     if (msg.type === 'OBJECT') {
                         if (msg.meaning === 'sample') {
-                            Vue.nextTick(() => {
+                            this.$nextTick(() => {
                                 self.removeDummyData();
                                 //console.debug(new Date());
                                 // Update must be done before assigning to observable self.tableData!

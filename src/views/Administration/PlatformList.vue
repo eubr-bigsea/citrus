@@ -71,7 +71,7 @@ export default {
                 filterable: false,
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },
@@ -91,7 +91,10 @@ export default {
                     let url = `${tahitiUrl}/platforms`;
                     try {
                         const resp = await axios.get(url, { params: data });
-                        return resp.data;
+                        return {
+                            data: resp.data.data,
+                            count: resp.data.pagination.total
+                        };
                     } catch (e) {
                         this.error(e);
                     }

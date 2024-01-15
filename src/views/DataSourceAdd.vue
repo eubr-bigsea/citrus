@@ -72,11 +72,11 @@
                         <textarea v-model="dataSource.command" class="form-control" rows="4" />
 
                         <div class="border-top mt-5 pt-4">
-                            <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
+                            <!-- <button class="btn me-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
                             <button class="btn btn-success" @click="handleSave">
                                 {{$t('actions.save')}}
                             </button>
-                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                            <button class="btn ms-1 btn-outline-secondary" @click="step=1">
                                 {{$t('actions.back')}}
                             </button>
                         </div>
@@ -110,7 +110,7 @@
                             <button class="btn btn-success" @click="handleSave">
                                 {{$t('actions.save')}}
                             </button>
-                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                            <button class="btn ms-1 btn-outline-secondary" @click="step=1">
                                 {{$t('actions.back')}}
                             </button>
                         </div>
@@ -172,21 +172,21 @@
     </main>
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router'
 
 import Notifier from '../notifier.js';
 import axios from 'axios';
-import Vue from 'vue';
+;
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 import Resumable from 'resumablejs';
 export default {
     setup() {
-        const router = Vue.prototype.$legacyRouter; //FIXME
+        const router = useRouter();
         const { t } = useI18n();
-        const notifier = new Notifier(Vue.prototype.$snotify, t, router);
-
+        
         const step = ref(1);
         const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder' });
         const storage = ref({
@@ -222,7 +222,7 @@ export default {
                 dataSource.value.storage_id = storage.value.fsStorage;
                 storageType.value = 'FS';
                 /* Setup resumable */
-                Vue.nextTick(() => {
+                nextTick(() => {
                     setupResumable();
                 });
             }

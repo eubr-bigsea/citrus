@@ -118,7 +118,7 @@
                 </b-card>
             </div>
         </div>
-        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-secondary mt-4 pl-4 pr-4">
+        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-secondary mt-4 ps-4 pe-4">
             {{$t('actions.back')}}
         </router-link>
     </main>
@@ -203,7 +203,7 @@
                 <div v-if="step === 3"></div>
             </b-card-text>
             <div class="float-right">
-                <b-button v-if="step !== 1" href="#" variant="secondary" size="sm" class="mr-1" @click="previous">
+                <b-button v-if="step !== 1" href="#" variant="secondary" size="sm" class="me-1" @click="previous">
                     Anterior</b-button>
                 <b-button href="#" variant="primary" size="sm" @click="next">Próximo</b-button>
             </div>

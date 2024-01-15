@@ -43,7 +43,7 @@
                                                                 <td class="col-12">
                                                                     <b-form-radio-group id="radios2"
                                                                                         v-model="selectedSubset" name="subset"
-                                                                                        class="pl-4"
+                                                                                        class="ps-4"
                                                                                         @change="selectOptions(true, platform.id)">
                                                                         <b-form-radio v-model="selectedSubset"
                                                                                       :value="subset.id" name="subset">

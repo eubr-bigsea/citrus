@@ -79,7 +79,7 @@
                             <div class="form-group row border-top clearfix pt-3">
                                 <div class="col-sm-12 text-center">
                                     <button type="submit"
-                                            class="btn btn-primary mr-2 pr-5 pl-5">
+                                            class="btn btn-primary me-2 pe-5 ps-5">
                                         {{$t('common.ok')}}
                                     </button>
                                     <router-link :to="{ name: 'AdministrationUserList' }"

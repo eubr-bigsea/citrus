@@ -28,7 +28,7 @@
                     </template>
                     <template #actions="props">
                         <div>
-                            <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ml-2 btn btn-sm btn-danger"
+                            <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ms-2 btn btn-sm btn-danger"
                                     @click="remove(props.row.id, props.row.title)">
                                 <font-awesome-icon icon="trash" />
                             </button>
@@ -68,7 +68,7 @@ export default {
                 filterable: ['id', 'title', 'updated', 'user.name'],
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },

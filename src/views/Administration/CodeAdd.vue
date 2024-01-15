@@ -43,12 +43,12 @@
                 <div class="row">
                     <div class="col-md-12 pt-2">
                         <hr>
-                        <button class="btn btn-primary mr-1 btn-spinner" @click="[addCode(), reset()]">
+                        <button class="btn btn-primary me-1 btn-spinner" @click="[addCode(), reset()]">
                             <font-awesome-icon icon="fa fa-save" />
                             {{$t('actions.save')}}
                         </button>
                         <router-link :to="{name: 'codeLibrary'}"
-                                     class="btn btn-secondary mr-1">
+                                     class="btn btn-secondary me-1">
                             {{$t('actions.cancel')}}
                         </router-link>
                     </div>

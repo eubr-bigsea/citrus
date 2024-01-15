@@ -23,7 +23,7 @@
                                     <font-awesome-icon icon="fa fa-cogs" />
                                 </button>
                             </div>
-                            <button v-if="!publicRoute" class="btn btn-sm btn-success mr-2"
+                            <button v-if="!publicRoute" class="btn btn-sm btn-success me-2"
                                     :title="$t('actions.showProperties')" @click.prevent="addText">
                                 <font-awesome-icon icon="fa fa-plus" /> {{$t('dashboard.markupVisualization')}}
                             </button>

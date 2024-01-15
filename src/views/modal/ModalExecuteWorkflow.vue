@@ -55,7 +55,7 @@
                         class="btn btn-sm btn-outline-success" @click="execute($event)">
                     <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}
                 </button>
-                <button class="ml-1 btn btn-sm btn-outline-dark" @click="close">
+                <button class="ms-1 btn btn-sm btn-outline-dark" @click="close">
                     {{$t('actions.cancel')}}
                 </button>
             </div>

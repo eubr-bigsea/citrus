@@ -36,9 +36,9 @@
 
                             <div class="form-group">
                                 <label>
-                                    <b-check v-model="rememberPassword">
+                                    <b-form-checkbox v-model="rememberPassword">
                                         {{$t('common.rememberMe')}}
-                                    </b-check>
+                                    </b-form-checkbox>
                                 </label>
                             </div>
 

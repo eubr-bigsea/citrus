@@ -1,4 +1,5 @@
 //import Vue from 'vue';
+/*
 import { configureCompat } from "vue";
 configureCompat({
     MODE: 2,
@@ -24,6 +25,10 @@ configureCompat({
 });
 
 import Vue, { createApp, h } from '@vue/compat';
+*/
+
+import './assets/main.scss';
+import { createApp, h } from 'vue';
 //import VueProgressBar from "@aacassandra/vue3-progressbar";
 //import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
@@ -52,7 +57,9 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 //import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons.js';
 
-Vue.component('FontAwesomeIcon', FontAwesomeIcon);
+import Toast, { useToast } from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
 
 /* Widgets */
 
@@ -87,19 +94,12 @@ import TextAreaComponent from './components/widgets/TextArea.vue';
 import UrlComponent from './components/widgets/Url.vue';
 import Plotly from './components/visualization/Plotly.vue';
 
-
-import vSelect from 'vue-select';
+import VueSelect from "vue-select";
 import VueGridLayout from 'vue3-grid-layout-next';
-
 
 
 //Vue.use(BootstrapVue);
 import { BButton } from "bootstrap-vue-next";
-Vue.component('BButton', BButton);
-
-Vue.component('VSelect', vSelect);
-Vue.component('GridItem', VueGridLayout.GridItem);
-Vue.component('GridLayout', VueGridLayout.GridLayout);
 
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
@@ -136,27 +136,11 @@ const widgets = new Map([
     ['url-component', UrlComponent],
 ]);
 
-widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
 //Vue.component('Plotly', Plotly.default || Plotly);
-import './assets/main.scss';
-import '~vue-snotify/styles/dark.scss'; //dark or material.css or simple.css
 
-// Snotify
-import Snotify from 'vue-snotify';
-window.Vue = Vue; // Force Snotify to be installed in window
-Vue.use(Snotify, {
-    toast: {
-        titleMaxLength: 100,
-        timeout: 5000,
-        xposition: 'centerTop'
-    }
-});
-Vue.directive('focus', {
-    inserted: function (el) {
-        el.focus();
-    }
-});
+
+
 /**
  * Setting this config so that Vue-tables-2 will be able to replace sort icons with chevrons
  * https://fontawesome.com/how-to-use/with-the-api/setup/configuration
@@ -168,11 +152,6 @@ config.autoReplaceSvg = 'nest';
 
 //Vue.use(VueAxios, axios);
 //Vue.use(BootstrapVue);
-Vue.component('FontAwesomeIcon', FontAwesomeIcon);
-Vue.component('FontAwesomeLayers', FontAwesomeLayers);
-
-Vue.config.productionTip = false;
-
 
 // Date-fns
 import { format, formatDistanceStrict, parseISO, fromUnixTime } from 'date-fns';
@@ -186,29 +165,8 @@ const locales = {
     pt: require('date-fns/locale/pt')
 };
 */
-Vue.prototype.$filters = {
-    formatJsonDate(v) {
-        if (v) {
-            return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
-        }
-    },
-    formatTimestamp(v) {
-        if (v) {
-            return format(
-                utcToZonedTime(fromUnixTime(v * .000001)),
-                'dd/MM/yyyy HH:mm:ss');
-        }
-    },
-    timeFromNow(v, l) {
-        return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
-            { addSuffix: true, locale: locales[l] });
-    },
-    formatJsonHourMinute(v) {
-        if (v) {
-            return format(parseISO(v + '.000Z'), 'HH:mm:ss');
-        }
-    }
-};
+
+/*
 Vue.filter('formatJsonDate', v => {
     if (v) {
         return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
@@ -224,10 +182,11 @@ Vue.filter('formatJsonHourMinute', v => {
         return format(parseISO(v + '.000Z'), 'HH:mm:ss');
     }
 });
-
+*/
 // Leaflet
 //import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
+/*
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
@@ -235,9 +194,10 @@ import 'leaflet.heat';
 Vue.component('LMap', LMap);
 Vue.component('LTileLayer', LTileLayer);
 Vue.component('LMarker', LMarker);
+*/
 
 
-delete L.Icon.Default.prototype._getIconUrl;
+//delete L.Icon.Default.prototype._getIconUrl;
 /*
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -246,9 +206,6 @@ L.Icon.Default.mergeOptions({
 });
 */
 
-Vue.prototype.$openIdService = openIdService;
-Vue.prototype.$legacyStore = store;
-Vue.prototype.$legacyRouter = router;
 openIdService.loadConfig(store).then(() => {
     // Auth
     const token = localStorage.getItem('token');
@@ -275,15 +232,6 @@ openIdService.loadConfig(store).then(() => {
         locale: user ? user.locale : 'pt',
         fallbackLocale: 'en',
         messages
-    });
-
-    Object.defineProperty(Vue.prototype, '$locale', {
-        get: function () {
-            return i18n.locale;
-        },
-        set: function (locale) {
-            i18n.locale = locale;
-        }
     });
 
     router.beforeEach((to, from, next) => {
@@ -364,10 +312,90 @@ openIdService.loadConfig(store).then(() => {
         inverse: false
     });
     */
+
+    app.directive('focus', {
+        inserted: function (el) {
+            el.focus();
+        }
+    });
+    app.config.globalProperties.$openIdService = openIdService;
+    app.config.globalProperties.$legacyStore = store;
+    app.config.globalProperties.$legacyRouter = router;
+
+    app.config.globalProperties.$locale = {
+        get: function () {
+            return i18n.locale;
+        },
+        set: function (locale) {
+            i18n.locale = locale;
+        }
+    };
+
+    app.config.globalProperties.$filters = {
+        formatJsonDate(v) {
+            if (v) {
+                return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
+            }
+        },
+        formatTimestamp(v) {
+            if (v) {
+                return format(
+                    utcToZonedTime(fromUnixTime(v * .000001)),
+                    'dd/MM/yyyy HH:mm:ss');
+            }
+        },
+        timeFromNow(v, l) {
+            return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
+                { addSuffix: true, locale: locales[l] });
+        },
+        formatJsonHourMinute(v) {
+            if (v) {
+                return format(parseISO(v + '.000Z'), 'HH:mm:ss');
+            }
+        }
+    };
+    const toastOptions = {
+        transition: "Vue-Toastification__bounce",
+        maxToasts: 7,
+        newestOnTop: true,
+        position: "bottom-right",
+        filterBeforeCreate: (toast, toasts) => {
+            if (toasts.filter(
+                t => t.type === toast.type
+            ).length !== 0) {
+                // Returning false discards the toast
+                return false;
+            }
+            // You can modify the toast if you want
+            return toast;
+        }
+    };
+    app.use(Toast, toastOptions);
+
+
     app.use(store);
     app.use(i18n);
     app.use(router);
+
+    const toast = useToast();
+    app.config.globalProperties.$snotify = {
+        error: (text, title, opts) => {
+            toast.error(text, { ... toastOptions, opts})
+        },
+        success: (text, title, opts) => {
+            toast.success(text, { ... toastOptions, ... opts})
+        }
+    };
+
+    app.component("v-select", VueSelect);
     app.component('VServerTable', VServerTable);
+    app.component('BButton', BButton);
+    app.component('GridItem', VueGridLayout.GridItem);
+    app.component('GridLayout', VueGridLayout.GridLayout);
+    app.component('FontAwesomeIcon', FontAwesomeIcon);
+    app.component('FontAwesomeLayers', FontAwesomeLayers);
+    widgets.forEach((v, k) => app.component(k, v.default || v));
+
     app.mount('#app');
 
     let requestCounter = 0;

@@ -36,7 +36,7 @@
                         <div v-show="props.row.tags.length && props.row.tags[0]">
                             <span v-for="t in props.row.tags"
                                   :key="t"
-                                  class="badge badge-pill badge-primary">
+                                  class="badge badge-pill bg-primary">
                                 {{t}}
                             </span>
                         </div>
@@ -46,7 +46,7 @@
                     <div class="w-100">
                         <b-button variant="secondary"
                                   size="sm"
-                                  class="btn-sm ml-1 float-right"
+                                  class="btn-sm ms-1 float-right"
                                   @click="closeModal">
                             {{$t('actions.cancel')}}
                         </b-button>
@@ -81,7 +81,7 @@ export default {
                 perPageValues: [],
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },

@@ -15,7 +15,7 @@
                                                     name="notificationList">
                                         <template #type="props">
                                             <span class="badge"
-                                                  :class="{ 'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'badge-danger': props.row.type === 'ERROR' }">
+                                                  :class="{ 'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'bg-danger': props.row.type === 'ERROR' }">
                                                 &nbsp;{{$t('titles.' + props.row.type.toLowerCase()).toUpperCase()}}
                                             </span>
                                         </template>
@@ -83,7 +83,7 @@ export default {
                 filterable: ['text', 'type', 'status'],
                 sortIcon: {
                     base: 'sort-base',
-                    is: 'sort-is ml-10',
+                    is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
                 },

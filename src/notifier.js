@@ -1,9 +1,39 @@
+import { useToast, POSITION } from 'vue-toastification';
+import { useModalController } from 'bootstrap-vue-next';
+
+const toastOptions = {
+    transition: "Vue-Toastification__bounce",
+    maxToasts: 7,
+    newestOnTop: true,
+    position: POSITION.BOTTOM_RIGHT,
+    filterToasts: toasts => {
+        // Keep track of existing types
+        const types = {};
+        return toasts.reduce((aggToasts, toast) => {
+            // Check if type was not seen before
+            if (!types[toast.type]) {
+                aggToasts.push(toast);
+                types[toast.type] = true;
+            }
+            return aggToasts;
+        }, []);
+    }
+};
+const toast = useToast();
 export default class {
 
     constructor($snotify, $t, $router) {
         this.$snotify = $snotify;
         this.$t = $t;
         this.$router = $router;
+    }
+    async confirm2() {
+       const {confirm} = useModalController();
+       const value = await confirm({props: {title: 'teste'} });
+       return value;
+    }
+    success2(msg, timeout) {
+        toast.success(msg, { ...toastOptions, timeout });
     }
     confirm(title, question, callback) {
         this.$snotify.confirm(

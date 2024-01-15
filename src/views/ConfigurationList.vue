@@ -59,7 +59,7 @@
                     <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
                         <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                     </button>
-                    <button class="ml-1 btn btn-sm btn-outline-dark" @click="cancel">
+                    <button class="ms-1 btn btn-sm btn-outline-dark" @click="cancel">
                         {{$t('actions.cancel')}}
                     </button>
                 </div>
@@ -96,7 +96,7 @@ export default {
                     filterable: ['description', 'name'],
                     sortIcon: {
                         base: 'fa fas',
-                        is: 'fa-sort ml-10',
+                        is: 'fa-sort ms-10',
                         up: 'fa-sort-amount-up',
                         down: 'fa-sort-amount-down'
                     },

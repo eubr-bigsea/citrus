@@ -7,15 +7,15 @@
                 </h6>
             </div>
             <div class="float-right text-right">
-                <button class="btn btn-link btn-sm m-0 p-0 pr-1" @click="deleteCard">
+                <button class="btn btn-link btn-sm m-0 p-0 pe-1" @click="deleteCard">
                     <font-awesome-icon icon="edit"
                                        :title="$t('actions.edit')" />
                 </button>
-                <button class="btn btn-link btn-sm m-0 p-0 pr-1" @click="deleteCard">
+                <button class="btn btn-link btn-sm m-0 p-0 pe-1" @click="deleteCard">
                     <font-awesome-icon icon="trash"
                                        :title="$t('actions.delete')" />
                 </button>
-                <button class="btn btn-link btn-sm m-0 p-0 pr-1" @click="deleteCard">
+                <button class="btn btn-link btn-sm m-0 p-0 pe-1" @click="deleteCard">
                     <font-awesome-icon icon="refresh"
                                        :title="$t('actions.refresh')" />
                 </button>

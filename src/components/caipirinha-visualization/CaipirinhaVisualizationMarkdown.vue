@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="float-right mr-1 editor-controls">
+        <div class="float-right me-1 editor-controls">
             <span v-if="editing">
-                <small class="mr-1"><a href="#" @click.prevent="cancel">{{$t('actions.cancel')}}</a></small>
+                <small class="me-1"><a href="#" @click.prevent="cancel">{{$t('actions.cancel')}}</a></small>
                 <small><a href="#" @click.prevent="save">{{$t('actions.save')}}</a></small>
             </span>
             <small v-if="!editing && !publicRoute" class="d-print-none">
@@ -13,14 +13,14 @@
                     <font-awesome-icon icon="fa fa-trash" /></a>
             </small>
         </div>
-        <div v-if="editing" class="ml-2 float-left">
+        <div v-if="editing" class="ms-2 float-left">
             {{$t('dashboard.markupVisualization')}}:
         </div>
 
-        <div v-if="editing" class="pl-2 pr-2 editor-container">
+        <div v-if="editing" class="ps-2 pe-2 editor-container">
             <textarea v-model="content.markdown" class="markdown-editor" />
         </div>
-        <div v-else class="pl-2 pr-2">
+        <div v-else class="ps-2 pe-2">
             <div v-html="markdown" />
         </div>
     </div>

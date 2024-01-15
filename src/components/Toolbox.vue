@@ -65,7 +65,7 @@
                                                            class="when-closed " />
                                         <font-awesome-icon icon="fa fa-angle-down"
                                                            class="when-opened" />
-                                        <span class="menu-collapsed pl-2">
+                                        <span class="menu-collapsed ps-2">
                                             <strong> {{subGroup.subGroup}}</strong>
                                         </span>
                                     </b-button>
@@ -81,7 +81,7 @@
                                            @dragstart="startDrag"
                                            @dragend="stopDrag">
                                             <span :data-id="op.operation.id"
-                                                  class="ml-3"
+                                                  class="ms-3"
                                                   v-text="op.operation.name" />
                                             <font-awesome-icon icon="fa fa-bars fa-1x"
                                                                class="float-right" />
@@ -109,7 +109,7 @@
                 </div>
             </ul>
         </div>
-        <!-- <div class="mr-2 mt-4">
+        <!-- <div class="me-2 mt-4">
                 <ul class="list-group">
                     <li
                         class="list-group-item sidebar-separator-title d-flex align-items-center menu-collapsed bg-dark text-white">

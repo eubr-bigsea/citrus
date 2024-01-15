@@ -66,7 +66,7 @@
                 <div class="w-100">
                     <b-button variant="primary"
                               size="sm"
-                              class="ml-1 float-right"
+                              class="ms-1 float-right"
                               @click="closeModal">
                         {{$t('common.ok')}}
                     </b-button>

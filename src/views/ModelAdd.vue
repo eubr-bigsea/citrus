@@ -103,7 +103,7 @@
                                     </table>
                                 </div>
                                 <div class="border-top mt-5 pt-4">
-                                    <button class="btn btn-outline-secondary ml-1" @click="step=1">
+                                    <button class="btn btn-outline-secondary ms-1" @click="step=1">
                                         {{$t('actions.back')}}
                                     </button>
                                 </div>
@@ -121,11 +121,11 @@
                                 <textarea v-model="model.command" class="form-control" rows="4" />
 
                                 <div class="border-top mt-5 pt-4">
-                                    <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
+                                    <!-- <button class="btn me-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
                                     <button class="btn btn-success" @click="save">
                                         {{$t('actions.save')}}
                                     </button>
-                                    <button class="btn ml-1" @click="step=1">
+                                    <button class="btn ms-1" @click="step=1">
                                         {{$t('actions.back')}}
                                     </button>
                                 </div>
@@ -139,7 +139,7 @@
 </template>
 <script>
 import axios from 'axios';
-import Vue from 'vue';
+;
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 import Resumable from 'resumablejs';
 export default {
@@ -216,7 +216,7 @@ export default {
             this.step = 2;
             this.model.storage_id = this.fsStorage;
             /* Setup resumable */
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 this.setupResumable();
             });
             return false;

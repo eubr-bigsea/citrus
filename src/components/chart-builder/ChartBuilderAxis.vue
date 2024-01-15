@@ -99,10 +99,10 @@
                             </div>
                         </div>
                         <!--
-                        <b-dropdown size="sm" ref="axis" class="mr-1" variant="outline-secondary small-dd-title"
+                        <b-dropdown size="sm" ref="axis" class="me-1" variant="outline-secondary small-dd-title"
                             title="Cor">
                             <template #button-content>
-                                <font-awesome-icon class="mr-2 text-success" prefix="fa" icon="droplet" /> Cor
+                                <font-awesome-icon class="me-2 text-success" prefix="fa" icon="droplet" /> Cor
                             </template>
                             <b-dropdown-form form-class="right-drop-form">
                                 <div class="row half-series-form">
@@ -132,10 +132,10 @@
                                 </div>
                             </b-dropdown-form>
                         </b-dropdown>
-                        <b-dropdown size="sm" ref="axis" class="mr-1" variant="outline-secondary small-dd-title"
+                        <b-dropdown size="sm" ref="axis" class="me-1" variant="outline-secondary small-dd-title"
                             title="Tamanho">
                             <template #button-content>
-                                <font-awesome-icon class="mr-2 text-primary" prefix="fa" icon="ruler-combined" /> Tamanho
+                                <font-awesome-icon class="me-2 text-primary" prefix="fa" icon="ruler-combined" /> Tamanho
                             </template>
                             <b-dropdown-form form-class="right-drop-form">
                                 <div class="row half-series-form">
@@ -165,10 +165,10 @@
                                 </div>
                             </b-dropdown-form>
                         </b-dropdown>
-                        <b-dropdown size="sm" ref="axis" class="mr-1" variant="outline-secondary small-dd-title"
+                        <b-dropdown size="sm" ref="axis" class="me-1" variant="outline-secondary small-dd-title"
                             title="Texto">
                             <template #button-content>
-                                <font-awesome-icon class="mr-2 text-warning" prefix="fa" icon="a" /> Texto
+                                <font-awesome-icon class="me-2 text-warning" prefix="fa" icon="a" /> Texto
                             </template>
                             <b-dropdown-form form-class="right-drop-form">
                                 <div class="row half-series-form">
@@ -204,10 +204,10 @@
             </template>
             <template v-else>
                 <div class="clearfix">
-                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 mr-1 float-left"
+                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-left"
                                 variant="outline-secondary small-dd-title">
                         <template #button-content>
-                            <font-awesome-icon class="mr-2" prefix="fa" icon="y" />
+                            <font-awesome-icon class="me-2" prefix="fa" icon="y" />
                         </template>
                         <b-dropdown-form v-if="hasAxis"
                                          form-class="down-drop-form">
@@ -277,7 +277,7 @@
                                :move="handleYAxisDrag" direction="horizontal" class="draggable-area" @start="drag = true"
                                @end="drag = false">
                         <div v-for="(y, i) in ySeries" :key="i" class="drag-handle" :data-test="`y-series-${i}`">
-                            <b-dropdown ref="yDimensionDD" size="sm" class="mt-2 mr-1 pull-right"
+                            <b-dropdown ref="yDimensionDD" size="sm" class="mt-2 me-1 pull-right"
                                         :variant="'outline-secondary small-dd-title ' + (y.enabled ? '' : 'disabled')">
                                 <template #button-content>
                                     {{y.attribute === '*' ? 'COUNT' : y.aggregation.toUpperCase()}}
@@ -474,10 +474,10 @@
                     </b-button>
                 </div>
                 <div class="clearfix">
-                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 mr-1 float-left"
+                    <b-dropdown v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-left"
                                 variant="outline-secondary small-dd-title">
                         <template #button-content>
-                            <font-awesome-icon class="mr-2" prefix="fa" icon="x" />
+                            <font-awesome-icon class="me-2" prefix="fa" icon="x" />
                         </template>
                         <b-dropdown-form v-if="hasAxis"
                                          form-class="down-drop-form">
@@ -547,7 +547,7 @@
                                @end="drag = false">
                         <div v-for="(x, i) in xSeries" :key="i" class="drag-handle">
                             <b-dropdown :id="`x-series-${i}`" ref="xDimensionDD" size="sm small-dd-title"
-                                        class="mt-2 mr-1 pull-right"
+                                        class="mt-2 me-1 pull-right"
                                         :variant="x.attribute ? 'outline-secondary' : 'outline-danger'">
                                 <template #button-content>
                                     {{getDisplayXDimensionLabel(x, 'Selecione...', 'grupos', 'tamanho', 'Categórico')}}

@@ -32,7 +32,7 @@
                                 </small>
                                 <a href="#"
                                    :title="$t('actions.delete')"
-                                   class="ml-1 float-right btn btn-sm py-0 btn-light text-danger"
+                                   class="ms-1 float-right btn btn-sm py-0 btn-light text-danger"
                                    @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle" />
                                 </a>
@@ -234,7 +234,7 @@
                 <div class="w-100 text-right">
                     <b-button variant="primary"
                               size="sm"
-                              class="mr-1 pl-5 pr-5"
+                              class="me-1 ps-5 pe-5"
                               @click="okClicked">
                         {{$t('common.ok')}}
                     </b-button>

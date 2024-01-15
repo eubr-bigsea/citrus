@@ -54,7 +54,8 @@ export default {
     border: 1px solid #ccc;
 }
 .home-card-item>>>a  {
-    color: #77a640
+    color: #77a640;
+    text-decoration: none;
 }
 .home-card {
     border: 1px solid #ddd;

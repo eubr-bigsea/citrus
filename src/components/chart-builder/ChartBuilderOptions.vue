@@ -109,7 +109,7 @@
                                           label="name" value="name" :append-to-body="true" data-test="size_attribute" />
                             </template>
                             <!--
-                                        <b-dropdown dropdown size="sm" ref="axis" class="mt-2 mr-1 w-75" variant="light xsmall-dd-title" :boundary="'window'">
+                                        <b-dropdown dropdown size="sm" ref="axis" class="mt-2 me-1 w-75" variant="light xsmall-dd-title" :boundary="'window'">
                                             <template #button-content>
                                                 {{ editableVisualization.color_attribute.value === '*' ? 'COUNT' : editableVisualization.color_aggregation.value.toUpperCase() }}
                                                 {{ editableVisualization.color_aggregation.value !== '' ? `(${editableVisualization.color_attribute.value})` : editableVisualization.color_attribute.value }}
@@ -601,7 +601,7 @@
                                             <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"/>
                                         </b-form-group>
                                         
-                                        <b-dropdown size="sm" dropright ref="axis" class="mt-2 mr-1" variant="light small-dd-title">
+                                        <b-dropdown size="sm" dropright ref="axis" class="mt-2 me-1" variant="light small-dd-title">
                                             <template #button-content>
                                                 Margens
                                             </template>

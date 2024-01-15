@@ -7,7 +7,7 @@
                     obrigatório.</u></small>
                 <hr>
                 <b-list-group>
-                    <b-list-group-item v-for="alg in algorithms" :key="alg.id" class="p-0 pl-2"
+                    <b-list-group-item v-for="alg in algorithms" :key="alg.id" class="p-0 ps-2"
                                        :class="{ 'bg-light': selectedAlgorithm === alg }">
                         <div class="d-flex w-100 p-1" role="button" @click="handleSelectAlgorithm(alg)">
                             <b-form-checkbox v-model="alg.enabled" switch />
@@ -61,7 +61,7 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
+;
 import Checkboxes from '../../../components/widgets/Checkboxes.vue';
 import InputTag from '../../../components/widgets/InputTag.vue';
 import NumericRangeOrSet from '../../../components/widgets/NumericRangeOrSet.vue';

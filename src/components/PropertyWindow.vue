@@ -141,7 +141,7 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import SwitchComponent from './widgets/Switch.vue';

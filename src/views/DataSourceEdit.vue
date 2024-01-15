@@ -318,7 +318,7 @@
                                                         <tbody>
                                                             <tr v-for="p in dataSource.permissions" :key="p.id">
                                                                 <td style="width:80px" class="text-center">
-                                                                    <div class="badge badge-secondary mt-2 pt-1 pb-1 pr-2 pl-2"
+                                                                    <div class="badge bg-secondary mt-2 pt-1 pb-1 pe-2 ps-2"
                                                                          :title="$t('permissions.' + p.permission)">
                                                                         {{$t('permissions.'
                                                                             +p.permission).toUpperCase()}}
@@ -361,7 +361,7 @@
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{$t('dataSource.inferSchema')}}
                                     </button>
-                                    <button class="btn btn-spinner ml-1 btn-outline-info" :disabled="isDirty"
+                                    <button class="btn btn-spinner ms-1 btn-outline-info" :disabled="isDirty"
                                             @click.stop="preview">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <font-awesome-icon icon="fa fa-eye" />
@@ -427,7 +427,7 @@
                                       rows="5" />
                             <template #modal-footer>
                                 <div class="w-100">
-                                    <b-button variant="primary" class="float-right mr-2" @click="okPrivacy">
+                                    <b-button variant="primary" class="float-right me-2" @click="okPrivacy">
                                         {{$t('actions.close')}}
                                     </b-button>
                                 </div>
@@ -442,9 +442,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import axios from 'axios';
-import VueSelect from 'vue-select';
 import Notifier from '../mixins/Notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
 import DataSourceOptions from '../components/data-source/DataSourceOptions.vue';
@@ -456,7 +454,6 @@ const thornUrl = import.meta.env.VITE_THORN_URL;
 
 export default {
     components: {
-        'v-select': VueSelect,
         ModalPreviewDataSource,
         DataSourceOptions,
     },
@@ -537,7 +534,7 @@ export default {
     watch: {
         '$route.params.id': function () {
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -550,7 +547,7 @@ export default {
         },
         customTags: {
             handler(value) {
-                this.dataSource.tags = value.join(',');
+                this.dataSource.tags = value? value.join(',') : null;
             }
         },
     },
@@ -563,10 +560,10 @@ export default {
     mounted() {
         let self = this;
         this.load().then(() => {
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 self.isDirty = false;
                 self.retrieveTables();
-                this.customTags = this.dataSource.tags.split(',');
+                this.customTags = this.dataSource.tags?.split(',');
             });
         });
     },
@@ -732,7 +729,7 @@ export default {
                     event.target.removeAttribute('disabled');
                     event.target.classList.add('btn-spinner');
                     self.dataSource = resp.data.data;
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                     self.success(

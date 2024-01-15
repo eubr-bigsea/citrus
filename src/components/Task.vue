@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import { anchors, endPointOptionsInput, endPointOptionsOutput } from '../jsplumb-const.js';
 const TaskComponent = Vue.extend({
     name: 'TaskComponent',
@@ -273,7 +273,7 @@ const TaskComponent = Vue.extend({
             if (!this.isComment && this.enableContextMenu) {
                 this.contextMenuOpened = true;
                 const self = this;
-                Vue.nextTick(function () {
+                this.$nextTick(function () {
                     self.$refs.right.focus();
                     //self.$refs.right.style.left = e.offsetX;
                     //self.$refs.right.style.top = e.offsetY;

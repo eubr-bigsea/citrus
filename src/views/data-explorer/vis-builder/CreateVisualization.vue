@@ -27,7 +27,7 @@
                             </template>
                         </vue-select>
                         <hr>
-                        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-outline-secondary mr-2">
+                        <router-link :to="{ name: 'index-explorer' }" class="btn btn-sm btn-outline-secondary me-2">
                             {{$t('actions.back')}}
                         </router-link>
                         <button class="btn btn-primary btn-sm" :disabled="!valid" @click="create">
@@ -45,10 +45,10 @@
                             <div class="mb-4">
                                 <img :src="getChartIcon(type.name)" style="width:60px; height: 60px;">
                             </div>
-                            <div v-for="obj in type.objectives" :key="obj" class="badge badge-info ml-1 small-badge">
+                            <div v-for="obj in type.objectives" :key="obj" class="badge bg-info ms-1 small-badge">
                                 {{obj}}
                             </div>
-                            <div v-for="dt in type.dataTypes" :key="dt" class="badge badge-secondary ml-1 small-badge">
+                            <div v-for="dt in type.dataTypes" :key="dt" class="badge bg-secondary ms-1 small-badge">
                                 {{dt}}
                             </div>
                         </div>

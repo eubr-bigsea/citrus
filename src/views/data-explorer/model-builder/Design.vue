@@ -9,31 +9,31 @@
                     <label>{{$t('common.name')}}:</label>
                     <input v-model="workflowObj.name"
                            type="text"
-                           class="form-control form-control-sm ml-1 w-50"
+                           class="form-control form-control-sm ms-1 w-50"
                            :placeholder="$t('common.name')"
                            maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ml-1 float-right"
+                    <button class="btn btn-sm btn-outline-success ms-1 float-right"
                             @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
                         {{$t('actions.save')}}
                     </button>
 
                     <button v-if="notRunning"
-                            class="btn btn-sm btn-outline-primary ml-1 float-right"
+                            class="btn btn-sm btn-outline-primary ms-1 float-right"
                             @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
                         {{$t('actions.train')}}
                     </button>
 
                     <button v-else
-                            class="btn btn-sm btn-outline-danger ml-1 float-right"
+                            class="btn btn-sm btn-outline-danger ms-1 float-right"
                             @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
                         {{$t('actions.stop')}}
                     </button>
 
                     <!--
-                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ml-1 float-right">
+                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ms-1 float-right">
                         <font-awesome-icon icon="fa fa-sync" />
                         Reload jobs</button>
                         -->
@@ -53,7 +53,7 @@
                                              @edit="edit" />
                                 </div>
                             </div>
-                            <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
+                            <div class="col-md-9 col-lg-10 ps-4 pe-4 bg-white expand">
                                 <form action=""
                                       class="form p-2">
                                     <template v-if="selected === 'target'">
@@ -126,7 +126,7 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
+;
 import io from 'socket.io-client';
 import SideBar from './SideBar.vue';
 import DesignData from './DesignData.vue';
@@ -419,7 +419,7 @@ export default {
                 this.error(e);
                 this.$router.push({ name: 'index-explorer' });
             } finally {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.loadingData = false;
                     this.isDirty = false;
                 });

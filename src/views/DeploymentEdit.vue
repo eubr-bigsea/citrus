@@ -101,20 +101,20 @@
                                     </form>
                                     <div class="row">
                                         <div class="col-12 mt-4 border-top pt-2">
-                                            <button class="btn btn-primary mr-1 btn-spinner"
+                                            <button class="btn btn-primary me-1 btn-spinner"
                                                     @click.stop="save($event, false)">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
                                                 {{$t('actions.save')}}
                                             </button>
-                                            <button class="btn btn-outline-primary mr-1 btn-spinner"
+                                            <button class="btn btn-outline-primary me-1 btn-spinner"
                                                     @click.stop="save($event, true)">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-server" />
                                                 {{$t('deployment.saveAndRedeploy')}}
                                             </button>
                                             <router-link :to="{name: 'deployments'}"
-                                                         class="btn btn-outline-secondary mr-1">
+                                                         class="btn btn-outline-secondary me-1">
                                                 {{$t('actions.cancel')}}
                                             </router-link>
                                         </div>
@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import VueSelect from 'vue-select';
 import Notifier from '../mixins/Notifier.js';
@@ -172,7 +172,7 @@ export default {
     watch: {
         '$route.params.id': function () {
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -268,7 +268,7 @@ export default {
                 const resp = await axiosCall(url, data);
 
                 self.deployment = resp.data;
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     self.isDirty = false;
                 });
                 self.success(

@@ -57,7 +57,7 @@
                             </div>
                         </div>
                         <div class="col-md-12 mb-4 border-top pt-2 mt-2">
-                            <button class="btn btn-primary mr-1 btn-spinner"
+                            <button class="btn btn-primary me-1 btn-spinner"
                                     @click.stop="save">
                                 <font-awesome-icon icon="spinner"
                                                    pulse
@@ -66,7 +66,7 @@
                                 {{$t('actions.save')}}
                             </button>
                             <router-link :to="{name: 'storages'}"
-                                         class="btn btn-secondary mr-1">
+                                         class="btn btn-secondary me-1">
                                 {{$t('actions.cancel')}}
                             </router-link>
                         </div>

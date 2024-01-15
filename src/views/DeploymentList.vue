@@ -34,21 +34,21 @@
                 <template #actions="props">
                     <div v-if="loggedUserIsOwnerOrAdmin(props.row)">
                         <button v-if="['PENDING', 'DEPLOYED_OLD', 'PENDING_UNDEPLOY', 'UNDEPLOYED', 'ERROR', 'SUSPENDED'].indexOf(props.row.current_status) > -1"
-                                class="ml-1 btn btn-sm btn-success" :title="$t('actions.deploy')"
+                                class="ms-1 btn btn-sm btn-success" :title="$t('actions.deploy')"
                                 @click="deployOrUndeploy(props.row.id, true)">
                             <font-awesome-icon icon="power-off" />
                         </button>
                         <button v-if="['PENDING', 'DEPLOYED', 'DEPLOYED_OLD'].indexOf(props.row.current_status) > -1"
-                                class="ml-1 btn btn-sm btn-danger" :title="$t('actions.undeploy')"
+                                class="ms-1 btn btn-sm btn-danger" :title="$t('actions.undeploy')"
                                 @click="deployOrUndeploy(props.row.id, false)">
                             <font-awesome-icon icon="power-off" />
                         </button>
-                        <button class="ml-1 btn btn-sm btn-outline-info" :title="$t('actions.info')"
+                        <button class="ms-1 btn btn-sm btn-outline-info" :title="$t('actions.info')"
                                 @click="showInfo(props.row)">
                             <font-awesome-icon icon="list-alt" />
                             {{$t('deployment.log', 2)}}
                         </button>
-                        <button class="ml-2 btn btn-sm btn-outline-danger" @click="remove(props.row.id)">
+                        <button class="ms-2 btn btn-sm btn-outline-danger" @click="remove(props.row.id)">
                             <font-awesome-icon icon="trash" />
                         </button>
                     </div>
@@ -126,7 +126,7 @@ export default {
                 filterable: ['id', 'description', 'type', 'created'],
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },

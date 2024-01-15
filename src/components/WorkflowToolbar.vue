@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="btn-group mr-2"
+        <div class="btn-group me-2"
              role="group">
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('titles.job', 2)"
@@ -14,7 +14,7 @@
                 <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
             </button>
         </div>
-        <div class="btn-group mr-2"
+        <div class="btn-group me-2"
              role="group">
             <button class="btn btn-sm btn-outline-success"
                     :title="$t('actions.save')"
@@ -27,7 +27,7 @@
                 <font-awesome-icon icon="fa fa-copy" /> {{$t('actions.saveAs')}}...
             </button>
         </div>
-        <div class="btn-group mr-2">
+        <div class="btn-group me-2">
             <b-dropdown right
                         split
                         variant="sm btn-outline-dark"
@@ -49,7 +49,7 @@
                 -->
             </b-dropdown>
         </div>
-        <div class="btn-group mr-2"
+        <div class="btn-group me-2"
              role="group">
             <button class="btn btn-sm btn-outline-dark"
                     :title="$t('actions.showProperties')"

@@ -6,7 +6,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h1> {{workflow.name}} </h1>
                     <div>
-                        <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-left mr-1">
+                        <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-left me-1">
                             {{$t('actions.back')}}</router-link>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                     <VuePerfectScrollbar v-if="loaded" ref="scrollBar" useBothWheelAxes="true" class="scroll-area"
                         style="margin-right:-15px">
                         -->
-                    <form v-if="loaded" ref="form" class="pr-3 zoom-90">
+                    <form v-if="loaded" ref="form" class="pe-3 zoom-90">
                         <div v-for="field in sortedEditFields" :key="field.key" class="lemonade-widgets"
                              :data-name="field.name" :data-type="field.sourceType"
                              :data-component="field.suggested_widget" :data-index="field.display_index">
@@ -74,11 +74,11 @@
                         <b-skeleton animation="wave" width="70%" height="60px" />
                     </div>
                     <div class="buttons mt-5 pt-2 text-center border-top">
-                        <button class="btn btn-sm btn-outline-secondary float-right ml-1 mb-2"
+                        <button class="btn btn-sm btn-outline-secondary float-right ms-1 mb-2"
                                 @click="showWorkflowInfo">
                             <font-awesome-icon icon="fas fa-info-circle" />
                         </button>
-                        <button class="btn btn-sm btn-primary float-right ml-1 mb-2" type="submit" :disabled="running"
+                        <button class="btn btn-sm btn-primary float-right ms-1 mb-2" type="submit" :disabled="running"
                                 @click="execute">
                             <font-awesome-icon icon="fa fa-search" /> {{$t('actions.execute')}}
                         </button>
@@ -128,7 +128,7 @@
                                 <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
                                            :w="item.w"
                                            :h="item.h" :i="item.i" class="grid-item">
-                                    <caipirinha-visualization v-if="!running" class="pl-2 pr-2"
+                                    <caipirinha-visualization v-if="!running" class="ps-2 pe-2"
                                                               :url="getCaipirinhaLink(job.id, item.task.id, 0)" :height="100*item.h" />
                                     <div v-else class="p-5 text-center mt-5">
                                         <b-spinner variant="success" type="grow" />

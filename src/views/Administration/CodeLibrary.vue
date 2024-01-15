@@ -19,7 +19,7 @@
                                             <button class="btn btn-sm btn-danger">
                                                 <font-awesome-icon icon="trash" />
                                             </button>
-                                            <router-link :to="{ name: 'codeEdit' }" class="btn btn-sm btn-primary ml-2">
+                                            <router-link :to="{ name: 'codeEdit' }" class="btn btn-sm btn-primary ms-2">
                                                 <font-awesome-icon icon="pen-to-square" size="lg" />
                                             </router-link>
                                         </template>
