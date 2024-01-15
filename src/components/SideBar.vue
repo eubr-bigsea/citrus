@@ -2,7 +2,7 @@
     <div id="sidebar-wrapper">
         <ul id="menu" class="sidebar-nav nav-pills nav-stacked">
             <li class="sidebar-brand">
-                <button v-if="icon" id="btn-nav" type="button" class="navbar-toggle collapsed btn btn-sm mr-2"
+                <button v-if="icon" id="btn-nav" type="button" class="navbar-toggle collapsed btn btn-sm me-2"
                         @click="toggle">
                     <font-awesome-icon :icon="'fa ' + icon"
                                        fixed-width />

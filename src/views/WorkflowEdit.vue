@@ -67,7 +67,7 @@
 
                 <!--
                 <div class="row border-top pt-1">
-                    <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
+                    <div class="col col-md-4 col-lg-3 col-xl-2 pe-0">
                         <toolbox :operations="operations" :workflow="workflow" :selected-task='selectedTask.task' />
                     </div>
                     <div class="col col-md-8 col-lg-9 col-xl-10" style="position: relative">
@@ -99,7 +99,7 @@
                     <b-tab :title="$t('titles.workflow', 1)" title-item-class="tab-order-5">
                         <b-card>
                             <div class="row">
-                                <div class="col col-md-4 col-lg-3 col-xl-2 pr-0">
+                                <div class="col col-md-4 col-lg-3 col-xl-2 pe-0">
                                     <toolbox :operations="operations" :workflow="workflow"
                                         :selected-task='selectedTask.task' />
                                 </div>
@@ -165,7 +165,7 @@ import PropertyWindow from '../components/PropertyWindow.vue';
 import Notifier from '../mixins/Notifier.js';
 import ToolboxComponent from '../components/Toolbox.vue';
 import CustomToolboxComponent from '../components/CustomToolbox.vue';
-import Vue from 'vue';
+;
 import WorkflowExecution from '../components/WorkflowExecution.vue';
 import WorkflowToolbar from '../components/WorkflowToolbar.vue';
 
@@ -486,7 +486,7 @@ export default {
                     ).catch(function (e) {
                         this.error(e);
                     }.bind(this)).finally(() => {
-                        Vue.nextTick(() => {
+                        this.$nextTick(() => {
                             self.loadingToolbox = true;
                             delete params['workflow'];
                             delete params['t'];

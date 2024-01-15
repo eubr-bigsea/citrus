@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-deprecated-dollar-listeners-api -->
 <template>
     <div>
-        <b-dropdown class="more-actions mr-1 mt-1 border rounded" size="sm" variant="btn" split>
+        <b-dropdown class="more-actions me-1 mt-1 border rounded" size="sm" variant="btn" split>
             <template #button-content>
                 <input type="checkbox" @change="handleSelectAll($event)">
             </template>

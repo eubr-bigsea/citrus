@@ -76,13 +76,13 @@
                                     </form>
                                     <div class="row">
                                         <div class="col-md-12 mt-4 border-top pt-2">
-                                            <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                            <button class="btn btn-primary me-1 btn-spinner" @click.stop="save">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
                                                 {{$t('actions.save')}}
                                             </button>
                                             <router-link :to="{name: 'clusters'}"
-                                                         class="btn btn-outline-secondary mr-1">
+                                                         class="btn btn-outline-secondary me-1">
                                                 {{$t('actions.cancel')}}
                                             </router-link>
                                         </div>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import VueSelect from 'vue-select';
 
@@ -127,7 +127,7 @@ export default {
     watch: {
         '$route.params.id': function (){
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -195,7 +195,7 @@ export default {
                     event.target.removeAttribute('disabled');
                     event.target.classList.add('btn-spinner');
                     self.cluster = resp.data;
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                     self.success(

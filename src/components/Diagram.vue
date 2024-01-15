@@ -46,7 +46,7 @@
 
 <script>
 
-import Vue from 'vue';
+;
 
 import TaskComponent from './Task.vue';
 import DiagramToolbar from './DiagramToolbar.vue';
@@ -1011,7 +1011,7 @@ const DiagramComponent = Vue.extend({
                     }
                     finalPos = t[prop] + distance + parseInt(elem.offsetWidth);
                 });
-                Vue.nextTick(function () {
+                this.$nextTick(function () {
                     self.instance.repaintEverything();
                 });
             }
@@ -1048,7 +1048,7 @@ const DiagramComponent = Vue.extend({
                         task[pos] = minPosTask[pos];
                     });
                 }
-                Vue.nextTick(function () {
+                this.$nextTick(function () {
                     self.instance.repaintEverything();
                 });
             }

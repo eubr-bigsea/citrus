@@ -2,7 +2,7 @@
     <div>
         <div v-if="jobs"
              class="row">
-            <div class="col-md-4 col-lg-3 pl-4">
+            <div class="col-md-4 col-lg-3 ps-4">
                 <b-list-group v-if="jobs.length > 0">
                     <b-list-group-item v-for="job in jobs"
                                        :key="job.id"
@@ -208,7 +208,7 @@
                             <img src="https://topepo.github.io/caret/basic/train_plot1-1.svg" alt="">
                             Gráfico métrica por tempo
                             <b-list-group>
-                                <b-list-group-item v-for="run in sessions[0].runs" :key="run.id" class="p-0 pl-2">
+                                <b-list-group-item v-for="run in sessions[0].runs" :key="run.id" class="p-0 ps-2">
                                     <div class="d-flex w-100 justify-content-between bg-light p-1">
                                         <b class="mb-1">{{run.name}}</b>
                                         <small>

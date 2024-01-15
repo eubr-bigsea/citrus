@@ -25,7 +25,7 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
+;
 /**
      * Based on https://www.digitalocean.com/community/tutorials/vuejs-vue-autocomplete-component
     */

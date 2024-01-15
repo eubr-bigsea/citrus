@@ -66,7 +66,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
+                    <tr v-if="tableData.length !== 0" v-for="(row, rowIndex) in tableData" :key="rowIndex">
                         <td v-for="colName in columns" :key="colName"
                             :class="getColumnClass(options.columnClasses, colName)">
                             <slot :name="colName" :row="row">
@@ -131,7 +131,7 @@ const tableCustomQueries = ref();
 
 const sortIcon = ref({
     base: 'sort-base',
-    is: 'sort-is ml-10',
+    is: 'sort-is ms-10',
     up: 'sort-up',
     down: 'sort-down'
     , ... (props.options.sortIcon || {})
@@ -186,7 +186,7 @@ const populateTable = async () => {
             tableCustomQueries.value = customQueries;
             const params = { orderBy: {} };
             params.orderBy.column = sortColumn.value;
-            params.orderBy.ascending = sortDirection.value === 1;
+            params.orderBy.ascending = sortDirection.value === 'asc';
             params.perPage = perPage.value;
             params.query = query.value;
             params.page = currentPage.value;
@@ -241,7 +241,7 @@ const load = () => {
                 try {
                     const params = JSON.parse(saved);
                     sortColumn.value = params.orderBy?.column;
-                    sortDirection.value = params.orderBy.ascending ? 1 : 0,
+                    sortDirection.value = params.orderBy.ascending ? 'asc' : 'desc',
                     perPage.value = params.perPage,
                     query.value = params.query,
                     currentPage.value = params.page;

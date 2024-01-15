@@ -39,7 +39,7 @@
 </template>
 <script>
 import axios from 'axios';
-import Vue from 'vue';
+;
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
@@ -99,7 +99,7 @@ export default {
                 sortable: ['full_name', 'email'],
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },
@@ -118,7 +118,7 @@ export default {
         resourceId: function (id) {
             if (id != 0) {
                 this.load().then(() => {
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                 });

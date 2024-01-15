@@ -56,7 +56,7 @@
                           @click="cancelModal">
                     {{$t('actions.cancel')}}
                 </b-button>
-                <b-button variant="success mr-1"
+                <b-button variant="success me-1"
                           size="sm"
                           class="float-right"
                           @click="okModal">
@@ -67,7 +67,6 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
 //import "prismjs/themes/prism.min.css";
 import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
@@ -129,7 +128,7 @@ export default {
             if (prismEditor.history.offset > 0) {
                 const { selectionStart, selectionEnd } = prismEditor.history.stack.slice(-1)[0];
                 /* hack to move cursor to correct position when using modal */
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     window.setTimeout(() => {
                         prismEditor.$refs.textarea.setSelectionRange(
                             selectionStart, selectionEnd);

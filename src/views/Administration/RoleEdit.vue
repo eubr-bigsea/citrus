@@ -46,8 +46,8 @@
                                                         {{$t('common.permission', 2)}}:
                                                     </h6>
                                                     <div>
-                                                        <b-card no-body>
-                                                            <b-tabs pills card vertical>
+                                                        <b-card>
+                                                            <b-tabs pills vertical>
                                                                 <b-tab v-for="gp in groupedPermissions" :key="gp[0]"
                                                                        :title="$t('assets.' + gp[0], 2)">
                                                                     <b-card-text>
@@ -89,13 +89,13 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 mt-4 border-top pt-2">
-                                                <button class="btn btn-primary mr-1 btn-spinner" type="submit">
+                                                <button class="btn btn-primary me-1 btn-spinner" type="submit">
                                                     <font-awesome-icon icon="spinner" pulse class="icon" />
                                                     <font-awesome-icon icon="fa fa-save" />
                                                     {{$t('actions.save')}}
                                                 </button>
                                                 <router-link :to="{name: 'AdministrationRoleList'}"
-                                                             class="btn btn-secondary mr-1">
+                                                             class="btn btn-secondary me-1">
                                                     {{$t('actions.cancel')}}
                                                 </router-link>
                                             </div>
@@ -111,7 +111,7 @@
     </main>
 </template>
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import VueSelect from 'vue-select';
 import { debounce } from '../../util.js';
@@ -144,7 +144,7 @@ export default {
     watch: {
         '$route.params.id': function () {
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -161,7 +161,7 @@ export default {
     mounted() {
         let self = this;
         this.load().then(() => {
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 self.isDirty = false;
             });
             self.selectedPermissions = self.role.permissions.map(p => p.id);
@@ -264,7 +264,7 @@ export default {
             return axiosCall(url, this.role)
                 .then(resp => {
                     self.role = resp.data;
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                     self.success(

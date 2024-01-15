@@ -25,7 +25,7 @@
 <script setup>
 import { ref, onMounted, computed, } from 'vue';
 
-const emit = defineEmits(['update:currentPage']);
+const emit = defineEmits(['update:page']);
 const props = defineProps({
     total: { type: Number, required: true },
     perPage: { type: Number, required: true },
@@ -53,7 +53,7 @@ const gotoPage = (page) => {
     if (page >= 1 && page <= totalPages.value) {
         //props.value = page;
         currentPage.value = page;
-        emit('update:currentPage', page);
+        emit('update:page', page);
     }
 };
 

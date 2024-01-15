@@ -18,7 +18,7 @@ export default defineConfig({
         //createVuePlugin(/* options */)
         vue({
             template: {
-                compilerOptions: {
+                /*compilerOptions: {
                     compatConfig: {
                         MODE: 2,
                         ATTR_FALSE_VALUE: false,
@@ -27,7 +27,7 @@ export default defineConfig({
                         INSTANCE_SCOPED_SLOTS: true,
                         
                     }
-                }
+                }*/
             }
         }),
         visualizer(),
@@ -39,10 +39,12 @@ export default defineConfig({
     ],
     resolve: {
         alias: [
+            /*
             {   
                 find: 'vue',
                 replacement: '@vue/compat'
             },
+            */
             {
                 // this is required for the SCSS modules
                 find: /^~(.*)$/,

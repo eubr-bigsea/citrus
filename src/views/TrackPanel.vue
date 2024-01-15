@@ -8,12 +8,12 @@
                         <div class="float-right">
                             <!--
                             <router-link :to="{name: 'addTrack'}" v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
-                                class="btn btn-primary btn-lemonade-primary float-left mr-1">
+                                class="btn btn-primary btn-lemonade-primary float-left me-1">
                                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                             </router-link>
                             -->
                             <!--
-                            <button class="btn btn-outline-secondary mr-1" :disabled="display === 'large'"
+                            <button class="btn btn-outline-secondary me-1" :disabled="display === 'large'"
                                 @click="show('large')">
                                 <font-awesome-icon icon="fa fa-th" />
                             </button>
@@ -59,7 +59,7 @@
                                 </div>
                             </div>
                             <div class="text-center">
-                                <pagination v-model="page" :records="records" :per-page="10" :options="options"
+                                <pager-component v-model="page" :records="records" :per-page="10" :options="options"
                                             class="pagination" @paginate="paginate" />
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                             <v-server-table ref="trackPanelList" :columns="columns" :options="options"
                                             name="trackPanelList" @pagination="paginate">
                                 <template #beforeTable>
-                                    <div class="ml-2">
+                                    <div class="ms-2">
                                         <div class="input-group mb-3">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
@@ -102,14 +102,14 @@
                                 <template slot="actions" slot-scope="props">
 
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
-                                        <span class="btn btn-sm btn-info mr-1" :title="$t('actions.view')">
+                                        <span class="btn btn-sm btn-info me-1" :title="$t('actions.view')">
                                             <font-awesome-icon icon="eye"></font-awesome-icon>
                                         </span>
                                     </router-link>
 
                                     <router-link v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
                                         :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                                        <span class="btn btn-sm btn-warning mr-1" :title="$t('actions.edit')"
+                                        <span class="btn btn-sm btn-warning me-1" :title="$t('actions.edit')"
                                             :to="{name: 'trackParameter', params: {id: props.row.id}}">
                                             <font-awesome-icon icon="pen"></font-awesome-icon>
                                         </span>
@@ -137,12 +137,12 @@ import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
 import { debounce } from '../util.js';
 
-import Pagination from 'vue-pagination-2';
+import PagerComponent from '@/components/PagerComponent.vue';
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const LIST_OF_FIELDS = 'id,name,updated,user,version,description,publishing_status,image,platform';
 export default {
     components: {
-        'pagination': Pagination,
+        PagerComponent
     },
     mixins: [Notifier],
     data() {
@@ -178,7 +178,7 @@ export default {
                 },
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },

@@ -30,7 +30,7 @@
             <b-button variant="secondary_sm" size="sm" class="btn-outline-secondary float-right" @click="close">
                 {{$t('actions.cancel')}}
             </b-button>
-            <b-button variant="primary" class="float-right mr-1" size="sm" :disabled="(newName === '')"
+            <b-button variant="primary" class="float-right me-1" size="sm" :disabled="(newName === '')"
                       @click="okClicked">
                 {{$t('actions.save')}}
             </b-button>

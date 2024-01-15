@@ -10,7 +10,7 @@
                                  @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
                                     <span v-if="row.label">({{row.label}})</span></small>
-                                <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
+                                <a class="float-right ms-1 bn btn-sm py-0 btn-light text-danger" href="#"
                                    :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                                 </a>
@@ -136,7 +136,7 @@
         </p>
         <template #modal-footer>
             <div class="w-100 text-right">
-                <b-button variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
+                <b-button variant="primary" size="sm" class="me-1 ps-5 pe-5" @click="okClicked">
                     {{$t('common.ok')}}
                 </b-button>
             </div>

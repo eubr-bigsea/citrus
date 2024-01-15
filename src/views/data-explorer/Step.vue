@@ -106,7 +106,7 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
+;
 import { deepToRaw } from '@/util.js';
 import BDropdown from '@/components/BDropdown.vue';
 
@@ -244,7 +244,7 @@ export default {
             this.displayFormCategory = category;
             this.editableStep.editing = true;
             this.$emit('edit', this.step);
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 const elem = this.$refs.form.querySelector('input, select');
                 elem && elem.focus();
                 try {

@@ -44,12 +44,12 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 mt-4 border-top pt-2">
-                                                <button class="btn btn-primary mr-1 btn-spinner" @click.stop="save">
+                                                <button class="btn btn-primary me-1 btn-spinner" @click.stop="save">
                                                     <font-awesome-icon icon="spinner" pulse class="icon" />
                                                     <font-awesome-icon icon="fa fa-save" />
                                                     {{$t('actions.save')}}
                                                 </button>
-                                                <router-link :to="{name: 'platforms'}" class="btn btn-secondary mr-1">
+                                                <router-link :to="{name: 'platforms'}" class="btn btn-secondary me-1">
                                                     {{$t('actions.cancel')}}
                                                 </router-link>
                                             </div>
@@ -81,7 +81,7 @@
                                                        class="form-control">
                                             </td>
                                             <td>
-                                                <button class="btn btn-primary btn-sm mr-1" :title="$t('actions.save')"
+                                                <button class="btn btn-primary btn-sm me-1" :title="$t('actions.save')"
                                                         @click="saveSubset(subset)">
                                                     {{$t('actions.save')}}
                                                 </button>
@@ -192,7 +192,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
 
@@ -220,7 +220,7 @@ export default {
     watch: {
         '$route.params.id': function (){
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -235,7 +235,7 @@ export default {
     mounted(){
         let self = this;
         this.load().then(() => {
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 self.isDirty = false;
             });
         });
@@ -395,7 +395,7 @@ export default {
                 .patch(url, this.platform)
                 .then(resp => {
                     self.platform = resp.data;
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                     self.success(

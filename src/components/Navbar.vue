@@ -118,7 +118,7 @@
                         <div class="text-center">
                             <strong>{{$t('titles.role', 2)}}</strong><br>
                             <div class="mt-2">
-                                <span v-for=" role in user.roles " :key="role.id" class="badge badge-info mr-1 p-1">
+                                <span v-for=" role in user.roles " :key="role.id" class="badge bg-info me-1 p-1">
                                     {{role.label}}
                                 </span>
                             </div>
@@ -127,7 +127,7 @@
                             <b-button variant="primary" size="sm" @click="profile">
                                 {{$t('titles.profile')}}
                             </b-button>
-                            <b-button variant="danger" size="sm" class="ml-2" @click="logout">
+                            <b-button variant="danger" size="sm" class="ms-2" @click="logout">
                                 {{$t('common.logout')}}
                             </b-button>
                         </p>
@@ -138,7 +138,7 @@
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-bell" />
                         <span v-if="unreadNotifications > 0" class="badge badge-pill"
-                              :class="unreadNotifications > 0 ? 'badge-danger' : 'badge-success'">
+                              :class="unreadNotifications > 0 ? 'bg-danger' : 'badge-success'">
                             {{unreadNotifications > 99 ? '99+' : unreadNotifications}}
                         </span>
                     </template>

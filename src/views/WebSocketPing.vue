@@ -10,7 +10,7 @@
                 <button class="mt-2 btn btn-sm btn-primary" @click="change">
                     Change
                 </button>
-                <button class="ml-1 mt-2 btn btn-sm btn-danger" @click="disconnect">
+                <button class="ms-1 mt-2 btn btn-sm btn-danger" @click="disconnect">
                     Disconnect
                 </button>
             </div>
@@ -20,7 +20,7 @@
                 <button class="mt-2 btn btn-success btn-sm" @click="send(false)">
                     Send
                 </button>
-                <button class="mt-2 btn btn-success btn-sm ml-1" @click="send(true)">
+                <button class="mt-2 btn btn-success btn-sm ms-1" @click="send(true)">
                     Send as object
                 </button>
             </div>
@@ -48,7 +48,7 @@
                     <button class="btn btn-sm btn-warning mt-3" @click="responsesFromStore = []">
                         Clear messages
                     </button>
-                    <!--button class="btn btn-sm btn-secondary ml-2 mt-3" @click="emitFromStore">
+                    <!--button class="btn btn-sm btn-secondary ms-2 mt-3" @click="emitFromStore">
                         Send hello from store
                     </button -->
                     <pre class="pre-code"><code v-for="m, x in responsesFromStore"

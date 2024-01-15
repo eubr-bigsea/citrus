@@ -45,10 +45,10 @@
                             </select>
                         </td>
                         <td style="width:10%" class="text-center">
-                            <a href="#" :title="$t('actions.delete')" class="pr-1" @click="remove($event, index)">
+                            <a href="#" :title="$t('actions.delete')" class="pe-1" @click="remove($event, index)">
                                 <font-awesome-icon icon="fa fa-minus-circle" />
                             </a>
-                            <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')" class="pr-1"
+                            <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')" class="pe-1"
                                @click="moveUp($event, index)">
                                 <font-awesome-icon icon="fa fa-chevron-circle-up" />
                             </a>
@@ -67,7 +67,7 @@
             </div>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-button variant="primary" size="sm" class="mr-1" @click="okClicked">
+                    <b-button variant="primary" size="sm" class="me-1" @click="okClicked">
                         {{$t('common.ok')}}
                     </b-button>
                     <b-button variant="secondary" size="sm" @click="cancelClicked">

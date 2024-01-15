@@ -3,28 +3,28 @@
         <LabelComponent :field="field" :value="value" :show-help="showHelp" />
         <div class="row">
             <div class="col-10">
-                <div v-if="internalValue.type === 'range'" class="border p-1 pl-2 border-radius">
+                <div v-if="internalValue.type === 'range'" class="border p-1 ps-2 border-radius">
                     <b-form inline>
                         <label for="inline-form-input-name">Min:</label>
                         <input v-model.number="internalValue.min" type="number"
-                               class="form-control form-control-sm ml-2 mr-2 small-text"
+                               class="form-control form-control-sm ms-2 me-2 small-text"
                                onKeyPress="return this.value.length < 12">
 
                         <label for="inline-form-input-username">Max:</label>
                         <input v-model.number="internalValue.max" type="number"
-                               class="form-control form-control-sm ml-2 mr-2 small-text"
+                               class="form-control form-control-sm ms-2 me-2 small-text"
                                onKeyPress="return this.value.length < 12">
 
                         <template v-if="showQuantity">
                             <label for="inline-form-input-username">Qtde. valores:</label>
                             <input v-model.number="internalValue.quantity" type="number" min="1"
-                                   class="form-control form-control-sm ml-2 mr-2 small-text"
+                                   class="form-control form-control-sm ms-2 me-2 small-text"
                                    onKeyPress="return this.value.length < 12">
                         </template>
 
                         <label for="inline-form-input-username">Dist.:</label>
                         <select v-model="internalValue.distribution"
-                                class="form-control form-control-sm small-text ml-2 mr-2 ">
+                                class="form-control form-control-sm small-text ms-2 me-2 ">
                             <option value="uniform">
                                 Uniforme
                             </option>
@@ -48,8 +48,8 @@
                                 </b-button>
                             </b-input-group-append>
                         </b-input-group>
-                        <div v-if="tags && tags.length" class="pl-2 mt-2 w-75 float-left">
-                            <div v-for="(tag, i) in tags" :key="i" class="badge text-secondary badge-light2 border mr-1">
+                        <div v-if="tags && tags.length" class="ps-2 mt-2 w-75 float-left">
+                            <div v-for="(tag, i) in tags" :key="i" class="badge text-secondary badge-light2 border me-1">
                                 {{tag}} <a href="#" class="text-danger" @click.prevent="removeTag(tag)">&times;</a>
                             </div>
                         </div>

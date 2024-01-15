@@ -25,11 +25,11 @@
                         <font-awesome-icon icon="trash" />
                     </button>
                     <button v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && props.row.deployment_status === 'NOT_DEPLOYED' "
-                            class="ml-1 btn btn-sm btn-success" :title="$t('actions.deploy')" @click="remove(props.row.id)">
+                            class="ms-1 btn btn-sm btn-success" :title="$t('actions.deploy')" @click="remove(props.row.id)">
                         <font-awesome-icon icon="server" />
                     </button>
                     <button v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && ['DEPLOYED', 'RUNNING'].indexOf(props.row.deployment_status) > -1"
-                            class="ml-1 btn btn-sm btn-warning" :title="$t('actions.undeploy')"
+                            class="ms-1 btn btn-sm btn-warning" :title="$t('actions.undeploy')"
                             @click="remove(props.row.id)">
                         <font-awesome-icon icon="server" />
                     </button>
@@ -71,7 +71,7 @@ export default {
                 filterable: ['id', 'name', 'type', 'created'],
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },

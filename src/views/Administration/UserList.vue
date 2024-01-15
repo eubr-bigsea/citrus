@@ -8,66 +8,13 @@
                             <h1>{{$t('titles.user')}}</h1>
                             <div>
                                 <router-link :to="{ name: 'AdministrationAddUser' }"
-                                             class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                                             class="btn btn-primary btn-lemonade-primary float-left ms-2">
                                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                                 </router-link>
                             </div>
                         </div>
                     </div>
-                    <!--
-                    <v-server-table ref="userList" :columns="columns" :options="options" name="userList">
-                        <template #id="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{props.row.id}}
-                            </router-link>
-                        </template>
-                        <template #full_name="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{props.row.full_name}}
-                            </router-link>
-                        </template>
-
-                        <template #enabled="props">
-                            {{$t(props.row.enabled ? 'common.yes': 'common.no')}}
-                        </template>
-                        <template #email="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{props.row.email}}
-                            </router-link>
-                        </template>
-                        <template #roles="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                <span v-for="role in props.row.roles"
-                                      :key="role.id">
-                                    <div class="badge badge-secondary p-1 mr-1">{{role.label}}</div>
-                                </span>
-                            </router-link>
-                        </template>
-                        <template #notes="props">
-                            {{props.row.notes}}
-                        </template>
-
-                        <template #confirmed_at="props">
-                            <div v-if="isConfirmedUser(props.row.confirmed_at)">
-                                {{$filters.formatJsonDate(props.row.confirmed_at)}}
-                                <font-awesome-icon icon="check" />
-                            </div>
-                            <button v-else
-                                    class="btn btn-sm btn-success"
-                                    @click="confirmUser(props.row.id)">
-                                {{$t('common.confirm')}}
-                            </button>
-                        </template>
-
-                        <template #actions="props">
-                            <button class="btn btn-sm btn-light"
-                                    @click="remove(props.row.id)">
-                                <font-awesome-icon icon="trash" />
-                            </button>
-                        </template>
-                    </v-server-table>
-                -->
-                    <v-server-table :options="options" :columns="columns">
+                    <v-server-table :options="options" :columns="columns" name="users">
                         <template #id="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                 {{props.row.id}}
@@ -89,7 +36,7 @@
                         <template #roles="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                 <span v-for="role in props.row.roles" :key="role.id">
-                                    <div class="badge badge-secondary p-1 mr-1">{{role.label}}</div>
+                                    <div class="badge bg-secondary p-1 me-1">{{role.label}}</div>
                                 </span>
                             </router-link>
                         </template>
@@ -156,11 +103,11 @@ export default {
                 filterable: ['full_name', 'id', 'email'],
                 sortIcon: {
                     /*base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down',*/
                     base: 'sort-base',
-                    is: 'sort-is ml-10',
+                    is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
                 },

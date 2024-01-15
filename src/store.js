@@ -1,5 +1,3 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { createStore } from 'vuex';

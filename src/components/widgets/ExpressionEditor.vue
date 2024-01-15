@@ -101,7 +101,7 @@
                             </tbody>
                         </table>
                     </form>
-                    <div v-else class="border pt-5 pb-5 pl-3">
+                    <div v-else class="border pt-5 pb-5 ps-3">
                         <div class="label label-info">
                             {{$t('property.noExpressions')}}
                         </div>
@@ -141,7 +141,7 @@
             </small>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <b-button variant="primary" class="btn-sm mr-1" @click.prevent="okClicked">
+                    <b-button variant="primary" class="btn-sm me-1" @click.prevent="okClicked">
                         {{$t('common.ok')}}
                     </b-button>
                     <b-button variant="secondary" class="btn-sm " @click.prevent="cancelClicked">

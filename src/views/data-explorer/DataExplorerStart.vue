@@ -35,11 +35,11 @@
                         </template>
                     </vue-select>
                     <hr>
-                    <button class="btn btn-sm btn-primary pr-4 pl-4"
+                    <button class="btn btn-sm btn-primary pe-4 ps-4"
                             @click.prevent="create">
                         {{$t('actions.create2')}}
                     </button>
-                    <b-link :to="{ name: 'index-explorer'}" class="btn btn-secondary btn-sm ml-1">
+                    <b-link :to="{ name: 'index-explorer'}" class="btn btn-secondary btn-sm ms-1">
                         {{$t('actions.cancel')}}
                     </b-link>
                 </b-card>

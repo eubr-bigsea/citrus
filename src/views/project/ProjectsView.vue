@@ -38,7 +38,7 @@
 <script>
 import { useI18n } from 'vue-i18n';
 
-import Vue from 'vue';
+;
 import axios from 'axios';
 import DataTableBuilder from '../../data-table-builder.js';
 

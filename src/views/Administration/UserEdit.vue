@@ -56,7 +56,8 @@
                                                        type="text"
                                                        class="form-control"
                                                        required
-                                                       maxlength="100">
+                                                       maxlength="100"
+                                                       autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -84,7 +85,8 @@
                                                 <input v-model="user.password"
                                                        type="password"
                                                        class="form-control"
-                                                       maxlength="50">
+                                                       maxlength="50"
+                                                       autocomplete="new-password">
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="col-form-label">
@@ -150,7 +152,7 @@
                                                 <div>
                                                     <div v-for="gr in globalRoles"
                                                          :key="gr.id"
-                                                         class="badge badge-info mr-1">
+                                                         class="badge bg-info me-1">
                                                         {{gr.label}}
                                                     </div>
                                                 </div>
@@ -158,7 +160,7 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 mt-4 border-top pt-2">
-                                                <button class="btn btn-primary mr-1 btn-spinner"
+                                                <button class="btn btn-primary me-1 btn-spinner"
                                                         @click.stop="save">
                                                     <font-awesome-icon icon="spinner"
                                                                        pulse
@@ -167,7 +169,7 @@
                                                     {{$t('actions.save')}}
                                                 </button>
                                                 <router-link :to="{name: 'AdministrationUserList'}"
-                                                             class="btn btn-secondary mr-1">
+                                                             class="btn btn-secondary me-1">
                                                     {{$t('actions.cancel')}}
                                                 </router-link>
                                             </div>

@@ -7,16 +7,16 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar SQL
                 </button>
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar filtro
                 </button>
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar texto
                 </button>
-                <button class="btn btn-sm btn-secondary ml-1">
+                <button class="btn btn-sm btn-secondary ms-1">
                     Adicionar visualização
                 </button>
             </div>

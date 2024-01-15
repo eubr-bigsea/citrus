@@ -44,7 +44,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12 mt-5 mb-4 border-top pt-2">
-                                    <router-link :to="{name: 'models'}" class="btn btn-secondary mr-1">
+                                    <router-link :to="{name: 'models'}" class="btn btn-secondary me-1">
                                         {{$t('actions.cancel')}}
                                     </router-link>
                                 </div>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
@@ -87,7 +87,7 @@ export default {
     xwatch: {
         '$route.params.id': function () {
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });

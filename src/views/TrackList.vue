@@ -8,7 +8,7 @@
                             <h1>{{$t('titles.track', 2)}}</h1>
                             <div>
                                 <router-link :to="{ name: 'addTrack' }"
-                                             class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                                             class="btn btn-primary btn-lemonade-primary float-left ms-2">
                                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                                 </router-link>
                             </div>
@@ -35,8 +35,8 @@
                             {{$filters.formatJsonDate(props.row.updated)}}
                         </template>
                         <template #afterFilters>
-                            <div class="ml-2 mt-4">
-                                <button type="button" class="btn btn-sm btn-light btn-outline-secondary ml-2"
+                            <div class="ms-2 mt-4">
+                                <button type="button" class="btn btn-sm btn-light btn-outline-secondary ms-2"
                                         @click="clearFilters">
                                     {{$t('actions.clearFilters')}}
                                 </button>
@@ -80,7 +80,7 @@ export default {
                 filterable: ['name', 'id'],
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },

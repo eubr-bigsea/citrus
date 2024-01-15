@@ -22,12 +22,12 @@
                                 <div class="d-flex justify-content-between col-md-12 border-bottom pt-3 pb-3">
                                     <h4>File Name</h4>
                                     <div>
-                                        <button class="btn btn-success mr-1 btn-spinner" @click.stop="save">
+                                        <button class="btn btn-success me-1 btn-spinner" @click.stop="save">
                                             <font-awesome-icon icon="spinner" class="icon" />
                                             <font-awesome-icon icon="fa fa-save" />
                                             {{$t('actions.save')}}
                                         </button>
-                                        <router-link :to="{ name: 'codeLibrary' }" class="btn btn-secondary mr-1">
+                                        <router-link :to="{ name: 'codeLibrary' }" class="btn btn-secondary me-1">
                                             {{$t('actions.cancel')}}
                                         </router-link>
                                     </div>

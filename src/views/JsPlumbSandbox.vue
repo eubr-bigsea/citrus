@@ -1,13 +1,13 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <button class="btn btn-secondary btn-sm mr-1" @click="addElement">
+            <button class="btn btn-secondary btn-sm me-1" @click="addElement">
                 Add element
             </button>
-            <button class="btn btn-secondary btn-sm mr-1" @click="addGroup">
+            <button class="btn btn-secondary btn-sm me-1" @click="addGroup">
                 Add group
             </button>
-            <button class="btn btn-secondary btn-sm mr-1" @click="addSample">
+            <button class="btn btn-secondary btn-sm me-1" @click="addSample">
                 Add sample
             </button>
         </div>

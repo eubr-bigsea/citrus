@@ -23,7 +23,7 @@
                     </template>
                     <template #actions="props">
                         <button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING' "
-                                class="btn btn-sm btn-outline-danger mr-1" :title="$t('actions.stop')"
+                                class="btn btn-sm btn-outline-danger me-1" :title="$t('actions.stop')"
                                 @click="stop(props.row)">
                             <font-awesome-icon icon="stop" />
                         </button>
@@ -95,7 +95,7 @@ export default {
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
                     base: 'fa fas',
-                    is: 'fa-sort ml-10',
+                    is: 'fa-sort ms-10',
                     up: 'fa-sort-amount-up',
                     down: 'fa-sort-amount-down'
                 },

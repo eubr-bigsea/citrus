@@ -26,7 +26,7 @@
                         <template #head="scope">
                             <div class="user-select-none" @click.prevent="customOpen($event, scope)">
                                 <div class="clearfix no-wrap">
-                                    <div class="attribute-name mr-2">
+                                    <div class="attribute-name me-2">
                                         {{scope.field.label}}
                                     </div>
                                     <!--
@@ -69,7 +69,7 @@
                              @dragover.prevent="dragOver(scope.field, $event)" @xdrop="drop(scope.field, $event)">
                             <div style="pointer-events: none;">
                                 <div class="clearfix no-wrap">
-                                    <div class="attribute-name mr-2">
+                                    <div class="attribute-name me-2">
                                         {{scope.label}}
                                     </div>
                                     <font-awesome-icon v-if="scope.field.locked" class="" icon="lock" />
@@ -250,7 +250,7 @@ export default {
             }
             /*
                 const self = this;
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     const tbody = self.$refs.table.$el.querySelector('tbody');
                     // Reset cells previously with invalid data
                     [].forEach.call(document.querySelectorAll('.invalid-data'),

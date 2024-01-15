@@ -19,7 +19,7 @@ export default {
                 { route: 'dataSourceStorage', title: 'titles.storage' },
                 //{ route: 'dataSourceValidation', title: 'titles.validation' },
                 //{ route: 'dataSourceFeatureGeneration', title: 'dataSource.featureGeneration' },
-                { route: 'dataSourceAnalysis', title: 'titles.analysis' },
+                //{ route: 'dataSourceAnalysis', title: 'titles.analysis' },
             ]
         };
     }

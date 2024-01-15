@@ -60,7 +60,7 @@
                     <b-button variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
                         {{$t('actions.cancel')}}
                     </b-button>
-                    <b-button variant="primary mr-1" size="sm" class="float-right" @click="okModal">
+                    <b-button variant="primary me-1" size="sm" class="float-right" @click="okModal">
                         {{$t('common.ok')}}
                     </b-button>
                 </template>

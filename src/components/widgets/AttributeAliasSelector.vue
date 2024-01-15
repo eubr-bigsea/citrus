@@ -77,7 +77,7 @@
                                             </div>
                                             <div>
                                                 <a v-if="index !== 0" href="#" :title="$t('actions.moveUp')"
-                                                   class="mr-2" @click.prevent="moveUp($event, index)">
+                                                   class="me-2" @click.prevent="moveUp($event, index)">
                                                     <font-awesome-icon icon="fa fa-arrow-up" />
                                                 </a>
                                                 <a v-if="index !== (value.length - 1)" href="#"
@@ -97,7 +97,7 @@
                     <b-button variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
                         {{$t('actions.cancel')}}
                     </b-button>
-                    <b-button variant="primary mr-1" size="sm" class="float-right" @click="okModal">
+                    <b-button variant="primary me-1" size="sm" class="float-right" @click="okModal">
                         {{$t('common.ok')}}
                     </b-button>
                 </template>

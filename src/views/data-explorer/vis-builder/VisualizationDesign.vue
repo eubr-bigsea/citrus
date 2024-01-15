@@ -56,12 +56,12 @@
                                       @click="saveWorkflow">
                                 <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                             </b-button>
-                            <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
+                            <b-button size="sm" variant="outline-secondary" class="float-right mt-2 me-1"
                                       data-test="refresh" @click.prevent="loadData">
                                 <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                             </b-button>
                             <!--
-                        <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
+                        <router-link class="btn btn-sm btn-outline-secondary ms-1" :to="{ name: 'index-explorer' }"
                             :title="i18n.$t('actions.back')">
                             {{ i18n.$t('actions.back') }}
                         </router-link>
@@ -128,7 +128,7 @@ import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderO
 import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
 
 import { debounce } from "../../../util.js";
-import Vue from 'vue';
+;
 import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
 
 import Plotly from '../../../components/visualization/Plotly.vue';
@@ -335,7 +335,7 @@ const load = async () => {
         error(e);
         router.push({ name: 'index-explorer' });
     } finally {
-        Vue.nextTick(() => {
+        this.$nextTick(() => {
             progress.finish();
             loadingData.value = false;
             isDirty.value = false;

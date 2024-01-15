@@ -140,7 +140,7 @@
             </div>
             <template #modal-footer>
                 <div class="w-100 text-right">
-                    <button class="btn btn-sm btn-primary mr-1" @click="okClicked">
+                    <button class="btn btn-sm btn-primary me-1" @click="okClicked">
                         {{$t('common.ok')}}
                     </button>
                     <button class="btn btn-sm btn-secondary" @click="cancelClicked">

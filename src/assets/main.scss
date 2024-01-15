@@ -448,7 +448,7 @@ footer {
 }
 
 h1 {
-    font-size: 30px;
+    font-size: 30px !important;
     font-weight: 200;
     margin-bottom: 0;
 }
@@ -956,3 +956,13 @@ ul.b-form-tags-list {
 .modal.fade {
     opacity: 1 !important;
 }
+.ml-10, .ms-10 {
+    margin-left: 10px;
+}
+
+.jumbotron {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    background-color: #e9ecef;
+    border-radius: .3rem;
+  }

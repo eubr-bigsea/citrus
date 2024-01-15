@@ -21,7 +21,7 @@
                                 {{$t('titles.workflow', 1)}} {{job.workflow.id}}
                             </router-link>
                             <button v-if="job.status === 'RUNNING' || job.status === 'PENDING' || job.status === 'WAITING' "
-                                    class="btn btn-sm btn-outline-danger mr-1 pull-right" :title="$t('actions.stop')"
+                                    class="btn btn-sm btn-outline-danger me-1 pull-right" :title="$t('actions.stop')"
                                     @click="stop(job.id)">
                                 <font-awesome-icon icon="stop" /> {{$t('actions.stop')}}
                             </button>
@@ -226,7 +226,7 @@
                                                                  :header="result.value.task.name" class="mt-2"
                                                                  header-bg-variant="light" border-variant="info">
                                                                 <div v-for="log in result.value.logs" :key="log.id"
-                                                                     class="pl-5 mt-2">
+                                                                     class="ps-5 mt-2">
                                                                     <span v-if="log.type === 'HTML'">
                                                                         <div class="html-div" v-html="log.message" />
                                                                     </span>
@@ -241,7 +241,7 @@
                                                                  header-bg-variant="light" border-variant="info">
                                                                 <h1>Objeto</h1>
                                                                 <div v-for="log in result.value.logs" :key="log.id"
-                                                                     class="pl-5 mt-2">
+                                                                     class="ps-5 mt-2">
                                                                     <span v-if="log.type === 'OBJECT' && log.message.attributes">
                                                                         <v-client-table ref="jobList"
                                                                                         :data="log.message.rows"
@@ -283,7 +283,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import DiagramComponent from '../components/Diagram.vue';
 import SourceCode from '../components/SourceCode.vue';
 import Notifier from '../mixins/Notifier.js';
