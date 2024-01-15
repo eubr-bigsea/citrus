@@ -4,7 +4,7 @@
             <div class="card-header">
                 <div class="card-title">
                     <span v-if="icon" :class="icon" />
-                    {{ $t(`titles.${type}`, 2) }}
+                    {{$t(`titles.${type}`, 2)}}
                 </div>
                 <HomeCardCounter :value="total" />
             </div>
@@ -12,12 +12,12 @@
                 <dl>
                     <HomeCardItem v-for="item in items" :key="item.id" :type="type" :item="item" />
                     <div v-if="items.length == 0">
-                        {{ $t('common.noData') }}
+                        {{$t('common.noData')}}
                     </div>
                 </dl>
                 <div v-if="items.length > 0 && type !== 'app'" class="text-right">
                     <b-button size="sm" :to="{ name: `${type}s` }" variant="link" class="bottom-right">
-                        {{ $t('common.moreRecords') }} ...
+                        {{$t('common.moreRecords')}} ...
                     </b-button>
                 </div>
             </div>

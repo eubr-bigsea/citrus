@@ -5,11 +5,11 @@
                 <div>
                     <div class="title">
                         <div class="d-flex justify-content-between align-items-center">
-                            <h1>{{ $t('titles.user') }}</h1>
+                            <h1>{{$t('titles.user')}}</h1>
                             <div>
                                 <router-link :to="{ name: 'AdministrationAddUser' }"
-                                    class="btn btn-primary btn-lemonade-primary float-left ml-2">
-                                    <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                                             class="btn btn-primary btn-lemonade-primary float-left ml-2">
+                                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                                 </router-link>
                             </div>
                         </div>
@@ -70,40 +70,40 @@
                     <v-server-table :options="options" :columns="columns">
                         <template #id="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{ props.row.id }}
+                                {{props.row.id}}
                             </router-link>
                         </template>
                         <template #full_name="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{ props.row.full_name }}
+                                {{props.row.full_name}}
                             </router-link>
                         </template>
                         <template #enabled="props">
-                            {{ $t(props.row.enabled ? 'common.yes' : 'common.no') }}
+                            {{$t(props.row.enabled ? 'common.yes' : 'common.no')}}
                         </template>
                         <template #email="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{ props.row.email }}
+                                {{props.row.email}}
                             </router-link>
                         </template>
                         <template #roles="props">
                             <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
                                 <span v-for="role in props.row.roles" :key="role.id">
-                                    <div class="badge badge-secondary p-1 mr-1">{{ role.label }}</div>
+                                    <div class="badge badge-secondary p-1 mr-1">{{role.label}}</div>
                                 </span>
                             </router-link>
                         </template>
                         <template #notes="props">
-                            {{ props.row.notes }}
+                            {{props.row.notes}}
                         </template>
 
                         <template #confirmed_at="props">
                             <div v-if="isConfirmedUser(props.row.confirmed_at)">
-                                {{ $filters.formatJsonDate(props.row.confirmed_at) }}
+                                {{$filters.formatJsonDate(props.row.confirmed_at)}}
                                 <font-awesome-icon icon="check" />
                             </div>
                             <button v-else class="btn btn-sm btn-success" @click="confirmUser(props.row.id)">
-                                {{ $t('common.confirm') }}
+                                {{$t('common.confirm')}}
                             </button>
                         </template>
 
@@ -127,10 +127,10 @@ let thornUrl = import.meta.env.VITE_THORN_URL;
 
 
 export default {
-    mixins: [Notifier],
     components: {
         //'v-server-table': VServerTable,
     },
+    mixins: [Notifier],
     data() {
         const self = this;
         return {
@@ -197,7 +197,7 @@ export default {
                     }
                 }
             }
-        }
+        };
     },
     methods: {
         clearFilters() {

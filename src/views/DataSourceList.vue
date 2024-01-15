@@ -1,10 +1,10 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{ $t('titles.dataSource', 2) }}</h1>
+            <h1>{{$t('titles.dataSource', 2)}}</h1>
             <router-link v-if="hasAnyPermission(['DATA_SOURCE_EDIT']) || isAdmin" id="add-data-source"
-                :to="{ name: 'addDataSource' }" class="btn btn-success">
-                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                         :to="{ name: 'addDataSource' }" class="btn btn-success">
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </router-link>
         </div>
         <div class="card">
@@ -12,42 +12,42 @@
                 <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList">
                     <template #id="props">
                         <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
-                            {{ props.row.id }}
+                            {{props.row.id}}
                         </router-link>
                     </template>
                     <template #name="props">
                         <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
-                            {{ props.row.name }}
+                            {{props.row.name}}
                         </router-link>
                     </template>
                     <template #actions="props">
                         <div class="btn-group" role="group">
                             <button v-if="visualizable(props.row)" :title="$t('common.preview')"
-                                class="btn btn-spinner btn-primary btn-sm" @click.stop="handlePreview(props.row.id)">
+                                    class="btn btn-spinner btn-primary btn-sm" @click.stop="handlePreview(props.row.id)">
                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                 <font-awesome-icon icon="fa-eye" />
                             </button>
                             <a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info"
-                                :title="$t('actions.download')" target="_blank">
+                               :title="$t('actions.download')" target="_blank">
                                 <font-awesome-icon icon="download" />
                             </a>
                             <a v-if="props.row.format === 'PARQUET'" :href="getDownloadLink(props.row, true)"
-                                class="btn btn-sm btn-secondary" :title="$t('actions.download') + ' CSV'" target="_blank">
+                               class="btn btn-sm btn-secondary" :title="$t('actions.download') + ' CSV'" target="_blank">
                                 <font-awesome-icon icon="download" /> CSV
                             </a>
                             <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
-                                @click="remove(props.row.id)">
+                                    @click="remove(props.row.id)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
                     </template>
                     <template #created="props">
-                        {{ $filters.formatJsonDate(props.row.created) }}
+                        {{$filters.formatJsonDate(props.row.created)}}
                     </template>
                     <template #tags="props">
                         <div v-if="props.row.tags">
                             <div v-for="tag in (props.row.tags || '').split(',')" :key="tag" class="badge badge-info mr-1">
-                                {{ tag }}
+                                {{tag}}
                             </div>
                         </div>
                     </template>

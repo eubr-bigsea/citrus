@@ -45,15 +45,15 @@
                 <template #modal-footer>
                     <div class="w-100">
                         <b-button variant="secondary"
-                               size="sm"
-                               class="btn-sm ml-1 float-right"
-                               @click="closeModal">
+                                  size="sm"
+                                  class="btn-sm ml-1 float-right"
+                                  @click="closeModal">
                             {{$t('actions.cancel')}}
                         </b-button>
                         <b-button variant="outline-primary"
-                               size="sm"
-                               class="btn-sm float-right"
-                               @click="removeValue">
+                                  size="sm"
+                                  class="btn-sm float-right"
+                                  @click="removeValue">
                             {{$t('actions.removeValue')}}
                         </b-button>
                     </div>

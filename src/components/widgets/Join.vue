@@ -94,8 +94,8 @@
                         {{$t('common.ok')}}
                     </b-button>
                     <b-button variant="secondary"
-                           size="sm"
-                           @click="cancelClicked">
+                              size="sm"
+                              @click="cancelClicked">
                         {{$t('actions.cancel')}}
                     </b-button>
                 </div>

@@ -1,5 +1,5 @@
 <template>
-    {{ displayNumber }}
+    {{displayNumber}}
 </template>
 
 <script setup>
