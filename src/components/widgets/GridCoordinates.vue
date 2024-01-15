@@ -66,13 +66,13 @@
                 <div class="w-100">
                     <b-button variant="primary"
                               size="sm"
-                              class="ms-1 float-right"
+                              class="ms-1 float-end"
                               @click="closeModal">
                         {{$t('common.ok')}}
                     </b-button>
                     <b-button variant="outline-primary"
                               size="sm"
-                              class="float-right"
+                              class="float-end"
                               @click="removeValue">
                         {{$t('actions.removeValue')}}
                     </b-button>

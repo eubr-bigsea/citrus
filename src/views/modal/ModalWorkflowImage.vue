@@ -21,7 +21,7 @@
         </b-form>
         <template #modal-footer>
             <div>
-                <b-button variant="primary btn-sm" class="float-right me-1" :disabled="(workflow.name === '')"
+                <b-button variant="primary btn-sm" class="float-end me-1" :disabled="(workflow.name === '')"
                           @click="okClicked">
                     {{$t('common.ok')}}
                 </b-button>

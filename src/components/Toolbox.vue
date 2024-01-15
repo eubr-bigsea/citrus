@@ -51,7 +51,7 @@
                                               :title="op.operation.name"
                                               v-text="op.operation.name" />
                                         <font-awesome-icon icon="fa fa-bars fa-1x"
-                                                           class="float-right" />
+                                                           class="float-end" />
                                     </a>
                                 </span>
                             </div>
@@ -84,7 +84,7 @@
                                                   class="ms-3"
                                                   v-text="op.operation.name" />
                                             <font-awesome-icon icon="fa fa-bars fa-1x"
-                                                               class="float-right" />
+                                                               class="float-end" />
                                         </a>
                                     </b-collapse>
                                 </div>
@@ -103,7 +103,7 @@
                                 @dragend="stopDrag">
                             {{op.name}}
                             <font-awesome-icon icon="fa fa-bars fa-1x"
-                                               class="float-right" />
+                                               class="float-end" />
                         </b-link>
                     </span>
                 </div>

@@ -32,7 +32,7 @@
                                 </small>
                                 <a href="#"
                                    :title="$t('actions.delete')"
-                                   class="ms-1 float-right btn btn-sm py-0 btn-light text-danger"
+                                   class="ms-1 float-end btn btn-sm py-0 btn-light text-danger"
                                    @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle" />
                                 </a>

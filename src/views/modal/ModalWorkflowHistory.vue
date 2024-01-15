@@ -22,7 +22,7 @@
         </div>
         <template #modal-footer>
             <div class="w-100">
-                <b-button variant="secondary_sm" class="float-right btn-outline-secondary" @click="close">
+                <b-button variant="secondary_sm" class="float-end btn-outline-secondary" @click="close">
                     {{$t('actions.cancel')}}
                 </b-button>
             </div>

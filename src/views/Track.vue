@@ -6,7 +6,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h1> {{workflow.name}} </h1>
                     <div>
-                        <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-left me-1">
+                        <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-start me-1">
                             {{$t('actions.back')}}</router-link>
                     </div>
                 </div>
@@ -20,10 +20,6 @@
                     <p class="border-bottom">
                         {{workflow.name}}
                     </p>
-                    <!--
-                    <VuePerfectScrollbar v-if="loaded" ref="scrollBar" useBothWheelAxes="true" class="scroll-area"
-                        style="margin-right:-15px">
-                        -->
                     <form v-if="loaded" ref="form" class="pe-3 zoom-90">
                         <div v-for="field in sortedEditFields" :key="field.key" class="lemonade-widgets"
                              :data-name="field.name" :data-type="field.sourceType"
@@ -55,9 +51,6 @@
                                        :type="prop.field.type" xlookups-method="getLookups" xlookups="lookups" />
                         </div>
                     </form>
-                    <!--
-                    </VuePerfectScrollbar>
-                    -->
                     <div v-else class="text-bold-normal">
                         <label>{{$t('common.filter')}}:</label>
                         <b-skeleton type="input" width="65%" />
@@ -74,15 +67,15 @@
                         <b-skeleton animation="wave" width="70%" height="60px" />
                     </div>
                     <div class="buttons mt-5 pt-2 text-center border-top">
-                        <button class="btn btn-sm btn-outline-secondary float-right ms-1 mb-2"
+                        <button class="btn btn-sm btn-outline-secondary float-end ms-1 mb-2"
                                 @click="showWorkflowInfo">
                             <font-awesome-icon icon="fas fa-info-circle" />
                         </button>
-                        <button class="btn btn-sm btn-primary float-right ms-1 mb-2" type="submit" :disabled="running"
+                        <button class="btn btn-sm btn-primary float-end ms-1 mb-2" type="submit" :disabled="running"
                                 @click="execute">
                             <font-awesome-icon icon="fa fa-search" /> {{$t('actions.execute')}}
                         </button>
-                        <button class="btn btn-sm btn-outline-info float-right" type="button" :disabled="running"
+                        <button class="btn btn-sm btn-outline-info float-end" type="button" :disabled="running"
                                 @click="showHelp">
                             <font-awesome-icon icon="fa fa-question-circle" /> {{$t('variables.help')}}
                         </button>
@@ -207,7 +200,6 @@
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
 import DateComponent from '../components/widgets/Date.vue';
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import io from 'socket.io-client';
 import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
@@ -284,7 +276,6 @@ export default {
     components: {
         'date-component': DateComponent,
         'caipirinha-visualization': CapirinhaVisualization,
-        VuePerfectScrollbar
     },
     mixins: [Notifier],
     data() {

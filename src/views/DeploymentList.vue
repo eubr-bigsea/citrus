@@ -125,10 +125,10 @@ export default {
                 sortable: ['id', 'name', 'type', 'created', 'updated', 'current_status'],
                 filterable: ['id', 'description', 'type', 'created'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ms-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                   base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,

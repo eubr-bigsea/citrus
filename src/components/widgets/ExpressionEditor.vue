@@ -108,7 +108,7 @@
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <button class="btn btn-success btn-sm float-right" @click.prevent="add">
+                    <button class="btn btn-success btn-sm float-end" @click.prevent="add">
                         <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.simpleAdd')}}
                     </button>
                 </div>

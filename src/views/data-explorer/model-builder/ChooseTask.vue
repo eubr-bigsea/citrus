@@ -202,7 +202,7 @@
                 </div>
                 <div v-if="step === 3"></div>
             </b-card-text>
-            <div class="float-right">
+            <div class="float-end">
                 <b-button v-if="step !== 1" href="#" variant="secondary" size="sm" class="me-1" @click="previous">
                     Anterior</b-button>
                 <b-button href="#" variant="primary" size="sm" @click="next">Próximo</b-button>

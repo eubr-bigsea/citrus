@@ -38,7 +38,7 @@
                             </template>
                         </v-select>
                         <div class="mt-2 ">
-                            <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-right"
+                            <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-end"
                                         size="sm" no-caret>
                                 <template #button-content>
                                     <font-awesome-icon icon="ellipsis-h" />
@@ -52,11 +52,11 @@
                                     ...
                                 </b-dropdown-item>
                             </b-dropdown>
-                            <b-button variant="primary" size="sm" class="float-right mt-2" data-test="save"
+                            <b-button variant="primary" size="sm" class="float-end mt-2" data-test="save"
                                       @click="saveWorkflow">
                                 <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                             </b-button>
-                            <b-button size="sm" variant="outline-secondary" class="float-right mt-2 me-1"
+                            <b-button size="sm" variant="outline-secondary" class="float-end mt-2 me-1"
                                       data-test="refresh" @click.prevent="loadData">
                                 <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                             </b-button>

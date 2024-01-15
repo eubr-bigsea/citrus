@@ -46,13 +46,13 @@
                     <div class="w-100">
                         <b-button variant="secondary"
                                   size="sm"
-                                  class="btn-sm ms-1 float-right"
+                                  class="btn-sm ms-1 float-end"
                                   @click="closeModal">
                             {{$t('actions.cancel')}}
                         </b-button>
                         <b-button variant="outline-primary"
                                   size="sm"
-                                  class="btn-sm float-right"
+                                  class="btn-sm float-end"
                                   @click="removeValue">
                             {{$t('actions.removeValue')}}
                         </b-button>
@@ -80,10 +80,10 @@ export default {
                 perPage: 5,
                 perPageValues: [],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ms-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                   base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 columnsClasses: {
                     key: 'text-center',

@@ -1,12 +1,12 @@
 <template>
     <b-card class="analysis_card border">
         <template #header>
-            <div class="float-left">
+            <div class="float-start">
                 <h6 class="mb-0">
                     {{info.attr.name}}
                 </h6>
             </div>
-            <div class="float-right text-right">
+            <div class="float-end text-right">
                 <button class="btn btn-link btn-sm m-0 p-0 pe-1" @click="deleteCard">
                     <font-awesome-icon icon="edit"
                                        :title="$t('actions.edit')" />
@@ -25,7 +25,7 @@
                 </button>
             </div>
             <!--
-            <b-dropdown id="dropdown-right" right class="m-2 float-right" variant="outline-dark" size="sm">
+            <b-dropdown id="dropdown-right" right class="m-2 float-end" variant="outline-dark" size="sm">
                 <b-dropdown-item href="#" @click="deleteCard">
                     <font-awesome-icon icon="trash" /> {{ $t('actions.delete') }}
                 </b-dropdown-item>

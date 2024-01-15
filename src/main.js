@@ -93,10 +93,12 @@ import TextComponent from './components/widgets/Text.vue';
 import TextAreaComponent from './components/widgets/TextArea.vue';
 import UrlComponent from './components/widgets/Url.vue';
 import Plotly from './components/visualization/Plotly.vue';
-
+import ConfirmComponenent from './components/ConfirmComponent.vue';
 import VueSelect from "vue-select";
 import VueGridLayout from 'vue3-grid-layout-next';
 
+import * as ConfirmDialog from 'vuejs-confirm-dialog'
+import { createConfirmDialog } from 'vuejs-confirm-dialog'
 
 //Vue.use(BootstrapVue);
 import { BButton } from "bootstrap-vue-next";
@@ -372,6 +374,7 @@ openIdService.loadConfig(store).then(() => {
     };
     app.use(Toast, toastOptions);
 
+    app.use(ConfirmDialog);
 
     app.use(store);
     app.use(i18n);
@@ -380,10 +383,26 @@ openIdService.loadConfig(store).then(() => {
     const toast = useToast();
     app.config.globalProperties.$snotify = {
         error: (text, title, opts) => {
-            toast.error(text, { ... toastOptions, opts})
+            toast.error(text, { ...toastOptions, opts })
         },
         success: (text, title, opts) => {
-            toast.success(text, { ... toastOptions, ... opts})
+            toast.success(text, { ...toastOptions, ...opts })
+        },
+        info: (text, title, opts) => {
+            toast.info(text, { ...toastOptions, ...opts })
+        },
+        alert: (text, title, opts) => {
+            toast.alert(text, { ...toastOptions, ...opts })
+        },
+        confirm: (question, title, opts) => {
+            const dialog = createConfirmDialog(ConfirmComponenent, 
+                {question, title},
+                { chore: true, keepInitial: true });
+            dialog.onConfirm(() => {
+                opts.callback();
+            })
+
+            dialog.reveal()
         }
     };
 

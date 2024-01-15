@@ -1,5 +1,5 @@
 <template>
-    <BNavbar v-b-color-mode="'light'" toggleable="lg" variant="white" class="border">
+    <BNavbar v-b-color-mode="'light'" toggleable="lg" variant="white" class="border-bottom">
         <BNavbarToggle target="nav-collapse" />
         <BNavbarBrand :to="{ name: 'home' }" class="me-5">
             <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32"

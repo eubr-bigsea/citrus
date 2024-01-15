@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;" class="step" :class="stepClass">
-        <div class="float-left text-secondary step-drag-handle">
+        <div class="float-start text-secondary step-drag-handle">
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
         <div v-if="hasProblems" class="pulse-item text-danger"
@@ -8,7 +8,7 @@
             <font-awesome-icon icon="fa fa-question-circle" />
             {{hasProblems.label}}
         </div>
-        <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
+        <div ref="step" class="float-start step" style="width: calc(100% - 25px)">
             <div class="step-description">
                 <input v-if="!locked && index > 0" v-model="editableStep.selected" type="checkbox">&nbsp;
                 <span class="step-number">#{{index + 1}}</span> -
@@ -23,7 +23,7 @@
 
                 <small v-if="step?.forms?.comment?.value" class="step-comment">{{step?.forms?.comment?.value}}</small>
                 <div class="btn-group" role="group" aria-label="Step commands" />
-                <div v-if="!editableStep.editing" role="group" class="btn-group zoom-buttom float-right">
+                <div v-if="!editableStep.editing" role="group" class="btn-group zoom-buttom float-end">
                     <button v-if="editableStep.editable" class="btn btn-sm btn-light text-primary"
                             :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
@@ -88,7 +88,7 @@
                         </template>
                     </div>
 
-                    <div class="btn-group float-right mb-2">
+                    <div class="btn-group float-end mb-2">
                         <button class="btn btn-sm btn-light text-primary" :title="$t('actions.save')" @click="save">
                             <font-awesome-icon icon="fa fa-save" />
                         </button>

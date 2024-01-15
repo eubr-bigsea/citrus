@@ -28,7 +28,7 @@
                     {{$t(props.row.system? 'common.yes': 'common.no')}}
                 </template>
                 <template #actions="props">
-                    <button v-if="!props.row.system" class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                    <button v-if="!props.row.system" class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                         <font-awesome-icon icon="trash" />
                     </button>
                 </template>
@@ -68,10 +68,10 @@ export default {
                 sortable: ['name', 'id'],
                 filterable: ['name', 'id', 'description', 'label'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ms-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                   base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,

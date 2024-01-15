@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="float-right me-1 editor-controls">
+        <div class="float-end me-1 editor-controls">
             <span v-if="editing">
                 <small class="me-1"><a href="#" @click.prevent="cancel">{{$t('actions.cancel')}}</a></small>
                 <small><a href="#" @click.prevent="save">{{$t('actions.save')}}</a></small>
@@ -13,7 +13,7 @@
                     <font-awesome-icon icon="fa fa-trash" /></a>
             </small>
         </div>
-        <div v-if="editing" class="ms-2 float-left">
+        <div v-if="editing" class="ms-2 float-start">
             {{$t('dashboard.markupVisualization')}}:
         </div>
 
@@ -42,7 +42,7 @@ export default {
         visualizationData: { type: Object, default: () => null },
         publicRoute: { default: true, type: Boolean }
     },
-    emits: ['update-value'],
+    emits: ['update-value', 'on-save', 'on-delete'],
     data: function () {
         return {
             editing: false,
@@ -50,6 +50,7 @@ export default {
             content: { ... this.visualizationData }
         };
     },
+    /*
     watch: {
         content: {
             deep: true,
@@ -57,18 +58,18 @@ export default {
                 this.$emit('update-value', newValues);
             }
         }
-    },
+    },*/
     methods: {
 
         edit() {
             this.editing = true;
         },
         deleteText() {
-            this.$root.$emit('ondelete-visualization', this.visualizationData.id);
+            this.$emit('on-delete', this.visualizationData.id);
         },
         save() {
-            const data = JSON.stringify({ markdown: this.visualizationData.markdown });
-            this.$root.$emit('onsave-visualization', this.visualizationData.id, data, (result, responseData) => {
+            const data = JSON.stringify({ markdown: this.content.markdown });
+            this.$emit('on-save', this.visualizationData.id, data, (result, responseData) => {
                 this.editing = false;
                 this.markdown = sanitizeMarkdown(JSON.parse(responseData).markdown || "");
             });

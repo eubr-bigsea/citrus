@@ -13,11 +13,11 @@
                @input="updated($event)"
                @mousedown="mouseDown"
                @mouseup="mouseUp">
-        <div class="float-left">
+        <div class="float-start">
             {{values[language] ? values[language][0] : ''}}:
             {{split || 0}}%
         </div>
-        <div class="float-right text-right">
+        <div class="float-end text-right">
             {{values[language] ? values[language][1] : ''}}:
             {{100-split}}%
         </div>

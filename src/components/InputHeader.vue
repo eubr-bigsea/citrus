@@ -1,37 +1,55 @@
 <template>
-    <h2>
-        <input :title="$t('actions.rename')"
-               :value="value"
-               :size="titleSize"
-               @input="$emit('input', $event.target.value)">
-    </h2>
+    <div class="input-header mb-2">
+        <font-awesome-icon icon="fa fa-edit" class="text-primary" />
+        <h2>
+            <input :title="$t('actions.rename')" :value="props.modelValue" maxlength="50"
+                @input="emit('update:modelValue', $event.target.value)"
+                placeholder="Informe o nome">
+        </h2>
+    </div>
 </template>
 
-<script>
+<script setup>
+const props = defineProps(['modelValue'])
+const emit = defineEmits(['update:modelValue'])
+/*
 export default {
     name: 'InputHeader',
     props: {
         value: {type: String, default: null}
     },
-    emits: ['input'],
+    data(){
+        return {
+            internalValue: this.value,
+        }
+    },
+    emits: ['update:modelValue'],
     computed: {
         titleSize() {
             return (this.value || '').length;
         }
     }
 };
+*/
 </script>
 
 <style scoped>
-    input {
-        background-color: transparent;
-        border: 1px solid transparent;
-        font-size: 30px;
-        font-weight: 300;
-        display: inline-block;
-    }
+.input-header>>>h2 {
+    display: inline
+}
+input:placeholder-shown {
+   font-style: italic;
+}
+input {
+    background-color: transparent;
+    border: 1px solid transparent;
+    font-size: 30px;
+    font-weight: 300;
+    display: inline-block;
+    width: 90%;
+}
 
-    input:hover {
-        border-color: #CCC;
-    }
+input:hover {
+    border-color: #CCC;
+}
 </style>

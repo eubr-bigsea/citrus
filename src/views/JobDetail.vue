@@ -15,7 +15,7 @@
                         <div>
                             <router-link v-if="workflow.id"
                                          :to="{name: 'editWorkflow', params: {id: workflow.id, platform: workflow.platform.id}}"
-                                         class="btn btn-outline-primary d-print-none float-right btn-sm">
+                                         class="btn btn-outline-primary d-print-none float-end btn-sm">
                                 <font-awesome-icon icon="fa-chevron-left" />
                                 &nbsp; {{$t('actions.back')}} -
                                 {{$t('titles.workflow', 1)}} {{job.workflow.id}}

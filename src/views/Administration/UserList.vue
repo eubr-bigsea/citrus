@@ -8,7 +8,7 @@
                             <h1>{{$t('titles.user')}}</h1>
                             <div>
                                 <router-link :to="{ name: 'AdministrationAddUser' }"
-                                             class="btn btn-primary btn-lemonade-primary float-left ms-2">
+                                             class="btn btn-primary btn-lemonade-primary float-start ms-2">
                                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                                 </router-link>
                             </div>
@@ -55,7 +55,7 @@
                         </template>
 
                         <template #actions="props">
-                            <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
+                            <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </template>
@@ -103,9 +103,9 @@ export default {
                 filterable: ['full_name', 'id', 'email'],
                 sortIcon: {
                     /*base: 'fa fas',
-                    is: 'fa-sort ms-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down',*/
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down',*/
                     base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',

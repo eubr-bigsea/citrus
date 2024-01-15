@@ -3,11 +3,11 @@
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{$t('titles.workflow', 2)}}</h1>
             <div>
-                <button class="btn btn-outline-info float-left" @click.prevent="showImportWorkflow">
+                <button class="btn btn-outline-info float-start" @click.prevent="showImportWorkflow">
                     <font-awesome-icon icon="fa fa-download" />
                     {{$t('actions.import')}}
                 </button>
-                <router-link :to="{name: 'addWorkflow'}" class="btn btn-primary btn-lemonade-primary float-left ms-2">
+                <router-link :to="{name: 'addWorkflow'}" class="btn btn-primary btn-lemonade-primary float-start ms-2">
                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </router-link>
             </div>
@@ -41,7 +41,7 @@
                         {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #afterFilter>
-                        <div class="form-group float-left ms-3">
+                        <div class="form-group float-start ms-3">
                             <label>{{$t('common.platform')}}</label>
                             <select v-model="platform" class="form-control">
                                 <option />
@@ -50,7 +50,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="form-group float-left ms-3 mt-4">
+                        <div class="form-group float-start ms-3 mt-4">
                             <button type="button" class="btn btn-sm btn-light btn-outline-secondary ms-2"
                                     @click="clearFilters">
                                 {{$t('actions.clearFilters')}}
@@ -82,10 +82,10 @@
             </b-form-radio-group>
             <template #modal-footer>
                 <div class="w-100">
-                    <b-button variant="secondary_sm" class="float-right btn-sm btn-outline-secondary" @click="closeImport">
+                    <b-button variant="secondary_sm" class="float-end btn-sm btn-outline-secondary" @click="closeImport">
                         {{$t('actions.cancel')}}
                     </b-button>
-                    <b-button variant="primary" class="float-right me-2 btn-sm " @click="importWorkflow">
+                    <b-button variant="primary" class="float-end me-2 btn-sm " @click="importWorkflow">
                         {{$t('common.ok')}}
                     </b-button>
                 </div>

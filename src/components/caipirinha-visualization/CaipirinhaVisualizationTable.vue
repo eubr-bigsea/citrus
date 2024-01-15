@@ -28,10 +28,10 @@ export default {
                 perPageValues: [],
                 skin: 'table-smallest table vis-table',
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ms-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                   base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 texts: {
                     filter: this.$t('common.filter'),

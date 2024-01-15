@@ -4,6 +4,7 @@ export default {
             this.$snotify.confirm(
                 question, title,
                 {
+                    callback,
                     position: 'centerTop',
                     xbuttons: {
                         text: 'Yes', action: () => callback()
