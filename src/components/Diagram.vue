@@ -6,9 +6,7 @@
                          @onremove-tasks="removeSelectedTasks" />
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
              class="lemonade-container not-selectable" @click="diagramClick">
-            <!--
-                 <VuePerfectScrollbar :settings="settings" class="scroll-area" @ps-scroll-y="scrollHandle" />
-                -->
+            
             <div class="scroll-area">
                 <div id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                      :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
@@ -63,7 +61,7 @@ const connectorPaintStyle = {
     outlineWidth: 2,
 };
 
-const DiagramComponent = Vue.extend({
+export default {
     name: 'DiagramComponent',
     components: {
         'task-component': TaskComponent,
@@ -253,8 +251,6 @@ const DiagramComponent = Vue.extend({
         );
 
         /* scroll bars */
-        // @FIXME PerfectScrollbar.initialize(self.diagramElement.parentElement);
-
         this.$el.addEventListener('keyup', this.keyboardKeyUpTrigger, true);
 
         /* selection by dragging */
@@ -952,7 +948,6 @@ const DiagramComponent = Vue.extend({
             let adjust = (1.0 / zoom) * 5000 + 'px';
             el.style.width = adjust;
             el.style.height = adjust;
-            // @FIXME PerfectScrollbar.update(this.diagramElement.parentElement);
         },
         setZoomPercent(zoom) {
             this.zoom = zoom;
@@ -1062,6 +1057,7 @@ const DiagramComponent = Vue.extend({
         cancelExecute() {
             this.showExecutionModal = false;
         },
+        /*
         execute() {
             this.showExecutionModal = false;
 
@@ -1111,6 +1107,7 @@ const DiagramComponent = Vue.extend({
                     }
                 });
         },
+        
         onClickExecute() {
             let self = this;
             let headers = {
@@ -1145,7 +1142,7 @@ const DiagramComponent = Vue.extend({
                         self.$root.$refs.toastr.e(`Unhandled error: ${JSON.stringify(ex)}`);
                     }
                 });
-        },
+        },*/
         _fixGroupConnections(self) {
             return function (group) {
                 let members = group.getMembers();
@@ -1276,9 +1273,8 @@ const DiagramComponent = Vue.extend({
             self.instance.setContainer('lemonade-diagram');
         }
     },
-});
+}
 
-export default DiagramComponent;
 </script>
 
 <style scoped lang="scss">
@@ -1291,7 +1287,7 @@ export default DiagramComponent;
 
 .scroll-area {
     width: 100%;
-    height: 87vh;
+    height: 80vh;
     overflow: auto;
 }
 

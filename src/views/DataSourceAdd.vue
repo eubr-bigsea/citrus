@@ -164,7 +164,7 @@
                 </div>
             </div>
             <div v-if="step === 2 " class="col">
-                <button class="btn btn-outline-secondary mt-2 ml- float-right" @click="step=1">
+                <button class="btn btn-outline-secondary mt-2 ml- float-end" @click="step=1">
                     {{$t('actions.back')}}
                 </button>
             </div>

@@ -97,7 +97,7 @@
                                 </b-tabs>
                             </div>
                             <div class="col-md-12 mt-3 border-top pt-1">
-                                <button class="btn float-right" :class="{'btn-success': true }" :disabled="!canCreate"
+                                <button class="btn float-end" :class="{'btn-success': true }" :disabled="!canCreate"
                                         @click="choose($event)">
                                     {{$t('actions.confirm')}}
                                 </button>

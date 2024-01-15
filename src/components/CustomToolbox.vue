@@ -1,6 +1,5 @@
 <template>
     <div class="lemonade-toolbox">
-        <VuePerfectScrollbar class="scroll-area" :settings="settings">
             <div>
                 <ul class="list-group">
                     <!-- <li
@@ -21,18 +20,16 @@
                                     @dragend="stopDrag">
                                 {{item.name}}
                                 <font-awesome-icon icon="fa fa-bars fa-1x"
-                                                   class="float-right" />
+                                                   class="float-end" />
                             </b-link>
                         </span>
                     </div>
                 </ul>
             </div>
-        </VuePerfectScrollbar>
         <div ref="opDrag" />
     </div>
 </template>
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import ToolboxMixin from '../mixins/Toolbox.js';
 import Notifier from '../mixins/Notifier.js';
 import { debounce } from '../util.js';
@@ -45,9 +42,7 @@ const standUrl = import.meta.env.VITE_STAND_URL;
 
 export default {
     name: 'CustomToolbox',
-    components: {
-        VuePerfectScrollbar
-    },
+
     mixins: [ToolboxMixin, Notifier],
     props: {
         operations: {

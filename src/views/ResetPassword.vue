@@ -5,10 +5,10 @@
                 <div class="brand" />
                 <div class="card fat">
                     <div class="card-body">
-                        <h4 class="card-title float-left">
+                        <h4 class="card-title float-start">
                             {{$t('titles.resetPassword')}}
                         </h4>
-                        <div class="float-right navbar-brand logo" />
+                        <div class="float-end navbar-brand logo" />
 
                         <form v-if="!showSuccess" @submit.prevent="resetPassword">
                             <div class="form-group">

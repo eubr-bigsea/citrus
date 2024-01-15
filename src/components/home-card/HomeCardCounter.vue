@@ -1,5 +1,5 @@
 <template>
-    <span class="home-card-counter float-right"
+    <span class="home-card-counter float-end"
           title="Total">
         <animated-number :value="value" :speed="10" />
     </span>

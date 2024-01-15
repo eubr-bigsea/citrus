@@ -32,7 +32,7 @@
                                  role="button">
                                 {{result[0].title}}
                                 <div v-if="result[0] && result[0].best"
-                                     class="float-right">
+                                     class="float-end">
                                     {{result[0].best.toFixed(4)}}
                                 </div>
                                 <!--
@@ -53,7 +53,7 @@
                 <b-card v-if="selectedJob" variant="primary">
                     <template #header>
                         <b>{{$t('titles.job')}} #{{selectedJob.id}}</b>
-                        <span class="pull-right float-right">
+                        <span class="pull-right float-end">
                             <small>Iniciada em {{$filters.formatJsonDate(selectedJob.started)}}</small>
                             <small v-if="selectedJob.finished"> / Terminada em {{$filters.formatJsonDate(selectedJob.finished)}}</small>
                         </span>

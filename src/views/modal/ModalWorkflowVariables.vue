@@ -10,7 +10,7 @@
                                  @click.prevent="select(row, index)">
                                 <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
                                     <span v-if="row.label">({{row.label}})</span></small>
-                                <a class="float-right ms-1 bn btn-sm py-0 btn-light text-danger" href="#"
+                                <a class="float-end ms-1 bn btn-sm py-0 btn-light text-danger" href="#"
                                    :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                                 </a>

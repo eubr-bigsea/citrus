@@ -46,7 +46,7 @@
 <script>
 ;
 import { anchors, endPointOptionsInput, endPointOptionsOutput } from '../jsplumb-const.js';
-const TaskComponent = Vue.extend({
+export default {
     name: 'TaskComponent',
     props: {
         draggable: { default: true, type: Boolean },
@@ -346,8 +346,8 @@ const TaskComponent = Vue.extend({
             }
         }
     },
-});
-export default TaskComponent;
+}
+
 </script>
 
 <style scoped lang="scss">

@@ -7,7 +7,7 @@
         <span v-if="field.required">&nbsp;*</span>:
         <span v-if="(showHelp === undefined || showHelp) && field.help"
               class="data-help">
-            <font-awesome-icon icon="fa fa-question-circle float-right"
+            <font-awesome-icon icon="fa fa-question-circle float-end"
                                :title="field.help" />
         </span>
     </span>

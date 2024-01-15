@@ -94,10 +94,10 @@
                     </div>
                 </template>
                 <template #modal-footer>
-                    <b-button variant="outline-secondary" size="sm" class="float-right" @click="cancelModal">
+                    <b-button variant="outline-secondary" size="sm" class="float-end" @click="cancelModal">
                         {{$t('actions.cancel')}}
                     </b-button>
-                    <b-button variant="primary me-1" size="sm" class="float-right" @click="okModal">
+                    <b-button variant="primary me-1" size="sm" class="float-end" @click="okModal">
                         {{$t('common.ok')}}
                     </b-button>
                 </template>

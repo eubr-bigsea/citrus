@@ -16,9 +16,9 @@
                 </div>
 
                 <div v-if="copy.forms.strategy.value === 'grid'">
-                    <b-checkbox v-model="copy.forms.random_grid.value">
+                    <b-form-checkbox v-model="copy.forms.random_grid.value">
                         Aleatorizar a busca na grade
-                    </b-checkbox>
+                    </b-form-checkbox>
                     <small>Aleatoriza a grade antes de realizar a busca</small>
                     <br>
                 </div>

@@ -8,7 +8,7 @@
                             <h1>{{$t('titles.track', 2)}}</h1>
                             <div>
                                 <router-link :to="{ name: 'addTrack' }"
-                                             class="btn btn-primary btn-lemonade-primary float-left ms-2">
+                                             class="btn btn-primary btn-lemonade-primary float-start ms-2">
                                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                                 </router-link>
                             </div>
@@ -79,10 +79,10 @@ export default {
                 sortable: ['name', 'id', 'updated'],
                 filterable: ['name', 'id'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ms-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                   base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,

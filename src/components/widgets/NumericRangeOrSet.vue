@@ -38,7 +38,7 @@
                              style="overflow: auto;"
                              @input="handleInput">
                     <template #default="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
-                        <b-input-group class="w-25 float-left">
+                        <b-input-group class="w-25 float-start">
                             <input v-bind="inputAttrs" :type="inputType.type" onKeyPress="return this.value.length < 12"
                                    class="border-0 w-50 form-control form-control-sm " :step="inputType.step"
                                    placeholder="Valor" v-on="inputHandlers" @keyup="handleKeyUp">
@@ -48,7 +48,7 @@
                                 </b-button>
                             </b-input-group-append>
                         </b-input-group>
-                        <div v-if="tags && tags.length" class="ps-2 mt-2 w-75 float-left">
+                        <div v-if="tags && tags.length" class="ps-2 mt-2 w-75 float-start">
                             <div v-for="(tag, i) in tags" :key="i" class="badge text-secondary badge-light2 border me-1">
                                 {{tag}} <a href="#" class="text-danger" @click.prevent="removeTag(tag)">&times;</a>
                             </div>

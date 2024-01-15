@@ -37,7 +37,7 @@
                 -->
                     <!-- FIXME
                     <b-dropdown :disabled="false && loadingData" variant="secondary" size="sm"
-                        class="float-right mt-2 ms-1" @click="saveWorkflow">
+                        class="float-end mt-2 ms-1" @click="saveWorkflow">
                         <template #button-content>
                             <font-awesome-icon icon="fa fa-cog" />
                         </template>
@@ -46,12 +46,12 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button variant="primary" size="sm" class="float-right mt-2" :disabled="editing"
+                    <b-button variant="primary" size="sm" class="float-end mt-2" :disabled="editing"
                               @click="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                     </b-button>
                     <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary"
-                              class="float-right mt-2 me-1" @click="loadData(null, null, false)">
+                              class="float-end mt-2 me-1" @click="loadData(null, null, false)">
                         <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                     </b-button>
                     <!--
@@ -100,9 +100,9 @@
                 <div class="p-2">
                     <div v-if="stats && stats.attribute === null">
                         <h5>Estatísticas do resultado</h5>
-                        <b-checkbox v-model="numericOnlyStats" class="mt-3 mb-4">
+                        <b-form-checkbox v-model="numericOnlyStats" class="mt-3 mb-4">
                             Mostrar apenas para atributos numéricos
-                        </b-checkbox>
+                        </b-form-checkbox>
                         <b-tabs>
                             <b-tab title="Estatísticas básicas" title-link-class="small-nav-link tab-small">
                                 <div class="scrollable stats">

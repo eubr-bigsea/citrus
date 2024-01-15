@@ -6,26 +6,26 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="header-pretitle">
-                                {{$t('titles.dashboard', 1)}}
+                                {{ $t('titles.dashboard', 1) }}
                             </h6>
                             <h2 v-if="publicRoute">
-                                {{dashboard.title}}
+                                {{ dashboard.title }}
                             </h2>
-                            <InputHeader v-else v-model="dashboard.title" />
+                            <input-header v-else v-model="dashboard.title" />
                         </div>
                         <div class="d-print-none">
-                            <div v-if="isLoggedIn" class="btn-group float-right" role="group">
+                            <div v-if="isLoggedIn" class="btn-group float-end" role="group">
                                 <button class="btn btn-sm btn-outline-dark" @click.stop="save">
-                                    <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
+                                    <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                                 </button>
                                 <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
-                                        @click.prevent="showProperties">
+                                    @click.prevent="showProperties">
                                     <font-awesome-icon icon="fa fa-cogs" />
                                 </button>
                             </div>
                             <button v-if="!publicRoute" class="btn btn-sm btn-success me-2"
-                                    :title="$t('actions.showProperties')" @click.prevent="addText">
-                                <font-awesome-icon icon="fa fa-plus" /> {{$t('dashboard.markupVisualization')}}
+                                :title="$t('actions.showProperties')" @click.prevent="addText">
+                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('dashboard.markupVisualization') }}
                             </button>
                         </div>
                     </div>
@@ -36,14 +36,14 @@
                                 <div class="card-body">
                                     <div v-if="layout">
                                         <grid-layout ref="grid" :layout="layout" :col-num="12" :row-height="30"
-                                                     :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
-                                                     :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
-                                                     :use-css-transforms="true" :prevent-collision="false"
-                                                     @layout-updated="layoutUpdatedEvent">
+                                            :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
+                                            :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
+                                            :use-css-transforms="true" :prevent-collision="false"
+                                            @layout-updated="layoutUpdatedEvent">
                                             <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
-                                                       :w="item.w" :h="item.h" :i="item.i" @move="moveEvent"
-                                                       @moved="movedEvent">
-                                                <caipirinha-visualization :url="item.url" :public-route="publicRoute" />
+                                                :w="item.w" :h="item.h" :i="item.i" @move="moveEvent" @moved="movedEvent">
+                                                <caipirinha-visualization :url="item.url" :public-route="publicRoute"
+                                                    @on-save="handleSaveMarkdown" @on-delete="handleDeleteMarkdown" />
                                             </grid-item>
                                         </grid-layout>
                                     </div>
@@ -53,20 +53,20 @@
                     </div>
                 </div>
                 <div v-else>
-                    <h2>{{$t('common.noData')}}</h2>
+                    <h2>{{ $t('common.noData') }}</h2>
                 </div>
             </div>
         </div>
         <b-modal id="dashboardProperties" ref="dashboardProperties" size="lg" button-size="sm"
-                 :title="$t('titles.property', 2)" :ok-only="true">
+            :title="$t('titles.property', 2)" :ok-only="true">
             <b-form @submit="save">
                 <b-form-group :label="$t('common.title', 1) + ':'">
                     <b-form-input v-model="dashboard.title" required />
                 </b-form-group>
                 <b-form-checkbox v-model="dashboard.is_public">
-                    {{$t('dashboard.public')}}
+                    {{ $t('dashboard.public') }}
                     <br>
-                    <small><em>{{$t('dashboard.publicExplanation')}}</em></small>
+                    <small><em>{{ $t('dashboard.publicExplanation') }}</em></small>
                 </b-form-checkbox>
                 <b-input-group v-if="dashboard.is_public" class="mt-3">
                     <template #append>
@@ -86,7 +86,7 @@ import Notifier from '../mixins/Notifier.js';
 import axios from 'axios';
 import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 import InputHeader from '../components/InputHeader.vue';
-import {GridLayout, GridItem} from "vue3-grid-layout-next";
+import { GridLayout, GridItem } from "vue3-grid-layout-next";
 //import Plotly from '../components/visualization/Plotly.vue';
 
 const caipirinhaUrl = import.meta.env.VITE_CAIPIRINHA_URL;
@@ -121,53 +121,47 @@ export default {
             return `${location.protocol}//${location.host}/public/dashboard/${this.dashboard.hash}`;
         }
     },
-    beforeUnmount() {
-        this.$root.$off('ondelete-visualization');
-        this.$root.$off('onsave-visualization');
-    },
     mounted() {
         this.load();
         const self = this;
-        this.$root.$on('ondelete-visualization', (visId) => {
-            this.confirm(this.$t('actions.delete'),
-                this.$t('messages.doYouWantToDelete'),
-                () => {
-                    axios
-                        .delete(`${caipirinhaUrl}/visualizations/0/0/${visId}`)
-                        .then(() => {
-                            this.success(
-                                this.$t('messages.successDeletion', {
-                                    what: this.$t('titles.visualization')
-                                })
-                            );
-                            delete self.configuration[visId];
-                            self.layout = self.layout.filter(l => l.i !== visId);
-                        })
-                        .catch(e => {
-                            this.error(e);
-                        });
-                });
-        });
-        this.$root.$on('onsave-visualization', (visualizationId, visualizationData, callback) => {
-            const params = { data: visualizationData };
-            axios
-                .patch(`${caipirinhaUrl}/visualizations/0/0/${visualizationId}`, params)
-                .then(response => {
-                    this.success(
-                        this.$t('messages.savedWithSuccess', {
-                            what: this.$t('titles.visualization')
-                        })
-                    );
-                    if (callback) {
-                        callback(true, response.data.data.data);
-                    }
-                })
-                .catch(e => {
-                    this.error(e);
-                });
-        });
     },
     methods: {
+        async handleDeleteMarkdown(visId) {
+            this.confirm(this.$t('actions.delete'),
+                this.$t('messages.doYouWantToDelete'),
+                async () => {
+                    try {
+                        await axios.delete(`${caipirinhaUrl}/visualizations/0/0/${visId}`);
+
+                        this.success(
+                            this.$t('messages.successDeletion', {
+                                what: this.$t('titles.visualization')
+                            })
+                        );
+                        delete self.configuration[visId];
+                        self.layout = self.layout.filter(l => l.i !== visId);
+                    } catch (e) {
+                        this.error(e);
+                    }
+                });
+        },
+        async handleSaveMarkdown(visualizationId, visualizationData, callback) {
+            const params = { data: visualizationData };
+            try {
+                const response = await axios.patch(`${caipirinhaUrl}/visualizations/0/0/${visualizationId}`, params);
+                this.success(
+                    this.$t('messages.savedWithSuccess', {
+                        what: this.$t('titles.visualization')
+                    })
+                );
+                if (callback) {
+                    callback(true, response.data.data.data);
+                }
+            } catch (e) {
+                this.error(e);
+            }
+        },
+
         moveEvent() {
             this.$refs.grid.$el.classList.add('grid');
         },

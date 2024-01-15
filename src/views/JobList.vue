@@ -90,14 +90,15 @@ export default {
                     created: this.$t('common.created'),
                     actions: this.$t('common.action', 2),
                     name: this.$t('common.name'),
-                    'user.name': this.$t('common.user.name')
+                    'user.name': this.$t('common.user.name'),
+                    status: this.$t('common.status'),
                 },
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ms-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                   base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,

@@ -5,7 +5,7 @@
             <!--
             <div class="filters">
                 <div class="col-md-12">
-                    <div class="form-group float-left">
+                    <div class="form-group float-start">
                         <div class="">
                             <label for="filter font-weight-bold">Filtro</label>
                             <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off" class="form-control"
@@ -14,7 +14,7 @@
                     </div>
                     <slot name="afterFilter">
                     </slot>
-                    <div v-if="perPageValues && perPageValues.length" class="form-group form-inline float-right">
+                    <div v-if="perPageValues && perPageValues.length" class="form-group form-inline float-end">
                         <div class=""><label for="limit">Limite</label>
                             <select name="limit" class="form-control form-control-sm" v-model="perPage">
                                 <option v-for="value in perPageValues" :value="value" :key="value">{{value}}</option>
@@ -29,15 +29,14 @@
                     <div class="row">
                         <div class="col-5">
                             <label for="filter font-weight-bold">Filtro</label>
-                            <input :value="query" type="text" placeholder="Busca" name="filter"
-                                   autocomplete="off"
-                                   class="form-control form-control-sm" maxlength="50" @input="search($event)">
+                            <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off"
+                                class="form-control form-control-sm" maxlength="50" @input="search($event)">
                         </div>
                         <div class="col-1 xoffset-md-6 text-right">
-                            <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-right">
+                            <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-end">
                                 <label for="limit">Limite</label>
                                 <select v-model="perPage" name="limit" class="form-select form-select-sm">
-                                    <option v-for="value in perPageValues" :key="value" :value="value">{{value}}</option>
+                                    <option v-for="value in perPageValues" :key="value" :value="value">{{ value }}</option>
                                 </select>
                             </span>
                         </div>
@@ -48,7 +47,7 @@
         <table v-show="showSkeleton && firstLoad" class="table b-table table-striped table-bordered">
             <tbody>
                 <tr v-for="row in 10" :key="row">
-                    <td v-for="col,i in columns.length" :key="i">
+                    <td v-for="col, i in columns.length" :key="i">
                         <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 75%;" />
                     </td>
                 </tr>
@@ -61,17 +60,17 @@
                         <th v-for="(heading, index) in columns" :key="index" class="header"
                             :class="{ [sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
                             @click="handleSort(heading, $event)">
-                            {{getTableHeader(heading)}}
+                            {{ getTableHeader(heading) }}
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-if="tableData.length !== 0" v-for="(row, rowIndex) in tableData" :key="rowIndex">
                         <td v-for="colName in columns" :key="colName"
-                            :class="getColumnClass(options.columnClasses, colName)">
+                            :class="getColumnClass(options.columnsClasses, colName)">
                             <slot :name="colName" :row="row">
-                                <span :class="`${getColumnClass(options.columnClasses, colName)}-scoped`">
-                                    {{row[colName]}}
+                                <span :class="`${getColumnClass(options.columnsClasses, colName)}-scoped`">
+                                    {{ row[colName] }}
                                 </span>
                             </slot>
                         </td>
@@ -81,9 +80,9 @@
             <slot name="pagination">
                 <div v-if="paginationEnabled" class="pagination-text text-center">
                     <pager-component v-if="tableCount > 0" v-model:page="currentPage" :total="tableCount"
-                                     :per-page="perPage" />
+                        :per-page="perPage" />
                     <p class="pagination-message">
-                        {{pagerMessage}}
+                        {{ pagerMessage }}
                     </p>
                 </div>
             </slot>
@@ -106,12 +105,12 @@ const props = defineProps({
     columns: { type: Array, required: true },
     //sortColumn: { type: Object, required: false, default: () => { } },
     //sortDirection: { type: Object, required: false, default: () => { } },
-    name: { type: String, required: false, default: Math.random().toString(36).slice(2, 7)},
+    name: { type: String, required: false, default: Math.random().toString(36).slice(2, 7) },
     showSkeleton: { type: Boolean, required: false, default: true },
 });
 
 const getTableHeader = (col) => ('headings' in props.options && props.options.headings[col])
-    ? props.options.headings[col] : col;
+    ? props.options.headings[col] : (col.charAt(0).toUpperCase() + col.slice(1));
 
 const loading = ref(false);
 const firstLoad = ref(true);
@@ -207,8 +206,11 @@ const populateTable = async () => {
 };
 
 const getColumnClass = (columnClasses, columnName) => {
-    return '';
-    return columnClasses[columnName] || '';
+    if (columnClasses) {
+        return columnClasses[columnName] || '';
+    } else {
+        return null;
+    }
 };
 
 const handleSort = (column, event) => {
@@ -242,9 +244,9 @@ const load = () => {
                     const params = JSON.parse(saved);
                     sortColumn.value = params.orderBy?.column;
                     sortDirection.value = params.orderBy.ascending ? 'asc' : 'desc',
-                    perPage.value = params.perPage,
-                    query.value = params.query,
-                    currentPage.value = params.page;
+                        perPage.value = params.perPage,
+                        query.value = params.query,
+                        currentPage.value = params.page;
                     tableCustomQueries.value = params.customQueries;
 
                 } catch (e) {

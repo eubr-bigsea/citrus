@@ -2,6 +2,7 @@
     <div>
         <!--web-socket / -->
         <l-navbar v-if="isLoggedIn" />
+        <DialogsWrapper />
         <div id="wrapperx">
             <!--<side-bar ref="sidebar" />-->
             <div id="page-content-wrapperx">
@@ -19,7 +20,7 @@
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import axios from 'axios';
-
+import { DialogsWrapper } from 'vuejs-confirm-dialog'
 
 export default {
     name: 'App',

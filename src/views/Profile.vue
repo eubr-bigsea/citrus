@@ -51,7 +51,7 @@
                             </div>
                             <div class="form-group row">
                                 <div v-if="isPasswordChangeable" class="col-md-12">
-                                    <b-link v-b-toggle.changePassword class="float-right">
+                                    <b-link v-b-toggle.changePassword class="float-end">
                                         {{$t('profile.alsoChangePassword')}}
                                     </b-link>
                                 </div>

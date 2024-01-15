@@ -7,7 +7,7 @@
         </div>
         <div v-else
              class="clearfix">
-            <div class="float-left"
+            <div class="float-start"
                  :data-name="field.name">
                 <b-form-checkbox v-if="visualStyle === 'explorer'"
                                  switch
@@ -17,7 +17,7 @@
                         || field.name}}
                 </b-form-checkbox>
                 <SwitchComponent v-else
-                                 class="float-left"
+                                 class="float-start"
                                  :checked="checked"
                                  :onchange="changed">
                     {{field.label ||
@@ -26,7 +26,7 @@
             </div>
             <span v-if="(showHelp === undefined || showHelp) && field.help"
                   class="data-help">
-                <font-awesome-icon icon="fa fa-question-circle float-right"
+                <font-awesome-icon icon="fa fa-question-circle float-end"
                                    :title="field.help" />
             </span>
             <!-- <div style="clear: both">

@@ -5,35 +5,35 @@
                 <div class="title">
                     <h1>Construção de Modelos</h1>
                 </div>
-                <form class="float-right form-inline w-50 d-flex justify-content-end">
+                <form class="float-end form-inline w-50 d-flex justify-content-end">
                     <label>{{$t('common.name')}}:</label>
                     <input v-model="workflowObj.name"
                            type="text"
                            class="form-control form-control-sm ms-1 w-50"
                            :placeholder="$t('common.name')"
                            maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ms-1 float-right"
+                    <button class="btn btn-sm btn-outline-success ms-1 float-end"
                             @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
                         {{$t('actions.save')}}
                     </button>
 
                     <button v-if="notRunning"
-                            class="btn btn-sm btn-outline-primary ms-1 float-right"
+                            class="btn btn-sm btn-outline-primary ms-1 float-end"
                             @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
                         {{$t('actions.train')}}
                     </button>
 
                     <button v-else
-                            class="btn btn-sm btn-outline-danger ms-1 float-right"
+                            class="btn btn-sm btn-outline-danger ms-1 float-end"
                             @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
                         {{$t('actions.stop')}}
                     </button>
 
                     <!--
-                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ms-1 float-right">
+                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ms-1 float-end">
                         <font-awesome-icon icon="fa fa-sync" />
                         Reload jobs</button>
                         -->

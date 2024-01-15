@@ -97,7 +97,7 @@
                                 <template v-for="form in forms">
                                     <tr v-for="field in getExecutionFields(form, taskCopy)" :key="field.name">
                                         <td>
-                                            <b-checkbox v-if="taskCopy.forms[field.name]"
+                                            <b-form-checkbox v-if="taskCopy.forms[field.name]"
                                                         v-model="taskCopy.forms[field.name].publishing_enabled" />
                                         </td>
                                         <td>{{field.label}}</td>
@@ -143,7 +143,6 @@
 <script>
 ;
 import axios from 'axios';
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import SwitchComponent from './widgets/Switch.vue';
 import Notifier from '../mixins/Notifier.js';
 
@@ -154,7 +153,6 @@ export default {
     name: 'PropertyWindow',
     components: {
         SwitchComponent,
-        VuePerfectScrollbar,
     },
     mixins: [Notifier],
     props: {
@@ -267,11 +265,10 @@ export default {
                 self.forms.forEach((f) => {
                     f.fields.forEach((field) => {
                         if (self.taskCopy && self.taskCopy.forms[field.name]) {
-                            Vue.set(field, "internalValue", self.taskCopy.forms[field.name].value);
+                            field.internalValue = self.taskCopy.forms[field.name].value;
                             const f = self.taskCopy.forms[field.name];
                             if (!f['new_label']) {
-                                Vue.set(self.taskCopy.forms[field.name], "new_label",
-                                    self.taskCopy.forms[field.name].label);
+                                self.taskCopy.forms[field.name].new_label = self.taskCopy.forms[field.name].label;
                             }
                             if (!f['publishing_enabled']) {
                                 delete f['new_label'];
@@ -289,7 +286,6 @@ export default {
                     });
                     f.fields.forEach((field) => {
                         field.category = f.category;
-                        Vue.set(field, "enabled", true);
                         field.enabled = true;
                         if (field.enable_conditions) {
                             if (field.enable_conditions === 'false') {
