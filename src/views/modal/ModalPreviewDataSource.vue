@@ -1,12 +1,11 @@
 <template>
-    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only no-stacking button-size="sm" centered
-        header-bg-variant="dark" header-text-variant="light" no-fade>
-        <small><strong>*{{ $t('dataSource.previewExplanation', { amount: 40 }) }}</strong></small>
+    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only
+             no-stacking button-size="sm" centered
+             header-bg-variant="dark" header-text-variant="light" no-fade>
+        <small><strong>*{{$t('dataSource.previewExplanation', { amount: 40 })}}</strong></small>
 
-        <v-server-table v-if="loaded" :columns="attributes" :options="options" ref="table">
-        </v-server-table>
-        <spinner-display v-else/>
-        
+        <v-server-table v-if="loaded" ref="table" :columns="attributes" :options="options" />
+        <spinner-display v-else />
     </b-modal>
 </template>
 <script>
@@ -16,8 +15,8 @@ import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
 export default {
-    mixins: [Notifier],
     components: {SpinnerDisplay},
+    mixins: [Notifier],
     data() {
         const self = this;
         return {
@@ -41,7 +40,7 @@ export default {
                     return {
                         data: self.samples.slice((page - 1) * limit, page * limit),
                         count: self.samples.length
-                    }
+                    };
                 }
             }
         };
@@ -58,11 +57,11 @@ export default {
                     this.attributes = [];
                 }
                 this.$nextTick(() => {
-                    this.$nextTick(()=> {})
+                    this.$nextTick(()=> {});
                     this.$refs.preview.show();
                     this.$refs.table.setCurrentPage(1);
                     this.$refs.table.refresh();
-                })
+                });
             }
             catch (e) {
                 this.error(e);

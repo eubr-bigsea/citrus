@@ -31,7 +31,7 @@
                 {{$t('actions.cancel')}}
             </b-button>
             <b-button variant="primary" class="float-right mr-1" size="sm" :disabled="(newName === '')"
-                   @click="okClicked">
+                      @click="okClicked">
                 {{$t('actions.save')}}
             </b-button>
         </template>

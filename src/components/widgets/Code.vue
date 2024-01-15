@@ -51,15 +51,15 @@
             </template>
             <template #modal-footer>
                 <b-button variant=""
-                       size="sm"
-                       class="float-right"
-                       @click="cancelModal">
+                          size="sm"
+                          class="float-right"
+                          @click="cancelModal">
                     {{$t('actions.cancel')}}
                 </b-button>
                 <b-button variant="success mr-1"
-                       size="sm"
-                       class="float-right"
-                       @click="okModal">
+                          size="sm"
+                          class="float-right"
+                          @click="okModal">
                     {{$t('common.ok')}}
                 </b-button>
             </template>

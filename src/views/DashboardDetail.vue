@@ -86,7 +86,7 @@ import Notifier from '../mixins/Notifier.js';
 import axios from 'axios';
 import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
 import InputHeader from '../components/InputHeader.vue';
-import {GridLayout, GridItem} from "vue3-grid-layout-next"
+import {GridLayout, GridItem} from "vue3-grid-layout-next";
 //import Plotly from '../components/visualization/Plotly.vue';
 
 const caipirinhaUrl = import.meta.env.VITE_CAIPIRINHA_URL;

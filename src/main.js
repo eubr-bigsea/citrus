@@ -21,7 +21,7 @@ configureCompat({
     INSTANCE_DESTROY: 'suppress-warning',
     COMPONENT_ASYNC: 'suppress-warning'
     //RENDER_FUNCTION: true,
-})
+});
 
 import Vue, { createApp, h } from '@vue/compat';
 //import VueProgressBar from "@aacassandra/vue3-progressbar";
@@ -39,8 +39,8 @@ import messages from './i18n/messages.js';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 //import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 
 import axios from 'axios';
 //import VueAxios from 'vue-axios';
@@ -52,7 +52,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 //import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons.js';
 
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('FontAwesomeIcon', FontAwesomeIcon);
 
 /* Widgets */
 
@@ -95,7 +95,7 @@ import VueGridLayout from 'vue3-grid-layout-next';
 
 //Vue.use(BootstrapVue);
 import { BButton } from "bootstrap-vue-next";
-Vue.component('b-button', BButton);
+Vue.component('BButton', BButton);
 
 Vue.component('VSelect', vSelect);
 Vue.component('GridItem', VueGridLayout.GridItem);

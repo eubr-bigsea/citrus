@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import io from 'socket.io-client';
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
 
 const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
 const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;

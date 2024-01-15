@@ -1,165 +1,163 @@
 <template>
-    <template>
-        <BNavbar toggleable="lg" variant="white" v-b-color-mode="'light'" class="border">
-            <BNavbarToggle target="nav-collapse" />
-            <BNavbarBrand :to="{ name: 'home' }" class="me-5">
-                <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32" alt="Lemonade">
-                <img class="icon_logo me-3" src="../assets/lemonade_icon.svg" width="25" height="32" alt="Lemonade">
-            </BNavbarBrand>
-            <BCollapse id="nav-collapse" is-nav>
-                <BNavbarNav>
-                    <li v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" class="nav-item">
-                        <router-link :to="{ name: 'dataSources' }" class="nav-link">
-                            <font-awesome-icon icon="fa fa-database" class="text-success" /> {{ $t('titles.dataSource', 2)
-                            }}
-                        </router-link>
-                    </li>
-                    <li v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" class="nav-item">
-                        <router-link :to="{ name: 'workflows' }" class="nav-link">
-                            <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $t('titles.workflow', 2) }}
-                        </router-link>
-                    </li>
-                    <li v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" class="nav-item">
-                        <router-link :to="{ name: 'index-explorer' }" data-test="experiments-menu" class="nav-link">
-                            <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $t('titles.dataExplorer', 2) }}
-                        </router-link>
+    <BNavbar v-b-color-mode="'light'" toggleable="lg" variant="white" class="border">
+        <BNavbarToggle target="nav-collapse" />
+        <BNavbarBrand :to="{ name: 'home' }" class="me-5">
+            <img class="full_logo" src="../assets/lemonade_logo.svg" width="157" height="32"
+                 alt="Lemonade">
+            <img class="icon_logo me-3" src="../assets/lemonade_icon.svg" width="25" height="32"
+                 alt="Lemonade">
+        </BNavbarBrand>
+        <BCollapse id="nav-collapse" is-nav>
+            <BNavbarNav>
+                <li v-if="hasAnyPermission(DATA_SOURCE_PERMISSIONS) || isAdmin" class="nav-item">
+                    <router-link :to="{ name: 'dataSources' }" class="nav-link">
+                        <font-awesome-icon icon="fa fa-database" class="text-success" /> {{$t('titles.dataSource', 2)}}
+                    </router-link>
+                </li>
+                <li v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" class="nav-item">
+                    <router-link :to="{ name: 'workflows' }" class="nav-link">
+                        <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{$t('titles.workflow', 2)}}
+                    </router-link>
+                </li>
+                <li v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" class="nav-item">
+                    <router-link :to="{ name: 'index-explorer' }" data-test="experiments-menu" class="nav-link">
+                        <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{$t('titles.dataExplorer', 2)}}
+                    </router-link>
+                </li>
+                <li v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" class="nav-item">
+                    <router-link :to="{ name: 'tracks' }" class="nav-link">
+                        <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{$t('titles.track', 2)}}
+                    </router-link>
+                </li>
+                <li v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" class="nav-item">
+                    <router-link :to="{ name: 'jobs' }" class="nav-link">
+                        <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{$t('titles.jobs', 2)}}
+                    </router-link>
+                </li>
+                <li v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" class="nav-item">
+                    <router-link :to="{ name: 'dashboards' }" class="nav-link">
+                        <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{$t('titles.dashboard', 2)}}
+                    </router-link>
+                </li>
+            </BNavbarNav>
 
-                    </li>
-                    <li v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" class="nav-item">
-                        <router-link :to="{ name: 'tracks' }" class="nav-link">
-                            <font-awesome-icon icon="fa fa-microscope" class="text-success" /> {{ $t('titles.track', 2) }}
+            <b-navbar-nav class="">
+                <b-nav-item-dropdown v-if="isAdmin">
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-lock" class="text-success" />
+                        {{$t('titles.administration', 2)}}
+                    </template>
+                    <li>
+                        <router-link :to="{ name: 'AdministrationUserList' }" class="dropdown-item">
+                            {{$t('titles.user', 2)}}
                         </router-link>
                     </li>
-                    <li v-if="hasAnyPermission(JOB_PERMISSIONS) || isAdmin" class="nav-item">
-                        <router-link :to="{ name: 'jobs' }" class="nav-link">
-                            <font-awesome-icon icon="fa fa-tasks" class="text-success" /> {{ $t('titles.jobs', 2) }}
+                    <li>
+                        <router-link :to="{ name: 'AdministrationRoleList' }" class="dropdown-item">
+                            {{$t('titles.role', 2)}}
                         </router-link>
                     </li>
-                    <li v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" class="nav-item">
-                        <router-link :to="{ name: 'dashboards' }" class="nav-link">
-                            <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $t('titles.dashboard', 2)
-                            }}
+                    <li>
+                        <router-link :to="{ name: 'configuration' }" class="dropdown-item">
+                            {{$t('titles.configuration', 2)}}
                         </router-link>
                     </li>
-                </BNavbarNav>
+                    <b-dropdown-divider />
+                    <li>
+                        <router-link :to="{ name: 'clusters' }" class="dropdown-item">
+                            {{$t('titles.cluster', 2)}}
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :to="{ name: 'storages' }" class="dropdown-item">
+                            {{$t('titles.storage', 2)}}
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :to="{ name: 'platforms' }" class="dropdown-item">
+                            {{$t('titles.platform', 2)}}
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :to="{ name: 'models' }" class="dropdown-item">
+                            {{$t('titles.model', 2)}}
+                        </router-link>
+                    </li>
+                    <b-dropdown-divider />
+                    <li>
+                        <router-link :to="{ name: 'deployments' }" class="dropdown-item">
+                            {{$t('titles.deployment', 2)}}
+                        </router-link>
+                    </li>
+                    <b-dropdown-divider />
+                    <li>
+                        <router-link :to="{ name: 'admin-openid' }" class="dropdown-item">
+                            OpenId Sandbox
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :to="{ name: 'webSocketPing' }" class="dropdown-item">
+                            Test Websocket
+                        </router-link>
+                    </li>
+                </b-nav-item-dropdown>
+            </b-navbar-nav>
+            <b-navbar-nav class="ms-auto">
+                <b-nav-item-dropdown ref="dropdown" right no-caret>
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-user" class="text-success" />
+                    </template>
 
-                <b-navbar-nav class="">
-                    <b-nav-item-dropdown v-if="isAdmin">
-                        <template #button-content>
-                            <font-awesome-icon icon="fa fa-lock" class="text-success" />
-                            {{ $t('titles.administration', 2) }}
-                        </template>
-                        <li>
-                            <router-link :to="{ name: 'AdministrationUserList' }" class="dropdown-item">
-                                {{ $t('titles.user', 2) }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'AdministrationRoleList' }" class="dropdown-item">
-                                {{ $t('titles.role', 2) }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'configuration' }" class="dropdown-item">
-                                {{ $t('titles.configuration', 2) }}
-                            </router-link>
-                        </li>
-                        <b-dropdown-divider />
-                        <li>
-                            <router-link :to="{ name: 'clusters' }" class="dropdown-item">
-                                {{ $t('titles.cluster', 2) }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'storages' }" class="dropdown-item">
-                                {{ $t('titles.storage', 2) }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'platforms' }" class="dropdown-item">
-                                {{ $t('titles.platform', 2) }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'models' }" class="dropdown-item">
-                                {{ $t('titles.model', 2) }}
-                            </router-link>
-                        </li>
-                        <b-dropdown-divider />
-                        <li>
-                            <router-link :to="{ name: 'deployments' }" class="dropdown-item">
-                                {{ $t('titles.deployment', 2) }}
-                            </router-link>
-                        </li>
-                        <b-dropdown-divider />
-                        <li>
-                            <router-link :to="{ name: 'admin-openid' }" class="dropdown-item">OpenId Sandbox</router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'webSocketPing' }" class="dropdown-item">Test Websocket</router-link>
-                        </li>
-                    </b-nav-item-dropdown>
-                </b-navbar-nav>
-                <b-navbar-nav class="ms-auto">
-                    <b-nav-item-dropdown ref="dropdown" right no-caret>
-                        <template #button-content>
-                            <font-awesome-icon icon="fa fa-user" class="text-success" />
-                            
-                        </template>
-
-                        <b-dropdown-item style="width: 400px" class="text-center" right no-caret>
-                            <font-awesome-icon icon="fa fa-user" />
-                            <p>
-                                <strong>{{ user.name }}</strong>
-                                <br>
-                                <small>{{ user.email }}</small>
-                            </p>
-                            <div class="text-center">
-                                <strong>{{ $t('titles.role', 2) }}</strong><br>
-                                <div class="mt-2">
-                                    <span v-for=" role  in  user.roles " :key="role.id" class="badge badge-info mr-1 p-1">
-                                        {{ role.label }}
-                                    </span>
-                                </div>
+                    <b-dropdown-item style="width: 400px" class="text-center" right no-caret>
+                        <font-awesome-icon icon="fa fa-user" />
+                        <p>
+                            <strong>{{user.name}}</strong>
+                            <br>
+                            <small>{{user.email}}</small>
+                        </p>
+                        <div class="text-center">
+                            <strong>{{$t('titles.role', 2)}}</strong><br>
+                            <div class="mt-2">
+                                <span v-for=" role in user.roles " :key="role.id" class="badge badge-info mr-1 p-1">
+                                    {{role.label}}
+                                </span>
                             </div>
-                            <p class="border-top pt-2">
-                                <b-button variant="primary" size="sm" @click="profile">
-                                    {{ $t('titles.profile') }}
-                                </b-button>
-                                <b-button variant="danger" size="sm" class="ml-2" @click="logout">
-                                    {{ $t('common.logout') }}
-                                </b-button>
-                            </p>
-                        </b-dropdown-item>
-                    </b-nav-item-dropdown>
-                    <b-nav-item-dropdown ref="dropdown" right no-caret @show="loadNotifications" class="ms-auto">
-                        <template #button-content>
-                            <font-awesome-icon icon="fa fa-bell" />
-                            <span v-if="unreadNotifications > 0" class="badge badge-pill"
-                                :class="unreadNotifications > 0 ? 'badge-danger' : 'badge-success'">
-                                {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
-                            </span>
-
-                        </template>
-                        <b-dropdown-item v-for=" notification  in  sampleNotifications " :key="notification.id"
-                            style="width: 400px">
-                            <div class="notification border-bottom pb-2">
-                                <div><font-awesome-icon v-bind="getIcon(notification)" /></div>
-                                <div :class="{ 'font-weight-bold': notification.status === 'UNREAD' }"
-                                    v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&h e llip;' : '')" />
-                            </div>
-                        </b-dropdown-item>
-                        <b-dropdown-item
-                            @click.stop="$route.name === 'notifications' ? $router.go() : $router.push({ name: 'notifications' })">
-                            {{ $t('titles.allNotifications') }} {{ $route.name === 'notifications' }}
-                            <font-awesome-icon icon="fa fa-angle-right" />
-                        </b-dropdown-item>
-                    </b-nav-item-dropdown>
-                   
-                </b-navbar-nav>
-            </BCollapse>
-        </BNavbar>
-    </template>
+                        </div>
+                        <p class="border-top pt-2">
+                            <b-button variant="primary" size="sm" @click="profile">
+                                {{$t('titles.profile')}}
+                            </b-button>
+                            <b-button variant="danger" size="sm" class="ml-2" @click="logout">
+                                {{$t('common.logout')}}
+                            </b-button>
+                        </p>
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+                <b-nav-item-dropdown ref="dropdown" right no-caret class="ms-auto"
+                                     @show="loadNotifications">
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-bell" />
+                        <span v-if="unreadNotifications > 0" class="badge badge-pill"
+                              :class="unreadNotifications > 0 ? 'badge-danger' : 'badge-success'">
+                            {{unreadNotifications > 99 ? '99+' : unreadNotifications}}
+                        </span>
+                    </template>
+                    <b-dropdown-item v-for=" notification in sampleNotifications " :key="notification.id"
+                                     style="width: 400px">
+                        <div class="notification border-bottom pb-2">
+                            <div><font-awesome-icon v-bind="getIcon(notification)" /></div>
+                            <div :class="{ 'font-weight-bold': notification.status === 'UNREAD' }"
+                                 v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&h e llip;' : '')" />
+                        </div>
+                    </b-dropdown-item>
+                    <b-dropdown-item @click.stop="$route.name === 'notifications' ? $router.go() : $router.push({ name: 'notifications' })">
+                        {{$t('titles.allNotifications')}} {{$route.name === 'notifications'}}
+                        <font-awesome-icon icon="fa fa-angle-right" />
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
+            </b-navbar-nav>
+        </BCollapse>
+    </BNavbar>
 </template>
 
 <script>
@@ -249,21 +247,21 @@ export default {
     methods: {
         getIcon(notification) {
             switch (notification.type) {
-                case 'INFO':
-                    return {
-                        icon: 'fa-info-circle',
-                        class: 'text-success'
-                    };
-                case 'WARNING':
-                    return {
-                        icon: 'fa-exclamation-triangle',
-                        class: 'text-warning'
-                    };
-                default:
-                    return {
-                        icon: 'fa-exclamation-circle',
-                        class: 'text-danger'
-                    };
+            case 'INFO':
+                return {
+                    icon: 'fa-info-circle',
+                    class: 'text-success'
+                };
+            case 'WARNING':
+                return {
+                    icon: 'fa-exclamation-triangle',
+                    class: 'text-warning'
+                };
+            default:
+                return {
+                    icon: 'fa-exclamation-circle',
+                    class: 'text-danger'
+                };
             }
         },
         logout() {
@@ -464,10 +462,12 @@ export default {
     text-overflow: ellipsis;
     max-width: 75ch;
 }
+
 .navbar-nav .nav-link:hover {
     border-bottom: 2px solid var(--secondary-color);
     border-radius: 0;
 }
+
 .navbar-nav .nav-link {
     border-bottom: 2px solid transparent;
 }

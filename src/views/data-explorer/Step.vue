@@ -4,14 +4,14 @@
             <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
         </div>
         <div v-if="hasProblems" class="pulse-item text-danger"
-            title="Existem problemas na configuração. Edite para corrigir.">
+             title="Existem problemas na configuração. Edite para corrigir.">
             <font-awesome-icon icon="fa fa-question-circle" />
-            {{ hasProblems.label }}
+            {{hasProblems.label}}
         </div>
         <div ref="step" class="float-left step" style="width: calc(100% - 25px)">
             <div class="step-description">
                 <input v-if="!locked && index > 0" v-model="editableStep.selected" type="checkbox">&nbsp;
-                <span class="step-number">#{{ index + 1 }}</span> -
+                <span class="step-number">#{{index + 1}}</span> -
                 <del v-if="!step.enabled">
                     <span v-html="step.getLabel()" />
                 </del>
@@ -19,28 +19,27 @@
             </div>
             <div>
                 <font-awesome-icon v-if="step.error" v-b-tooltip.html icon="fa fa-exclamation-circle text-danger"
-                    :title="step.error" />
+                                   :title="step.error" />
 
-                <small v-if="step?.forms?.comment?.value" class="step-comment">{{ step?.forms?.comment?.value }}</small>
-                <div class="btn-group" role="group" aria-label="Step commands">
-                </div>
+                <small v-if="step?.forms?.comment?.value" class="step-comment">{{step?.forms?.comment?.value}}</small>
+                <div class="btn-group" role="group" aria-label="Step commands" />
                 <div v-if="!editableStep.editing" role="group" class="btn-group zoom-buttom float-right">
                     <button v-if="editableStep.editable" class="btn btn-sm btn-light text-primary"
-                        :title="$t('actions.edit')" @click="edit('execution')">
+                            :title="$t('actions.edit')" @click="edit('execution')">
                         <font-awesome-icon icon="fa fa-edit" />
                     </button>
 
                     <button class="btn btn-sm btn-light text-secondary" :title="$t('common.previewUntilHere')"
-                        @click="$emit('preview', step)">
+                            @click="$emit('preview', step)">
                         <font-awesome-icon :icon="`fa ${step.previewable ? 'fa-eye' : 'fa-eye-slash'}`" />
                     </button>
 
                     <button v-if="index > 0" class="btn btn-sm btn-light text-secondary" :title="$t('actions.delete')"
-                        @click="$emit('delete', step)">
+                            @click="$emit('delete', step)">
                         <font-awesome-icon icon="fa fa-trash" />
                     </button>
                     <button v-if="index > 0" class="btn btn-sm btn-light"
-                        :title="step.enabled ? $t('actions.disable') : $t('actions.enable')" @click="$emit('toggle', step)">
+                            :title="step.enabled ? $t('actions.disable') : $t('actions.enable')" @click="$emit('toggle', step)">
                         <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success" />
                         <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
                     </button>
@@ -65,12 +64,12 @@
                             <font-awesome-icon icon="fa fa-ellipsis-h" />
                         </template>
                         <b-dropdown-item href="#" @click.prevent="edit('appearance')">
-                            {{ $t('titles.comment') }} &amp;
-                            {{ $t('titles.color').toLowerCase() }}
+                            {{$t('titles.comment')}} &amp;
+                            {{$t('titles.color').toLowerCase()}}
                         </b-dropdown-item>
                         <b-dropdown-item href="#" @click.prevent="$emit('duplicate', step)">
-                            {{ $t('actions.duplicate') }}
-                            {{ $t('dataExplorer.step').toLowerCase() }}
+                            {{$t('actions.duplicate')}}
+                            {{$t('dataExplorer.step').toLowerCase()}}
                         </b-dropdown-item>
                     </b-dropdown>
                 </div>
@@ -78,13 +77,13 @@
                     <div class="mb-3">
                         <template v-for="form in currentForm">
                             <div v-for="field in form.fields" :key="`${step.id}:${field.name}`"
-                                class="mb-2 step-properties">
+                                 class="mb-2 step-properties">
                                 <component :is="getWidget(field)" v-if="field.editable && field.enabled !== false"
-                                    :field="field" :value="getValue(field.name)" :language="language"
-                                    :type="field.suggested_widget" :read-only="!field.editable" context="context"
-                                    :suggestion-event="() => suggestionEvent(step.id)"
-                                    :extended-suggestion-event="() => extendedSuggestionEvent(step.id)"
-                                    @update="updateField" />
+                                           :field="field" :value="getValue(field.name)" :language="language"
+                                           :type="field.suggested_widget" :read-only="!field.editable" context="context"
+                                           :suggestion-event="() => suggestionEvent(step.id)"
+                                           :extended-suggestion-event="() => extendedSuggestionEvent(step.id)"
+                                           @update="updateField" />
                             </div>
                         </template>
                     </div>
@@ -97,7 +96,7 @@
                             <font-awesome-icon icon="fa fa-undo-alt" />
                         </button>
                         <button class="btn btn-sm btn-light text-secondary" :title="$t('actions.delete')"
-                            @click="$emit('delete', step)">
+                                @click="$emit('delete', step)">
                             <font-awesome-icon icon="fa fa-trash" />
                         </button>
                     </div>

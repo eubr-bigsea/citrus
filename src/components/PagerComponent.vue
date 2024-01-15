@@ -2,13 +2,22 @@
 <template>
     <nav class="pagination">
         <ul>
-            <li @click="gotoPage(1)" :class="{ disabled: currentPage === 1 }">«</li>
-            <li @click="prevPage" :class="{ disabled: currentPage === 1 }">‹</li>
-            <li v-for="page in displayedPages" :key="page" @click="gotoPage(page)"
-                :class="{ active: currentPage === page }">{{
-                    page }}</li>
-            <li @click="nextPage" :class="{ disabled: currentPage === totalPages }">›</li>
-            <li @click="gotoPage(totalPages)" :class="{ disabled: currentPage === totalPages }">»</li>
+            <li :class="{ disabled: currentPage === 1 }" @click="gotoPage(1)">
+                «
+            </li>
+            <li :class="{ disabled: currentPage === 1 }" @click="prevPage">
+                ‹
+            </li>
+            <li v-for="pageNumber in displayedPages" :key="pageNumber" :class="{ active: currentPage === pageNumber }"
+                @click="gotoPage(pageNumber)">
+                {{pageNumber}}
+            </li>
+            <li :class="{ disabled: currentPage === totalPages }" @click="nextPage">
+                ›
+            </li>
+            <li :class="{ disabled: currentPage === totalPages }" @click="gotoPage(totalPages)">
+                »
+            </li>
         </ul>
     </nav>
 </template>
@@ -20,14 +29,16 @@ const emit = defineEmits(['update:currentPage']);
 const props = defineProps({
     total: { type: Number, required: true },
     perPage: { type: Number, required: true },
-    currentPage: { type: Number },
+    page: { type: Number, required: true },
 });
+
+const currentPage = ref(props.page);
 
 const totalPages = computed(() => Math.ceil(props.total / props.perPage));
 
 const displayRange = 10;
 const halfRange = displayRange / 2;
-const startPage = computed(() => Math.max(1, props.currentPage - halfRange));
+const startPage = computed(() => Math.max(1, currentPage.value - halfRange));
 const endPage = computed(() => Math.min(totalPages.value, startPage.value + displayRange - 1));
 const displayedPages = computed(() => {
     const pages = [];
@@ -41,24 +52,25 @@ const displayedPages = computed(() => {
 const gotoPage = (page) => {
     if (page >= 1 && page <= totalPages.value) {
         //props.value = page;
+        currentPage.value = page;
         emit('update:currentPage', page);
     }
 };
 
 const prevPage = () => {
-    gotoPage(props.currentPage - 1);
+    gotoPage(currentPage.value - 1);
 };
 
 const nextPage = () => {
-    gotoPage(props.currentPage + 1);
+    gotoPage(currentPage.value + 1);
 };
 
 // Ensure the current page is valid on component mount
 onMounted(() => {
-    if (props.currentPage < 1) {
-        props.currentPage = 1;
-    } else if (props.currentPage > totalPages.value) {
-        props.currentPage = totalPages.value;
+    if (currentPage.value < 1) {
+        currentPage.value = 1;
+    } else if (currentPage.value > totalPages.value) {
+        currentPage.value = totalPages.value;
     }
 });
 </script>

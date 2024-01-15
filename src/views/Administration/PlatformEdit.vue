@@ -126,7 +126,7 @@
                                                     <tr>
                                                         <th class="text-center" style="width: 80px">
                                                             {{$t('common.enabled',
-                                                                  1)}}
+                                                                 1)}}
                                                         </th>
                                                         <th class="text-center" style="width: 80px">
                                                             {{$t('common.id', 1)}}

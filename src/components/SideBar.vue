@@ -43,7 +43,7 @@
                     <font-awesome-icon icon="fa fa-project-diagram"
                                        size="lg"
                                        fixed-width /> {{$t('titles.workflow',
-                                                            2)}}
+                                                           2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/experiments'}">
@@ -91,7 +91,7 @@
                     <font-awesome-icon icon="fa fa-user-lock"
                                        size="lg"
                                        fixed-width /> {{$t('titles.administration',
-                                                            2)}}
+                                                           2)}}
                 </b-link>
             </li>
             <li :class="{active: path === '/me'}">

@@ -29,14 +29,15 @@
                     <div class="row">
                         <div class="col-5">
                             <label for="filter font-weight-bold">Filtro</label>
-                            <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off"
-                                class="form-control form-control-sm" maxlength="50" @input="search($event)" />
+                            <input :value="query" type="text" placeholder="Busca" name="filter"
+                                   autocomplete="off"
+                                   class="form-control form-control-sm" maxlength="50" @input="search($event)">
                         </div>
                         <div class="col-1 xoffset-md-6 text-right">
                             <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-right">
                                 <label for="limit">Limite</label>
-                                <select name="limit" class="form-select form-select-sm" v-model="perPage">
-                                    <option v-for="value in perPageValues" :value="value" :key="value">{{ value }}</option>
+                                <select v-model="perPage" name="limit" class="form-select form-select-sm">
+                                    <option v-for="value in perPageValues" :key="value" :value="value">{{value}}</option>
                                 </select>
                             </span>
                         </div>
@@ -47,20 +48,20 @@
         <table v-show="showSkeleton && firstLoad" class="table b-table table-striped table-bordered">
             <tbody>
                 <tr v-for="row in 10" :key="row">
-                    <td v-for="col in columns.length">
-                        <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 75%;"></div>
+                    <td v-for="col,i in columns.length" :key="i">
+                        <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 75%;" />
                     </td>
                 </tr>
             </tbody>
         </table>
         <section v-show="!firstLoad">
-            <table v-if="tableData?.length" :class="options.skin" class="server-table" ref="table">
+            <table v-if="tableData?.length" ref="table" :class="options.skin" class="server-table">
                 <thead>
                     <tr>
                         <th v-for="(heading, index) in columns" :key="index" class="header"
                             :class="{ [sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
                             @click="handleSort(heading, $event)">
-                            {{ getTableHeader(heading) }}
+                            {{getTableHeader(heading)}}
                         </th>
                     </tr>
                 </thead>
@@ -70,7 +71,7 @@
                             :class="getColumnClass(options.columnClasses, colName)">
                             <slot :name="colName" :row="row">
                                 <span :class="`${getColumnClass(options.columnClasses, colName)}-scoped`">
-                                    {{ row[colName] }}
+                                    {{row[colName]}}
                                 </span>
                             </slot>
                         </td>
@@ -79,15 +80,15 @@
             </table>
             <slot name="pagination">
                 <div v-if="paginationEnabled" class="pagination-text text-center">
-                    <pager-component v-if="tableCount > 0" :total="tableCount" :per-page="perPage"
-                        v-model:current-page="currentPage" />
+                    <pager-component v-if="tableCount > 0" v-model:page="currentPage" :total="tableCount"
+                                     :per-page="perPage" />
                     <p class="pagination-message">
-                        {{ pagerMessage }}
+                        {{pagerMessage}}
                     </p>
                 </div>
             </slot>
         </section>
-        <div class="text-center preview-loading" v-if="loading" style="border: none;background: transparent">
+        <div v-if="loading" class="text-center preview-loading" style="border: none;background: transparent">
             <SpinnerDisplay />
         </div>
     </div>
@@ -105,7 +106,7 @@ const props = defineProps({
     columns: { type: Array, required: true },
     //sortColumn: { type: Object, required: false, default: () => { } },
     //sortDirection: { type: Object, required: false, default: () => { } },
-    name: { type: String, required: false },
+    name: { type: String, required: false, default: Math.random().toString(36).slice(2, 7)},
     showSkeleton: { type: Boolean, required: false, default: true },
 });
 
@@ -145,7 +146,7 @@ const setFilter = (value, customQueries) => {
 };
 const setCustomQuery = (value) => {
     tableCustomQueries.value = value;
-}
+};
 const search = debounce((ev) => {
     query.value = ev.target.value;
     populateTable();
@@ -206,7 +207,7 @@ const populateTable = async () => {
 };
 
 const getColumnClass = (columnClasses, columnName) => {
-    return ''
+    return '';
     return columnClasses[columnName] || '';
 };
 
@@ -217,7 +218,7 @@ const handleSort = (column, event) => {
             table.value.querySelectorAll('th.can-be-sorted').forEach((el) => {
                 el.classList.remove('sort-up', 'sort-down');
                 el.classList.add('sort-is');
-            })
+            });
         } else {
             sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
         }
@@ -241,9 +242,9 @@ const load = () => {
                     const params = JSON.parse(saved);
                     sortColumn.value = params.orderBy?.column;
                     sortDirection.value = params.orderBy.ascending ? 1 : 0,
-                        perPage.value = params.perPage,
-                        query.value = params.query,
-                        currentPage.value = params.page
+                    perPage.value = params.perPage,
+                    query.value = params.query,
+                    currentPage.value = params.page;
                     tableCustomQueries.value = params.customQueries;
 
                 } catch (e) {
@@ -254,8 +255,8 @@ const load = () => {
         }
     }
     populateTable();
-}
-onMounted(() => load())
+};
+onMounted(() => load());
 //onRenderTriggered(() => load());
 const getData = populateTable;
 const refresh = populateTable;

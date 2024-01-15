@@ -615,10 +615,10 @@ export default {
 
             try {
                 this.loadingData = true;
-                console.debug('loading')
+                console.debug('loading');
                 const response = await axios.post(`${standUrl}/jobs`, body,
                     { headers: { 'Locale': self.$root.$i18n.locale, } });
-                console.debug('loaded')
+                console.debug('loaded');
                 self.$refs.preview && self.$refs.preview.scroll({ top: 0 });
                 self.job = response.data.data;
                 self.page = 1;

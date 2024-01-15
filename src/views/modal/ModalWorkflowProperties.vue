@@ -61,7 +61,7 @@
         <template #modal-footer>
             <div>
                 <b-button variant="primary btn-sm" class="float-right mr-1" :disabled="(workflowCopy.name === '')"
-                       @click="okClicked">
+                          @click="okClicked">
                     {{$t('common.ok')}}
                 </b-button>
             </div>
