@@ -1,42 +1,42 @@
 <template>
-    <div>
-        <div class="title">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1>{{$t('titles.platform', 2)}}</h1>
-                <router-link :to="{name: 'addPlatform'}" class="btn btn-primary btn-lemonade-primary">
-                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
-                </router-link>
+    <main>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.platform', 2) }}</h1>
+            <router-link :to="{ name: 'addPlatform' }" class="btn btn-primary btn-lemonade-primary">
+                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+            </router-link>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="platformList" :columns="columns" :options="options" name="platformList">
+                    <template #id="props">
+                        <router-link :to="{ name: 'editPlatform', params: { id: props.row.id } }">
+                            {{ props.row.id }}
+                        </router-link>
+                    </template>
+                    <template #name="props">
+                        <router-link :to="{ name: 'editPlatform', params: { id: props.row.id } }">
+                            {{ props.row.name }}
+                        </router-link>
+                    </template>
+                    <template #enabled="props">
+                        {{ $t(props.row.enabled ? 'common.yes' : 'common.no') }}
+                    </template>
+                    <template #plugin="props">
+                        {{ $t(props.row.plugin ? 'common.yes' : 'common.no') }}
+                    </template>
+                    <template #actions="props">
+                        <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                    </template>
+                    <template #version="props">
+                        {{ props.row.version }}
+                    </template>
+                </v-server-table>
             </div>
         </div>
-
-        <v-server-table ref="platformList" :columns="columns" :options="options"
-                        name="platformList">
-            <template #id="props">
-                <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
-                    {{props.row.id}}
-                </router-link>
-            </template>
-            <template #name="props">
-                <router-link :to="{name: 'editPlatform', params: {id: props.row.id}}">
-                    {{props.row.name}}
-                </router-link>
-            </template>
-            <template #enabled="props">
-                {{$t(props.row.enabled ? 'common.yes': 'common.no')}}
-            </template>
-            <template #plugin="props">
-                {{$t(props.row.plugin ? 'common.yes': 'common.no')}}
-            </template>
-            <template #actions="props">
-                <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
-                    <font-awesome-icon icon="trash" />
-                </button>
-            </template>
-            <template #version="props">
-                {{props.row.version}}
-            </template>
-        </v-server-table>
-    </div>
+    </main>
 </template>
 
 <script>
@@ -70,7 +70,7 @@ export default {
                 //filterable: ['name', 'id', 'description'],
                 filterable: false,
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'

@@ -1,40 +1,47 @@
 <template>
     <main role="main">
-        <div>
-            <v-server-table ref="listTable" :columns="columns" :options="options" name="modelList">
-                <template #id="props">
-                    <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
-                        {{props.row.id}}
-                    </router-link>
-                </template>
-                <template #name="props">
-                    <router-link :to="{name: 'editModel', params: {id: props.row.id}}">
-                        {{props.row.name}}
-                    </router-link>
-                </template>
-                <template #deployment_status="props">
-                    <font-awesome-icon icon="circle" :class="getDeploymentClass(props.row)" />
-                    {{$t(`model.status_${props.row.deployment_status}`)}}
-                </template>
-                <template #created="props">
-                    {{$filters.formatJsonDate(props.row.created)}}
-                </template>
-                <template #actions="props">
-                    <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.model', 2) }}</h1>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="listTable" :columns="columns" :options="options" name="modelList">
+                    <template #id="props">
+                        <router-link :to="{ name: 'editModel', params: { id: props.row.id } }">
+                            {{ props.row.id }}
+                        </router-link>
+                    </template>
+                    <template #name="props">
+                        <router-link :to="{ name: 'editModel', params: { id: props.row.id } }">
+                            {{ props.row.name }}
+                        </router-link>
+                    </template>
+                    <template #deployment_status="props">
+                        <font-awesome-icon icon="circle" :class="getDeploymentClass(props.row)" />
+                        {{ $t(`model.status_${props.row.deployment_status}`) }}
+                    </template>
+                    <template #created="props">
+                        {{ $filters.formatJsonDate(props.row.created) }}
+                    </template>
+                    <template #actions="props">
+                        <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
                             :title="$t('actions.delete')" @click="remove(props.row.id)">
-                        <font-awesome-icon icon="trash" />
-                    </button>
-                    <button v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && props.row.deployment_status === 'NOT_DEPLOYED' "
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                        <button
+                            v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && props.row.deployment_status === 'NOT_DEPLOYED'"
                             class="ms-1 btn btn-sm btn-success" :title="$t('actions.deploy')" @click="remove(props.row.id)">
-                        <font-awesome-icon icon="server" />
-                    </button>
-                    <button v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && ['DEPLOYED', 'RUNNING'].indexOf(props.row.deployment_status) > -1"
+                            <font-awesome-icon icon="server" />
+                        </button>
+                        <button
+                            v-if="loggedUserIsOwnerOrAdmin(props.row) && props.row.type === 'MLEAP' && ['DEPLOYED', 'RUNNING'].indexOf(props.row.deployment_status) > -1"
                             class="ms-1 btn btn-sm btn-warning" :title="$t('actions.undeploy')"
                             @click="remove(props.row.id)">
-                        <font-awesome-icon icon="server" />
-                    </button>
-                </template>
-            </v-server-table>
+                            <font-awesome-icon icon="server" />
+                        </button>
+                    </template>
+                </v-server-table>
+            </div>
         </div>
     </main>
 </template>
@@ -70,7 +77,7 @@ export default {
                 sortable: ['id', 'name', 'type', 'created', 'deployment_status'],
                 filterable: ['id', 'name', 'type', 'created'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
@@ -120,12 +127,12 @@ export default {
     methods: {
         getDeploymentClass(item) {
             switch (item.deployment_status) {
-            case 'NOT_DEPLOYED':
-                return 'text-secondary';
-            case 'DEPLOYED':
-                return 'text-success';
-            case 'PENDING':
-                return 'text-warning';
+                case 'NOT_DEPLOYED':
+                    return 'text-secondary';
+                case 'DEPLOYED':
+                    return 'text-success';
+                case 'PENDING':
+                    return 'text-warning';
             }
         },
         loggedUserIsOwnerOrAdmin(model) {

@@ -22,9 +22,6 @@
                         <div ref="ghostSelect" class="ghost-select">
                             <span />
                         </div>
-                        <div v-for="group in groups" :key="group.id">
-                            <group-component :key="group.id" :group="group" :instance="instance" />
-                        </div>
                     </template>
                     <div v-else>
                         <div class="no-task-diagram">

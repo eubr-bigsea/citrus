@@ -1,38 +1,37 @@
 <template>
     <main role="main">
-        <div>
-            <div class="title">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$t('titles.role', 2)}}</h1>
-                    <router-link :to="{ name: 'AdministrationAddRole' }" class="btn btn-primary btn-lemonade-primary">
-                        <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
-                    </router-link>
-                </div>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.role', 2) }}</h1>
+            <router-link :to="{ name: 'AdministrationAddRole' }" class="btn btn-primary btn-lemonade-primary">
+                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+            </router-link>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="roleList" :columns="columns" :options="options" name="roleList">
+                    <template #id="props">
+                        <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
+                            {{ props.row.id }}
+                        </router-link>
+                    </template>
+                    <template #name="props">
+                        <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
+                            {{ props.row.name }}
+                        </router-link>
+                    </template>
+                    <template #enabled="props">
+                        {{ $t(props.row.enabled ? 'common.yes' : 'common.no') }}
+                    </template>
+                    <template #system="props">
+                        {{ $t(props.row.system ? 'common.yes' : 'common.no') }}
+                    </template>
+                    <template #actions="props">
+                        <button v-if="!props.row.system" class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                    </template>
+                </v-server-table>
             </div>
-
-            <v-server-table ref="roleList" :columns="columns" :options="options" name="roleList">
-                <template #id="props">
-                    <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
-                        {{props.row.id}}
-                    </router-link>
-                </template>
-                <template #name="props">
-                    <router-link :to="{ name: 'AdministrationEditRole', params: { id: props.row.id } }">
-                        {{props.row.name}}
-                    </router-link>
-                </template>
-                <template #enabled="props">
-                    {{$t(props.row.enabled ? 'common.yes': 'common.no')}}
-                </template>
-                <template #system="props">
-                    {{$t(props.row.system? 'common.yes': 'common.no')}}
-                </template>
-                <template #actions="props">
-                    <button v-if="!props.row.system" class="btn btn-sm btn-danger" @click="remove(props.row.id)">
-                        <font-awesome-icon icon="trash" />
-                    </button>
-                </template>
-            </v-server-table>
         </div>
     </main>
 </template>
@@ -68,7 +67,7 @@ export default {
                 sortable: ['name', 'id'],
                 filterable: ['name', 'id', 'description', 'label'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
