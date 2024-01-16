@@ -1,30 +1,29 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$t('titles.jobs', 2)}}</h1>
+            <h1>{{ $t('titles.jobs', 2) }}</h1>
         </div>
         <div class="card">
             <div class="card-body">
-                <v-server-table ref="jobList" :data="tableData" :columns="columns" :options="options"
-                                name="jobList">
+                <v-server-table ref="jobList" :data="tableData" :columns="columns" :options="options" name="jobList">
                     <template #id="props">
                         <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-                                     :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">
-                            {{props.row.id}}
+                            :to="{ name: 'jobDetail', params: { platform: props.row.workflow.platform.id, id: props.row.id } }">
+                            {{ props.row.id }}
                         </router-link>
-                        <span v-else>{{props.row.id}}</span>
+                        <span v-else>{{ props.row.id }}</span>
                     </template>
                     <template #name="props">
                         <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-                                     :to="{name: 'jobDetail', params: {platform: props.row.workflow.platform.id, id: props.row.id}}">
-                            {{props.row.name}}
+                            :to="{ name: 'jobDetail', params: { platform: props.row.workflow.platform.id, id: props.row.id } }">
+                            {{ props.row.name }}
                         </router-link>
-                        <span v-else>{{props.row.name}}</span>
+                        <span v-else>{{ props.row.name }}</span>
                     </template>
                     <template #actions="props">
-                        <button v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING' "
-                                class="btn btn-sm btn-outline-danger me-1" :title="$t('actions.stop')"
-                                @click="stop(props.row)">
+                        <button
+                            v-if="props.row.status === 'RUNNING' || props.row.status === 'PENDING' || props.row.status === 'WAITING'"
+                            class="btn btn-sm btn-outline-danger me-1" :title="$t('actions.stop')" @click="stop(props.row)">
                             <font-awesome-icon icon="stop" />
                         </button>
 
@@ -34,19 +33,19 @@
                     </template>
                     <template #status="props">
                         <div class="lemonade-job" :class="props.row.status.toLowerCase()">
-                            {{props.row.status}}
+                            {{ props.row.status }}
                         </div>
                     </template>
                     <template #created="props">
-                        {{$filters.formatJsonDate(props.row.created)}}
+                        {{ $filters.formatJsonDate(props.row.created) }}
                     </template>
                     <template #workflow="props">
                         <router-link v-if="props.row.type !== 'MODEL_BUILDER'"
-                                     :to="{name: 'editWorkflow', params: {'id': props.row.workflow.id, platform: props.row.workflow.platform.id}}">
-                            {{props.row.workflow.id}} - {{props.row.workflow.name}}
+                            :to="{ name: 'editWorkflow', params: { 'id': props.row.workflow.id, platform: props.row.workflow.platform.id } }">
+                            {{ props.row.workflow.id }} - {{ props.row.workflow.name }}
                         </router-link>
-                        <router-link v-else :to="{name: 'model-design', params: {'id': props.row.workflow.id}}">
-                            {{props.row.workflow.id}} - {{props.row.workflow.name}}
+                        <router-link v-else :to="{ name: 'model-design', params: { 'id': props.row.workflow.id } }">
+                            {{ props.row.workflow.id }} - {{ props.row.workflow.name }}
                         </router-link>
                     </template>
                 </v-server-table>
@@ -75,7 +74,7 @@ export default {
                 'actions'
             ],
             tableData: [],
-            showSideBar: false,
+            showSideBar: false, 
             options: {
                 perPageValues: [5, 10, 20],
                 skin: 'table-sm table table-hover',
@@ -95,7 +94,7 @@ export default {
                 },
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'

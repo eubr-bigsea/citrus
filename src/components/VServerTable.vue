@@ -2,28 +2,6 @@
 <template>
     <div class="v-server-table-area">
         <slot v-if="options.filterable" name="filters">
-            <!--
-            <div class="filters">
-                <div class="col-md-12">
-                    <div class="form-group float-start">
-                        <div class="">
-                            <label for="filter font-weight-bold">Filtro</label>
-                            <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off" class="form-control"
-                                maxlength="50" @input="search($event)" />
-                        </div>
-                    </div>
-                    <slot name="afterFilter">
-                    </slot>
-                    <div v-if="perPageValues && perPageValues.length" class="form-group form-inline float-end">
-                        <div class=""><label for="limit">Limite</label>
-                            <select name="limit" class="form-control form-control-sm" v-model="perPage">
-                                <option v-for="value in perPageValues" :value="value" :key="value">{{value}}</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        -->
             <div class="filters">
                 <form class="mb-4" @submit.prevent="$event.preventDefault()">
                     <div class="row">
@@ -99,12 +77,10 @@ import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
 import PagerComponent from '@/components/PagerComponent.vue';
 
 import { ref, onMounted, computed, defineProps, watch, shallowRef } from 'vue';
-import { onRenderTriggered } from 'vue';
+
 const props = defineProps({
     options: { type: Object, required: true },
     columns: { type: Array, required: true },
-    //sortColumn: { type: Object, required: false, default: () => { } },
-    //sortDirection: { type: Object, required: false, default: () => { } },
     name: { type: String, required: false, default: Math.random().toString(36).slice(2, 7) },
     showSkeleton: { type: Boolean, required: false, default: true },
 });
@@ -117,7 +93,6 @@ const firstLoad = ref(true);
 const paginationEnabled = computed(() => {
     return true;
 });
-const tableHeadings = ref([]);
 const tableData = shallowRef([]);
 const tableCount = ref(0);
 const currentPage = ref(1);
@@ -156,7 +131,7 @@ const pagerMessage = computed(() => {
     const parts = (txt).split(/\|/);
 
     if (tableCount.value === 0) {
-        return props.options.texts.noResults || 'No records found';
+        return props.options.texts?.noResults || 'No records found';
     } else if (tableCount.value === 1) {
         return parts[2];
     } else if (perPage.value < tableCount.value) {
@@ -256,9 +231,11 @@ const load = () => {
             }
         }
     }
-    populateTable();
+    if (props.options?.requestFunction) {
+        populateTable();
+    }
 };
-onMounted(() => load());
+onMounted(load);
 //onRenderTriggered(() => load());
 const getData = populateTable;
 const refresh = populateTable;
@@ -266,8 +243,8 @@ const setCurrentPage = (v) => currentPage.value = v;
 const setFirstLoad = (v) => firstLoad.value = v;
 const setLoading = (v) => loading.value = v;
 
-watch(currentPage, populateTable);
-watch(perPage, populateTable);
+//watch(currentPage, populateTable);
+//watch(perPage, populateTable);
 
 defineExpose({
     setFilter, getData, setCustomQuery, refresh, setCurrentPage, setFirstLoad, setLoading

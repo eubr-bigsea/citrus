@@ -1,38 +1,37 @@
 <template>
     <main role="main">
-        <div>
-            <div class="title">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$t('titles.cluster', 2)}}</h1>
-                    <router-link :to="{name: 'addCluster'}" class="btn btn-primary btn-lemonade-primary">
-                        <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
-                    </router-link>
-                </div>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.cluster', 2) }}</h1>
+            <router-link :to="{ name: 'addCluster' }" class="btn btn-primary btn-lemonade-primary">
+                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+            </router-link>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="clusterList" :columns="columns" :options="options" name="clusterList">
+                    <template #id="props">
+                        <router-link :to="{ name: 'editCluster', params: { id: props.row.id } }">
+                            {{ props.row.id }}
+                        </router-link>
+                    </template>
+                    <template #name="props">
+                        <router-link :to="{ name: 'editCluster', params: { id: props.row.id } }">
+                            {{ props.row.name }}
+                        </router-link>
+                    </template>
+                    <template #type="props">
+                        {{ props.row.type }}
+                    </template>
+                    <template #enabled="props">
+                        {{ $t(props.row.enabled ? 'common.yes' : 'common.no') }}
+                    </template>
+                    <template #actions="props">
+                        <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                    </template>
+                </v-server-table>
             </div>
-
-            <v-server-table ref="clusterList" :columns="columns" :options="options" name="clusterList">
-                <template #id="props">
-                    <router-link :to="{name: 'editCluster', params: {id: props.row.id}}">
-                        {{props.row.id}}
-                    </router-link>
-                </template>
-                <template #name="props">
-                    <router-link :to="{name: 'editCluster', params: {id: props.row.id}}">
-                        {{props.row.name}}
-                    </router-link>
-                </template>
-                <template #type="props">
-                    {{props.row.type}}
-                </template>
-                <template #enabled="props">
-                    {{$t(props.row.enabled ? 'common.yes': 'common.no')}}
-                </template>
-                <template #actions="props">
-                    <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
-                        <font-awesome-icon icon="trash" />
-                    </button>
-                </template>
-            </v-server-table>
         </div>
     </main>
 </template>
@@ -45,7 +44,7 @@ const standUrl = import.meta.env.VITE_STAND_URL;
 
 export default {
     mixins: [Notifier],
-    data(){
+    data() {
         return {
             platform: '',
             platforms: [],
@@ -53,7 +52,7 @@ export default {
             options: {
                 debounce: 800,
                 skin: 'table-sm table table-hover',
-                columnClasses: {actions: 'th-10'},
+                columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',
                     name: this.$t('common.name'),
@@ -64,7 +63,7 @@ export default {
                 sortable: ['name', 'id', 'type'],
                 filterable: ['name', 'id'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
@@ -73,7 +72,7 @@ export default {
                 saveState: true,
                 customFilters: ['platform'],
                 filterByColumn: false,
-                requestFunction: function (data){
+                requestFunction: function (data) {
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = data.limit;
@@ -83,7 +82,7 @@ export default {
 
                     let url = `${standUrl}/clusters`;
                     return axios
-                        .get(url, {params: data})
+                        .get(url, { params: data })
                         .then(resp => {
                             return {
                                 data: resp.data.data,
@@ -91,7 +90,7 @@ export default {
                             };
                         })
                         .catch(
-                            function (e){
+                            function (e) {
                                 this.error(e);
                             }.bind(this)
                         );
@@ -119,15 +118,15 @@ export default {
         //     table.getData();
         // }
     },
-    mounted(){ },
+    mounted() { },
     /* Methods */
     methods: {
-        clearFilters(){
+        clearFilters() {
             this.$refs.clusterList.setFilter('');
             this.$refs.clusterList.customQueries = {};
             this.platform = '';
         },
-        remove(clusterId){
+        remove(clusterId) {
             const self = this;
             this.confirm(
                 this.$t('actions.delete'),

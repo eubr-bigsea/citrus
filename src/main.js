@@ -405,9 +405,10 @@ openIdService.loadConfig(store).then(() => {
             dialog.reveal()
         }
     };
-
+    app.provide('snotify', app.config.globalProperties.$snotify);
     app.component("v-select", VueSelect);
     app.component('VServerTable', VServerTable);
+    app.component('VClientTable', VServerTable);
     app.component('BButton', BButton);
     app.component('GridItem', VueGridLayout.GridItem);
     app.component('GridLayout', VueGridLayout.GridLayout);

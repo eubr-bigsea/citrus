@@ -27,11 +27,7 @@ export default class {
         this.$t = $t;
         this.$router = $router;
     }
-    async confirm2() {
-       const {confirm} = useModalController();
-       const value = await confirm({props: {title: 'teste'} });
-       return value;
-    }
+
     success2(msg, timeout) {
         toast.success(msg, { ...toastOptions, timeout });
     }
@@ -39,10 +35,8 @@ export default class {
         this.$snotify.confirm(
             question, title,
             {
+                callback,
                 position: 'centerTop',
-                xbuttons: {
-                    text: 'Yes', action: () => callback()
-                },
                 buttons: [
                     { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id); }, },
                     { text: this.$t('common.no'), action: (toast) => { console.log('Clicked: No'); this.$snotify.remove(toast.id); }, bold: true },

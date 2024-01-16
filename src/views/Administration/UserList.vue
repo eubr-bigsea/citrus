@@ -1,66 +1,63 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="title">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h1>{{$t('titles.user')}}</h1>
-                            <div>
-                                <router-link :to="{ name: 'AdministrationAddUser' }"
-                                             class="btn btn-primary btn-lemonade-primary float-start ms-2">
-                                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
-                                </router-link>
-                            </div>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.user') }}</h1>
+            <div>
+                <router-link :to="{ name: 'AdministrationAddUser' }"
+                    class="btn btn-primary btn-lemonade-primary float-start ms-2">
+                    <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                </router-link>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+
+                <v-server-table :options="options" :columns="columns" name="users">
+                    <template #id="props">
+                        <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                            {{ props.row.id }}
+                        </router-link>
+                    </template>
+                    <template #full_name="props">
+                        <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                            {{ props.row.full_name }}
+                        </router-link>
+                    </template>
+                    <template #enabled="props">
+                        {{ $t(props.row.enabled ? 'common.yes' : 'common.no') }}
+                    </template>
+                    <template #email="props">
+                        <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                            {{ props.row.email }}
+                        </router-link>
+                    </template>
+                    <template #roles="props">
+                        <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
+                            <span v-for="role in props.row.roles" :key="role.id">
+                                <div class="badge bg-secondary p-1 me-1">{{ role.label }}</div>
+                            </span>
+                        </router-link>
+                    </template>
+                    <template #notes="props">
+                        {{ props.row.notes }}
+                    </template>
+
+                    <template #confirmed_at="props">
+                        <div v-if="isConfirmedUser(props.row.confirmed_at)">
+                            {{ $filters.formatJsonDate(props.row.confirmed_at) }}
+                            <font-awesome-icon icon="check" />
                         </div>
-                    </div>
-                    <v-server-table :options="options" :columns="columns" name="users">
-                        <template #id="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{props.row.id}}
-                            </router-link>
-                        </template>
-                        <template #full_name="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{props.row.full_name}}
-                            </router-link>
-                        </template>
-                        <template #enabled="props">
-                            {{$t(props.row.enabled ? 'common.yes' : 'common.no')}}
-                        </template>
-                        <template #email="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                {{props.row.email}}
-                            </router-link>
-                        </template>
-                        <template #roles="props">
-                            <router-link :to="{ name: 'AdministrationEditUser', params: { id: props.row.id } }">
-                                <span v-for="role in props.row.roles" :key="role.id">
-                                    <div class="badge bg-secondary p-1 me-1">{{role.label}}</div>
-                                </span>
-                            </router-link>
-                        </template>
-                        <template #notes="props">
-                            {{props.row.notes}}
-                        </template>
+                        <button v-else class="btn btn-sm btn-success" @click="confirmUser(props.row.id)">
+                            {{ $t('common.confirm') }}
+                        </button>
+                    </template>
 
-                        <template #confirmed_at="props">
-                            <div v-if="isConfirmedUser(props.row.confirmed_at)">
-                                {{$filters.formatJsonDate(props.row.confirmed_at)}}
-                                <font-awesome-icon icon="check" />
-                            </div>
-                            <button v-else class="btn btn-sm btn-success" @click="confirmUser(props.row.id)">
-                                {{$t('common.confirm')}}
-                            </button>
-                        </template>
-
-                        <template #actions="props">
-                            <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
-                                <font-awesome-icon icon="trash" />
-                            </button>
-                        </template>
-                    </v-server-table>
-                </div>
+                    <template #actions="props">
+                        <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
+                    </template>
+                </v-server-table>
             </div>
         </div>
     </main>
@@ -69,14 +66,11 @@
 <script>
 import axios from 'axios';
 import Notifier from '@/mixins/Notifier.js';
-//import VServerTable from '@/components/VServerTable.vue';
+
 let thornUrl = import.meta.env.VITE_THORN_URL;
 
 
 export default {
-    components: {
-        //'v-server-table': VServerTable,
-    },
     mixins: [Notifier],
     data() {
         const self = this;

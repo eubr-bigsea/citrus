@@ -1,70 +1,59 @@
 <template>
     <main role="main">
-        <div>
-            <div class="title">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$t('titles.configuration', 2)}}</h1>
-                </div>
-            </div>
-            <v-server-table ref="configurationList" :columns="table.columns" :options="table.options"
-                            name="configurationList">
-                <template #id="props">
-                    {{props.row.id}}
-                </template>
-                <template #name="props">
-                    {{props.row.name}}
-                </template>
-                <template #type="props">
-                    {{props.row.description}}
-                </template>
-                <template #category="props">
-                    {{props.row.category}}
-                </template>
-                <template #enabled="props">
-                    {{props.row.enabled ? $t('common.yes') : $t('common.no')}}
-                </template>
-                <template #actions="props">
-                    <button class="btn btn-sm btn-light" @click="edit(props.row)">
-                        <font-awesome-icon icon="edit" />
-                    </button>
-                </template>
-            </v-server-table>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.configuration', 2) }}</h1>
         </div>
+        <div class="card">
+            <div class="card-body">
+                <v-server-table ref="configurationList" :columns="table.columns" :options="table.options"
+                    name="configurationList">
 
-        <b-modal id="modalConfig" ref="modalConfig" :title="currentRow ? currentRow.name : ''" size="lg">
-            <div v-if="currentRow" class="row">
-                <div class="col-md-12">
-                    <label>{{currentRow.description}}:</label>
-                </div>
-                <div class="col-md-12">
-                    <template v-if="currentRow.editor === 'TEXTAREA'">
-                        <textarea v-model="editableValue" class="form-control text-monospace" rows="20" />
+                    <template #enabled="props">
+                        {{ props.row.enabled ? $t('common.yes') : $t('common.no') }} 
                     </template>
-                    <template v-if="currentRow.editor === 'TEXT' || currentRow.editor === 'URL'">
-                        <input v-model="editableValue" type="text" class="form-control text-monospace">
+                    <template #actions="props">
+                        <button class="btn btn-sm btn-light" @click="edit(props.row)">
+                            <font-awesome-icon icon="edit" />
+                        </button>
                     </template>
-                    <template v-if="currentRow.editor === 'EMAIL'">
-                        <input v-model="editableValue" type="email" class="form-control text-monospace">
-                    </template>
-                    <template v-if="currentRow.editor === 'PASSWORD'">
-                        <input v-model="editableValue" type="password" class="form-control text-monospace">
-                    </template>
-                    <template v-if="currentRow.editor === 'INTEGER'">
-                        <input v-model="editableValue" type="number" class="form-control text-monospace">
-                    </template>
-                </div>
+                </v-server-table>
             </div>
-            <template #modal-footer>
-                <div class="w-100 text-right">
-                    <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
-                        <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
-                    </button>
-                    <button class="ms-1 btn btn-sm btn-outline-dark" @click="cancel">
-                        {{$t('actions.cancel')}}
-                    </button>
+
+            <b-modal id="modalConfig" ref="modalConfig" :title="currentRow ? currentRow.name : ''" size="lg">
+                <div v-if="currentRow" class="row">
+                    <div class="col-md-12">
+                        <label>{{ currentRow.description }}:</label>
+                    </div>
+                    <div class="col-md-12">
+                        <template v-if="currentRow.editor === 'TEXTAREA'">
+                            <textarea v-model="editableValue" class="form-control text-monospace" rows="20" />
+                        </template>
+                        <template v-if="currentRow.editor === 'TEXT' || currentRow.editor === 'URL'">
+                            <input v-model="editableValue" type="text" class="form-control text-monospace">
+                        </template>
+                        <template v-if="currentRow.editor === 'EMAIL'">
+                            <input v-model="editableValue" type="email" class="form-control text-monospace">
+                        </template>
+                        <template v-if="currentRow.editor === 'PASSWORD'">
+                            <input v-model="editableValue" type="password" class="form-control text-monospace">
+                        </template>
+                        <template v-if="currentRow.editor === 'INTEGER'">
+                            <input v-model="editableValue" type="number" class="form-control text-monospace">
+                        </template>
+                    </div>
                 </div>
-            </template>
-        </b-modal>
+                <template #modal-footer>
+                    <div class="w-100 text-right">
+                        <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
+                            <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                        </button>
+                        <button class="ms-1 btn btn-sm btn-outline-dark" @click="cancel">
+                            {{ $t('actions.cancel') }}
+                        </button>
+                    </div>
+                </template>
+            </b-modal>
+        </div>
     </main>
 </template>
 
@@ -90,12 +79,13 @@ export default {
                         category: this.$t('common.category'),
                         type: this.$t('common.description'),
                         enabled: this.$t('common.enabled'),
-                        actions: this.$t('common.action', 2)
+                        actions: this.$t('common.action', 2),
+                        description: this.$t('common.description'),
                     },
                     sortable: ['name', 'id'],
                     filterable: ['description', 'name'],
                     sortIcon: {
-                       base: 'sort-base',
+                        base: 'sort-base',
                         is: 'sort-is ms-10',
                         up: 'sort-up',
                         down: 'sort-down'

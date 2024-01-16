@@ -9,7 +9,8 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList">
+                <v-server-table ref="dataSourceList" :columns="columns" :options="options" name="dataSourceList"
+                    :data="tableData" :size="tableDataSize" @on-load="handleLoad">
                     <template #id="props">
                         <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
                             {{ props.row.id }}
@@ -46,11 +47,13 @@
                     </template>
                     <template #tags="props">
                         <div v-if="props.row.tags">
-                            <div v-for="tag in (props.row.tags || '').split(',')" :key="tag" class="badge bg-info me-1">
+                            <div v-for="tag in (props.row.tags).split(',')" :key="tag" class="badge bg-info me-1">
                                 {{ tag }}
                             </div>
                         </div>
                     </template>
+                    <!--  
+                     -->
                 </v-server-table>
                 <modal-preview-data-source ref="previewWindow" />
             </div>
@@ -59,7 +62,7 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { inject, ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mapGetters, useStore } from 'vuex';
 
@@ -68,7 +71,6 @@ import Notifier from '@/notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
 import DataTableBuilder from '../data-table-builder.js';
 import VServerTable from '@/components/VServerTable.vue';
-import { useModalController } from 'bootstrap-vue-next';
 
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 
@@ -82,9 +84,12 @@ export default {
         const store = useStore()
         const user = store.getters.user;
         const isAdmin = user.roles.indexOf('admin') >= 0;
+        const notifier = new Notifier(inject('snotify'), t);
+        const tableData = [];
+        const tableDataSize = 0;
 
         //#region Listing
-        const reqFn = async (data) => {
+        const handleLoad = async (data) => {
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
@@ -99,7 +104,7 @@ export default {
                     count: resp.data.pagination.total
                 };
             } catch (e) {
-                Vue.prototype.$snotify.error(e);
+                notifier.error(e);
             }
         };
 
@@ -127,8 +132,8 @@ export default {
             })
             .sortable('name', 'id', 'created')
             .filterable('name')
-            .requestFunction(reqFn);
-        //#endregion
+            .requestFunction(handleLoad);
+        //#endregion 
         //#region Preview
 
         const previewWindow = ref(null);
@@ -147,14 +152,6 @@ export default {
 
         const dataSourceList = ref(null);
         const remove = async (dataSourceId) => {
-            
-
-            show({
-                props: computed(() => ({
-                    title: 'title.value',
-                })),
-            })
-            return
             notifier.confirm(
                 t('actions.delete'),
                 t('messages.doYouWantToDelete'),
@@ -181,7 +178,6 @@ export default {
         const visualizable = (ds) => {
             return ['JDBC', 'CSV', 'HIVE', 'PARQUET'].includes(ds.format);
         };
-
         return {
             ...dtBuilder.build(),
             previewWindow,
@@ -192,7 +188,8 @@ export default {
             getDownloadLink,
             remove,
             visualizable,
-            preventableModal
+            preventableModal,
+            tableData, tableDataSize, handleLoad
         };
     },
     computed: {
