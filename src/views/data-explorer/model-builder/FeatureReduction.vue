@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-4">
                 <label for="">Método de redução:</label>
-                <select v-model="copy.forms.method.value" class="form-control form-control-sm mb-3" data-test="reduction">
+                <select v-model="copy.forms.method.value" class="form-select form-select-sm mb-3" data-test="reduction">
                     <option v-for="opt in reduction.operation.fieldsMap.get('method').values" :key="opt.key"
                             :value="opt.key">
                         {{opt.pt}}

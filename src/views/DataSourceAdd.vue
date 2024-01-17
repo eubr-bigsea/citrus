@@ -25,7 +25,7 @@
                                 </div>
                                 <div class="card-footer text-center">
                                     <p>
-                                        <select v-model="storage[option.prop]" class="form-control" :name="`storage-${option.prop}`">
+                                        <select v-model="storage[option.prop]" class="form-select" :name="`storage-${option.prop}`">
                                             <option v-for="s in storages[option.items]" :key="s.id" :value="s.id">
                                                 {{s.name}}
                                             </option>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label>{{$t('dataSource.tablesReference')}}</label>
-                                <select v-model="selectedTable" class="form-control tables" size="10"
+                                <select v-model="selectedTable" class="form-select tables" size="10"
                                         @dblclick.stop="copyTableName">
                                     <option v-for="tb in tables" :key="tb">
                                         {{tb}}

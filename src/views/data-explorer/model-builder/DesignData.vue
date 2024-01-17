@@ -42,7 +42,7 @@
         </h5>
         <hr>
         <label for="">Forma de amostragem:</label> &nbsp;
-        <select id="" v-model="copy.forms.type.value" class="form-control w-50 form-control-sm">
+        <select id="" v-model="copy.forms.type.value" class="form-select w-50 form-control-sm">
             <option value="">
                 Sem amostragem, usar todos os registros
             </option>

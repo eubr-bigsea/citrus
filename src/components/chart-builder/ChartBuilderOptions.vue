@@ -67,7 +67,7 @@
                                 </select>
                             </template>
                             <label class="mt-2">Tema:</label>
-                            <select v-model="editableVisualization.template.value" class="form-control form-control-sm mb-2"
+                            <select v-model="editableVisualization.template.value" class="form-select form-select-sm mb-2"
                                     data-test="template">
                                 <option value="none">
                                     Nenhum
@@ -241,7 +241,7 @@
                             </template>
                             <template v-if="mapFamily">
                                 <b-form-group label="Estilo do mapa:">
-                                    <select v-model="editableVisualization.style.value" class="form-control form-control-sm"
+                                    <select v-model="editableVisualization.style.value" class="form-select form-select-sm"
                                             data-test="style">
                                         <option value="carto-darkmatter">
                                             Carto Darkmatter
@@ -394,7 +394,7 @@
                             </template>
                             <template v-if="false && type.value == 'bar'">
                                 <b-form-group label="Direção:">
-                                    <select v-model="forms.direction.value" class="form-control form-control-sm"
+                                    <select v-model="forms.direction.value" class="form-select form-select-sm"
                                             data-test="direction">
                                         <option value="VERTICAL">
                                             Vertical
@@ -423,7 +423,7 @@
 
 
                                 <b-form-group label="Tipo de Linha:" label-for="line-width">
-                                    <select v-model="forms.line_type.value" class="form-control form-control-sm">
+                                    <select v-model="forms.line_type.value" class="form-select form-select-sm">
                                         <option value="solid">
                                             Sólida
                                         </option>
@@ -437,7 +437,7 @@
                                 </b-form-group>
 
                                 <b-form-group label="Modo para as séries:">
-                                    <select v-model="forms.mode.value" class="form-control form-control-sm">
+                                    <select v-model="forms.mode.value" class="form-select form-select-sm">
                                         <option value="lines">
                                             Somente linhas
                                         </option>
@@ -632,7 +632,7 @@
                                         </b-dropdown>
                                         <b-form-group>
                                             <label>Exibir legenda:</label>
-                                            <select v-model="editableVisualization.display_legend.value" class="form-control form-control-sm">
+                                            <select v-model="editableVisualization.display_legend.value" class="form-select form-select-sm">
                                                 <option value="HIDE">Ocultar</option>
                                                 <option value="AUTO">Posicionar automaticamente</option>
                                                 <option value="LEFT">Topo à esquerda</option>

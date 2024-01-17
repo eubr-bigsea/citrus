@@ -152,7 +152,7 @@
                     </div>
                     <div v-else>
                         <span v-if="stats">
-                            <select ref="selectAttributeStat" class="form-control-sm mb-2"
+                            <select ref="selectAttributeStat" class="form-select-sm mb-2"
                                     @change.prevent="handleSelectAttributeStat">
                                 <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{name}}</option>
                             </select>
