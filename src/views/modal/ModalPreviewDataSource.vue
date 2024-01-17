@@ -1,10 +1,10 @@
 <template>
-    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only
-             no-stacking button-size="sm" centered
-             header-bg-variant="dark" header-text-variant="light" no-fade>
-        <small><strong>*{{$t('dataSource.previewExplanation', { amount: 40 })}}</strong></small>
-
-        <v-server-table v-if="loaded" ref="table" :columns="attributes" :options="options" />
+    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only no-stacking button-size="sm" centered
+        header-bg-variant="dark" header-text-variant="light" no-fade @hidden="$emit('hidden')">
+        <small><strong>*{{ $t('dataSource.previewExplanation', { amount: 40 }) }}</strong></small>
+        <div v-if="loaded">
+            <v-server-table ref="table" :columns="attributes" :options="options" />
+        </div>
         <spinner-display v-else />
     </b-modal>
 </template>
@@ -15,8 +15,9 @@ import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
 import axios from 'axios';
 import Notifier from '../../mixins/Notifier.js';
 export default {
-    components: {SpinnerDisplay},
+    components: { SpinnerDisplay },
     mixins: [Notifier],
+    emits: ['hidden'],
     data() {
         const self = this;
         return {
@@ -57,7 +58,7 @@ export default {
                     this.attributes = [];
                 }
                 this.$nextTick(() => {
-                    this.$nextTick(()=> {});
+                    this.$nextTick(() => { });
                     this.$refs.preview.show();
                     this.$refs.table.setCurrentPage(1);
                     this.$refs.table.refresh();
@@ -70,3 +71,9 @@ export default {
     }
 };
 </script>
+<style scoped>
+.scroll-area {
+    overflow: auto;
+    max-height: 400px;
+}
+</style>

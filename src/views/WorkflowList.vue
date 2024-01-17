@@ -1,14 +1,14 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{$t('titles.workflow', 2)}}</h1>
+            <h1>{{ $t('titles.workflow', 2) }}</h1>
             <div>
                 <button class="btn btn-outline-info float-start" @click.prevent="showImportWorkflow">
                     <font-awesome-icon icon="fa fa-download" />
-                    {{$t('actions.import')}}
+                    {{ $t('actions.import') }}
                 </button>
-                <router-link :to="{name: 'addWorkflow'}" class="btn btn-primary btn-lemonade-primary float-start ms-2">
-                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+                <router-link :to="{ name: 'addWorkflow' }" class="btn btn-primary btn-lemonade-primary float-start ms-2">
+                    <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
                 </router-link>
             </div>
         </div>
@@ -16,44 +16,46 @@
             <div class="card-body">
                 <v-server-table ref="workflowList" :columns="columns" :options="options" name="workflowList">
                     <template #id="props">
-                        <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                            {{props.row.id}}
+                        <router-link
+                            :to="{ name: 'editWorkflow', params: { id: props.row.id, platform: props.row.platform.id } }">
+                            {{ props.row.id }}
                         </router-link>
                     </template>
                     <template #name="props">
-                        <router-link :to="{name: 'editWorkflow', params: {id: props.row.id, platform: props.row.platform.id}}">
-                            {{props.row.name}}
+                        <router-link
+                            :to="{ name: 'editWorkflow', params: { id: props.row.id, platform: props.row.platform.id } }">
+                            {{ props.row.name }}
                         </router-link>
-                        <small v-if="props.row.description" class="break-word"><br>{{props.row.description}}</small>
+                        <small v-if="props.row.description" class="break-word"><br>{{ props.row.description }}</small>
                     </template>
                     <template #platform="props">
-                        {{props.row.platform.name}}
+                        {{ props.row.platform.name }}
                     </template>
                     <template #is_template="props">
-                        {{$t(props.row.is_template ?
-                            'common.yes':
-                            'common.no')}}
+                        {{ $t(props.row.is_template ?
+                            'common.yes' :
+                            'common.no') }}
                     </template>
                     <template #user_name="props">
-                        {{props.row.user.name}}
+                        {{ props.row.user.name }}
                     </template>
                     <template #updated="props">
-                        {{$filters.formatJsonDate(props.row.updated)}}
+                        {{ $filters.formatJsonDate(props.row.updated) }}
                     </template>
                     <template #afterFilter>
                         <div class="form-group float-start ms-3">
-                            <label>{{$t('common.platform')}}</label>
-                            <select v-model="platform" class="form-control">
+                            <label>{{ $t('common.platform') }}</label>
+                            <select v-model="platform" class="form-select form-select-sm">
                                 <option />
                                 <option v-for="p in platforms" :key="p.id" :value="p.slug">
-                                    {{p.name}}
+                                    {{ p.name }}
                                 </option>
                             </select>
                         </div>
                         <div class="form-group float-start ms-3 mt-4">
                             <button type="button" class="btn btn-sm btn-light btn-outline-secondary ms-2"
-                                    @click="clearFilters">
-                                {{$t('actions.clearFilters')}}
+                                @click="clearFilters">
+                                {{ $t('actions.clearFilters') }}
                             </button>
                         </div>
                     </template>
@@ -65,14 +67,14 @@
                 </v-server-table>
             </div>
         </div>
-        <b-modal id="importModal" ref="importModal" size="lg"
-                 :title="$t('actions.import') + ' ' + $t('titles.workflow', 1)" ok-disabled>
+        <b-modal id="importModal" ref="importModal" size="lg" :title="$t('actions.import') + ' ' + $t('titles.workflow', 1)"
+            ok-disabled>
             <b-form-radio-group>
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <p>{{$t('import.description')}}</p>
+                        <p>{{ $t('import.description') }}</p>
                         <div class="alert alert-warning" role="alert">
-                            {{$t('import.review')}}
+                            {{ $t('import.review') }}
                         </div>
                     </div>
                     <div class="col-md-12 mb-3">
@@ -83,10 +85,10 @@
             <template #modal-footer>
                 <div class="w-100">
                     <b-button variant="secondary_sm" class="float-end btn-sm btn-outline-secondary" @click="closeImport">
-                        {{$t('actions.cancel')}}
+                        {{ $t('actions.cancel') }}
                     </b-button>
                     <b-button variant="primary" class="float-end me-2 btn-sm " @click="importWorkflow">
-                        {{$t('common.ok')}}
+                        {{ $t('common.ok') }}
                     </b-button>
                 </div>
             </template>
@@ -162,7 +164,7 @@ export default {
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total,
-                                customQueries: {platform: self.platform}
+                                customQueries: { platform: self.platform }
                             };
                         })
                         .catch(
@@ -190,7 +192,7 @@ export default {
 
             // This works, but it uses internal details of component
             const table = this.$refs.workflowList;
-            table.setCustomQuery({platform: this.platform});
+            table.setCustomQuery({ platform: this.platform });
             //table.updateState('customQueries', table.customQueries);
             table.getData();
         }

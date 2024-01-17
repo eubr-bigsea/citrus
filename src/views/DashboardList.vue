@@ -12,11 +12,11 @@
                         </router-link>
                     </template>
                     <template #is_public="props">
-                        <div v-if="props.row.is_public">
-                            <a :href="`${origin}/public/dashboard/${props.row.hash}`" target="_blank">
-                                {{ $t('common.publicLink') }}
-                            </a>
-                        </div>
+                        <a v-if="props.row.is_public" :href="`${origin}/public/dashboard/${props.row.hash}`"
+                            target="_blank">
+                            {{ $t('common.publicLink') }}
+                        </a>
+                        <span v-else>{{ $t('common.no') }}</span>
                     </template>
                     <template #title="props">
                         <router-link :to="{ name: 'dashboardDetail', params: { id: props.row.id } }">
@@ -27,12 +27,10 @@
                         {{ $filters.formatJsonDate(props.row.updated) }}
                     </template>
                     <template #actions="props">
-                        <div>
-                            <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ms-2 btn btn-sm btn-danger"
-                                @click="remove(props.row.id, props.row.title)">
-                                <font-awesome-icon icon="trash" />
-                            </button>
-                        </div>
+                        <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ms-2 btn btn-sm btn-danger"
+                            @click="remove(props.row.id, props.row.title)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
                     </template>
                 </v-server-table>
             </div>
