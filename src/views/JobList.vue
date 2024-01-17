@@ -36,6 +36,9 @@
                             {{ props.row.status }}
                         </div>
                     </template>
+                    <template #user_name="props">
+                        {{ props.row.user.name }}
+                    </template>
                     <template #created="props">
                         {{ $filters.formatJsonDate(props.row.created) }}
                     </template>
@@ -70,11 +73,11 @@ export default {
                 'name',
                 'workflow',
                 'created',
-                'user.name',
+                'user_name',
                 'actions'
             ],
             tableData: [],
-            showSideBar: false, 
+            showSideBar: false,
             options: {
                 perPageValues: [5, 10, 20],
                 skin: 'table-sm table table-hover',
@@ -89,7 +92,7 @@ export default {
                     created: this.$t('common.created'),
                     actions: this.$t('common.action', 2),
                     name: this.$t('common.name'),
-                    'user.name': this.$t('common.user.name'),
+                    'user_name': this.$t('common.user.name'),
                     status: this.$t('common.status'),
                 },
                 sortable: ['name', 'id', 'created'],
@@ -121,6 +124,7 @@ export default {
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
             data.name = data.query;
+            data.fields = 'id,status,name,workflow.id,created,user'
             return axios
                 .get(`${standUrl}/jobs`, {
                     params: data
