@@ -286,7 +286,7 @@ export default {
                 .then(resp => {
                     this.notifications = resp.data.data;
                 });
-        }
+        },
     },
 
 };
