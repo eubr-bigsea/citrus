@@ -1,104 +1,81 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$t('titles.track', 2)}}</h1>
-                        <div class="float-end">
-                            <!--
-                            <router-link :to="{name: 'addTrack'}" v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
-                                class="btn btn-primary btn-lemonade-primary float-start me-1">
-                                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
-                            </router-link>
-                            -->
-                            <!--
-                            <button class="btn btn-outline-secondary me-1" :disabled="display === 'large'"
-                                @click="show('large')">
-                                <font-awesome-icon icon="fa fa-th" />
-                            </button>
-
-                            <button class="btn btn-outline-secondary" :disabled="display === 'small'"
-                                @click="show('small')">
-                                <font-awesome-icon icon="fa fa-list" />
-                            </button>
-                        -->
+    <main role="main">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{ $t('titles.track', 2) }}</h1>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div v-if="display === 'large'">
+                    <div class=" traxck">
+                        <div v-for="item in items" :key="item.id" class="track-item" :title="item.description">
+                            <b-dropdown variant="light" class="track-item-dropdown">
+                                <b-dropdown-item :to="{ name: 'trackParameter', params: { id: item.id } }">
+                                    Visualizar
+                                </b-dropdown-item>
+                                <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
+                                    :to="{ name: 'editWorkflow', params: { id: item.id, platform: item.platform.id } }">
+                                    {{ $t('actions.edit') }}
+                                </b-dropdown-item>
+                                <b-dropdown-item :to="{ name: 'trackParameter', params: { id: item.id } }">
+                                    Execuções anteriores
+                                </b-dropdown-item>
+                            </b-dropdown>
+                            <div class="img text-center">
+                                <router-link :to="{ name: 'trackParameter', params: { id: item.id } }">
+                                    <img v-if="item.image" class="circle-image" :src="item.image" :alt="item.name">
+                                    <div v-else class="big-letter">
+                                        {{ item.name.substring(0, 1).toUpperCase() }}
+                                    </div>
+                                </router-link>
+                            </div>
+                            <div class="text text-center">
+                                <router-link :to="{ name: 'trackParameter', params: { id: item.id } }">
+                                    {{ item.name }}
+                                </router-link>
+                            </div>
                         </div>
                     </div>
-                    <hr>
-                    <div class="row">
-                        <div v-if="display==='large'" class="col-md-12">
-                            <div class=" track">
-                                <div v-for="item in items" :key="item.id" class="track-item" :title="item.description">
-                                    <b-dropdown variant="light" class="track-item-dropdown">
-                                        <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
-                                            Visualizar
-                                        </b-dropdown-item>
-                                        <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
-                                                         :to="{name: 'editWorkflow', params: {id: item.id, platform: item.platform.id}}">
-                                            {{$t('actions.edit')}}
-                                        </b-dropdown-item>
-                                        <b-dropdown-item :to="{name: 'trackParameter', params: {id: item.id}}">
-                                            Execuções anteriores
-                                        </b-dropdown-item>
-                                    </b-dropdown>
-                                    <div class="img text-center">
-                                        <router-link :to="{name: 'trackParameter', params: {id: item.id}}">
-                                            <img v-if="item.image" class="circle-image" :src="item.image"
-                                                 :alt="item.name">
-                                            <div v-else class="big-letter">
-                                                {{item.name.substring(0, 1).toUpperCase()}}
-                                            </div>
-                                        </router-link>
+                    <div class="text-center">
+                        <pager-component v-model="page" :records="records" :per-page="10" :options="options"
+                            class="pagination" @paginate="paginate" />
+                    </div>
+                </div>
+                <div v-else>
+                    <v-server-table ref="trackPanelList" :columns="columns" :options="options" name="trackPanelList"
+                        @pagination="paginate">
+                        <template #beforeTable>
+                            <div class="ms-2">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
                                     </div>
-                                    <div class="text text-center">
-                                        <router-link :to="{name: 'trackParameter', params: {id: item.id}}">
-                                            {{item.name}}
-                                        </router-link>
-                                    </div>
+                                    <input v-model="search" v-focus type="text" class="form-control"
+                                        :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
                                 </div>
                             </div>
-                            <div class="text-center">
-                                <pager-component v-model="page" :records="records" :per-page="10" :options="options"
-                                            class="pagination" @paginate="paginate" />
+                        </template>
+                        <template #id="props">
+                            <router-link :to="{ name: 'trackParameter', params: { id: props.row.id } }">
+                                {{ props.row.id }}
+                            </router-link>
+                        </template>
+                        <template #image="props">
+                            <img v-if="props.row.image" :src="props.row.image" alt="props.row.name" class="circle-image">
+                            <div v-else class="big-letter">
+                                {{ props.row.name.substring(0, 1).toUpperCase() }}
                             </div>
-                        </div>
-                        <div v-else class="col-md-12">
-                            <v-server-table ref="trackPanelList" :columns="columns" :options="options"
-                                            name="trackPanelList" @pagination="paginate">
-                                <template #beforeTable>
-                                    <div class="ms-2">
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
-                                            </div>
-                                            <input v-model="search" v-focus type="text" class="form-control"
-                                                   :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
-                                        </div>
-                                    </div>
-                                </template>
-                                <template #id="props">
-                                    <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
-                                        {{props.row.id}}
-                                    </router-link>
-                                </template>
-                                <template #image="props">
-                                    <img v-if="props.row.image" :src="props.row.image" alt="props.row.name"
-                                         class="circle-image">
-                                    <div v-else class="big-letter">
-                                        {{props.row.name.substring(0, 1).toUpperCase()}}
-                                    </div>
-                                </template>
-                                <template #name="props">
-                                    <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
-                                        {{props.row.name}}
-                                    </router-link>
-                                    <small v-if="props.row.description" class="break-word"><br>{{props.row.description}}</small>
-                                </template>
-                                <template #updated="props">
-                                    {{$filters.formatJsonDate(props.row.updated)}}
-                                </template>
-                                <!--
+                        </template>
+                        <template #name="props">
+                            <router-link :to="{ name: 'trackParameter', params: { id: props.row.id } }">
+                                {{ props.row.name }}
+                            </router-link>
+                            <small v-if="props.row.description" class="break-word"><br>{{
+                                props.row.description }}</small>
+                        </template>
+                        <template #updated="props">
+                            {{ $filters.formatJsonDate(props.row.updated) }}
+                        </template>
+                        <!--
                                 <template slot="actions" slot-scope="props">
 
                                     <router-link :to="{name: 'trackParameter', params: {id: props.row.id}}">
@@ -122,13 +99,11 @@
                                     </router-link>
                                 </template>
                                  -->
-                            </v-server-table>
-                        </div>
-                    </div>
+                    </v-server-table>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 </template>
 
 <script>
@@ -177,7 +152,7 @@ export default {
                     actions: this.$t('common.action', 2)
                 },
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
@@ -185,35 +160,30 @@ export default {
                 sortable: ['name', 'updated'],
                 preserveState: false,
                 saveState: true,
-                filterable: false,
+                filterable: true,
                 filterByColumn: false,
                 hidePerPageSelect: true,
-                requestFunction: function (data) {
+                requestFunction: async function (data) {
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
                     data.size = data.limit;
-                    data.name = self.customQueries['name'];
+                    data.name = data.query; // self.customQueries['name'];
                     self.page = data.page;
                     data.fields = LIST_OF_FIELDS;
 
-                    let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
-                    return axios
-                        .get(url, {
-                            params: data
-                        })
-                        .then(resp => {
-                            self.items = resp.data.data;
-                            self.records = resp.data.pagination.total;
-                            return {
-                                data: resp.data.data,
-                                count: resp.data.pagination.total
-                            };
-                        })
-                        .catch(
-                            function (e) {
-                                self.error(e);
-                            }.bind(self)
-                        );
+                    try {
+                        let url = `${tahitiUrl}/workflows?enabled=1&track=1&published=1`;
+                        const resp = await axios.get(url, { params: data });
+                        self.items = resp.data.data;
+                        self.records = resp.data.pagination.total;
+                        return {
+                            data: resp.data.data,
+                            count: resp.data.pagination.total,
+                            customQueries: null
+                        };
+                    } catch (e) {
+                        self.error(e);
+                    }
                 },
                 texts: {
                     filter: this.$t('common.filter'),
@@ -227,7 +197,7 @@ export default {
         }
     },
     mounted() {
-        this.search = this.$refs.trackPanelList.customQueries['name'];
+        //this.search = this.$refs.trackPanelList.customQueries['name'];
         //this.init();
     },
     /* Methods */
@@ -274,95 +244,95 @@ export default {
 };
 </script>
 <style lang="scss">
-    .track {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
+.track {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 
-        .track-item {
-            flex: 0 0 19.6%;
-            /*grow | shrink | basis */
-            height: 280px;
-            margin: 5px 2px;
-            border: 1px #aaa solid;
-            border-radius: 4px;
-            padding: 10px;
-            position: relative;
+    .track-item {
+        flex: 0 0 19.6%;
+        /*grow | shrink | basis */
+        height: 280px;
+        margin: 5px 2px;
+        border: 1px #aaa solid;
+        border-radius: 4px;
+        padding: 10px;
+        position: relative;
 
-            .track-item-dropdown {
-                position: absolute;
-                right: 0;
-                top: 0;
-            }
-
-
-            .img {
-                height: 160px;
-            }
-
-            .text {
-                font-weight: bold;
-                padding-top: 5px;
-                height: 80px;
-
-                a {
-                    color: #222;
-                }
-            }
+        .track-item-dropdown {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
 
 
-            .text2 {
-                height: 30px;
+        .img {
+            height: 160px;
+        }
 
-                a {
-                    color: #555;
-                }
+        .text {
+            font-weight: bold;
+            padding-top: 5px;
+            height: 80px;
 
+            a {
+                color: #222;
             }
         }
 
-        .big-letter,
-        .circle-image {
-            height: 150px !important;
-            width: 150px !important;
-        }
 
-        .big-letter {
-            font-size: 80pt !important;
+        .text2 {
+            height: 30px;
+
+            a {
+                color: #555;
+            }
+
         }
+    }
+
+    .big-letter,
+    .circle-image {
+        height: 150px !important;
+        width: 150px !important;
     }
 
     .big-letter {
-        background: #222;
-        border-radius: 150px;
-        color: #eee;
-        font-size: 30pt;
-        font-weight: bold;
-        height: 48px;
-        margin: 0 auto;
-        text-align: center;
-        width: 48px;
+        font-size: 80pt !important;
     }
+}
 
-    .circle-image {
-        padding: 2px;
+.big-letter {
+    background: #222;
+    border-radius: 150px;
+    color: #eee;
+    font-size: 30pt;
+    font-weight: bold;
+    height: 48px;
+    margin: 0 auto;
+    text-align: center;
+    width: 48px;
+}
 
-        height: 50px;
-        width: 50px;
-        background-size: cover;
-        background-position: center;
-        border: 2px solid #eee;
-        border-radius: 15px;
-    }
+.circle-image {
+    padding: 2px;
 
-    .paginationx {
-        width: 400px;
-        margin: 0 auto;
-    }
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #eee;
+    border-radius: 15px;
+}
 
-    /*
+.paginationx {
+    width: 400px;
+    margin: 0 auto;
+}
+
+/*
     tr td:nth-child(1) {
         width: 60px;
     }*/
