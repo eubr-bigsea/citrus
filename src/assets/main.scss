@@ -1014,3 +1014,11 @@ ul.b-form-tags-list {
     background: linear-gradient(90deg,transparent,hsla(0,0%,100%,.4),transparent);
     animation: b-skeleton-animate-wave 1.75s linear infinite;
 }
+
+a {
+    text-decoration: none !important;
+}
+
+a:hover {
+    text-decoration: underline !important;
+}
