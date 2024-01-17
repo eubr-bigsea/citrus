@@ -58,7 +58,7 @@
                 </div>
             </div>
         </b-form>
-        <template #modal-footer>
+        <template #footer>
             <div>
                 <b-button variant="primary btn-sm" class="float-end me-1" :disabled="(workflowCopy.name === '')"
                           @click="okClicked">

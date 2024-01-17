@@ -14,7 +14,7 @@
                 </b-button>
                 COLUMN_NAME (999 distinct values)
             </template>
-            <template #modal-footer>
+            <template #footer>
                 &nbsp;
             </template>
             <div>

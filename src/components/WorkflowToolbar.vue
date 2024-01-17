@@ -1,44 +1,45 @@
 <template>
     <div>
-        <div class="btn-group me-2"
-             role="group">
-            <button class="btn btn-sm btn-outline-dark"
-                    :title="$t('titles.job', 2)"
-                    @click.prevent="showExecutions">
-                <font-awesome-icon icon="fa fa-tasks" /> {{$t('titles.job', 2)}}
+        <div class="btn-group me-2" role="group">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('titles.job', 2)" @click.prevent="showExecutions">
+                <font-awesome-icon icon="fa fa-tasks" /> {{ $t('titles.job', 2) }}
+                <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-info">
+                    {{ totalJobs }}
+                    <span class="visually-hidden">{{ $t('titles.job', 2) }}</span>
+                </span>
             </button>
             <button v-if="(hasAnyPermission(['APP_EDIT']) || isAdmin) && workflow.publishing_enabled"
-                    class="btn btn-sm btn-outline-dark"
-                    :title="$t('actions.showVariables')"
-                    @click.prevent="showVariables">
-                <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
+                class="btn btn-sm btn-outline-dark" :title="$t('actions.showVariables')" @click.prevent="showVariables">
+                <font-awesome-icon icon="fa fa-dollar-sign" /> {{$t('workflow.variables', 2)}}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info">
+                    {{ totalVariables }}
+                    <span class="visually-hidden">{{ $t('workflow.variables', 2) }}</span>
+                </span>
             </button>
         </div>
-        <div class="btn-group me-2"
-             role="group">
-            <button class="btn btn-sm btn-outline-success"
-                    :title="$t('actions.save')"
-                    :disabled="!isDirty" @click.prevent="saveWorkflow">
-                <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
+        <div class="btn-group me-2" role="group">
+            <button class="btn btn-sm btn-outline-success" :title="$t('actions.save')" :disabled="!isDirty"
+                @click.prevent="saveWorkflow">
+                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
             </button>
-            <button class="btn btn-sm btn-outline-dark"
-                    :title="$t('actions.saveAs')"
-                    @click.prevent="saveWorkflowAs">
-                <font-awesome-icon icon="fa fa-copy" /> {{$t('actions.saveAs')}}...
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.saveAs')" @click.prevent="saveWorkflowAs">
+                <font-awesome-icon icon="fa fa-copy" /> {{ $t('actions.saveAs') }}...
             </button>
         </div>
+        
         <div class="btn-group me-2">
-            <b-dropdown right
-                        split
-                        variant="sm btn-outline-dark"
-                        @click.prevent.stop="exportWorkflow()">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.export')" 
+                @click.prevent.stop="exportWorkflow()">
+                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.export') }}
+            </button>
+            <!---
+            <b-dropdown right split variant="sm btn-outline-dark" @click.prevent.stop="exportWorkflow()">
                 <template #button-content>
-                    <font-awesome-icon icon="fa fa-download" /> {{$t('actions.export')}}
+                    <font-awesome-icon icon="fa fa-download" /> {{ $t('actions.export') }}
                 </template>
                 <b-dropdown-item @click.prevent="exportWorkflow()">
-                    {{$t('common.json')}}
+                    {{ $t('common.json') }}
                 </b-dropdown-item>
-                <!--
                 <b-dropdown-divider />
                 <b-dropdown-item @click.prevent="exportWorkflow('python')">
                     {{$t('common.python')}}
@@ -46,14 +47,12 @@
                 <b-dropdown-item @click.prevent="exportWorkflow('notebook')">
                     {{$t('common.jupyter')}}
                 </b-dropdown-item>
-                -->
             </b-dropdown>
+            -->
         </div>
-        <div class="btn-group me-2"
-             role="group">
-            <button class="btn btn-sm btn-outline-dark"
-                    :title="$t('actions.showProperties')"
-                    @click.prevent="showProperties">
+        <div class="btn-group me-2" role="group">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
+                @click.prevent="showProperties">
                 <font-awesome-icon icon="fa fa-cogs" />
             </button>
             <!--
@@ -63,21 +62,14 @@
                 <font-awesome-icon icon="fa fa-image" />
             </button>
             -->
-            <button class="btn btn-sm btn-outline-dark"
-                    :title="$t('actions.showHistory')"
-                    @click.prevent="showHistory">
+            <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showHistory')" @click.prevent="showHistory">
                 <font-awesome-icon icon="fa fa-history" />
             </button>
         </div>
-        <div class="btn-group"
-             role="group">
-            <button id="tlb-execute-wf"
-                    class="btn btn-sm btn-outline-dark runBtn"
-                    :title="$t('actions.execute')"
-                    variant="success"
-                    @click.prevent="execute">
-                <font-awesome-icon icon="fa fa-play"
-                                   class=" text-primary" /> {{$t('actions.execute')}}
+        <div class="btn-group" role="group">
+            <button id="tlb-execute-wf" class="btn btn-sm btn-outline-dark runBtn" :title="$t('actions.execute')"
+                variant="success" @click.prevent="execute">
+                <font-awesome-icon icon="fa fa-play" class=" text-primary" /> {{ $t('actions.execute') }}
             </button>
             <!--
         <button class="btn btn-sm btn-outline-dark" @click.prevent="restart" :title="$t('actions.stop')"
@@ -95,8 +87,9 @@ import { mapGetters } from 'vuex';
 export default {
     name: 'WorkflowToolbar',
     props: {
-        workflow: {type: Object, default: () => null},
-        isDirty: {type: Boolean, default: () => false}
+        workflow: { type: Object, default: () => null },
+        isDirty: { type: Boolean, default: () => false },
+        totalJobs: { type: Number, default: 0 },
     },
     emits: ['onsave-workflow', 'onsaveas-workflow', 'onshow-history',
         'onclick-execute', 'onclick-export', 'onshow-properties', 'onshow-executions',
@@ -104,6 +97,9 @@ export default {
     ],
     computed: {
         ...mapGetters(['hasAnyPermission', 'isAdmin', 'user']),
+        totalVariables() {
+            return this.workflow.variables.length;
+        }
     },
     methods: {
         saveWorkflow() {

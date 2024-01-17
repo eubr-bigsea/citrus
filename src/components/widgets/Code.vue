@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </template>
-            <template #modal-footer>
+            <template #footer>
                 <b-button variant=""
                           size="sm"
                           class="float-end"

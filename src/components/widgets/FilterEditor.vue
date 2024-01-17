@@ -230,7 +230,7 @@
                     </div>
                 </div>
             </div>
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100 text-right">
                     <b-button variant="primary"
                               size="sm"

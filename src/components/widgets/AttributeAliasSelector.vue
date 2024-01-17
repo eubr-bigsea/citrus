@@ -42,11 +42,11 @@
                         </div>
                         <div class="text-center mt-5 text-center actions col-md-1">
                             <div v-if="!single">
-                                <b-button class="mb-1" variant="" size="sm" @click="move('all-right', null)">
+                                <b-button class="mb-1" variant="secondary" size="sm" @click="move('all-right', null)">
                                     &gt;&gt;
                                 </b-button>
                                 <br>
-                                <b-button class="mb-1" variant="" size="sm" @click="move('all-left', null)">
+                                <b-button class="mb-1" variant="secondary" size="sm" @click="move('all-left', null)">
                                     &lt;&lt;
                                 </b-button>
                             </div>
@@ -93,7 +93,7 @@
                         </div>
                     </div>
                 </template>
-                <template #modal-footer>
+                <template #footer>
                     <b-button variant="outline-secondary" size="sm" class="float-end" @click="cancelModal">
                         {{$t('actions.cancel')}}
                     </b-button>

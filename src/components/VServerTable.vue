@@ -159,26 +159,30 @@ const populateTable = async () => {
             query: query.value,
             fields: null,
             page: currentPage.value,
-            customQueries: tableCustomQueries.value,
+            customQueries: tableCustomQueries?.value,
         };
         loading.value = true;
-        const { data, count, customQueries } = await props.options.requestFunction(defaultOptions);
+        try {
+            const { data, count, customQueries } = await props.options.requestFunction(defaultOptions);
 
-        if (props.options?.saveState) {
-            tableCustomQueries.value = customQueries;
-            const params = { orderBy: {} };
-            params.orderBy.column = sortColumn.value;
-            params.orderBy.ascending = sortDirection.value === 'asc';
-            params.perPage = perPage.value;
-            params.query = query.value;
-            params.page = currentPage.value;
-            params.customQueries = tableCustomQueries.value;
-            localStorage[`vuetables_${props.name}`] = JSON.stringify(params);
+            if (props.options?.saveState) {
+                tableCustomQueries.value = customQueries;
+                const params = { orderBy: {} };
+                params.orderBy.column = sortColumn.value;
+                params.orderBy.ascending = sortDirection.value === 'asc';
+                params.perPage = perPage.value;
+                params.query = query.value;
+                params.page = currentPage.value;
+                params.customQueries = tableCustomQueries.value;
+                localStorage[`vuetables_${props.name}`] = JSON.stringify(params);
+            }
+            tableData.value = data || [];
+            tableCount.value = count;
+        } catch (e) {
+            throw e;
         }
         loading.value = false;
 
-        tableData.value = data || [];
-        tableCount.value = count;
         if ((currentPage.value - 1) * perPage.value > tableCount.value) {
             currentPage.value = 1;
         }
@@ -265,6 +269,7 @@ div.table-area {
     height: 100%;
     overflow: auto;
 }
+
 .server-table>>>td,
 .server-table>>>th {
     padding: 8px 5px;
@@ -303,32 +308,5 @@ div.table-area {
     font-weight: bold;
 }
 
-.skeleton-text {
-    height: 1rem;
-    margin-bottom: 0.25rem;
-    border-radius: 0.25rem;
-}
-
-.skeleton {
-    position: relative;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.12);
-    cursor: wait;
-    -webkit-mask-image: radial-gradient(white, black);
-    mask-image: radial-gradient(white, black);
-}
-
-.skeleton-animate-wave::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    -webkit-animation: b-skeleton-animate-wave 1.75s linear infinite;
-    animation: b-skeleton-animate-wave 1.75s linear infinite;
-}
 </style>
   

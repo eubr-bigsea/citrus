@@ -26,7 +26,7 @@
                 -->
             </div>
         </b-form-radio-group>
-        <template #modal-footer>
+        <template #footer>
             <b-button variant="secondary_sm" size="sm" class="btn-outline-secondary float-end" @click="close">
                 {{$t('actions.cancel')}}
             </b-button>

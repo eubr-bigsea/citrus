@@ -2,8 +2,6 @@
     <main role="main">
         <div class="row">
             <div class="col">
-                <TahitiSuggester />
-
                 <div class="row">
                     <div class="col-6">
                         <h6 class="header-pretitle">
@@ -12,7 +10,7 @@
                         <input-header v-model="workflow.name" />
                     </div>
                     <div class="col-6 text-end">
-                        <workflow-toolbar v-if="loaded" :workflow="workflow" :is-dirty="isDirty"
+                        <workflow-toolbar v-if="loaded" :workflow="workflow" :is-dirty="isDirty" :total-jobs="totalJobs"
                             @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
                             @onshow-executions="$refs.executionsModal.show()"
                             @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
@@ -54,6 +52,14 @@
                     @add-flow="addFlow" @remove-flow="removeFlow" @onclear-selection="clearSelection"
                     @onblur-selection="blurSelection" @remove-task="removeTask" />
 
+                <div v-else>
+                    <div class="preview-loading">
+                        <font-awesome-icon icon="spinner" size="1x" spin class="text-success" />
+                        {{ $t('common.loading') }}
+                    </div>
+                    <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 100%; height: 40px">
+                    </div>
+                </div>
                 <div v-if="showProperties" class="diagram-properties">
                     <property-window v-if="selectedTask.task" :task="selectedTask.task"
                         :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
@@ -128,20 +134,25 @@
                     </b-tab>
                 </b-tabs>
                 -->
-                <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"
-                    @ok="(v) => { workflow.variables = v; isDirty = true }" />
-                <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :cluster-info="clusterInfo"
-                    :validation-errors="validationErrors" :workflow="workflow" @onexecute-workflow="execute"
-                    @onchange-cluster="changeCluster" @update-value="handleUpdateClusterInfo" />
-                <ModalWorkflowHistory ref="historyModal" :history="history" @onrestore-workflow="restore" />
-                <ModalSaveWorkflowAs ref="saveAsModal" @onsave-workflow-as="saveWorkflowAs" />
-                <ModalTaskResults ref="taskResultModal" :task="resultTask" />
-                <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow"
-                    :clusters="clusters" @update-value="handleUpdateWorkflowProperties" />
-                <!--
+                <template v-if="loaded">
+                    <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"
+                        @confirm="handleUpdateVariables" />
+                    <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :cluster-info="clusterInfo"
+                        :validation-errors="validationErrors" :workflow="workflow" @onexecute-workflow="execute"
+                        @onchange-cluster="changeCluster" @update-value="handleUpdateClusterInfo" />
+                    <ModalWorkflowHistory ref="historyModal" :history="history" @onrestore-workflow="restore" />
+                    <ModalSaveWorkflowAs ref="saveAsModal" @onsave-workflow-as="saveWorkflowAs" />
+                    <ModalTaskResults ref="taskResultModal" :task="resultTask" />
+                    <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow"
+                        :clusters="clusters" @update-value="handleUpdateWorkflowProperties" />
+                    <!--
                 <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" @update-value="(v) => workflow.image = v"/>
                 -->
-                <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" />
+                    <WorkflowExecution ref="executionsModal" :workflow-id="workflow.id" @loaded="handleJobsHistoryLoaded" />
+                </template>
+                <!--
+                <tahiti-suggester />
+                -->
             </div>
         </div>
     </main>
@@ -168,6 +179,8 @@ import CustomToolboxComponent from '../components/CustomToolbox.vue';
 import WorkflowExecution from '../components/WorkflowExecution.vue';
 import WorkflowToolbar from '../components/WorkflowToolbar.vue';
 
+import loadTahitiScript from '@/tahiti.js';
+
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
@@ -190,6 +203,7 @@ export default {
 
         WorkflowExecution,
         InputHeader,
+        /*
         TahitiSuggester: () => {
             return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
                 const script = document.createElement('script');
@@ -198,7 +212,7 @@ export default {
                 //script.src = `${tahitiUrl}/public/js/tahiti.js`
                 document.head.appendChild(script);
             });
-        }
+        }*/
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
@@ -212,6 +226,7 @@ export default {
     },
     data() {
         return {
+            totalJobs: 0,
             job: {},
             attributeSuggesterLoaded: false,
             attributeSuggestion: {},
@@ -246,6 +261,7 @@ export default {
             },
             expandableOperations: [],
             exportTimeoutHandler: null,
+            suggestion: null,
 
         };
     },
@@ -258,19 +274,31 @@ export default {
     created() {
         window.addEventListener('beforeunload', this.leaving);
     },
-    mounted() {
+    async mounted() {
         const self = this;
+        await this.load();
+        /*
         document.getElementById('tahiti-script').setAttribute(
             'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.$route.params.platform}`);
-
+        */
         //this.$root.$on('onshow-result', this.showTaskResult);
-        this.load();
+        const tahiti = await loadTahitiScript(`${tahitiUrl}/public/js/tahiti.js`);
+        this.suggestion = TahitiAttributeSuggester;
 
     },
     beforeUnmount() {
         window.removeEventListener('beforeunload', this.leaving);
     },
+
     methods: {
+        handleUpdateVariables(v) {
+            debugger
+            this.workflow.variables = v;
+            this.isDirty = true;
+        },
+        handleJobsHistoryLoaded(total) {
+            this.totalJobs = total;
+        },
         // Forms 
         updateFormFieldValue(field, value, labelValue) {
             const self = this;
@@ -465,65 +493,59 @@ export default {
             self.loadingToolbox = false;
             self.expandableOperations = this.operations.filter(op => op.type === 'SHORTCUT');
         },
-        load() {
+        async load() {
             let self = this;
             self.loadingToolbox = true;
-            axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`).then(
-                (resp) => {
-                    let workflow = resp.data;
-                    workflow.variables = workflow.variables || [];
-                    const params = {
-                        platform: workflow.platform.id, //this.$route.params.platform,
-                        subset: workflow.subset ? workflow.subset.id : null,
-                        lang: this.$root.$i18n.locale,
-                        disabled: true, // even disabled operations must be returned to keep compatibility,
-                        workflow: workflow.id,
-                        t: new Date().getTime(), // Force refresh
-                    };
+            try {
+                const resp = await axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`);
+                let workflow = resp.data;
+                workflow.variables = workflow.variables || [];
+                const params = {
+                    platform: workflow.platform.id, //this.$route.params.platform,
+                    subset: workflow.subset ? workflow.subset.id : null,
+                    lang: this.$root.$i18n.locale,
+                    disabled: true, // even disabled operations must be returned to keep compatibility,
+                    workflow: workflow.id,
+                    t: new Date().getTime(), // Force refresh
+                };
+                const respOperations = await axios.get(`${tahitiUrl}/operations`, { params });
+                self._loadOperations(self, workflow, respOperations.data, true);
+                this.$nextTick(() => {
+                    self.loadingToolbox = true;
+                    delete params['workflow'];
+                    delete params['t'];
                     axios.get(`${tahitiUrl}/operations`, { params }).then(
-                        resp => self._loadOperations(self, workflow, resp.data, true)
+                        resp => self._loadOperations(self, workflow, resp.data, false)
                     ).catch(function (e) {
                         this.error(e);
-                    }.bind(this)).finally(() => {
-                        this.$nextTick(() => {
-                            self.loadingToolbox = true;
-                            delete params['workflow'];
-                            delete params['t'];
-                            axios.get(`${tahitiUrl}/operations`, { params }).then(
-                                resp => self._loadOperations(self, workflow, resp.data, false)
-                            ).catch(function (e) {
-                                this.error(e);
-                            });
-                        });
                     });
-                    axios.get(`${standUrl}/jobs/latest`, { params })
-                        .then((resp2 => {
-                            const job = resp2.data;
-                            self.job = job;
-                            const tasks = self.workflow.tasks;
-                            job.steps.forEach((step) => {
-                                const foundTask = tasks.find((t) => {
-                                    return t.id === step.task.id;
-                                });
-                                if (foundTask) {
-                                    foundTask.step = step;
-                                }
-                            });
-                            job.results.forEach((result) => {
-                                const foundTask = tasks.find((t) => {
-                                    return t.id === result.task.id;
-                                });
-                                if (foundTask) {
-                                    foundTask.result = result;
-                                }
-                            });
-                        })).catch(() => { });
+                });
+                const respJob = await axios.get(`${standUrl}/jobs/latest`, { params });
+                const job = respJob.data;
+                self.job = job;
+                const tasks = self.workflow.tasks;
+                /*
+                job.steps.forEach((step) => {
+                    const foundTask = tasks.find((t) => {
+                        return t.id === step.task.id;
+                    });
+                    if (foundTask) {
+                        foundTask.step = step;
+                    }
+                });
+                job.results.forEach((result) => {
+                    const foundTask = tasks.find((t) => {
+                        return t.id === result.task.id;
+                    });
+                    if (foundTask) {
+                        foundTask.result = result;
+                    }
+                });
+                */
 
-                }
-            ).catch(function (e) {
+            } catch (e) {
                 this.error(e);
-            }.bind(this));
-
+            }
         },
         async saveAsImage() {
             let self = this;
@@ -676,6 +698,17 @@ export default {
             }
         },
         getExtendedSuggestions(taskId) {
+            if (this.suggestion.processed === undefined
+                || this.attributeSuggestion[taskId] === undefined
+                || this.attributeSuggestion[taskId].length === 0) {
+                this.updateAttributeSuggestion();
+            }
+            if (this.attributeSuggestion[taskId]) {
+                return this.attributeSuggestion[taskId];
+            } else {
+                return {};
+            }
+            return
             if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                 if (window.TahitiAttributeSuggester.processed === undefined
                     || this.attributeSuggestion[taskId] === undefined
@@ -690,8 +723,22 @@ export default {
             }
         },
         updateAttributeSuggestion() {
-            let self = this;
             let attributeSuggestion = {};
+            if (! this.suggestion) return;
+            try {
+                this.suggestion.compute(this.workflow, this._queryDataSource,
+                    (result) => {
+                        Object.keys(result).forEach(key => {
+                            attributeSuggestion[key] = result[key].uiPorts;
+                        });
+                        Object.assign(this.attributeSuggestion, attributeSuggestion);
+                        this.suggestion.processed = true;
+                    });
+            } catch (e) {
+                console.log(e);
+            }
+            return
+            let self = this;
             try {
                 window.TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,
                     (result) => {
@@ -740,7 +787,6 @@ export default {
             }
         },
         setIsDirty(flag) {
-            console.debug('Dirty=', flag);
             this.isDirty = flag;
         },
 

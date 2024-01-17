@@ -15,7 +15,7 @@
                     </router-link>
                 </li>
                 <li v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" class="nav-item">
-                    <router-link :to="{ name: 'workflows' }" class="nav-link">
+                    <router-link :to="{ name: 'listWorkflows' }" class="nav-link">
                         <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{$t('titles.workflow', 2)}}
                     </router-link>
                 </li>

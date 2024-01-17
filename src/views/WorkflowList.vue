@@ -45,7 +45,7 @@
                     <template #afterFilter>
                         <div class="form-group float-start ms-3">
                             <label>{{ $t('common.platform') }}</label>
-                            <select v-model="platform" class="form-select form-select-sm">
+                            <select v-model="platform" class="form-select form-select-sm" @change="handleSelectPlatform">
                                 <option />
                                 <option v-for="p in platforms" :key="p.id" :value="p.slug">
                                     {{ p.name }}
@@ -82,7 +82,7 @@
                     </div>
                 </div>
             </b-form-radio-group>
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100">
                     <b-button variant="secondary_sm" class="float-end btn-sm btn-outline-secondary" @click="closeImport">
                         {{ $t('actions.cancel') }}
@@ -184,19 +184,6 @@ export default {
             }
         };
     },
-    watch: {
-        platform(v) {
-            // This is not working
-            // Event.$emit('vue-tables.workflowList.filter::platform', v);
-            // Event.$emit('vue-tables.filter::platform', v);
-
-            // This works, but it uses internal details of component
-            const table = this.$refs.workflowList;
-            table.setCustomQuery({ platform: this.platform });
-            //table.updateState('customQueries', table.customQueries);
-            table.getData();
-        }
-    },
     async mounted() {
         let url = `${tahitiUrl}/platforms`;
         try {
@@ -205,10 +192,14 @@ export default {
         } catch (e) {
             this.error(e);
         }
-        //this.platform = this.$refs.workflowList.customQueries['platform'];
     },
     /* Methods */
     methods: {
+        handleSelectPlatform(ev) {
+            const table = this.$refs.workflowList;
+            table.setCustomQuery({ platform: ev.target.value });
+            table.getData();
+        },
         clearFilters() {
             this.platform = '';
             this.$refs.workflowList.setFilter('', null);

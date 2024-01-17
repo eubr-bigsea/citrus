@@ -9,11 +9,6 @@ export default class DataTableBuilder {
             saveState: true,
             filterByColumn: false,
             sortIcon: {
-                /*
-                base: 'fa fas',
-                is: 'fa-sort ml-10',
-                up: 'fa-sort-amount-up',
-                down: 'fa-sort-amount-down'*/
                 base: 'sort-base',
                 is: 'sort-is ml-10',
                 up: 'sort-up',
@@ -51,6 +46,14 @@ export default class DataTableBuilder {
     }
     headings(h) {
         this.options.headings = h;
+        return this;
+    }
+    saveState(v) {
+        this.options.saveState = v;
+        return this;
+    }
+    perPageValues(v) {
+        this.options.perPageValues = v;
         return this;
     }
 }

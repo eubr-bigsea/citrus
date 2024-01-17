@@ -42,7 +42,7 @@
                         </div>
                     </template>
                 </v-client-table>
-                <template #modal-footer>
+                <template #footer>
                     <div class="w-100">
                         <b-button variant="secondary"
                                   size="sm"

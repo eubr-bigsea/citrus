@@ -65,7 +65,7 @@
                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </button>
             </div>
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100 text-right">
                     <b-button variant="primary" size="sm" class="me-1" @click="okClicked">
                         {{$t('common.ok')}}

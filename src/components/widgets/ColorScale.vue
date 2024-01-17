@@ -26,7 +26,7 @@
                     <div class="gradient color" :style="getColorScale(scale[1])" />
                 </div>
             </div>
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100 text-right">
                     <b-button variant="secondary" class="btn-sm " @click="cancelClicked">
                         {{$t('actions.cancel')}}

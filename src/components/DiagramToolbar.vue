@@ -1,12 +1,12 @@
 <template>
     <div class="toolbar">
         <div class="toolbar-group">
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasksPanel">
+            <button type="button" @click.prevent="toggleTasksPanel">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {type: $t('titles.operation').toLowerCase()})}}
             </button>
         </div>
         <div v-if="useDataSource" class="toolbar-group">
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleDataSourcesPanel">
+            <button type="button" @click.prevent="toggleDataSourcesPanel">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {
                     type:
                         $t('titles.dataSource2').toLowerCase()
@@ -66,8 +66,8 @@
         </div>
 
         <div class="toolbar-group">
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(-.1)">
-                <font-awesome-icon icon="fa fa-search" />
+            <button type="button" :title="$t('actions.zoomOut')" @click.prevent="changeZoom(-.1)">
+                <font-awesome-icon icon="fa fa-magnifying-glass-minus" />
             </button>
 
             <b-input-group size="sm" class="mx-1 zoom">
@@ -84,8 +84,8 @@
                 ]" />
             </b-input-group>
 
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(.1)">
-                <font-awesome-icon icon="fa fa-search" />
+            <button type="button" :title="$t('actions.zoomIn')" @click.prevent="changeZoom(.1)">
+                <font-awesome-icon icon="fa fa-magnifying-glass-plus" />
             </button>
         </div>
 
@@ -222,7 +222,7 @@ export default {
     }
 
     .zoom {
-        width: 75px !important;
+        width:90px !important;
         display: inline-block;
 
         select {

@@ -38,7 +38,7 @@
             </li>
             <li :class="{active: path === '/workflows'}">
                 <b-link v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin"
-                        :to="{ name: 'workflows' }"
+                        :to="{ name: 'listWorkflows' }"
                         class="text-success-2">
                     <font-awesome-icon icon="fa fa-project-diagram"
                                        size="lg"

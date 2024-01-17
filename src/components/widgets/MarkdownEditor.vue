@@ -27,7 +27,7 @@
                     <Markdown :text="code" />
                 </div>
             </div>
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100 text-right">
                     <b-button variant="primary"
                               class="me-1"

@@ -62,7 +62,7 @@
                            class="form-control">
                 </div>
             </div>
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100">
                     <b-button variant="primary"
                               size="sm"
