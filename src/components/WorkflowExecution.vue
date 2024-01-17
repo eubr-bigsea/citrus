@@ -1,35 +1,23 @@
 <template>
-    <b-modal ref="modal"
-             size="xl"
-             :ok-only="true"
-             scrollable
-             :title="$t('titles.job', 2)"
-             :hide-footer="true">
-        <v-server-table ref="jobList"
-                        :data="jobs"
-                        :columns="columns"
-                        :options="options"
-                        name="jobListWf">
+    <b-modal ref="modal" size="xl" :ok-only="true" scrollable :title="$t('titles.job', 2)" :hide-footer="true">
+        <v-server-table ref="jobList" :columns="columns" :options="options" name="jobListWf">
             <template #id="props">
-                <router-link :to="{name: 'jobDetail', params: {id: props.row.id}}">
-                    {{props.row.id}}
+                <router-link :to="{ name: 'jobDetail', params: { id: props.row.id } }">
+                    {{ props.row.id }}
                 </router-link>
             </template>
             <template #actions="props">
-                <button class="btn btn-sm danger"
-                        :title="$t('actions.delete')"
-                        @click="remove(props.row)">
+                <button class="btn btn-sm danger" :title="$t('actions.delete')" @click="remove(props.row)">
                     <font-awesome-icon icon="trash" />
                 </button>
             </template>
             <template #status="props">
-                <div class="lemonade-job"
-                     :class="props.row.status.toLowerCase()">
-                    {{props.row.status}}
+                <div class="lemonade-job" :class="props.row.status.toLowerCase()">
+                    {{ props.row.status }}
                 </div>
             </template>
             <template #created="props">
-                {{$filters.formatJsonDate(props.row.created)}}
+                {{ $filters.formatJsonDate(props.row.created) }}
             </template>
         </v-server-table>
     </b-modal>
@@ -43,15 +31,14 @@ const standUrl = import.meta.env.VITE_STAND_URL;
 export default {
     mixins: [Notifier],
     props: {
-        workflowId: {type: Number, default: null},
+        workflowId: { type: Number, default: null },
 
     },
     data() {
         return {
-            jobs: [],
-            jobsTotal: 0,
             columns: ['status', 'id', 'name', 'created'],
             options: {
+                skin: 'table-sm table table-hover',
                 columnsClasses: {
                     name: 'th-20',
                     description: 'th-20',
@@ -68,13 +55,13 @@ export default {
                 },
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
                 },
                 requestFunction: this.load,
-                filterable: [],
+                filterable: false,
                 perPageValues: [],
                 texts: {
                     filter: this.$t('common.filter'),
@@ -87,24 +74,26 @@ export default {
             }
         };
     },
+    emits: ['loaded'],
     methods: {
-        show(){
+        show() {
             this.$refs.modal.show();
         },
-        load(params) {
+        async load(params) {
+            const self = this;
             params.sort = params.orderBy;
             params.asc = (params.ascending === 1 && params.orderBy) ? 'true' : 'false';
             params.size = params.limit;
             params.name = params.query;
             params.workflow_id = this.workflowId;
             params.fields = "id,name,created,status";
-
-            return axios.get(`${standUrl}/jobs`, { params })
-                .then(resp => {
-                    return { data: resp.data.data, count: resp.data.pagination.total };
-                }).catch(function (e) {
-                    this.error(e);
-                }.bind(this));
+            try {
+                const resp = await axios.get(`${standUrl}/jobs`, { params });
+                self.$emit('loaded', resp.data.pagination.total);
+                return { data: resp.data.data, count: resp.data.pagination.total };
+            } catch (e) {
+                this.error(e);
+            }
         },
     }
 

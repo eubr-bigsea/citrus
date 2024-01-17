@@ -38,7 +38,7 @@
                 </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>
-        <template #modal-footer>
+        <template #footer>
             <b-button :disabled="analysis.length === 0" variant="primary" size="sm"
                       @click="[addCard(), $bvModal.hide('modal')]">
                 {{$t('common.ok')}}

@@ -138,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100 text-right">
                     <button class="btn btn-sm btn-primary me-1" @click="okClicked">
                         {{$t('common.ok')}}

@@ -35,7 +35,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.type')}}:</label>
-                                    <select v-model="selected.type" class="form-control">
+                                    <select v-model="selected.type" class="form-select">
                                         <option />
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                             {{$t('dataTypes.' + dt)}}
@@ -49,7 +49,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label>{{$t('variables.multiplicity')}}:</label>
-                                    <select v-model="selected.multiplicity" class="form-control" tabindex="0">
+                                    <select v-model="selected.multiplicity" class="form-select" tabindex="0">
                                         <option value="0">
                                             Opcional
                                         </option>
@@ -134,8 +134,8 @@
             Variáveis podem ser usadas como parâmetros na construção do fluxo de trabalho. Para usar uma variável,
             use a representação <code>${nome-variável}</code> por exemplo nas propriedades das tarefas.
         </p>
-        <template #modal-footer>
-            <div class="w-100 text-right">
+        <template #footer>
+            <div class="w-100 text-end">
                 <b-button variant="primary" size="sm" class="me-1 ps-5 pe-5" @click="okClicked">
                     {{$t('common.ok')}}
                 </b-button>
@@ -148,7 +148,7 @@ export default {
     props: {
         items: { type: Array, default: () => [], required: true }
     },
-    emits: ['ok'],
+    emits: ['confirm'],
     data() {
         return {
             variables: [
@@ -199,7 +199,7 @@ export default {
             this.$refs.modal.show();
         },
         okClicked() {
-            this.$emit('ok', this.itemsCopy);
+            this.$emit('confirm', this.itemsCopy);
             this.$refs.modal.hide();
         },
     }

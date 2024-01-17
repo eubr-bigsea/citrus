@@ -465,7 +465,7 @@ let router = createRouter({
         },*/
         {
             path: '/workflows',
-            name: 'workflows',
+            name: 'listWorkflows',
             component: WorkflowList,
             meta: {
                 requiresAuth: true,

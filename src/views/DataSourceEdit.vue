@@ -427,7 +427,7 @@
                             <textarea v-if="currentAttribute.attribute_privacy"
                                       v-model="currentAttribute.attribute_privacy.hierarchy" class="form-control" type="text"
                                       rows="5" />
-                            <template #modal-footer>
+                            <template #footer>
                                 <div class="w-100">
                                     <b-button variant="primary" class="float-end me-2" @click="okPrivacy">
                                         {{$t('actions.close')}}

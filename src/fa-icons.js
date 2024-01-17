@@ -151,6 +151,8 @@ import {
     faMapLocationDot,
     faFileExport,
     faMaximize,
+    faMagnifyingGlassMinus,
+    faMagnifyingGlassPlus,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -305,6 +307,8 @@ library.add(
     faX,
     faXmarkCircle,
     faY,
+    faMagnifyingGlassMinus,
+    faMagnifyingGlassPlus,
 
 );
 /**

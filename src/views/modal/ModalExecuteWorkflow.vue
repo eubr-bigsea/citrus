@@ -49,7 +49,7 @@
         <div v-else class="alert alert-danger">
             <font-awesome-icon icon="fa fa-exclamation-circle" /> {{$t("workflow.errorNoCluster")}}
         </div>
-        <template #modal-footer>
+        <template #footer>
             <div class="w-100 text-right">
                 <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn"
                         class="btn btn-sm btn-outline-success" @click="execute($event)">

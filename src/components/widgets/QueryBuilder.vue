@@ -23,7 +23,7 @@
                       class="form-control"
                       rows="10" />
 
-            <template #modal-footer>
+            <template #footer>
                 <div class="w-100 text-right">
                     <b-button variant="primary"
                               class="me-1"

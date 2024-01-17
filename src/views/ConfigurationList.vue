@@ -42,7 +42,7 @@
                         </template>
                     </div>
                 </div>
-                <template #modal-footer>
+                <template #footer>
                     <div class="w-100 text-right">
                         <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
                             <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
