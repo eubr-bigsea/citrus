@@ -25,8 +25,8 @@
                         <div class="btn-group" role="group">
                             <button v-if="visualizable(props.row)" :title="$t('common.preview')"
                                 class="btn btn-spinner btn-primary btn-sm" @click.stop="handlePreview(props.row.id)">
-                                <font-awesome-icon icon="spinner" pulse class="icon" />
-                                <font-awesome-icon icon="fa-eye" />
+                                <font-awesome-icon v-if="showPreview" icon="fa-spinner" pulse/>
+                                <font-awesome-icon v-else icon="fa-eye" />
                             </button>
                             <a :href="getDownloadLink(props.row)" class="btn btn-sm btn-info"
                                 :title="$t('actions.download')" target="_blank">
@@ -37,7 +37,7 @@
                                 <font-awesome-icon icon="download" /> CSV
                             </a>
                             <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="btn btn-sm btn-danger"
-                                @click="remove(props.row.id)">
+                                :title="$t('actions.delete')" @click="remove(props.row.id)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
@@ -47,22 +47,25 @@
                     </template>
                     <template #tags="props">
                         <div v-if="props.row.tags">
-                            <div v-for="tag in (props.row.tags).split(',')" :key="tag" class="badge bg-info me-1">
+                            <div v-for="tag in (props.row.tags).split(',')" :key="tag" 
+                                class="badge bg-light text-dark px-2 py-1  me-1">
                                 {{ tag }}
                             </div>
                         </div>
                     </template>
-                    <!--  
+                    <!--    
                      -->
                 </v-server-table>
-                <modal-preview-data-source ref="previewWindow" />
+                <modal-preview-data-source v-if="showPreview" 
+                    ref="previewWindow" table-class="table-striped table-sm" 
+                    @hidden="showPreview = false"/>
             </div>
         </div>
     </main>
 </template>
 
 <script>
-import { inject, ref, computed } from 'vue';
+import { inject, ref, computed, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { mapGetters, useStore } from 'vuex';
 
@@ -87,6 +90,7 @@ export default {
         const notifier = new Notifier(inject('snotify'), t);
         const tableData = [];
         const tableDataSize = 0;
+        const showPreview = ref(false);
 
         //#region Listing
         const handleLoad = async (data) => {
@@ -139,7 +143,10 @@ export default {
         const previewWindow = ref(null);
         const handlePreview = (dataSource) => {
             /**/
-            previewWindow.value.show(dataSource);
+            showPreview.value = true;
+            nextTick(() =>
+                previewWindow.value.show(dataSource)
+            );
         };
         //#endregion
         const loggedUserIsOwnerOrAdmin = (dataSource) => {
@@ -189,7 +196,8 @@ export default {
             remove,
             visualizable,
             preventableModal,
-            tableData, tableDataSize, handleLoad
+            tableData, tableDataSize, handleLoad,
+            showPreview
         };
     },
     computed: {

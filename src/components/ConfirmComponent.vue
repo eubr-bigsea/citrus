@@ -7,10 +7,10 @@
             </p>
 
             <div class="text-center border-top pt-2 btn-flex">
-                <b-button size="sm" variant="success" @click="emit('confirm')">
+                <b-button size="sm" :class="yesButton?.cssClass" @click="emit('confirm')">
                     {{ $t('common.yes') }}
                 </b-button>
-                <b-button size="sm" variant="danger" @click="emit('cancel')">
+                <b-button size="sm" class="noButton.cssClass" @click="emit('cancel')">
                     {{ $t('common.no') }}
                 </b-button>
             </div>
@@ -23,6 +23,8 @@ const props = defineProps(
     {
         question: { type: String, required: true },
         title: { type: String, required: false, default: '' },
+        yesButton: {type: Object, required: false, default: () => ({'cssClass': 'btn-danger'})},
+        noButton: {type: Object, required: false, default: () => ({'cssClass': 'btn-secondary'})},
     }
 );
 const emit = defineEmits(['confirm', 'cancel'])

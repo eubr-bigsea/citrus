@@ -10,7 +10,12 @@
                             <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off"
                                 class="form-control form-control-sm" maxlength="50" @input="search($event)">
                         </div>
-                        <div class="col-1 xoffset-md-6 text-right">
+                        <div class="col-6">
+                            <slot name="afterFilter">
+
+                            </slot>
+                        </div>
+                        <div class="col-1 text-right">
                             <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-end">
                                 <label for="limit">Limite</label>
                                 <select v-model="perPage" name="limit" class="form-select form-select-sm">
@@ -22,6 +27,7 @@
                 </form>
             </div>
         </slot>
+
         <table v-show="showSkeleton && firstLoad" class="table b-table table-striped table-bordered">
             <tbody>
                 <tr v-for="row in 10" :key="row">
@@ -32,29 +38,31 @@
             </tbody>
         </table>
         <section v-show="!firstLoad">
-            <table v-if="tableData?.length" ref="table" :class="options.skin" class="server-table">
-                <thead>
-                    <tr>
-                        <th v-for="(heading, index) in columns" :key="index" class="header"
-                            :class="{ [sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
-                            @click="handleSort(heading, $event)">
-                            {{ getTableHeader(heading) }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-if="tableData.length !== 0" v-for="(row, rowIndex) in tableData" :key="rowIndex">
-                        <td v-for="colName in columns" :key="colName"
-                            :class="getColumnClass(options.columnsClasses, colName)">
-                            <slot :name="colName" :row="row">
-                                <span :class="`${getColumnClass(options.columnsClasses, colName)}-scoped`">
-                                    {{ row[colName] }}
-                                </span>
-                            </slot>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-area scroll-area">
+                <table v-if="tableData?.length" ref="table" :class="options.skin" class="server-table">
+                    <thead>
+                        <tr>
+                            <th v-for="(heading, index) in columns" :key="index" class="header"
+                                :class="{ [sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
+                                @click="handleSort(heading, $event)">
+                                {{ getTableHeader(heading) }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="tableData.length !== 0" v-for="(row, rowIndex) in tableData" :key="rowIndex">
+                            <td v-for="colName in columns" :key="colName"
+                                :class="getColumnClass(options.columnsClasses, colName)">
+                                <slot :name="colName" :row="row">
+                                    <span :class="`${getColumnClass(options.columnsClasses, colName)}-scoped`">
+                                        {{ row[colName] }}
+                                    </span>
+                                </slot>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <slot name="pagination">
                 <div v-if="paginationEnabled" class="pagination-text text-center">
                     <pager-component v-if="tableCount > 0" v-model:page="currentPage" :total="tableCount"
@@ -243,8 +251,8 @@ const setCurrentPage = (v) => currentPage.value = v;
 const setFirstLoad = (v) => firstLoad.value = v;
 const setLoading = (v) => loading.value = v;
 
-//watch(currentPage, populateTable);
-//watch(perPage, populateTable);
+watch(currentPage, populateTable);
+watch(perPage, populateTable);
 
 defineExpose({
     setFilter, getData, setCustomQuery, refresh, setCurrentPage, setFirstLoad, setLoading
@@ -252,6 +260,11 @@ defineExpose({
 </script>
   
 <style scoped>
+div.table-area {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
 .server-table>>>td,
 .server-table>>>th {
     padding: 8px 5px;

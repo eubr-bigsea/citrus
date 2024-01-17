@@ -928,7 +928,13 @@ h1 {
 ul.b-form-tags-list {
     padding-top: 0.5rem !important;
 }
+.table-smallest {
+    font-size: 0.8em;
+}
 
+.table-smallest td {
+    white-space: nowrap;
+}
 .tab-small {
     font-size: 10pt
 }
