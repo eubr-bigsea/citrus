@@ -167,7 +167,7 @@
                     <div class="row">
                         <div class="col-md-4 text-secondary xtext-center offset-md-4 mt-3 mb-5">
                             <label>Variável-alvo do modelo:</label>
-                            <select name="" id="" class="form-control">
+                            <select name="" id="" class="form-select">
                                 <option>fraude</option>
                             </select>
                         </div>

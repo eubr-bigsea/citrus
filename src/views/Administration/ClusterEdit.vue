@@ -22,7 +22,7 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="font-weight-bold">{{$t('common.type')}}:</label>
-                                                <select v-model="cluster.type" class="form-control">
+                                                <select v-model="cluster.type" class="form-select">
                                                     <option v-for="typ in types" :key="typ" :value="typ">
                                                         {{typ}}
                                                     </option>

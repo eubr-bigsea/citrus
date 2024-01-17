@@ -326,7 +326,7 @@
                                             </b-form-group>
 
                                             <b-form-group label="Função de agregação:">
-                                                <select v-model="y.aggregation" class="form-control form-control-sm">
+                                                <select v-model="y.aggregation" class="form-select form-select-sm">
                                                     <option v-if="y.attribute !== '*'" label="" value="">
                                                         Usar valor sem
                                                         agregar
@@ -352,7 +352,7 @@
                                                 </select>
                                             </b-form-group>
                                             <b-form-group v-if="false" label="Computação:">
-                                                <select v-model="y.compute" class="form-control form-control-sm">
+                                                <select v-model="y.compute" class="form-select form-select-sm">
                                                     <option label="NORMAL" value="NORMAL">
                                                         NORMAL
                                                     </option>
@@ -399,7 +399,7 @@
                                                               class="form-control form-control-sm" />
                                             </b-form-group>
                                             <b-form-group v-if="!pieFamily" label="Tipo de linha:">
-                                                <select v-model="y.stroke" class="form-control form-control-sm w-50">
+                                                <select v-model="y.stroke" class="form-select form-select-sm w-50">
                                                     <option v-for="opt in ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']"
                                                             :key="opt" :value="opt">
                                                         {{opt}}
@@ -588,7 +588,7 @@
                                             </b-form-group>
                                             <div v-if="true && isNumeric(x.attribute)">
                                                 <b-form-group label="Agrupamento (bins):">
-                                                    <select v-model="x.binning" class="form-control form-control-sm">
+                                                    <select v-model="x.binning" class="form-select form-select-sm">
                                                         <option value="EQUAL_INTERVAL">
                                                             Número fixo de
                                                             grupos com intervalos iguais
@@ -625,7 +625,7 @@
                                                 </b-form-group>
 
                                                 <b-form-group v-if="false" label="Computação:">
-                                                    <select v-model="x.compute" class="form-control form-control-sm">
+                                                    <select v-model="x.compute" class="form-select form-select-sm">
                                                         <option label="NORMAL" value="NORMAL">
                                                             NORMAL
                                                         </option>
@@ -669,7 +669,7 @@
                                                 </select>
                                             </b-form-group>
                                             <b-form-group label="Ordenação:">
-                                                <select v-model="x.sorting" class="form-control form-control-sm">
+                                                <select v-model="x.sorting" class="form-select form-select-sm">
                                                     <option label="Ordenação natural" value="NATURAL" selected="selected">
                                                         Ordenação natural
                                                     </option>

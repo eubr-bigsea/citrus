@@ -11,7 +11,7 @@
                     </div>
                     <div class="col-12 mt-2">
                         <label>Armazenamento:</label>
-                        <select v-model.number="storage" class="form-control form-control-sm" name="storage">
+                        <select v-model.number="storage" class="form-select form-select-sm" name="storage">
                             <option />
                             <option v-for="st in storages" :key="st.id" :value="st.id">
                                 {{st.name}} ({{st.type}})

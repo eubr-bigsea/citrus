@@ -293,7 +293,7 @@
                                                 </div>
                                                 <div>
                                                     <label>{{$t('common.permission', 1)}}:</label>
-                                                    <select v-model="permission" class="form-control">
+                                                    <select v-model="permission" class="form-select">
                                                         <option value="MANAGE">
                                                             {{$t('permissions.MANAGE')}}
                                                         </option>

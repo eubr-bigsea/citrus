@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <label>{{$t('titles.cluster')}}:</label>
-                            <select v-model="clusterInfoCopy.id" class="form-control-sm form-control"
+                            <select v-model="clusterInfoCopy.id" class="form-select form-select-sm"
                                     @change="changeCluster">
                                 <option v-for="option in clusters" :key="option.id" :value="option.id">
                                     {{option.name}}

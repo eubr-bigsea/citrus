@@ -7,7 +7,7 @@
             <form class="form">
                 <div class="mb-3 mt-2">
                     <label>Estratégia:</label>
-                    <select v-model="copy.forms.strategy.value" class="form-control form-control-sm">
+                    <select v-model="copy.forms.strategy.value" class="form-select form-select-sm">
                         <option v-for="opt in grid.operation.fieldsMap.get('strategy').values" :key="opt.key"
                                 :value="opt.key">
                             {{opt.pt}}

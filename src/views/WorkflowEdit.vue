@@ -520,28 +520,8 @@ export default {
                         this.error(e);
                     });
                 });
-                const respJob = await axios.get(`${standUrl}/jobs/latest`, { params });
-                const job = respJob.data;
-                self.job = job;
-                const tasks = self.workflow.tasks;
-                /*
-                job.steps.forEach((step) => {
-                    const foundTask = tasks.find((t) => {
-                        return t.id === step.task.id;
-                    });
-                    if (foundTask) {
-                        foundTask.step = step;
-                    }
-                });
-                job.results.forEach((result) => {
-                    const foundTask = tasks.find((t) => {
-                        return t.id === result.task.id;
-                    });
-                    if (foundTask) {
-                        foundTask.result = result;
-                    }
-                });
-                */
+
+                self._loadLatestJob(params)
 
             } catch (e) {
                 this.error(e);
@@ -560,6 +540,33 @@ export default {
                     link.click();
                     link.remove();
                 });
+        },
+        async _loadLatestJob(params) {
+            try {
+                const respJob = await axios.get(`${standUrl}/jobs/latest`, { params });
+                const job = respJob.data;
+                this.job = job;
+                const tasks = self.workflow.tasks;
+
+                job.steps.forEach((step) => {
+                    const foundTask = tasks.find((t) => {
+                        return t.id === step.task.id;
+                    });
+                    if (foundTask) {
+                        foundTask.step = step;
+                    }
+                });
+                job.results.forEach((result) => {
+                    const foundTask = tasks.find((t) => {
+                        return t.id === result.task.id;
+                    });
+                    if (foundTask) {
+                        foundTask.result = result;
+                    }
+                });
+            } catch (e) {
+                //ignore
+            }
         },
         _generateId() {
             return this.$refs.diagram.generateId();
@@ -724,7 +731,7 @@ export default {
         },
         updateAttributeSuggestion() {
             let attributeSuggestion = {};
-            if (! this.suggestion) return;
+            if (!this.suggestion) return;
             try {
                 this.suggestion.compute(this.workflow, this._queryDataSource,
                     (result) => {
@@ -1001,7 +1008,7 @@ body {
     width: 350px;
     height: calc(100vh - 250px);
     position: fixed;
-    right: 1rem;
+    right: 28px;
     /* bottom: calc(1rem + 25px); */
     top: 190px;
     overflow: hidden;

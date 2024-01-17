@@ -113,7 +113,7 @@ export default {
                                     STAND_URL: standUrl,
                                     THORN_URL: thornUrl,
                                 });
-                            console.debug(url);
+                            //console.debug(url);
                         }
                         axios.get(url).then((resp) => {
                             const values = resp.data;

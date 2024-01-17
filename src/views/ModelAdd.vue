@@ -12,7 +12,7 @@
                                     </h4>
                                     <div>
                                         <label class="font-weight-bold">{{$t('common.type')}}:</label>
-                                        <select v-model="model.type" class="form-control" required>
+                                        <select v-model="model.type" class="form-select" required>
                                             <option />
                                             <option v-for="fmt in types" :key="fmt" :value="fmt">
                                                 {{$t('model.type_' + fmt)}}
@@ -21,7 +21,7 @@
                                     </div>
                                     <div>
                                         <label>{{$t('model.storage')}}:</label>
-                                        <select v-model="fsStorage" class="form-control" required>
+                                        <select v-model="fsStorage" class="form-select" required>
                                             <option />
                                             <option v-for="s in fsStorages" :key="s.id" :value="s.id">
                                                 {{s.name}}

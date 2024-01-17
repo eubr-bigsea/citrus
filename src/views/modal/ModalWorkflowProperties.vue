@@ -6,11 +6,11 @@
                     <div class="row">
                         <div class="col-md-7">
                             <label>{{$t('common.name', 1)}}:</label>
-                            <b-form-input v-model="workflowCopy.name" type="text" required />
+                            <b-form-input v-model="workflowCopy.name" type="text" required class="form-control-sm"/>
                         </div>
                         <div class="col-md-5">
                             <label>{{$t('workflow.preferredCluster')}}:</label>
-                            <select v-model="workflowCopy.preferred_cluster_id" class="form-control w-75">
+                            <select v-model="workflowCopy.preferred_cluster_id" class="form-select form-select-sm w-75">
                                 <option v-for="cluster in clusters" :key="cluster.id" :value="cluster.id">
                                     {{cluster.name}}
                                 </option>
@@ -18,7 +18,7 @@
                         </div>
                         <div class="col-md-12">
                             <label>{{$t('common.description', 1)}}:</label>
-                            <b-form-textarea v-model="workflowCopy.description" :rows="3" :max-rows="6" />
+                            <b-form-textarea v-model="workflowCopy.description" :rows="3" :max-rows="6" class="form-control-sm"/>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                     <small><em>{{$t('workflow.publishingEnabledExplanation')}}</em></small>
                     <div v-if="workflowCopy.publishing_enabled" class="mt-1">
                         <label>{{$t('workflow.publishingStatus')}}:</label>
-                        <select v-model="workflowCopy.publishing_status" class="form-control w-50">
+                        <select v-model="workflowCopy.publishing_status" class="form-select form-select-sm w-50">
                             <option value="EDITING">
                                 {{$t('workflow.publisingStatusEditing')}}
                             </option>

@@ -25,7 +25,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="font-weight-bold">{{$t('common.type')}}:</label>
-                                        <select v-model="model.type" class="form-control">
+                                        <select v-model="model.type" class="form-select">
                                             <option v-for="fmt in types" :key="fmt" :value="fmt">
                                                 {{$t('model.type_' + fmt)}}
                                             </option>

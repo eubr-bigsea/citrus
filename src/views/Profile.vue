@@ -32,7 +32,7 @@
                             <div class="form-group row">
                                 <label for="inputEmail3" class="col-sm-3 col-form-label">{{$t('common.language')}}:</label>
                                 <div class="col-sm-9">
-                                    <select v-model="user.locale" class="form-control">
+                                    <select v-model="user.locale" class="form-select">
                                         <option value="en">
                                             English/Inglês
                                         </option>
