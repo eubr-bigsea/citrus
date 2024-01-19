@@ -21,14 +21,14 @@
             <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflow.tasks"
                 :move="handleStepDrag" item-key="id" @start="drag = true" @end="endSortSteps">
                 <template #item="{ element, index }">
-                    <div :key="element.id" xv-if="element.operation.slug !== 'read-data'"
-                        class="list-group-item steps clearfix p-0" :title="element.name !== 'unnamed' ? element.name : ''"
-                        :style="{ 'border-left': '4px solid ' + element?.forms?.color?.value }">
+                    <div :key="element.id" 
+                    class="list-group-item steps clearfix p-0" :title="element.name !== 'unnamed' ? element.name : ''"
+                    :style="{ 'border-left': '4px solid ' + element?.forms?.color?.value?.background }">
                         <Step :ref="setStepRefs" :step="element" :language="language" :attributes="attributes"
                             :index="index" :protected="index <= 1 ? true : null"
                             :schema="index > 0 && workflow.schema ? workflow.schema[index - 1] : null"
                             :suggestion-event="suggestionEvent" :extended-suggestion-event="extendedSuggestionEvent"
-                            @edit="editStep(element)" @cancel="cancelEdit(element)" @update="update(element)"
+                            @edit="editStep(element)" @cancel="cancelEdit(element)" @update="update"
                             @preview="preview(element)" v-bind="$attrs"/>
                     </div>
                 </template>
@@ -138,9 +138,9 @@ export default {
         cancelEdit(step) {
             this.stepRefs.forEach(s => s.setEditable(true));
         },
-        update(step) {
+        update(step, what) {
             this.stepRefs.forEach(s => s.setEditable(true));
-            // this.$emit('update', step);
+            this.$emit('update', step);
         },
         preview(step) {
             const toggle = this.lastPreviewableStep === step;

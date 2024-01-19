@@ -258,7 +258,7 @@
                                         <template #title>
                                             <font-awesome-icon icon="fa fa-link" /> {{$t('dataSource.relationship', 2)}}
                                         </template>
-                                        <p class="pb-1 border-bottom text-right">
+                                        <p class="pb-1 border-bottom text-end">
                                             <button :disabled="userPermission === null || permission === null"
                                                     class="btn btn-sm btn-primary" @click="addPermission">
                                                 <font-awesome-icon icon="fa fa-link" />
@@ -328,7 +328,7 @@
                                                                 <td>
                                                                     {{p.user_name}} ({{p.user_login}})
                                                                 </td>
-                                                                <td v-if="loggedUserIsOwnerOrAdmin" class="text-right">
+                                                                <td v-if="loggedUserIsOwnerOrAdmin" class="text-end">
                                                                     <button class="btn btn-sm btn-light"
                                                                             @click="removePermission(p)">
                                                                         <font-awesome-icon icon="trash" />

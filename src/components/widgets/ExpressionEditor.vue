@@ -140,7 +140,7 @@
                 </i18n-t>
             </small>
             <template #footer>
-                <div class="w-100 text-right">
+                <div class="w-100 text-end">
                     <b-button variant="primary" class="btn-sm me-1" @click.prevent="okClicked">
                         {{$t('common.ok')}}
                     </b-button>

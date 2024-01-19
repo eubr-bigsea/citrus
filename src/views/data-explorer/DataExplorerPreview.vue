@@ -299,7 +299,7 @@ export default {
                             h('b', 'Sinalizar'), " registros onde ",
                             h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
                         ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('flag', this.cellMenuData.name, '=',
@@ -311,7 +311,7 @@ export default {
                             h('b', 'Sinalizar'), " registros onde ",
                             h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
                         ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('flag', this.cellMenuData.name, '', null),
@@ -323,7 +323,7 @@ export default {
                             h('b', 'Sinalizar'), " registros onde ",
                             h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
                         ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('flag', this.cellMenuData.name, '!=',
@@ -335,7 +335,7 @@ export default {
                             h('b', 'Sinalizar'), " registros onde ",
                             h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
                         ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('flag', this.cellMenuData.name, '!', null),
@@ -345,12 +345,12 @@ export default {
                         label: h(
                             'span', {}, [
                             h('b', 'Limpar'), " dados do atributo onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
                         ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-eraser' }),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-eraser   ', 'class': 'text-warning' }),
 
                         onClick: () =>
-                            this.onCellContextMenuAction('clean', this.cellMenuData.name, '==', null),
+                            this.onCellContextMenuAction('clean', this.cellMenuData.name, '==', value),
                         divided: false
                     },
 
@@ -361,7 +361,7 @@ export default {
             if (item[key] == null) {
                 return 'null-cell';
                 //} else if (this.columnTypes.get(key) == 'Decimal' || this.columnTypes.get(key) == 'Integer') {
-                //    return 'text-right'
+                //    return 'text-end'
             }
             //return null;
         },
@@ -405,11 +405,11 @@ export default {
                 th = event.target.closest('th');
             }
 
-            this.lastHeader && this.lastHeader.classList.remove('bg-info', 'text-white');
+            this.lastHeader && this.lastHeader.classList.remove('bg-secondary', 'text-white');
             if (this.menuData.field !== data.field) {
                 this.lastHeader = th;
                 this.moveSelectionOverlay(th);
-                this.lastHeader.classList.add('bg-info', 'text-white');
+                this.lastHeader.classList.add('bg-secondary', 'text-white');
                 this.menuData = data;
                 this.$emit('select', data);
             } else {
@@ -423,8 +423,8 @@ export default {
                 this.$refs.colOverlay.style.left = '-100px';
                 this.$refs.colOverlay.style.display = 'none';
             }
-            const elem = document.querySelector('th.bg-info');
-            elem && elem.classList.remove('bg-info', 'text-white');
+            const elem = document.querySelector('th.bg-secondary');
+            elem && elem.classList.remove('bg-secondary', 'text-white');
         },
         menuAction(options) {
             if (typeof this[options.action] === 'function') {
@@ -670,6 +670,7 @@ div.data-type {
     position: absolute;
     height: 80vh;
     /*min-width: 100px;*/
+    z-index: 1;
 }
 
 .col-overlay div {

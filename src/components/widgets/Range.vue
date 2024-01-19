@@ -17,7 +17,7 @@
             {{values[language] ? values[language][0] : ''}}:
             {{split || 0}}%
         </div>
-        <div class="float-end text-right">
+        <div class="float-end text-end">
             {{values[language] ? values[language][1] : ''}}:
             {{100-split}}%
         </div>
