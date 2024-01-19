@@ -90,7 +90,7 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
 /* Experiments */
-const Explorer = () => import('./views/data-explorer/Explorer.vue');
+const DataExplorerIndex = () => import('./views/data-explorer/DataExplorerIndex.vue');
 const DataExplorerStart = () => import('./views/data-explorer/DataExplorerStart.vue');
 const ExplorerIndex = () => import('./views/data-explorer/Index.vue');
 
@@ -769,7 +769,7 @@ let router = createRouter({
         {
             path: '/experiments/data-explorer/:id',
             name: 'data-explorer-panel',
-            component: Explorer,
+            component: DataExplorerIndex,
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]

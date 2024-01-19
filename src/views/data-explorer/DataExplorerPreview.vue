@@ -1,53 +1,55 @@
 <template>
     <div>
         <v-style v-if="rightAlignedAttributes && rightAlignedAttributes.length">
-            .table-preview td:nth-child(1), {{rightAlignedAttributes}} {
+            .table-preview td:nth-child(1), {{ rightAlignedAttributes }} {
             text-align: right;
             }
             .table-preview td:nth-child(1) {
             background: #efefef;
             }
         </v-style>
-        <div v-show="loading" class="preview-loading">
-            <font-awesome-icon icon="lemon" spin class="text-success" />
-            {{$t('common.wait')}}
+        <div v-show="loading">
+            <div class="preview-loading">
+                <font-awesome-icon icon="lemon" spin class="text-success" />
+                {{ $t('common.wait') }}
+            </div>
         </div>
 
-        <template v-if="items">
+        <template v-if="items && items.length > 0">
             <div style="position: relative">
                 <div ref="colOverlay" class="col-overlay" @click="resetMenuData">
                     <div />
                 </div>
                 <div class="border scroll-area table-preview b-table-sticky-header table-responsive"
-                     style="max-height: 85vh;">
-                    <preview-table ref="table" :headers="headersWithLineNumber" :stick-header="true"
-                                   :rows="items" table-class="table b-table table-preview table-hover table-bordered table-sm border"
-                                   @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
+                    style="max-height: 85vh;">
+                    <preview-table ref="table" :headers="headersWithLineNumber" :stick-header="true" :rows="items"
+                        table-class="table b-table table-preview table-hover table-bordered table-sm border"
+                        @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
                         <template #head="scope">
                             <div class="user-select-none" @click.prevent="customOpen($event, scope)">
                                 <div class="clearfix no-wrap">
                                     <div class="attribute-name me-2">
-                                        {{scope.field.label}}
+                                        {{ scope.field.label }}
                                     </div>
                                     <!--
                                     <font-awesome-icon v-if="scope?.field.locked" class="" icon="lock" />
                                     -->
                                 </div>
                                 <div class="data-type">
-                                    {{scope.field.generic_type}}
+                                    {{ scope.field.generic_type }}
                                     <br>
-                                    {{scope.field.type}}<span v-if="scope.field.inner">({{scope.field.inner}})</span>
+                                    {{ scope.field.type }}<span v-if="scope.field.inner">({{ scope.field.inner }})</span>
                                     <span v-if="scope.field.truncated">(trunc.)</span>
                                 </div>
                             </div>
                         </template>
                         <template #cell="scope">
-                            <span v-if="scope.field.name === 'lineno'">
-                                {{scope.index + 1}}
-                            </span>
-                            <span v-else>
-                                {{scope.row[scope.field.name]}}
-                            </span>
+                            <template v-if="scope.field.name === 'lineno'">
+                                {{ scope.index + 1 }}
+                            </template>
+                            <template v-else>
+                                {{ scope.row[scope.field.name] }}
+                            </template>
                         </template>
                     </preview-table>
                 </div>
@@ -88,93 +90,13 @@
                 -->
             </div>
         </template>
-        <template v-else />
-
-        <!-- FIXME: translation -->
-        <context-menu ref="ctxCellMenu" class="menu" @ctx-open="(data) => cellMenuData = data"
-                      @ctx-cancel="resetCellCtxLocals">
-            <template v-if="cellMenuData">
-                <li class="ctx-item"
-                    @click="onCellContextMenuAction('filter', cellMenuData.name, '!=', cellMenuData.value)">
-                    <font-awesome-icon icon="fa fa-times" class="text-danger" /> <b>Remover</b> registros onde
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
-                </li>
-                <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '!', null)">
-                    <font-awesome-icon icon="fa fa-times" class="text-secondary" /> <b>Remover</b> registros onde
-                    <b><code>{{cellMenuData.name}} é nulo</code></b>
-                </li>
-                <li class="ctx-divider" />
-
-                <li class="ctx-item"
-                    @click="onCellContextMenuAction('filter', cellMenuData.name, '==', cellMenuData.value)">
-                    <font-awesome-icon icon="fa fa-check" class="text-success" /> <b>Manter</b> apenas registros onde
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
-                </li>
-                <li class="ctx-item" @click="onCellContextMenuAction('filterNull', cellMenuData.name, '', null)">
-                    <font-awesome-icon icon="fa fa-check text-secondary" /> <b>Manter</b> apenas registros onde
-                    <b><code>{{cellMenuData.name}} é nulo</code></b>
-                </li>
-
-                <li class="ctx-divider" />
-
-                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '==', cellMenuData.value)">
-                    <font-awesome-icon icon="fa fa-flag text-primary" />
-                    <b>Sinalizar</b> quando
-                    <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
-                </li>
-                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '!=', cellMenuData.value)">
-                    <font-awesome-icon icon="fa fa-flag text-danger" />
-                    <b>Sinalizar</b> quando
-                    <b><code>{{cellMenuData.name}} 	&#8800; {{cellMenuData.value}}</code></b>
-                </li>
-                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '', null)">
-                    <font-awesome-icon icon="fa fa-flag" calss="text-warning" />
-                    <b>Sinalizar</b> quando
-                    <b><code>{{cellMenuData.name}} é nulo</code></b>
-                </li>
-                <li class="ctx-item" @click="onCellContextMenuAction('flag', cellMenuData.name, '!', null)">
-                    <font-awesome-icon icon="fa fa-flag" class="text-secondary" />
-                    <b>Sinalizar </b> quando
-                    <b><code>{{cellMenuData.name}} não é nulo</code></b>
-                </li>
-                <li class="ctx-divider" />
-
-                <li class="ctx-item" @click="onCellContextMenuAction('clean', cellMenuData.name, '==', cellMenuData.value)">
-                    <font-awesome-icon icon="fa fa-eraser" class="text-warning" /> <b>Limpar</b> dados do atributo
-                    onde <b><code>{{cellMenuData.name}}={{cellMenuData.value}}</code></b>
-                </li>
-                <!--
-                <li class="ctx-divider"></li>
-                <li class="ctx-item"><font-awesome-icon icon="fa fa-search" />
-                    <b>Localizar</b> <code>{{cellMenuData.value}}</code> on
-                    <code>{{cellMenuData.name}}</code> e substituir ...
-                </li>
-            -->
-            </template>
-        </context-menu>
-        <button @click.prevent="onContextMenu">
-            Testar
-        </button> {{showContextMenu}}
-        <!--
-        <context-menu-2 v-model.show="showContextMenu" :options="optionsMenu">
-            <context-menu-item label="Simple item" @click="onMenuClick(1)" />
-            <context-menu-group label="Menu with child">
-                <context-menu-item label="Item1" @click="onMenuClick(2)" />
-                <context-menu-item label="Item2" @click="onMenuClick(3)" />
-                <context-menu-group label="Child with v-for 50">
-                    <context-menu-item v-for="index of 50" :key="index" :label="'Item3-' + index"
-                        @click="onLoopMenuClick(index)" />
-                </context-menu-group>
-            </context-menu-group>
-        </context-menu-2>
-        -->
     </div>
 </template>
 
 <script>
 import contextMenu from 'vue-context-menu';
 import Notifier from '@/mixins/Notifier.js';
-import PreviewTable from './PreviewTable.vue';
+import PreviewTable from './DataExplorerPreviewTable.vue';
 import VStyle from '@/components/VStyle.vue';
 import { h } from 'vue';
 
@@ -200,7 +122,7 @@ export default {
         serviceBus: { type: Object, default: () => null },
         total: { type: Number, default: () => 0 },
     },
-    emits: ['select', 'scroll', 'context-menu', 'drop'],
+    emits: ['select', 'scroll', 'context-menu', 'drop', 'render-complete'],
     data() {
         return {
             optionsMenu: {
@@ -311,7 +233,7 @@ export default {
             let value = this.cellMenuData.value;
             if (value.length > 40)
                 value = `${value.substring(0, 40)} ...`;
-            if (value.trim() == ''){
+            if (value.trim() == '') {
                 value = `"${value}"`;
             }
 
@@ -323,22 +245,22 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Manter'), " apenas registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
-                            ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-check', 'class':'text-success' }),
+                            h('b', 'Manter'), " apenas registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
+                        ]),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-check', 'class': 'text-success' }),
 
                         onClick: () =>
-                            this.onCellContextMenuAction('filter', this.cellMenuData.name, '==', 
+                            this.onCellContextMenuAction('filter', this.cellMenuData.name, '==',
                                 this.cellMenuData.value),
                     },
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Manter'), " apenas registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
-                            ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-check', 'class':'text-success' }),
+                            h('b', 'Manter'), " apenas registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
+                        ]),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-check', 'class': 'text-success' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('filterNull', this.cellMenuData.name, '', null),
@@ -347,24 +269,24 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Remover'), " registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
-                            ]),
+                            h('b', 'Remover'), " registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
+                        ]),
                         iconFontClass: 'text-danger',
-                        icon: h(FontAwesomeIcon, { icon: 'fa-times', 'class':'text-danger' }),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-times', 'class': 'text-danger' }),
 
                         onClick: () =>
-                            this.onCellContextMenuAction('filter', this.cellMenuData.name, '!=', 
+                            this.onCellContextMenuAction('filter', this.cellMenuData.name, '!=',
                                 this.cellMenuData.value),
                     },
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Remover'), " registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
-                            ]),
+                            h('b', 'Remover'), " registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
+                        ]),
                         iconFontClass: 'text-danger',
-                        icon: h(FontAwesomeIcon, { icon: 'fa-times', 'class':'text-danger' }),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-times', 'class': 'text-danger' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('filterNull', this.cellMenuData.name, '!', null),
@@ -374,22 +296,22 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Sinalizar'), " registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
-                            ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class':'text-warning' }),
+                            h('b', 'Sinalizar'), " registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
+                        ]),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
 
                         onClick: () =>
-                            this.onCellContextMenuAction('flag', this.cellMenuData.name, '=', 
+                            this.onCellContextMenuAction('flag', this.cellMenuData.name, '=',
                                 this.cellMenuData.value),
                     },
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Sinalizar'), " registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
-                            ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class':'text-warning' }),
+                            h('b', 'Sinalizar'), " registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
+                        ]),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('flag', this.cellMenuData.name, '', null),
@@ -398,22 +320,22 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Sinalizar'), " registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
-                            ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class':'text-warning' }),
+                            h('b', 'Sinalizar'), " registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
+                        ]),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
 
                         onClick: () =>
-                            this.onCellContextMenuAction('flag', this.cellMenuData.name, '!=', 
+                            this.onCellContextMenuAction('flag', this.cellMenuData.name, '!=',
                                 this.cellMenuData.value),
                     },
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Sinalizar'), " registros onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
-                            ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class':'text-warning' }),
+                            h('b', 'Sinalizar'), " registros onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
+                        ]),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-warning' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('flag', this.cellMenuData.name, '!', null),
@@ -422,16 +344,16 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                                h('b', 'Limpar'), " dados do atributo onde ",
-                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
-                            ]),
-                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class':'text-eraser' }),
+                            h('b', 'Limpar'), " dados do atributo onde ",
+                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
+                        ]),
+                        icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-eraser' }),
 
                         onClick: () =>
                             this.onCellContextMenuAction('clean', this.cellMenuData.name, '==', null),
                         divided: false
                     },
-                   
+
                 ]
             });
         },
@@ -462,8 +384,13 @@ export default {
             this.resetMenuData();
             const cell = event.target.closest('td,th');
             const index = cell.cellIndex;
-            const field = this.attributes[index - 1];
-            this.customOpen(event, { field, column: field.name, label: field.name }, index);
+            if (index > 0) { 
+                // 0 = row number, not an attribute
+                const field = this.attributes[index - 1];
+                this.customOpen(event, { field, column: field.name, label: field.name }, index);
+            } else {
+                this.resetMenuData();
+            }
             return;
         },
         customOpen(event, data, index) {
@@ -640,7 +567,8 @@ export default {
 .mx-context-menu {
     font-size: 10pt;
 }
-.mx-context-menu code { 
+
+.mx-context-menu code {
     font-family: Verdana, Geneva, Tahoma, sans-serif
 }
 </style>
