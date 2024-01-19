@@ -130,14 +130,14 @@
                     <li><code>substring(name, instr(name, " "))</code></li>
                     <li><code>upper(name)</code></li>
                 </ul>
-                <i18n path="property.expression.validExpressions" tag="span">
+                <i18n-t keypath="property.expression.validExpressions" tag="span" scope="global">
                     <template #ex1>
                         <strong><code>atributo * 10 - 4 </code></strong>
                     </template>
                     <template #ex2>
                         <strong><code>split(atributo, ' ')</code></strong>
                     </template>
-                </i18n>
+                </i18n-t>
             </small>
             <template #footer>
                 <div class="w-100 text-right">
@@ -155,10 +155,10 @@
 <script>
 import jsep from 'jsep';
 import LabelComponent from './Label.vue';
-import Widget from '../../mixins/Widget.js';
-import { debounce } from '../../util.js';
-import functionsHelp from '../../i18n/functions.js';
-import Notifier from '../../mixins/Notifier.js';
+import Widget from '@/mixins/Widget.js';
+import { debounce } from '@/util.js';
+import functionsHelp from '@/i18n/functions.js';
+import Notifier from '@/mixins/Notifier.js';
 
 export default {
     components: { LabelComponent },

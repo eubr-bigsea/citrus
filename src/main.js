@@ -394,6 +394,9 @@ openIdService.loadConfig(store).then(() => {
         alert: (text, title, opts) => {
             toast.alert(text, { ...toastOptions, ...opts })
         },
+        warning: (text, title, opts) => {
+            toast.warning(text, { ...toastOptions, ...opts })
+        },
         confirm: (question, title, opts) => {
             const dialog = createConfirmDialog(ConfirmComponenent, 
                 {question, title},

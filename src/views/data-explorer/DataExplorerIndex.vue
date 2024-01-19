@@ -1,21 +1,20 @@
 <template>
     <div class="source-code-pro-font">
-        <TahitiSuggester />
         <div class="flex_container">
             <div class="flex_item_left noselect step-list p-1">
                 <div class="p-2">
-                    <h6>{{$t('dataExplorer.title')}}</h6>
+                    <h6>{{ $t('dataExplorer.title') }}</h6>
                     <div>
-                        <small>{{$t('common.name')}}</small>
+                        <small>{{ $t('common.name') }}</small>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm" maxlength="50">
                     </div>
                     <div class="mb-">
-                        <small>{{$t('titles.cluster')}}</small>
+                        <small>{{ $t('titles.cluster') }}</small>
                         <v-select v-model="clusterId" :options="clusters" label="name" :reduce="(opt) => opt.id"
-                                  :taggable="false" :close-on-select="true" :filterable="false">
+                            :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{name}}<br>
-                                <small><em>{{description}}</em></small>
+                                {{ name }}<br>
+                                <small><em>{{ description }}</em></small>
                             </template>
                         </v-select>
                     </div>
@@ -46,13 +45,12 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button variant="primary" size="sm" class="float-end mt-2" :disabled="editing"
-                              @click="saveWorkflow">
-                        <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
+                    <b-button variant="primary" size="sm" class="float-end mt-2" :disabled="editing" @click="saveWorkflow">
+                        <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                     </b-button>
                     <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary"
-                              class="float-end mt-2 me-1" @click="loadData(null, null, false)">
-                        <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
+                        class="float-end mt-2 me-1" @click="loadData(null, null, false)">
+                        <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
                     <!--
                     <b-button @click="loadingData = !loadingData" class="btn btn-sm">OK</b-button>
@@ -61,16 +59,16 @@
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]"
-                               :suggestion-event="getSuggestions" :extended-suggestion-event="getExtendedSuggestions" @toggle="handleToggleStep"
-                               @delete="handleDeleteStep" @delete-many="handleDeleteSelected" @duplicate="duplicate"
-                               @preview="previewUntilHere" @update="handleUpdateStep"
-                               @end-sort-steps="endSortSteps" 
-                               @duplicate-step="duplicateStep" />
+                        :suggestion-event="getSuggestions" :extended-suggestion-event="getExtendedSuggestions"
+                        @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
+                        @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
+                        @end-sort-steps="endSortSteps" @duplicate-step="duplicateStep" @select="handleSelectStep"
+                        @toggle-selected="handleToggleSelected"/>
 
                     <div class="text-secondary">
-                        <small>{{jobStatus}} (p. {{page}})</small>
+                        <small>{{ jobStatus }} (p. {{ page }})</small>
                         <br>
-                        <small>Data size: {{dataSize}} kb.</small>
+                        <small>Data size: {{ dataSize }} kb.</small>
                         <br>
                         <!--
 
@@ -86,17 +84,31 @@
             <!-- Preview area -->
             <div class="flex_item_right mt-3">
                 <PreviewMenu :selected="selected" :menus="menus" @trigger="handleTrigger" @analyse="handleAnalyse" />
+                <table v-if="!previewCompleted" class="table b-table table-striped table-bordered">
+                    <tbody>
+                        <tr>
+                            <th v-for="col, i in 10" :key="i">
+                                &nbsp;
+                            </th>
+                        </tr>
+                        <tr v-for="row in 10" :key="row">
+                            <td v-for="col, i in 10" :key="i">
+                                <div class="skeleton skeleton-text skeleton-animate-wave" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
                 <Preview ref="preview" :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
-                         :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
-                         @select="handleSelectAttribute" @drop="handleTrigger" @context-menu="handleContextMenu"
-                         @scroll="handleScroll" />
+                    :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
+                    @select="handleSelectAttribute" @drop="handleTrigger" @context-menu="handleContextMenu"
+                    @scroll="handleScroll" @render-complete="previewCompleted = true" />
             </div>
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true"
-                     :hide-header="true" @close="stats = null"
-                     @ok="stats = null">
+            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true" :hide-header="true" @close="stats = null"
+                @ok="stats = null">
                 <div class="p-2">
                     <div v-if="stats && stats.attribute === null">
                         <h5>Estatísticas do resultado</h5>
@@ -110,7 +122,7 @@
                                         <thead>
                                             <tr v-if="stats.message && stats.message.table" class="text-center">
                                                 <td v-for="k in stats.message.table.columns" :key="k.name">
-                                                    {{k.name}}
+                                                    {{ k.name }}
                                                 </td>
                                             </tr>
                                         </thead>
@@ -118,7 +130,7 @@
                                             <tr v-for="(v, row) in numericStats" :key="row">
                                                 <td v-for="(attr, col) in stats.message.table.columns" :key="col"
                                                     :class="{ 'font-weight-bold': col === 0 }">
-                                                    {{stats.message.table.columns[col].values[row] || '-'}} 
+                                                    {{ stats.message.table.columns[col].values[row] || '-' }}
                                                 </td>
                                             </tr>
                                         </transition-group>
@@ -132,16 +144,17 @@
                                             <tr class="text-center correlation">
                                                 <td />
                                                 <th v-for="v in stats.message.numeric" :key="v">
-                                                    {{v}}
+                                                    {{ v }}
                                                 </th>
                                             </tr>
                                         </thead>
                                         <transition-group name="slide" tag="tbody">
                                             <tr v-for="(v, row) in stats.message.correlation" :key="row">
-                                                <th>{{stats.message.numeric[row]}}</th>
-                                                <td v-for="(attr, col) in v" :key="col" 
-                                                    :style="{backgroundColor: _heatMapColorforValue(attr), color: attr === 1 ? 'white': 'black'}" class="text-center">
-                                                    {{attr}}
+                                                <th>{{ stats.message.numeric[row] }}</th>
+                                                <td v-for="(attr, col) in v" :key="col"
+                                                    :style="{ backgroundColor: _heatMapColorforValue(attr), color: attr === 1 ? 'white' : 'black' }"
+                                                    class="text-center">
+                                                    {{ attr }}
                                                 </td>
                                             </tr>
                                         </transition-group>
@@ -153,39 +166,39 @@
                     <div v-else>
                         <span v-if="stats">
                             <select ref="selectAttributeStat" class="form-select-sm mb-2"
-                                    @change.prevent="handleSelectAttributeStat">
-                                <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">{{name}}</option>
+                                @change.prevent="handleSelectAttributeStat">
+                                <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">
+                                    {{ name }}</option>
                             </select>
                         </span>
                         <b-tabs>
                             <b-tab title="Estatísticas" title-link-class="small-nav-link">
                                 <div v-if="stats && stats.message" class="row">
                                     <div v-if="stats && stats.message.histogram"
-                                         :class="stats.message.numeric ? 'col-9' : 'col-12'">
+                                        :class="stats.message.numeric ? 'col-9' : 'col-12'">
                                         <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
-                                                    showlegend: false,
-                                                    margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
-                                                    xaxis: {
-                                                        tickangle: 45, tickfont: { size: 11 },
-                                                        type: stats.message.numeric ? null : 'category'
-                                                    },
-                                                    yaxis: { domain: [0.2] },
-                                                    yaxis2: {
-                                                        domain: [0.8],
-                                                        visible: false,
-                                                    },
-                                                    legend: { traceorder: 'reversed' },
-                                                    height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
-                                                    autosize: true,
-                                                }"
-                                                :data="getStatData2()" :options="{ displayModeBar: false }" />
+                                            showlegend: false,
+                                            margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
+                                            xaxis: {
+                                                tickangle: 45, tickfont: { size: 11 },
+                                                type: stats.message.numeric ? null : 'category'
+                                            },
+                                            yaxis: { domain: [0.2] },
+                                            yaxis2: {
+                                                domain: [0.8],
+                                                visible: false,
+                                            },
+                                            legend: { traceorder: 'reversed' },
+                                            height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
+                                            autosize: true,
+                                        }" :data="getStatData2()" :options="{ displayModeBar: false }" />
                                     </div>
                                     <div v-if="stats.message.numeric" class="col-3">
                                         <div v-if="stats.message.outliers && stats.message.outliers.length">
                                             <span>Valores atípicos (outliers)*</span>
                                             <table class="table table-sm table-stats">
                                                 <tr v-for="t, i in stats.message.outliers" :key="i">
-                                                    <td>{{t}}</td>
+                                                    <td>{{ t }}</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -198,9 +211,9 @@
                                         <table class="table table-sm table-stats">
                                             <tr v-for="value, stat in stats.message.stats" :key="stat">
                                                 <td class="text-capitalize">
-                                                    {{stat}}
+                                                    {{ stat }}
                                                 </td>
-                                                <td>{{value}}</td>
+                                                <td>{{ value }}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -209,13 +222,13 @@
                                         <table class="table table-sm table-stats">
                                             <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
                                                 <td class="col-8">
-                                                    {{t[0]}}
+                                                    {{ t[0] }}
                                                     <div class="top-bar"
-                                                         :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                                        :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
                                                 </td>
                                                 <td class="col-4 text-right">
-                                                    {{t[1]}}
-                                                    ({{(100 * t[1] / stats.message.stats.count).toFixed(2)}})%
+                                                    {{ t[1] }}
+                                                    ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
                                                 </td>
                                             </tr>
                                         </table>
@@ -227,12 +240,12 @@
                                 </div>
                             </b-tab>
                             <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
-                                   :title-link-class="'small-nav-link'">
+                                :title-link-class="'small-nav-link'">
                                 <form action="" class="form-inline">
                                     <div class="form-group mb-2">
                                         <label for="similarity">Similaridade:</label> &nbsp;
                                         <select v-model.number="similarity" name="similarity"
-                                                class="form-control-sm ms-3 me-3">
+                                            class="form-control-sm ms-3 me-3">
                                             <option value="0.5">
                                                 0.5 (menos semelhantes)
                                             </option>
@@ -255,7 +268,7 @@
                                 </form>
                                 <div style="height: 500px; overflow-y:auto">
                                     <table v-if="valuesClusters && valuesClusters.length > 0"
-                                           class="table table-sm table-smallest mt-4">
+                                        class="table table-sm table-smallest mt-4">
                                         <tr>
                                             <th />
                                             <th class="col-6">
@@ -271,11 +284,11 @@
                                             </td>
                                             <td>
                                                 <span v-for="v, k in values" :key="k" style="white-space: pre"
-                                                      :class="{ 'text-secondary': k !== 0 }">{{v}} <br></span>
+                                                    :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control form-control-sm w-100"
-                                                       :value="values[0]">
+                                                    :value="values[0]">
                                             </td>
                                         </tr>
                                     </table>
@@ -287,7 +300,7 @@
             </b-modal>
         </div>
         <modal-save-data v-if="internalWorkflowId" ref="modalSaveData" name="save-data" :workflow-id="internalWorkflowId"
-                         @confirm="handleConfirmSaveData" />
+            @confirm="handleConfirmSaveData" />
     </div>
 </template>
 <script>
@@ -296,14 +309,15 @@ import jsep from 'jsep';
 import io from 'socket.io-client';
 import axios from 'axios';
 import { debounce, deepToRaw } from '@/util.js';
-import Preview from './Preview.vue';
-import PreviewMenu from './PreviewMenu.vue';
-import StepList from './StepList.vue';
-import Notifier from '../../mixins/Notifier.js';
+import Preview from './DataExplorerPreview.vue';
+import PreviewMenu from './DataExplorerPreviewMenu.vue';
+import StepList from './DataExplorerStepList.vue';
+import Notifier from '@/mixins/Notifier.js';
 import { Workflow, Operation, Task, Constants } from './entities.js';
+import Plotly from '@/components/visualization/Plotly.vue';
 import ModalExport from './ModalExport.vue';
-import Plotly from '../../components/visualization/Plotly.vue';
 import ModalSaveData from './data-explorer/ModalSaveData.vue';
+import loadTahitiScript from '@/tahiti.js';
 
 jsep.addBinaryOp(">=", 1);
 jsep.removeBinaryOp('^');
@@ -343,16 +357,8 @@ export default {
     name: "DataExplorer",
     components: {
         Plotly,
-        Preview, 
-        StepList, PreviewMenu, ModalExport, ModalSaveData,
-        TahitiSuggester: () => {
-            return new Promise((resolve, reject) => { // eslint-disable-line no-unused-vars
-                const script = document.createElement('script');
-                script.setAttribute('id', 'tahiti-script');
-                script.async = true;
-                document.head.appendChild(script);
-            });
-        }
+        Preview,
+        StepList, PreviewMenu, ModalExport, ModalSaveData
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
@@ -367,6 +373,7 @@ export default {
     },
     data() {
         return {
+            previewCompleted: false,
             attributeSelection: [], // used to select attributes
             attributes: [],
             attributeNames: [],
@@ -403,6 +410,7 @@ export default {
             similarity: 0.8,
 
             numericOnlyStats: false,
+            suggestion: null,
         };
     },
     computed: {
@@ -415,8 +423,8 @@ export default {
                 || (this.workflowObj.tasks && undefined !== this.workflowObj.tasks.find(t => t.hasProblems()));
         },
         numericStats() {
-            return this.stats.message.table.columns[0].values.filter((v, inx) => 
-                !this.numericOnlyStats || this.stats.message.numeric.includes(v)); 
+            return this.stats.message.table.columns[0].values.filter((v, inx) =>
+                !this.numericOnlyStats || this.stats.message.numeric.includes(v));
         }
     },
     async mounted() {
@@ -435,12 +443,20 @@ export default {
         } else {
             this.loadingData = false;
         }
-        this.updateAttributeSuggestion();
+        await loadTahitiScript(`${tahitiUrl}/public/js/tahiti.js`);
+        this.suggestion = TahitiAttributeSuggester;
+        //this.updateAttributeSuggestion();
     },
     beforeUnmount() {
         this.disconnectWebSocket();
     },
     methods: {
+        handleSelectStep(task, value){
+            const found = this.workflowObj.tasks.find((t) => task.id === t.id);
+            if (found) {
+                found.selected = true;
+            }
+        },
         addDummyData() {
             /* not working as expected
                 return
@@ -559,8 +575,6 @@ export default {
                 }
                 this.workflowObj.tasks.forEach((t, inx) => t.display_order = inx);
                 this.loadingData = false;
-                document.getElementById('tahiti-script').setAttribute(
-                    'src', `${tahitiUrl}/public/js/tahiti.js?platform=${this.workflowObj.platform.id}`);
                 return !hasProblems;
 
             } catch (e) {
@@ -615,10 +629,8 @@ export default {
 
             try {
                 this.loadingData = true;
-                console.debug('loading');
                 const response = await axios.post(`${standUrl}/jobs`, body,
                     { headers: { 'Locale': self.$root.$i18n.locale, } });
-                console.debug('loaded');
                 self.$refs.preview && self.$refs.preview.scroll({ top: 0 });
                 self.job = response.data.data;
                 self.page = 1;
@@ -627,6 +639,11 @@ export default {
                 if (success) {
                     success();
                 }
+                this.$nextTick(() => {
+                    this.$nextTick(() => {
+                        this.previewCompleted = true
+                    });
+                });
             } catch (ex) {
                 if (ex.data) {
                     self.error(ex.data.message);
@@ -736,27 +753,37 @@ export default {
             });
         },
         handleToggleSelected(value) {
+            let changed = false;
             this.workflowObj.tasks.forEach((task) => {
-                task.enabled = (task.selected && value) || (task.display_order <= 1);
+                task.enabled = (task.selected && value) || (task.display_order < 1);
                 this.isDirty = true;
+                changed = true;
             });
+            if (changed) {
+                this.loadData(null, null, false);
+            }
         },
         handleDeleteSelected() {
             this.confirm(
                 this.$t('actions.delete'), this.$t('dataExplorer.doYouWantToDeleteStep'),
                 () => {
+                    let found = false;
                     this.workflowObj.tasks.forEach((task) => {
                         if (task.display_order > 1 && task.selected) {
                             this.workflowObj.deleteTask(task);
                             this.isDirty = true;
+                            found = true;
                         }
                     });
+                    if (found){
+                        this.loadData(null, null, false);
+                    }
                 }
             );
         },
         /* Attribute suggestion */
         async _queryDataSource(id, callback) {
-            console.debug(`Querying data source ${id}.`);
+            //console.debug(`Querying data source ${id}.`);
             let attributes = null;
             id = parseInt(id);
             if (window.TahitiAttributeSuggester.cached === undefined) {
@@ -781,44 +808,20 @@ export default {
         },
         updateAttributeSuggestion() {
             let attributeSuggestion = {};
+            if (!this.suggestion) return;
             try {
-                // Add sequential flows to compute attribute suggestion
-                const clonedWorkflow = JSON.parse(JSON.stringify(this.workflowObj));
-                clonedWorkflow.flows = [];
-                clonedWorkflow.tasks = clonedWorkflow.tasks
-                    .sort((a, b) => a.display_order - b.display_order);
-                let task = clonedWorkflow.tasks[0];
-                for (let i = 1; i < clonedWorkflow.tasks.length; i++) {
-                    clonedWorkflow.flows.push({
-                        source_id: task.id,
-                        target_id: clonedWorkflow.tasks[i].id
-                    });
-                    task = clonedWorkflow.tasks[i];
-                }
-                window.TahitiAttributeSuggester.compute(clonedWorkflow, this._queryDataSource,
+                this.suggestion.compute(this.workflowObj, this._queryDataSource,
                     (result) => {
                         Object.keys(result).forEach(key => {
                             attributeSuggestion[key] = result[key].uiPorts;
                         });
                         Object.assign(this.attributeSuggestion, attributeSuggestion);
-                        window.TahitiAttributeSuggester.processed = true;
-
-                        // Update with last valid suggestion if previous step is disabled
-                        /*let lastValid = null;
-                        const totalOfSteps = this.workflowObj.tasks.length;
-                        this.workflowObj.tasks.forEach((t, i) => {
-                            if (i < totalOfSteps && !t.enabled) {
-                                if (this.workflowObj.tasks[i + 1]?.enabled) {
-                                    this.attributeSuggestion[this.workflowObj.tasks[i + 1].id] = lastValid;
-                                }
-                            } else if (t.enabled) {
-                                lastValid = this.attributeSuggestion[t.id]
-                            }
-                        });*/
+                        this.suggestion.processed = true;
                     });
             } catch (e) {
                 console.log(e);
             }
+            return
         },
         _unique(data) {
             return Array.from(new Set(data));
@@ -835,21 +838,16 @@ export default {
             }
         },
         getExtendedSuggestions(taskId) {
-            if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
-                if (window.TahitiAttributeSuggester.processed === undefined
-                    || this.attributeSuggestion[taskId] === undefined
-                    || Object.keys(this.attributeSuggestion[taskId]).length === 0
-                    || this.attributeSuggestion[taskId].length === 0) {
-                    this.updateAttributeSuggestion();
-                }
-                if (this.attributeSuggestion[taskId]) {
-                    const suggestions = this.attributeSuggestion[taskId];
-                    return suggestions;
-                } else {
-                    return {};
-                }
+            if (this.suggestion.processed === undefined
+                || this.attributeSuggestion[taskId] === undefined
+                || this.attributeSuggestion[taskId].length === 0) {
+                this.updateAttributeSuggestion();
             }
-            return [];
+            if (this.attributeSuggestion[taskId]) {
+                return this.attributeSuggestion[taskId];
+            } else {
+                return {};
+            }
         },
         /* Trigged by the step action */
         handleToggleStep(task) {
@@ -969,7 +967,7 @@ export default {
                 this.$refs.modalExport.show();
             } else if (options?.params[0]?.slug === 'save') {
                 this.$refs.modalSaveData.show();
-                console.debug(options);
+                //console.debug(options);
             } else if (options.action === 'menu') {
                 const newTask = this.workflowObj.addTask(
                     this.operationLookup.get(options.params[0].id),
@@ -1018,13 +1016,13 @@ export default {
                 this.socket.close();
             }
         },
-        duplicateStep(step){
+        duplicateStep(step) {
             // Clone tasks instance
             const cloned = new Task(JSON.parse(JSON.stringify(step)));
             cloned.id = Operation.generateTaskId();
-            this.workflow.tasks.splice(step.display_order, 0, cloned);
+            this.workflowObj.tasks.splice(step.display_order, 0, cloned);
             // Update the display_order
-            this.workflow.tasks.slice(step.display_order + 1).forEach(
+            this.workflowObj.tasks.slice(step.display_order + 1).forEach(
                 (task) => task.display_order++);
             this.isDirty = true;
         },
@@ -1167,7 +1165,7 @@ export default {
                 socket.on('connect', () => { socket.emit('join', { cached: false, room: self.job.id }); });
 
                 socket.on('exported result', (msg) => {
-                    console.debug(msg);
+                    //console.debug(msg);
                 });
                 socket.on('analysis', (msg) => { // eslint-disable-line no-unused-vars
                     if (msg.analysis_type !== 'cluster') {
@@ -1186,7 +1184,7 @@ export default {
                     if (task) {
                         task.error = (msg.status === 'ERROR') ? msg.message : '';
                     }
-                    
+
                     if (msg.type === 'OBJECT') {
                         if (msg.meaning === 'sample') {
                             this.$nextTick(() => {
@@ -1318,8 +1316,8 @@ export default {
                         self.loadingData = false;
                     }
                 });
-                socket.on('*', (msg) => { 
-                    console.debug(msg, 'teste');
+                socket.on('*', (msg) => {
+                    //console.debug(msg, 'teste');
                 });
             } else {
                 //self.socket.emit('join', { room: self.job.id });
@@ -1329,7 +1327,6 @@ export default {
 };
 </script>
 <style scoped>
-
 .flex_container {
     display: flex;
     width: 100%;
@@ -1421,9 +1418,10 @@ export default {
 
 div.stats {
     max-height: 450px;
-    overflow:auto
+    overflow: auto
 }
-tr.correlation > th {
+
+tr.correlation>th {
     writing-mode: vertical-lr;
     background-color: pink;
     width: 60px !important;

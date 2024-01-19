@@ -122,18 +122,20 @@
 </template>
 
 <script setup>
-import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
-import { getCurrentInstance } from 'vue';
-import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
-import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
+import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted, nextTick } from "vue";
+import { getCurrentInstance, toRaw } from 'vue';
+import ChartBuilderOptions from '@/components/chart-builder/ChartBuilderOptions.vue';
+import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
+import { useI18n } from 'vue-i18n'
 
-import { debounce } from "../../../util.js";
+
+import { debounce } from "@/util.js";
 ;
-import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
+import ExpressionEditor from '@/components/widgets/ExpressionEditor.vue';
 
-import Plotly from '../../../components/visualization/Plotly.vue';
-import useNotifier from '../../../composables/useNotifier.js';
-import useDataSource from '../../../composables/useDataSource.js';
+import Plotly from '@/components/visualization/Plotly.vue';
+import useNotifier from '@/composables/useNotifier.js';
+import useDataSource from '@/composables/useDataSource.js';
 
 import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
 import axios from 'axios';
@@ -147,7 +149,6 @@ const router = vm.proxy.$router;
 const route = vm.proxy.$route;
 const progress = {start: ()=> {}, finish: ()=> {} }; //vm.proxy.$Progress;
 const store = vm.proxy.$store;
-const i18n = vm.proxy.$i18n.vm;
 const { success, error } = useNotifier(vm.proxy);
 
 const plotVersion = ref(0);
@@ -181,6 +182,7 @@ const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } 
 const visualizationObj = ref(null);
 const chartOptions = ref({ responsive: true, height: 600 });
 
+const i18n = useI18n({ useScope: 'global' });
 // Elements refs
 const cluster = ref(null);
 const visualizationDesigner = ref(ref);
@@ -335,7 +337,7 @@ const load = async () => {
         error(e);
         router.push({ name: 'index-explorer' });
     } finally {
-        this.$nextTick(() => {
+        nextTick(() => {
             progress.finish();
             loadingData.value = false;
             isDirty.value = false;
@@ -375,14 +377,14 @@ const loadClusters = async () => {
 };
 const saveWorkflow = async () => {
     workflowObj.value.visualization.forms = visualizationObj.value;
-    let cloned = structuredClone(workflowObj.value);
+    let cloned = structuredClone(toRaw(workflowObj.value));
 
     if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null
         || cloned.visualization.forms.filter.value.length === 0) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
     } else {
         // Copy filter from visualization to correct operation
-        cloned.filter.forms.formula = structuredClone(cloned.visualization.forms.filter);
+        cloned.filter.forms.formula = structuredClone(toRaw(cloned.visualization.forms.filter));
     }
     if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
@@ -435,7 +437,7 @@ const loadData = async () => {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
     } else {
         // Copy filter from visualization to correct operation
-        filterTask.forms.formula = structuredClone(visualizationTask.forms.filter);
+        filterTask.forms.formula = structuredClone(toRaw(visualizationTask.forms.filter));
     }
 
     cloned.tasks.forEach((task) => {

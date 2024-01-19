@@ -659,7 +659,7 @@
     </div>
 </template>
 <script setup>
-import { getCurrentInstance } from 'vue';
+import { getCurrentInstance, toRaw } from 'vue';
 import { ref, watch, defineProps, defineEmits, computed } from "vue";
 import ChartTypes from '../../views/data-explorer/vis-builder/visualizations.js';
 
@@ -671,7 +671,7 @@ import ExpressionEditor from '../widgets/ExpressionEditor.vue';
 const vm = getCurrentInstance();
 const props = defineProps({
     attributes: { type: Array, required: true },
-    value: { type: Object, required: true },
+    modelValue: { type: Object, required: true },
     chartType: { type: String, required: false, default: null }
 });
 const emit = defineEmits(['input', 'update-chart']);
@@ -683,7 +683,7 @@ const editableVisualization = ref(null);
 const palette = ref({ label: 'Paleta de cores' });
 const colorScale = ref({ label: 'Escala de cores' });
 const filterField = ref({ label: 'Filtros' });
-editableVisualization.value = structuredClone(props.value);
+editableVisualization.value = JSON.parse(JSON.stringify(props.modelValue)); //structuredClone(toRaw(props.modelValue));
 
 
 /* Computed */
@@ -716,7 +716,7 @@ watch(
     }, { deep: true });
 
 watch(
-    () => props.value,
+    () => props.modelValue,
     (value) => {
         if (!value.display_legend) {
             value.display_legend = { value: 'HIDE' };
@@ -730,7 +730,7 @@ watch(
             }
         });
 
-        editableVisualization.value = structuredClone(value);
+        editableVisualization.value = JSON.parse(JSON.stringify(value));//structuredClone(toRaw(value));
         toEmit.value = false;
     }, { deep: true, immediate: true });
 

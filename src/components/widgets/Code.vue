@@ -11,7 +11,7 @@
                               v-model="code"
                               :highlight="highlighter"
                               class="prism-editor-wrapper-disabled code2"
-                              :readonly="false" />
+                              :readonly="false" @input="handleInput"/>
             </div>
             <b-link variant="sm"
                     @click.prevent="showModal">
@@ -136,8 +136,11 @@ export default {
                 });
             }
         },
+        handleInput() {
+            this.triggerUpdateEvent(this.message, this.field, this.code)
+        },
         okModal() {
-            this.$root.$emit(this.message, this.field, this.code);
+            this.triggerUpdateEvent(this.message, this.field, this.code);
             this.$refs.modal.hide();
         },
         showModal() {
@@ -145,7 +148,8 @@ export default {
         },
         cancelModal() {
             this.code = this.originalCode;
-            this.$root.$emit(this.message, this.field, this.code);
+            this.triggerUpdateEvent(this.message, this.field, this.code);
+            
             this.$refs.modal.hide();
         },
         highlighter() {
