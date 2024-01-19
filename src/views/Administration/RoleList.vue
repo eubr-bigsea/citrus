@@ -52,7 +52,7 @@ export default {
             columns: ['id', 'name', 'label', 'description', 'enabled', 'system', 'actions'],
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 dateColumns: ['updated'],
                 columnClasses: { actions: 'th-2' },
                 headings: {

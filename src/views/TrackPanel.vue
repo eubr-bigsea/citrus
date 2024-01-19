@@ -143,7 +143,7 @@ export default {
             const self = this;
             return {
                 initialPage: this.page,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 dateColumns: ['updated'],
                 headings: {
                     image: this.$t('common.image'),

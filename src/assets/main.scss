@@ -370,7 +370,7 @@ h2.title {
 }
 
 .modal {
-    z-index: 100001 !important;
+    /*z-index: 100001 !important;*/
 }
 
 .lemonade-job {
@@ -1045,4 +1045,7 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+Vue-Toastification__toast {
+    z-index: 10000000;
 }

@@ -52,7 +52,7 @@ export default {
 
             showSideBar: false,
             options: {
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 dateColumns: ['updated'],
                 headings: {
                     id: 'ID',

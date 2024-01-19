@@ -7,7 +7,7 @@
                         :value="value" />
         <div v-if="!field.multiplicity || field.multiplicity === 1 || field.multiplicity === 0">
             <select v-model="selected"
-                    class="form-control input-sm "
+                    class="form-select form-select-sm input-sm "
                     :data-field="field.name"
                     :required="field.required"
                     @change="updated">

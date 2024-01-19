@@ -86,6 +86,7 @@
                             <font-awesome-icon icon="fa fa-trash" />
                         </button>
                     </div>
+                    
                 </div>
             </div>
         </div>

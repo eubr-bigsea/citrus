@@ -22,7 +22,7 @@
                         <div class="col-md-3">
                             <label type="checkbox">
                                 <SwitchComponent v-model="taskCopy.enabled" :checked="taskCopy.enabled" 
-                                                 @input="$emit('toggle-task', taskCopy.enabled)">
+                                                 @input="(v) => $emit('toggle-task', v)">
                                     {{$t('common.enabled')}}
                                 </SwitchComponent>
                             </label>
@@ -40,6 +40,7 @@
                                          class="mb-2 property clearfix" :data-name="field.name">
                                         <keep-alive>
                                             <component :is="getWidget(field)" :field="field" :value="getValue(field.name)"
+                                                        v-model="taskCopy.forms[field.name].value"
                                                        :suggestion-event="suggestionEvent"
                                                        :extended-suggestion-event="extendedSuggestionEvent"
                                                        :programming-language="taskCopy.operation.slug === 'execute-python' ? 'python' : (taskCopy.operation.slug === 'execute-sql' ? 'sql' : '')"
@@ -192,10 +193,10 @@ export default {
                 this.update();
             }
         },
-        taskCopy: {
+        xtask: {
             deep: true,
             handler(newValues) {
-
+                //this.taskCopy = {... this.task}
             }
         }
     },
