@@ -50,7 +50,7 @@
                 </div>
             </template>
             <template #footer>
-                <b-button variant=""
+                <b-button variant="secondary"
                           size="sm"
                           class="float-end"
                           @click="cancelModal">

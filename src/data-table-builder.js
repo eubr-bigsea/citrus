@@ -3,7 +3,7 @@ export default class DataTableBuilder {
         // Initialize with default options
         this.options = {
             debounce: 800,
-            skin: 'table-sm table table-hover',
+            skin: 'table table-hover',
             columnClasses: { actions: 'th-10' },
             preserveState: true,
             saveState: true,

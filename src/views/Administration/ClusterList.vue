@@ -51,7 +51,7 @@ export default {
             columns: ['id', 'name', 'type', 'enabled', 'actions'],
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 columnClasses: { actions: 'th-10' },
                 headings: {
                     id: 'ID',

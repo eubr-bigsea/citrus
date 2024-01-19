@@ -27,7 +27,6 @@
                 </form>
             </div>
         </slot>
-
         <table v-show="showSkeleton && firstLoad" class="table b-table table-striped table-bordered">
             <tbody>
                 <tr v-for="row in 10" :key="row">
@@ -39,7 +38,7 @@
         </table>
         <section v-show="!firstLoad">
             <div class="table-area scroll-area">
-                <table v-if="tableData?.length" ref="table" :class="options.skin" class="server-table">
+                <table v-if="tableData?.length" ref="table" :class="options.skin">
                     <thead>
                         <tr>
                             <th v-for="(heading, index) in columns" :key="index" class="header"

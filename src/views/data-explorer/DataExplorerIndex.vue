@@ -18,7 +18,7 @@
                             </template>
                         </v-select>
                     </div>
-                    
+
                     <!-- FIXME
                     <b-dropdown :disabled="false && loadingData" variant="secondary" size="sm"
                         class="float-end mt-2 ms-1" @click="saveWorkflow">
@@ -208,7 +208,7 @@
                                                 <td class="col-8">
                                                     {{ t[0] }}
                                                     <div class="top-bar"
-                                                        :style="{height: '10px', width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                                        :style="{ height: '10px', width: (100 * t[1] / stats.message.stats.count) + '%' }" />
                                                 </td>
                                                 <td class="col-4 text-end">
                                                     {{ t[1] }}
@@ -429,7 +429,7 @@ export default {
         }
         await loadTahitiScript(`${tahitiUrl}/public/js/tahiti.js`);
         this.suggestion = TahitiAttributeSuggester;
-        //this.updateAttributeSuggestion();
+        this.updateAttributeSuggestion();
     },
     beforeUnmount() {
         this.disconnectWebSocket();
@@ -498,6 +498,7 @@ export default {
                 delete task.step;
                 delete task.status;
             });
+            cloned.flows = [];
             try {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
@@ -593,6 +594,7 @@ export default {
                 task.operation = { id: task.operation.id };
                 delete task.version;
             });
+            cloned.flows = [];
             if (callback) {
                 callback(cloned);
             }
@@ -794,6 +796,15 @@ export default {
             let attributeSuggestion = {};
             if (!this.suggestion) return;
             try {
+                //const cloned = structuredClone(deepToRaw(this.workflowObj));
+                const flows = []
+                for (let i = 0; i < this.workflowObj.tasks.length - 1; i++) {
+                    let pair = [, this.workflowObj.tasks[i + 1].id];
+                    flows.push({source_id: this.workflowObj.tasks[i].id, 
+                        target_id: this.workflowObj.tasks[i + 1].id});
+                }
+                
+                this.workflowObj.flows = flows;
                 this.suggestion.compute(this.workflowObj, this._queryDataSource,
                     (result) => {
                         Object.keys(result).forEach(key => {
@@ -963,7 +974,7 @@ export default {
                 console.log(`Unknown action: ${options.action}`);
             }
         },
-       
+
         disconnectWebSocket() {
             if (this.socket) {
                 this.socket.emit('leave', { room: this.job.id });

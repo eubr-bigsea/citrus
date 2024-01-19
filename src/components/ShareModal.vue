@@ -77,7 +77,7 @@ export default {
             users: [],
             columns: ['full_name', 'email', 'actions'],
             options: {
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 columnsClasses: {
                     name: 'th-20',
                     description: 'th-20',

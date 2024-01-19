@@ -80,7 +80,7 @@ export default {
             columns: ['id', 'full_name', 'enabled', 'email', 'notes', 'roles', 'confirmed_at', 'actions'],
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 dateColumns: ['updated'],
                 columnClasses: { actions: 'th-10' },
                 headings: {

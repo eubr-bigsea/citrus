@@ -80,7 +80,7 @@ export default {
             showSideBar: false,
             options: {
                 perPageValues: [5, 10, 20],
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 columnsClasses: {
                     name: 'th-20',
                     description: 'th-20',

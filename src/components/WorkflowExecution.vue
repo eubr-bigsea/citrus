@@ -38,7 +38,7 @@ export default {
         return {
             columns: ['status', 'id', 'name', 'created'],
             options: {
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 columnsClasses: {
                     name: 'th-20',
                     description: 'th-20',
