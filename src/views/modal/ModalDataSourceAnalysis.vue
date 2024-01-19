@@ -35,7 +35,7 @@
                                  :key="option.name" 
                                  :disabled="!(currentAttributeIsNumeric && option.numeric || !currentAttributeIsNumeric && option.categorical)" :value="option.name">
                     {{$t(`dataSource.analysis.${option.name}`)}}
-                </b-form-checkbox>
+                </b-form-checkbox>AAA
             </b-form-checkbox-group>
         </b-form-group>
         <template #footer>

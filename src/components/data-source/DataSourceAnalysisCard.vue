@@ -6,7 +6,7 @@
                     {{info.attr.name}}
                 </h6>
             </div>
-            <div class="float-end text-right">
+            <div class="float-end text-end">
                 <button class="btn btn-link btn-sm m-0 p-0 pe-1" @click="deleteCard">
                     <font-awesome-icon icon="edit"
                                        :title="$t('actions.edit')" />

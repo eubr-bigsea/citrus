@@ -56,7 +56,7 @@
                     </template>
                 </b-form-tags>
             </div>
-            <div class="col-2 text-right">
+            <div class="col-2 text-end">
                 <b-form-radio-group v-model="internalValue.type" :options="opts" button-variant="outline-secondary"
                                     size="sm" name="radio-btn-outline" buttons @input="handleInput" />
             </div>

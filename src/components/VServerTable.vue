@@ -15,7 +15,7 @@
 
                             </slot>
                         </div>
-                        <div class="col-1 text-right">
+                        <div class="col-1 text-end">
                             <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-end">
                                 <label for="limit">Limite</label>
                                 <select v-model="perPage" name="limit" class="form-select form-select-sm">

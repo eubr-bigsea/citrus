@@ -18,22 +18,7 @@
                             </template>
                         </v-select>
                     </div>
-                    <!--
-                    <b-dropdown class="more-actions me-1 mt-1 border rounded" size="sm" variant="btn" split>
-                        <template #button-content>
-                            <input type="checkbox" @change="handleSelectAll($event)">
-                        </template>
-                        <b-dropdown-item @click="handleToggleSelected(true)">
-                            {{ $t('dataExplorer.enableSelected') }}
-                        </b-dropdown-item>
-                        <b-dropdown-item @click="handleToggleSelected(false)">
-                            {{ $t('dataExplorer.disableSelected') }}
-                        </b-dropdown-item>
-                        <b-dropdown-item @click="handleRemoveSelected">
-                            {{ $t('dataExplorer.removeSelected') }}
-                        </b-dropdown-item>
-                    </b-dropdown>
-                -->
+                    
                     <!-- FIXME
                     <b-dropdown :disabled="false && loadingData" variant="secondary" size="sm"
                         class="float-end mt-2 ms-1" @click="saveWorkflow">
@@ -52,9 +37,6 @@
                         class="float-end mt-2 me-1" @click="loadData(null, null, false)">
                         <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                     </b-button>
-                    <!--
-                    <b-button @click="loadingData = !loadingData" class="btn btn-sm">OK</b-button>
-                -->
                 </div>
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
@@ -63,7 +45,7 @@
                         @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
                         @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
                         @end-sort-steps="endSortSteps" @duplicate-step="duplicateStep" @select="handleSelectStep"
-                        @toggle-selected="handleToggleSelected"/>
+                        @toggle-selected="handleToggleSelected" />
 
                     <div class="text-secondary">
                         <small>{{ jobStatus }} (p. {{ page }})</small>
@@ -112,9 +94,11 @@
                 <div class="p-2">
                     <div v-if="stats && stats.attribute === null">
                         <h5>Estatísticas do resultado</h5>
-                        <b-form-checkbox v-model="numericOnlyStats" class="mt-3 mb-4">
-                            Mostrar apenas para atributos numéricos
-                        </b-form-checkbox>
+                        <div>
+                            <b-form-checkbox v-model="numericOnlyStats" xclass="mt-3 mb-4">
+                                Mostrar apenas para atributos numéricos
+                            </b-form-checkbox>
+                        </div>
                         <b-tabs>
                             <b-tab title="Estatísticas básicas" title-link-class="small-nav-link tab-small">
                                 <div class="scrollable stats">
@@ -191,12 +175,12 @@
                                             legend: { traceorder: 'reversed' },
                                             height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
                                             autosize: true,
-                                        }" :data="getStatData2()" :options="{ displayModeBar: false }" />
+                                        }" :data="getStatData()" :options="{ displayModeBar: false }" />
                                     </div>
                                     <div v-if="stats.message.numeric" class="col-3">
                                         <div v-if="stats.message.outliers && stats.message.outliers.length">
                                             <span>Valores atípicos (outliers)*</span>
-                                            <table class="table table-sm table-stats">
+                                            <table class="table table-sm table-stats table-bordered">
                                                 <tr v-for="t, i in stats.message.outliers" :key="i">
                                                     <td>{{ t }}</td>
                                                 </tr>
@@ -208,7 +192,7 @@
                                     </div>
                                     <div class="col-4">
                                         <span>Estatísticas (exclui nulos)</span>
-                                        <table class="table table-sm table-stats">
+                                        <table class="table table-sm table-stats table-bordered">
                                             <tr v-for="value, stat in stats.message.stats" :key="stat">
                                                 <td class="text-capitalize">
                                                     {{ stat }}
@@ -219,14 +203,14 @@
                                     </div>
                                     <div v-if="stats.message.top20" class="col-8">
                                         <span>Top valores *</span>
-                                        <table class="table table-sm table-stats">
+                                        <table class="table table-sm table-stats table-bordered">
                                             <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
                                                 <td class="col-8">
                                                     {{ t[0] }}
                                                     <div class="top-bar"
-                                                        :style="{ width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                                        :style="{height: '10px', width: (100 * t[1] / stats.message.stats.count) + '%' }" />
                                                 </td>
-                                                <td class="col-4 text-right">
+                                                <td class="col-4 text-end">
                                                     {{ t[1] }}
                                                     ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
                                                 </td>
@@ -234,7 +218,7 @@
                                         </table>
                                     </div>
 
-                                    <div class="col-12 text-right">
+                                    <div class="col-12 text-end">
                                         <small><em>*limitados a 10</em></small>
                                     </div>
                                 </div>
@@ -451,7 +435,7 @@ export default {
         this.disconnectWebSocket();
     },
     methods: {
-        handleSelectStep(task, value){
+        handleSelectStep(task, value) {
             const found = this.workflowObj.tasks.find((t) => task.id === t.id);
             if (found) {
                 found.selected = true;
@@ -775,7 +759,7 @@ export default {
                             found = true;
                         }
                     });
-                    if (found){
+                    if (found) {
                         this.loadData(null, null, false);
                     }
                 }
@@ -979,37 +963,7 @@ export default {
                 console.log(`Unknown action: ${options.action}`);
             }
         },
-        /* to be removed*/
-        /*
-        dateTruncate(attributeName) {
-            const modal = this.$refs.simpleInput;
-            const modalConfig =
-            {
-                format: 'options',
-                okTitle: this.$t('common.ok'),
-                cancelTitle: this.$t('actions.cancel'),
-                message: this.$t('dataExplorer.informFormat'),
-                title: this.$t('actions.formatDate'),
-                options: [
-                    { value: 'YEAR', text: this.$t('common.periods.year') },
-                    { value: 'MONTH', text: this.$t('common.periods.month') },
-                    { value: 'DAY', text: this.$t('common.periods.day') },
-                    { value: 'HOUR', text: this.$t('common.periods.hour') },
-                    { value: 'MINUTE', text: this.$t('common.periods.minute') },
-                    { value: 'SECOND', text: this.$t('common.periods.seconds') },
-                    { value: 'WEEK', text: this.$t('common.periods.week') },
-                    //maybe quarter
-                ],
-                value: null,
-                ok: () => {
-                    this.store.transformWithFunction(
-                        attributeName,
-                        this.selected.field.position,
-                        ['dateTruncate', 'date_trunc', attributeName, `'${modal.value}'`]);
-                }
-            };
-            modal.show(modalConfig);
-        },*/
+       
         disconnectWebSocket() {
             if (this.socket) {
                 this.socket.emit('leave', { room: this.job.id });
@@ -1094,22 +1048,7 @@ export default {
             this.info('Exportando o fluxo de trabalho. Quando a exportação terminar, você será notificado.', 10000);
         },
 
-        /*getStatData() {
-            const x = this.stats.message.histogram[1];
-            const customdata = x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`);
-            return [{
-                type: 'bar',
-                hovertemplate: `%{customdata}: %{y} ${this.$t("common.records", 2)}<extra></extra>`,
-                customdata,
-                x,
-                y: this.stats.message.histogram[0],
-                marker: {
-                    color: 'rgb(49,130,189)',
-                    opacity: 0.4,
-                }
-            }];
-        },*/
-        getStatData2() {
+        getStatData() {
             const x = this.stats.message.histogram[1];
             const customdata = this.stats.message.numeric ?
                 x.map((v, inx) => `${v.toFixed(2)} - ${x[inx + 1] ? x[inx + 1].toFixed(2) : ""}`) : x;
@@ -1351,35 +1290,7 @@ export default {
     min-height: 20px;
 }
 
-/*
-.steps {
-    border-radius: 0 !important;
-    padding-bottom: 100px;
-}
 
-.steps .list-group-item {
-    cursor: move;
-    font-size: .8em;
-}
-
-.list-group-item:first-child {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-
-.list-group-item:last-child {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-.list-group-item.steps {
-    padding: 8px 5px;
-}
-
-.more-actions li {
-    font-size: .8em !important;
-}
-*/
 #step-container {
     position: relative;
 }
@@ -1413,7 +1324,7 @@ export default {
 
 .top-bar {
     height: 4px;
-    background: rgb(49, 130, 189)
+    background: rgb(49, 130, 189) !important;
 }
 
 div.stats {

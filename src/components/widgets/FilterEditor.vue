@@ -231,7 +231,7 @@
                 </div>
             </div>
             <template #footer>
-                <div class="w-100 text-right">
+                <div class="w-100 text-end">
                     <b-button variant="primary"
                               size="sm"
                               class="me-1 ps-5 pe-5"

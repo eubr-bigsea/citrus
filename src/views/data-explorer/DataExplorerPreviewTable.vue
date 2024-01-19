@@ -11,7 +11,7 @@
         </thead>
         <tbody>
             <tr v-for="row, inx in rows" :key="inx" @click.prevent="handleRowClick">
-                <td v-for="header in headers" :key="header">
+                <td v-for="header in headers" :key="header" :class="{'null-cell': row[header.name] === null}">
                     <slot name="cell" :row="row" :field="header" :index="inx">
                         {{row[header.name]}}
                     </slot>
@@ -100,6 +100,9 @@ div.table-preview {
 .table-preview td:hover {
     background-color: #666;
     color: #fff
+}
+.null-cell {
+    background: #eee !important;
 }
 </style>
   

@@ -15,7 +15,7 @@
                         {{$t('common.noData')}}
                     </div>
                 </dl>
-                <div v-if="items.length > 0 && type !== 'app'" class="text-right">
+                <div v-if="items.length > 0 && type !== 'app'" class="text-end">
                     <b-button size="sm" :to="{ name: `${type}s` }" variant="link" class="bottom-right">
                         {{$t('common.moreRecords')}} ...
                     </b-button>

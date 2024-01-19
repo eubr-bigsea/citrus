@@ -1,7 +1,7 @@
 <template>
     <div style="display: flex;" class="step" :class="stepClass">
         <div class="float-start text-secondary step-drag-handle">
-            <font-awesome-icon v-if="!locked" icon="fa fa-grip-vertical" />
+            <font-awesome-icon v-if="!locked && index > 0" icon="fa fa-grip-vertical" />
         </div>
         <div v-if="hasProblems" class="pulse-item text-danger"
             title="Existem problemas na configuração. Edite para corrigir.">
@@ -43,23 +43,6 @@
                         <font-awesome-icon v-if="step.enabled" icon="fa fa-toggle-on text-success" />
                         <font-awesome-icon v-else icon="fa fa-toggle-off text-secondary" />
                     </button>
-                    <!--
-
-                        <b-dropdown-2 size="lg" variant="light" class="zoom-buttom" no-caret>
-                            <template #button-content>
-                            <font-awesome-icon icon="fa fa-ellipsis-h" />
-                        </template>
-                        <a href="#" @click.prevent="edit('appearance')">
-                            {{ $t('titles.comment') }} &amp;
-                            {{ $t('titles.color').toLowerCase() }}
-                        </a>
-                        <a href="#" @click.prevent="$emit('duplicate', step)">
-                            {{ $t('actions.duplicate') }}
-                            {{ $t('dataExplorer.step').toLowerCase() }}
-                        </a>
-                    </b-dropdown-2>
-                -->
-
                     <dropdown-button size="lg" variant="light" no-caret>
                         <template #button-content>
                             <font-awesome-icon icon="fa fa-ellipsis-h" />
@@ -256,16 +239,8 @@ export default {
             });
         },
         save() {
-            //Cloned object doesn't carry function
-            //this.step.parameters.i18nArgs = this.step.parameters.i18nArgs;
-            //this.step.forms = this.step.parameters.getForms(this.step.parameters.alias,
-            //    [this.step.parameters.attributeName,]);
-            /*
-                if (this.step?.forms?.callbacks?.out) {
-                    this.step?.forms?.callbacks?.out(this.step, this.step.editableStep.forms['$meta']?.value);
-                }*/
             this.editableStep.editing = false;
-            this.$emit('update', this.editableStep);
+            this.$emit('update', this.editableStep, 'saved');
         },
         getStepClass(step) {
             if (step === undefined) { return ''; }

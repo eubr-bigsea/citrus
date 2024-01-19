@@ -70,7 +70,7 @@
                 </b-tab>
             </b-tabs>
             <template #footer>
-                <div class="w-100 text-right">
+                <div class="w-100 text-end">
                     <b-button variant="secondary" class="btn-sm " @click="cancelClicked">
                         {{$t('actions.cancel')}}
                     </b-button>

@@ -86,7 +86,7 @@
                 </div>
             </form>
             <template #footer>
-                <div class="w-100 text-right">
+                <div class="w-100 text-end">
                     <b-button variant="primary"
                               class="me-1"
                               size="sm"
