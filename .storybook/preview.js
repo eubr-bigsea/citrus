@@ -1,3 +1,4 @@
+/*
 import Vue from 'vue'
 import BootstrapVue from "bootstrap-vue"
 import "bootstrap/dist/css/bootstrap.min.css"
@@ -84,6 +85,32 @@ export const decorators = [(story) => ({
     template: "<story/>"
 }));
 */
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
+
+import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
+import { setup } from "@storybook/vue3";
+import '@/assets/main.scss';
+import messages from '@/i18n/messages.js';
+
+import { createI18n } from 'vue-i18n';
+
+setup((app) => {
+
+    const i18n = createI18n({
+        allowComposition: true,
+        globalInjection: true,
+        global: true,
+        legacy: false,
+        locale: 'pt',
+        fallbackLocale: 'en',
+        messages
+    });
+
+    app.component('FontAwesomeIcon', FontAwesomeIcon);
+    app.component('FontAwesomeLayers', FontAwesomeLayers);
+    app.use(i18n);
+});
 
 export const parameters = {
     actions: { argTypesRegex: "^on[A-Z].*" },

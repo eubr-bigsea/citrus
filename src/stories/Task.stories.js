@@ -1,5 +1,5 @@
 
-import Task from '../components/Task.vue';
+import Task from '@/components/Task.vue';
 
 const field1 = { label: 'Date', order: 1, name: 'attribute', required: true };
 

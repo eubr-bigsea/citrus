@@ -1,5 +1,5 @@
 
-import BarChart from '../../components/visualization/BarChart.vue';
+import BarChart from '../@/components/visualization/BarChart.vue';
 
 const chart1 = {
     "orientation": "v",
