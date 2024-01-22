@@ -69,8 +69,10 @@
                         </div>
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top scroll-area">
+                        |{{ options.title }}|
                         <chart-builder-options v-model="options" :attributes="attributes" :chart-type="visualizationObj.type.value"
-                                               data-test="options-section" @update-chart="updateChart" />
+                                               data-test="options-section" @update-chart="updateChart" 
+                                               v-model:title="options.title.value"/>
                     </div>
                 </form>
             </div>
