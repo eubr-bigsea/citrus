@@ -35,6 +35,12 @@ export default {
         value: {
             default: '',
         },
+        modelValue: {
+            default: ''
+        },
+        label: {
+            default: ''
+        }
     },
     methods: {
         triggerUpdateEvent(message, field, value, labelValue) {

@@ -1,4 +1,4 @@
-import AutocompleteComponent from '../components/widgets/ExpressionEditor.vue';
+import AutocompleteComponent from '@/components/widgets/ExpressionEditor.vue';
 import { action } from '@storybook/addon-actions';
 
 const field1 = {

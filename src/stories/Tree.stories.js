@@ -1,4 +1,4 @@
-import TreeviewComponent from '../components/Tree.vue';
+import TreeviewComponent from '@/components/Tree.vue';
 import { action } from '@storybook/addon-actions';
 import functionsHelp from '../i18n/functions.js';
 const treeData = {

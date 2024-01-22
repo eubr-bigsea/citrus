@@ -1,5 +1,5 @@
 
-import LineChart from '../../components/visualization/LineChart.vue';
+import LineChart from '../@/components/visualization/LineChart.vue';
 
 const chart1 = {
     "title": "Line chart 1",

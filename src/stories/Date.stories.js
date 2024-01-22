@@ -1,5 +1,5 @@
 
-import DateComponent from '../components/widgets/Date.vue';
+import DateComponent from '@/components/widgets/Date.vue';
 
 const field1 = { label: 'Date', order: 1, name: 'attribute', required: true };
 
@@ -17,12 +17,13 @@ export default {
 const Template = (args, { argTypes }) => ({
     props: Object.keys(argTypes),
     components: { DateComponent },
-    mounted() {
-        this.$root.$on('update-form-field-value', (field, value) => {
-            console.debug(field, value);
-        });
+    methdos: {
+        handleUpdate(a, b, c, d){
+            //console.debug(field, value);
+            console.debug(a, b, c, d)
+        }
     },
-    template: `<date-component v-bind="$props" />`,
+    template: `<date-component v-bind="$props" @update-form-field-value="handleUpdate"/>`,
 });
 
 export const WithValue = Template.bind({});
