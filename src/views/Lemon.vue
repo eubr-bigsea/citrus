@@ -15,7 +15,7 @@
         </div> 
 
         <b-modal ref="addModal" title="Criação de pipeline" size="lg" hide-footer
-                 scrollable>
+                 scrollable @hidden="closeAddModal">
             <div class="lemonPage-wizard">
                 <div v-if="wizardStep === 1" class="lemonPage-wizard-stepBox">
                     <div class="lemonPage-wizard-header">
@@ -27,16 +27,30 @@
                             Etapa 1 de 2
                         </div>
                     </div>
-                    <label class="lemonPage-label" for="identificador">Identificador</label>
-                    <input id="identificador" class="lemonPage-input" type="text"
-                           maxlength="100" placeholder="Identificador da pipeline">
+                    <div class="position-relative">
+                        <label class="lemonPage-label" for="identificador">Nome</label>
+                        <input id="identificador" 
+                               v-model="pipelineName" 
+                               class="lemonPage-input"
+                               type="text"
+                               maxlength="100" 
+                               placeholder="Nome da pipeline" 
+                               @input="handleInput">
+                        <div v-if="invalidInputLength" class="lemonPage-invalid-length">
+                            - Nome da pipeline deve ter pelo menos 3 caracteres.
+                        </div>
+                    </div>
 
                     <label class="lemonPage-label" for="descricao">Descrição</label>
-                    <textarea id="descricao" class="lemonPage-textarea" type="text"
-                              maxlength="200" placeholder="Descrição da pipeline	" />
+                    <textarea id="descricao" 
+                              v-model="pipelineDescription"
+                              class="lemonPage-textarea" 
+                              type="text"
+                              maxlength="200" 
+                              placeholder="Descrição da pipeline" />
 
                     <div class="lemonPage-wizard-stepBox-buttons" :class="first">
-                        <b-button size="sm" variant="secondary" @click="wizardStep = 2">
+                        <b-button size="sm" variant="secondary" @click="firstWizardStep">
                             Avançar
                         </b-button>
                     </div>
@@ -53,45 +67,43 @@
                     </div>
                     
                     Deseja utilizar algum template de pipeline?
-                    <b-form-select v-model="selectedTemplate" :options="selectTemplates" class="mt-1 mb-1" />
+                    <b-form-select v-model="selectedTemplate" :options="templateOptions" class="mt-1 mb-1" />
 
                     <div v-if="selectedTemplate !== null">
                         <b-card class="lemonPage-infos">
                             <div class="lemonPage-infos-body">
                                 <div class="lemonPage-infos-body-column">
-                                    <span class="left">Identificador:</span><span class="right">Template Teste</span>
+                                    <span class="left">Identificador:</span><span class="right">{{findTemplate().name}}</span>
                                 </div>
                                 <div class="lemonPage-infos-body-column">
-                                    <span class="left">Descrição:</span><span class="right-description">Descrição Template Teste.</span>
+                                    <span class="left">Descrição:</span><span class="right-description">{{findTemplate().description}}</span>
                                 </div>
                                 <div class="lemonPage-infos-body-column">
                                     <span class="left">Etapas:</span> 
-                                    <div class="lemonPage-etapas-table">
-                                        <div class="lemonPage-etapas-header">
-                                            <div class="lemonPage-etapas-header-column">
+                                    <b-container class="lemonPage-etapas-table">
+                                        <b-row class="lemonPage-etapas-header">
+                                            <b-col>
                                                 Ordem da Etapa
-                                            </div>
-                                            <div class="lemonPage-etapas-header-column">
+                                            </b-col>
+                                            <b-col>
                                                 Identificador
-                                            </div>
-                                            <div class="lemonPage-etapas-header-column">
+                                            </b-col>
+                                            <b-col>
                                                 Descrição
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div v-for="(etapa, index) in etapasPipeline" :key="etapa.id" class="lemonPage-dragDiv">
-                                                <div class="lemonPage-drag-column" :class="ordem">
-                                                    # {{index + 1}}
-                                                </div>
-                                                <div class="lemonPage-drag-column" :class="ident">
-                                                    {{etapa.nome}}
-                                                </div>
-                                                <div class="lemonPage-drag-column" :class="ident">
-                                                    {{etapa.descricao}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                            </b-col>
+                                        </b-row>
+                                        <b-row v-for="(etapa, index) in findTemplate().steps" :key="etapa.id" class="lemonPage-dragDiv">
+                                            <b-col>
+                                                # {{index + 1}}
+                                            </b-col>
+                                            <b-col>
+                                                {{etapa.name}}
+                                            </b-col>
+                                            <b-col>
+                                                {{etapa.description}}
+                                            </b-col>
+                                        </b-row>
+                                    </b-container>
                                 </div>
                             </div>
                         </b-card>
@@ -101,8 +113,8 @@
                         <b-button size="sm" variant="secondary" @click="wizardStep = 1">
                             Voltar
                         </b-button>
-                        <b-button size="sm" variant="secondary" @click="wizardStep = 3">
-                            Avançar
+                        <b-button size="sm" variant="secondary" @click="secondWizardStep">
+                            Finalizar
                         </b-button>
                     </div>
                 </div>
@@ -184,60 +196,38 @@
 </template>
 
 <script>
+import axios from 'axios';
 import { BModal } from 'bootstrap-vue';
+import Notifier from '../mixins/Notifier.js';
+
+let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
         BModal
     },
+    mixins: [Notifier],
     data() {
         return {
             wizardStep: 1,
             first: 'first',
-            ordem: 'ordem',
-            ident: 'ident',
-            acoes: 'acoes',
-            subtitle: 'subtitle',
+            pipelineName: '',
+            pipelineDescription: '',
+            pipelineTemplates: [],
             selectedTemplate: null,
-            selectTemplates: [
+            createdPipelineId: null,
+            invalidInputLength: true,
+            pipelineData: {
+                name: '',
+                description: '',
+                enabled: true,
+                steps: [],
+            },
+            templateOptions: [
                 { value: null, text: 'Não utilizar template' },
-                { value: '1', text: 'Template Teste' },
-                { value: '2', text: 'Template 1' },
-                { value: '3', text: 'Template Lemon' },
-                { value: '4', text: 'Template para Pipeline' },
-                { value: '5', text: 'Template Lemonade' },
             ],
             selectedStep: null,
-            selectSteps: [
-                { value: null, text: 'Selecione a etapa' },
-                { value: '1', text: 'Landing Zone' },
-                { value: '2', text: 'Raw' },
-                { value: '3', text: 'Stage_1' },
-                { value: '4', text: 'Dataset' },
-                { value: '5', text: 'MDM' },
-            ],
-            etapasPipeline: [
-                { id: 1, nome: 'Landing Zone', descricao: 'Descrição Landing Zone' },
-                { id: 2, nome: 'Raw', descricao: 'Descrição Raw' },
-                { id: 3, nome: 'Stage_1', descricao: 'Descrição Stage_1' },
-                { id: 4, nome: 'Dataset', descricao: 'Descrição Dataset' },
-                { id: 5, nome: 'MDM', descricao: 'Descrição MDM' },
-            ],
             selectedFreqOpt: null,
-            selectFreqOpt: [
-                { value: null, text: 'Selecione a frequência' },
-                { value: 'imediatamente', text: 'Imediatamente após a etapa anterior' },
-                { value: 'uma-vez', text: 'Uma vez' },
-                { value: 'diariamente', text: 'Diariamente' },
-                { value: 'semanalmente', text: 'Semanalmente' },
-                { value: 'mensalmente', text: 'Mensalmente' },
-            ],
-            dragOptions: {
-                animation: 200,
-                group: 'description',
-                disabled: false,
-                ghostClass: 'ghost'
-            },
             columns: [
                 'id',
                 'identificador',
@@ -297,11 +287,15 @@ export default {
     methods: {
         abrirAddModal() {
             this.wizardStep = 1;
+            this.loadTemplates();
             this.$refs.addModal.show();
         },
         closeAddModal() {
+            if (this.wizardStep === 3) this.$router.push({ name: 'lemon-edit', params: {id: this.createdPipelineId}});
             this.$refs.addModal.hide();
-            this.$router.push({ name: 'lemon-edit', params: {id: 103, identificador: 'Consumidor Gov', prox_exec: '08/10/2010 00:00', ultima_exec: '30/12/2023', status_ultima: 'sucesso', criado_em: '24/08/2023', habilitado: 'Sim'}});
+            this.pipelineName = '';
+            this.pipelineDescription = '';
+            this.invalidInputLength = true;
             this.selectedTemplate = null;
             this.wizardStep = 0;
         },
@@ -316,6 +310,53 @@ export default {
         },
         openAddStepModal() {
             this.$refs.addStepModal.show();
+        },
+        findTemplate() {
+            const selectedTemplate = this.pipelineTemplates.find(template => template.id == this.selectedTemplate);
+            return selectedTemplate ? { ...selectedTemplate } : null;
+        },
+        loadTemplates() {
+            if (this.templateOptions.length >= 2) return;
+            axios
+                .get(`${tahitiUrl}/pipeline-templates`)
+                .then((resp) => {
+                    this.pipelineTemplates.push(...resp.data.data);
+                    this.pipelineTemplates.map(template => {
+                        let aux = { value: template.id, text: template.name };
+                        this.templateOptions.push(aux);
+                    });
+                })
+                .catch(
+                    function (e) {
+                        this.error(e);
+                    }.bind(this)
+                );
+        },
+        firstWizardStep() {
+            if (this.invalidInputLength) return;
+            else this.wizardStep = 2;
+        },
+        secondWizardStep() {
+            this.wizardStep = 3;
+            this.pipelineData.name = this.pipelineName;
+            this.pipelineData.description = this.pipelineDescription;
+            if (this.selectedTemplate !== null) this.pipelineData.steps = JSON.parse(JSON.stringify(this.findTemplate().steps, (key, value) => (key === 'id' ? undefined : value)));
+            this.createPipeline();
+        },
+        handleInput() {
+            this.invalidInputLength = this.pipelineName.length < 3;
+        },
+        createPipeline() {
+            axios
+                .post(`${tahitiUrl}/pipelines`, this.pipelineData)
+                .then((resp) => {
+                    this.createdPipelineId = resp.data.id;
+                    this.success('Pipeline criada com sucesso');})
+                .catch(
+                    function (e) {
+                        this.error(e);
+                    }.bind(this)
+                );
         },
     }
 };
@@ -633,8 +674,6 @@ function getData() {
 .lemonPage-body {
     width: 100%;
     background-color: #fff;
-    /* padding: 10px; */
-    /* border: 1px solid #5f5f5f; */
     border-radius: 3px;
 }
 
@@ -651,8 +690,10 @@ function getData() {
 .lemonPage-label {
     display: block;
     margin-bottom: 10px;
+    text-transform: uppercase;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .lemonPage-input {
@@ -733,55 +774,25 @@ function getData() {
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-left: 40px;
 }
 
 .lemonPage-etapas-header {
-    display: flex;
-    position: relative;
-    flex-direction: row;
-    justify-content: space-between;
     margin-bottom: -2px;
     border: 2px solid #dfdfdf;
     padding: 3px 0px;
     font-weight: 700;
     background-color: #FFF;
     text-align: center;
-    width: 50%;
-    margin: 0 auto -2px auto;
-    width: 90%;
-}
-
-.lemonPage-etapas-header-column {
-    display: flex;
-    width: 50%;
-    justify-content: center;
 }
 
 .lemonPage-dragDiv {
-    width: 90%;
-    display: flex;
-    position: relative;
     justify-content: space-between;
     border: 2px solid #dfdfdf;
-    padding: 15px 0px;
+    padding: 10px 0px;
     background-color: #FFF;
     margin-bottom: -2px;
-    font-weight: 400;
-    border-radius: 4px;
-    margin: 0 auto -2px auto;
-    gap: 10px;
-}
-
-.lemonPage-drag-column {
-    display: flex;
-    width: 50%;
-    justify-content: center;
-    align-items: center;
-
-    &.ident {
-        justify-content: start;
-        /* padding-left: 17%; */
-    }
+    text-align: center;
 }
 
 .lemonPage-stepButton {
@@ -854,9 +865,18 @@ function getData() {
 
     span.right-description {
         margin-left: 10px;
-        /* max-width: 200px; */
         font-size: 14px;
     }
+}
+
+.lemonPage-invalid-length {
+    color: red;
+    font-size: 12px;
+    position: absolute;
+    top: 4px;
+    display: flex;
+    justify-content: end;
+    width: 100%;
 }
 
 </style>
