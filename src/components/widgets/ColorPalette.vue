@@ -6,7 +6,7 @@
             <div class="palette clearfix">
                 <template v-if="displayValue && displayValue.length > 0">
                     <div v-for="color in displayValue" :key="color">
-                        <div class="color" :style="{'background-color': color}" />
+                        <div class="color" :style="{ 'background-color': color }" />
                     </div>
                 </template>
                 <div v-else>
@@ -14,19 +14,76 @@
                 </div>
             </div>
             <b-link variant="sm" @click.prevent="openModal">
-                {{$t('actions.chooseOption')}}
+                {{ $t('actions.chooseOption') }}
             </b-link>
             |
             <b-link variant="sm" @click.prevent="clear">
-                {{$t('actions.clear')}}
+                {{ $t('actions.clear') }}
             </b-link>
         </span>
-        <span v-else>{{displayValue}}</span>
-        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label"
-                 :hide-header="true"
-                 :cancel-title="$t('actions.cancel')" no-fade>
+        <span v-else>{{ displayValue }}</span>
+
+        <!---->
+        <modal id="lookupModal" ref="modal" size="xl" :title="field.label" :hide-header="true"
+            :cancel-title="$t('actions.cancel')" no-fade>
             <p>
-                {{field.label || field.name}}
+                {{ fieldDisplay }} 
+            </p>
+            <b-tabs>
+                <b-tab title="Matplotlib">
+                    <div class="color-select">
+                        <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix"
+                            @click="select(inx, 'palettes')">
+                            <div class="palette-name">
+                                {{ palette[0] }}
+                            </div>
+                            <div v-for="color in palette[1]" :key="color">
+                                <div class="color" :style="{ 'background-color': color }" />
+                            </div>
+                        </div>
+                    </div>
+                </b-tab>
+                <b-tab title="Color blind">
+                    <div class="color-select">
+                        <div v-for="(palette, inx) in colorBlindPalettes" :key="palette[0]" class="palette clearfix"
+                            @click="select(inx, 'colorBlindPalettes')">
+                            <div class="palette-name">
+                                {{ palette[0] }}
+                            </div>
+                            <div v-for="color in palette[1]" :key="color">
+                                <div class="color" :style="{ 'background-color': color }" />
+                            </div>
+                        </div>
+                    </div>
+                </b-tab>
+                <b-tab title="Wes Anderson Palettes">
+                    <div class="color-select">
+                        <div v-for="(palette, inx) in wesAndersonPalettes" :key="palette[0]" class="palette clearfix"
+                            @click="select(inx, 'wesAndersonPalettes')">
+                            <div class="palette-name">
+                                {{ palette[0] }}
+                            </div>
+                            <div v-for="color in palette[1]" :key="color">
+                                <div class="color" :style="{ 'background-color': color }" />
+                            </div>
+                        </div>
+                    </div>
+                </b-tab>
+            </b-tabs>
+            <template #footer>
+                <div class="w-100 text-end">
+                    <b-button variant="secondary" class="btn-sm " @click="cancelClicked">
+                        {{ $t('actions.cancel') }}
+                    </b-button>
+                </div>
+            </template>
+        </modal>
+        <!--
+            <b-modal v-if="openModal" id="lookupModal" ref="modal" size="lg" :title="field.label"
+                     :hide-header="true"
+                     :cancel-title="$t('actions.cancel')" no-fade>
+            <p>
+                {{ fieldDisplay }}
             </p>
             <b-tabs>
                 <b-tab title="Matplotlib">
@@ -77,11 +134,13 @@
                 </div>
             </template>
         </b-modal>
+    -->
+
     </div>
 </template>
 <script>
 import LabelComponent from './Label.vue';
-import Widget from '../../mixins/Widget.js';
+import Widget from '@/mixins/Widget.js';
 
 
 const wesAndersonPalettes = [
@@ -174,11 +233,11 @@ const colorBlindPalettes = [
 ];
 
 export default {
-    components: {LabelComponent},
+    components: { LabelComponent },
     mixins: [Widget],
     props: {
-        value: {type: Array, default: () => []},
-        field: {type: Object, default: () => null},
+        value: { type: Array, default: () => [] },
+        field: { type: Object, default: () => null },
         message: {
             type: String,
             default: () => 'update-form-field-value'
@@ -189,6 +248,7 @@ export default {
             displayValue: '',
             internalValue: null,
             palettes, wesAndersonPalettes, colorBlindPalettes,
+            showModal: false,
         };
     },
     mounted() {
@@ -199,23 +259,31 @@ export default {
             this.displayValue = this.internalValue;
         }
     },
+    computed: {
+        fieldDisplay() {
+            return this.field.label || this.field.name;
+        }
+    },
     methods: {
         clear() {
             this.triggerUpdateEvent(this.message, this.field, []);
             this.displayValue = null;
         },
         openModal() {
+            this.openModal = true;
             this.$refs.modal.show();
             if (this.suggestionEvent) {
                 this.suggestions = this.suggestionEvent();
             }
         },
         select(inx, type) {
+            this.openModal = false;
             this.triggerUpdateEvent(this.message, this.field, this[type][inx][1]);
             this.$refs.modal.hide();
             this.displayValue = this[type][inx][1];
         },
         cancelClicked() {
+            this.openModal = false;
             this.$refs.modal.hide();
         }
     },
