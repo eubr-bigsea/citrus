@@ -1,5 +1,5 @@
-import StepList from '../../views/data-explorer/StepList.vue';
-import { Task, Workflow } from '../../views/data-explorer/entities.js';
+import StepList from '@/views/data-explorer/DataExplorerStepList.vue';
+import { Task, Workflow } from '@/views/data-explorer/entities.js';
 export default {
     title: 'DataExplorer/StepList'
 };
