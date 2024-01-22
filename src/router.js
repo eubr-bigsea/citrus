@@ -90,7 +90,7 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
-const Lemon = () => import('./views/Lemon.vue');
+const PipelineList = () => import('./views/PipelineList.vue');
 const LemonEdit = () => import('./views/LemonEdit.vue');
 const LemonTemplates = () => import('./views/LemonTemplates.vue');
 const LemonHistory = () => import('./views/LemonHistory.vue');
@@ -854,9 +854,9 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/lemon',
-            name: 'lemon',
-            component: Lemon,
+            path: '/pipelines',
+            name: 'pipelines',
+            component: PipelineList,
             meta: {
                 requiresAuth: true,
                 title: ['titles.lemon', 1]
