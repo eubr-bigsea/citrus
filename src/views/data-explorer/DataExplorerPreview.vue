@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import contextMenu from 'vue-context-menu';
+//import contextMenu from 'vue-context-menu';
 import Notifier from '@/mixins/Notifier.js';
 import PreviewTable from './DataExplorerPreviewTable.vue';
 import VStyle from '@/components/VStyle.vue';

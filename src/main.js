@@ -52,6 +52,7 @@ import axios from 'axios';
 import VueTheMask from 'vue-the-mask';
 
 import VServerTable from '@/components/VServerTable.vue';
+import Modal from '@/components/Modal.vue';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 //import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
@@ -417,6 +418,7 @@ openIdService.loadConfig(store).then(() => {
     app.component('GridLayout', VueGridLayout.GridLayout);
     app.component('FontAwesomeIcon', FontAwesomeIcon);
     app.component('FontAwesomeLayers', FontAwesomeLayers);
+    app.component('Modal', Modal);
     widgets.forEach((v, k) => app.component(k, v.default || v));
 
     app.mount('#app');

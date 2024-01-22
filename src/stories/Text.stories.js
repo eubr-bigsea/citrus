@@ -1,4 +1,4 @@
-import TextComponent from '@/components/widgets/TextComponent.vue';
+import TextComponent from '@/components/widgets/Text.vue';
 
 const field1 = { label: 'Text', order: 1, name: 'attribute', required: true };
 
