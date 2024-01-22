@@ -23,10 +23,10 @@
                 <b-form-input xv-model="editableVisualization.title.value" maxlength="50" class="form-control-sm"
                 spellcheck="false" data-chart-layout="title" name="title"
                 xinput="emit('update-chart', $event, ['title', 'text'])" 
-                
+                :value="title" @input="$emit('update:title', $event)"
                 />
                 |{{title}}|||
-                    <input :input="title" @input="$emit('update:title', $event.target.value)" class="form-control form-control-sm"/>
+                    <input :value="title" @input="$emit('update:title', $event.target.value)" class="form-control form-control-sm"/>
             </b-form-group>
 
             <div class="accordion options-font" role="tablist">

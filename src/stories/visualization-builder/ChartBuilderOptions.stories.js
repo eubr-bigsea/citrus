@@ -6,7 +6,7 @@ const field1 = {
     "order": 1,
     "name": "attribute",
     "required": true,
-    "title": "testando",
+    "title": {value: "testando"},
     "display_legend": {
         "value": "HIDE"
     },
@@ -106,7 +106,7 @@ const Template = (args) => ({
     template: 
     `<div>
         <chart-builder-options 
-            v-model="args.options" :attributes="args.attributes" v-model:title="args.options.title"/>
+            v-model="args.options" :attributes="args.attributes" v-model:title="args.options.title.value"/>
     </div>`,
 });
 

@@ -110,6 +110,11 @@ setup((app) => {
     app.component('FontAwesomeIcon', FontAwesomeIcon);
     app.component('FontAwesomeLayers', FontAwesomeLayers);
     app.use(i18n);
+    app.directive('focus', {
+        inserted: function (el) {
+            el.focus();
+        }
+    });
 });
 
 export const parameters = {
