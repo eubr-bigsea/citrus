@@ -5,10 +5,10 @@
                 Pipelines
             </h1>
             <div>
-                <router-link :to="{name: 'lemon-history'}" class="btn btn-outline-secondary float-left ml-2">
+                <!-- <router-link :to="{name: 'lemon-history'}" class="btn btn-outline-secondary float-left ml-2">
                     <font-awesome-icon icon="fa fa-history" /> Histórico
-                </router-link>
-                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="abrirAddModal">
+                </router-link> -->
+                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
                     <font-awesome-icon icon="fa fa-plus" /> Adicionar
                 </button>
             </div>
@@ -141,34 +141,40 @@
 
         <div class="lemonPage-body">
             <div class="lemonPage-container">
-                <v-client-table v-model="data" class="lemonPage-table" :columns="columns" :options="options">
+                <v-server-table ref="pipelineList" :data="tableData" class="lemonPage-table" :columns="columns" 
+                                :options="options" name="pipelineList">
                     <template #id="props">
-                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id, identificador: props.row.identificador, descricao: props.row.descricao, prox_exec: props.row.prox_exec, ultima_exec: props.row.ultima_exec, status_ultima: props.row.status_ultima, criado_em: props.row.criado_em, habilitado: props.row.habilitado}}">
+                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
                             {{props.row.id}}
                         </router-link>
                     </template>
-                    <template #identificador="props">
-                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id, identificador: props.row.identificador, descricao: props.row.descricao, prox_exec: props.row.prox_exec, ultima_exec: props.row.ultima_exec, status_ultima: props.row.status_ultima, criado_em: props.row.criado_em, habilitado: props.row.habilitado}}">
-                            {{props.row.identificador}}
+                    <template #name="props">
+                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
+                            {{props.row.name}}
                         </router-link>
                     </template>
-                    <template #status_ultima="props">
-                        <div class="lemonPage-status-ultima" :class="props.row.status_ultima.toLowerCase()">
-                            {{props.row.status_ultima}}
-                        </div>
+                    <template #created="props">
+                        {{props.row.created | formatJsonDate}}
                     </template>
-                    <template #habilitado="props">
-                        <div class="lemonPage-habilitado" :class="props.row.habilitado.toLowerCase()" />
+                    <template #updated="props">
+                        {{props.row.updated | formatJsonDate}}
                     </template>
-                    <template #acoes>
+                    <!-- <template #enabled="props">
+                        <div class="lemonPage-enabled" :class="toString(props.row.enabled)" />
+                        {{$tc(props.row.enabled ? 'common.yes': 'common.no')}}
+                    </template> -->
+                    <template #version="props">
+                        {{props.row.version}}
+                    </template>
+                    <template #acoes="props">
                         <div>
-                            <button class="btn btn-spinner btn-primary btn-sm" title="Exibir log" @click="abrirLogModal">
+                            <button class="btn btn-spinner btn-primary btn-sm" title="Exibir log" @click="openLogModal">
                                 <font-awesome-icon icon="fa-eye" />
                             </button>
-                            <button class="ml-2 btn btn-spinner btn-secondary btn-sm" title="Desabilitar pipeline" @click="openDisablePipelineModal">
+                            <!-- <button class="ml-2 btn btn-spinner btn-secondary btn-sm" title="Desabilitar pipeline" @click="disablePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="fa-ban" />
-                            </button>
-                            <button class="ml-2 btn btn-sm btn-danger" title="Excluir pipeline" @click="abrirDeleteModal">
+                            </button> -->
+                            <button class="ml-2 btn btn-sm btn-danger" title="Excluir pipeline" @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
@@ -182,14 +188,8 @@
                                 <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
                             </b-card>
                         </b-modal>
-                        <b-modal ref="disableModal" title="Desabilitar pipeline">
-                            <p>Deseja desabilitar esta pipeline?</p>
-                        </b-modal>
-                        <b-modal ref="deleteModal" title="Confirmar exclusão">
-                            <p>Deseja excluir esta pipeline?</p>
-                        </b-modal>
                     </template>
-                </v-client-table>
+                </v-server-table>
             </div>
         </div>
     </div>
@@ -230,49 +230,46 @@ export default {
             selectedFreqOpt: null,
             columns: [
                 'id',
-                'identificador',
-                'prox_exec',
-                'ultima_exec',
-                'status_ultima',
-                'criado_em',
-                'habilitado',
+                'name',
+                'created',
+                'updated',
+                'user_name',
+                // 'enabled',
+                'version',
                 'acoes',
             ],
-            data: getData(),
+            tableData: [],
             options: {
                 skin: 'table-sm table table-hover',
                 dateColumns: ['prox_exec', 'ultima_exec', 'criado_em'],
                 columnsClasses: {
                     id: 'text-start',
-                    identificador: 'text-start',
-                    prox_exec: 'text-left',
-                    ultima_exec: 'text-left',
-                    status_ultima: 'text-left',
-                    habilitado: 'text-center',
+                    name: 'text-start',
+                    created: 'text-start',
+                    updated: 'text-start',
+                    // enabled: 'text-center',
+                    version: 'text-start',
+                    user_name: 'text-start',
                     acoes: 'text-center',
                 },
                 headings: {
                     id: 'ID',
-                    identificador: 'Identificador',
-                    prox_exec: 'Próxima execução',
-                    ultima_exec: 'Última execução',
-                    status_ultima: 'Status da última execução',
-                    criado_em: 'Criado em',
-                    habilitado: 'Habilitado',
+                    name: 'Nome',
+                    created: 'Criado em',
+                    updated: 'Atualizado em',
+                    // enabled: 'Habilitado',
+                    version: 'Versão',
+                    user_name: 'Nome do usuário',
                     acoes: 'Ações',
                 },
-                sortable: ['id','identificador','prox_exec','ultima_exec','criado_em'],
-                filterable: ['id','identificador','prox_exec','ultima_exec','criado_em'],
+                sortable: ['id','name','created','updated'],
+                filterable: ['id','name','created','updated'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ml-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
-                // preserveState: true,
-                // saveState: true,
-                // customFilters: false,
-                // filterByColumn: false,
                 texts: {
                     filter: this.$tc('common.filter'),
                     count: this.$t('common.pagerShowing'),
@@ -280,12 +277,37 @@ export default {
                     noResults: this.$t('common.noData'),
                     loading: this.$t('common.loading'),
                     filterPlaceholder: this.$t('common.filterPlaceholder')
-                }
+                },
+                requestFunction: this.load
             }
         };
     },
     methods: {
-        abrirAddModal() {
+        load(data) {
+            data.sort = data.orderBy;
+            data.asc = data.ascending === 1 ? 'true' : 'false';
+            data.size = data.limit;
+            data.name = data.query;
+            data.fields = 'id,name,version,created,updated,user_name';
+            data.disabled = 1;
+
+            this.$Progress.start();
+            return axios
+                .get(`${tahitiUrl}/pipelines`, {
+                    params: data
+                })
+                .then(resp => {
+                    this.$Progress.finish();
+                    return { data: resp.data.data, count: resp.data.pagination.total };
+                })
+                .catch(
+                    function (e) {
+                        this.$Progress.finish();
+                        this.error(e);
+                    }.bind(this)
+                );
+        },
+        openAddModal() {
             this.wizardStep = 1;
             this.loadTemplates();
             this.$refs.addModal.show();
@@ -299,17 +321,8 @@ export default {
             this.selectedTemplate = null;
             this.wizardStep = 0;
         },
-        abrirDeleteModal() {
-            this.$refs.deleteModal.show();
-        },
-        abrirLogModal() {
+        openLogModal() {
             this.$refs.logModal.show();
-        },
-        openDisablePipelineModal() {
-            this.$refs.disableModal.show();
-        },
-        openAddStepModal() {
-            this.$refs.addStepModal.show();
         },
         findTemplate() {
             const selectedTemplate = this.pipelineTemplates.find(template => template.id == this.selectedTemplate);
@@ -358,310 +371,51 @@ export default {
                     }.bind(this)
                 );
         },
+        // disablePipeline(pipelineId, pipelineName) {
+        //     this.confirm(
+        //         `Desabilitar '${pipelineName}'`,
+        //         'Tem certeza que deseja desabilitar esta pipeline?',
+        //         () => {
+        //             axios
+        //                 .patch(`${tahitiUrl}/pipelines/${pipelineId}`, { enabled: false })
+        //                 .then(() => {
+        //                     this.success('Pipeline desabilitada com sucesso');
+        //                     this.$refs.pipelineList.refresh();
+        //                 })
+        //                 .catch(
+        //                     function (e) {
+        //                         this.error(e);
+        //                     }.bind(this)
+        //                 );
+        //         }
+        //     );
+        // },
+        deletePipeline(pipelineId, pipelineName) {
+            this.confirm(
+                this.$t('actions.delete') + " '" + pipelineName + "'",
+                this.$t('messages.doYouWantToDelete'),
+                () => {
+                    axios
+                        .delete(`${tahitiUrl}/pipelines/${pipelineId}`, {})
+                        .then(() => {
+                            this.success(
+                                this.$t('messages.successDeletion', {
+                                    what: 'Pipeline'
+                                })
+                            );
+                            this.$refs.pipelineList.refresh();
+                        })
+                        .catch(
+                            function (e) {
+                                this.error(e);
+                            }.bind(this)
+                        );
+                }
+            );
+        }
     }
 };
 
-function getData() {
-    return [
-        { 
-            id: 100, 
-            identificador: "Anac",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 18:30', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 101, 
-            identificador: "Licitações",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '05/10/2021 09:15', 
-            ultima_exec: '---', 
-            status_ultima: 'Erro', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 102, 
-            identificador: "Copasa",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '13/05/2022 10:00', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 103, 
-            identificador: "Consumidor Gov", 
-            descricao: "Descrição da pipeline.",
-            prox_exec: '08/10/2010 00:00', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 104, 
-            identificador: "Endereço",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '07/05/2021 22:20', 
-            ultima_exec: '---', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 105, 
-            identificador: "Fakenews",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 08:30', 
-            ultima_exec: '---',
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 106, 
-            identificador: "Ibge",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 11:50', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Pendente', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 107, 
-            identificador: "Anac",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 17:10', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 108, 
-            identificador: "Inss",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 14:30', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Erro', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 100, 
-            identificador: "Anac",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 18:30', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 101, 
-            identificador: "Licitações",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '05/10/2021 09:15', 
-            ultima_exec: '---', 
-            status_ultima: 'Erro', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 102, 
-            identificador: "Copasa",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '13/05/2022 10:00', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 103, 
-            identificador: "Consumidor Gov", 
-            descricao: "Descrição da pipeline.",
-            prox_exec: '08/10/2010 00:00', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 104, 
-            identificador: "Endereço",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '07/05/2021 22:20', 
-            ultima_exec: '---', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 105, 
-            identificador: "Fakenews",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 08:30', 
-            ultima_exec: '---',
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 106, 
-            identificador: "Ibge",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 11:50', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Pendente', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 107, 
-            identificador: "Anac",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 17:10', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 108, 
-            identificador: "Inss",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 14:30', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Erro', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 100, 
-            identificador: "Anac",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 18:30', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 101, 
-            identificador: "Licitações",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '05/10/2021 09:15', 
-            ultima_exec: '---', 
-            status_ultima: 'Erro', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 102, 
-            identificador: "Copasa",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '13/05/2022 10:00', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 103, 
-            identificador: "Consumidor Gov",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '08/10/2010 00:00', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 104, 
-            identificador: "Endereço",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '07/05/2021 22:20', 
-            ultima_exec: '---', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-        { 
-            id: 105, 
-            identificador: "Fakenews",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 08:30', 
-            ultima_exec: '---', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 106, 
-            identificador: "Ibge",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 11:50', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Pendente', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 107, 
-            identificador: "Anac",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 17:10', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Sucesso', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Sim', 
-            acoes: "" 
-        },
-        { 
-            id: 108, 
-            identificador: "Inss",
-            descricao: "Descrição da pipeline.", 
-            prox_exec: '24/08/2023 14:30', 
-            ultima_exec: '30/12/2023', 
-            status_ultima: 'Erro', 
-            criado_em: '24/08/2023', 
-            habilitado: 'Não', 
-            acoes: "" 
-        },
-    ];
-}
 </script>
 
 <style lang="scss">
