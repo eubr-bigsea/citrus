@@ -62,8 +62,8 @@
                             </b-button>
                             <!--
                         <router-link class="btn btn-sm btn-outline-secondary ms-1" :to="{ name: 'index-explorer' }"
-                            :title="i18n.$t('actions.back')">
-                            {{ i18n.$t('actions.back') }}
+                            :title="t('actions.back')">
+                            {{ t('actions.back') }}
                         </router-link>
                         -->
                         </div>
@@ -77,7 +77,7 @@
         </div>
         <div v-if="visualizationObj" class="options-main">
             <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
-                                :chart-type="visualizationObj.type.value" />
+                                :chart-type="visualizationObj.type.value" :value="axis"/>
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 75vh">
                     <div v-if="display && plotlyData" ref="chart">
@@ -122,19 +122,19 @@
 </template>
 
 <script setup>
-import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted, nextTick } from "vue";
+import { inject, ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted, nextTick } from "vue";
 import { getCurrentInstance, toRaw } from 'vue';
 import ChartBuilderOptions from '@/components/chart-builder/ChartBuilderOptions.vue';
 import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
 import { useI18n } from 'vue-i18n'
 
 
-import { debounce } from "@/util.js";
+import { debounce, deepToRaw} from "@/util.js";
 ;
 import ExpressionEditor from '@/components/widgets/ExpressionEditor.vue';
 
 import Plotly from '@/components/visualization/Plotly.vue';
-import useNotifier from '@/composables/useNotifier.js';
+import Notifier from '@/notifier.js';
 import useDataSource from '@/composables/useDataSource.js';
 
 import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
@@ -149,7 +149,6 @@ const router = vm.proxy.$router;
 const route = vm.proxy.$route;
 const progress = {start: ()=> {}, finish: ()=> {} }; //vm.proxy.$Progress;
 const store = vm.proxy.$store;
-const { success, error } = useNotifier(vm.proxy);
 
 const plotVersion = ref(0);
 const display = ref(true);
@@ -182,7 +181,9 @@ const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } 
 const visualizationObj = ref(null);
 const chartOptions = ref({ responsive: true, height: 600 });
 
-const i18n = useI18n({ useScope: 'global' });
+const {t} = useI18n();
+const notifier = new Notifier(inject('snotify'), t);
+
 // Elements refs
 const cluster = ref(null);
 const visualizationDesigner = ref(ref);
@@ -313,7 +314,7 @@ const load = async () => {
             plotlyData.value = resp.data.forms.$meta.plot;
         }
         if (workflowObj.value.type !== 'VIS_BUILDER') {
-            error(null, i18n.$t('modelBuilder.invalidType'));
+            notifier.error(null, t('modelBuilder.invalidType'));
             router.push({ name: 'index-explorer' });
             return;
         }
@@ -334,7 +335,7 @@ const load = async () => {
         loaded.value = true;
 
     } catch (e) {
-        error(e);
+        notifier.error(e);
         router.push({ name: 'index-explorer' });
     } finally {
         nextTick(() => {
@@ -372,12 +373,12 @@ const loadClusters = async () => {
         const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${targetPlatform.value}`);
         clusters.value = resp.data.data;
     } catch (ex) {
-        error(ex);
+        notifier.error(ex);
     }
 };
 const saveWorkflow = async () => {
     workflowObj.value.visualization.forms = visualizationObj.value;
-    let cloned = structuredClone(toRaw(workflowObj.value));
+    let cloned = structuredClone(deepToRaw(workflowObj.value));
 
     if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null
         || cloned.visualization.forms.filter.value.length === 0) {
@@ -409,9 +410,9 @@ const saveWorkflow = async () => {
     try {
         await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
         isDirty.value = false;
-        success(i18n.$t('messages.savedWithSuccess', { what: i18n.$t('titles.workflow') }));
+        notifier.success(t('messages.savedWithSuccess', { what: t('titles.workflow') }));
     } catch (e) {
-        error(e);
+        notifier.error(e);
     }
 };
 const handleUpdateFilter = (field, value) => {
@@ -419,7 +420,7 @@ const handleUpdateFilter = (field, value) => {
 };
 const loadData = async () => {
     if (!workflowObj.value.preferred_cluster_id) {
-        error(`${i18n.$t('errors.missingRequiredValue')}: ${i18n.$t('workflow.preferredCluster')}`);
+        notifier.error(`${t('errors.missingRequiredValue')}: ${t('workflow.preferredCluster')}`);
         return;
     }
     loadingData.value = true;
@@ -466,11 +467,11 @@ const loadData = async () => {
         connectWebSocket();
     } catch (ex) {
         if (ex.data) {
-            error(ex.data.message);
+            notifier.error(ex.data.message);
         } else if (ex.status === 0) {
             this.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
         } else {
-            error(`Unhandled error: ${ex}`);
+            notifier.error(`Unhandled error: ${ex}`);
         }
     } finally {
         progress.finish();
@@ -505,7 +506,7 @@ const connectWebSocket = () => {
         socket.on('update job', msg => {
             jobStatus.value = '';
             if (msg.status === 'ERROR') {
-                error(msg);
+                notifier.error(msg);
                 loadingData.value = false;
             }
             if (msg.status === 'COMPLETED') {

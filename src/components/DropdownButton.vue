@@ -22,6 +22,7 @@ const props = defineProps({
     text: { type: String, required: false, default: 'Dropdown' },
     size: { type: String, required: true, default: '' },
     noCaret: { type: Boolean, required: false, default: false },
+    keepOpen: { type: Boolean, required: false, default: false }
 });
 const isDropdownOpen = ref(false);
 
@@ -45,12 +46,16 @@ const toggleDropdown = () => {
         document.body.removeEventListener('click', closeDropdown);
     }
 };
-const closeDropdown = () => {
-    isDropdownOpen.value = false;
-    document.body.removeEventListener('click', closeDropdown);
-    if (popperInstance) {
-        popperInstance.destroy();
-        popperInstance = null;
+const closeDropdown = (evt) => {
+    
+    const toClose = !props.keepOpen || content.value !== evt.target.closest('.dropdown-menu');
+    if (toClose) {
+        isDropdownOpen.value = false;
+        document.body.removeEventListener('click', closeDropdown);
+        if (popperInstance) {
+            popperInstance.destroy();
+            popperInstance = null;
+        }
     }
 };
 

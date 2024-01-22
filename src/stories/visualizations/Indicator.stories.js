@@ -1,5 +1,5 @@
 
-import Indicator from '../@/components/visualization/Indicator.vue';
+import Indicator from '@/components/visualization/Indicator.vue';
 
 export default {
     title: 'Visualization/Indicator',
