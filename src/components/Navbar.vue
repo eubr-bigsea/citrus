@@ -73,7 +73,7 @@
                         Test Websocket
                     </b-dropdown-item>
                     <b-dropdown-divider />
-                    <b-dropdown-item :to="{ name: 'lemon-templates' }">
+                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
                         Template Pipeline
                     </b-dropdown-item>
                 </b-nav-item-dropdown>

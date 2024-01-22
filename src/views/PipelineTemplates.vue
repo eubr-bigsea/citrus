@@ -13,16 +13,16 @@
                  scrollable @ok="createTemplate">
             <div class="templatePage-card-modal">
                 <div class="position-relative">
-                    <label class="templatePage-label" for="identificador">Identificador</label>
-                    <input id="identificador"
+                    <label class="templatePage-label" for="nome">Nome</label>
+                    <input id="nome"
                            v-model="createTemplateName" 
                            class="templatePage-input" 
                            type="text"
                            maxlength="50"
-                           placeholder="Identificador do template"
+                           placeholder="Nome do template"
                            @input="handleInput('create')">
                     <div v-if="invalidInputLength" class="templatePage-invalid-length">
-                        - Identificador do template deve ter pelo menos 3 caracteres.
+                        - Nome do template deve ter pelo menos 3 caracteres.
                     </div>
                 </div>
 
@@ -47,13 +47,13 @@
                         </b-popover>
                     </label>
                     <div class="templatePage-input-container">
-                        <draggable :options="dragOptions">
+                        <draggable v-model="stepsInputs" :options="dragOptions">
                             <div v-for="(input, index) in stepsInputs" :key="`step-${index}-${addModalKey}`" class="templatePage-input-box" @dragend="handleDragEnd">
                                 <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
                                 {{setOrder(input, index)}}
                                 #{{index + 1}}
                                 <input v-model="input.name" 
-                                       placeholder="Identificador da etapa" 
+                                       placeholder="Nome da etapa" 
                                        class="templatePage-input" 
                                        maxlength="50"
                                        :class="stepInput">
@@ -111,16 +111,16 @@
                                          @hidden="cancelEdit">
                                     <div class="templatePage-card-modal">
                                         <div class="position-relative">
-                                            <label class="templatePage-label" for="identificador">Identificador</label>
-                                            <input id="identificador" 
+                                            <label class="templatePage-label" for="nome">Nome</label>
+                                            <input id="nome" 
                                                    v-model="editedTemplate.name" 
                                                    class="templatePage-input" 
                                                    type="text" 
                                                    maxlength="50" 
-                                                   placeholder="Identificador do template"
+                                                   placeholder="Nome do template"
                                                    @input="handleInput('edit')">
                                             <div v-if="invalidInputLength" class="templatePage-invalid-length">
-                                                Identificador do template deve ter pelo menos 3 caracteres.
+                                                - Nome do template deve ter pelo menos 3 caracteres.
                                             </div>
                                         </div>
 
@@ -144,13 +144,13 @@
                                                 </b-popover>
                                             </label>
                                             <div class="templatePage-input-container">
-                                                <draggable :options="dragOptions">
+                                                <draggable v-model="editedTemplate.steps" :options="dragOptions">
                                                     <div v-for="(input, index) in editedTemplate.steps" :key="index" class="templatePage-input-box">
                                                         <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
                                                         {{setOrder(input, index)}}
                                                         #{{index + 1}}
                                                         <input v-model="input.name" 
-                                                               placeholder="Identificador da etapa" 
+                                                               placeholder="Nome da etapa" 
                                                                class="templatePage-input" 
                                                                maxlength="50"
                                                                :class="stepInput">
@@ -232,7 +232,7 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    name: 'Identificador',
+                    name: 'Nome',
                     description: 'Descrição',
                     steps: 'Etapas',
                     actions: 'Ações',
@@ -404,7 +404,7 @@ export default {
 .templatePage-card-modal {
     width: 100%;
     background-color: #fff;
-    padding: 10px;
+    /* padding: 10px; */
 }
 
 .templatePage-table {
@@ -415,9 +415,11 @@ export default {
 .templatePage-label {
     display: block;
     margin-bottom: 10px;
-    font-size: 18px;
-    font-weight: 700;
     align-items: center;
+    text-transform: uppercase;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .templatePage-input {
@@ -493,7 +495,7 @@ export default {
     color: red;
     font-size: 12px;
     position: absolute;
-    top: 10px;
+    top: 5px;
     display: flex;
     justify-content: end;
     width: 100%;
