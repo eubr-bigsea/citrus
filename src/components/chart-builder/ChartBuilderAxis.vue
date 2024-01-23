@@ -98,7 +98,7 @@
                                 </v-select>
                             </div>
                         </div>
-                        <!--
+                        !--
                         <dropdown-button size="sm" ref="axis" class="me-1" variant="outline-secondary small-dd-title"
                             title="Cor">
                             <template #button-content>
@@ -198,13 +198,14 @@
                                 </div>
                             </b-dropdown-form>
                         </dropdown-button>
-                    -->
+                        --
                     </div>
                 </div>
             </template>
             <template v-else>
+                <h1>OK</h1>
+                ||{{ hasAxis }}|| {{ type }}
                 <div class="clearfix">
-
                     <dropdown-button v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-start"
                         variant="outline-secondary small-dd-title" :keep-open="true">
                         <template #button-content>
@@ -215,27 +216,24 @@
                                 <div class="row axis-form">
                                     <div class="col-12">
                                         <b-form-group label="Título:">
-                                            <input v-model="editableVisualization.y_axis.value.label" type="text"
-                                                class="form-control form-control-sm">
+                                            <input v-model="yLabel" type="text" class="form-control form-control-sm">
                                         </b-form-group>
                                     </div>
                                     <div class="col-6">
                                         <b-form-group label="Limite inferior:">
-                                            <input v-model="editableVisualization.y_axis.value.lowerBound" type="number"
-                                                class="form-control form-control-sm">
+                                            <input v-model="yLowerBound" type="number" class="form-control form-control-sm">
                                         </b-form-group>
                                         <b-form-group label="Limite superior:">
-                                            <input v-model="editableVisualization.y_axis.value.upperBound" type="number"
-                                                class="form-control form-control-sm">
+                                            <input v-model="yUpperBound" type="number" class="form-control form-control-sm">
                                         </b-form-group>
-                                        <b-form-checkbox v-model="editableVisualization.y_axis.value.logScale">
+                                        <b-form-checkbox v-model="yLogScale">
                                             Usar escala
                                             logarítmica
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="editableVisualization.y_axis.value.display">
+                                        <b-form-checkbox v-model="yDisplay">
                                             Exibir eixo
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="editableVisualization.y_axis.value.displayLabel">
+                                        <b-form-checkbox v-model="yDisplayLabel">
                                             Exibir
                                             título
                                             do eixo
@@ -244,22 +242,22 @@
                                     <div class="col-6">
                                         <!--
                                             <b-form-group label="Multiplicar por:">
-                                                <b-form-input type="number" v-model.number="editableVisualization.y_axis.value.multiplier"
+                                                <b-form-input type="number" v-model.number="yMultiplier"
                                                     class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
                                             </b-form-group>
                                             <b-form-group label="Casas decimais:">
                                                 <input type="number" class="form-control form-control-sm w-50"
-                                                    v-model.number="editableVisualization.y_axis.value.decimal_places" max="6" min="0"
+                                                    v-model.number="yDecimal_places" max="6" min="0"
                                                     debounce="500" />
                                             </b-form-group>
                                             -->
                                         <b-form-group label="Prefixo:">
-                                            <input v-model="editableVisualization.y_axis.value.prefix" type="text"
-                                                class="form-control form-control-sm" maxlength="20" debounce="500">
+                                            <input v-model="yPrefix" type="text" class="form-control form-control-sm"
+                                                maxlength="20" debounce="500">
                                         </b-form-group>
                                         <b-form-group label="Sufixo:">
-                                            <input v-model="editableVisualization.y_axis.value.suffix" type="text"
-                                                class="form-control form-control-sm" maxlength="20" debounce="500">
+                                            <input v-model="ySuffix" type="text" class="form-control form-control-sm"
+                                                maxlength="20" debounce="500">
                                         </b-form-group>
                                     </div>
                                 </div>
@@ -282,7 +280,7 @@
                                         :variant="'outline-secondary small-dd-title ' + (element.enabled ? '' : 'disabled')"
                                         :keep-open="true">
                                         <template #button-content>
-                                            {{ element.attribute === '*' ? 'COUNT' : element.aggregation.toUpperCase() }}
+                                            {{ element.aggregation.toUpperCase() }}
                                             {{ element.aggregation !== '' ? `(${element.attribute})` : element.attribute }}
                                         </template>
                                         <template #content>
@@ -399,7 +397,7 @@
                                                                 class="form-control form-control-sm" maxlength="20"
                                                                 debounce="500" />
                                                         </b-form-group>
-                                                        <b-form-group v-if="!['donut', 'pie'].includes(chartType)">
+                                                        <b-form-group v-if="!['donut', 'pie'].includes(type)">
                                                             <template #label>
                                                                 <b-form-checkbox v-model="element.custom_color">
                                                                     Usar cor personalizada
@@ -410,11 +408,22 @@
                                                                 class="form-control form-control-sm" />
                                                         </b-form-group>
                                                         <b-form-group v-if="!pieFamily" label="Tipo de linha:">
+                                                            <v-select v-model="element.stroke"
+                                                                :options="['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']" 
+                                                                :searchable="false" class="select2-small">
+                                                                <template #option="{label}">
+                                                                    <div :class="`stroke stroke-${label}`">{{label}}</div>
+                                                                </template>
+
+                                                                <template #selected-option="{label}">
+                                                                    <div :class="`stroke stroke-${label}`">{{label}}</div>
+                                                                </template>
+                                                            </v-select>
                                                             <select v-model="element.stroke"
                                                                 class="form-select form-select-sm w-50">
                                                                 <option
                                                                     v-for="opt in ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']"
-                                                                    :key="opt" :value="opt">
+                                                                    :key="opt" :value="opt" :class="`stroke-${opt}`">
                                                                     {{ opt }}
                                                                 </option>
                                                             </select>
@@ -431,8 +440,7 @@
                                                             <b-form-input v-model="element.line_color" type="color"
                                                                 class="form-control form-control-sm w-50" />
                                                         </b-form-group>
-                                                        <b-form-group
-                                                            v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
+                                                        <b-form-group v-if="type.endsWith('bar') || type.endsWith('area')"
                                                             label="Padrão de preenchimento:">
                                                             <v-select v-model="element.shape" :options="shapes"
                                                                 label="label" :reduce="(opt) => opt.name"
@@ -472,7 +480,7 @@
                                                     </b-form-group>
                                                     -->
                                                     </div>
-                                                    <div class="col-12 border-top pt-2">
+                                                    <div class="col-12 border-top pt-2 mt-2">
                                                         <b-button size="sm" variant="danger" class="float-end"
                                                             @click="handleDeleteY(i)">
                                                             {{ $t('actions.delete') }}
@@ -503,27 +511,24 @@
                                 <div class="row axis-form">
                                     <div class="col-12">
                                         <b-form-group label="Título:">
-                                            <input v-model="editableVisualization.x_axis.value.label" type="text"
-                                                class="form-control form-control-sm">
+                                            <input v-model="xLabel" type="text" class="form-control form-control-sm">
                                         </b-form-group>
                                     </div>
                                     <div class="col-6">
                                         <b-form-group label="Limite inferior:">
-                                            <input v-model="editableVisualization.x_axis.value.lowerBound" type="number"
-                                                class="form-control form-control-sm">
+                                            <input v-model="xLowerBound" type="number" class="form-control form-control-sm">
                                         </b-form-group>
                                         <b-form-group label="Limite superior:">
-                                            <input v-model="editableVisualization.x_axis.value.upperBound" type="number"
-                                                class="form-control form-control-sm">
+                                            <input v-model="xUpperBound" type="number" class="form-control form-control-sm">
                                         </b-form-group>
-                                        <b-form-checkbox v-model="editableVisualization.x_axis.value.logScale">
+                                        <b-form-checkbox v-model="xLogScale">
                                             Usar escala
                                             logarítmica
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="editableVisualization.x_axis.value.display">
+                                        <b-form-checkbox v-model="xDisplay">
                                             Exibir eixo
                                         </b-form-checkbox>
-                                        <b-form-checkbox v-model="editableVisualization.x_axis.value.displayLabel">
+                                        <b-form-checkbox v-model="xDisplayLabel">
                                             Exibir
                                             título
                                             do eixo
@@ -532,22 +537,22 @@
                                     <div class="col-6">
                                         <!--
                                             <b-form-group label="Multiplicar por:">
-                                                <b-form-input type="number" v-model.number="editableVisualization.x_axis.value.multiplier"
+                                                <b-form-input type="number" v-model.number="xMultiplier"
                                                     class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
                                             </b-form-group>
-                                            <b-form-group v-if="editableVisualization.x_axis.value.attribute" label="Casas decimais:">
+                                            <b-form-group v-if="xAttribute" label="Casas decimais:">
                                                 <input type="number" class="form-control form-control-sm w-50"
-                                                    v-model.number="editableVisualization.x_axis.value.decimal_places" max="6" min="0"
+                                                    v-model.number="xDecimal_places" max="6" min="0"
                                                     debounce="500" />
                                             </b-form-group>
                                         -->
                                         <b-form-group label="Prefixo:">
-                                            <input v-model="editableVisualization.x_axis.value.prefix" type="text"
-                                                class="form-control form-control-sm" maxlength="20" debounce="500">
+                                            <input v-model="xPrefix" type="text" class="form-control form-control-sm"
+                                                maxlength="20" debounce="500">
                                         </b-form-group>
                                         <b-form-group label="Sufixo:">
-                                            <input v-model="editableVisualization.x_axis.value.suffix" type="text"
-                                                class="form-control form-control-sm" maxlength="20" debounce="500">
+                                            <input v-model="xSuffix" type="text" class="form-control form-control-sm"
+                                                maxlength="20" debounce="500">
                                         </b-form-group>
                                     </div>
                                 </div>
@@ -566,9 +571,10 @@
                             :item-key="(item) => xSeries.indexOf(item)">
                             <template #item="{ element, index }">
                                 <div :key="index" class="drag-handle">
-                                    <dropdown-button :id="`x-series-${index}`" ref="xDimensionDD" size="sm small-dd-title"
-                                        class="mt-2 me-1 pull-right"
-                                        :variant="element.attribute ? 'outline-secondary' : 'outline-danger'" :keep-open="true">
+                                    <dropdown-button :id="`x-series-${index}`" ref="setXDimensionDDRef"
+                                        size="sm small-dd-title" class="mt-2 me-1 pull-right"
+                                        :variant="element.attribute ? 'outline-secondary' : 'outline-danger'"
+                                        :keep-open="true">
                                         <template #button-content>
                                             {{ getDisplayXDimensionLabel(element, 'Selecione...', 'grupos', 'tamanho',
                                                 'Categórico')
@@ -581,18 +587,17 @@
                                                         <b-form-group :label="$t('common.attribute', 1) + ':'">
                                                             <v-select v-model="element.attribute" :options="attributes"
                                                                 label="name" :reduce="(opt) => opt.name" :searchable="false"
-                                                                :selected="handleSelectAttribute(element)"
-                                                                @selected="handleSelectAttribute(element)">
+                                                                :getOptionKey="(opt) => opt.name">
                                                                 <template #option="{ type, name }">
-                                                                    <span
-                                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }" />
+                                                                    <font-awesome-icon
+                                                                        :icon="(type === 'CHARACTER') ? 'fa fa-font' : 'fa fa-hashtag'" />
                                                                     {{ name }}
                                                                 </template>
 
                                                                 <template #selected-option="{ type, name }">
                                                                     <div>
-                                                                        <span
-                                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }" />
+                                                                        <font-awesome-icon
+                                                                            :icon="(type === 'CHARACTER') ? 'fa fa-font' : 'fa fa-hashtag'" />
                                                                         {{ name }}
                                                                     </div>
                                                                 </template>
@@ -612,9 +617,10 @@
                                                                 class="form-control form-control-sm" maxlength="100"
                                                                 debounce="500" />
                                                         </b-form-group>
+
                                                         <div v-if="true && isNumeric(element.attribute)">
                                                             <b-form-group label="Agrupamento (bins):">
-                                                                <select v-model="element.binning"
+                                                                <select v-model="element.binning" tabindex="-1"
                                                                     class="form-select form-select-sm">
                                                                     <option value="EQUAL_INTERVAL">
                                                                         Número fixo de
@@ -688,7 +694,8 @@
                                                     </div>
                                                     <div class="col-6">
                                                         <b-form-group v-if="!pieFamily" label="Tratar valores vazios:">
-                                                            <select class="form-control-sm">
+                                                            <select class="form-select form-select-sm"
+                                                                v-model="element.handleEmpty">
                                                                 <option label="Replace with zeros" value="ZEROS"
                                                                     selected="selected">
                                                                     Replace with zeros
@@ -768,8 +775,8 @@
                                                             -->
                                                     </div>
                                                     <div class="col-12">
-                                                        <b-button size="sm" variant="danger" class="float-end"
-                                                            @click="handleDeleteX(i)">
+                                                        <b-button size="sm" variant="danger" class="float-end mt-2"
+                                                            @click="handleDeleteX(index, $event)">
                                                             {{ $t('actions.delete') }}
                                                         </b-button>
                                                     </div>
@@ -792,11 +799,38 @@
     </div>
 </template>
 <script setup>
-import { ref, computed, watch, defineProps, defineEmits, onBeforeMount } from "vue";
+import vSelect from 'vue-select';
+import { ref, computed, watch, defineProps, defineEmits, onBeforeMount, defineModel } from "vue";
 import { XDimension, YDimension } from '@/views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
 import { deepToRaw } from '@/util.js';
 import DropdownButton from '@/components/DropdownButton.vue';
+
+
+const type = defineModel('type');
+
+const yLabel = defineModel('yLabel');
+const yLowerBound = defineModel('yLowerBound');
+const yUpperBound = defineModel('yUpperBound');
+const yLogScale = defineModel('yLogScale');
+const yDisplay = defineModel('yDisplay');
+const yDisplayLabel = defineModel('yDisplayLabel');
+const yPrefix = defineModel('yPrefix');
+const ySuffix = defineModel('ySuffix');
+
+const xLabel = defineModel('xLabel');
+const xLowerBound = defineModel('xLowerBound');
+const xUpperBound = defineModel('xUpperBound');
+const xLogScale = defineModel('xLogScale');
+const xDisplay = defineModel('xDisplay');
+const xDisplayLabel = defineModel('xDisplayLabel');
+const xPrefix = defineModel('xPrefix');
+const xSuffix = defineModel('xSuffix');
+
+const x = defineModel('x');
+const y = defineModel('y');
+
+const attribute = ref('name')
 
 const shapes = [
     { name: '', label: 'Sólido', icon: 'solid' },
@@ -841,7 +875,12 @@ onBeforeMount(() =>
 
 /* Elements refs */
 const yDimensionDD = ref(null);
-const xDimensionDD = ref(null);
+const xDimensionDD = ref([]);
+const setXDimensionDDRef = (el) => {
+    if (el) {
+        xDrimentionDD.value.push(el);
+    }
+};
 
 
 editableVisualization.value = structuredClone(deepToRaw(props.value));
@@ -850,26 +889,27 @@ editableVisualization.value = structuredClone(deepToRaw(props.value));
 /* Computed */
 
 const mapFamily = computed(() =>
-    ['scattermapbox'].includes(props.chartType)
+    ['scattermapbox'].includes(type.value)
 );
 const pieFamily = computed(() =>
-    ['donut', 'pie'].includes(props.chartType)
+    ['donut', 'pie'].includes(type.value)
 );
-const hasAxis = computed(() =>
-(editableVisualization.value !== null && editableVisualization.value !== undefined
-    && !['pie', 'donut', 'indicator'].includes(props.chartType))
+const hasAxis = computed(() => {
+    return !['pie', 'donut', 'indicator'].includes(type.value)
+}
 );
 const xSeries = computed(() =>
-    editableVisualization.value.x.value.slice(0, limitXDimension.value)
+    //FIXME x.value.slice(0, limitXDimension.value)
+    x.value.slice(0, limitXDimension.value)
 );
 const ySeries = computed(() =>
-    editableVisualization.value.y.value.slice(0, limitYDimension.value)
+    y.value.slice(0, limitYDimension.value)
 );
 const limitXDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
-    if (['pie', 'donut', 'scatter'].includes(props.chartType)) {
+    if (['pie', 'donut', 'scatter'].includes(type.value)) {
         result = 1;
-    } else if (editableVisualization.value.x.value.length >= 2 && props.chartType !== 'treemap') {
+    } else if (x.value.length >= 2 && type.value !== 'treemap') {
         result = 2;
     }
     return result;
@@ -877,8 +917,8 @@ const limitXDimension = computed(() => {
 const limitYDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
     if (
-        (['pie', 'donut', 'scatter', 'treemap'].includes(props.chartType))
-        || (editableVisualization.value.x.value.length >= 2)
+        (['pie', 'donut', 'scatter', 'treemap'].includes(type.value))
+        || (x.value.length >= 2)
     ) {
         result = 1;
     }
@@ -886,18 +926,18 @@ const limitYDimension = computed(() => {
 });
 const canAddXDimension = computed(() => {
     let result = true;
-    result = (limitXDimension.value > editableVisualization.value.x.value.length);
+    result = (limitXDimension.value > x.value.length);
     return result;
 });
 const canAddYDimension = computed(() => {
     let result = true;
-    result = (limitYDimension.value > editableVisualization.value.y.value.length);
+    result = (limitYDimension.value > y.value.length);
     return result;
 });
 
 /* Methods */
 const handleYAxisDrag = (e) => true;
-const isNumeric = function (attributeName) {
+const isNumeric = (attributeName) => {
     const b = !!props.attributes && attributesMap.value[attributeName] &&
         attributesMap.value[attributeName].numeric;
     return b;
@@ -915,15 +955,16 @@ const handleSelectAttribute = (x) => {
 };
 
 
-const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
-const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
+const handleAddY = () => y.value.push(new YDimension({}));
+const handleAddX = () => x.value.push(new XDimension({}));
 const handleDeleteY = (index) => {
     yDimensionDD.value[index].hide(true);
-    editableVisualization.value.y.value.splice(index, 1);
+    y.value.splice(index, 1);
 };
-const handleDeleteX = (index) => {
-    xDimensionDD.value[index].hide(true);
-    editableVisualization.value.x.value.splice(index, 1);
+const handleDeleteX = (index, ev) => {
+    //debugger
+    //xDimensionDD.value[index].hide(true);
+    x.value.splice(index, 1);
 };
 const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) => {
     if (!obj.attribute) {
@@ -1020,5 +1061,53 @@ watch(
     float: left;
     width: 60px;
     margin-top: 8px;
+}
+
+
+.stroke-dashdot {
+    width: 124px;
+    height: 32px;
+    background: url('@/assets/stroke.png') -156px -62px;
+}
+
+.stroke-dot {
+    width: 124px;
+    height: 32px;
+    background: url('@/assets/stroke.png') -10px -114px;
+}
+
+
+.stroke-dash {
+    width: 124px;
+    height: 32px;
+    background: url('@/assets/stroke.png') -154px -114px;
+}
+
+.stroke-longdashdot {
+    width: 126px;
+    height: 32px;
+    background: url('@/assets/stroke.png') -10px -10px;
+}
+
+.stroke-longdash {
+    width: 126px;
+    height: 32px;
+    background: url('@/assets/stroke.png') -10px -62px;
+}
+
+.stroke-longdashdotdot {
+    width: 126px;
+    height: 32px;
+    background: url('@/assets/stroke.png') -156px -10px;
+}
+
+.stroke-solid {
+    width: 124px;
+    height: 32px;
+    background: url('@/assets/stroke.png') -10px -166px;
+}
+.stroke {
+    padding-left: 140px;
+    text-wrap: nowrap;
 }
 </style>

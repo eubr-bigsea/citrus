@@ -12,12 +12,9 @@
             </p>
         </span>
         <span v-else>{{displayValue}}</span>
-        <b-modal id="lookupModal" ref="modal" size="lg" :title="field.label"
+        <modal id="lookupModal" ref="modal" size="lg" :title="field.label"
                  :hide-header="true"
                  :cancel-title="$t('actions.cancel')" no-fade>
-            <p>
-                <em>Color scale</em>
-            </p>
             <div class="color-select">
                 <div v-for="(scale, inx) in scales" :key="scale[0]" class="scale clearfix" @click="select(inx)">
                     <div class="scale-name">
@@ -33,7 +30,7 @@
                     </b-button>
                 </div>
             </template>
-        </b-modal>
+        </modal>
     </div>
 </template>
 <script>
@@ -191,7 +188,7 @@ export default {
         };
     },
     mounted() {
-        this.displayValue = this.value;
+        this.displayValue = this.modelValue || this.value;
     },
     methods: {
         getColorScale(scale) {

@@ -89,11 +89,13 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
 
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
+import '@/fa-icons.js';
 import { setup } from "@storybook/vue3";
 import '@/assets/main.scss';
 import messages from '@/i18n/messages.js';
 import 'vue-select/dist/vue-select.css';
 import { createI18n } from 'vue-i18n';
+
 
 setup((app) => {
 

@@ -1,5 +1,5 @@
 <template>
-    <button class="btn dropdown-toggle" :class="buttonClass" @click.stop="toggleDropdown"
+    <button class="btn dropdown-toggle" :class="buttonClass" @click="toggleDropdown($event)"
         :aria-expanded="isDropdownOpen.toString()" ref="button" v-bind="$attrs">
         <slot name="button-content">
             {{ text }}
@@ -11,10 +11,11 @@
     </ul>
 </template>  
 <script setup>
-import { ref, computed, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount, nextTick } from 'vue';
 import { createPopper } from '@popperjs/core';
 
 let popperInstance = null;
+let buttonInstance = null;
 
 const button = ref();
 const props = defineProps({
@@ -34,22 +35,24 @@ const buttonClass = computed(() => {
 });
 
 const content = ref();
-const toggleDropdown = () => {
-
+const toggleDropdown = (evt) => {
     isDropdownOpen.value = !isDropdownOpen.value;
+    buttonInstance = evt.target;
     if (isDropdownOpen.value) {
-        document.body.addEventListener('click', closeDropdown);
+        nextTick(()=> document.body.addEventListener('click', closeDropdown));
+        content.value.classList.add('show');
         popperInstance = createPopper(button.value, content.value, {
             placement: 'bottom-start',
         });
     } else {
         document.body.removeEventListener('click', closeDropdown);
     }
+    //evt.stopPropagation();
 };
 const closeDropdown = (evt) => {
     
     const toClose = !props.keepOpen || content.value !== evt.target.closest('.dropdown-menu');
-    if (toClose) {
+    if (toClose && evt.target !== buttonInstance) {
         isDropdownOpen.value = false;
         document.body.removeEventListener('click', closeDropdown);
         if (popperInstance) {
