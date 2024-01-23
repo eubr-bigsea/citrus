@@ -79,7 +79,26 @@
         </div>
         <div v-if="visualizationObj" class="options-main">
             <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
-                                :chart-type="visualizationObj.type.value" :value="axis"/>
+                                :chart-type="visualizationObj.type.value" :value="axis"
+                                
+                v-model:xLabel="editableVisualization.x_axis.value.label"
+                v-model:xLowerBound="editableVisualization.x_axis.value.lowerBound"
+                v-model:xUpperBound="editableVisualization.x_axis.value.upperBound"
+                v-model:xLogScale="editableVisualization.x_axis.value.logScale"
+                v-model:xDisplay="editableVisualization.x_axis.value.display"
+                v-model:xDisplayLabel="editableVisualization.x_axis.value.displayLabel"
+                v-model:xPrefix="editableVisualization.x_axis.value.prefix"
+                v-model:xSuffix="editableVisualization.x_axis.value.suffix"
+
+                v-model:yLabel="editableVisualization.y_axis.value.label"
+                v-model:yLowerBound="editableVisualization.y_axis.value.lowerBound"
+                v-model:yUpperBound="editableVisualization.y_axis.value.upperBound"
+                v-model:yLogScale="editableVisualization.y_axis.value.logScale"
+                v-model:yDisplay="editableVisualization.y_axis.value.display"
+                v-model:yDisplayLabel="editableVisualization.y_axis.value.displayLabel"
+                v-model:yPrefix="editableVisualization.y_axis.value.prefix"
+                v-model:ySuffix="editableVisualization.y_axis.value.suffix"
+                                />
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 75vh">
                     <div v-if="display && plotlyData" ref="chart">

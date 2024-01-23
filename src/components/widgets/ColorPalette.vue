@@ -26,9 +26,6 @@
         <!---->
         <modal id="lookupModal" ref="modal" size="xl" :title="field.label" :hide-header="true"
             :cancel-title="$t('actions.cancel')" no-fade>
-            <p>
-                {{ fieldDisplay }} 
-            </p>
             <b-tabs>
                 <b-tab title="Matplotlib">
                     <div class="color-select">
@@ -78,64 +75,6 @@
                 </div>
             </template>
         </modal>
-        <!--
-            <b-modal v-if="openModal" id="lookupModal" ref="modal" size="lg" :title="field.label"
-                     :hide-header="true"
-                     :cancel-title="$t('actions.cancel')" no-fade>
-            <p>
-                {{ fieldDisplay }}
-            </p>
-            <b-tabs>
-                <b-tab title="Matplotlib">
-                    <div class="color-select">
-                        <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix"
-                             @click="select(inx, 'palettes')">
-                            <div class="palette-name">
-                                {{palette[0]}}
-                            </div>
-                            <div v-for="color in palette[1]" :key="color">
-                                <div class="color" :style="{'background-color': color}" />
-                            </div>
-                        </div>
-                    </div>
-                </b-tab>
-                <b-tab title="Color blind">
-                    <div class="color-select">
-                        <div v-for="(palette, inx) in colorBlindPalettes" :key="palette[0]" class="palette clearfix"
-                             @click="select(inx, 'colorBlindPalettes')">
-                            <div class="palette-name">
-                                {{palette[0]}}
-                            </div>
-                            <div v-for="color in palette[1]" :key="color">
-                                <div class="color" :style="{'background-color': color}" />
-                            </div>
-                        </div>
-                    </div>
-                </b-tab>
-                <b-tab title="Wes Anderson Palettes">
-                    <div class="color-select">
-                        <div v-for="(palette, inx) in wesAndersonPalettes" :key="palette[0]" class="palette clearfix"
-                             @click="select(inx, 'wesAndersonPalettes')">
-                            <div class="palette-name">
-                                {{palette[0]}}
-                            </div>
-                            <div v-for="color in palette[1]" :key="color">
-                                <div class="color" :style="{'background-color': color}" />
-                            </div>
-                        </div>
-                    </div>
-                </b-tab>
-            </b-tabs>
-            <template #footer>
-                <div class="w-100 text-end">
-                    <b-button variant="secondary" class="btn-sm " @click="cancelClicked">
-                        {{$t('actions.cancel')}}
-                    </b-button>
-                </div>
-            </template>
-        </b-modal>
-    -->
-
     </div>
 </template>
 <script>
@@ -252,17 +191,15 @@ export default {
         };
     },
     mounted() {
-        this.displayValue = this.value;
-        if (this.value === null || this.value === undefined) {
+        this.displayValue = this.modelValue || this.value;
+        if (this.displayValue === null || this.displayValue === undefined) {
             this.internalValue = this.palettes[6][1]; // D3
             this.triggerUpdateEvent(this.message, this.field, this.internalValue);
             this.displayValue = this.internalValue;
         }
     },
     computed: {
-        fieldDisplay() {
-            return this.field.label || this.field.name;
-        }
+        
     },
     methods: {
         clear() {
@@ -270,20 +207,17 @@ export default {
             this.displayValue = null;
         },
         openModal() {
-            this.openModal = true;
             this.$refs.modal.show();
             if (this.suggestionEvent) {
                 this.suggestions = this.suggestionEvent();
             }
         },
         select(inx, type) {
-            this.openModal = false;
             this.triggerUpdateEvent(this.message, this.field, this[type][inx][1]);
             this.$refs.modal.hide();
             this.displayValue = this[type][inx][1];
         },
         cancelClicked() {
-            this.openModal = false;
             this.$refs.modal.hide();
         }
     },

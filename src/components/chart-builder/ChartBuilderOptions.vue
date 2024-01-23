@@ -24,7 +24,7 @@
             </div>
 
             <div class="accordion options-font" role="tablist">
-                <div v-if="true">
+                <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-2 variant="light" size="sm" data-test="card-1"
                             class="w-100 border border-gray">
@@ -39,7 +39,7 @@
                                     data-test="display_legend">
                                     <option v-for="opt, value in legendOptions" :value="value">{{ opt }}</option>
                                 </select>
-                            </template> 
+                            </template>
                             <label class="mt-2">Tema:</label>
                             <select v-model="template" class="form-select form-select-sm mb-2" data-test="template">
                                 <option v-for="opt, value in themeOptions" :value="value">{{ opt }}</option>
@@ -54,11 +54,9 @@
                                     :append-to-body="true" data-test="size_attribute" />
                             </template>
                             <color-palette v-if="discreteColors" :field="paletteField" data-test="palette"
-                            v-model="palette" />
-                            <!--
-                                <color-scale v-if="continuousColors" :field="colorScaleField" data-test="color_scale"
+                                v-model="palette" />
+                            <color-scale v-if="continuousColors" :field="colorScaleField" data-test="color_scale"
                                 v-model="colorScale" />
-                            -->
 
                             <!-- 
                             <b-form-checkbox v-model="editableVisualization.blackWhite.value" switch>
@@ -68,7 +66,7 @@
                         </b-card-body>
                     </b-collapse>
                 </div>
-                <div v-if="true">
+                <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-1 variant="light" size="sm" data-test="card-2"
                             class="w-100 border border-gray">
@@ -325,7 +323,7 @@
                         </b-card-body>
                     </b-collapse>
                 </div>
-                <div v-if="true">
+                <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-3 variant="light" size="sm" data-test="card-3"
                             class="w-100 border border-gray">
@@ -393,7 +391,7 @@
                         </b-card-body>
                     </b-collapse>
                 </div>
-                <div v-if="true">
+                <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-4 variant="light" size="sm" data-test="card-4"
                             class="w-100 border border-gray">
@@ -412,7 +410,7 @@
                     </b-collapse>
                 -->
                 </div>
-                <div v-if="true">
+                <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-5 variant="light" size="sm" data-test="card-5"
                             class="w-100 border border-gray">
@@ -436,7 +434,7 @@
                         </b-card-body>
                     </b-collapse>
                 </div>
-                <div v-if="true">
+                <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-6 variant="light" size="sm" data-test="card-6"
                             class="w-100 border border-gray">
