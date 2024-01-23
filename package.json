@@ -7,7 +7,7 @@
     "build": "vite build",
     "serve": "vite preview",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore src",
-    "test": "vitest",
+    "test": "vitest --root src/tests --environment jsdom",
     "coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -42,6 +42,7 @@
     "snarkdown": "^2.0.0",
     "socket.io-client": "^2.4.0",
     "vue": "^3.2.41",
+    "vue-draggable-plus": "^0.3.5",
     "vue-i18n": "^9.8.0",
     "vue-prism-editor": "^2.0.0-alpha.2",
     "vue-router": "^4.2.5",
