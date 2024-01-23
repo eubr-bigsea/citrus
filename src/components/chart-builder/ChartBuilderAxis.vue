@@ -5,8 +5,8 @@
                 <div class="row">
                     <div class="col-6">
                         <small class="form-text text-muted">Latitude:</small>
-                        <v-select v-model="editableVisualization.latitude.value" :options="attributes" label="name"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                        <v-select v-model="latitude" :options="attributes" label="name" :reduce="(opt) => opt.name"
+                            :searchable="true" class="select2-small">
                             <template #option="{ type, name }">
                                 <span v-if="name !== '*'"
                                     :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }" />
@@ -23,8 +23,8 @@
                         </v-select>
 
                         <small class="form-text text-muted">Longitude:</small>
-                        <v-select v-model="editableVisualization.longitude.value" :options="attributes" label="name"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                        <v-select v-model="longitude" :options="attributes" label="name" :reduce="(opt) => opt.name"
+                            :searchable="true" class="select2-small">
                             <template #option="{ type, name }">
                                 <span v-if="name !== '*'"
                                     :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }" />
@@ -44,8 +44,8 @@
                         <div class="row">
                             <div class="col-6">
                                 <small class="form-text text-muted">Cor (opcional):</small>
-                                <v-select v-model="editableVisualization.color_attribute.value" :options="attributes"
-                                    label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                                <v-select v-model="colorAttribute" :options="attributes" label="name"
+                                    :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
                                     <template #option="{ type, name }">
                                         <span v-if="name !== '*'"
                                             :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }" />
@@ -61,8 +61,8 @@
                                     </template>
                                 </v-select>
                                 <small class="form-text text-muted">Tamanho (raio, opcional):</small>
-                                <v-select v-model="editableVisualization.size_attribute.value" :options="attributes"
-                                    label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                                <v-select v-model="sizeAttribute" :options="attributes" label="name"
+                                    :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
                                     <template #option="{ type, name }">
                                         <span v-if="name !== '*'"
                                             :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }" />
@@ -79,9 +79,9 @@
                                 </v-select>
                             </div>
                             <div class="col-6">
-                                <small class="form-text text-muted">Text (opcional):</small>
-                                <v-select v-model="editableVisualization.text_attribute.value" :options="attributes"
-                                    label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                                <small class="form-text text-muted">Texto (opcional):</small>
+                                <v-select v-model="textAttribute" :options="attributes" label="name"
+                                    :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
                                     <template #option="{ type, name }">
                                         <span v-if="name !== '*'"
                                             :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }" />
@@ -98,113 +98,10 @@
                                 </v-select>
                             </div>
                         </div>
-                        !--
-                        <dropdown-button size="sm" ref="axis" class="me-1" variant="outline-secondary small-dd-title"
-                            title="Cor">
-                            <template #button-content>
-                                <font-awesome-icon class="me-2 text-success" prefix="fa" icon="droplet" /> Cor
-                            </template>
-                            <b-dropdown-form form-class="right-drop-form">
-                                <div class="row half-series-form">
-                                    <div class="col-12">
-                                        <b-form-group :label="$t('common.attribute', 1) + ':'"
-                                            label-for="dropdown-form-email">
-
-                                            <v-select v-model="editableVisualization.color_attribute.value"
-                                                :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
-                                                :reduce="(opt) => opt.name" :searchable="false">
-                                                <template #option="{ type, name }">
-                                                    <span v-if="name !== '*'"
-                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                    {{ name }}
-                                                </template>
-
-                                                <template #selected-option="{ type, name }">
-                                                    <div>
-                                                        <span v-if="name !== '*'"
-                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                        {{ name }}
-                                                    </div>
-                                                </template>
-                                            </v-select>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </b-dropdown-form>
-                        </dropdown-button>
-                        <dropdown-button size="sm" ref="axis" class="me-1" variant="outline-secondary small-dd-title"
-                            title="Tamanho">
-                            <template #button-content>
-                                <font-awesome-icon class="me-2 text-primary" prefix="fa" icon="ruler-combined" /> Tamanho
-                            </template>
-                            <b-dropdown-form form-class="right-drop-form">
-                                <div class="row half-series-form">
-                                    <div class="col-12">
-                                        <b-form-group :label="$t('common.attribute', 1) + ':'"
-                                            label-for="dropdown-form-email">
-
-                                            <v-select v-model="editableVisualization.size_attribute.value"
-                                                :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
-                                                :reduce="(opt) => opt.name" :searchable="false">
-                                                <template #option="{ type, name }">
-                                                    <span v-if="name !== '*'"
-                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                    {{ name }}
-                                                </template>
-
-                                                <template #selected-option="{ type, name }">
-                                                    <div>
-                                                        <span v-if="name !== '*'"
-                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                        {{ name }}
-                                                    </div>
-                                                </template>
-                                            </v-select>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </b-dropdown-form>
-                        </dropdown-button>
-                        <dropdown-button size="sm" ref="axis" class="me-1" variant="outline-secondary small-dd-title"
-                            title="Texto">
-                            <template #button-content>
-                                <font-awesome-icon class="me-2 text-warning" prefix="fa" icon="a" /> Texto
-                            </template>
-                            <b-dropdown-form form-class="right-drop-form">
-                                <div class="row half-series-form">
-                                    <div class="col-12">
-                                        <b-form-group :label="$t('common.attribute', 1) + ':'"
-                                            label-for="dropdown-form-email">
-
-                                            <v-select v-model="editableVisualization.text_attribute.value"
-                                                :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
-                                                :reduce="(opt) => opt.name" :searchable="false">
-                                                <template #option="{ type, name }">
-                                                    <span v-if="name !== '*'"
-                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                    {{ name }}
-                                                </template>
-
-                                                <template #selected-option="{ type, name }">
-                                                    <div>
-                                                        <span v-if="name !== '*'"
-                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                        {{ name }}
-                                                    </div>
-                                                </template>
-                                            </v-select>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </b-dropdown-form>
-                        </dropdown-button>
-                        --
                     </div>
                 </div>
             </template>
             <template v-else>
-                <h1>OK</h1>
-                ||{{ hasAxis }}|| {{ type }}
                 <div class="clearfix">
                     <dropdown-button v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-start"
                         variant="outline-secondary small-dd-title" :keep-open="true">
@@ -270,10 +167,10 @@
                     <div v-else class="axis-label">
                         Exibir
                     </div>
-                    <div v-if="editableVisualization">
+                    <div>
                         <draggable ghost-class="ghost" handle=".drag-handle" :list="ySeries" :move="handleYAxisDrag"
-                            direction="horizontal" class="draggable-area" @start="drag = true" @end="drag = false"
-                            :item-key="(item) => ySeries.indexOf(item)">
+                            direction="vertical" class="draggable-area" @start="drag = true" @end="drag = false"
+                            @change="handleYAxisDragEnd" item-key="id">
                             <template #item="{ element, index }">
                                 <div :key="index" class="drag-handle" :data-test="`y-series-${index}`">
                                     <dropdown-button ref="yDimensionDD" size="sm" class="mt-2 me-1 pull-right"
@@ -358,20 +255,8 @@
                                                         <b-form-group v-if="false" label="Computação:">
                                                             <select v-model="element.compute"
                                                                 class="form-select form-select-sm">
-                                                                <option label="NORMAL" value="NORMAL">
-                                                                    NORMAL
-                                                                </option>
-                                                                <option label="PERCENTAGE SCALE" value="PERCENTAGE SCALE">
-                                                                    PERCENTAGE
-                                                                    SCALE
-                                                                </option>
-                                                                <option label="CUMULATIVE" value="CUMULATIVE">
-                                                                    CUMULATIVE
-                                                                </option>
-                                                                <option label="CUMULATIVE_PERCENTAGE"
-                                                                    value="CUMULATIVE_PERCENTAGE">
-                                                                    CUMULATIVE
-                                                                    PERCENTAGE
+                                                                <option v-for="value, k in computeOptions" :key="k" :value="k">
+                                                                    {{ value }}
                                                                 </option>
                                                             </select>
                                                         </b-form-group>
@@ -405,28 +290,20 @@
                                                             </template>
                                                             <b-form-input v-if="element.custom_color"
                                                                 v-model="element.color" type="color"
-                                                                class="form-control form-control-sm" />
+                                                                class="form-control form-control-sm w-25" />
                                                         </b-form-group>
                                                         <b-form-group v-if="!pieFamily" label="Tipo de linha:">
                                                             <v-select v-model="element.stroke"
-                                                                :options="['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']" 
+                                                                :options="['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']"
                                                                 :searchable="false" class="select2-small">
-                                                                <template #option="{label}">
-                                                                    <div :class="`stroke stroke-${label}`">{{label}}</div>
+                                                                <template #option="{ label }">
+                                                                    <div :class="`stroke stroke-${label}`">{{ label }}</div>
                                                                 </template>
 
-                                                                <template #selected-option="{label}">
-                                                                    <div :class="`stroke stroke-${label}`">{{label}}</div>
+                                                                <template #selected-option="{ label }">
+                                                                    <div :class="`stroke stroke-${label}`">{{ label }}</div>
                                                                 </template>
                                                             </v-select>
-                                                            <select v-model="element.stroke"
-                                                                class="form-select form-select-sm w-50">
-                                                                <option
-                                                                    v-for="opt in ['solid', 'dot', 'dash', 'longdash', 'dashdot', 'longdashdot']"
-                                                                    :key="opt" :value="opt" :class="`stroke-${opt}`">
-                                                                    {{ opt }}
-                                                                </option>
-                                                            </select>
                                                         </b-form-group>
                                                         <b-form-group label="Espessura da linha:">
                                                             <select v-model.number="element.strokeSize"
@@ -482,7 +359,7 @@
                                                     </div>
                                                     <div class="col-12 border-top pt-2 mt-2">
                                                         <b-button size="sm" variant="danger" class="float-end"
-                                                            @click="handleDeleteY(i)">
+                                                            @click="handleDeleteY(i, $event)">
                                                             {{ $t('actions.delete') }}
                                                         </b-button>
                                                     </div>
@@ -565,7 +442,7 @@
                     <div v-else class="axis-label">
                         Por
                     </div>
-                    <div v-if="editableVisualization">
+                    <div>
                         <draggable ghost-class="ghost" handle=".drag-handle" :list="xSeries" :move="handleYAxisDrag"
                             direction="horizontal" class="draggable-area" @start="drag = true" @end="drag = false"
                             :item-key="(item) => xSeries.indexOf(item)">
@@ -602,15 +479,6 @@
                                                                     </div>
                                                                 </template>
                                                             </v-select>
-                                                            <!--
-                                                        <select class="form-control form-control-sm" v-model="element.attribute"
-                                                            @change="handleSelectAttribute(x)">
-                                                            <option v-for="attr in attributes" :value="attr.name">
-                                                                {{ attr.name }}
-                                                                ({{ attr.type }})
-                                                            </option>
-                                                        </select>
-                                                    -->
                                                         </b-form-group>
                                                         <b-form-group v-if="!pieFamily" label="Rótulo para legenda:">
                                                             <b-form-input v-model="element.displayLabel" type="text"
@@ -622,21 +490,9 @@
                                                             <b-form-group label="Agrupamento (bins):">
                                                                 <select v-model="element.binning" tabindex="-1"
                                                                     class="form-select form-select-sm">
-                                                                    <option value="EQUAL_INTERVAL">
-                                                                        Número fixo de
-                                                                        grupos com intervalos iguais
-                                                                    </option>
-                                                                    <option value="FIXED_SIZE">
-                                                                        Grupos com comprimento de intervalo fixo
-                                                                    </option>
-                                                                    <option value="NONE">
-                                                                        Nenhuma transformação
-                                                                    </option>
-                                                                    <option value="QUANTILES">
-                                                                        Quantis (em %)
-                                                                    </option>
-                                                                    <option value="CATEGORICAL">
-                                                                        Tratar valores como categóricos
+                                                                    <option v-for="value, k in binningOptions" :key="k"
+                                                                        :value="k">
+                                                                        {{ value }}
                                                                     </option>
                                                                 </select>
                                                             </b-form-group>
@@ -662,21 +518,10 @@
                                                             <b-form-group v-if="false" label="Computação:">
                                                                 <select v-model="element.compute"
                                                                     class="form-select form-select-sm">
-                                                                    <option label="NORMAL" value="NORMAL">
-                                                                        NORMAL
-                                                                    </option>
-                                                                    <option label="PERCENTAGE SCALE"
-                                                                        value="PERCENTAGE SCALE">
-                                                                        PERCENTAGE
-                                                                        SCALE
-                                                                    </option>
-                                                                    <option label="CUMULATIVE" value="CUMULATIVE">
-                                                                        CUMULATIVE
-                                                                    </option>
-                                                                    <option label="CUMULATIVE_PERCENTAGE"
-                                                                        value="CUMULATIVE_PERCENTAGE">
-                                                                        CUMULATIVE
-                                                                        PERCENTAGE
+                                                                    <option></option>
+                                                                    <option v-for="value, k in computeOptions" :key="k"
+                                                                        :value="k">
+                                                                        {{ value }}
                                                                     </option>
                                                                 </select>
                                                             </b-form-group>
@@ -696,35 +541,17 @@
                                                         <b-form-group v-if="!pieFamily" label="Tratar valores vazios:">
                                                             <select class="form-select form-select-sm"
                                                                 v-model="element.handleEmpty">
-                                                                <option label="Replace with zeros" value="ZEROS"
-                                                                    selected="selected">
-                                                                    Replace with zeros
-                                                                </option>
-                                                                <option label="Link neighbors" value="AVERAGE">
-                                                                    Link neighbors
-                                                                </option>
-                                                                <option label="Interrupt line" value="DASHED">
-                                                                    Interrupt line
+                                                                <option v-for="value, k in handleEmptyOptions" :key="k"
+                                                                    :value="k">
+                                                                    {{ value }}
                                                                 </option>
                                                             </select>
                                                         </b-form-group>
                                                         <b-form-group label="Ordenação:">
                                                             <select v-model="element.sorting"
                                                                 class="form-select form-select-sm">
-                                                                <option label="Ordenação natural" value="NATURAL"
-                                                                    selected="selected">
-                                                                    Ordenação natural
-                                                                </option>
-                                                                <option label="Valor do eixo Y (ascendente)" value="Y_ASC">
-                                                                    Valor do eixo
-                                                                    Y
-                                                                    (ascendente)
-                                                                </option>
-                                                                <option label="Valor do eixo Y (descendente)"
-                                                                    value="Y_DESC">
-                                                                    Valor do
-                                                                    eixo Y
-                                                                    (descendente)
+                                                                <option v-for="value, k in sorting" :key="k" :value="k">
+                                                                    {{ value }}
                                                                 </option>
                                                             </select>
                                                         </b-form-group>
@@ -803,9 +630,7 @@ import vSelect from 'vue-select';
 import { ref, computed, watch, defineProps, defineEmits, onBeforeMount, defineModel } from "vue";
 import { XDimension, YDimension } from '@/views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
-import { deepToRaw } from '@/util.js';
 import DropdownButton from '@/components/DropdownButton.vue';
-
 
 const type = defineModel('type');
 
@@ -829,9 +654,15 @@ const xSuffix = defineModel('xSuffix');
 
 const x = defineModel('x');
 const y = defineModel('y');
+// Map
+const latitude = defineModel('latitude');
+const longitude = defineModel('longitude');
 
-const attribute = ref('name')
+const colorAttribute = defineModel('colorAttribute');
+const sizeAttribute = defineModel('sizeAttribute');
+const textAttribute = defineModel('textAttribute');
 
+/* Options */
 const shapes = [
     { name: '', label: 'Sólido', icon: 'solid' },
     { name: '/', label: 'Diagonal direita', icon: 'right-diag' },
@@ -843,8 +674,32 @@ const shapes = [
     { name: '.', label: 'Ponto', icon: 'points' },
 ];
 
+const sorting = {
+    NATURAL: 'Ordenação natural',
+    Y_ASC: 'Valor do eixo Y (ascendente)',
+    Y_DESC: 'Valor do eixo Y (descendente)'
+};
+const handleEmptyOptions = {
+    ZEROS: 'Substituir por zeros',
+    AVERAGE: 'Ligar pontos vizinhos',
+    DASHED: 'Interromper linha',
+};
+const computeOptions = {
+    'NORMAL': 'NORMAL',
+    'PERCENTAGE SCALE': 'PERCENTAGE SCALE',
+    'CUMULATIVE': 'CUMULATIVE',
+    'CUMULATIVE_PERCENTAGE': 'CUMULATIVE_PERCENTAGE'
+};
+const binningOptions = {
+    EQUAL_INTERVAL: 'Número fixo de grupos com intervalos iguais',
+    FIXED_SIZE: 'Grupos com comprimento de intervalo fixo',
+    NONE: 'Nenhuma transformação',
+    QUANTILES: 'Quantis (em %)',
+    CATEGORICAL: 'Tratar valores como categóricos',
+}
+/**/
 const emit = defineEmits(['input']);
-const editableVisualization = ref(null);
+//const editableVisualization = ref(null);
 const props = defineProps({
     workflow: { type: Object, required: true },
     attributes: { type: Array, required: true },
@@ -883,7 +738,7 @@ const setXDimensionDDRef = (el) => {
 };
 
 
-editableVisualization.value = structuredClone(deepToRaw(props.value));
+//editableVisualization.value = structuredClone(deepToRaw(props.value));
 
 
 /* Computed */
@@ -903,7 +758,7 @@ const xSeries = computed(() =>
     x.value.slice(0, limitXDimension.value)
 );
 const ySeries = computed(() =>
-    y.value.slice(0, limitYDimension.value)
+    y.value.slice(0, limitYDimension.value)//.map((item) => ({ ...item, id: item.id || generateId() }))
 );
 const limitXDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
@@ -936,7 +791,19 @@ const canAddYDimension = computed(() => {
 });
 
 /* Methods */
-const handleYAxisDrag = (e) => true;
+const handleYAxisDrag = (info, evt) => { return true };
+const handleYAxisDragEnd = (info) => {
+    const { moved } = info;
+    if (moved) {
+        const draggedIndex = moved.oldIndex;
+        const index = moved.newIndex;
+        const draggedItem = y.value[draggedIndex];
+        y.value.splice(draggedIndex, 1);
+        y.value.splice(index, 0, draggedItem);
+        console.debug(draggedIndex, '=>', index);
+    }
+    return true
+};
 const isNumeric = (attributeName) => {
     const b = !!props.attributes && attributesMap.value[attributeName] &&
         attributesMap.value[attributeName].numeric;
@@ -947,18 +814,19 @@ const isInteger = function (attributeName) {
         attributesMap.value[attributeName].integerType;
     return b;
 };
-
+/*
 const handleSelectAttribute = (x) => {
     if (!isNumeric(x.attribute)) {
         x.binning = null;
     }
 };
+*/
 
 
 const handleAddY = () => y.value.push(new YDimension({}));
 const handleAddX = () => x.value.push(new XDimension({}));
-const handleDeleteY = (index) => {
-    yDimensionDD.value[index].hide(true);
+const handleDeleteY = (index, ev) => {
+    //yDimensionDD.value[index].hide(true);
     y.value.splice(index, 1);
 };
 const handleDeleteX = (index, ev) => {
@@ -989,6 +857,7 @@ const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) =
     }
 };
 /* Watch */
+/*
 watch(
     () => editableVisualization,
     (value) => {
@@ -997,7 +866,7 @@ watch(
         }
         toEmit.value = true;
     }, { deep: true });
-
+*/
 watch(
     () => props.value,
     (value) => {
@@ -1008,7 +877,7 @@ watch(
             }
         });
 
-        editableVisualization.value = structuredClone(deepToRaw(value));
+        //editableVisualization.value = structuredClone(deepToRaw(value));
         toEmit.value = false;
     }, { deep: true, immediate: true });
 
@@ -1106,8 +975,12 @@ watch(
     height: 32px;
     background: url('@/assets/stroke.png') -10px -166px;
 }
+
 .stroke {
-    padding-left: 140px;
+    margin-top: 0px;
+    padding-right: 200px;
     text-wrap: nowrap;
+    background-position-x: 80px;
+    background-repeat: no-repeat;
 }
 </style>

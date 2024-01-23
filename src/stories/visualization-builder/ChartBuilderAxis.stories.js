@@ -1,11 +1,11 @@
 import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
 
 const attributes = [
-    {name: 'name',  type: 'CHARACTER', numeric: false},
-    {name: 'age',  type: 'INTEGER', numeric: true},
-    {name: 'address',  type: 'CHARACTER', numeric: false},
-    {name: 'postcode', type: 'CHARACTER', numeric: false},
-] 
+    { name: 'name', type: 'CHARACTER', numeric: false },
+    { name: 'age', type: 'INTEGER', numeric: true },
+    { name: 'address', type: 'CHARACTER', numeric: false },
+    { name: 'postcode', type: 'CHARACTER', numeric: false },
+]
 const field1 = {
     "type": { value: 'line' },
     x_axis: {
@@ -31,7 +31,7 @@ const field1 = {
     x: [{
         "attribute": 'name', "binning": null, "displayLabel": "First value",
         "sorting": "Y_ASC", "max_displayed": 6,
-        "group_others": true, "label_others": "Others", "prefix": "x", 
+        "group_others": true, "label_others": "Others", "prefix": "x",
         "suffix": "x"
     }],
     y: [],
@@ -64,7 +64,12 @@ const Template = (args) => ({
         <small><span class="px-1 border me-1 mb-1" v-for="opt,k in args.x_axis">{{k}} == {{opt}}</span></small>
         <br/>y: 
         <small><span class="px-1 border me-1 mb-1" v-for="opt,k in args.y_axis">{{k}} == {{opt}}</span></small>
+        <p>
         [x={{args.x}}]
+        <br/>
+        [y={{args.y}}]
+        </p>
+        <br/>Geo: {{args.geo}}
         <chart-builder-axis :attributes="args.attributes" 
             :workflow="{}" :value="{x: {value: []}, y: {value: []}}"
             v-model:type="args.type"
@@ -89,6 +94,13 @@ const Template = (args) => ({
             v-model:yDisplayLabel="args.y_axis.displayLabel"
             v-model:yPrefix="args.y_axis.prefix"
             v-model:ySuffix="args.y_axis.suffix"
+            
+            v-model:latitude="args.geo.latitude"
+            v-model:longitude="args.geo.longitude"
+            v-model:colorAttribute="args.geo.color_attribute"
+            v-model:sizeAttribute="args.geo.size_attribute"
+            v-model:textAttribute="args.geo.text_attribute"
+
             />
     </div>`,
 });
@@ -101,11 +113,11 @@ export const WithAxis = {
         x: field1.x,
         y: field1.y,
         type: 'line',
-
+        geo: {},
         attributes: attributes
     }
 };
-export const WithoutAxis = {
+export const PieChart = {
     render: (args) => Template(args),
     args: {
         x_axis: field1.x_axis,
@@ -113,6 +125,61 @@ export const WithoutAxis = {
         x: field1.x,
         y: field1.y,
         type: 'pie',
+        
+        geo: {},
+        attributes: attributes
+    }
+};
+export const MapChart = {
+    render: (args) => Template(args),
+    args: {
+        x_axis: field1.x_axis,
+        y_axis: field1.y_axis,
+        x: field1.x,
+        y: field1.y,
+        type: 'scattermapbox',
+
+        attributes: ['latitude', 'longitude', 'message', 'value', 'color'],
+
+        geo: {
+            latitude: 'latitude',
+            longitude: 'longitude',
+            color_attribute: 'color',
+            size_attribute: 'value',
+            text_attribute: 'message',
+        }
+    }
+};
+export const LineChart = {
+    render: (args) => Template(args),
+    args: {
+        x_axis: field1.x_axis,
+        y_axis: field1.y_axis,
+        x: field1.x,
+        geo: {}, 
+        y: [
+            {
+                "attribute": "name", "aggregation": "MIN", "compute": null,
+                "displayOn": "left", "multiplier": null, "decimal_places": 2,
+                "prefix": null, "suffix": null, "label": null, "strokeSize": 0,
+                "stroke": null, "color": null, "marker": null, "enabled": true,
+                "color": "#1945be", "custom_color": true
+            },
+            {
+                "attribute": "age", "aggregation": "AVG", "compute": null,
+                "displayOn": "left", "multiplier": null, "decimal_places": 2,
+                "prefix": null, "suffix": null, "label": null, "strokeSize": 0,
+                "stroke": null, "color": null, "marker": null, "enabled": false
+            },
+            {
+                "attribute": "postcode", "aggregation": "MAX", "compute": null,
+                "displayOn": "left", "multiplier": null, "decimal_places": 2,
+                "prefix": null, "suffix": null, "label": null, "strokeSize": 2,
+                "stroke": 'longdash', "color": null, "marker": null,
+                "enabled": true, "line_color": "#eedd11"
+            }
+        ],
+        type: 'line',
 
         attributes: attributes
     }
