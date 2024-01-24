@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-style v-if="rightAlignedAttributes && rightAlignedAttributes.length">
-            .table-preview td:nth-child(1), {{ rightAlignedAttributes }} {
+            .table-preview td:nth-child(1), {{rightAlignedAttributes}} {
             text-align: right;
             }
             .table-preview td:nth-child(1) {
@@ -11,7 +11,7 @@
         <div v-show="loading">
             <div class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
-                {{ $t('common.wait') }}
+                {{$t('common.wait')}}
             </div>
         </div>
 
@@ -21,34 +21,34 @@
                     <div />
                 </div>
                 <div class="border scroll-area table-preview b-table-sticky-header table-responsive"
-                    style="max-height: 85vh;">
+                     style="max-height: 85vh;">
                     <preview-table ref="table" :headers="headersWithLineNumber" :stick-header="true" :rows="items"
-                        table-class="table b-table table-preview table-hover table-bordered table-sm border"
-                        @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
+                                   table-class="table b-table table-preview table-hover table-bordered table-sm border"
+                                   @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
                         <template #head="scope">
                             <div class="user-select-none" @click.prevent="customOpen($event, scope)">
                                 <div class="clearfix no-wrap">
                                     <div class="attribute-name me-2">
-                                        {{ scope.field.label }}
+                                        {{scope.field.label}}
                                     </div>
                                     <!--
                                     <font-awesome-icon v-if="scope?.field.locked" class="" icon="lock" />
                                     -->
                                 </div>
                                 <div class="data-type">
-                                    {{ scope.field.generic_type }}
+                                    {{scope.field.generic_type}}
                                     <br>
-                                    {{ scope.field.type }}<span v-if="scope.field.inner">({{ scope.field.inner }})</span>
+                                    {{scope.field.type}}<span v-if="scope.field.inner">({{scope.field.inner}})</span>
                                     <span v-if="scope.field.truncated">(trunc.)</span>
                                 </div>
                             </div>
                         </template>
                         <template #cell="scope">
                             <template v-if="scope.field.name === 'lineno'">
-                                {{ scope.index + 1 }}
+                                {{scope.index + 1}}
                             </template>
                             <template v-else>
-                                {{ scope.row[scope.field.name] }}
+                                {{scope.row[scope.field.name]}}
                             </template>
                         </template>
                     </preview-table>
@@ -95,20 +95,20 @@
 
 <script>
 //import contextMenu from 'vue-context-menu';
-import Notifier from '@/mixins/Notifier.js';
-import PreviewTable from './DataExplorerPreviewTable.vue';
 import VStyle from '@/components/VStyle.vue';
+import Notifier from '@/mixins/Notifier.js';
 import { h } from 'vue';
+import PreviewTable from './DataExplorerPreviewTable.vue';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import ContextMenu from '@imengyu/vue3-context-menu';
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
-import ContextMenu, { ContextMenuItem, ContextMenuGroup, ContextMenuSeparator } from '@imengyu/vue3-context-menu';
 
 ContextMenu.compatConfig = { MODE: 3 };
 export default {
     name: 'PreviewComponent',
     components: {
-        contextMenu, PreviewTable, VStyle, //'context-menu-2': ContextMenu,
+        PreviewTable, VStyle, //'context-menu-2': ContextMenu,
         //ContextMenuGroup, ContextMenuItem, ContextMenuSeparator
     },
     mixins: [Notifier],
@@ -245,9 +245,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Manter'), " apenas registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
-                        ]),
+                                h('b', 'Manter'), " apenas registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
+                            ]),
                         icon: h(FontAwesomeIcon, { icon: 'fa-check', 'class': 'text-success' }),
 
                         onClick: () =>
@@ -257,9 +257,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Manter'), " apenas registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
-                        ]),
+                                h('b', 'Manter'), " apenas registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
+                            ]),
                         icon: h(FontAwesomeIcon, { icon: 'fa-check', 'class': 'text-success' }),
 
                         onClick: () =>
@@ -269,9 +269,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Remover'), " registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
-                        ]),
+                                h('b', 'Remover'), " registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
+                            ]),
                         iconFontClass: 'text-danger',
                         icon: h(FontAwesomeIcon, { icon: 'fa-times', 'class': 'text-danger' }),
 
@@ -282,9 +282,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Remover'), " registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
-                        ]),
+                                h('b', 'Remover'), " registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
+                            ]),
                         iconFontClass: 'text-danger',
                         icon: h(FontAwesomeIcon, { icon: 'fa-times', 'class': 'text-danger' }),
 
@@ -296,9 +296,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Sinalizar'), " registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
-                        ]),
+                                h('b', 'Sinalizar'), " registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
+                            ]),
                         icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
@@ -308,9 +308,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Sinalizar'), " registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
-                        ]),
+                                h('b', 'Sinalizar'), " registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} é nulo`)]),
+                            ]),
                         icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
@@ -320,9 +320,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Sinalizar'), " registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
-                        ]),
+                                h('b', 'Sinalizar'), " registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} ≠ ${value}`)]),
+                            ]),
                         icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
@@ -332,9 +332,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Sinalizar'), " registros onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
-                        ]),
+                                h('b', 'Sinalizar'), " registros onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} não é nulo`)]),
+                            ]),
                         icon: h(FontAwesomeIcon, { icon: 'fa-flag   ', 'class': 'text-primary' }),
 
                         onClick: () =>
@@ -344,9 +344,9 @@ export default {
                     {
                         label: h(
                             'span', {}, [
-                            h('b', 'Limpar'), " dados do atributo onde ",
-                            h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
-                        ]),
+                                h('b', 'Limpar'), " dados do atributo onde ",
+                                h('b', {}, [h('code', {}, `${this.cellMenuData.name} = ${value}`)]),
+                            ]),
                         icon: h(FontAwesomeIcon, { icon: 'fa-eraser   ', 'class': 'text-warning' }),
 
                         onClick: () =>

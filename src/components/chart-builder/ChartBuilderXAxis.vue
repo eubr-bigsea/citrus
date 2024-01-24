@@ -1,6 +1,6 @@
 <template>
     <dropdown-button v-if="hasAxis" ref="axis" size="sm" class="mt-2 me-1 float-start"
-        variant="outline-secondary small-dd-title" :keep-open="true">
+                     variant="outline-secondary small-dd-title" :keep-open="true">
         <template #button-content>
             <font-awesome-icon class="me-2" prefix="fa" icon="x" />
         </template>
@@ -33,7 +33,7 @@
                         </b-form-checkbox>
                     </div>
                     <div class="col-6">
-                     <!--
+                        <!--
                             <b-form-group label="Multiplicar por:">
                                 <b-form-input type="number" v-model.number="xMultiplier"
                                     class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
@@ -46,11 +46,11 @@
                         -->
                         <b-form-group label="Prefixo:">
                             <input v-model="xPrefix" type="text" class="form-control form-control-sm" maxlength="20"
-                                debounce="500">
+                                   debounce="500">
                         </b-form-group>
                         <b-form-group label="Sufixo:">
                             <input v-model="xSuffix" type="text" class="form-control form-control-sm" maxlength="20"
-                                debounce="500">
+                                   debounce="500">
                         </b-form-group>
                     </div>
                 </div>

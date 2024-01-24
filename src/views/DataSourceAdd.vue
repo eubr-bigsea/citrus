@@ -175,7 +175,7 @@
 import { ref, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onMounted } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 
 import Notifier from '../notifier.js';
 import axios from 'axios';

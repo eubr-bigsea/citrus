@@ -3,7 +3,7 @@
         <div>
             <div class="d-flex justify-content-between align-items-center">
                 <h1>
-                    <font-awesome-icon icon="fa fa-vial" /> {{ $t('dataExplorer.tagline', 1) }}
+                    <font-awesome-icon icon="fa fa-vial" /> {{$t('dataExplorer.tagline', 1)}}
                 </h1>
             </div>
             <hr>
@@ -79,65 +79,65 @@
             <div class="col-md-12 custom-table">
                 <b-card>
                     <v-server-table ref="workflowList" :columns="columns" :options="options"
-                        name="workflowListDataExperiments">
+                                    name="workflowListDataExperiments">
                         <template #id="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
-                                {{ props.row.id }}
+                                         :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
+                                {{props.row.id}}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                :to="{ name: 'model-design', params: { id: props.row.id } }">
-                                {{ props.row.id }}
+                                         :to="{ name: 'model-design', params: { id: props.row.id } }">
+                                {{props.row.id}}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                :to="{ name: 'visualization-design', params: { id: props.row.id } }">
-                                {{ props.row.id }}
+                                         :to="{ name: 'visualization-design', params: { id: props.row.id } }">
+                                {{props.row.id}}
                             </router-link>
                         </template>
                         <template #type="props">
                             <font-awesome-icon :icon="getIcon(props.row)" />
-                            {{ $t(`dataExplorer.experiments.${props.row.type}`) }}
+                            {{$t(`dataExplorer.experiments.${props.row.type}`)}}
                         </template>
                         <template #user="props">
-                            {{ props.row.user.name }}
+                            {{props.row.user.name}}
                         </template>
                         <template #name="props">
                             <router-link v-if="props.row.type === 'DATA_EXPLORER'"
-                                :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
-                                {{ props.row.name }}
+                                         :to="{ name: 'data-explorer-panel', params: { id: props.row.id } }">
+                                {{props.row.name}}
                             </router-link>
                             <router-link v-if="props.row.type === 'MODEL_BUILDER'"
-                                :to="{ name: 'model-design', params: { id: props.row.id } }">
-                                {{ props.row.name }}
+                                         :to="{ name: 'model-design', params: { id: props.row.id } }">
+                                {{props.row.name}}
                             </router-link>
                             <router-link v-if="props.row.type === 'VIS_BUILDER'"
-                                :to="{ name: 'visualization-design', params: { id: props.row.id } }">
-                                {{ props.row.name }}
+                                         :to="{ name: 'visualization-design', params: { id: props.row.id } }">
+                                {{props.row.name}}
                             </router-link>
                         </template>
                         <template #updated="props">
-                            {{ $filters.formatJsonDate(props.row.updated) }}
+                            {{$filters.formatJsonDate(props.row.updated)}}
                         </template>
                         <template #afterFilter>
                             <label>Tipo:</label>
                             <select v-model="typeFilter" class="form-select w-50 form-select-sm" @change="handleSelectType">
                                 <option selected disabled>
-                                    {{ $t('actions.choose') }}...
+                                    {{$t('actions.choose')}}...
                                 </option>
                                 <option value="DATA_EXPLORER">
-                                    {{ $t('dataExplorer.experiments.DATA_EXPLORER') }}
+                                    {{$t('dataExplorer.experiments.DATA_EXPLORER')}}
                                 </option>
                                 <option value="MODEL_BUILDER">
-                                    {{ $t('dataExplorer.experiments.MODEL_BUILDER') }}
+                                    {{$t('dataExplorer.experiments.MODEL_BUILDER')}}
                                 </option>
                                 <option value="VIS_BUILDER">
-                                    {{ $t('dataExplorer.experiments.VIS_BUILDER') }}
+                                    {{$t('dataExplorer.experiments.VIS_BUILDER')}}
                                 </option>
                             </select>
                         </template>
                         <template #actions="props">
-                            <button class="ms-2 btn btn-sm btn-danger" @click="remove(props.row.id, props.row.name)"
-                                :title="$t('actions.delete')">
+                            <button class="ms-2 btn btn-sm btn-danger" :title="$t('actions.delete')"
+                                    @click="remove(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </template>
@@ -205,7 +205,7 @@ export default {
                     self.error(e);
                     return {
                         data: [], count: 0
-                    }
+                    };
                 }
             }
             );

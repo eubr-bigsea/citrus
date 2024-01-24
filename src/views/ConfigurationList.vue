@@ -1,15 +1,14 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{ $t('titles.configuration', 2) }}</h1>
+            <h1>{{$t('titles.configuration', 2)}}</h1>
         </div>
         <div class="card">
             <div class="card-body">
                 <v-server-table ref="configurationList" :columns="table.columns" :options="table.options"
-                    name="configurationList">
-
+                                name="configurationList">
                     <template #enabled="props">
-                        {{ props.row.enabled ? $t('common.yes') : $t('common.no') }} 
+                        {{props.row.enabled ? $t('common.yes') : $t('common.no')}} 
                     </template>
                     <template #actions="props">
                         <button class="btn btn-sm btn-light" @click="edit(props.row)">
@@ -22,7 +21,7 @@
             <b-modal id="modalConfig" ref="modalConfig" :title="currentRow ? currentRow.name : ''" size="lg">
                 <div v-if="currentRow" class="row">
                     <div class="col-md-12">
-                        <label>{{ currentRow.description }}:</label>
+                        <label>{{currentRow.description}}:</label>
                     </div>
                     <div class="col-md-12">
                         <template v-if="currentRow.editor === 'TEXTAREA'">
@@ -45,10 +44,10 @@
                 <template #footer>
                     <div class="w-100 text-end">
                         <button class="btn btn-sm btn-outline-success" @click.prevent.stop="save">
-                            <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                            <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                         </button>
                         <button class="ms-1 btn btn-sm btn-outline-dark" @click="cancel">
-                            {{ $t('actions.cancel') }}
+                            {{$t('actions.cancel')}}
                         </button>
                     </div>
                 </template>

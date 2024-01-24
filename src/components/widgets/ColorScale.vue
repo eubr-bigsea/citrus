@@ -12,7 +12,7 @@
             </p>
         </span>
         <span v-else>{{displayValue}}</span>
-        <modal id="lookupModal" ref="modal" size="lg" :title="field.label"
+        <v-modal id="lookupModal" ref="modal" size="lg" :title="field.label"
                  :hide-header="true"
                  :cancel-title="$t('actions.cancel')" no-fade>
             <div class="color-select">
@@ -30,7 +30,7 @@
                     </b-button>
                 </div>
             </template>
-        </modal>
+        </v-modal>
     </div>
 </template>
 <script>

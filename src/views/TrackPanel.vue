@@ -1,7 +1,7 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{ $t('titles.track', 2) }}</h1>
+            <h1>{{$t('titles.track', 2)}}</h1>
         </div>
         <div class="card">
             <div class="card-body">
@@ -13,8 +13,8 @@
                                     Visualizar
                                 </b-dropdown-item>
                                 <b-dropdown-item v-if="hasAnyPermission(['APP_EDIT']) || isAdmin"
-                                    :to="{ name: 'editWorkflow', params: { id: item.id, platform: item.platform.id } }">
-                                    {{ $t('actions.edit') }}
+                                                 :to="{ name: 'editWorkflow', params: { id: item.id, platform: item.platform.id } }">
+                                    {{$t('actions.edit')}}
                                 </b-dropdown-item>
                                 <b-dropdown-item :to="{ name: 'trackParameter', params: { id: item.id } }">
                                     Execuções anteriores
@@ -24,25 +24,25 @@
                                 <router-link :to="{ name: 'trackParameter', params: { id: item.id } }">
                                     <img v-if="item.image" class="circle-image" :src="item.image" :alt="item.name">
                                     <div v-else class="big-letter">
-                                        {{ item.name.substring(0, 1).toUpperCase() }}
+                                        {{item.name.substring(0, 1).toUpperCase()}}
                                     </div>
                                 </router-link>
                             </div>
                             <div class="text text-center">
                                 <router-link :to="{ name: 'trackParameter', params: { id: item.id } }">
-                                    {{ item.name }}
+                                    {{item.name}}
                                 </router-link>
                             </div>
                         </div>
                     </div>
                     <div class="text-center">
                         <pager-component v-model="page" :records="records" :per-page="10" :options="options"
-                            class="pagination" @paginate="paginate" />
+                                         class="pagination" @paginate="paginate" />
                     </div>
                 </div>
                 <div v-else>
                     <v-server-table ref="trackPanelList" :columns="columns" :options="options" name="trackPanelList"
-                        @pagination="paginate">
+                                    @pagination="paginate">
                         <template #beforeTable>
                             <div class="ms-2">
                                 <div class="input-group mb-3">
@@ -50,30 +50,29 @@
                                         <span class="input-group-text"><font-awesome-icon icon="fa fa-search" /></span>
                                     </div>
                                     <input v-model="search" v-focus type="text" class="form-control"
-                                        :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
+                                           :placeholder="$t('track.whichTrack')" maxlength="60" @input="query">
                                 </div>
                             </div>
                         </template>
                         <template #id="props">
                             <router-link :to="{ name: 'trackParameter', params: { id: props.row.id } }">
-                                {{ props.row.id }}
+                                {{props.row.id}}
                             </router-link>
                         </template>
                         <template #image="props">
                             <img v-if="props.row.image" :src="props.row.image" alt="props.row.name" class="circle-image">
                             <div v-else class="big-letter">
-                                {{ props.row.name.substring(0, 1).toUpperCase() }}
+                                {{props.row.name.substring(0, 1).toUpperCase()}}
                             </div>
                         </template>
                         <template #name="props">
                             <router-link :to="{ name: 'trackParameter', params: { id: props.row.id } }">
-                                {{ props.row.name }}
+                                {{props.row.name}}
                             </router-link>
-                            <small v-if="props.row.description" class="break-word"><br>{{
-                                props.row.description }}</small>
+                            <small v-if="props.row.description" class="break-word"><br>{{props.row.description}}</small>
                         </template>
                         <template #updated="props">
-                            {{ $filters.formatJsonDate(props.row.updated) }}
+                            {{$filters.formatJsonDate(props.row.updated)}}
                         </template>
                         <!--
                                 <template slot="actions" slot-scope="props">

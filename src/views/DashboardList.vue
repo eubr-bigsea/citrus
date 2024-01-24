@@ -1,34 +1,34 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{ $t('titles.dashboard', 2) }}</h1>
+            <h1>{{$t('titles.dashboard', 2)}}</h1>
         </div>
         <div class="card">
             <div class="card-body">
                 <v-server-table ref="listTable" :columns="columns" :options="options" name="dashboardList">
                     <template #id="props">
                         <router-link :to="{ name: 'dashboardDetail', params: { id: props.row.id } }">
-                            {{ props.row.id }}
+                            {{props.row.id}}
                         </router-link>
                     </template>
                     <template #is_public="props">
                         <a v-if="props.row.is_public" :href="`${origin}/public/dashboard/${props.row.hash}`"
-                            target="_blank">
-                            {{ $t('common.publicLink') }}
+                           target="_blank">
+                            {{$t('common.publicLink')}}
                         </a>
-                        <span v-else>{{ $t('common.no') }}</span>
+                        <span v-else>{{$t('common.no')}}</span>
                     </template>
                     <template #title="props">
                         <router-link :to="{ name: 'dashboardDetail', params: { id: props.row.id } }">
-                            {{ props.row.title }}
+                            {{props.row.title}}
                         </router-link>
                     </template>
                     <template #updated="props">
-                        {{ $filters.formatJsonDate(props.row.updated) }}
+                        {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #actions="props">
                         <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ms-2 btn btn-sm btn-danger"
-                            @click="remove(props.row.id, props.row.title)">
+                                @click="remove(props.row.id, props.row.title)">
                             <font-awesome-icon icon="trash" />
                         </button>
                     </template>

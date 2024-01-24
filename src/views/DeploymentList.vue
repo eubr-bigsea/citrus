@@ -125,7 +125,7 @@ export default {
                 sortable: ['id', 'name', 'type', 'created', 'updated', 'current_status'],
                 filterable: ['id', 'description', 'type', 'created'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'

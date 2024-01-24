@@ -1,7 +1,8 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value" />
-        <textarea readonly :value="displayValue" class="form-control code bg-light " rows="4" @click.prevent="openModal" role="button"/>
+        <textarea readonly :value="displayValue" class="form-control code bg-light " rows="4"
+                  role="button" @click.prevent="openModal" />
         <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
             {{$t('property.editValue')}}
         </b-link>

@@ -7,29 +7,29 @@
             </template>
             <template #content>
                 <b-dropdown-item @click="handleToggleSelected(true)">
-                    {{ $t('dataExplorer.enableSelected') }}
+                    {{$t('dataExplorer.enableSelected')}}
                 </b-dropdown-item>
                 <b-dropdown-item @click="handleToggleSelected(false)">
-                    {{ $t('dataExplorer.disableSelected') }}
+                    {{$t('dataExplorer.disableSelected')}}
                 </b-dropdown-item>
                 <b-dropdown-item @click="handleRemoveSelected">
-                    {{ $t('dataExplorer.removeSelected') }}
+                    {{$t('dataExplorer.removeSelected')}}
                 </b-dropdown-item>
             </template>
         </dropdown-button>
         <div v-if="workflow.tasks" ref="stepsArea" class="step-scroll-area scroll-area" style="overflow-y: scroll;">
             <draggable class="list-group" ghost-class="ghost" handle=".step-drag-handle" :list="workflow.tasks"
-                :move="handleStepDrag" item-key="id" @start="drag = true" @end="endSortSteps">
+                       :move="handleStepDrag" item-key="id" @start="drag = true" @end="endSortSteps">
                 <template #item="{ element, index }">
                     <div :key="element.id" 
-                    class="list-group-item steps clearfix p-0" :title="element.name !== 'unnamed' ? element.name : ''"
-                    :style="{ 'border-left': '4px solid ' + element?.forms?.color?.value?.background }">
+                         class="list-group-item steps clearfix p-0" :title="element.name !== 'unnamed' ? element.name : ''"
+                         :style="{ 'border-left': '4px solid ' + element?.forms?.color?.value?.background }">
                         <Step :ref="setStepRefs" :step="element" :language="language" :attributes="attributes"
-                            :index="index" :protected="index <= 1 ? true : null"
-                            :schema="index > 0 && workflow.schema ? workflow.schema[index - 1] : null"
-                            :suggestion-event="suggestionEvent" :extended-suggestion-event="extendedSuggestionEvent"
-                            @edit="editStep(element)" @cancel="cancelEdit(element)" @update="update"
-                            @preview="preview(element)" v-bind="$attrs"/>
+                              :index="index" :protected="index <= 1 ? true : null"
+                              :schema="index > 0 && workflow.schema ? workflow.schema[index - 1] : null"
+                              :suggestion-event="suggestionEvent" :extended-suggestion-event="extendedSuggestionEvent"
+                              v-bind="$attrs" @edit="editStep(element)" @cancel="cancelEdit(element)"
+                              @update="update" @preview="preview(element)" />
                     </div>
                 </template>
             </draggable>
@@ -101,7 +101,7 @@ export default {
             changed && this.$emit('toggle-selected', value);
         },
         handleRemoveSelected() {
-            this.$emit('delete-many') 
+            this.$emit('delete-many'); 
             //[...this.stepRefs].filter(s => s.editableStep.selected)
             //    .map(s => s.editableStep));
         },

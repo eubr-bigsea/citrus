@@ -7,35 +7,35 @@
                         <div>
                             <h1 v-if="loaded" class="header-title">
                                 <h6 class="header-pretitle">
-                                    {{ $t('titles.job', 1) }} #{{ job.id }}
+                                    {{$t('titles.job', 1)}} #{{job.id}}
                                 </h6>
-                                {{ workflow.name }}
+                                {{workflow.name}}
                             </h1>
                         </div>
                         <div>
                             <router-link v-if="workflow.id"
-                                :to="{ name: 'editWorkflow', params: { id: workflow.id, platform: workflow.platform.id } }"
-                                class="btn btn-outline-primary d-print-none float-end btn-sm">
+                                         :to="{ name: 'editWorkflow', params: { id: workflow.id, platform: workflow.platform.id } }"
+                                         class="btn btn-outline-primary d-print-none float-end btn-sm">
                                 <font-awesome-icon icon="fa-chevron-left" />
-                                &nbsp; {{ $t('actions.back') }} -
-                                {{ $t('titles.workflow', 1) }} {{ job.workflow.id }}
+                                &nbsp; {{$t('actions.back')}} -
+                                {{$t('titles.workflow', 1)}} {{job.workflow.id}}
                             </router-link>
                             <button v-if="job.status === 'RUNNING' || job.status === 'PENDING' || job.status === 'WAITING'"
-                                class="btn btn-sm btn-outline-danger me-1 pull-right" :title="$t('actions.stop')"
-                                @click="stop(job.id)">
-                                <font-awesome-icon icon="stop" /> {{ $t('actions.stop') }}
+                                    class="btn btn-sm btn-outline-danger me-1 pull-right" :title="$t('actions.stop')"
+                                    @click="stop(job.id)">
+                                <font-awesome-icon icon="stop" /> {{$t('actions.stop')}}
                             </button>
                         </div>
                     </div>
-                    <div  style="overflow:hidden">
+                    <div style="overflow:hidden">
                         <b-tabs nav-class="custom-tab mb-0 ms-1">
                             <b-tab active :title="$t('titles.job')" :title-link-class="'small-nav-link'">
                                 <div>
                                     <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
-                                        :operations="operations" :version="job.id" :show-toolbar="false" :editable="false"
-                                        :shink="true" :loaded="loaded" :show-task-decoration="true" :initial-zoom=".85" 
-                                        @onclick-task="handleOnClickTask"
-                                        @onblur-selection="handleOnBlurSelection"/>
+                                             :operations="operations" :version="job.id" :show-toolbar="false" :editable="false"
+                                             :shink="true" :loaded="loaded" :show-task-decoration="true" :initial-zoom=".85" 
+                                             @onclick-task="handleOnClickTask"
+                                             @onblur-selection="handleOnBlurSelection" />
                                 </div>
                                 <div class="job-details">
                                     <b-card no-body>
@@ -43,9 +43,9 @@
                                             <b-tab active>
                                                 <template #title>
                                                     <div id="dtl-job-status"
-                                                        class="job-status-circle lemonade-job margin-right"
-                                                        :class="jobStatus" :title="job.status" />
-                                                    {{ $t('job.logs', 2) }}
+                                                         class="job-status-circle lemonade-job margin-right"
+                                                         :class="jobStatus" :title="job.status" />
+                                                    {{$t('job.logs', 2)}}
                                                 </template>
                                                 <div>
                                                     <div class="alert" :class="{
@@ -53,16 +53,16 @@
                                                         'alert-danger': job.status == 'ERROR',
                                                         'alert-warning': job.status == 'WAITING',
                                                     }">
-                                                        {{ job.status_text }}
+                                                        {{job.status_text}}
                                                     </div>
 
                                                     <div v-for="step in notPendingSteps" :key="step.id" class="job-step"
-                                                        :class="{ 'disabled': selectedTask.id && selectedTask.id !== step.task.id }">
+                                                         :class="{ 'disabled': selectedTask.id && selectedTask.id !== step.task.id }">
                                                         <div class="label"
-                                                            :class="step.logs[step.logs.length - 1].level.toLowerCase()">
-                                                            {{ $t(`juicer.log.${step.logs[step.logs.length - 1].level.toLowerCase()}`) }}
+                                                             :class="step.logs[step.logs.length - 1].level.toLowerCase()">
+                                                            {{$t(`juicer.log.${step.logs[step.logs.length - 1].level.toLowerCase()}`)}}
                                                         </div>
-                                                        <h2>{{ getTask(step.task.id).name }}</h2>
+                                                        <h2>{{getTask(step.task.id).name}}</h2>
 
                                                         <div v-for="log in step.logs" :key="log.id">
                                                             <p v-if="log.type === 'TEXT' || log.type === 'STATUS'">
@@ -76,9 +76,8 @@
                                                                     }"></span>
                                                                     -->
 
-                                                                <span
-                                                                    class="date">{{ $filters.formatJsonHourMinute(log.date) }}</span>
-                                                                <span class="info">{{ log.message }}</span>
+                                                                <span class="date">{{$filters.formatJsonHourMinute(log.date)}}</span>
+                                                                <span class="info">{{log.message}}</span>
                                                             </p>
                                                         </div>
                                                     </div>
@@ -114,37 +113,37 @@
                                             <b-tab v-if="job.exception_stack" :title="$t('titles.errorDetail')">
                                                 <div style="font-size:.8em">
                                                     <code>
-                                                            <pre>{{ job.exception_stack }}</pre>
-                                                        </code>
+                                                        <pre>{{job.exception_stack}}</pre>
+                                                    </code>
                                                 </div>
                                             </b-tab>
                                             <b-tab :title="$t('job.details', 2)">
                                                 <dl>
-                                                    <dt>{{ $t('common.date') }}</dt>
-                                                    <dd>{{ $filters.formatJsonDate(job.created) }}</dd>
-                                                    <dt>{{ $t('common.user.name') }}</dt>
-                                                    <dd>{{ job.user.name }} ({{ job.user.login }})</dd>
-                                                    <dt>{{ $t('titles.cluster') }}</dt>
-                                                    <dd>{{ job.cluster.name }}</dd>
+                                                    <dt>{{$t('common.date')}}</dt>
+                                                    <dd>{{$filters.formatJsonDate(job.created)}}</dd>
+                                                    <dt>{{$t('common.user.name')}}</dt>
+                                                    <dd>{{job.user.name}} ({{job.user.login}})</dd>
+                                                    <dt>{{$t('titles.cluster')}}</dt>
+                                                    <dd>{{job.cluster.name}}</dd>
                                                 </dl>
                                             </b-tab>
                                             <b-tab v-if="job.workflow" :title="$t('job.parameters', 2)">
                                                 <div v-for="ttask in job.workflow.tasks" :key="ttask.id" class="card">
                                                     <div class="card-body" style="overflow: auto">
-                                                        {{ ttask.name }} ({{ ttask.operation.name }})
+                                                        {{ttask.name}} ({{ttask.operation.name}})
                                                         <table class="table table-sm table-parameters">
                                                             <thead>
                                                                 <tr />
                                                                 <tr>
-                                                                    <th>{{ $t('job.parameters', 1) }}</th>
-                                                                    <th>{{ $t('job.values', 1) }}</th>
+                                                                    <th>{{$t('job.parameters', 1)}}</th>
+                                                                    <th>{{$t('job.values', 1)}}</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 <tr v-for="(v, k, i) in ttask.forms" :key="i">
-                                                                    <td>{{ v.label ? v.label : k }}</td>
+                                                                    <td>{{v.label ? v.label : k}}</td>
                                                                     <td>
-                                                                        {{ v.labelValue ? v.labelValue : v.value }}
+                                                                        {{v.labelValue ? v.labelValue : v.value}}
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
@@ -210,9 +209,9 @@
                                     <div class="col-md-3 pt-3 result-area">
                                         <b-list-group>
                                             <b-list-group-item v-for="(res, taskId) in allResults" :key="taskId" button
-                                                href="#" @click.prevent="showResult(taskId)">
-                                                {{ res[0].value.task.name }}
-                                                <br><em><small>{{ res[0].value.task.operation.name }}</small></em>
+                                                               href="#" @click.prevent="showResult(taskId)">
+                                                {{res[0].value.task.name}}
+                                                <br><em><small>{{res[0].value.task.operation.name}}</small></em>
                                             </b-list-group-item>
                                         </b-list-group>
                                     </div>
@@ -220,39 +219,37 @@
                                         <div v-for="(res, taskId) in allResults" :key="taskId" class="row">
                                             <div class="col-md-12">
                                                 <b-card :id="`task-${taskId}`" :header="getTask(taskId).name" class="mt-2"
-                                                    header-bg-variant="light" border-variant="info">
+                                                        header-bg-variant="light" border-variant="info">
                                                     <div v-for="(result, inx) in res" :key="inx">
                                                         <div v-if="result.type === 'result'" class="col-md-12 lemonade">
                                                             <div v-if="result.value.logs.find(s => s.type === 'HTML' || s.type === 'IMAGE')"
-                                                                :header="result.value.task.name" class="mt-2"
-                                                                header-bg-variant="light" border-variant="info">
+                                                                 :header="result.value.task.name" class="mt-2"
+                                                                 header-bg-variant="light" border-variant="info">
                                                                 <div v-for="log in result.value.logs" :key="log.id"
-                                                                    class="ps-5 mt-2">
+                                                                     class="ps-5 mt-2">
                                                                     <span v-if="log.type === 'HTML'">
                                                                         <div class="html-div" v-html="log.message" />
                                                                     </span>
                                                                     <div v-else-if="log.type === 'IMAGE'"
-                                                                        class="image-result">
+                                                                         class="image-result">
                                                                         <img :src="'data:image/png;base64,' + log.message">
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div v-if="result.value.logs.find(s => s.type === 'OBJECT')"
-                                                                :header="result.value.task.name" class="mt-2"
-                                                                header-bg-variant="light" border-variant="info">
+                                                                 :header="result.value.task.name" class="mt-2"
+                                                                 header-bg-variant="light" border-variant="info">
                                                                 <h1>Objeto</h1>
                                                                 <div v-for="log in result.value.logs" :key="log.id"
-                                                                    class="ps-5 mt-2">
-                                                                    <span
-                                                                        v-if="log.type === 'OBJECT' && log.message.attributes">
+                                                                     class="ps-5 mt-2">
+                                                                    <span v-if="log.type === 'OBJECT' && log.message.attributes">
                                                                         <v-client-table ref="jobList"
-                                                                            :data="log.message.rows"
-                                                                            :columns="log.message.attributes.map(a => a.label)"
-                                                                            :options="sampleOptions">
-                                                                            <template
-                                                                                v-for="header in log.message.attributes.map(a => a.label)"
-                                                                                #[`h__${header}`]="{ }">
-                                                                                <span :key="header">{{ header }}</span>
+                                                                                        :data="log.message.rows"
+                                                                                        :columns="log.message.attributes.map(a => a.label)"
+                                                                                        :options="sampleOptions">
+                                                                            <template v-for="header in log.message.attributes.map(a => a.label)"
+                                                                                      #[`h__${header}`]="{ }">
+                                                                                <span :key="header">{{header}}</span>
                                                                             </template>
                                                                         </v-client-table>
                                                                     </span>
@@ -260,9 +257,8 @@
                                                             </div>
                                                         </div>
                                                         <div v-if="result.type === 'visualization'"
-                                                            class="col-md-12 lemonade">
-                                                            <caipirinha-visualization
-                                                                :url="getCaipirinhaLink(job.id, result.value.task.id, 0)" />
+                                                             class="col-md-12 lemonade">
+                                                            <caipirinha-visualization :url="getCaipirinhaLink(job.id, result.value.task.id, 0)" />
                                                         </div>
                                                     </div>
                                                 </b-card>
@@ -273,7 +269,7 @@
                             </b-tab>
 
                             <b-tab :title="$t('job.sourceCode')" :title-link-class="'small-nav-link'"
-                                @click="showSourceCode = 1">
+                                   @click="showSourceCode = 1">
                                 <b-card class="mt-3">
                                     <SourceCode v-if="showSourceCode" :job="job.id" />
                                 </b-card>

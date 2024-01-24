@@ -11,7 +11,7 @@
                               v-model="code"
                               :highlight="highlighter"
                               class="prism-editor-wrapper-disabled code2"
-                              :readonly="false" @input="handleInput"/>
+                              :readonly="false" @input="handleInput" />
             </div>
             <b-link variant="sm"
                     @click.prevent="showModal">
@@ -123,21 +123,22 @@ export default {
         }
     },
     methods: {
+        
+        // handleInput() {
+        //     const prismEditor = this.$refs.prismEditor;
+        //     if (prismEditor.history.offset > 0) {
+        //         const { selectionStart, selectionEnd } = prismEditor.history.stack.slice(-1)[0];
+        //         /* hack to move cursor to correct position when using modal */
+        //         this.$nextTick(() => {
+        //             window.setTimeout(() => {
+        //                 prismEditor.$refs.textarea.setSelectionRange(
+        //                     selectionStart, selectionEnd);
+        //             }, 1);
+        //         });
+        //     }
+        // },
         handleInput() {
-            const prismEditor = this.$refs.prismEditor;
-            if (prismEditor.history.offset > 0) {
-                const { selectionStart, selectionEnd } = prismEditor.history.stack.slice(-1)[0];
-                /* hack to move cursor to correct position when using modal */
-                this.$nextTick(() => {
-                    window.setTimeout(() => {
-                        prismEditor.$refs.textarea.setSelectionRange(
-                            selectionStart, selectionEnd);
-                    }, 1);
-                });
-            }
-        },
-        handleInput() {
-            this.triggerUpdateEvent(this.message, this.field, this.code)
+            this.triggerUpdateEvent(this.message, this.field, this.code);
         },
         okModal() {
             this.triggerUpdateEvent(this.message, this.field, this.code);

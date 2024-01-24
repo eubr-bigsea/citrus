@@ -6,26 +6,26 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h6 class="header-pretitle">
-                                {{ $t('titles.dashboard', 1) }}
+                                {{$t('titles.dashboard', 1)}}
                             </h6>
                             <h2 v-if="publicRoute">
-                                {{ dashboard.title }}
+                                {{dashboard.title}}
                             </h2>
                             <input-header v-else v-model="dashboard.title" />
                         </div>
                         <div class="d-print-none">
                             <div v-if="isLoggedIn" class="btn-group float-end" role="group">
                                 <button class="btn btn-sm btn-outline-dark" @click.stop="save">
-                                    <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                                    <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                                 </button>
                                 <button class="btn btn-sm btn-outline-dark" :title="$t('actions.showProperties')"
-                                    @click.prevent="showProperties">
+                                        @click.prevent="showProperties">
                                     <font-awesome-icon icon="fa fa-cogs" />
                                 </button>
                             </div>
                             <button v-if="!publicRoute" class="btn btn-sm btn-success me-2"
-                                :title="$t('actions.showProperties')" @click.prevent="addText">
-                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('dashboard.markupVisualization') }}
+                                    :title="$t('actions.showProperties')" @click.prevent="addText">
+                                <font-awesome-icon icon="fa fa-plus" /> {{$t('dashboard.markupVisualization')}}
                             </button>
                         </div>
                     </div>
@@ -36,14 +36,15 @@
                                 <div class="card-body">
                                     <div v-if="layout">
                                         <grid-layout ref="grid" :layout="layout" :col-num="12" :row-height="30"
-                                            :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
-                                            :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
-                                            :use-css-transforms="true" :prevent-collision="false"
-                                            @layout-updated="layoutUpdatedEvent">
+                                                     :is-draggable="!publicRoute" :is-resizable="!publicRoute" :is-mirrored="false"
+                                                     :is-responsive="true" :vertical-compact="false" :margin="[2, 2]"
+                                                     :use-css-transforms="true" :prevent-collision="false"
+                                                     @layout-updated="layoutUpdatedEvent">
                                             <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
-                                                :w="item.w" :h="item.h" :i="item.i" @move="moveEvent" @moved="movedEvent">
+                                                       :w="item.w" :h="item.h" :i="item.i" @move="moveEvent"
+                                                       @moved="movedEvent">
                                                 <caipirinha-visualization :url="item.url" :public-route="publicRoute"
-                                                    @on-save="handleSaveMarkdown" @on-delete="handleDeleteMarkdown" />
+                                                                          @on-save="handleSaveMarkdown" @on-delete="handleDeleteMarkdown" />
                                             </grid-item>
                                         </grid-layout>
                                     </div>
@@ -53,20 +54,20 @@
                     </div>
                 </div>
                 <div v-else>
-                    <h2>{{ $t('common.noData') }}</h2>
+                    <h2>{{$t('common.noData')}}</h2>
                 </div>
             </div>
         </div>
         <b-modal id="dashboardProperties" ref="dashboardProperties" size="lg" button-size="sm"
-            :title="$t('titles.property', 2)" :ok-only="true">
+                 :title="$t('titles.property', 2)" :ok-only="true">
             <b-form @submit="save">
                 <b-form-group :label="$t('common.title', 1) + ':'">
                     <b-form-input v-model="dashboard.title" required />
                 </b-form-group>
                 <b-form-checkbox v-model="dashboard.is_public">
-                    {{ $t('dashboard.public') }}
+                    {{$t('dashboard.public')}}
                     <br>
-                    <small><em>{{ $t('dashboard.publicExplanation') }}</em></small>
+                    <small><em>{{$t('dashboard.publicExplanation')}}</em></small>
                 </b-form-checkbox>
                 <b-input-group v-if="dashboard.is_public" class="mt-3">
                     <template #append>

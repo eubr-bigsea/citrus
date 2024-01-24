@@ -20,7 +20,7 @@ const Template = (args, { argTypes }) => ({
     methdos: {
         handleUpdate(a, b, c, d){
             //console.debug(field, value);
-            console.debug(a, b, c, d)
+            console.debug(a, b, c, d);
         }
     },
     template: `<date-component v-bind="$props" @update-form-field-value="handleUpdate"/>`,

@@ -60,7 +60,7 @@ export default {
                 },
                 sortable: ['name', 'id', 'created'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'

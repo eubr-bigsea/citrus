@@ -14,25 +14,26 @@
                 </div>
             </div>
             <b-link variant="sm" @click.prevent="openModal">
-                {{ $t('actions.chooseOption') }}
+                {{$t('actions.chooseOption')}}
             </b-link>
             |
             <b-link variant="sm" @click.prevent="clear">
-                {{ $t('actions.clear') }}
+                {{$t('actions.clear')}}
             </b-link>
         </span>
-        <span v-else>{{ displayValue }}</span>
+        <span v-else>{{displayValue}}</span>
 
         <!---->
-        <modal id="lookupModal" ref="modal" size="xl" :title="field.label" :hide-header="true"
-            :cancel-title="$t('actions.cancel')" no-fade>
+        <v-modal id="lookupModal" ref="modal" size="xl" :title="field.label"
+                 :hide-header="true"
+                 :cancel-title="$t('actions.cancel')" no-fade>
             <b-tabs>
                 <b-tab title="Matplotlib">
                     <div class="color-select">
                         <div v-for="(palette, inx) in palettes" :key="palette[0]" class="palette clearfix"
-                            @click="select(inx, 'palettes')">
+                             @click="select(inx, 'palettes')">
                             <div class="palette-name">
-                                {{ palette[0] }}
+                                {{palette[0]}}
                             </div>
                             <div v-for="color in palette[1]" :key="color">
                                 <div class="color" :style="{ 'background-color': color }" />
@@ -43,9 +44,9 @@
                 <b-tab title="Color blind">
                     <div class="color-select">
                         <div v-for="(palette, inx) in colorBlindPalettes" :key="palette[0]" class="palette clearfix"
-                            @click="select(inx, 'colorBlindPalettes')">
+                             @click="select(inx, 'colorBlindPalettes')">
                             <div class="palette-name">
-                                {{ palette[0] }}
+                                {{palette[0]}}
                             </div>
                             <div v-for="color in palette[1]" :key="color">
                                 <div class="color" :style="{ 'background-color': color }" />
@@ -56,9 +57,9 @@
                 <b-tab title="Wes Anderson Palettes">
                     <div class="color-select">
                         <div v-for="(palette, inx) in wesAndersonPalettes" :key="palette[0]" class="palette clearfix"
-                            @click="select(inx, 'wesAndersonPalettes')">
+                             @click="select(inx, 'wesAndersonPalettes')">
                             <div class="palette-name">
-                                {{ palette[0] }}
+                                {{palette[0]}}
                             </div>
                             <div v-for="color in palette[1]" :key="color">
                                 <div class="color" :style="{ 'background-color': color }" />
@@ -70,11 +71,11 @@
             <template #footer>
                 <div class="w-100 text-end">
                     <b-button variant="secondary" class="btn-sm " @click="cancelClicked">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-button>
                 </div>
             </template>
-        </modal>
+        </v-modal>
     </div>
 </template>
 <script>
@@ -190,6 +191,9 @@ export default {
             showModal: false,
         };
     },
+    computed: {
+        
+    },
     mounted() {
         this.displayValue = this.modelValue || this.value;
         if (this.displayValue === null || this.displayValue === undefined) {
@@ -197,9 +201,6 @@ export default {
             this.triggerUpdateEvent(this.message, this.field, this.internalValue);
             this.displayValue = this.internalValue;
         }
-    },
-    computed: {
-        
     },
     methods: {
         clear() {

@@ -1,94 +1,94 @@
 <template>
-    <draggable ghost-class="ghost" handle=".drag-handle" :list="xSeries" direction="horizontal" class="draggable-area"
-        @start="drag = true" @end="drag = false" item-key="id">
+    <draggable ghost-class="ghost" handle=".drag-handle" :list="xSeries" direction="horizontal"
+               class="draggable-area"
+               item-key="id" @start="drag = true" @end="drag = false">
         <template #item="{ element, index }">
             <div :key="index" class="drag-handle">
                 <dropdown-button :id="`x-series-${index}`" ref="setXDimensionDDRef" size="sm small-dd-title"
-                    class="mt-2 me-1 pull-right" :variant="element.attribute ? 'outline-secondary' : 'outline-danger'"
-                    :keep-open="true">
+                                 class="mt-2 me-1 pull-right" :variant="element.attribute ? 'outline-secondary' : 'outline-danger'"
+                                 :keep-open="true">
                     <template #button-content>
-                        {{ getDisplayXDimensionLabel(element, 'Selecione...', 'grupos', 'tamanho',
-                            'Categórico')
-                        }}
+                        {{getDisplayXDimensionLabel(element, 'Selecione...', 'grupos', 'tamanho',
+                                                    'Categórico')}}
                     </template>
                     <template #content>
                         <b-dropdown-form form-class="right-drop-form">
                             <div class="row series-form">
                                 <div class="col-6">
                                     <b-form-group :label="$t('common.attribute', 1) + ':'">
-                                        <chart-builder-attribute-selector :attributes="attributes"
-                                            v-model="element.attribute" />
+                                        <chart-builder-attribute-selector v-model="element.attribute"
+                                                                          :attributes="attributes" />
                                     </b-form-group>
                                     <b-form-group v-if="!pieFamily" label="Rótulo para legenda:">
                                         <b-form-input v-model="element.displayLabel" type="text"
-                                            class="form-control form-control-sm" maxlength="100" debounce="500" />
+                                                      class="form-control form-control-sm" maxlength="100" debounce="500" />
                                     </b-form-group>
 
                                     <div v-if="isNumeric(element.attribute)">
                                         <b-form-group label="Agrupamento (bins):">
                                             <select v-model="element.binning" tabindex="-1"
-                                                class="form-select form-select-sm">
+                                                    class="form-select form-select-sm">
                                                 <option v-for="value, k in binningOptions" :key="k" :value="k">
-                                                    {{ value }}
+                                                    {{value}}
                                                 </option>
                                             </select>
                                         </b-form-group>
                                         <b-form-group v-if="element.binning === 'EQUAL_INTERVAL'"
-                                            label="Número de grupos (bins):">
+                                                      label="Número de grupos (bins):">
                                             <b-form-input v-model.number="element.bins" type="number"
-                                                class="form-control form-control-sm w-25" max="1000" min="1"
-                                                debounce="500" />
+                                                          class="form-control form-control-sm w-25" max="1000" min="1"
+                                                          debounce="500" />
                                         </b-form-group>
                                         <b-form-group v-if="element.binning === 'FIXED_SIZE'" label="Tamanho dos grupos:">
                                             <b-form-input v-model.number="element.bin_size" type="number"
-                                                class="form-control form-control-sm w-25" max="1000" min="1"
-                                                debounce="500" />
+                                                          class="form-control form-control-sm w-25" max="1000" min="1"
+                                                          debounce="500" />
                                         </b-form-group>
                                         <b-form-group v-if="element.binning === 'QUANTILES'"
-                                            label="Quantis (inteiros separados por vírgula):">
+                                                      label="Quantis (inteiros separados por vírgula):">
                                             <b-form-input v-model="element.quantiles" type="text"
-                                                class="form-control form-control-sm w-100" max="1000" min="1"
-                                                debounce="500" />
+                                                          class="form-control form-control-sm w-100" max="1000" min="1"
+                                                          debounce="500" />
                                         </b-form-group>
 
                                         <b-form-group v-if="false" label="Computação:">
                                             <select v-model="element.compute" class="form-select form-select-sm">
-                                                <option></option>
+                                                <option />
                                                 <option v-for="value, k in computeOptions" :key="k" :value="k">
-                                                    {{ value }}
+                                                    {{value}}
                                                 </option>
                                             </select>
                                         </b-form-group>
                                         <b-form-group v-if="!pieFamily" label="Multiplicar:">
                                             <b-form-input v-model.number="element.multiplier" type="number"
-                                                class="form-control form-control-sm w-25" max="1000000000000" min="1"
-                                                debounce="500" />
+                                                          class="form-control form-control-sm w-25" max="1000000000000" min="1"
+                                                          debounce="500" />
                                         </b-form-group>
                                         <b-form-group label="Casas decimais:">
                                             <b-form-input v-model.number="element.decimal_places" type="number"
-                                                class="form-control form-control-sm w-25" max="6" min="0" debounce="500" />
+                                                          class="form-control form-control-sm w-25" max="6" min="0" debounce="500" />
                                         </b-form-group>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <b-form-group v-if="!pieFamily" label="Tratar valores vazios:">
-                                        <select class="form-select form-select-sm" v-model="element.handleEmpty">
+                                        <select v-model="element.handleEmpty" class="form-select form-select-sm">
                                             <option v-for="value, k in handleEmptyOptions" :key="k" :value="k">
-                                                {{ value }}
+                                                {{value}}
                                             </option>
                                         </select>
                                     </b-form-group>
                                     <b-form-group label="Ordenação:">
                                         <select v-model="element.sorting" class="form-select form-select-sm">
                                             <option v-for="value, k in sorting" :key="k" :value="k">
-                                                {{ value }}
+                                                {{value}}
                                             </option>
                                         </select>
                                     </b-form-group>
 
                                     <b-form-group label="Limitar qtde. de valores:">
                                         <input v-model.number="element.max_displayed" type="number"
-                                            class="form-control form-control-sm">
+                                               class="form-control form-control-sm">
                                     </b-form-group>
                                     <b-form-group v-if="element.max_displayed !== 0">
                                         <b-form-checkbox v-model="element.group_others">
@@ -96,18 +96,18 @@
                                         </b-form-checkbox>
                                     </b-form-group>
                                     <b-form-group v-if="element.max_displayed !== 0 && element.group_others"
-                                        label="Nome para 'outros valores'">
+                                                  label="Nome para 'outros valores'">
                                         <input v-model="element.label_others" type="text"
-                                            class="form-control form-control-sm">
+                                               class="form-control form-control-sm">
                                     </b-form-group>
                                     <template v-if="!pieFamily">
                                         <b-form-group label="Prefixo:">
                                             <b-form-input v-model="element.prefix" type="text"
-                                                class="form-control form-control-sm" maxlength="20" debounce="500" />
+                                                          class="form-control form-control-sm" maxlength="20" debounce="500" />
                                         </b-form-group>
                                         <b-form-group v-if="!pieFamily" label="Sufixo:">
                                             <b-form-input v-model="element.suffix" type="text"
-                                                class="form-control form-control-sm" maxlength="20" debounce="500" />
+                                                          class="form-control form-control-sm" maxlength="20" debounce="500" />
                                         </b-form-group>
                                     </template>
                                     <!-- FIXME 
@@ -130,8 +130,8 @@
                                 </div>
                                 <div class="col-12">
                                     <b-button size="sm" variant="danger" class="float-end mt-2"
-                                        @click="emit('onDelete', element, index, $event)">
-                                        {{ $t('actions.delete') }}
+                                              @click="emit('onDelete', element, index, $event)">
+                                        {{$t('actions.delete')}}
                                     </b-button>
                                 </div>
                             </div>
@@ -160,7 +160,7 @@ const props = defineProps({
     type: { type: String, required: true },
     x: { type: Object, required: true },
     y: { type: Object, required: true },
-})
+});
 
 const shapes = [
     { name: '', label: 'Sólido', icon: 'solid' },
@@ -195,14 +195,14 @@ const binningOptions = {
     NONE: 'Nenhuma transformação',
     QUANTILES: 'Quantis (em %)',
     CATEGORICAL: 'Tratar valores como categóricos',
-}
+};
 
 const xSeries = defineModel('xSeries');
 const emit = defineEmits(['onChange', 'onDelete']);
 
 const handleChange = (args) => {
     emit('onChange', args);
-}
+};
 const isNumeric = (attributeName) => {
     const b = !!props.attributes && attributesMap[attributeName] &&
         attributesMap[attributeName].numeric;
@@ -236,18 +236,18 @@ const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) =
         return obj.attribute;
     }
     switch (obj.binning) {
-        case 'EQUAL_INTERVAL':
-            return `${obj.attribute} (${obj.bins} ${bins})`;
-        case 'FIXED_SIZE':
-            return `${obj.attribute} (${bins} ${size} ${obj.bin_size} )`;
-        case 'QUANTILES':
-            return `${obj.attribute} (quantis informados)`;
-        case 'NONE':
-            return obj.attribute;
-        case 'CATEGORICAL':
-            return `${obj.attribute} (${categorical})`;
-        default:
-            return obj.attribute;
+    case 'EQUAL_INTERVAL':
+        return `${obj.attribute} (${obj.bins} ${bins})`;
+    case 'FIXED_SIZE':
+        return `${obj.attribute} (${bins} ${size} ${obj.bin_size} )`;
+    case 'QUANTILES':
+        return `${obj.attribute} (quantis informados)`;
+    case 'NONE':
+        return obj.attribute;
+    case 'CATEGORICAL':
+        return `${obj.attribute} (${categorical})`;
+    default:
+        return obj.attribute;
     }
 };
 </script>

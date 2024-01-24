@@ -1,13 +1,12 @@
 <template>
-    <button class="btn dropdown-toggle" :class="buttonClass" @click="toggleDropdown($event)"
-        :aria-expanded="isDropdownOpen.toString()" ref="button" v-bind="$attrs">
+    <button ref="button" class="btn dropdown-toggle" :class="buttonClass"
+            :aria-expanded="isDropdownOpen.toString()" v-bind="$attrs" @click="toggleDropdown($event)">
         <slot name="button-content">
-            {{ text }}
+            {{text}}
         </slot>
     </button>
-    <ul class="dropdown-menu" role="menu" ref="content" :class="{ show: isDropdownOpen }">
-        <slot name="content">
-        </slot>
+    <ul ref="content" class="dropdown-menu" role="menu" :class="{ show: isDropdownOpen }">
+        <slot name="content" />
     </ul>
 </template>  
 <script setup>
@@ -31,7 +30,7 @@ const buttonClass = computed(() => {
     let result = (props.variant) ? `btn-${props.variant}` : '';
     result += (props.size) ? ` btn-${props.size}` : '';
     result += (props.noCaret) ? ' dropdown-toggle-no-caret' : '';
-    return result
+    return result;
 });
 
 const content = ref();
