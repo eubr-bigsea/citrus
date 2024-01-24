@@ -45,7 +45,7 @@ export default {
         options: { type: Object, required: true },
         readOnly: false,
         value: '',
-        attributes: ['name', 'age']
+        attributes: [{name:'name'}, {name:'age'}]
     },
 };
 
@@ -117,6 +117,18 @@ export const WithAxis = {
         attributes: attributes
     }
 };
+export const BarChart = {
+    render: (args) => Template(args),
+    args: {
+        x_axis: field1.x_axis,
+        y_axis: field1.y_axis,
+        x: field1.x,
+        y: field1.y,
+        type: 'bar',
+        geo: {},
+        attributes: attributes
+    }
+};
 export const PieChart = {
     render: (args) => Template(args),
     args: {
@@ -139,7 +151,13 @@ export const MapChart = {
         y: field1.y,
         type: 'scattermapbox',
 
-        attributes: ['latitude', 'longitude', 'message', 'value', 'color'],
+        attributes: [
+            {name: 'latitude', type: 'FLOAT'}, 
+            {name: 'longitude', type: 'FLOAT'}, 
+            {name: 'message', type: 'CHARACTER'}, 
+            {name: 'value', type: 'FLOAT'}, 
+            {name: 'color', type: 'CHARACTER'}
+        ],
 
         geo: {
             latitude: 'latitude',
