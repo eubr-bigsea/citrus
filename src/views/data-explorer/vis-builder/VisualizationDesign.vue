@@ -5,41 +5,41 @@
                 <h6>Construtor de visualizações</h6>
                 <form class="clearfix visualization-form">
                     <div data-test="basic-options-section">
-                        <label>{{$t('common.name')}}:</label>
+                        <label>{{ $t('common.name') }}:</label>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                               :placeholder="$t('common.name')" maxlength="100">
+                            :placeholder="$t('common.name')" maxlength="100">
 
                         <label for="">Fonte de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
-                                    v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
-                                    :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
-                                    @input="getAttributeList">
-                            <template #no-options="{}">
+                            v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
+                            :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
+                            @input="getAttributeList">
+                            <template #no-options="{ }">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{option.id}}</span> - {{option.name}}
+                                    <span class="span-id">{{ option.id }}</span> - {{ option.name }}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{option.id}} - {{option.name}}
+                                    {{ option.id }} - {{ option.name }}
                                 </div>
                             </template>
                         </vue-select>
 
-                        <label>{{$t('titles.cluster')}}: </label>
+                        <label>{{ $t('titles.cluster') }}: </label>
                         <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                                  :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
+                            :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{name}}<br>
-                                <small><em>{{description}}</em></small>
+                                {{ name }}<br>
+                                <small><em>{{ description }}</em></small>
                             </template>
                         </v-select>
                         <div class="mt-2 ">
                             <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-end"
-                                        size="sm" no-caret>
+                                size="sm" no-caret>
                                 <template #button-content>
                                     <font-awesome-icon icon="ellipsis-h" />
                                 </template>
@@ -53,12 +53,12 @@
                                 </b-dropdown-item>
                             </b-dropdown>
                             <b-button variant="primary" size="sm" class="float-end mt-2" data-test="save"
-                                      @click="saveWorkflow">
-                                <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
+                                @click="saveWorkflow">
+                                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
                             </b-button>
-                            <b-button size="sm" variant="outline-secondary" class="float-end mt-2 me-1"
-                                      data-test="refresh" @click.prevent="loadData">
-                                <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
+                            <b-button size="sm" variant="outline-secondary" class="float-end mt-2 me-1" data-test="refresh"
+                                @click.prevent="loadData">
+                                <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
                             </b-button>
                             <!--
                         <router-link class="btn btn-sm btn-outline-secondary ms-1" :to="{ name: 'index-explorer' }"
@@ -69,42 +69,62 @@
                         </div>
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top scroll-area">
-                        |{{ options.title }}|
-                        <chart-builder-options v-model="options" :attributes="attributes" :chart-type="visualizationObj.type.value"
-                                               data-test="options-section" @update-chart="updateChart" 
-                                               v-model:title="options.title.value"/>
+                        <chart-builder-options v-model="options" :attributes="attributes"
+                            :chart-type="visualizationObj.type.value" data-test="options-section"
+                            @update-chart="updateChart" v-model:title="options.title.value"
+                            v-model:type="options.type.value" v-model:displayLegend="options.display_legend.value"
+                            v-model:template="options.template.value" v-model:palette="options.palette.value"
+                            v-model:colorAttribute="options.color_attribute.value"
+                            v-model:sizeAttribute="options.size_attribute.value"
+                            v-model:colorScale="options.color_scale.value"
+                            v-model:numberFormat="options.number_format.value" v-model:opacity="options.opacity.value"
+                            v-model:fillOpacity="options.fill_opacity.value" v-model:hole="options.hole.value"
+                            v-model:smoothing="options.smoothing.value" v-model:scatterColor="options.scatter_color.value"
+                            v-model:scatterSize="options.scatter_size.value" v-model:width="options.width.value"
+                            v-model:height="options.height.value" v-model:autoMargin="options.auto_margin.value"
+                            v-model:topMargin="options.top_margin.value" v-model:leftMargin="options.left_margin.value"
+                            v-model:bottomMargin="options.bottom_margin.value" v-model:limit="options.limit.value"
+                            v-model:filter="options.filter.value" v-model:subgraph="options.subgraph.value"
+                            v-model:subgraphOrientation="options.subgraph_orientation.value"
+                            v-model:animation="options.animation.value" v-model:rightMargin="options.right_margin.value"
+                            v-model:textInfo="options.text_info.value" v-model:textPosition="options.text_position.value" />
                     </div>
                 </form>
             </div>
         </div>
         <div v-if="visualizationObj" class="options-main">
+            <div class="clearfix " v-if="visualizationObj">
+                <div>{{ visualizationObj.x }}</div>
+                <div>{{ visualizationObj.y }}</div>
+                <div>{{ visualizationObj.x_axis }}</div>
+                <div>{{ visualizationObj.y_axis }}</div>
+            </div>
             <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
-                                :chart-type="visualizationObj.type.value" :value="axis"
-                                
-                v-model:xLabel="editableVisualization.x_axis.value.label"
-                v-model:xLowerBound="editableVisualization.x_axis.value.lowerBound"
-                v-model:xUpperBound="editableVisualization.x_axis.value.upperBound"
-                v-model:xLogScale="editableVisualization.x_axis.value.logScale"
-                v-model:xDisplay="editableVisualization.x_axis.value.display"
-                v-model:xDisplayLabel="editableVisualization.x_axis.value.displayLabel"
-                v-model:xPrefix="editableVisualization.x_axis.value.prefix"
-                v-model:xSuffix="editableVisualization.x_axis.value.suffix"
-
-                v-model:yLabel="editableVisualization.y_axis.value.label"
-                v-model:yLowerBound="editableVisualization.y_axis.value.lowerBound"
-                v-model:yUpperBound="editableVisualization.y_axis.value.upperBound"
-                v-model:yLogScale="editableVisualization.y_axis.value.logScale"
-                v-model:yDisplay="editableVisualization.y_axis.value.display"
-                v-model:yDisplayLabel="editableVisualization.y_axis.value.displayLabel"
-                v-model:yPrefix="editableVisualization.y_axis.value.prefix"
-                v-model:ySuffix="editableVisualization.y_axis.value.suffix"
-                                />
+                :type="visualizationObj.type.value" :value="axis" v-model:xLabel="visualizationObj.x_axis.value.label"
+                v-model:x="visualizationObj.x.value" v-model:y="visualizationObj.y.value"
+                v-model:xLowerBound="visualizationObj.x_axis.value.lowerBound"
+                v-model:xUpperBound="visualizationObj.x_axis.value.upperBound"
+                v-model:xLogScale="visualizationObj.x_axis.value.logScale"
+                v-model:xDisplay="visualizationObj.x_axis.value.display"
+                v-model:xDisplayLabel="visualizationObj.x_axis.value.displayLabel"
+                v-model:xPrefix="visualizationObj.x_axis.value.prefix"
+                v-model:xSuffix="visualizationObj.x_axis.value.suffix" v-model:yLabel="visualizationObj.y_axis.value.label"
+                v-model:yLowerBound="visualizationObj.y_axis.value.lowerBound"
+                v-model:yUpperBound="visualizationObj.y_axis.value.upperBound"
+                v-model:yLogScale="visualizationObj.y_axis.value.logScale"
+                v-model:yDisplay="visualizationObj.y_axis.value.display"
+                v-model:yDisplayLabel="visualizationObj.y_axis.value.displayLabel"
+                v-model:yPrefix="visualizationObj.y_axis.value.prefix"
+                v-model:ySuffix="visualizationObj.y_axis.value.suffix" v-model:latitude="visualizationObj.latitude"
+                v-model:longitude="visualizationObj.longitude" v-model:colorAttribute="visualizationObj.color_attribute"
+                v-model:sizeAttribute="visualizationObj.size_attribute"
+                v-model:textAttribute="visualizationObj.text_attribute" />
             <div class="chart">
                 <div class="chart-builder-visualization" style="height: 75vh">
                     <div v-if="display && plotlyData" ref="chart">
-                        <plotly :key="plotVersion" ref="plotly" :options="chartOptions"
-                                :data="plotlyData.data" :layout="plotlyData.layout" :frames="plotlyData.frames" :watch-shallow="true"
-                                data-test="visualization" />
+                        <plotly :key="plotVersion" ref="plotly" :options="chartOptions" :data="plotlyData.data"
+                            :layout="plotlyData.layout" :frames="plotlyData.frames" :watch-shallow="true"
+                            data-test="visualization" />
                         <!--
                         <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData.layout }}</small>
                             -->
@@ -136,7 +156,7 @@
                     -->
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
-                {{$t('common.wait')}}
+                {{ $t('common.wait') }}
             </div>
         </div>
     </div>
@@ -150,7 +170,7 @@ import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
 import { useI18n } from 'vue-i18n'
 
 
-import { debounce, deepToRaw} from "@/util.js";
+import { debounce, deepToRaw } from "@/util.js";
 ;
 import ExpressionEditor from '@/components/widgets/ExpressionEditor.vue';
 
@@ -168,7 +188,7 @@ import { toPng } from 'html-to-image';
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
 const route = vm.proxy.$route;
-const progress = {start: ()=> {}, finish: ()=> {} }; //vm.proxy.$Progress;
+const progress = { start: () => { }, finish: () => { } }; //vm.proxy.$Progress;
 const store = vm.proxy.$store;
 
 const plotVersion = ref(0);
@@ -202,7 +222,7 @@ const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } 
 const visualizationObj = ref(null);
 const chartOptions = ref({ responsive: true, height: 600 });
 
-const {t} = useI18n();
+const { t } = useI18n();
 const notifier = new Notifier(inject('snotify'), t);
 
 // Elements refs
@@ -233,7 +253,7 @@ const plotly = ref();
 let changeCause = '';
 const options = computed({
     get() {
-        const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
+        let { display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info,
             top_margin, bottom_margin, left_margin, right_margin, auto_margin,
             template, blackWhite, subgraph, subgraph_orientation,
@@ -313,13 +333,13 @@ const updateThumb = () => {
 };
 const getIcon = (attr) => {
     switch (attr.type) {
-    case 'DECIMAL':
-    case 'INTEGER':
-        return 'hashtag';
-    case 'CHARACTER':
-        return 'font';
-    case 'DATE':
-        return 'calendar';
+        case 'DECIMAL':
+        case 'INTEGER':
+            return 'hashtag';
+        case 'CHARACTER':
+            return 'font';
+        case 'DATE':
+            return 'calendar';
 
     }
 };
