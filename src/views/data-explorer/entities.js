@@ -549,7 +549,7 @@ class XDimension {
         group_others = true, sorting = 'NATURAL' }) {
         this.binning = binning;  // equal_interval, fixed_size, none, categorical
         this.bins = bins;
-        this.binSize = binSize;
+        this.bin_size = binSize;
         this.emptyBins = emptyBins; //zeros, link, interrupt
         this.multiplier = multiplier; // A number to multiply by
         this.decimal_places = decimal_places;

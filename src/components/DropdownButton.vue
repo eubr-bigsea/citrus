@@ -39,13 +39,13 @@ const toggleDropdown = (evt) => {
     isDropdownOpen.value = !isDropdownOpen.value;
     buttonInstance = evt.target;
     if (isDropdownOpen.value) {
-        nextTick(()=> document.body.addEventListener('click', closeDropdown));
+        nextTick(()=> window.addEventListener('click', closeDropdown));
         content.value.classList.add('show');
         popperInstance = createPopper(button.value, content.value, {
             placement: 'bottom-start',
         });
     } else {
-        document.body.removeEventListener('click', closeDropdown);
+        window.removeEventListener('click', closeDropdown);
     }
     //evt.stopPropagation();
 };
@@ -54,7 +54,7 @@ const closeDropdown = (evt) => {
     const toClose = !props.keepOpen || content.value !== evt.target.closest('.dropdown-menu');
     if (toClose && evt.target !== buttonInstance) {
         isDropdownOpen.value = false;
-        document.body.removeEventListener('click', closeDropdown);
+        window.removeEventListener('click', closeDropdown);
         if (popperInstance) {
             popperInstance.destroy();
             popperInstance = null;
@@ -63,7 +63,7 @@ const closeDropdown = (evt) => {
 };
 
 onBeforeUnmount(() => {
-    document.body.removeEventListener('click', closeDropdown);
+    window.removeEventListener('click', closeDropdown);
 });
 </script>
   
