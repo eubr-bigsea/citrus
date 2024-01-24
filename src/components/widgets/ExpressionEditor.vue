@@ -1,7 +1,7 @@
 <template>
     <div>
         <LabelComponent :field="field" :value="value" />
-        <textarea disabled :value="displayValue" class="form-control code" rows="4" />
+        <textarea readonly :value="displayValue" class="form-control code bg-light " rows="4" @click.prevent="openModal" role="button"/>
         <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
             {{$t('property.editValue')}}
         </b-link>
@@ -281,8 +281,6 @@ export default {
             if (result) {
                 this.triggerUpdateEvent(this.message, this.field,
                     this.expressionList);
-
-                this.triggerUpdateEvent(this.message, this.field, this.expressionList);
 
                 this.$refs.modal.hide();
             } else {

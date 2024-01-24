@@ -47,11 +47,11 @@
                             <template v-if="supportsColor">
                                 <label>Atributo usado para cor:</label>
                                 <v-select v-model="colorAttribute" :options="attributes" label="name" value="name"
-                                    :append-to-body="true" data-test="color_attribute" />
+                                    :append-to-body="true" data-test="color_attribute" :reduce="(opt) => opt.name" />
 
                                 <label>Atributo usado para tamanho:</label>
                                 <v-select v-model="sizeAttribute" :options="attributes" label="name" value="name"
-                                    :append-to-body="true" data-test="size_attribute" />
+                                    :append-to-body="true" data-test="size_attribute" :reduce="(opt) => opt.name" />
                             </template>
                             <color-palette v-if="discreteColors" :field="paletteField" data-test="palette"
                                 v-model="palette" />
@@ -398,17 +398,15 @@
                             Filtrar dados
                         </b-button>
                     </div>
-                    <!--
                     <b-collapse id="accordion-4" accordion="my-accordion" role="tabpanel">
                         <b-card-body>
                             <label>Limitar quantidade de registros:</label>
                             <input v-model.number="limit" type="number" class="form-control form-control-sm w-50" min="1"
                                 step="100" data-test="limit">
-                            <expression-editor :field="filterField" v-model="filter" :show-alias="false"
+                            <expression-editor :field="filterField" v-model="filter" :show-alias="false" :value="filter"
                                 :suggestion-event="() => attributes.map(a => a.name)" />
                         </b-card-body>
                     </b-collapse>
-                -->
                 </div>
                 <div>
                     <div class="mt-1" role="tab">
@@ -421,7 +419,7 @@
                         <b-card-body>
                             <label>Subgráficos por:</label>
                             <v-select v-model="subgraph" :options="attributes" label="name" value="name" :searchable="false"
-                                :append-to-body="true" data-test="subgraph" />
+                                :append-to-body="true" data-test="subgraph" :reduce="(opt) => opt.name" />
 
                             <b-form-group v-if="subgraph" label="Direção (orientação)" class="p-0 mt-3">
                                 <b-form-radio v-model="subgraphOrientation" value="v" data-test="subgraph_orientation-v">
@@ -445,7 +443,7 @@
                         <b-card-body>
                             <label>Atributo usado para animação:</label>
                             <v-select v-model="animation" :options="attributes" label="name" value="name"
-                                :append-to-body="true" data-test="animation" />
+                                :append-to-body="true" data-test="animation" :reduce="(opt) => opt.name" />
                         </b-card-body>
                     </b-collapse>
                 </div>

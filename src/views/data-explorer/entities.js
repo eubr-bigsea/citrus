@@ -263,7 +263,7 @@ class Operation {
             if (field.values) {
                 try {
                     field.values = JSON.parse(field.values);
-                }catch(e){
+                } catch (e) {
                     console.error(e, field);
                 }
             }
@@ -446,9 +446,11 @@ class Visualization {
         smoothing = { value: true }, palette = { value: null },
         color_scale = { value: null },
         x = { value: [] }, y = { value: [] },
-        x_axis = null, y_axis = null, title = { value: null },
-        hole = null, text_position = null, text_info = null,
-        right_margin = null, left_margin = 0, top_margin = 0, bottom_margin = 0,
+        x_axis = null, y_axis = null,
+        title = { value: null },
+        hole = { value: null },
+        right_margin = {value: null}, left_margin = {value: 0}, 
+        top_margin = {value: 0}, bottom_margin = {value: 0},
         auto_margin = { value: true }, template = { value: null },
         blackWhite = { value: false },
         subgraph = { value: null },
@@ -479,6 +481,9 @@ class Visualization {
 
         limit = { value: null },
         filter = { value: null },
+
+        text_position = { value: null },
+        text_info = { value: null },
 
     },
     ) {

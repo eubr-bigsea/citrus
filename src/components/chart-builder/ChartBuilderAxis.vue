@@ -632,7 +632,6 @@ import { XDimension, YDimension } from '@/views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
 import DropdownButton from '@/components/DropdownButton.vue';
 
-const type = defineModel('type');
 
 const yLabel = defineModel('yLabel');
 const yLowerBound = defineModel('yLowerBound');
@@ -712,7 +711,7 @@ const props = defineProps({
             latitude_attribute: { value: null }, longitude_attribute: { value: null }
         })
     },
-    chartType: { type: String, required: false, default: null }
+    type: { type: String, required: false, default: null }
 });
 const getShapeIcon = (type) => {
     return new URL(`@/assets/charts/shapes/${type}.svg`, import.meta.url).href;
@@ -744,13 +743,13 @@ const setXDimensionDDRef = (el) => {
 /* Computed */
 
 const mapFamily = computed(() =>
-    ['scattermapbox'].includes(type.value)
+    ['scattermapbox'].includes(props.type)
 );
 const pieFamily = computed(() =>
-    ['donut', 'pie'].includes(type.value)
+    ['donut', 'pie'].includes(props.type)
 );
 const hasAxis = computed(() => {
-    return !['pie', 'donut', 'indicator'].includes(type.value)
+    return !['pie', 'donut', 'indicator'].includes(props.type)
 }
 );
 const xSeries = computed(() =>
@@ -762,9 +761,9 @@ const ySeries = computed(() =>
 );
 const limitXDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
-    if (['pie', 'donut', 'scatter'].includes(type.value)) {
+    if (['pie', 'donut', 'scatter'].includes(props.type)) {
         result = 1;
-    } else if (x.value.length >= 2 && type.value !== 'treemap') {
+    } else if (x.value.length >= 2 && props.type !== 'treemap') {
         result = 2;
     }
     return result;
@@ -772,7 +771,7 @@ const limitXDimension = computed(() => {
 const limitYDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
     if (
-        (['pie', 'donut', 'scatter', 'treemap'].includes(type.value))
+        (['pie', 'donut', 'scatter', 'treemap'].includes(props.type))
         || (x.value.length >= 2)
     ) {
         result = 1;
