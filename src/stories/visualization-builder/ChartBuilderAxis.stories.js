@@ -5,7 +5,7 @@ const attributes = [
     { name: 'age', type: 'INTEGER', numeric: true },
     { name: 'address', type: 'CHARACTER', numeric: false },
     { name: 'postcode', type: 'CHARACTER', numeric: false },
-]
+];
 const field1 = {
     "type": { value: 'line' },
     x_axis: {

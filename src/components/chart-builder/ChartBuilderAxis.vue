@@ -2,43 +2,44 @@
     <div>
         <b-card class="mt-1">
             <template v-if="mapFamily">
-                <chart-builder-map-axis :attributes="attributes" v-model:latitude="latitude" v-model:longitude="longitude"
-                    v-model:colorAttribute="colorAttribute" v-model:sizeAttribute="sizeAttribute"
-                    v-model:textAttribute="textAttribute" />
+                <chart-builder-map-axis v-model:latitude="latitude" v-model:longitude="longitude" v-model:colorAttribute="colorAttribute"
+                                        v-model:sizeAttribute="sizeAttribute" v-model:textAttribute="textAttribute"
+                                        :attributes="attributes" />
             </template>
             <template v-else>
                 <div class="clearfix">
-                    <chart-builder-y-axis v-if="hasAxis" :has-axis="hasAxis" v-model:yLabel="yLabel"
-                        v-model:yLowerBound="yLowerBound" v-model:yUpperBound="yUpperBound" v-model:yLogScale="yLogScale"
-                        v-model:yDisplay="yDisplay" v-model:yDisplayLabel="yDisplayLabel" v-model:yPrefix="yPrefix"
-                        v-model:ySuffix="ySuffix" />
+                    <chart-builder-y-axis v-if="hasAxis" v-model:yLabel="yLabel" v-model:yLowerBound="yLowerBound"
+                                          v-model:yUpperBound="yUpperBound" v-model:yLogScale="yLogScale" v-model:yDisplay="yDisplay"
+                                          v-model:yDisplayLabel="yDisplayLabel" v-model:yPrefix="yPrefix" v-model:ySuffix="ySuffix"
+                                          :has-axis="hasAxis" />
                     <div v-else class="axis-label">
                         Exibir
                     </div>
                     <div>
-                        <chart-builder-y-series :attributes="attributes" :type="type" :x="x" :y="y" v-model="ySeries" 
-                            @on-move="handleYAxisDrag" @on-change="handleYAxisDragEnd" @on-delete="handleDeleteY"/>
+                        <chart-builder-y-series v-model="ySeries" :attributes="attributes" :type="type" :x="x"
+                                                :y="y" 
+                                                @on-move="handleYAxisDrag" @on-change="handleYAxisDragEnd" @on-delete="handleDeleteY" />
                       
                         <b-button v-if="canAddYDimension" size="sm" variant="success small-dd-title"
-                            class="mt-2 float-start" data-test="add-y" @click="handleAddY">
+                                  class="mt-2 float-start" data-test="add-y" @click="handleAddY">
                             <font-awesome-icon prefix="fa" icon="plus" />
                         </b-button>
                     </div>
                 </div>
                 <div class="clearfix">
-                    <chart-builder-x-axis v-if="hasAxis" :has-axis="hasAxis" v-model:xLabel="xLabel"
-                        v-model:xLowerBound="xLowerBound" v-model:xUpperBound="xUpperBound" v-model:xLogScale="xLogScale"
-                        v-model:xDisplay="xDisplay" v-model:xDisplayLabel="xDisplayLabel" v-model:xPrefix="xPrefix"
-                        v-model:xSuffix="xSuffix"/>
+                    <chart-builder-x-axis v-if="hasAxis" v-model:xLabel="xLabel" v-model:xLowerBound="xLowerBound"
+                                          v-model:xUpperBound="xUpperBound" v-model:xLogScale="xLogScale" v-model:xDisplay="xDisplay"
+                                          v-model:xDisplayLabel="xDisplayLabel" v-model:xPrefix="xPrefix" v-model:xSuffix="xSuffix"
+                                          :has-axis="hasAxis" />
                     <div v-else class="axis-label">
                         Por
                     </div>
                     <div>
-                        <chart-builder-x-series 
-                            :attributes="attributes" :type="type" :x="x" :y="y" v-model="xSeries" 
-                            @on-delete="handleDeleteX"/>
+                        <chart-builder-x-series v-model="xSeries" :attributes="attributes" :type="type" :x="x"
+                                                :y="y" 
+                                                @on-delete="handleDeleteX" />
                         <b-button v-if="canAddXDimension" size="sm" variant="success small-dd-title"
-                            class="mt-2 float-start clearfix" data-test="add-x" @click="handleAddX">
+                                  class="mt-2 float-start clearfix" data-test="add-x" @click="handleAddX">
                             <font-awesome-icon prefix="fa" icon="plus" />
                         </b-button>
                     </div>
@@ -108,7 +109,7 @@ const mapFamily = computed(() =>
 );
 
 const hasAxis = computed(() => {
-    return !['pie', 'donut', 'indicator'].includes(props.type)
+    return !['pie', 'donut', 'indicator'].includes(props.type);
 }
 );
 const xSeries = computed(() =>
@@ -153,7 +154,7 @@ const canAddYDimension = computed(() => {
 });
 
 /* Methods */
-const handleYAxisDrag = (info, evt) => { return true };
+const handleYAxisDrag = (info, evt) => { return true; };
 const handleYAxisDragEnd = (info) => {
     const { moved } = info;
     if (moved && false) {
@@ -164,14 +165,14 @@ const handleYAxisDragEnd = (info) => {
         y.value.splice(index, 0, draggedItem);
         console.debug(draggedIndex, '=>', index);
     }
-    return true
+    return true;
 };
 
 const handleAddY = () => y.value.push(new YDimension({}));
 const handleAddX = () => x.value.push(new XDimension({}));
 const handleDeleteY = (index, element, ev) => {
     const idx = y.value.indexOf(element);
-    console.debug('index', index, idx)
+    console.debug('index', index, idx);
     y.value.splice(idx, 1);
     document.body.click(); // to close the dialog
 };

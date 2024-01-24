@@ -1,9 +1,10 @@
 <template>
-    <b-modal ref="modal" size="xl" :ok-only="true" scrollable :title="$t('titles.job', 2)" :hide-footer="true">
+    <b-modal ref="modal" size="xl" :ok-only="true" scrollable
+             :title="$t('titles.job', 2)" :hide-footer="true">
         <v-server-table ref="jobList" :columns="columns" :options="options" name="jobListWf">
             <template #id="props">
                 <router-link :to="{ name: 'jobDetail', params: { id: props.row.id } }">
-                    {{ props.row.id }}
+                    {{props.row.id}}
                 </router-link>
             </template>
             <template #actions="props">
@@ -13,11 +14,11 @@
             </template>
             <template #status="props">
                 <div class="lemonade-job" :class="props.row.status.toLowerCase()">
-                    {{ props.row.status }}
+                    {{props.row.status}}
                 </div>
             </template>
             <template #created="props">
-                {{ $filters.formatJsonDate(props.row.created) }}
+                {{$filters.formatJsonDate(props.row.created)}}
             </template>
         </v-server-table>
     </b-modal>
@@ -34,6 +35,7 @@ export default {
         workflowId: { type: Number, default: null },
 
     },
+    emits: ['loaded'],
     data() {
         return {
             columns: ['status', 'id', 'name', 'created'],
@@ -74,7 +76,6 @@ export default {
             }
         };
     },
-    emits: ['loaded'],
     methods: {
         show() {
             this.$refs.modal.show();

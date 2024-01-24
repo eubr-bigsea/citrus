@@ -1,17 +1,19 @@
 <template>
     <div class="confirm-overlay">
         <div class="confirm-modal p-4">
-            <h6 class="border-bottom mb-3">{{ title }}</h6>
+            <h6 class="border-bottom mb-3">
+                {{title}}
+            </h6>
             <p class="p-2">
-                {{ question }}
+                {{question}}
             </p>
 
             <div class="text-center border-top pt-2 btn-flex">
                 <b-button size="sm" :class="yesButton?.cssClass" @click="emit('confirm')">
-                    {{ $t('common.yes') }}
+                    {{$t('common.yes')}}
                 </b-button>
                 <b-button size="sm" class="noButton.cssClass" @click="emit('cancel')">
-                    {{ $t('common.no') }}
+                    {{$t('common.no')}}
                 </b-button>
             </div>
         </div>
@@ -27,7 +29,7 @@ const props = defineProps(
         noButton: {type: Object, required: false, default: () => ({'cssClass': 'btn-secondary'})},
     }
 );
-const emit = defineEmits(['confirm', 'cancel'])
+const emit = defineEmits(['confirm', 'cancel']);
 </script>
 <style scoped>
 .confirm-overlay {

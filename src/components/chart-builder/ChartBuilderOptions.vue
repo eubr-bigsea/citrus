@@ -4,30 +4,30 @@
             <div>
                 <label>Tipo da visualização:</label>
 
-                <v-select v-model="type" :options="chartTypes" label="label" :reduce="(opt) => opt.name" :searchable="false"
-                    class="options-font" data-test="chart-type">
+                <v-select v-model="type" :options="chartTypes" label="label" :reduce="(opt) => opt.name"
+                          :searchable="false"
+                          class="options-font" data-test="chart-type">
                     <template #option="{ label, name }">
                         <img :src="getChartIcon(name)" class="type-icon" :data-test="`chart-type-${name}`">
-                        {{ label }}
+                        {{label}}
                     </template>
 
                     <template #selected-option="{ label, name }">
                         <img :src="getChartIcon(name)" class="type-icon" data-test="selected-type">
-                        {{ label }}
+                        {{label}}
                     </template>
                 </v-select>
-
             </div>
             <div class="mt-2">
-                <label>{{ $t('common.title') }}:</label>
-                <input v-model="title" class="form-control form-control-sm" maxlength="50" />
+                <label>{{$t('common.title')}}:</label>
+                <input v-model="title" class="form-control form-control-sm" maxlength="50">
             </div>
 
             <div class="accordion options-font" role="tablist">
                 <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-2 variant="light" size="sm" data-test="card-1"
-                            class="w-100 border border-gray">
+                                  class="w-100 border border-gray">
                             Legenda, temas e cores
                         </b-button>
                     </div>
@@ -36,27 +36,31 @@
                             <template v-if="supportsLegend">
                                 <label>Exibir legenda:</label>
                                 <select v-model="displayLegend" class="form-select form-select-sm"
-                                    data-test="display_legend">
-                                    <option v-for="opt, value in legendOptions" :value="value">{{ opt }}</option>
+                                        data-test="display_legend">
+                                    <option v-for="opt, value in legendOptions" :key="value" :value="value">
+                                        {{opt}}
+                                    </option>
                                 </select>
                             </template>
                             <label class="mt-2">Tema:</label>
                             <select v-model="template" class="form-select form-select-sm mb-2" data-test="template">
-                                <option v-for="opt, value in themeOptions" :value="value">{{ opt }}</option>
+                                <option v-for="opt, value in themeOptions" :key="value" :value="value">
+                                    {{opt}}
+                                </option>
                             </select>
                             <template v-if="supportsColor">
                                 <label>Atributo usado para cor:</label>
                                 <v-select v-model="colorAttribute" :options="attributes" label="name" value="name"
-                                    :append-to-body="true" data-test="color_attribute" :reduce="(opt) => opt.name" />
+                                          :append-to-body="true" data-test="color_attribute" :reduce="(opt) => opt.name" />
 
                                 <label>Atributo usado para tamanho:</label>
                                 <v-select v-model="sizeAttribute" :options="attributes" label="name" value="name"
-                                    :append-to-body="true" data-test="size_attribute" :reduce="(opt) => opt.name" />
+                                          :append-to-body="true" data-test="size_attribute" :reduce="(opt) => opt.name" />
                             </template>
-                            <color-palette v-if="discreteColors" :field="paletteField" data-test="palette"
-                                v-model="palette" />
-                            <color-scale v-if="continuousColors" :field="colorScaleField" data-test="color_scale"
-                                v-model="colorScale" />
+                            <color-palette v-if="discreteColors" v-model="palette" :field="paletteField"
+                                           data-test="palette" />
+                            <color-scale v-if="continuousColors" v-model="colorScale" :field="colorScaleField"
+                                         data-test="color_scale" />
 
                             <!-- 
                             <b-form-checkbox v-model="editableVisualization.blackWhite.value" switch>
@@ -69,7 +73,7 @@
                 <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-1 variant="light" size="sm" data-test="card-2"
-                            class="w-100 border border-gray">
+                                  class="w-100 border border-gray">
                             Aparência
                         </b-button>
                     </div>
@@ -83,35 +87,40 @@
                                 -->
                             <b-form-group v-if="!mapFamily" label="Formato dos números">
                                 <select v-model="numberFormat" class="form-select form-select-sm" data-test="number_format">
-                                    <option v-for="opt, value in numberFormatOptions" :value="value">{{ opt }}</option>
+                                    <option v-for="opt, value in numberFormatOptions" :key="value" :value="value">
+                                        {{opt}}
+                                    </option>
                                 </select>
                             </b-form-group>
                             <b-form-group v-if="!mapFamily" label="Opacidade do gráfico:" label-for="line-width">
                                 <div class="range-selector">
-                                    <b-form-input id="title" v-model.number="opacity" type="range" min="0" max="1"
-                                        step="0.01" class="form-control-sm" data-test="opacity" />
+                                    <b-form-input id="title" v-model.number="opacity" type="range" min="0"
+                                                  max="1"
+                                                  step="0.01" class="form-control-sm" data-test="opacity" />
                                     <b-form-text class="text-center mt-0">
-                                        {{ Math.round(opacity * 100) }}%
+                                        {{Math.round(opacity * 100)}}%
                                     </b-form-text>
                                 </div>
                             </b-form-group>
                             <b-form-group v-if="!mapFamily" label="Opacidade do preenchimento:">
                                 <div class="range-selector">
-                                    <b-form-input id="title" v-model.number="fillOpacity" type="range" min="0" max="1"
-                                        step=".01" class="form-control-sm" data-test="fill_opacity" />
+                                    <b-form-input id="title" v-model.number="fillOpacity" type="range" min="0"
+                                                  max="1"
+                                                  step=".01" class="form-control-sm" data-test="fill_opacity" />
                                     <b-form-text class="text-center mt-0">
-                                        {{ Math.round(fillOpacity * 100) }}%
+                                        {{Math.round(fillOpacity * 100)}}%
                                     </b-form-text>
                                 </div>
                             </b-form-group>
                             <template v-if="type == 'donut'">
                                 <b-form-group label="Preenchimento (0 = pizza, > 0 donut)" label-for="pie-fill">
                                     <div class="range-selector">
-                                        <b-form-input id="title" v-model.number="hole" type="range" min="0" max="90"
-                                            step="1" class="form-control-sm" data-test="hole"
-                                            @input="emit('update-chart', 'hole')" />
+                                        <b-form-input id="title" v-model.number="hole" type="range" min="0"
+                                                      max="90"
+                                                      step="1" class="form-control-sm" data-test="hole"
+                                                      @input="emit('update-chart', 'hole')" />
                                         <b-form-text class="text-center mt-0">
-                                            {{ Math.round(hole) }}%
+                                            {{Math.round(hole)}}%
                                         </b-form-text>
                                     </div>
                                 </b-form-group>
@@ -124,17 +133,17 @@
                             <template v-if="type == 'scatter'">
                                 <b-form-group label="Atributo usado para a cor dos pontos">
                                     <v-select v-model="scatterColor" :options="attributes" label="name" value="name"
-                                        :append-to-body="true" data-test="scatter_color" />
+                                              :append-to-body="true" data-test="scatter_color" />
                                 </b-form-group>
                                 <b-form-group label="Atributo usado para o tamanho dos pontos">
                                     <v-select v-model="scatterSize" :options="attributes" label="name" value="name"
-                                        :append-to-body="true" data-test="scatter_size" />
+                                              :append-to-body="true" data-test="scatter_size" />
                                 </b-form-group>
                             </template>
                             <template v-if="mapFamily">
                                 <b-form-group label="Estilo do mapa:">
                                     <select v-model="editableVisualization.style.value" class="form-select form-select-sm"
-                                        data-test="style">
+                                            data-test="style">
                                         <option value="carto-darkmatter">
                                             Carto Darkmatter
                                         </option>
@@ -170,7 +179,7 @@
                                 </b-form-group>
                                 <b-form-group label="Exibir no mapa:">
                                     <select v-model="editableVisualization.text_info.value"
-                                        class="form-control form-control-sm" data-test="text_info">
+                                            class="form-control form-control-sm" data-test="text_info">
                                         <option value="markers">
                                             Marcadores
                                         </option>
@@ -184,7 +193,7 @@
                                 </b-form-group>
                                 <b-form-group label="Exibir dica (tooltip):">
                                     <select v-model="editableVisualization.tooltip_info.value"
-                                        class="form-control form-control-sm" data-test="tooltip_info">
+                                            class="form-control form-control-sm" data-test="tooltip_info">
                                         <option value="lat">
                                             Latitude
                                         </option>
@@ -207,30 +216,30 @@
                                 </b-form-group>
                                 <b-form-group label="Zoom mapa:">
                                     <b-form-input v-model.number="editableVisualization.zoom.value" type="range" class=""
-                                        min="0" step="1" max="20" data-test="zoom" />
+                                                  min="0" step="1" max="20" data-test="zoom" />
                                     <b-form-text class="text-center mt-0">
-                                        {{ editableVisualization.zoom.value }}
+                                        {{editableVisualization.zoom.value}}
                                     </b-form-text>
                                 </b-form-group>
                                 <b-form-group label="Raio base (se atributo para tamanho):">
                                     <b-form-input v-model.number="editableVisualization.marker_size.value" type="number"
-                                        class="form-control form-control-sm mb-0" min="0" step=".1" max=""
-                                        data-test="marker_size" />
+                                                  class="form-control form-control-sm mb-0" min="0" step=".1" max=""
+                                                  data-test="marker_size" />
                                 </b-form-group>
                                 <b-form-group label="Centro do mapa:">
                                     <div class="row">
                                         <div class="col-6">
                                             <b-form-input v-model="editableVisualization.center_latitude.value"
-                                                type="number" class="form-control form-control-sm mb-0" min="0" step="0.01"
-                                                data-test="latitude" />
+                                                          type="number" class="form-control form-control-sm mb-0" min="0" step="0.01"
+                                                          data-test="latitude" />
                                             <b-form-text class="text-center mt-0 mb-2">
                                                 latitude
                                             </b-form-text>
                                         </div>
                                         <div class="col-6">
                                             <b-form-input v-model="editableVisualization.center_longitude.value"
-                                                type="number" class="form-control form-control-sm mb-0" min="0" step="0.01"
-                                                data-test="longitude" />
+                                                          type="number" class="form-control form-control-sm mb-0" min="0" step="0.01"
+                                                          data-test="longitude" />
                                             <b-form-text class="text-center mt-0 mb-2">
                                                 longitude
                                             </b-form-text>
@@ -241,13 +250,16 @@
                             <template v-if="pieFamily">
                                 <b-form-group label="Posição do texto">
                                     <select v-model="textPosition" class="form-select form-select-sm"
-                                        data-test="text_position">
-                                        <option v-for="opt, value in textPositionOptions" :value="value">{{ opt }}</option>
+                                            data-test="text_position">
+                                        <option v-for="opt, value in textPositionOptions" :key="value" :value="value">
+                                            {{opt}}
+                                        </option>
                                     </select>
                                 </b-form-group>
                                 <b-form-group label="Informação">
                                     <select v-model="textInfo" class="form-select form-select-sm" data-test="text_info">
-                                        <option v-for="opt, value in pieInformationTypeOptions" :value="value">{{ opt }}
+                                        <option v-for="opt, value in pieInformationTypeOptions" :key="value" :value="value">
+                                            {{opt}}
                                         </option>
                                     </select>
                                 </b-form-group>
@@ -255,7 +267,7 @@
                             <template v-if="false && type.value == 'bar'">
                                 <b-form-group label="Direção:">
                                     <select v-model="forms.direction.value" class="form-select form-select-sm"
-                                        data-test="direction">
+                                            data-test="direction">
                                         <option value="VERTICAL">
                                             Vertical
                                         </option>
@@ -276,8 +288,9 @@
 
                             <template v-if="false && type.value == 'line'">
                                 <b-form-group label="Espessura da Linha:" label-for="line-width">
-                                    <b-form-input v-model="forms.line_stroke.value" type="number" min="1" max="10" step="1"
-                                        class="form-control form-control-sm w-50" />
+                                    <b-form-input v-model="forms.line_stroke.value" type="number" min="1" max="10"
+                                                  step="1"
+                                                  class="form-control form-control-sm w-50" />
                                 </b-form-group>
 
 
@@ -326,7 +339,7 @@
                 <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-3 variant="light" size="sm" data-test="card-3"
-                            class="w-100 border border-gray">
+                                  class="w-100 border border-gray">
                             Tamanho e margens
                         </b-button>
                     </div>
@@ -336,13 +349,13 @@
                                 <div class="col-6">
                                     <b-form-group label="Largura (px):">
                                         <b-form-input v-model.number="width" type="number" min="100"
-                                            class="form-control form-control-sm mb-0 w-50" data-test="width" />
+                                                      class="form-control form-control-sm mb-0 w-50" data-test="width" />
                                     </b-form-group>
                                 </div>
                                 <div class="col-6">
                                     <b-form-group label="Altura (px):">
                                         <b-form-input v-model.number="height" type="number" min="100"
-                                            class="form-control form-control-sm mb-0 w-50" data-test="height" />
+                                                      class="form-control form-control-sm mb-0 w-50" data-test="height" />
                                     </b-form-group>
                                 </div>
                             </div>
@@ -356,32 +369,32 @@
                                     <label>Informe as margens:</label>
                                     <div class="offset-3 col-6 text-center">
                                         <b-form-input v-model.number="topMargin" type="number"
-                                            class="form-control form-control-sm mb-0 text-center" min="0"
-                                            data-test="top_margin" />
+                                                      class="form-control form-control-sm mb-0 text-center" min="0"
+                                                      data-test="top_margin" />
                                         <b-form-text class="text-center mt-0 mb-2">
                                             superior
                                         </b-form-text>
                                     </div>
                                     <div class="col-6 text-center">
                                         <b-form-input v-model.number="leftMargin" type="number"
-                                            class="form-control form-control-sm mb-0 text-center" min="0"
-                                            data-test="left_margin" />
+                                                      class="form-control form-control-sm mb-0 text-center" min="0"
+                                                      data-test="left_margin" />
                                         <b-form-text class="text-center mt-0 mb-2">
                                             esquerda
                                         </b-form-text>
                                     </div>
                                     <div class="col-6 text-center">
                                         <b-form-input v-model.number="rightMargin" type="number"
-                                            class="form-control form-control-sm mb-0 text-center" min="0"
-                                            data-test="right_margin" />
+                                                      class="form-control form-control-sm mb-0 text-center" min="0"
+                                                      data-test="right_margin" />
                                         <b-form-text class="text-center mt-0 mb-2">
                                             direita
                                         </b-form-text>
                                     </div>
                                     <div class="offset-3 col-6 text-center">
                                         <b-form-input v-model.number="bottomMargin" type="number"
-                                            class="form-control form-control-sm mb-0 text-center" min="0"
-                                            data-test="bottom_margin" />
+                                                      class="form-control form-control-sm mb-0 text-center" min="0"
+                                                      data-test="bottom_margin" />
                                         <b-form-text class="text-center mt-0 mb-2">
                                             inferior
                                         </b-form-text>
@@ -394,7 +407,7 @@
                 <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-4 variant="light" size="sm" data-test="card-4"
-                            class="w-100 border border-gray">
+                                  class="w-100 border border-gray">
                             Filtrar dados
                         </b-button>
                     </div>
@@ -402,24 +415,25 @@
                         <b-card-body>
                             <label>Limitar quantidade de registros:</label>
                             <input v-model.number="limit" type="number" class="form-control form-control-sm w-50" min="1"
-                                step="100" data-test="limit">
-                            <expression-editor :field="filterField" v-model="filter" :show-alias="false" :value="filter"
-                                :suggestion-event="() => attributes.map(a => a.name)" />
+                                   step="100" data-test="limit">
+                            <expression-editor v-model="filter" :field="filterField" :show-alias="false" :value="filter"
+                                               :suggestion-event="() => attributes.map(a => a.name)" />
                         </b-card-body>
                     </b-collapse>
                 </div>
                 <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-5 variant="light" size="sm" data-test="card-5"
-                            class="w-100 border border-gray">
+                                  class="w-100 border border-gray">
                             Subgráficos
                         </b-button>
                     </div>
                     <b-collapse id="accordion-5" accordion="my-accordion" role="tabpanel">
                         <b-card-body>
                             <label>Subgráficos por:</label>
-                            <v-select v-model="subgraph" :options="attributes" label="name" value="name" :searchable="false"
-                                :append-to-body="true" data-test="subgraph" :reduce="(opt) => opt.name" />
+                            <v-select v-model="subgraph" :options="attributes" label="name" value="name"
+                                      :searchable="false"
+                                      :append-to-body="true" data-test="subgraph" :reduce="(opt) => opt.name" />
 
                             <b-form-group v-if="subgraph" label="Direção (orientação)" class="p-0 mt-3">
                                 <b-form-radio v-model="subgraphOrientation" value="v" data-test="subgraph_orientation-v">
@@ -435,7 +449,7 @@
                 <div>
                     <div class="mt-1" role="tab">
                         <b-button v-b-toggle.accordion-6 variant="light" size="sm" data-test="card-6"
-                            class="w-100 border border-gray">
+                                  class="w-100 border border-gray">
                             Animação
                         </b-button>
                     </div>
@@ -443,7 +457,7 @@
                         <b-card-body>
                             <label>Atributo usado para animação:</label>
                             <v-select v-model="animation" :options="attributes" label="name" value="name"
-                                :append-to-body="true" data-test="animation" :reduce="(opt) => opt.name" />
+                                      :append-to-body="true" data-test="animation" :reduce="(opt) => opt.name" />
                         </b-card-body>
                     </b-collapse>
                 </div>
@@ -544,7 +558,7 @@ const emit = defineEmits(['input', 'update-chart', 'update:title']);
 
 const chartTypes = ChartTypes.types;
 /* Data fields */
-const x = 34211
+const x = 34211;
 const toEmit = ref(true);
 const editableVisualization = ref(null);
 const paletteField = ref({ label: 'Paleta de cores' });

@@ -353,13 +353,13 @@
                                 </b-tabs>
                                 <div class="card-footer">
                                     <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-success btn-spinner"
-                                            @click.stop="save" :title="$t('actions.save')">
+                                            :title="$t('actions.save')" @click.stop="save">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <font-awesome-icon icon="fa fa-save" />
                                         {{$t('actions.save')}}
                                     </button>
                                     <button v-if="canInfer && loggedUserIsOwnerOrAdmin"
-                                            class="btn btn-primary btn-spinner" @click.stop="infer"  :title="$t('dataSource.inferSchema')">
+                                            class="btn btn-primary btn-spinner" :title="$t('dataSource.inferSchema')" @click.stop="infer">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{$t('dataSource.inferSchema')}}
                                     </button>

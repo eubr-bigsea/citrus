@@ -5,19 +5,19 @@
                 <div class="row">
                     <div class="col-6">
                         <h6 class="header-pretitle">
-                            {{ $t('titles.workflow', 1) }} #{{ workflow.id }}
+                            {{$t('titles.workflow', 1)}} #{{workflow.id}}
                         </h6>
                         <input-header v-model="workflow.name" />
                     </div>
                     <div class="col-6 text-end">
                         <workflow-toolbar v-if="loaded" :workflow="workflow" :is-dirty="isDirty" :total-jobs="totalJobs"
-                            @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
-                            @onshow-executions="$refs.executionsModal.show()"
-                            @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
-                            @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
-                            @onclick-execute="showExecuteWindow" @onclick-export="(format) => exportWorkflow(format)"
-                            @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
-                            @onsave-as-image="saveAsImage" />
+                                          @onsave-workflow="saveWorkflow(false)" @onshow-history="showHistory"
+                                          @onshow-executions="$refs.executionsModal.show()"
+                                          @onshow-variables="$refs.variablesModal.show()" @onsave-workflow-as="saveWorkflowAs"
+                                          @onshow-properties="showWorkflowProperties" @onsaveas-workflow="showSaveAs"
+                                          @onclick-execute="showExecuteWindow" @onclick-export="(format) => exportWorkflow(format)"
+                                          @onupdate-workflow-properties="saveWorkflowProperties" @onrestore-workflow="restore"
+                                          @onsave-as-image="saveAsImage" />
                     </div>
                 </div>
 
@@ -25,49 +25,49 @@
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{ $t('common.operation', 2) }}
+                                {{$t('common.operation', 2)}}
                             </h4>
                         </div>
                         <toolbox :operations="operations" :workflow="workflow" :selected-task="selectedTask.task"
-                            :loading="loadingToolbox" />
+                                 :loading="loadingToolbox" />
                     </div>
                 </div>
                 <div v-show="showDataSourcesPanel" class="toolbox datasource-toolbox">
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                {{ $t('titles.dataSource2', 2) }}
+                                {{$t('titles.dataSource2', 2)}}
                             </h4>
                         </div>
                         <custom-toolbox :operations="expandableOperations" :workflow="workflow"
-                            :selected-task="selectedTask.task" />
+                                        :selected-task="selectedTask.task" />
                     </div>
                 </div>
 
-                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow" :operations="operations"
-                    :loaded="loaded" :version="workflow.version" tabindex="0"
-                    :use-data-source="expandableOperations.length > 0" @ontoggle-tasks-panel="toggleTasksPanel"
-                    @ontoggle-data-sources-panel="toggleDataSourcesPanel" @onselect-image="selectImage"
-                    @onset-is-dirty="setIsDirty" @onzoom="applyZoom" @add-task="addTask" @onclick-task="clickTask"
-                    @add-flow="addFlow" @remove-flow="removeFlow" @onclear-selection="clearSelection"
-                    @onblur-selection="blurSelection" @remove-task="removeTask" />
+                <diagram v-if="loaded" id="main-diagram" ref="diagram" :workflow="workflow"
+                         :operations="operations"
+                         :loaded="loaded" :version="workflow.version" tabindex="0"
+                         :use-data-source="expandableOperations.length > 0" @ontoggle-tasks-panel="toggleTasksPanel"
+                         @ontoggle-data-sources-panel="toggleDataSourcesPanel" @onselect-image="selectImage"
+                         @onset-is-dirty="setIsDirty" @onzoom="applyZoom" @add-task="addTask" @onclick-task="clickTask"
+                         @add-flow="addFlow" @remove-flow="removeFlow" @onclear-selection="clearSelection"
+                         @onblur-selection="blurSelection" @remove-task="removeTask" />
 
                 <div v-else>
                     <div class="preview-loading">
                         <font-awesome-icon icon="spinner" size="1x" spin class="text-success" />
-                        {{ $t('common.loading') }}
+                        {{$t('common.loading')}}
                     </div>
-                    <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 100%; height: 40px">
-                    </div>
+                    <div class="skeleton skeleton-text skeleton-animate-wave" style="width: 100%; height: 40px" />
                 </div>
                 <div v-if="showProperties" class="diagram-properties">
                     <property-window v-if="selectedTask.task" :task="selectedTask.task"
-                        :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
-                        :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
-                        :publishing-enabled="workflow && workflow.publishing_enabled"
-                        @update-form-field-value="updateFormFieldValue"
-                        @update-task-name="(name) => selectedTask.task.name = name"
-                        @toggle-task="(value) => selectedTask.task.enabled = value" />
+                                     :variables="workflow.variables || []" :suggestion-event="() => getSuggestions(selectedTask.task.id)"
+                                     :extended-suggestion-event="() => getExtendedSuggestions(selectedTask.task.id)"
+                                     :publishing-enabled="workflow && workflow.publishing_enabled"
+                                     @update-form-field-value="updateFormFieldValue"
+                                     @update-task-name="(name) => selectedTask.task.name = name"
+                                     @toggle-task="(value) => selectedTask.task.enabled = value" />
                 </div>
 
                 <!--
@@ -136,15 +136,15 @@
                 -->
                 <template v-if="loaded">
                     <ModalWorkflowVariables ref="variablesModal" :workflow="workflow" :items="workflow.variables"
-                        @confirm="handleUpdateVariables" />
+                                            @confirm="handleUpdateVariables" />
                     <ModalExecuteWorkflow ref="executeModal" :clusters="clusters" :cluster-info="clusterInfo"
-                        :validation-errors="validationErrors" :workflow="workflow" @onexecute-workflow="execute"
-                        @onchange-cluster="changeCluster" @update-value="handleUpdateClusterInfo" />
+                                          :validation-errors="validationErrors" :workflow="workflow" @onexecute-workflow="execute"
+                                          @onchange-cluster="changeCluster" @update-value="handleUpdateClusterInfo" />
                     <ModalWorkflowHistory ref="historyModal" :history="history" @onrestore-workflow="restore" />
                     <ModalSaveWorkflowAs ref="saveAsModal" @onsave-workflow-as="saveWorkflowAs" />
                     <ModalTaskResults ref="taskResultModal" :task="resultTask" />
                     <ModalWorkflowProperties ref="workflowPropertiesModal" :loaded="loaded" :workflow="workflow"
-                        :clusters="clusters" @update-value="handleUpdateWorkflowProperties" />
+                                             :clusters="clusters" @update-value="handleUpdateWorkflowProperties" />
                     <!--
                 <ModalWorkflowImage ref="workflowImageModal" :workflow="workflow" @update-value="(v) => workflow.image = v"/>
                 -->
@@ -292,7 +292,7 @@ export default {
 
     methods: {
         handleUpdateVariables(v) {
-            debugger
+            debugger;
             this.workflow.variables = v;
             this.isDirty = true;
         },
@@ -521,7 +521,7 @@ export default {
                     });
                 });
 
-                self._loadLatestJob(params)
+                self._loadLatestJob(params);
 
             } catch (e) {
                 this.error(e);
@@ -602,8 +602,8 @@ export default {
                             resp => {
                                 self._downloadAsType(resp.data, contentType, extension);
                             }).catch(function (e) {
-                                self.error(e);
-                            });
+                            self.error(e);
+                        });
                     }, 5000);
                 }).catch(function (e) {
                     self.error(e);
@@ -715,7 +715,7 @@ export default {
             } else {
                 return {};
             }
-            return
+            return;
             if (Object.hasOwnProperty.call(window, 'TahitiAttributeSuggester')) {
                 if (window.TahitiAttributeSuggester.processed === undefined
                     || this.attributeSuggestion[taskId] === undefined
@@ -744,7 +744,7 @@ export default {
             } catch (e) {
                 console.log(e);
             }
-            return
+            return;
             let self = this;
             try {
                 window.TahitiAttributeSuggester.compute(self.workflow, this._queryDataSource,

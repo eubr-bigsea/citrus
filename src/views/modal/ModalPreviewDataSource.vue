@@ -1,7 +1,8 @@
 <template>
-    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only no-stacking button-size="sm" centered
-        header-bg-variant="dark" header-text-variant="light" no-fade @hidden="$emit('hidden')">
-        <small><strong>*{{ $t('dataSource.previewExplanation', { amount: 40 }) }}</strong></small>
+    <b-modal ref="preview" size="xl" :title="$t('common.preview')" ok-only
+             no-stacking button-size="sm" centered
+             header-bg-variant="dark" header-text-variant="light" no-fade @hidden="$emit('hidden')">
+        <small><strong>*{{$t('dataSource.previewExplanation', { amount: 40 })}}</strong></small>
         <div v-if="loaded">
             <v-server-table ref="table" :columns="attributes" :options="options" />
         </div>

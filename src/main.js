@@ -52,7 +52,7 @@ import axios from 'axios';
 import VueTheMask from 'vue-the-mask';
 
 import VServerTable from '@/components/VServerTable.vue';
-import Modal from '@/components/Modal.vue';
+import VModal from '@/components/VModal.vue';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 //import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
@@ -98,8 +98,8 @@ import ConfirmComponenent from './components/ConfirmComponent.vue';
 import VueSelect from "vue-select";
 import VueGridLayout from 'vue3-grid-layout-next';
 
-import * as ConfirmDialog from 'vuejs-confirm-dialog'
-import { createConfirmDialog } from 'vuejs-confirm-dialog'
+import * as ConfirmDialog from 'vuejs-confirm-dialog';
+import { createConfirmDialog } from 'vuejs-confirm-dialog';
 
 //Vue.use(BootstrapVue);
 import { BButton } from "bootstrap-vue-next";
@@ -384,19 +384,19 @@ openIdService.loadConfig(store).then(() => {
     const toast = useToast();
     app.config.globalProperties.$snotify = {
         error: (text, title, opts) => {
-            toast.error(text, { ...toastOptions, opts })
+            toast.error(text, { ...toastOptions, opts });
         },
         success: (text, title, opts) => {
-            toast.success(text, { ...toastOptions, ...opts })
+            toast.success(text, { ...toastOptions, ...opts });
         },
         info: (text, title, opts) => {
-            toast.info(text, { ...toastOptions, ...opts })
+            toast.info(text, { ...toastOptions, ...opts });
         },
         alert: (text, title, opts) => {
-            toast.alert(text, { ...toastOptions, ...opts })
+            toast.alert(text, { ...toastOptions, ...opts });
         },
         warning: (text, title, opts) => {
-            toast.warning(text, { ...toastOptions, ...opts })
+            toast.warning(text, { ...toastOptions, ...opts });
         },
         confirm: (question, title, opts) => {
             const dialog = createConfirmDialog(ConfirmComponenent, 
@@ -404,13 +404,13 @@ openIdService.loadConfig(store).then(() => {
                 { chore: true, keepInitial: true });
             dialog.onConfirm(() => {
                 opts.callback();
-            })
+            });
 
-            dialog.reveal()
+            dialog.reveal();
         }
     };
     app.provide('snotify', app.config.globalProperties.$snotify);
-    app.component("v-select", VueSelect);
+    app.component("VSelect", VueSelect);
     app.component('VServerTable', VServerTable);
     app.component('VClientTable', VServerTable);
     app.component('BButton', BButton);
@@ -418,7 +418,7 @@ openIdService.loadConfig(store).then(() => {
     app.component('GridLayout', VueGridLayout.GridLayout);
     app.component('FontAwesomeIcon', FontAwesomeIcon);
     app.component('FontAwesomeLayers', FontAwesomeLayers);
-    app.component('Modal', Modal);
+    app.component('VModal', VModal);
     widgets.forEach((v, k) => app.component(k, v.default || v));
 
     app.mount('#app');

@@ -1,20 +1,27 @@
 <!-- Modal.vue -->
 
 <template>
-    <div class="modal show" tabindex="-1" ref="modal" id="modal" role="dialog">
+    <div id="modal" ref="modal" class="modal show" tabindex="-1"
+         role="dialog">
         <div class="modal-dialog" :class="modalClass">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ title }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">
+                        {{title}}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                 </div>
                 <div class="modal-body">
                     <slot />
                 </div>
                 <div class="modal-footer">
                     <slot name="footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
-                        <button type="button" class="btn btn-primary">{{ cancelTitle || 'Cancel' }}</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            OK
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                            {{cancelTitle || 'Cancel'}}
+                        </button>
                     </slot>
                 </div>
             </div>
@@ -24,20 +31,25 @@
   
 <script setup>
 import { Modal } from 'bootstrap';
-import { reactive, onMounted, computed } from 'vue'
+import { reactive, onMounted, computed } from 'vue';
 import { ref, defineProps, defineExpose } from 'vue';
 
 const state = reactive({
     modal: null,
-})
+});
 // Props
-const props = defineProps(['title', 'size', 'hideHeader', 'cancelTitle',]);
+const props = defineProps({
+    'title': {type: String, default: '' },
+    'size': {type: String, default: '' },
+    'hideHeader': {type: Boolen, default: true },
+    'cancelTitle': {type: String, default: 'Cancel' },
+});
 
 const modal = ref();
 
 onMounted(() => {
-    state.modal = new Modal(modal.value, { backdrop: true })
-})
+    state.modal = new Modal(modal.value, { backdrop: true });
+});
 
 const modalClass = computed(() => {
     if (props.size !== '') {

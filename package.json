@@ -6,7 +6,7 @@
     "dev": "vite --port 8081",
     "build": "vite build",
     "serve": "vite preview",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore src",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore src --fix",
     "test": "vitest --root src/tests --environment jsdom",
     "coverage": "vitest run --coverage",
     "storybook": "storybook dev -p 6006",

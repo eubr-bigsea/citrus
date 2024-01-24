@@ -98,7 +98,7 @@ export default {
                 },
                 sortable: ['full_name', 'email'],
                 sortIcon: {
-                   base: 'sort-base',
+                    base: 'sort-base',
                     is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'

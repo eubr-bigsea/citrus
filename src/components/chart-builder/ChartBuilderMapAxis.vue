@@ -2,26 +2,26 @@
     <div class="row">
         <div class="col-6">
             <small class="form-text text-muted">Latitude:</small>
-            <chart-builder-attribute-selector :attributes="attributes" v-model="latitude" class="select2-small" />
+            <chart-builder-attribute-selector v-model="latitude" :attributes="attributes" class="select2-small" />
 
             <small class="form-text text-muted">Longitude:</small>
-            <chart-builder-attribute-selector :attributes="attributes" v-model="longitude" class="select2-small" />
+            <chart-builder-attribute-selector v-model="longitude" :attributes="attributes" class="select2-small" />
         </div>
         <div class="col-6">
             <div class="row">
                 <div class="col-6">
                     <small class="form-text text-muted">Cor (opcional):</small>
-                    <chart-builder-attribute-selector :attributes="attributes" v-model="colorAttribute"
-                        class="select2-small" />
+                    <chart-builder-attribute-selector v-model="colorAttribute" :attributes="attributes"
+                                                      class="select2-small" />
 
                     <small class="form-text text-muted">Tamanho (raio, opcional):</small>
-                    <chart-builder-attribute-selector :attributes="attributes" v-model="sizeAttribute"
-                        class="select2-small" />
+                    <chart-builder-attribute-selector v-model="sizeAttribute" :attributes="attributes"
+                                                      class="select2-small" />
                 </div>
                 <div class="col-6">
                     <small class="form-text text-muted">Texto (opcional):</small>
-                    <chart-builder-attribute-selector :attributes="attributes" v-model="textAttribute"
-                        class="select2-small" />
+                    <chart-builder-attribute-selector v-model="textAttribute" :attributes="attributes"
+                                                      class="select2-small" />
                 </div>
             </div>
         </div>

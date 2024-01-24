@@ -6,7 +6,6 @@
                          @onremove-tasks="removeSelectedTasks" />
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
              class="lemonade-container not-selectable" @click="diagramClick">
-            
             <div class="scroll-area">
                 <div id="lemonade-diagram" ref="diagram" :show-task-decoration="true"
                      :style="{'pointer-events': showToolbarInternal && showToolbar ? 'auto' : 'auto'}" class="lemonade"
@@ -1270,7 +1269,7 @@ export default {
             self.instance.setContainer('lemonade-diagram');
         }
     },
-}
+};
 
 </script>
 

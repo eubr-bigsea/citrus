@@ -7,19 +7,18 @@
                     <div class="row">
                         <div class="col-5">
                             <label for="filter font-weight-bold">Filtro</label>
-                            <input :value="query" type="text" placeholder="Busca" name="filter" autocomplete="off"
-                                class="form-control form-control-sm" maxlength="50" @input="search($event)">
+                            <input :value="query" type="text" placeholder="Busca" name="filter"
+                                   autocomplete="off"
+                                   class="form-control form-control-sm" maxlength="50" @input="search($event)">
                         </div>
                         <div class="col-6">
-                            <slot name="afterFilter">
-
-                            </slot>
+                            <slot name="afterFilter" />
                         </div>
                         <div class="col-1 text-end">
                             <span v-if="perPageValues && perPageValues.length" class="form-group form-inline float-end">
                                 <label for="limit">Limite</label>
                                 <select v-model="perPage" name="limit" class="form-select form-select-sm">
-                                    <option v-for="value in perPageValues" :key="value" :value="value">{{ value }}</option>
+                                    <option v-for="value in perPageValues" :key="value" :value="value">{{value}}</option>
                                 </select>
                             </span>
                         </div>
@@ -44,17 +43,17 @@
                             <th v-for="(heading, index) in columns" :key="index" class="header"
                                 :class="{ [sortIcon.is]: sortableColumns.includes(heading), 'can-be-sorted': sortableColumns.includes(heading) }"
                                 @click="handleSort(heading, $event)">
-                                {{ getTableHeader(heading) }}
+                                {{getTableHeader(heading)}}
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr v-if="tableData.length !== 0" v-for="(row, rowIndex) in tableData" :key="rowIndex">
+                    <tbody v-if="tableData.length !== 0">
+                        <tr v-for="(row, rowIndex) in tableData" :key="rowIndex">
                             <td v-for="colName in columns" :key="colName"
                                 :class="getColumnClass(options.columnsClasses, colName)">
                                 <slot :name="colName" :row="row">
                                     <span :class="`${getColumnClass(options.columnsClasses, colName)}-scoped`">
-                                        {{ row[colName] }}
+                                        {{row[colName]}}
                                     </span>
                                 </slot>
                             </td>
@@ -65,9 +64,9 @@
             <slot name="pagination">
                 <div v-if="paginationEnabled" class="pagination-text text-center">
                     <pager-component v-if="tableCount > 0" v-model:page="currentPage" :total="tableCount"
-                        :per-page="perPage" />
+                                     :per-page="perPage" />
                     <p class="pagination-message">
-                        {{ pagerMessage }}
+                        {{pagerMessage}}
                     </p>
                 </div>
             </slot>
@@ -230,9 +229,9 @@ const load = () => {
                     const params = JSON.parse(saved);
                     sortColumn.value = params.orderBy?.column;
                     sortDirection.value = params.orderBy.ascending ? 'asc' : 'desc',
-                        perPage.value = params.perPage,
-                        query.value = params.query,
-                        currentPage.value = params.page;
+                    perPage.value = params.perPage,
+                    query.value = params.query,
+                    currentPage.value = params.page;
                     tableCustomQueries.value = params.customQueries;
 
                 } catch (e) {

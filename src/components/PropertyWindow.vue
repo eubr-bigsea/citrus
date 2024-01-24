@@ -39,8 +39,8 @@
                                     <div v-for="field in form.fields.filter(f => f.enabled)" :key="taskCopy.id + field.name"
                                          class="mb-2 property clearfix" :data-name="field.name">
                                         <keep-alive>
-                                            <component :is="getWidget(field)" :field="field" :value="getValue(field.name)"
-                                                        v-model="taskCopy.forms[field.name].value"
+                                            <component :is="getWidget(field)" v-model="taskCopy.forms[field.name].value" :field="field"
+                                                       :value="getValue(field.name)"
                                                        :suggestion-event="suggestionEvent"
                                                        :extended-suggestion-event="extendedSuggestionEvent"
                                                        :programming-language="taskCopy.operation.slug === 'execute-python' ? 'python' : (taskCopy.operation.slug === 'execute-sql' ? 'sql' : '')"
@@ -99,7 +99,7 @@
                                     <tr v-for="field in getExecutionFields(form, taskCopy)" :key="field.name">
                                         <td>
                                             <b-form-checkbox v-if="taskCopy.forms[field.name]"
-                                                        v-model="taskCopy.forms[field.name].publishing_enabled" />
+                                                             v-model="taskCopy.forms[field.name].publishing_enabled" />
                                         </td>
                                         <td>{{field.label}}</td>
                                         <td>

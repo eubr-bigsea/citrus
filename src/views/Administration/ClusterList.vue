@@ -1,9 +1,9 @@
 <template>
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
-            <h1>{{ $t('titles.cluster', 2) }}</h1>
+            <h1>{{$t('titles.cluster', 2)}}</h1>
             <router-link :to="{ name: 'addCluster' }" class="btn btn-primary btn-lemonade-primary">
-                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </router-link>
         </div>
         <div class="card">
@@ -11,19 +11,19 @@
                 <v-server-table ref="clusterList" :columns="columns" :options="options" name="clusterList">
                     <template #id="props">
                         <router-link :to="{ name: 'editCluster', params: { id: props.row.id } }">
-                            {{ props.row.id }}
+                            {{props.row.id}}
                         </router-link>
                     </template>
                     <template #name="props">
                         <router-link :to="{ name: 'editCluster', params: { id: props.row.id } }">
-                            {{ props.row.name }}
+                            {{props.row.name}}
                         </router-link>
                     </template>
                     <template #type="props">
-                        {{ props.row.type }}
+                        {{props.row.type}}
                     </template>
                     <template #enabled="props">
-                        {{ $t(props.row.enabled ? 'common.yes' : 'common.no') }}
+                        {{$t(props.row.enabled ? 'common.yes' : 'common.no')}}
                     </template>
                     <template #actions="props">
                         <button class="btn btn-sm btn-danger" @click="remove(props.row.id)">

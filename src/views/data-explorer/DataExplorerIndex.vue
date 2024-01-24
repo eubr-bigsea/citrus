@@ -3,18 +3,18 @@
         <div class="flex_container">
             <div class="flex_item_left noselect step-list p-1">
                 <div class="p-2">
-                    <h6>{{ $t('dataExplorer.title') }}</h6>
+                    <h6>{{$t('dataExplorer.title')}}</h6>
                     <div>
-                        <small>{{ $t('common.name') }}</small>
+                        <small>{{$t('common.name')}}</small>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm" maxlength="50">
                     </div>
                     <div class="mb-">
-                        <small>{{ $t('titles.cluster') }}</small>
+                        <small>{{$t('titles.cluster')}}</small>
                         <v-select v-model="clusterId" :options="clusters" label="name" :reduce="(opt) => opt.id"
-                            :taggable="false" :close-on-select="true" :filterable="false">
+                                  :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{ name }}<br>
-                                <small><em>{{ description }}</em></small>
+                                {{name}}<br>
+                                <small><em>{{description}}</em></small>
                             </template>
                         </v-select>
                     </div>
@@ -30,27 +30,28 @@
                         </b-dropdown-item>
                     </b-dropdown>
                     -->
-                    <b-button variant="primary" size="sm" class="float-end mt-2" :disabled="editing" @click="saveWorkflow">
-                        <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                    <b-button variant="primary" size="sm" class="float-end mt-2" :disabled="editing"
+                              @click="saveWorkflow">
+                        <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                     </b-button>
                     <b-button :disabled="loadingData || editing" size="sm" variant="outline-secondary"
-                        class="float-end mt-2 me-1" @click="loadData(null, null, false)">
-                        <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
+                              class="float-end mt-2 me-1" @click="loadData(null, null, false)">
+                        <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                     </b-button>
                 </div>
                 <!-- Steps -->
                 <div v-if="workflowObj" class="clearfix mt-2">
                     <step-list ref="stepList" :workflow="workflowObj" language="pt" :attributes="[]"
-                        :suggestion-event="getSuggestions" :extended-suggestion-event="getExtendedSuggestions"
-                        @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
-                        @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
-                        @end-sort-steps="endSortSteps" @duplicate-step="duplicateStep" @select="handleSelectStep"
-                        @toggle-selected="handleToggleSelected" />
+                               :suggestion-event="getSuggestions" :extended-suggestion-event="getExtendedSuggestions"
+                               @toggle="handleToggleStep" @delete="handleDeleteStep" @delete-many="handleDeleteSelected"
+                               @duplicate="duplicate" @preview="previewUntilHere" @update="handleUpdateStep"
+                               @end-sort-steps="endSortSteps" @duplicate-step="duplicateStep" @select="handleSelectStep"
+                               @toggle-selected="handleToggleSelected" />
 
                     <div class="text-secondary">
-                        <small>{{ jobStatus }} (p. {{ page }})</small>
+                        <small>{{jobStatus}} (p. {{page}})</small>
                         <br>
-                        <small>Data size: {{ dataSize }} kb.</small>
+                        <small>Data size: {{dataSize}} kb.</small>
                         <br>
                         <!--
 
@@ -82,15 +83,16 @@
                 </table>
 
                 <Preview ref="preview" :attributes="tableData.attributes" :items="rows" :missing="tableData.missing"
-                    :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
-                    @select="handleSelectAttribute" @drop="handleTrigger" @context-menu="handleContextMenu"
-                    @scroll="handleScroll" @render-complete="previewCompleted = true" />
+                         :invalid="tableData.invalid" :loading="loadingData" :total="tableData.total"
+                         @select="handleSelectAttribute" @drop="handleTrigger" @context-menu="handleContextMenu"
+                         @scroll="handleScroll" @render-complete="previewCompleted = true" />
             </div>
 
             <ModalExport v-if="!loadingData" ref="modalExport" :name="workflowObj.name" @ok="handleExport" />
 
-            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true" :hide-header="true" @close="stats = null"
-                @ok="stats = null">
+            <b-modal ref="statsModal" button-size="sm" size="xl" :ok-only="true"
+                     :hide-header="true" @close="stats = null"
+                     @ok="stats = null">
                 <div class="p-2">
                     <div v-if="stats && stats.attribute === null">
                         <h5>Estatísticas do resultado</h5>
@@ -106,7 +108,7 @@
                                         <thead>
                                             <tr v-if="stats.message && stats.message.table" class="text-center">
                                                 <td v-for="k in stats.message.table.columns" :key="k.name">
-                                                    {{ k.name }}
+                                                    {{k.name}}
                                                 </td>
                                             </tr>
                                         </thead>
@@ -114,7 +116,7 @@
                                             <tr v-for="(v, row) in numericStats" :key="row">
                                                 <td v-for="(attr, col) in stats.message.table.columns" :key="col"
                                                     :class="{ 'font-weight-bold': col === 0 }">
-                                                    {{ stats.message.table.columns[col].values[row] || '-' }}
+                                                    {{stats.message.table.columns[col].values[row] || '-'}}
                                                 </td>
                                             </tr>
                                         </transition-group>
@@ -128,17 +130,17 @@
                                             <tr class="text-center correlation">
                                                 <td />
                                                 <th v-for="v in stats.message.numeric" :key="v">
-                                                    {{ v }}
+                                                    {{v}}
                                                 </th>
                                             </tr>
                                         </thead>
                                         <transition-group name="slide" tag="tbody">
                                             <tr v-for="(v, row) in stats.message.correlation" :key="row">
-                                                <th>{{ stats.message.numeric[row] }}</th>
+                                                <th>{{stats.message.numeric[row]}}</th>
                                                 <td v-for="(attr, col) in v" :key="col"
                                                     :style="{ backgroundColor: _heatMapColorforValue(attr), color: attr === 1 ? 'white' : 'black' }"
                                                     class="text-center">
-                                                    {{ attr }}
+                                                    {{attr}}
                                                 </td>
                                             </tr>
                                         </transition-group>
@@ -150,39 +152,40 @@
                     <div v-else>
                         <span v-if="stats">
                             <select ref="selectAttributeStat" class="form-select-sm mb-2"
-                                @change.prevent="handleSelectAttributeStat">
+                                    @change.prevent="handleSelectAttributeStat">
                                 <option v-for="name in attributeNames" :key="name" :selected="name === stats.attribute">
-                                    {{ name }}</option>
+                                    {{name}}</option>
                             </select>
                         </span>
                         <b-tabs>
                             <b-tab title="Estatísticas" title-link-class="small-nav-link">
                                 <div v-if="stats && stats.message" class="row">
                                     <div v-if="stats && stats.message.histogram"
-                                        :class="stats.message.numeric ? 'col-9' : 'col-12'">
+                                         :class="stats.message.numeric ? 'col-9' : 'col-12'">
                                         <Plotly v-if="stats" ref="plotly" :auto-resize="true" :layout="{
-                                            showlegend: false,
-                                            margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
-                                            xaxis: {
-                                                tickangle: 45, tickfont: { size: 11 },
-                                                type: stats.message.numeric ? null : 'category'
-                                            },
-                                            yaxis: { domain: [0.2] },
-                                            yaxis2: {
-                                                domain: [0.8],
-                                                visible: false,
-                                            },
-                                            legend: { traceorder: 'reversed' },
-                                            height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
-                                            autosize: true,
-                                        }" :data="getStatData()" :options="{ displayModeBar: false }" />
+                                                    showlegend: false,
+                                                    margin: { l: 50, r: 50, b: stats.message.numeric ? 30 : 100, t: 10, pad: 4 },
+                                                    xaxis: {
+                                                        tickangle: 45, tickfont: { size: 11 },
+                                                        type: stats.message.numeric ? null : 'category'
+                                                    },
+                                                    yaxis: { domain: [0.2] },
+                                                    yaxis2: {
+                                                        domain: [0.8],
+                                                        visible: false,
+                                                    },
+                                                    legend: { traceorder: 'reversed' },
+                                                    height: stats.message.numeric ? 200 : 300, width: stats.message.numeric ? 600 : 750,
+                                                    autosize: true,
+                                                }"
+                                                :data="getStatData()" :options="{ displayModeBar: false }" />
                                     </div>
                                     <div v-if="stats.message.numeric" class="col-3">
                                         <div v-if="stats.message.outliers && stats.message.outliers.length">
                                             <span>Valores atípicos (outliers)*</span>
                                             <table class="table table-sm table-stats table-bordered">
                                                 <tr v-for="t, i in stats.message.outliers" :key="i">
-                                                    <td>{{ t }}</td>
+                                                    <td>{{t}}</td>
                                                 </tr>
                                             </table>
                                         </div>
@@ -195,9 +198,9 @@
                                         <table class="table table-sm table-stats table-bordered">
                                             <tr v-for="value, stat in stats.message.stats" :key="stat">
                                                 <td class="text-capitalize">
-                                                    {{ stat }}
+                                                    {{stat}}
                                                 </td>
-                                                <td>{{ value }}</td>
+                                                <td>{{value}}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -206,13 +209,13 @@
                                         <table class="table table-sm table-stats table-bordered">
                                             <tr v-for="t, i in stats.message.top20.slice(0, 10)" :key="i">
                                                 <td class="col-8">
-                                                    {{ t[0] }}
+                                                    {{t[0]}}
                                                     <div class="top-bar"
-                                                        :style="{ height: '10px', width: (100 * t[1] / stats.message.stats.count) + '%' }" />
+                                                         :style="{ height: '10px', width: (100 * t[1] / stats.message.stats.count) + '%' }" />
                                                 </td>
                                                 <td class="col-4 text-end">
-                                                    {{ t[1] }}
-                                                    ({{ (100 * t[1] / stats.message.stats.count).toFixed(2) }})%
+                                                    {{t[1]}}
+                                                    ({{(100 * t[1] / stats.message.stats.count).toFixed(2)}})%
                                                 </td>
                                             </tr>
                                         </table>
@@ -224,12 +227,12 @@
                                 </div>
                             </b-tab>
                             <b-tab v-if="selected?.field?.type === 'Text'" title="Agrupar/mesclar" class="pt-4"
-                                :title-link-class="'small-nav-link'">
+                                   :title-link-class="'small-nav-link'">
                                 <form action="" class="form-inline">
                                     <div class="form-group mb-2">
                                         <label for="similarity">Similaridade:</label> &nbsp;
                                         <select v-model.number="similarity" name="similarity"
-                                            class="form-control-sm ms-3 me-3">
+                                                class="form-control-sm ms-3 me-3">
                                             <option value="0.5">
                                                 0.5 (menos semelhantes)
                                             </option>
@@ -252,7 +255,7 @@
                                 </form>
                                 <div style="height: 500px; overflow-y:auto">
                                     <table v-if="valuesClusters && valuesClusters.length > 0"
-                                        class="table table-sm table-smallest mt-4">
+                                           class="table table-sm table-smallest mt-4">
                                         <tr>
                                             <th />
                                             <th class="col-6">
@@ -268,11 +271,11 @@
                                             </td>
                                             <td>
                                                 <span v-for="v, k in values" :key="k" style="white-space: pre"
-                                                    :class="{ 'text-secondary': k !== 0 }">{{ v }} <br></span>
+                                                      :class="{ 'text-secondary': k !== 0 }">{{v}} <br></span>
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control form-control-sm w-100"
-                                                    :value="values[0]">
+                                                       :value="values[0]">
                                             </td>
                                         </tr>
                                     </table>
@@ -284,7 +287,7 @@
             </b-modal>
         </div>
         <modal-save-data v-if="internalWorkflowId" ref="modalSaveData" name="save-data" :workflow-id="internalWorkflowId"
-            @confirm="handleConfirmSaveData" />
+                         @confirm="handleConfirmSaveData" />
     </div>
 </template>
 <script>
@@ -627,7 +630,7 @@ export default {
                 }
                 this.$nextTick(() => {
                     this.$nextTick(() => {
-                        this.previewCompleted = true
+                        this.previewCompleted = true;
                     });
                 });
             } catch (ex) {
@@ -797,7 +800,7 @@ export default {
             if (!this.suggestion) return;
             try {
                 //const cloned = structuredClone(deepToRaw(this.workflowObj));
-                const flows = []
+                const flows = [];
                 for (let i = 0; i < this.workflowObj.tasks.length - 1; i++) {
                     let pair = [, this.workflowObj.tasks[i + 1].id];
                     flows.push({source_id: this.workflowObj.tasks[i].id, 
@@ -816,7 +819,7 @@ export default {
             } catch (e) {
                 console.log(e);
             }
-            return
+            return;
         },
         _unique(data) {
             return Array.from(new Set(data));

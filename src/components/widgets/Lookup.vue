@@ -7,21 +7,22 @@
         <div v-else class="mb-1">
             <input disabled :value="displayLabel" class="form-control form-control-sm">
             <b-link variant="sm" @click.prevent="openModal">
-                <span v-if="selected === '' || selected === null">{{ $t('actions.chooseOption') }}</span>
-                <span v-if="selected !== '' && selected !== null">{{ $t('actions.changeOption') }}</span>
+                <span v-if="selected === '' || selected === null">{{$t('actions.chooseOption')}}</span>
+                <span v-if="selected !== '' && selected !== null">{{$t('actions.changeOption')}}</span>
             </b-link>
-            <b-modal ref="modal" size="lg" :title="field.label" ok-disabled :cancel-title="$t('actions.cancel')" no-fade>
-                {{ field.help }}
-                <v-server-table :show-skeleton="false" :columns="['id', 'name', 'tags']" class="lookupTable"
-                    :options="tableOptions" ref="table">
+            <b-modal ref="modal" size="lg" :title="field.label" ok-disabled
+                     :cancel-title="$t('actions.cancel')" no-fade>
+                {{field.help}}
+                <v-server-table ref="table" :show-skeleton="false" :columns="['id', 'name', 'tags']"
+                                class="lookupTable" :options="tableOptions">
                     <template #value="props">
-                        <a href="#" @click.prevent="select($event, props.row)">{{ props.row.value }}</a>
+                        <a href="#" @click.prevent="select($event, props.row)">{{props.row.value}}</a>
                     </template>
                     <template #name="props">
-                        <a href="#" @click.prevent="select($event, props.row)">{{ props.row.name }}</a>
+                        <a href="#" @click.prevent="select($event, props.row)">{{props.row.name}}</a>
                     </template>
                     <template #id="props">
-                        <a href="#" @click.prevent="select($event, props.row)">{{ props.row.id }}</a>
+                        <a href="#" @click.prevent="select($event, props.row)">{{props.row.id}}</a>
                     </template>
                     <!--
 
@@ -37,10 +38,10 @@
                 <template #footer>
                     <div class="w-100">
                         <b-button variant="secondary" size="sm" class="btn-sm ms-1 float-end" @click="closeModal">
-                            {{ $t('actions.cancel') }}
+                            {{$t('actions.cancel')}}
                         </b-button>
                         <b-button variant="outline-primary" size="sm" class="btn-sm float-end" @click="removeValue">
-                            {{ $t('actions.removeValue') }}
+                            {{$t('actions.removeValue')}}
                         </b-button>
                     </div>
                 </template>
@@ -107,11 +108,11 @@ export default {
                             self.error(e);
                         }
                     } else {
-                        return {data: [], count: 0}
+                        return {data: [], count: 0};
                     }
                 }
             }
-        }
+        };
     },
     computed: {
         pairOptionValueList() {
@@ -142,7 +143,7 @@ export default {
                 url += `&id=${this.value}`; //FIXME
             }
             try {
-                debugger
+                debugger;
                 const resp = await axios.get(url);
                 self.selected = self.value;
                 let data = resp.data.data || resp.data;

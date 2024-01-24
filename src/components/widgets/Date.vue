@@ -2,11 +2,11 @@
     <div>
         <LabelComponent :field="field" :value="value" :show-help="showHelp" />
         <div v-if="readOnly">
-            {{ value === null ? field.default : value }}
+            {{value === null ? field.default : value}}
         </div>
         <div v-else>
             <input v-model="dateValue" :type="useDatetimeLocal ? 'datetime-local' : 'date'" class="form-control"
-                max="2199-12-31" :required="field.required" step="1" @change="updated">
+                   max="2199-12-31" :required="field.required" step="1" @change="updated">
             <div class="invalid-feedback">
                 Please provide a valid date.
             </div>
@@ -54,7 +54,7 @@ export default {
                 this.dateValue = this.useDatetimeLocal ? format(d, 'yyyy-MM-DDTHH:mm:ss') : format(d, 'yyyy-MM-DD');
             }
         } else {
-            this.dateValue = format(new Date(), 'YYYY-MM-DD')
+            this.dateValue = format(new Date(), 'YYYY-MM-DD');
         }
     },
     methods: {
