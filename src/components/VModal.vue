@@ -41,7 +41,7 @@ const state = reactive({
 const props = defineProps({
     'title': {type: String, default: '' },
     'size': {type: String, default: '' },
-    'hideHeader': {type: Boolen, default: true },
+    'hideHeader': {type: Boolean, default: true },
     'cancelTitle': {type: String, default: 'Cancel' },
 });
 
