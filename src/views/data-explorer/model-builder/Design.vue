@@ -88,7 +88,7 @@
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <FeatureReduction :reduction="workflowObj.reduction" />
+                                        <model-builder-feature-reduction :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
                                         <Algorithms ref="algorithms"
@@ -134,11 +134,11 @@ import TrainTest from './TrainTest.vue';
 import Metric from './Metric.vue';
 import FeatureSelection from './FeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
-import FeatureReduction from './FeatureReduction.vue';
-import Algorithms from './Algorithms.vue';
+import FeatureReduction from './ModelBuilderFeatureReduction.vue';
+import Algorithms from './ModelBuilderAlgorithms.vue';
 import Grid from './ModelBuilderGrid.vue';
 import Runtime from './Runtime.vue';
-import Result from './result/Result.vue';
+import Result from './result/ModelBuilderResult.vue';
 import Weighting from './Weighting.vue';
 
 import DataSourceMixin from '../DataSourceMixin.js';

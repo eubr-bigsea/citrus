@@ -62,16 +62,16 @@
 </template>
 <script>
 ;
-import Checkboxes from '../../../components/widgets/Checkboxes.vue';
-import InputTag from '../../../components/widgets/InputTag.vue';
-import NumericRangeOrSet from '../../../components/widgets/NumericRangeOrSet.vue';
+import CheckboxesComponent from '@/components/widgets/Checkboxes.vue';
+import InputTagComponent from '@/components/widgets/InputTag.vue';
+import NumericRangeOrSetComponent from '@/components/widgets/NumericRangeOrSet.vue';
 const conditional = /\bthis\..+?\b/g;
 export default {
     name: 'AlgorithmsComponent',
     components: {
-        'checkboxes-component': Checkboxes,
-        'input-tag-component': InputTag,
-        'numeric-range-or-set-component': NumericRangeOrSet
+        'checkboxes-component': CheckboxesComponent,
+        'input-tag-component': InputTagComponent,
+        'numeric-range-or-set-component': NumericRangeOrSetComponent
     },
     props: {
         operations: { type: Array, required: true },
