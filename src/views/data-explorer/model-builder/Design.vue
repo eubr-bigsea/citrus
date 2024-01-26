@@ -136,7 +136,7 @@ import FeatureSelection from './FeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
 import FeatureReduction from './FeatureReduction.vue';
 import Algorithms from './Algorithms.vue';
-import Grid from './Grid.vue';
+import Grid from './ModelBuilderGrid.vue';
 import Runtime from './Runtime.vue';
 import Result from './result/Result.vue';
 import Weighting from './Weighting.vue';
