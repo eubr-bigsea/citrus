@@ -5,23 +5,22 @@
                 <h5 class="mb-3 border-bottom">Algoritmos</h5>
                 <small>Informe os parâmetros para a execução do algoritmo. <u>Nenhum parâmetro é
                         obrigatório.</u></small>
-                
+
                 <b-list-group class="mb-3 border-bottom">
-                    <b-list-group-item v-for="op in algorithmOperations" :key="op.id" class="p-0 ps-2"
-                        :class="{ 'bg-light': selectedAlgorithm === op }">
-                        <div class="d-flex w-100 p-1" role="button" @click="handleSelectAlgorithm(op)">
-                            <b-form-checkbox v-model="op.enabled" switch />
-                            {{ op.name }}
+                    <b-list-group-item v-for="task in props.tasks" :key="task.id" class="p-0 ps-2"
+                        :class="{ 'bg-light': selectedAlgorithm === task }">
+                        <div class="d-flex w-100 p-1" role="button" @click="handleSelectTask(task)">
+                            <b-form-checkbox v-model="task.enabled" switch />
+                            {{ task.operation.slug }}
+                            {{ task.name }} | {{ task.id }} || {{ task.enabled }}
                         </div>
                     </b-list-group-item>
                 </b-list-group>
-                <div v-if="false && selectedAlgorithm && selectedAlgorithm.operation">
-                    {{ selectedAlgorithm.forms }}
-                </div>
             </div>
             <div class="col-md-9 border p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
                     {{ selectedAlgorithm }}
+                    <input v-model="selectedAlgorithm.forms.test" class="form-control form-control-sm"/>
                 </div>
                 <div v-else class="text-center text-secondary mt-5 pt-5">
                     <h4>Selecione e habilite um algoritmo à esquerda para editar seus parâmetros.</h4>
@@ -35,35 +34,64 @@
 //import ModelBuilderAlgorithm from './ModelBuilderAlgorithm.vue';
 
 import { ref, computed, onMounted, reactive } from 'vue';
+import { Operation, Task } from '../entities';
 
 const conditional = /\bthis\..+?\b/g;
 
 const props = defineProps({
+    tasks: { type: Array, required: true },
     operations: { type: Array, required: true },
-    operationMap: { type: Map, required: true },
-    workflow: { type: Object, required: true },
-    gridStrategy: { type: String, required: true },
-    algorithmOperations: { type: Array, required: true },
 });
 
 const conditionalFields = new Map();
 const selectedAlgorithm = ref({});
 
+const emit = defineEmits(['update:tasks']);
+
 onMounted(() => {
+    const tasksLookup = new Map((props.tasks || []).map((task) => [task.operation.slug, task]));
+    const operationsLookup = new Map(props.operations.map(op => [op.slug, op]));
+
+    let updatedTasks = [...props.tasks];
+    
+    /* Remove invalid tasks */
+    const before = updatedTasks.length;
+    updatedTasks = updatedTasks.filter(t => operationsLookup.has(t.operation.slug));
+
+    let changed = before != updatedTasks.length;
+
+    console.debug(updatedTasks)
+    /* Add missing tasks */
+    for (let op of props.operations) {
+        if (!tasksLookup.has(op.slug)) {
+            updatedTasks.push(new Task({
+                id: Operation.generateTaskId(),
+                name: op.name,
+                enabled: true,
+                display_order: 1000,
+                forms: {},
+                operation: op
+            }));
+            changed = true;
+        }
+    }
+    if (changed) {
+        updatedTasks.sort(t => t.operation.slug);
+        emit('update:tasks', updatedTasks);
+    }
     return;
-    const algLookup = new Map((this.workflow.tasks || []).map((alg) => [operation.slug, alg]));
-    const operationsLookup = new Map(this.operations.map(op => [op.slug, op]));
+});
 
     /* Initialization
         if (!this.algorithms.forms) {
             this.algorithms.forms = { algorithms: { value: [] } };
         } else if (!this.algorithms.forms.algorithms) {
             this.algorithms.forms.algorithms = { value: [] };
-        } */
-    this.algorithms = this.operations.map((op) => {
+        } 
+    this.algorithms = props.algorithmOperations.map((op) => {
         let task;
-        if (algLookup.has(op.slug)) {
-            task = algLookup.get(op.slug);
+        if (tasksLookup.has(op.slug)) {
+            task = tasksLookup.get(op.slug);
             task.operation = operationsLookup.get(op.slug);
             task.algorithm = true;
         } else {
@@ -73,14 +101,14 @@ onMounted(() => {
         }
         return task;
     });
-
-}
-);
+*/
 const evalInContext = (js, context) => {
     return new Function("return `" + js + "`;").call(context);
 };
 
-const handleSelectAlgorithm = (op) => {
+const handleSelectTask = (task) => {
+
+    selectedAlgorithm.value = task;
     return
     if (selectedAlgorithm.value.forms === undefined) {
         selectedAlgorithm.value.forms = reactive({}); //Review

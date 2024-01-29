@@ -907,6 +907,10 @@ h1 {
     z-index: 101;
 }
 
+.braces::before {
+    content: "[]";
+}
+
 /* Sorting */
 .sort-up,
 .sort-down {
