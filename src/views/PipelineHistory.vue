@@ -11,12 +11,12 @@
             <div class="historyPage-container">
                 <v-client-table v-model="data" class="historyPage-table" :columns="columns" :options="options">
                     <template #id="props">
-                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
+                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
                             {{props.row.id}}
                         </router-link>
                     </template>
                     <template #pipeline="props">
-                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
+                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
                             {{props.row.pipeline}}
                         </router-link>
                     </template>

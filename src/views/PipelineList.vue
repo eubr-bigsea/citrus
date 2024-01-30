@@ -5,7 +5,7 @@
                 Pipelines
             </h1>
             <div>
-                <!-- <router-link :to="{name: 'lemon-history'}" class="btn btn-outline-secondary float-left ml-2">
+                <!-- <router-link :to="{name: 'pipelinesHistory'}" class="btn btn-outline-secondary float-left ml-2">
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </router-link> -->
                 <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
@@ -144,12 +144,12 @@
                 <v-server-table ref="pipelineList" :data="tableData" class="lemonPage-table" :columns="columns" 
                                 :options="options" name="pipelineList">
                     <template #id="props">
-                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
+                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
                             {{props.row.id}}
                         </router-link>
                     </template>
                     <template #name="props">
-                        <router-link :to="{name: 'lemon-edit', params: {id: props.row.id}}">
+                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
                             {{props.row.name}}
                         </router-link>
                     </template>
@@ -313,7 +313,7 @@ export default {
             this.$refs.addModal.show();
         },
         closeAddModal() {
-            if (this.wizardStep === 3) this.$router.push({ name: 'lemon-edit', params: {id: this.createdPipelineId}});
+            if (this.wizardStep === 3) this.$router.push({ name: 'pipelineEdit', params: {id: this.createdPipelineId}});
             this.$refs.addModal.hide();
             this.pipelineName = '';
             this.pipelineDescription = '';

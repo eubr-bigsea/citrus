@@ -91,9 +91,9 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
 const PipelineList = () => import('./views/PipelineList.vue');
-const LemonEdit = () => import('./views/LemonEdit.vue');
+const PipelineEdit = () => import('./views/PipelineEdit.vue');
 const PipelineTemplates = () => import('./views/PipelineTemplates.vue');
-const LemonHistory = () => import('./views/LemonHistory.vue');
+const PipelineHistory = () => import('./views/PipelineHistory.vue');
 
 
 /* Experiments */
@@ -863,9 +863,9 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/lemon/edit/:id',
-            name: 'lemon-edit',
-            component: LemonEdit,
+            path: '/pipelines/:id',
+            name: 'pipelineEdit',
+            component: PipelineEdit,
             meta: {
                 requiresAuth: true,
                 title: ['titles.lemon', 1]
@@ -881,9 +881,9 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/lemon/history',
-            name: 'lemon-history',
-            component: LemonHistory,
+            path: '/pipeline/history',
+            name: 'pipelinesHistory',
+            component: PipelineHistory,
             meta: {
                 requiresAuth: false,
                 title: ['titles.lemonHistory', 1]
