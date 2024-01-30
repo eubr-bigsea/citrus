@@ -6,7 +6,7 @@
     </div>
 </template>
 <script>
-import MarkdownWidget from "../widgets/Markdown.vue";
+import MarkdownWidget from "../widgets/MarkdownComponent.vue";
 import VisualizationMixin from "./VisualizationMixin.vue";
 export default {
     name: 'MarkdownVisualization',
