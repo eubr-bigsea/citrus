@@ -8,27 +8,26 @@
                         <div class="d-inline-flex align-items-center">
                             <label for="inline-form-input-name">Min:</label>
                             <input v-model.number="internalValue.min" type="number"
-                                class="form-control form-control-sm ms-2 me-2 small-text"
-                                onKeyPress="return this.value.length < 12">
-
+                                   class="form-control form-control-sm ms-2 me-2 small-text"
+                                   onKeyPress="return this.value.length < 12">
                         </div>
                         <div class="d-inline-flex align-items-center">
                             <label for="inline-form-input-username">Máx:</label>
                             <input v-model.number="internalValue.max" type="number"
-                                class="form-control form-control-sm ms-2 me-2 small-text"
-                                onKeyPress="return this.value.length < 12">
+                                   class="form-control form-control-sm ms-2 me-2 small-text"
+                                   onKeyPress="return this.value.length < 12">
 
                             <template v-if="showQuantity">
                                 <label for="inline-form-input-username">Qtde. valores:</label>
                                 <input v-model.number="internalValue.quantity" type="number" min="1"
-                                    class="form-control form-control-sm ms-2 me-2 small-text"
-                                    onKeyPress="return this.value.length < 12">
+                                       class="form-control form-control-sm ms-2 me-2 small-text"
+                                       onKeyPress="return this.value.length < 12">
                             </template>
                         </div>
                         <div class="d-inline-flex align-items-center">
                             <label for="inline-form-input-username">Dist.:</label>
                             <select v-model="internalValue.distribution"
-                                class="form-select form-select-sm small-text ms-2 me-2 ">
+                                    class="form-select form-select-sm small-text ms-2 me-2 ">
                                 <option value="uniform">
                                     Uniforme
                                 </option>
@@ -39,14 +38,14 @@
                         </div>
                     </div>
                 </div>
-                <b-form-tags v-else v-model="internalValue.list" no-outer-focus class="mb-2 p-0" style="overflow: auto;"
-                    @input="handleInput">
-
-                    <template #default="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+                <b-form-tags v-else v-model="internalValue.list" no-outer-focus class="mb-2 p-0"
+                             style="overflow: auto;"
+                             @input="handleInput">
+                    <template #default="{ tags, inputHandlers, addTag, removeTag }">
                         <b-input-group class="w-25 float-start">
                             <input :type="inputType.type" onKeyPress="return this.value.length < 12"
-                                class="border-0 w-50 form-control form-control-sm " :step="inputType.step"
-                                placeholder="Valor" v-on="inputHandlers" @keyup="handleKeyUp" xkeydown.enter="handleAdd(addTag, $event, inputHandlers.keydown)">
+                                   class="border-0 w-50 form-control form-control-sm " :step="inputType.step"
+                                   placeholder="Valor" xkeydown.enter="handleAdd(addTag, $event, inputHandlers.keydown)" v-on="inputHandlers" @keyup="handleKeyUp">
                             <b-input-group-append>
                                 <b-button variant="secondary" size="sm" @click="handleAdd(addTag, $event)">
                                     <font-awesome-icon icon="fa fa-caret-right" />
@@ -55,7 +54,7 @@
                         </b-input-group>
                         <div v-if="tags && tags.length" class="pt-1 ps-2 w-75 float-start">
                             <div v-for="(tag, i) in tags" :key="i" class="badge text-secondary badge-light2 border me-1">
-                                {{ tag }} <a href="#" class="text-danger" @click.prevent="removeTag(tag)">&times;</a>
+                                {{tag}} <a href="#" class="text-danger" @click.prevent="removeTag(tag)">&times;</a>
                             </div>
                         </div>
                     </template>
@@ -63,7 +62,7 @@
             </div>
             <div class="col-2 text-end">
                 <b-form-radio-group v-model="internalValue.type" :options="opts" button-variant="outline-secondary"
-                    size="sm" name="radio-btn-outline" buttons @input="handleInput" />
+                                    size="sm" name="radio-btn-outline" buttons @input="handleInput" />
             </div>
         </div>
     </div>
@@ -95,12 +94,12 @@ export default {
     computed: {
         inputType() {
             switch (this.field.suggested_widget) {
-                case 'integer':
-                    return { type: 'number', step: "1" };
-                case 'decimal':
-                    return { type: 'number', step: "0.01" };
-                default:
-                    return { type: 'text' };
+            case 'integer':
+                return { type: 'number', step: "1" };
+            case 'decimal':
+                return { type: 'number', step: "0.01" };
+            default:
+                return { type: 'text' };
             }
         }
     },
@@ -136,7 +135,7 @@ export default {
         handleAdd(addTag, ev, ch) {
             if (ch)
                 ch(ev);
-            addTag()
+            addTag();
             const input = ev.currentTarget.parentElement.querySelector('input');
             if (input) {
                 input.value = '';
@@ -148,8 +147,8 @@ export default {
         },
         handleInput() {
             switch (this.inputType.type) {
-                case 'number':
-                    this.internalValue.list = this.internalValue.list.map(v => parseFloat(v));
+            case 'number':
+                this.internalValue.list = this.internalValue.list.map(v => parseFloat(v));
             }
 
             //console.debug(this.message, this.field.name, this.internalValue)

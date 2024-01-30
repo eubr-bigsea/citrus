@@ -1,6 +1,8 @@
 <template>
     <section :key="counter">
-        <h6 class="mb-3 border-bottom">{{ name }}</h6>
+        <h6 class="mb-3 border-bottom">
+            {{name}}
+        </h6>
         <template v-for="opForm in operation.forms" :key="opForm.id">
             <div v-for="field in opForm.fields" :key="field.name" class="mb-2 property clearfix" :data-name="field.name">
                 <!--
@@ -8,19 +10,18 @@
                     (({{ field.suggested_widget }}))
                 -->
                 <keep-alive>
-                    <div
-                        v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
+                    <div v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
                         <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
-                            :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
-                            :read-only="!field.editable" context="context" @update="handleUpdateField"
-                            @xinput="handleUpdateField" @update-form-field="handleUpdateField" />
+                                              :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
+                                              :read-only="!field.editable" context="context" @update="handleUpdateField"
+                                              @xinput="handleUpdateField" @update-form-field="handleUpdateField" />
                     </div>
-                    <component v-else-if="getWidget(field) !== 'attribute-selector-component' "
-                        :is="getWidget(field)" visual-style="explorer" :field="field"
-                        :value="getFieldValue(field.name, false)" :language="$root.$i18n.locale"
-                        :type="field.suggested_widget" :small="true" :read-only="!field.editable" context="context"
-                        :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
-                        @update-form-field="handleUpdateField" />
+                    <component :is="getWidget(field)"
+                               v-else-if="getWidget(field) !== 'attribute-selector-component' " visual-style="explorer" :field="field"
+                               :value="getFieldValue(field.name, false)" :language="$root.$i18n.locale"
+                               :type="field.suggested_widget" :small="true" :read-only="!field.editable" context="context"
+                               :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
+                               @update-form-field="handleUpdateField" />
                     <div v-else>
                         Tipo de campo de formulário não suportado: {{field.suggested_widget}} para campo {{field.name}}
                     </div>
@@ -112,16 +113,16 @@ const getFieldValue = (name, checkboxes) => {
         return form.value[name]?.value;
     }
 
-}
+};
 const handleUpdateField = (field, value, label) => {
     if (field.name) {
-    if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
-        const newValue = { list: value, type: 'list' };//{type: 'list', list: value.filter(a => a !== '')};
-        form.value[field.name] = { value: newValue, label, internalValue: newValue };
-    } else {
-        form.value[field.name] = { value: value, label, internalValue: value };
+        if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
+            const newValue = { list: value, type: 'list' };//{type: 'list', list: value.filter(a => a !== '')};
+            form.value[field.name] = { value: newValue, label, internalValue: newValue };
+        } else {
+            form.value[field.name] = { value: value, label, internalValue: value };
+        }
     }
-}
 
 
     /*if (this.conditionalFields.has(field.name)) {

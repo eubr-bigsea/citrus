@@ -198,7 +198,7 @@ const operations = [
         "name": "Classificador Árvore de Decisão",
         "slug": "decision-tree-classifier"
     }),
-]
+];
 const Template = (args) => ({
     data() {
         return {
@@ -235,7 +235,7 @@ export const NaiveBayes = {
             },
             "smoothing": { 
                 "value": { "distribution": "uniform", "list": [ 53 ], 
-                "max": 100, "min": 10, "quantity": 4, "type": "range" }
+                    "max": 100, "min": 10, "quantity": 4, "type": "range" }
             },
             "thresholds": { "value": "1,2", "internalValue": "1,2" } ,
         }

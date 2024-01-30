@@ -7,7 +7,7 @@
                 <div v-if="selectedTarget">
                     <label>
                         <font-awesome-icon icon="fa-bullseye" class="text-primary" />
-                        Alvo atual: {{ selectedTarget.name }}</label>
+                        Alvo atual: {{selectedTarget.name}}</label>
                 </div>
                 <div v-else-if="supervisioned" class="text-danger">
                     É necessário informar um atributo alvo!
@@ -15,11 +15,11 @@
                 <div class="mt-2 features-list scroll-area">
                     <b-list-group>
                         <b-list-group-item v-for="attr in features" :key="attr.name" class="p-0"
-                            role="button" @click="handleSelectAttribute(attr)">
+                                           role="button" @click="handleSelectAttribute(attr)">
                             <div class="w-100 p-1"
-                                :class="{ 'bg-light border-secondary border': selectedAttribute === attr }">
+                                 :class="{ 'bg-light border-secondary border': selectedAttribute === attr }">
                                 <b-form-checkbox :checked="attr.usage !== 'unused'" switch @change="handleEnable">
-                                    {{ attr.name }}
+                                    {{attr.name}}
                                 </b-form-checkbox>
                             </div>
                         </b-list-group-item>
@@ -32,16 +32,16 @@
             <div class="col-md-8 border p-3">
                 <div v-if="selectedAttribute">
                     <h6 class="border-bottom mb-4">
-                        {{ selectedAttribute.name }}
+                        {{selectedAttribute.name}}
                     </h6>
 
                     <div class="row">
                         <div class="col-4">
                             <b-form-group label="Uso do atributo:">
-                                <b-form-radio-group name="radio-usage" v-model="selectedAttribute.usage" stacked
-                                    @input="changeUsage($event)">
-                                    <b-form-radio v-for="opt in usageOptions" name="usage" :value="opt.value">
-                                        <font-awesome-icon :icon="`fa ${opt.icon}`" :class="opt.cssClass" /> {{ opt.label }}
+                                <b-form-radio-group v-model="selectedAttribute.usage" name="radio-usage" stacked
+                                                    @input="changeUsage($event)">
+                                    <b-form-radio v-for="opt in usageOptions" :key="opt.value" name="usage" :value="opt.value">
+                                        <font-awesome-icon :icon="`fa ${opt.icon}`" :class="opt.cssClass" /> {{opt.label}}
                                     </b-form-radio>
                                 </b-form-radio-group>
                             </b-form-group>
@@ -51,7 +51,7 @@
                                     <b-form-radio v-for="opt in attributeTypeOptions" :key="opt.value" :value="opt.value">
                                         <font-awesome-icon v-if="opt.icon" :icon="opt.icon" />
                                         <em v-else>[ ]</em>
-                                        {{ opt.label }}
+                                        {{opt.label}}
                                     </b-form-radio>
                                 </b-form-radio-group>
                             </b-form-group>
@@ -61,16 +61,16 @@
                                 <b-form-group label="Tratamento para dado categórico:">
                                     <select v-model="selectedAttribute.transform" class="form-select form-select-sm mb-3">
                                         <option v-for="opt in categoricalHandlingOptions" :key="opt.value"
-                                            :value="opt.value">
-                                            {{ opt.label }}
+                                                :value="opt.value">
+                                            {{opt.label}}
                                         </option>
                                     </select>
                                 </b-form-group>
                                 <b-form-group label="Tratamento para valores ausentes:">
                                     <select v-model="selectedAttribute.missing_data" class="form-select form-select-sm">
                                         <option v-for="opt in categoricalMissingOptions" :key="opt.value"
-                                            :value="opt.value">
-                                            {{ opt.label }}
+                                                :value="opt.value">
+                                            {{opt.label}}
                                         </option>
                                     </select>
                                 </b-form-group>
@@ -79,7 +79,7 @@
                                 <b-form-group label="Tratamento para dado numérico:">
                                     <select v-model="selectedAttribute.transform" class="form-select form-select-sm mb-3">
                                         <option v-for="opt in numericalHandlingOptions" :key="opt.value" :value="opt.value">
-                                            {{ opt.label }}
+                                            {{opt.label}}
                                         </option>
                                     </select>
                                 </b-form-group>
@@ -87,8 +87,8 @@
                                     <b-form-group label="Mudar a escala do número:">
                                         <select v-model="selectedAttribute.scale" class="form-select form-select-sm mb-3">
                                             <option v-for="opt in numericalScaleOptions" :key="opt.value"
-                                                :value="opt.value">
-                                                {{ opt.label }}
+                                                    :value="opt.value">
+                                                {{opt.label}}
                                             </option>
                                         </select>
                                     </b-form-group>
@@ -96,23 +96,23 @@
                                 <template v-if="selectedAttribute.transform === 'binarize'">
                                     <b-form-group label="Limiar para a binarização:">
                                         <input v-model="selectedAttribute.threshold" type="number"
-                                            class="form-control form-control-sm mb-3 w-25" maxlength="18" step="0.01">
+                                               class="form-control form-control-sm mb-3 w-25" maxlength="18" step="0.01">
                                     </b-form-group>
                                 </template>
                                 <template v-if="selectedAttribute.transform === 'quantis'">
                                     <b-form-group label="Número de quantis:">
                                         <input v-model="selectedAttribute.quantis" type="number"
-                                            class="form-control form-control-sm mb-3 w-25" maxlength="10" step="1">
+                                               class="form-control form-control-sm mb-3 w-25" maxlength="10" step="1">
                                     </b-form-group>
                                 </template>
                                 <template v-if="selectedAttribute.transform === 'buckets'">
                                     <b-form-group label="Definição dos buckets:">
                                         <b-form-tags v-model="selectedAttribute.buckets" no-outer-focus class="mb-2 p-2"
-                                            placeholder="Informe um limite para o bucket"
-                                            duplicate-tag-text="Valor já informado" add-button-text="+"
-                                            input-type="number" />
+                                                     placeholder="Informe um limite para o bucket"
+                                                     duplicate-tag-text="Valor já informado" add-button-text="+"
+                                                     input-type="number" />
                                         <p v-if="selectedAttribute.buckets">
-                                            -∞ ... {{ [...selectedAttribute.buckets].sort().join(' ... ') }} ... +∞
+                                            -∞ ... {{[...selectedAttribute.buckets].sort().join(' ... ')}} ... +∞
                                         </p>
                                     </b-form-group>
                                 </template>
@@ -120,7 +120,7 @@
                                 <b-form-group label="Tratamento para valores ausentes:">
                                     <select v-model="selectedAttribute.missing_data" class="form-select form-select-sm">
                                         <option v-for="opt in numericalMissingOptions" :key="opt.value" :value="opt.value">
-                                            {{ opt.label }}
+                                            {{opt.label}}
                                         </option>
                                     </select>
                                 </b-form-group>
@@ -129,14 +129,14 @@
                                 <b-form-group label="Tratamento para dado textual:">
                                     <select v-model="selectedAttribute.transform" class="form-select form-select-sm mb-3">
                                         <option v-for="opt in textualHandlingOptions" :key="opt.value" :value="opt.value">
-                                            {{ opt.label }}
+                                            {{opt.label}}
                                         </option>
                                     </select>
                                 </b-form-group>
                                 <b-form-group label="Tratamento para valores ausentes:">
                                     <select v-model="selectedAttribute.missing_data" class="form-select form-select-sm">
                                         <option v-for="opt in textualMissingOptions" :key="opt.value" :value="opt.value">
-                                            {{ opt.label }}
+                                            {{opt.label}}
                                         </option>
                                     </select>
                                 </b-form-group>
@@ -145,8 +145,8 @@
                                 <label>Substituir valores ausentes
                                     por:</label>
                                 <input v-model="selectedAttribute.constant"
-                                    :type="(selectedAttribute.feature_type === 'numerical') ? 'number' : 'text'"
-                                    class="form-control form-control-sm" maxlength="100">
+                                       :type="(selectedAttribute.feature_type === 'numerical') ? 'number' : 'text'"
+                                       class="form-control form-control-sm" maxlength="100">
                             </template>
                         </div>
                     </div>

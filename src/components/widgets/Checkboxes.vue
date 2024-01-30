@@ -1,13 +1,13 @@
 <template>
     <div v-if="readOnly">
-        {{ selected }}
+        {{selected}}
     </div>
     <div v-else>
         <LabelComponent :field="field" :value="value" />
         <b-form-group class="checks">
             <b-form-checkbox-group v-model="internalValue" :name="field.name" switches @input="handleCheckboxChange">
                 <b-form-checkbox v-for="opt in pairOptionValueList" :key="opt.key" class="col-3" :value="opt.key">
-                    {{ opt[language] || opt.value }}
+                    {{opt[language] || opt.value}}
                 </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>

@@ -134,7 +134,6 @@ import TrainTest from './TrainTest.vue';
 import Metric from './Metric.vue';
 import FeatureSelection from './FeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
-import FeatureReduction from './ModelBuilderFeatureReduction.vue';
 import Algorithms from './ModelBuilderAlgorithms.vue';
 import Grid from './ModelBuilderGrid.vue';
 import Runtime from './Runtime.vue';
@@ -142,7 +141,7 @@ import Result from './result/ModelBuilderResult.vue';
 import Weighting from './Weighting.vue';
 
 import DataSourceMixin from '../DataSourceMixin.js';
-import Notifier from '../../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
 
 import { ModelBuilderWorkflow, Operation } from '../entities.js';
 
@@ -160,7 +159,7 @@ export default {
     name: 'DesignComponent',
     components: {
         SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
-        FeatureReduction, Algorithms, Grid, Runtime, Weighting, Result
+        Algorithms, Grid, Runtime, Weighting, Result
     },
     mixins: [DataSourceMixin, Notifier],
     data() {

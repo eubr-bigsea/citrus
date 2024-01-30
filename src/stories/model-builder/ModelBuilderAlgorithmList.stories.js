@@ -200,7 +200,7 @@ const operations = [
         "name": "Classificador Árvore de Decisão",
         "slug": "decision-tree-classifier"
     }),
-]
+];
 const operationMap = new Map(operations.map((op) => [op.id, op]));
 
 const Template = (args) => ({

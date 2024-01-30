@@ -2,25 +2,27 @@
     <div>
         <div class="row">
             <div class="col-md-3">
-                <h5 class="mb-3 border-bottom">Algoritmos</h5>
+                <h5 class="mb-3 border-bottom">
+                    Algoritmos
+                </h5>
                 <small>Informe os parâmetros para a execução do algoritmo. <u>Nenhum parâmetro é
-                        obrigatório.</u></small>
+                    obrigatório.</u></small>
 
                 <b-list-group class="mb-3 border-bottom">
                     <b-list-group-item v-for="task in props.tasks" :key="task.id" class="p-0 ps-2"
-                        :class="{ 'bg-light': selectedAlgorithm === task }">
+                                       :class="{ 'bg-light': selectedAlgorithm === task }">
                         <div class="d-flex w-100 p-1" role="button" @click="handleSelectTask(task)">
                             <b-form-checkbox v-model="task.enabled" switch />
-                            {{ task.operation.slug }}
-                            {{ task.name }} | {{ task.id }} || {{ task.enabled }}
+                            {{task.operation.slug}}
+                            {{task.name}} | {{task.id}} || {{task.enabled}}
                         </div>
                     </b-list-group-item>
                 </b-list-group>
             </div>
             <div class="col-md-9 border p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
-                    {{ selectedAlgorithm }}
-                    <input v-model="selectedAlgorithm.forms.test" class="form-control form-control-sm"/>
+                    {{selectedAlgorithm}}
+                    <input v-model="selectedAlgorithm.forms.test" class="form-control form-control-sm">
                 </div>
                 <div v-else class="text-center text-secondary mt-5 pt-5">
                     <h4>Selecione e habilite um algoritmo à esquerda para editar seus parâmetros.</h4>
@@ -33,8 +35,8 @@
 
 //import ModelBuilderAlgorithm from './ModelBuilderAlgorithm.vue';
 
-import { ref, computed, onMounted, reactive } from 'vue';
-import { Operation, Task } from '../entities';
+import { ref, onMounted, reactive } from 'vue';
+import { Operation, Task } from '../entities.js';
 
 const conditional = /\bthis\..+?\b/g;
 
@@ -60,7 +62,7 @@ onMounted(() => {
 
     let changed = before != updatedTasks.length;
 
-    console.debug(updatedTasks)
+    console.debug(updatedTasks);
     /* Add missing tasks */
     for (let op of props.operations) {
         if (!tasksLookup.has(op.slug)) {
@@ -82,7 +84,7 @@ onMounted(() => {
     return;
 });
 
-    /* Initialization
+/* Initialization
         if (!this.algorithms.forms) {
             this.algorithms.forms = { algorithms: { value: [] } };
         } else if (!this.algorithms.forms.algorithms) {
@@ -109,7 +111,7 @@ const evalInContext = (js, context) => {
 const handleSelectTask = (task) => {
 
     selectedAlgorithm.value = task;
-    return
+    return;
     if (selectedAlgorithm.value.forms === undefined) {
         selectedAlgorithm.value.forms = reactive({}); //Review
     }
@@ -183,7 +185,7 @@ const getFieldValue = (name, checkboxes) => {
             ? this.selectedAlgorithm.forms[name].value : null;
     }
 
-}
+};
 const handleUpdateField = (field, value, label) => {
     if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
         const newValue = { list: value, type: 'list' };//{type: 'list', list: value.filter(a => a !== '')};
