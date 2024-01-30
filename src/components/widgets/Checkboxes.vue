@@ -1,20 +1,13 @@
 <template>
     <div v-if="readOnly">
-        {{selected}}
+        {{ selected }}
     </div>
     <div v-else>
-        <LabelComponent :field="field"
-                        :value="value" />
+        <LabelComponent :field="field" :value="value" />
         <b-form-group class="checks">
-            <b-form-checkbox-group v-model="internalValue"
-                                   :name="field.name"
-                                   switches>
-                <b-form-checkbox v-for="opt in pairOptionValueList"
-                                 :key="opt.key"
-                                 class="col-3"
-                                 :value="opt.key"
-                                 @input="handleCheckboxChange(opt[language] || opt.value, $event)">
-                    {{opt[language] || opt.value}}
+            <b-form-checkbox-group v-model="internalValue" :name="field.name" switches @input="handleCheckboxChange">
+                <b-form-checkbox v-for="opt in pairOptionValueList" :key="opt.key" class="col-3" :value="opt.key">
+                    {{ opt[language] || opt.value }}
                 </b-form-checkbox>
             </b-form-checkbox-group>
         </b-form-group>
@@ -22,14 +15,15 @@
 </template>
 <script>
 import LabelComponent from './Label.vue';
-import Widget from '../../mixins/Widget.js';
+import Widget from '@/mixins/Widget.js';
 export default {
     name: 'CheckboxesComponent',
     components: { LabelComponent },
     mixins: [Widget],
     data() {
         return {
-            internalValue: []
+            internalValue: (Array.isArray(this.value)) ? this.value :
+                (this.value) ? [this.value] : []
         };
     },
     computed: {
@@ -62,17 +56,9 @@ export default {
         },
 
     },
-    mounted() {
-        if (Array.isArray(this.value)) {
-            this.internalValue = this.value;
-        } else {
-            this.internalValue = [this.value];
-        }
-    },
     methods: {
-        handleCheckboxChange(v, ev) {
-            this.triggerUpdateEvent(this.message, this.field, 
-                ev.filter(v => v !== null && v !== ''));
+        handleCheckboxChange(v) {
+            this.triggerUpdateEvent(this.message, this.field, v);
         },
     }
 };

@@ -1,26 +1,29 @@
 <template>
-    <section>
+    <section :key="counter">
         <h6 class="mb-3 border-bottom">{{ name }}</h6>
-        <template v-for="form in operation.forms" :key="form.id">
-            <div v-for="field in form.fields" :key="field.name" class="mb-2 property clearfix" :data-name="field.name">
-                <!--{{field.name}} {{field.enable_conditions}} {{getWidget(field)}}
-                                ||{{ getWidget(field) }}||
-                                {{getFieldValue(field.name, false)}} (({{ field.suggested_widget }}))
-                            -->
+        <template v-for="opForm in operation.forms" :key="opForm.id">
+            <div v-for="field in opForm.fields" :key="field.name" class="mb-2 property clearfix" :data-name="field.name">
+                <!--
+                    {{ field.name }} {{ field.enable_conditions }} {{ getWidget(field) }}
+                    (({{ field.suggested_widget }}))
+                -->
                 <keep-alive>
                     <div
                         v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
                         <checkboxes-component :field="field" :value="getFieldValue(field.name, true)"
                             :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
-                            :read-only="!field.editable" context="context" @update="handleUpdateField" />
+                            :read-only="!field.editable" context="context" @update="handleUpdateField"
+                            @xinput="handleUpdateField" @update-form-field="handleUpdateField" />
                     </div>
-                    <component :is="getWidget(field)"
-                        v-else-if="getWidget(field) !== 'attribute-selector-component' && field.enabled"
-                        visual-style="explorer" :field="field" :value="getFieldValue(field.name, false)"
-                        :language="$root.$i18n.locale" :type="field.suggested_widget" :small="true"
-                        :read-only="!field.editable" context="context" :show-quantity="gridStrategy === 'grid'"
-                        @update="handleUpdateField" />
-                    <div v-else />
+                    <component v-else-if="getWidget(field) !== 'attribute-selector-component' "
+                        :is="getWidget(field)" visual-style="explorer" :field="field"
+                        :value="getFieldValue(field.name, false)" :language="$root.$i18n.locale"
+                        :type="field.suggested_widget" :small="true" :read-only="!field.editable" context="context"
+                        :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
+                        @update-form-field="handleUpdateField" />
+                    <div v-else>
+                        Tipo de campo de formulário não suportado: {{field.suggested_widget}} para campo {{field.name}}
+                    </div>
                 </keep-alive>
             </div>
             <button class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">
@@ -30,57 +33,21 @@
     </section>
 </template>
 <script setup>
-
+import {ref} from 'vue';
 import CheckboxesComponent from '@/components/widgets/Checkboxes.vue';
-import InputTagComponent from '@/components/widgets/InputTag.vue';
-import NumericRangeOrSetComponent from '@/components/widgets/NumericRangeOrSet.vue';
-
-import { ref, computed, onMounted } from 'vue';
-
-const parameters = defineModel('parameters');
 
 const conditional = /\bthis\..+?\b/g;
 
-const props = defineProps({
-    name: {type: String, required: true},
-    enabled: { type: Boolean, required: true },
-    operation: { type: Object, required: true },
+const counter = ref(0);
 
-    operationMap: { type: Map, required: true },
-    workflow: { type: Object, required: true },
-    gridStrategy: { type: String, required: true },
+const props = defineProps({
+    operation: { type: Object, required: true },
+    name: { type: String, required: true, default: () => { } },
+    gridStrategy: {type: String, required: true}
 });
 
-const algorithms = ref([]);
-const conditionalFields = new Map();
-const selectedAlgorithm = ref({});
+const form = defineModel('form');
 
-onMounted(() => {
-    const algLookup = new Map((this.workflow.tasks || []).map((alg) => [alg.operation.slug, alg]));
-    const operationsLookup = new Map(this.operations.map(op => [op.slug, op]));
-
-    /* Initialization
-        if (!this.algorithms.forms) {
-            this.algorithms.forms = { algorithms: { value: [] } };
-        } else if (!this.algorithms.forms.algorithms) {
-            this.algorithms.forms.algorithms = { value: [] };
-        } */
-    this.algorithms = this.operations.map((op) => {
-        let task;
-        if (algLookup.has(op.slug)) {
-            task = algLookup.get(op.slug);
-            task.operation = operationsLookup.get(op.slug);
-            task.algorithm = true;
-        } else {
-            task = this.workflow.addTask(op);
-            task.enabled = false;
-            task.algorithm = true;
-        }
-        return task;
-    });
-
-}
-);
 const evalInContext = (js, context) => {
     return new Function("return `" + js + "`;").call(context);
 };
@@ -139,28 +106,23 @@ const getWidget = (field) => {
     }
 };
 const getFieldValue = (name, checkboxes) => {
-
     if (checkboxes) {
-        return this.selectedAlgorithm
-            && this.selectedAlgorithm?.forms
-            && this.selectedAlgorithm?.forms[name]
-            && this.selectedAlgorithm?.forms[name]?.value
-            ? this.selectedAlgorithm?.forms[name]?.value?.list : null;
+        return form.value[name]?.value?.list;
     } else {
-        return this.selectedAlgorithm
-            && this.selectedAlgorithm.forms
-            && this.selectedAlgorithm.forms[name]
-            ? this.selectedAlgorithm.forms[name].value : null;
+        return form.value[name]?.value;
     }
 
 }
 const handleUpdateField = (field, value, label) => {
+    if (field.name) {
     if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
         const newValue = { list: value, type: 'list' };//{type: 'list', list: value.filter(a => a !== '')};
-        this.selectedAlgorithm.forms[field.name] = { value: newValue, label, internalValue: newValue };
+        form.value[field.name] = { value: newValue, label, internalValue: newValue };
     } else {
-        this.selectedAlgorithm.forms[field.name] = { value: value, label, internalValue: value };
+        form.value[field.name] = { value: value, label, internalValue: value };
     }
+}
+
 
     /*if (this.conditionalFields.has(field.name)) {
             this.conditionalFields.get(field.name).forEach(field => {
@@ -170,10 +132,8 @@ const handleUpdateField = (field, value, label) => {
         }*/
 };
 const handleCleanAll = () => {
-    Object.entries(this.selectedAlgorithm.forms).forEach(([name, value], inx) => { // eslint-disable-line no-unused-vars
-        value.value = null;
-        value.internalValue = { type: 'list', list: [] };
-    });
+    form.value = {};
+    counter.value ++;
 };
 </script>
 <style scoped>

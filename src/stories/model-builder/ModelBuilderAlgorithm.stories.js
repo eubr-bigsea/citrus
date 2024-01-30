@@ -1,17 +1,15 @@
-import ModelBuilderAlgorithmList from '@/views/data-explorer/model-builder/ModelBuilderAlgorithmList.vue';
+import ModelBuilderAlgorithm from '@/views/data-explorer/model-builder/ModelBuilderAlgorithm.vue';
 import { Operation, Workflow } from '@/views/data-explorer/entities.js';
 
 
 export default {
-    title: 'ModelBuilder/AlgorithmsList',
+    title: 'ModelBuilder/Algorithm',
     argTypes: {
         supervisioned: { control: 'boolean' },
     },
 };
 
 const operations = [
-    new Operation({ id: 1, slug: 'data-reader' }),
-    new Operation({ id: 2100, slug: 'sample' }),
     new Operation({
         "id": 2359,
         "forms": [
@@ -201,55 +199,46 @@ const operations = [
         "slug": "decision-tree-classifier"
     }),
 ]
-const operationMap = new Map(operations.map((op) => [op.id, op]));
-
 const Template = (args) => ({
     data() {
         return {
             args,
         };
     },
-    components: { ModelBuilderAlgorithmList },
-    methods: {
-    },
-    computed: {
-        algorithmOperations() {
-            return this.args.operations.filter(op =>
-                op.categories && op.categories.find(cat => cat.type === 'model-builder')
-            );
-        }
-    },
+    components: { ModelBuilderAlgorithm },
     template:
         `<div>
-            <div v-if="args.workflow.tasks" class="border p-3">
-                <div v-for="t in args.workflow.tasks">
-                    <h6>{{t.operation.slug}}</h6>
-                    {{t.forms}}
-                </div>
+            <div class="border p-3">
+                |{{args.form}}|
             </div>
-            <div v-if="args.workflow.tasks.length > 0">
-            </div> 
-        <model-builder-algorithm-list
-            :operations="algorithmOperations"
-            v-model:tasks="args.workflow.tasks"
-         />
+            <model-builder-algorithm
+                :operation="args.operation"
+                :name="args.name"
+                :grid-strategy="args.gridStrategy"
+                v-model:form="args.form"
+            />
     </div>`,
 });
 
-export const Classification = {
+export const NaiveBayes = {
     render: (args) => Template(args),
     args: {
-        supervisioned: true,
-        operations,
-        operationMap,
         gridStrategy: 'grid',
-        workflow: new Workflow({
-            tasks: [
-                { id: '000', operation: { slug: 'naive-bayes' } },
-                { id: '001', operation: { slug: 'non-existing' } }
-            ],
-            platform: { id: 1, slug: 'spark', name: 'Spark' },
-        }),
-
+        operation: operations[0],
+        name: operations[0].name,
+        form: {
+            "model_type": {
+                "value": {
+                    "list": ["multinomial"],
+                    "type": "list"
+                },
+            },
+            "smoothing": { 
+                "value": { "distribution": "uniform", "list": [ 53 ], 
+                "max": 100, "min": 10, "quantity": 4, "type": "range" }
+            },
+            "thresholds": { "value": "1,2", "internalValue": "1,2" } ,
+        }
     }
 };
+
