@@ -1,4 +1,4 @@
-import DesignData from '@/views/data-explorer/model-builder/DesignData.vue';
+import ModelBuilderDataAndSampling from '@/views/data-explorer/model-builder/ModelBuilderDataAndSampling.vue';
 import { Operation, Form } from '@/views/data-explorer/entities.js';
 
 const attributes = [
@@ -41,7 +41,7 @@ const field1 = {
 
 export default {
     title: 'ModelBuilder/Data',
-    component: DesignData,
+    component: ModelBuilderDataAndSampling,
     argTypes: {
         options: { type: Object, required: true },
         readOnly: false,
@@ -57,7 +57,7 @@ const Template = (args) => ({
             dataSourceList: []
         };
     },
-    components: { DesignData },
+    components: { ModelBuilderDataAndSampling },
     methods: {
         searchDataSource(f) {
             this.dataSourceList = [
@@ -73,7 +73,7 @@ const Template = (args) => ({
             value = {{args.value}}
             fraction = {{args.fraction}}
             seed = {{args.seed}}
-        <design-data 
+        <model-builder-data-and-sampling
             :attributes="args.attributes" 
             :operation="args.operation"
             :sample="args.sample"

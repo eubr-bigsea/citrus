@@ -48,7 +48,7 @@
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
-                                    <SideBar :selected="selected"
+                                    <ModelBuilderSideBar :selected="selected"
                                              :supervisioned="supervisioned"
                                              @edit="edit" />
                                 </div>
@@ -57,27 +57,36 @@
                                 <form action=""
                                       class="form p-2">
                                     <template v-if="selected === 'target'">
-                                        <DesignData :attributes="attributes"
-                                                    :data-source-list="dataSourceList"
-                                                    :supervisioned="supervisioned"
-                                                    :label="labelAttribute"
-                                                    :data-source="dataSource"
-                                                    :sample="workflowObj.sample"
-                                                    @search-data-source="loadDataSourceList"
-                                                    @retrieve-attributes="handleRetrieveAttributes" 
-                                                    @update-value="(v) => workflowObj.sample = v" />
+                                        {{workflowObj.readData.forms.data_source}} |||
+                                        <!--
+                                        -->
+                                        <ModelBuilderDataAndSampling :attributes="attributes"
+                                            :data-source-list="dataSourceList"
+                                            :supervisioned="supervisioned"
+                                            :label="labelAttribute"
+                                            :data-source="dataSource"
+                                            :sample="workflowObj.sample"
+                                            @search-data-source="loadDataSourceList"
+                                            @retrieve-attributes="handleRetrieveAttributes" 
+                                            
+                                                    v-model:dataSource="workflowObj.readData.forms.data_source.value"
+                                                    v-model:type="workflowObj.sample.forms.type.value"
+                                                    v-model:value="workflowObj.sample.forms.value.value"
+                                                    v-model:fraction="workflowObj.sample.forms.fraction.value"
+                                                    v-model:seed="workflowObj.sample.forms.seed.value"
+                                                    />
                                     </template>
                                     <template v-if="selected === 'data'">
-                                        <TrainTest :split="workflowObj.split" 
+                                        <ModelBuilderTrainTest :split="workflowObj.split" 
                                                    @update-value="(v) => workflowObj.split = v" />
                                     </template>
                                     <template v-if="selected === 'metric'">
-                                        <Metric :evaluator="workflowObj.evaluator"
+                                        <ModelBuilderMetric :evaluator="workflowObj.evaluator"
                                                 :attributes="attributes" 
                                                 @update-value="(v) => {workflowObj.evaluator = v; taskType = v.forms.task_type.value ;}" />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
-                                        <FeatureSelection :attributes="attributes"
+                                        <ModelBuilderFeatureSelection :attributes="attributes"
                                                           :features="workflowObj.features"
                                                           :target="workflowObj.forms.$meta.value.target"
                                                           :supervisioned="supervisioned"
@@ -88,24 +97,33 @@
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <model-builder-feature-reduction :reduction="workflowObj.reduction" />
+                                        <ModelBuilderFeatureReduction :reduction="workflowObj.reduction" 
+                                            v-model:method="workflowObj.reduction.forms.method.value" 
+                                            v-model:k="workflowObj.reduction.forms.k.value"/>
                                     </template>
                                     <template v-if="selected === 'algorithms'">
-                                        <Algorithms ref="algorithms"
+                                        <ModelBuilderAlgorithmList ref="algorithms"
                                                     :operations="algorithmOperation"
                                                     :workflow="workflowObj"
                                                     :operation-map="operationsMap" />
                                     </template>
                                     <template v-if="selected === 'grid'">
-                                        <Grid :grid="workflowObj.grid" />
+                                        <ModelBuilderGrid 
+                                            :grid="workflowObj.grid" 
+                                            v-model:random_grid="workflowObj.grid.forms.random_grid.value"
+                                            v-model:max_iterations="workflowObj.grid.forms.max_iterations.value"
+                                            v-model:max_search_time="workflowObj.grid.forms.max_search_time.value"
+                                            v-model:parallelism="workflowObj.grid.forms.parallelism.value"
+                                            v-model:strategy="workflowObj.grid.forms.strategy.value"
+                                            v-model:seed="workflowObj.grid.forms.seed.value"/>
                                     </template>
                                     <template v-if="selected === 'weighting'">
                                         <Weighting />
                                     </template>
                                     <template v-if="selected === 'runtime'">
-                                        <Runtime :clusters="clusters"
-                                                 :workflow="workflowObj" 
-                                                 @update-value="(v) => workflowObj.preferred_cluster_id = v" />
+                                        <ModelBuilderRuntime 
+                                            :clusters="clusters"
+                                            v-model:preferred_cluster_id="workflowObj.preferred_cluster_id"/>
                                     </template>
                                 </form>
                             </div>
@@ -128,20 +146,21 @@
 <script>
 ;
 import io from 'socket.io-client';
-import SideBar from './SideBar.vue';
-import DesignData from './DesignData.vue';
-import TrainTest from './TrainTest.vue';
-import Metric from './Metric.vue';
-import FeatureSelection from './FeatureSelection.vue';
+import ModelBuilderSideBar from './ModelBuilderSideBar.vue';
+import ModelBuilderDataAndSampling from './ModelBuilderDataAndSampling.vue';
+import ModelBuilderTrainTest from './ModelBuilderTrainTest.vue';
+import ModelBuilderMetric from './ModelBuilderMetric.vue';
+import ModelBuilderFeatureSelection from './ModelBuilderFeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
-import Algorithms from './ModelBuilderAlgorithms.vue';
-import Grid from './ModelBuilderGrid.vue';
-import Runtime from './Runtime.vue';
-import Result from './result/ModelBuilderResult.vue';
+import ModelBuilderFeatureReduction from './ModelBuilderFeatureReduction.vue';
+import ModelBuilderAlgorithmList from './ModelBuilderAlgorithmList.vue';
+import ModelBuilderGrid from './ModelBuilderGrid.vue';
+import ModelBuilderRuntime from './ModelBuilderRuntime.vue';
+import Result from './result/Result.vue';
 import Weighting from './Weighting.vue';
 
 import DataSourceMixin from '../DataSourceMixin.js';
-import Notifier from '@/mixins/Notifier.js';
+import Notifier from '../../../mixins/Notifier.js';
 
 import { ModelBuilderWorkflow, Operation } from '../entities.js';
 
@@ -158,8 +177,8 @@ const META_PLATFORM_ID = 1000;
 export default {
     name: 'DesignComponent',
     components: {
-        SideBar, DesignData, TrainTest, Metric, FeatureSelection, FeatureGeneration,
-        Algorithms, Grid, Runtime, Weighting, Result
+        ModelBuilderSideBar, ModelBuilderDataAndSampling, ModelBuilderTrainTest, ModelBuilderMetric, ModelBuilderFeatureSelection, FeatureGeneration,
+        ModelBuilderFeatureReduction, ModelBuilderAlgorithmList, ModelBuilderGrid, ModelBuilderRuntime, Weighting, Result
     },
     mixins: [DataSourceMixin, Notifier],
     data() {
@@ -201,7 +220,7 @@ export default {
             return this.taskType === 'regression'
                 || this.taskType === 'binary-classification'
                 || this.taskType === 'multiclass-classification'
-            ;
+                ;
         },
         taskType: {
             get() { return this.workflowObj.forms.$meta.value.taskType; },
@@ -511,7 +530,6 @@ export default {
             let cloned = JSON.parse(JSON.stringify(this.workflowObj));
             let url = `${tahitiUrl}/workflows/${cloned.id}`;
 
-            cloned.preferred_cluster_id = 1; //FIXME!
             cloned.platform_id = META_PLATFORM_ID;
 
             cloned.tasks.forEach((task) => {
