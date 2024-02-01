@@ -23,7 +23,7 @@
                                :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
                                @update-form-field="handleUpdateField" />
                     <div v-else>
-                        Tipo de campo de formulário não suportado: {{field.suggested_widget}} para campo {{field.name}}
+                        Tipo de campo de formulário não suportado: {{ field.suggested_widget }} para campo {{ field.name }}
                     </div>
                 </keep-alive>
             </div>
@@ -34,21 +34,21 @@
     </section>
 </template>
 <script setup>
-import {ref} from 'vue';
+import { ref } from 'vue';
 import CheckboxesComponent from '@/components/widgets/Checkboxes.vue';
 
-const conditional = /\bthis\..+?\b/g;
+//const conditional = /\bthis\..+?\b/g;
 
 const counter = ref(0);
 
 const props = defineProps({
     operation: { type: Object, required: true },
     name: { type: String, required: true, default: () => { } },
-    gridStrategy: {type: String, required: true}
+    gridStrategy: { type: String, required: true }
 });
 
 const form = defineModel('form');
-
+/*
 const evalInContext = (js, context) => {
     return new Function("return `" + js + "`;").call(context);
 };
@@ -83,7 +83,8 @@ const handleSelectAlgorithm = (alg) => {
     });
     this.selectedAlgorithm = alg;
 };
-
+*/
+/*
 const getExecutionForm = () => {
     if (this.selectedAlgorithm && this.selectedAlgorithm.forms) {
         const result = this.selectedAlgorithm.forms.filter(f => f.category === 'execution');
@@ -93,7 +94,7 @@ const getExecutionForm = () => {
         return [];
     }
 };
-
+*/
 const getWidget = (field) => {
     if (field.suggested_widget.endsWith(':read-only')) {
         const s = field.suggested_widget;
@@ -107,14 +108,23 @@ const getWidget = (field) => {
     }
 };
 const getFieldValue = (name, checkboxes) => {
+    
     if (checkboxes) {
         return form.value[name]?.value?.list;
-    } else {
+    } else if (form.value[name]?.value){
         return form.value[name]?.value;
+    } else {
+        return null;
     }
 
+}
+const handleCleanAll = () => {
+    form.value = {};
+    counter.value++;
 };
+
 const handleUpdateField = (field, value, label) => {
+    console.debug(label, value, field)
     if (field.name) {
         if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
             const newValue = { list: value, type: 'list' };//{type: 'list', list: value.filter(a => a !== '')};
@@ -123,19 +133,8 @@ const handleUpdateField = (field, value, label) => {
             form.value[field.name] = { value: value, label, internalValue: value };
         }
     }
-
-
-    /*if (this.conditionalFields.has(field.name)) {
-            this.conditionalFields.get(field.name).forEach(field => {
-                const result = this.evalInContext()
-                field.enabled =
-            });
-        }*/
 };
-const handleCleanAll = () => {
-    form.value = {};
-    counter.value ++;
-};
+
 </script>
 <style scoped>
 .algorithm {

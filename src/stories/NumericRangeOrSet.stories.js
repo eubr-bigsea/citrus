@@ -28,11 +28,11 @@ const Template = (args) => ({
         </div>`,
 });
 
-export const WithValue = {
+export const NumericRange = {
     render: (args) => Template(args),
     args: {
         field: field1,
-        value: null,
+        value: { "distribution": "log_uniform", "list": [1], "max": 100, "min": 1, "quantity": null, "type": "range" },
         readOnly: false,
     }
 };
@@ -40,6 +40,6 @@ export const NumericSet = {
     render: (args) => Template(args),
     args: {
         field: field1,
-        value: null,
+        value: { "list": [ 2, 3, 4 ], "type": "list" },
     }
 };

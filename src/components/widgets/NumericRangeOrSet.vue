@@ -61,6 +61,7 @@
                 </b-form-tags>
             </div>
             <div class="col-2 text-end">
+                |{{value}}| {{ internalValue.type }}
                 <b-form-radio-group v-model="internalValue.type" :options="opts" button-variant="outline-secondary"
                                     size="sm" name="radio-btn-outline" buttons @input="handleInput" />
             </div>
@@ -127,7 +128,7 @@ export default {
             this.internalValue.type = 'list';
         }
         this.internalValue = {
-            distribution: 'uniform', list: [], max: null, min: null, quantity: null, type: 'list',
+            distribution: 'uniform', list: [], max: null, min: null, quantity: null, type: 'range',
             ... this.internalValue
         };
     },

@@ -209,7 +209,8 @@ const Template = (args) => ({
     template:
         `<div>
             <div class="border p-3">
-                |{{args.form}}|
+                <h6>Args</h6>
+                {{args.form}}
             </div>
             <model-builder-algorithm
                 :operation="args.operation"
@@ -220,6 +221,22 @@ const Template = (args) => ({
     </div>`,
 });
 
+export const DecisionTree = {
+    render: (args) => Template(args),
+    args: {
+        gridStrategy: 'grid',
+        operation: operations[1],
+        name: operations[1].name,
+        form: {
+            "max_bins": {
+                "value": {
+                    "list": [5, 10, 15],
+                    "type": "list"
+                },
+            },
+        }
+    }
+};
 export const NaiveBayes = {
     render: (args) => Template(args),
     args: {
@@ -233,11 +250,13 @@ export const NaiveBayes = {
                     "type": "list"
                 },
             },
-            "smoothing": { 
-                "value": { "distribution": "uniform", "list": [ 53 ], 
-                    "max": 100, "min": 10, "quantity": 4, "type": "range" }
+            "smoothing": {
+                "value": {
+                    "distribution": "uniform", "list": [53],
+                    "max": 100, "min": 10, "quantity": 4, "type": "range"
+                }
             },
-            "thresholds": { "value": "1,2", "internalValue": "1,2" } ,
+            "thresholds": { "value": "1,2", "internalValue": "1,2" , type: "list"},
         }
     }
 };
