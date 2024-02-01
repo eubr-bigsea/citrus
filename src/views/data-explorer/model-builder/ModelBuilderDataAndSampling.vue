@@ -7,7 +7,7 @@
         <b-form-group label="Fonte de dados:">
             <vue-select v-model="dataSource" :filterable="false" :options="dataSourceList" label="name"
                         class="w-50"
-                        :reduce="(opt) => opt.id" @search="searchDataSource" @input="retrieveAttributes">
+                        :reduce="(opt) => ({value: opt.id, name: opt.name})" @search="searchDataSource" @option:selected="retrieveAttributes">
                 <template #no-options="{ }">
                     <small>Digite parte do nome pesquisar ...</small>
                 </template>
@@ -18,7 +18,7 @@
                 </template>
                 <template #selected-option="option">
                     <div class="selected d-center">
-                        {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
+                        {{pad((option.id || option.value), 4, '&nbsp;')}} - {{option.name}}
                     </div>
                 </template>
             </vue-select>

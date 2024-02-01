@@ -44,7 +44,7 @@
                         class="p-2 custom-tab bg-white"
                         align="center">
                     <b-tab title="Parâmetros"
-                           class="m-1 parameters">
+                           class="m-1 parameters" title-link-class="small-nav-link">
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
@@ -57,9 +57,6 @@
                                 <form action=""
                                       class="form p-2">
                                     <template v-if="selected === 'target'">
-                                        {{workflowObj.readData.forms.data_source}} |||
-                                        <!--
-                                        -->
                                         <ModelBuilderDataAndSampling :attributes="attributes"
                                             :data-source-list="dataSourceList"
                                             :supervisioned="supervisioned"
@@ -68,8 +65,7 @@
                                             :sample="workflowObj.sample"
                                             @search-data-source="loadDataSourceList"
                                             @retrieve-attributes="handleRetrieveAttributes" 
-                                            
-                                                    v-model:dataSource="workflowObj.readData.forms.data_source.value"
+                                                    v-model:dataSource="workflowObj.readData.forms.data_source"
                                                     v-model:type="workflowObj.sample.forms.type.value"
                                                     v-model:value="workflowObj.sample.forms.value.value"
                                                     v-model:fraction="workflowObj.sample.forms.fraction.value"
@@ -77,8 +73,12 @@
                                                     />
                                     </template>
                                     <template v-if="selected === 'data'">
-                                        <ModelBuilderTrainTest :split="workflowObj.split" 
-                                                   @update-value="(v) => workflowObj.split = v" />
+                                        <ModelBuilderTrainTest 
+                                                   v-model:strategy="workflowObj.split.forms.strategy.value"
+                                                   v-model:ratio="workflowObj.split.forms.ratio.value"
+                                                   v-model:folds="workflowObj.split.forms.folds.value"
+                                                   v-model:seed="workflowObj.split.forms.seed.value"
+                                                   :split="workflowObj.split"/>
                                     </template>
                                     <template v-if="selected === 'metric'">
                                         <ModelBuilderMetric :evaluator="workflowObj.evaluator"
@@ -131,7 +131,7 @@
                     </b-tab>
                     <b-tab ref="tabResults"
                            title="Resultados"
-                           class="pt-2">
+                           class="pt-2" title-link-class="small-nav-link">
                         <Result ref="results"
                                 :jobs="jobs"
                                 :number-of-features="numberOfFeatures"
@@ -421,7 +421,9 @@ export default {
                     this.$router.push({ name: 'index-explorer' });
                     return;
                 }
-                await this.loadDataSource(this.dataSourceId);
+                if (this.dataSourceId) {
+                    await this.loadDataSource(this.dataSourceId);
+                }
                 this.labelAttribute = this.workflowObj.forms.$meta.value.label;
                 const evaluator = this.workflowObj.tasks.find(t => t.operation.slug === 'evaluator');
                 if (evaluator && !evaluator?.forms?.task_type?.value) {

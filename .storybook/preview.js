@@ -30,7 +30,7 @@ import IntegerComponent from '@/components/widgets/Integer.vue';
 import JoinComponent from '@/components/widgets/Join.vue';
 import LookupComponent from '@/components/widgets/Lookup.vue';
 import MarkdownEditorComponent from '@/components/widgets/MarkdownEditor.vue';
-import MarkdownComponent from '@/components/widgets/Markdown.vue';
+import MarkdownComponent from '@/components/widgets/MarkdownComponent.vue';
 import PercentageComponent from '@/components/widgets/Percentage.vue';
 import RadioComponent from '@/components/widgets/Radio.vue';
 import RangeComponent from '@/components/widgets/Range.vue';
