@@ -97,6 +97,8 @@ import Plotly from './components/visualization/Plotly.vue';
 import ConfirmComponenent from './components/ConfirmComponent.vue';
 import VueSelect from "vue-select";
 import VueGridLayout from 'vue3-grid-layout-next';
+import InputTagComponent from '@/components/widgets/InputTag.vue';
+import NumericRangeOrSetComponent from '@/components/widgets/NumericRangeOrSet.vue';
 
 import * as ConfirmDialog from 'vuejs-confirm-dialog';
 import { createConfirmDialog } from 'vuejs-confirm-dialog';
@@ -137,6 +139,8 @@ const widgets = new Map([
     ['text-component', TextComponent],
     ['textarea-component', TextAreaComponent],
     ['url-component', UrlComponent],
+    ['input-tag-component', InputTagComponent],
+    ['numeric-range-or-set-component', NumericRangeOrSetComponent],
 ]);
 
 

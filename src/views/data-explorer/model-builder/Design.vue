@@ -81,12 +81,16 @@
                                                    :split="workflowObj.split"/>
                                     </template>
                                     <template v-if="selected === 'metric'">
-                                        <ModelBuilderMetric :evaluator="workflowObj.evaluator"
-                                                :attributes="attributes" 
-                                                @update-value="(v) => {workflowObj.evaluator = v; taskType = v.forms.task_type.value ;}" />
+                                        {{workflowObj.evaluator.form}}
+                                        <ModelBuilderMetric 
+                                        :evaluator="workflowObj.evaluator"/>
+                                        v-model:strategy="workflowObj.evaluator.forms.strategy.value"
+                                        v-model:ratio="workflowObj.evaluator.forms.ratio.value"
+                                        v-model:folds="workflowObj.evaluator.forms.folds.value"
+                                        v-model:seed="workflowObj.evaluator.forms.seed.value"
                                     </template>
                                     <template v-if="selected === 'adjusts'">
-                                        <ModelBuilderFeatureSelection :attributes="attributes"
+                                        <ModelBuilderFeatureSelection 
                                                           :features="workflowObj.features"
                                                           :target="workflowObj.forms.$meta.value.target"
                                                           :supervisioned="supervisioned"
@@ -104,6 +108,7 @@
                                     <template v-if="selected === 'algorithms'">
                                         <ModelBuilderAlgorithmList ref="algorithms"
                                                     :operations="algorithmOperation"
+                                                    v-model:tasks="algorithmTasks"
                                                     :workflow="workflowObj"
                                                     :operation-map="operationsMap" />
                                     </template>
@@ -198,6 +203,7 @@ export default {
             notRunning: true,
             operationsMap: new Map(),
             selectedAlgorithm: { forms: [] },
+            selectedOperation: {},
             selected: 'target',
             socket: null, // used by socketio (web sockets)
             targetPlatform: 1,
@@ -209,12 +215,29 @@ export default {
     },
     computed: {
         algorithmOperation() {
-            const taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+            let taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+            if (taskType.endsWith('classification')) {
+                taskType = 'classification';
+            }
             return Array.from(this.operationsMap.values()).filter((op) => op.categories.find(cat => cat.subtype === taskType));
         },
+        algorithmTasks: {
+            get: function () {
+                let taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+                if (taskType.endsWith('classification')) {
+                    taskType = 'classification';
+                }
+                return this.workflowObj.tasks.filter(task =>
+                    this.operationsMap.has(task.operation.slug)
+                    && this.operationsMap.get(task.operation.slug).categories.find(
+                        cat => cat.subtype === taskType)
+                );
+            },
+            set: (v) => { }
+        },
         dataSourceId: {
-            get() { return this.workflowObj.tasks[0].forms.data_source.value; },
-            set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue; }
+            get() { return this.workflowObj.readData.forms.data_source.value; },
+            set(newValue) { this.workflowObj.readData.forms.data_source.value = newValue; }
         },
         supervisioned() {
             return this.taskType === 'regression'
@@ -233,7 +256,6 @@ export default {
             return this.workflowObj?.features?.forms?.features?.value?.length || 0;
         },
         features() {
-            console.debug(this.workflowObj?.features?.forms?.features);
             return this.workflowObj?.features?.forms?.features?.value || [];
         }
     },
@@ -562,6 +584,7 @@ export default {
         },
         selectAlgorithm(algo) {
             this.selectedAlgorithm = algo;
+            this.selectedOperation = this.operationsMap.get(algo.operation.slug);
         },
         handleRetrieveAttributes(ds) {
             if (ds) {

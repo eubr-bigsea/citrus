@@ -31,7 +31,6 @@ const Template = (args) => ({
             folds = {{args.folds}}
             seed = {{args.seed}}
         <model-builder-train-test 
-            :grid="args.grid"
             v-model:strategy="args.strategy"
             v-model:ratio="args.ratio"
             v-model:folds="args.folds"

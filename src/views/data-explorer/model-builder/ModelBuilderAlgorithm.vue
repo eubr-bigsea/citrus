@@ -6,8 +6,8 @@
         <template v-for="opForm in operation.forms" :key="opForm.id">
             <div v-for="field in opForm.fields" :key="field.name" class="mb-2 property clearfix" :data-name="field.name">
                 <!--
-                    {{ field.name }} {{ field.enable_conditions }} {{ getWidget(field) }}
-                    (({{ field.suggested_widget }}))
+                {{ field.name }} {{ field.enable_conditions }} {{ getWidget(field) }}
+                (({{ field.suggested_widget }}))
                 -->
                 <keep-alive>
                     <div v-if="['checkboxes-component', 'checkbox-component', 'dropdown-component'].includes(getWidget(field))">
@@ -27,7 +27,7 @@
                     </div>
                 </keep-alive>
             </div>
-            <button class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">
+            <button type="button" class="btn btn-sm btn-outline-secondary" @click.prevent="handleCleanAll">
                 Limpar parâmetros
             </button>
         </template>
@@ -124,7 +124,6 @@ const handleCleanAll = () => {
 };
 
 const handleUpdateField = (field, value, label) => {
-    console.debug(label, value, field)
     if (field.name) {
         if (['checkbox', 'dropdown'].includes(field.suggested_widget)) {
             const newValue = { list: value, type: 'list' };//{type: 'list', list: value.filter(a => a !== '')};

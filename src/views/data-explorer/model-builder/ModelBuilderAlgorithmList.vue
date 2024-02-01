@@ -13,16 +13,21 @@
                                        :class="{ 'bg-light': selectedAlgorithm === task }">
                         <div class="d-flex w-100 p-1" role="button" @click="handleSelectTask(task)">
                             <b-form-checkbox v-model="task.enabled" switch />
-                            {{task.operation.slug}}
-                            {{task.name}} | {{task.id}} || {{task.enabled}}
+                            {{task.name}}
                         </div>
                     </b-list-group-item>
                 </b-list-group>
             </div>
             <div class="col-md-9 border p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
-                    {{selectedAlgorithm}}
-                    <input v-model="selectedAlgorithm.forms.test" class="form-control form-control-sm">
+                    {{ selectedAlgorithm.forms }}
+                    <ModelBuilderAlgorithm
+                        :key="selectedAlgorithm.operation.slug"
+                        :operation="selectedOperation"
+                        :name="selectedAlgorithm.name"
+                        :grid-strategy="'grid'"
+                        v-model:form="selectedAlgorithm.forms"
+                        />
                 </div>
                 <div v-else class="text-center text-secondary mt-5 pt-5">
                     <h4>Selecione e habilite um algoritmo à esquerda para editar seus parâmetros.</h4>
@@ -33,9 +38,9 @@
 </template>
 <script setup>
 
-//import ModelBuilderAlgorithm from './ModelBuilderAlgorithm.vue';
+import ModelBuilderAlgorithm from './ModelBuilderAlgorithm.vue';
 
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import { Operation, Task } from '../entities.js';
 
 const conditional = /\bthis\..+?\b/g;
@@ -47,6 +52,9 @@ const props = defineProps({
 
 const conditionalFields = new Map();
 const selectedAlgorithm = ref({});
+const selectedOperation = computed(()=> {
+    return props.operations.find(op => op.id === selectedAlgorithm.value?.operation?.id)
+});
 
 const emit = defineEmits(['update:tasks']);
 

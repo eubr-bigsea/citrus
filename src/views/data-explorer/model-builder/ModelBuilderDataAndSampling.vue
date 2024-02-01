@@ -17,7 +17,7 @@
                     </div>
                 </template>
                 <template #selected-option="option">
-                    <div class="selected d-center">
+                    <div class="selected d-center" v-if="option.id || option.value">
                         {{pad((option.id || option.value), 4, '&nbsp;')}} - {{option.name}}
                     </div>
                 </template>
