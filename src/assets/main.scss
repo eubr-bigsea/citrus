@@ -1013,17 +1013,17 @@ ul.b-form-tags-list {
     }
 }
 
-.lemonPage-habilitado {
+.lemonPage-enabled {
     width: 12px;
     height: 12px;
     border-radius: 50%;
     margin: 0 auto;
 
-    &.sim {
+    &.true {
         background-color: #008a00;
     }
 
-    &.não {
+    &.false {
         background-color: #ca024f;
     }
 }

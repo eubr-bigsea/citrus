@@ -14,130 +14,7 @@
             </div>
         </div> 
 
-        <b-modal ref="addModal" title="Criação de pipeline" size="lg" hide-footer
-                 scrollable @hidden="closeAddModal">
-            <div class="lemonPage-wizard">
-                <div v-if="wizardStep === 1" class="lemonPage-wizard-stepBox">
-                    <div class="lemonPage-wizard-header">
-                        <div class="lemonPage-wizard-title">
-                            <font-awesome-icon class="mr-1" icon="fa fa-file" />
-                            Informações gerais
-                        </div>
-                        <div>
-                            Etapa 1 de 2
-                        </div>
-                    </div>
-                    <div class="position-relative">
-                        <label class="lemonPage-label" for="identificador">Nome</label>
-                        <input id="identificador" 
-                               v-model="pipelineName" 
-                               class="lemonPage-input"
-                               type="text"
-                               maxlength="100" 
-                               placeholder="Nome da pipeline" 
-                               @input="handleInput">
-                        <div v-if="invalidInputLength" class="lemonPage-invalid-length">
-                            - Nome da pipeline deve ter pelo menos 3 caracteres.
-                        </div>
-                    </div>
-
-                    <label class="lemonPage-label" for="descricao">Descrição</label>
-                    <textarea id="descricao" 
-                              v-model="pipelineDescription"
-                              class="lemonPage-textarea" 
-                              type="text"
-                              maxlength="200" 
-                              placeholder="Descrição da pipeline" />
-
-                    <div class="lemonPage-wizard-stepBox-buttons" :class="first">
-                        <b-button size="sm" variant="secondary" @click="firstWizardStep">
-                            Avançar
-                        </b-button>
-                    </div>
-                </div>
-                <div v-if="wizardStep === 2" class="lemonPage-wizard-stepBox">
-                    <div class="lemonPage-wizard-header">
-                        <div class="lemonPage-wizard-title">
-                            <font-awesome-icon class="mr-1" icon="fa fa-folder" />
-                            Template
-                        </div>
-                        <div>
-                            Etapa 2 de 2
-                        </div>
-                    </div>
-                    
-                    Deseja utilizar algum template de pipeline?
-                    <b-form-select v-model="selectedTemplate" :options="templateOptions" class="mt-1 mb-1" />
-
-                    <div v-if="selectedTemplate !== null">
-                        <b-card class="lemonPage-infos">
-                            <div class="lemonPage-infos-body">
-                                <div class="lemonPage-infos-body-column">
-                                    <span class="left">Identificador:</span><span class="right">{{findTemplate().name}}</span>
-                                </div>
-                                <div class="lemonPage-infos-body-column">
-                                    <span class="left">Descrição:</span><span class="right-description">{{findTemplate().description}}</span>
-                                </div>
-                                <div class="lemonPage-infos-body-column">
-                                    <span class="left">Etapas:</span> 
-                                    <b-container class="lemonPage-etapas-table">
-                                        <b-row class="lemonPage-etapas-header">
-                                            <b-col>
-                                                Ordem da Etapa
-                                            </b-col>
-                                            <b-col>
-                                                Identificador
-                                            </b-col>
-                                            <b-col>
-                                                Descrição
-                                            </b-col>
-                                        </b-row>
-                                        <b-row v-for="(etapa, index) in findTemplate().steps" :key="etapa.id" class="lemonPage-dragDiv">
-                                            <b-col>
-                                                # {{index + 1}}
-                                            </b-col>
-                                            <b-col>
-                                                {{etapa.name}}
-                                            </b-col>
-                                            <b-col>
-                                                {{etapa.description}}
-                                            </b-col>
-                                        </b-row>
-                                    </b-container>
-                                </div>
-                            </div>
-                        </b-card>
-                    </div>
-    
-                    <div class="lemonPage-wizard-stepBox-buttons">
-                        <b-button size="sm" variant="secondary" @click="wizardStep = 1">
-                            Voltar
-                        </b-button>
-                        <b-button size="sm" variant="secondary" @click="secondWizardStep">
-                            Finalizar
-                        </b-button>
-                    </div>
-                </div>
-                <div v-if="wizardStep === 3" class="lemonPage-wizard-stepBox">
-                    <div class="lemonPage-wizard-header">
-                        <div class="lemonPage-wizard-title">
-                            <font-awesome-icon class="mr-1" icon="fa fa-square-check" />
-                            Processo de criação da pipeline finalizada.
-                        </div>
-                    </div>
-    
-                    <div>
-                        Ao fechar este modal, você será redirecionado para a página da pipeline criada.
-                    </div>
-    
-                    <div class="lemonPage-wizard-stepBox-buttons">
-                        <b-button size="sm" variant="primary" @click="closeAddModal">
-                            Fechar
-                        </b-button>
-                    </div>
-                </div>
-            </div>
-        </b-modal>
+        <ModalCreatePipeline ref="addModal" :pipeline-templates="pipelineTemplates" :template-options="templateOptions" />
 
         <div class="lemonPage-body">
             <div class="lemonPage-container">
@@ -171,9 +48,9 @@
                             <button class="btn btn-spinner btn-primary btn-sm" title="Exibir log" @click="openLogModal">
                                 <font-awesome-icon icon="fa-eye" />
                             </button>
-                            <!-- <button class="ml-2 btn btn-spinner btn-secondary btn-sm" title="Desabilitar pipeline" @click="disablePipeline(props.row.id, props.row.name)">
+                            <button class="ml-2 btn btn-spinner btn-secondary btn-sm" title="Desabilitar pipeline" @click="disablePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="fa-ban" />
-                            </button> -->
+                            </button>
                             <button class="ml-2 btn btn-sm btn-danger" title="Excluir pipeline" @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
@@ -199,35 +76,23 @@
 import axios from 'axios';
 import { BModal } from 'bootstrap-vue';
 import Notifier from '../mixins/Notifier.js';
+import ModalCreatePipeline from './modal/ModalCreatePipeline.vue';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        BModal
+        BModal,
+        ModalCreatePipeline
     },
     mixins: [Notifier],
     data() {
         return {
-            wizardStep: 1,
             first: 'first',
-            pipelineName: '',
-            pipelineDescription: '',
             pipelineTemplates: [],
-            selectedTemplate: null,
-            createdPipelineId: null,
-            invalidInputLength: true,
-            pipelineData: {
-                name: '',
-                description: '',
-                enabled: true,
-                steps: [],
-            },
             templateOptions: [
                 { value: null, text: 'Não utilizar template' },
             ],
-            selectedStep: null,
-            selectedFreqOpt: null,
             columns: [
                 'id',
                 'name',
@@ -308,25 +173,11 @@ export default {
                 );
         },
         openAddModal() {
-            this.wizardStep = 1;
             this.loadTemplates();
             this.$refs.addModal.show();
         },
-        closeAddModal() {
-            if (this.wizardStep === 3) this.$router.push({ name: 'pipelineEdit', params: {id: this.createdPipelineId}});
-            this.$refs.addModal.hide();
-            this.pipelineName = '';
-            this.pipelineDescription = '';
-            this.invalidInputLength = true;
-            this.selectedTemplate = null;
-            this.wizardStep = 0;
-        },
         openLogModal() {
             this.$refs.logModal.show();
-        },
-        findTemplate() {
-            const selectedTemplate = this.pipelineTemplates.find(template => template.id == this.selectedTemplate);
-            return selectedTemplate ? { ...selectedTemplate } : null;
         },
         loadTemplates() {
             if (this.templateOptions.length >= 2) return;
@@ -345,51 +196,25 @@ export default {
                     }.bind(this)
                 );
         },
-        firstWizardStep() {
-            if (this.invalidInputLength) return;
-            else this.wizardStep = 2;
+        disablePipeline(pipelineId, pipelineName) {
+            this.confirm(
+                `Desabilitar '${pipelineName}'`,
+                'Tem certeza que deseja desabilitar esta pipeline?',
+                () => {
+                    axios
+                        .patch(`${tahitiUrl}/pipelines/${pipelineId}`, { enabled: false })
+                        .then(() => {
+                            this.success('Pipeline desabilitada com sucesso');
+                            this.$refs.pipelineList.refresh();
+                        })
+                        .catch(
+                            function (e) {
+                                this.error(e);
+                            }.bind(this)
+                        );
+                }
+            );
         },
-        secondWizardStep() {
-            this.wizardStep = 3;
-            this.pipelineData.name = this.pipelineName;
-            this.pipelineData.description = this.pipelineDescription;
-            if (this.selectedTemplate !== null) this.pipelineData.steps = JSON.parse(JSON.stringify(this.findTemplate().steps, (key, value) => (key === 'id' ? undefined : value)));
-            this.createPipeline();
-        },
-        handleInput() {
-            this.invalidInputLength = this.pipelineName.length < 3;
-        },
-        createPipeline() {
-            axios
-                .post(`${tahitiUrl}/pipelines`, this.pipelineData)
-                .then((resp) => {
-                    this.createdPipelineId = resp.data.id;
-                    this.success('Pipeline criada com sucesso');})
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
-        },
-        // disablePipeline(pipelineId, pipelineName) {
-        //     this.confirm(
-        //         `Desabilitar '${pipelineName}'`,
-        //         'Tem certeza que deseja desabilitar esta pipeline?',
-        //         () => {
-        //             axios
-        //                 .patch(`${tahitiUrl}/pipelines/${pipelineId}`, { enabled: false })
-        //                 .then(() => {
-        //                     this.success('Pipeline desabilitada com sucesso');
-        //                     this.$refs.pipelineList.refresh();
-        //                 })
-        //                 .catch(
-        //                     function (e) {
-        //                         this.error(e);
-        //                     }.bind(this)
-        //                 );
-        //         }
-        //     );
-        // },
         deletePipeline(pipelineId, pipelineName) {
             this.confirm(
                 this.$t('actions.delete') + " '" + pipelineName + "'",
