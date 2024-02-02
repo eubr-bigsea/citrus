@@ -1,10 +1,10 @@
 <template>
     <div>
+        <h5 class="pb-3 mb-3 border-bottom">
+            Algoritmos
+        </h5>
         <div class="row">
-            <div class="col-md-3">
-                <h5 class="mb-3 border-bottom">
-                    Algoritmos
-                </h5>
+            <div class="col-md-3 border-start border-end">
                 <small>Informe os parâmetros para a execução do algoritmo. <u>Nenhum parâmetro é
                     obrigatório.</u></small>
 
@@ -18,9 +18,8 @@
                     </b-list-group-item>
                 </b-list-group>
             </div>
-            <div class="col-md-9 border p-3 algorithm scroll-area">
+            <div class="col-md-9 p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
-                    {{ selectedAlgorithm.forms }}
                     <ModelBuilderAlgorithm
                         :key="selectedAlgorithm.operation.slug"
                         :operation="selectedOperation"
@@ -70,7 +69,6 @@ onMounted(() => {
 
     let changed = before != updatedTasks.length;
 
-    console.debug(updatedTasks);
     /* Add missing tasks */
     for (let op of props.operations) {
         if (!tasksLookup.has(op.slug)) {

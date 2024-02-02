@@ -1,30 +1,35 @@
 <template>
     <div>
         <h5 class="border-bottom pb-3">
-            Dados
+            Dados <span v-if="loading">(aguarde, carregando ...)</span>
         </h5>
-        
+
         <b-form-group label="Fonte de dados:">
-            <vue-select v-model="dataSource" :filterable="false" :options="dataSourceList" label="name"
-                        class="w-50"
-                        :reduce="(opt) => ({value: opt.id, name: opt.name})" @search="searchDataSource" @option:selected="retrieveAttributes">
+            <BPlaceholder v-if="loading" size="lg" variant="secondary" animation="glow"
+                class="border border-dark py-3 rounded-1 w-50" />
+            <vue-select v-else v-model="dataSource" :filterable="false" :options="dataSourceList" label="name" class="w-50"
+                :reduce="(opt) => ({ value: opt.id, name: opt.name })" @search="searchDataSource"
+                @option:selected="retrieveAttributes">
                 <template #no-options="{ }">
                     <small>Digite parte do nome pesquisar ...</small>
                 </template>
                 <template #option="option">
                     <div class="d-center">
-                        <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
+                        <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
                     </div>
                 </template>
                 <template #selected-option="option">
                     <div class="selected d-center" v-if="option.id || option.value">
-                        {{pad((option.id || option.value), 4, '&nbsp;')}} - {{option.name}}
+                        {{ pad((option.id || option.value), 4, '&nbsp;') }} - {{ option.name }}
                     </div>
                 </template>
             </vue-select>
             <div class="form-text">
-                Fonte de dados para treino e teste do modelo. <span class="text-danger">Alterar a fonte de dados de um
-                    experimento existente pode fazer com que ele pare de funcionar!</span>
+                Fonte de dados para treino e teste do modelo.
+            </div>
+            <div class="form-text text-danger">
+                <font-awesome-icon icon="fa fa-warning"/>
+                Alterar a fonte de dados de um experimento existente pode fazer com que ele pare de funcionar!
             </div>
         </b-form-group>
 
@@ -41,14 +46,16 @@
         <h5 class="mt-4 pb-3 border-bottom">
             Amostragem
         </h5>
-        
+
         <b-form-group label="Forma de amostragem:">
-            <select id="" v-model="type" class="form-select w-50 form-select-sm">
+            <BPlaceholder v-if="loading" size="lg" variant="secondary" animation="glow"
+                class="border border-dark py-3 rounded w-50" />
+            <select v-else v-model="type" class="form-select w-50 form-select-sm">
                 <option value="">
                     Sem amostragem, usar todos os registros
                 </option>
                 <option v-for="opt in sample.operation.fieldsMap.get('type').values" :key="opt.key" :value="opt.key">
-                    {{opt.pt}}
+                    {{ opt.pt }}
                 </option>
             </select>
             <div class="form-text">
@@ -56,25 +63,31 @@
             </div>
         </b-form-group>
 
-        <b-form-group label="Total de registros:" class="mt-3">
-            <input v-model="value" type="number" class="form-control form-control-sm w-25" min="1">
+        <b-form-group v-if="type === 'value' || type === 'head'" label="Total de registros:" class="mt-3">
+            <BPlaceholder v-if="loading" size="lg" variant="secondary" animation="glow"
+                class="border border-dark py-3 rounded w-25" />
+            <input v-else v-model="value" type="number" class="form-control form-control-sm w-25" min="1">
             <div class="form-text">
                 Total de registros a serem amostrados.
             </div>
         </b-form-group>
 
-        <b-form-group label="Percentual de registros:" class="mt-3">
-            <input v-model="fraction" type="number" class="form-control form-control-sm w-25" min="0.1"
-                   max="100" step="0.1"
-                   maxlength="5">
+        <b-form-group v-if="type === 'percent'" label="Percentual de registros:" class="mt-3">
+            <BPlaceholder v-if="loading" size="lg" variant="secondary" animation="glow"
+                class="border border-dark py-3 rounded w-25" />
+
+            <input v-else v-model="fraction" type="number" class="form-control form-control-sm w-25" min="0.1" max="100"
+                step="0.1" maxlength="5">
             <div class="form-text">
                 Percentual registros a serem amostrados.
             </div>
         </b-form-group>
 
         <b-form-group label="Semente para números aleatórios (seed):" class="mt-3">
-            <input v-model="seed" type="number" class="form-control form-control-sm w-25" min="0"
-                   step="1" maxlength="12">
+            <BPlaceholder v-if="loading" size="lg" variant="secondary" animation="glow"
+                class="border border-dark py-3 rounded w-25" />
+            <input v-else v-model="seed" type="number" class="form-control form-control-sm w-25" min="0" step="1"
+                maxlength="12">
             <div class="form-text">
                 Semente usada para poder repetir o experimento.
             </div>
@@ -93,9 +106,9 @@ const seed = defineModel('seed');
 const props = defineProps({
     attributes: { type: Array, default: () => [] },
     dataSourceList: { type: Array, default: () => [] },
-    //label: { type: String, default: () => null },
     supervisioned: { type: Boolean },
-    sample: { type: Object, default: () => null }
+    sample: { type: Object, default: () => null },
+    loading: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['search-data-source', 'retrieve-attributes']);

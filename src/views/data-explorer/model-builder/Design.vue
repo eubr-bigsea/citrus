@@ -3,7 +3,7 @@
         <div>
             <div class="d-flex justify-content-between align-items-center border-bottom">
                 <div class="title">
-                    <h1>Construção de Modelos</h1>
+                    <h1 class="pt-2">Construção de Modelos</h1>
                 </div>
                 <form class="float-end form-inline w-50 d-flex justify-content-end">
                     <label>{{$t('common.name')}}:</label>
@@ -40,13 +40,10 @@
                 </form>
             </div>
             <div class="custom-card">
-                <b-tabs v-if="loaded"
-                        class="p-2 custom-tab bg-white"
-                        align="center">
-                    <b-tab title="Parâmetros"
-                           class="m-1 parameters" title-link-class="small-nav-link">
+                <b-tabs class="p-2 custom-tab bg-white" align="left">
+                    <b-tab title="Parâmetros" class="m-1 parameters" title-link-class="small-nav-link">
                         <div class="row size-full">
-                            <div class="col-md-3 col-lg-2 border-right">
+                            <div class="col-md-3 col-lg-2 border-right border-end">
                                 <div class="explorer-nav p-1">
                                     <ModelBuilderSideBar :selected="selected"
                                              :supervisioned="supervisioned"
@@ -54,8 +51,7 @@
                                 </div>
                             </div>
                             <div class="col-md-9 col-lg-10 ps-4 pe-4 bg-white expand">
-                                <form action=""
-                                      class="form p-2">
+                                <form class="form p-2">
                                     <template v-if="selected === 'target'">
                                         <ModelBuilderDataAndSampling :attributes="attributes"
                                             :data-source-list="dataSourceList"
@@ -63,6 +59,7 @@
                                             :label="labelAttribute"
                                             :data-source="dataSource"
                                             :sample="workflowObj.sample"
+                                            :loading="!loaded"
                                             @search-data-source="loadDataSourceList"
                                             @retrieve-attributes="handleRetrieveAttributes" 
                                                     v-model:dataSource="workflowObj.readData.forms.data_source"
@@ -81,13 +78,14 @@
                                                    :split="workflowObj.split"/>
                                     </template>
                                     <template v-if="selected === 'metric'">
-                                        {{workflowObj.evaluator.form}}
                                         <ModelBuilderMetric 
-                                        :evaluator="workflowObj.evaluator"/>
-                                        v-model:strategy="workflowObj.evaluator.forms.strategy.value"
-                                        v-model:ratio="workflowObj.evaluator.forms.ratio.value"
-                                        v-model:folds="workflowObj.evaluator.forms.folds.value"
-                                        v-model:seed="workflowObj.evaluator.forms.seed.value"
+                                            :evaluator="workflowObj.evaluator"
+                                            v-model:taskType="workflowObj.evaluator.forms.task_type.value"
+                                            v-model:binaryMetric="workflowObj.evaluator.forms.bin_metric.value"
+                                            v-model:multiClassMetric="workflowObj.evaluator.forms.multi_metric.value"
+                                            v-model:regressionMetric="workflowObj.evaluator.forms.reg_metric.value"
+                                            v-model:clusteringMetric="workflowObj.evaluator.forms.clust_metric.value"
+                                        />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
                                         <ModelBuilderFeatureSelection 
@@ -106,6 +104,12 @@
                                             v-model:k="workflowObj.reduction.forms.k.value"/>
                                     </template>
                                     <template v-if="selected === 'algorithms'">
+                                        <!--
+
+                                            ||{{taskType}}||
+                                            {{algorithmOperation.map(o => o.name)}}
+                                            {{algorithmTasks}}
+                                        -->
                                         <ModelBuilderAlgorithmList ref="algorithms"
                                                     :operations="algorithmOperation"
                                                     v-model:tasks="algorithmTasks"
@@ -165,9 +169,9 @@ import Result from './result/Result.vue';
 import Weighting from './Weighting.vue';
 
 import DataSourceMixin from '../DataSourceMixin.js';
-import Notifier from '../../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
 
-import { ModelBuilderWorkflow, Operation } from '../entities.js';
+import { ModelBuilderWorkflow, Operation, Task } from '../entities.js';
 
 import axios from 'axios';
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -207,7 +211,10 @@ export default {
             selected: 'target',
             socket: null, // used by socketio (web sockets)
             targetPlatform: 1,
-            workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
+            workflowObj: {
+                readData: { forms: {} }, sample: { forms: { type: {}, value: {}, fraction: {}, seed: {} } },
+                forms: { $meta: { value: { target: '', taskType: '' } } }
+            },
 
             //FIXME: hard-coded. It'd be best defined in Tahiti
             unsupportedParameters: new Set(['perform_cross_validation', 'cross_validation', 'one_vs_rest'])
@@ -273,6 +280,23 @@ export default {
                 //this.algorithms = resp.data;
                 //this.selectedAlgorithm = this.algorithms[0];
             }
+        },
+        'workflowObj.evaluator.forms.task_type.value': function (v) {
+            console.debug('Changing type')
+            /*
+            // Disable all tasks. They could be removed, but user may lose
+            // all previous configurations.
+
+            this.workflowObj.tasks.filter(task =>
+            this.operationsMap.get(task.operation.slug).categories.find(cat => cat.type === 'algorithm'))
+            .forEach(task => task.enabled = false);
+            */
+           this.taskType = v;
+           this.algorithmOperation.forEach(op => {
+               if (! this.workflowObj.tasks.find(t => t.operation.id === op.id)){
+                    this.workflowObj.addTask(op, false, {});
+                }
+           });
         }
     },
     async created() {
