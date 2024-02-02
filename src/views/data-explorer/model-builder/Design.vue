@@ -42,6 +42,10 @@
             <div class="custom-card">
                 <b-tabs class="p-2 custom-tab bg-white" align="left">
                     <b-tab title="Parâmetros" class="m-1 parameters" title-link-class="small-nav-link">
+                <b-tabs class="p-2 custom-tab bg-white"
+                        align="center">
+                    <b-tab title="Parâmetros"
+                           class="m-1 parameters" title-link-class="small-nav-link">
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right border-end">
                                 <div class="explorer-nav p-1">
