@@ -70,7 +70,6 @@ onMounted(() => {
 
     let changed = before != updatedTasks.length;
 
-    console.debug(updatedTasks);
     /* Add missing tasks */
     for (let op of props.operations) {
         if (!tasksLookup.has(op.slug)) {
