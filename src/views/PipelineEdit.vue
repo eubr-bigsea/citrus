@@ -229,30 +229,17 @@ export default {
             ident: 'ident',
             collapse1: 'collapse1',
             selectedStep: '',
-            selectedStepIndex: '',
-            showWorkflowOps: 0,
+            selectedStepIndex: 0,
             collapseVisible2: true,
             collapseVisible3: false,
-            onDrag: false,
-            editedPipeline: { name: '', description: '', enabled: true, steps: [] },
             editedStep: { id: null, name: '', description: '', workflow: {} },
-            newStep: { name: '', description: '', enabled: true, order: null },
             stepOrder: null,
-            workflowName: '',
-            workflowPlatform: 1,
-            selectedWorkflowType: null,
-            workflowTypeOptions: [
-                { value: 'DATA_EXPLORER', text: 'Explorador de dados' },
-                { value: 'WORKFLOW', text: 'Fluxo de trabalho' },
-                { value: 'SQL', text: 'Fluxo baseado em SQL' },
-            ],
             dragOptions: {
                 animation: 200,
                 group: 'description',
                 disabled: false,
                 ghostClass: 'ghost'
             },
-            selectedWorkflow: null,
             columns: [
                 'id',
                 'etapa',
@@ -351,13 +338,9 @@ export default {
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
         },
         onDragEnd(event) {
-            // const movedStep = this.pipeline.steps[event.newIndex];
-
             this.pipeline.steps.forEach((step, index) => {
                 step.order = index + 1;
             });
-
-            // movedStep.order = event.newIndex + 1;
         },
         updatePipeline(childData) {
             this.pipeline = childData;

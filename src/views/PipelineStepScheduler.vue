@@ -318,11 +318,6 @@ export default {
         }
     },
     methods: {
-        // setSelectedStep(stepName, index) {
-        //     this.selectedStep = stepName;
-        //     this.selectedStepIndex = index;
-        //     this.selectedFreqOpt = null;
-        // },
         toggleAllMonths() {
             if (this.selectAllMonths) {
                 this.selectedMonths = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];

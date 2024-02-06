@@ -48,9 +48,9 @@
                             <button class="btn btn-spinner btn-primary btn-sm" title="Exibir log" @click="openLogModal">
                                 <font-awesome-icon icon="fa-eye" />
                             </button>
-                            <button class="ml-2 btn btn-spinner btn-secondary btn-sm" title="Desabilitar pipeline" @click="disablePipeline(props.row.id, props.row.name)">
+                            <!-- <button class="ml-2 btn btn-spinner btn-secondary btn-sm" title="Desabilitar pipeline" @click="disablePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="fa-ban" />
-                            </button>
+                            </button> -->
                             <button class="ml-2 btn btn-sm btn-danger" title="Excluir pipeline" @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
@@ -196,25 +196,25 @@ export default {
                     }.bind(this)
                 );
         },
-        disablePipeline(pipelineId, pipelineName) {
-            this.confirm(
-                `Desabilitar '${pipelineName}'`,
-                'Tem certeza que deseja desabilitar esta pipeline?',
-                () => {
-                    axios
-                        .patch(`${tahitiUrl}/pipelines/${pipelineId}`, { enabled: false })
-                        .then(() => {
-                            this.success('Pipeline desabilitada com sucesso');
-                            this.$refs.pipelineList.refresh();
-                        })
-                        .catch(
-                            function (e) {
-                                this.error(e);
-                            }.bind(this)
-                        );
-                }
-            );
-        },
+        // disablePipeline(pipelineId, pipelineName) {
+        //     this.confirm(
+        //         `Desabilitar '${pipelineName}'`,
+        //         'Tem certeza que deseja desabilitar esta pipeline?',
+        //         () => {
+        //             axios
+        //                 .patch(`${tahitiUrl}/pipelines/${pipelineId}`, { enabled: false })
+        //                 .then(() => {
+        //                     this.success('Pipeline desabilitada com sucesso');
+        //                     this.$refs.pipelineList.refresh();
+        //                 })
+        //                 .catch(
+        //                     function (e) {
+        //                         this.error(e);
+        //                     }.bind(this)
+        //                 );
+        //         }
+        //     );
+        // },
         deletePipeline(pipelineId, pipelineName) {
             this.confirm(
                 this.$t('actions.delete') + " '" + pipelineName + "'",
