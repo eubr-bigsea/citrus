@@ -9,71 +9,7 @@
             </button>
         </div>
 
-        <b-modal ref="addModal" title="Criação de template" size="lg" 
-                 scrollable @ok="createTemplate">
-            <div class="templatePage-card-modal">
-                <div class="position-relative">
-                    <label class="templatePage-label" for="nome">Nome</label>
-                    <input id="nome"
-                           v-model="createTemplateName" 
-                           class="templatePage-input" 
-                           type="text"
-                           maxlength="50"
-                           placeholder="Nome do template"
-                           @input="handleInput('create')">
-                    <div v-if="invalidInputLength" class="templatePage-invalid-length">
-                        - Nome do template deve ter pelo menos 3 caracteres.
-                    </div>
-                </div>
-
-                <div>
-                    <label class="templatePage-label" for="descricao">Descrição</label>
-                    <textarea id="descricao" 
-                              v-model="createTemplateDescription" 
-                              class="templatePage-textarea" 
-                              type="text"
-                              maxlength="200" 
-                              required
-                              placeholder="Descrição do template" />
-                </div>
-                <div class="position-relative">
-                    <label class="templatePage-label" for="descricao">
-                        Etapas
-                        <button id="popover-trigger" class="templatePage-tab-button">
-                            <font-awesome-icon icon="info-circle" />
-                        </button>
-                        <b-popover target="popover-trigger" triggers="hover">
-                            Segure e arraste as etapas abaixo para reordená-las.
-                        </b-popover>
-                    </label>
-                    <div class="templatePage-input-container">
-                        <draggable v-model="stepsInputs" :options="dragOptions">
-                            <div v-for="(input, index) in stepsInputs" :key="`step-${index}-${addModalKey}`" class="templatePage-input-box" @dragend="handleDragEnd">
-                                <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
-                                {{setOrder(input, index)}}
-                                #{{index + 1}}
-                                <input v-model="input.name" 
-                                       placeholder="Nome da etapa" 
-                                       class="templatePage-input" 
-                                       maxlength="50"
-                                       :class="stepInput">
-                                <textarea v-model="input.description" 
-                                          placeholder="Descrição da etapa" 
-                                          class="templatePage-textarea" 
-                                          maxlength="200"
-                                          :class="stepTextarea" />
-                                <button class="btn btn-sm btn-danger" @click="removeCreateTemplateInput(index)">
-                                    <font-awesome-icon icon="trash" />
-                                </button>
-                            </div>
-                        </draggable>
-                        <button class="btn btn-sm btn-primary mt-2" @click="addCreateTemplateInput">
-                            <font-awesome-icon icon="plus" />
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </b-modal>
+        <ModalCreateTemplate ref="addTemplateModal" @onupdate-template-list="updateTemplateList" />
 
         <div class="templatePage-body">
             <div class="templatePage-card-right">
@@ -86,6 +22,9 @@
                         <template #name="props">
                             {{props.row.name}}
                         </template>
+                        <template #description="props">
+                            {{props.row.description === '' ? 'Template sem descrição.' : props.row.description}}
+                        </template>
                         <template #steps="props">
                             <div :id="`trigger-${props.row.id}`" class="ml-2 btn btn-sm btn-secondary">
                                 <font-awesome-icon icon="info-circle" />
@@ -94,6 +33,9 @@
                                 <template #title>
                                     Etapas
                                 </template>
+                                <div v-if="props.row.steps.length === 0">
+                                    Template sem etapas.
+                                </div>
                                 <div v-for="(step, index) in props.row.steps" :key="step.name" class="templatePage-popover">
                                     <span class="font-weight-bold">#{{index + 1}} -</span> {{step.name}}
                                 </div>
@@ -101,79 +43,19 @@
                         </template>
                         <template #actions="props">
                             <div>
-                                <button class="btn btn-sm btn-secondary" title="Editar template" @click="openEditModal(props.row)">
+                                <button class="btn btn-sm btn-secondary" title="Editar template" @click.stop="openEditModal(props.row)">
                                     <font-awesome-icon icon="pen" />
                                 </button>
                                 <button v-b-modal.deleteModal class="ml-2 btn btn-sm btn-danger" title="Excluir template" @click="deleteTemplate(props.row.id, props.row.name)">
                                     <font-awesome-icon icon="trash" />
                                 </button>
-                                <b-modal :ref="`editModal-${props.row.name}`" title="Editar template" size="lg" @ok="editTemplate" 
-                                         @hidden="cancelEdit">
-                                    <div class="templatePage-card-modal">
-                                        <div class="position-relative">
-                                            <label class="templatePage-label" for="nome">Nome</label>
-                                            <input id="nome" 
-                                                   v-model="editedTemplate.name" 
-                                                   class="templatePage-input" 
-                                                   type="text" 
-                                                   maxlength="50" 
-                                                   placeholder="Nome do template"
-                                                   @input="handleInput('edit')">
-                                            <div v-if="invalidInputLength" class="templatePage-invalid-length">
-                                                - Nome do template deve ter pelo menos 3 caracteres.
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label class="templatePage-label" for="descricao">Descrição</label>
-                                            <textarea id="descricao" 
-                                                      v-model="editedTemplate.description" 
-                                                      class="templatePage-textarea" 
-                                                      type="text" 
-                                                      maxlength="200" 
-                                                      placeholder="Descrição do template" />
-                                        </div>
-                                        <div>
-                                            <label class="templatePage-label" for="descricao">
-                                                Etapas
-                                                <button id="popover-trigger" class="templatePage-tab-button">
-                                                    <font-awesome-icon icon="info-circle" />
-                                                </button>
-                                                <b-popover target="popover-trigger" triggers="hover">
-                                                    Segure e arraste as etapas abaixo para reordená-las.
-                                                </b-popover>
-                                            </label>
-                                            <div class="templatePage-input-container">
-                                                <draggable v-model="editedTemplate.steps" :options="dragOptions">
-                                                    <div v-for="(input, index) in editedTemplate.steps" :key="index" class="templatePage-input-box">
-                                                        <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
-                                                        {{setOrder(input, index)}}
-                                                        #{{index + 1}}
-                                                        <input v-model="input.name" 
-                                                               placeholder="Nome da etapa" 
-                                                               class="templatePage-input" 
-                                                               maxlength="50"
-                                                               :class="stepInput">
-                                                        <textarea v-model="input.description" 
-                                                                  placeholder="Descrição da etapa" 
-                                                                  class="templatePage-textarea" 
-                                                                  maxlength="200"
-                                                                  :class="stepTextarea" />
-                                                        <button class="btn btn-sm btn-danger" @click="removeEditTemplateInput(index)">
-                                                            <font-awesome-icon icon="trash" />
-                                                        </button>
-                                                    </div>
-                                                </draggable>
-                                                <button class="btn btn-sm btn-primary mt-2" @click="addEditTemplateInput">
-                                                    <font-awesome-icon icon="plus" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </b-modal>
                             </div>
                         </template>
                     </v-server-table>
+                    <ModalEditTemplate ref="editTemplateModal" 
+                                       :edited-template="editedTemplate" 
+                                       :edited-template-steps="editedTemplate.steps" 
+                                       @onupdate-template-list="updateTemplateList" />
                 </div>
             </div>
         </div>
@@ -182,32 +64,22 @@
 
 <script>
 import axios from 'axios';
-import { BModal } from 'bootstrap-vue';
-import draggable from 'vuedraggable';
 import Notifier from '../mixins/Notifier.js';
+import ModalEditTemplate from './modal/ModalEditTemplate.vue';
+import ModalCreateTemplate from './modal/ModalCreateTemplate.vue';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        draggable,
-        BModal
+        ModalEditTemplate,
+        ModalCreateTemplate
     },
     mixins: [Notifier],
     data() {
         return {
             stepInput: 'stepInput',
             stepTextarea: 'stepTextarea',
-            addModalKey: 0,
-            stepsInputs: [
-                { name: '', description: '', order: null, enabled: true }
-            ],
-            dragOptions: {
-                animation: 200,
-                group: 'description',
-                disabled: false,
-                ghostClass: 'ghost'
-            },
             columns: [
                 'id',
                 'name',
@@ -216,9 +88,6 @@ export default {
                 'actions'
             ],
             editedTemplate: { name: '', description: '', enabled: true, steps: [] },
-            templateStepsLength: null,
-            createTemplateName: '',
-            createTemplateDescription: '',
             invalidInputLength: true,
             tableData: [],
             options: {
@@ -276,86 +145,14 @@ export default {
                 );
         },
         openAddModal() {
-            this.invalidInputLength = true;
-            this.createTemplateName = '';
-            this.createTemplateDescription = '';
-            this.stepsInputs = [ { id: 0, name: '', description: '', order: null, enabled: true } ];
-            this.$refs.addModal.show();
-        },
-        addCreateTemplateInput() {
-            this.stepsInputs.push({ id: 0, enabled: true });
-        },
-        addEditTemplateInput() {
-            this.editedTemplate.steps.push({ enabled: true });
-        },
-        removeCreateTemplateInput: function(index) {
-            this.stepsInputs.splice(index, 1);
-        },
-        removeEditTemplateInput: function(index) {
-            this.editedTemplate.steps.splice(index, 1);
+            this.$refs.addTemplateModal.show();
         },
         openEditModal(row) {
-            const refEditModal = `editModal-${row.name}`;
-
-            this.invalidInputLength = false;
             this.editedTemplate = {...row};
-            this.stepsInputs = [...row.steps];
-            this.templateStepsLength = this.editedTemplate.steps.length;
-            this.$refs[refEditModal].show();
+            this.$refs.editTemplateModal.show();
         },
-        setOrder(input, index) {
-            input.order = index + 1;
-        },
-        handleInput(type) {
-            if (type === 'create') this.invalidInputLength = this.createTemplateName.length < 3;
-            else this.invalidInputLength = this.editedTemplate.name.length < 3;
-        },
-        handleDragEnd() {
-            this.$nextTick(() => {
-                this.editedTemplate.steps = [...this.editedTemplate.steps];
-            });
-        },
-        cancelEdit() {
-            if (this.templateStepsLength !== this.editedTemplate.steps.length) this.$refs.templateList.refresh();
-        },
-        createTemplate(e) {
-            if (this.invalidInputLength) {
-                e.preventDefault();
-                return;
-            }
-            const data = {
-                name: this.createTemplateName,
-                description: this.createTemplateDescription,
-                enabled: true,
-                steps: this.stepsInputs
-            };
-
-            axios
-                .post(`${tahitiUrl}/pipeline-templates`, data)
-                .then(() => {
-                    this.success('Template criado com sucesso');
-                    this.$refs.templateList.refresh();
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
-
-            this.$refs.addModal.hide();
-        },
-        editTemplate() {
-            axios
-                .patch(`${tahitiUrl}/pipeline-templates/${this.editedTemplate.id}`, this.editedTemplate)
-                .then(() => {
-                    this.success('Template editado com sucesso');
-                    this.$refs.templateList.refresh();
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+        updateTemplateList() {
+            this.$refs.templateList.refresh();
         },
         deleteTemplate(templateId, templateName) {
             this.confirm(
@@ -380,7 +177,6 @@ export default {
                 }
             );
         }
-
     }
 };
 
@@ -404,7 +200,6 @@ export default {
 .templatePage-card-modal {
     width: 100%;
     background-color: #fff;
-    /* padding: 10px; */
 }
 
 .templatePage-table {
