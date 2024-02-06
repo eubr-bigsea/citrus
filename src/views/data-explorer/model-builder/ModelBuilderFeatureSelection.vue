@@ -19,6 +19,8 @@
                             <div class="w-100 p-1"
                                  :class="{ 'bg-light border-secondary border': selectedAttribute === attr }">
                                 <b-form-checkbox :checked="attr.usage !== 'unused'" switch @change="handleEnable">
+                                    <font-awesome-icon v-if="attr.feature_type !== 'vector'" :icon="getAttributeTypeIcon(attr.feature_type)"/> 
+                                    <span v-else>[ ]</span>
                                     {{attr.name}}
                                 </b-form-checkbox>
                             </div>
@@ -31,8 +33,8 @@
             </div>
             <div class="col-md-8 border p-3">
                 <div v-if="selectedAttribute">
-                    <h6 class="border-bottom mb-4">
-                        {{selectedAttribute.name}}
+                    <h6 class="border-bottom mb-4 pb-2">
+                        <font-awesome-icon icon="fa fa-columns"/>  {{selectedAttribute.name}}
                     </h6>
 
                     <div class="row">
@@ -168,7 +170,7 @@ const props = defineProps({
     supervisioned: { type: Boolean },
 });
 
-const emit = defineEmits(['update-value', 'update-target']);
+const emit = defineEmits(['update-value', 'update-target', 'update:features']);
 const selectedAttribute = ref(null);
 const selectedTarget = ref(null);
 //const copy = ref({ ... this.features });
@@ -184,6 +186,9 @@ const attributeTypeOptions = [
     { value: "textual", icon: "fa fa-italic", label: 'Texto' },
     { value: "vector", label: 'Vetor', },
 ];
+const attributeTypeMap = new Map(attributeTypeOptions.map(a => [a.value, a.icon]));
+const getAttributeTypeIcon = (feature_type) => attributeTypeMap.get(feature_type);
+
 const categoricalHandlingOptions = [
     { value: "", label: '' },
     { value: "string_indexer", label: 'Dummy encoding (indexação)' },
@@ -249,6 +254,7 @@ onMounted(() => {
     if (!features.value) {
         features.value = [];
     }
+    let changed = false;
     props.attributes.forEach((attr) => {
         let cloned;
         if (attrLookup.has(attr.name)) {
@@ -277,6 +283,7 @@ onMounted(() => {
             /* Remove these properties and instead consider the 'usage' property */
             delete cloned.feature;
             delete cloned.label;
+            changed = true;
         }
 
         if (attr.name === props.target) {

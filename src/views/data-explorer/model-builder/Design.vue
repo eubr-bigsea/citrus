@@ -42,10 +42,6 @@
             <div class="custom-card">
                 <b-tabs class="p-2 custom-tab bg-white" align="left">
                     <b-tab title="Parâmetros" class="m-1 parameters" title-link-class="small-nav-link">
-                <b-tabs class="p-2 custom-tab bg-white"
-                        align="center">
-                    <b-tab title="Parâmetros"
-                           class="m-1 parameters" title-link-class="small-nav-link">
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right border-end">
                                 <div class="explorer-nav p-1">
@@ -92,12 +88,15 @@
                                         />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
+                                        <!--||{{workflowObj.features.forms.features.value[0]}}||-->
                                         <ModelBuilderFeatureSelection 
-                                                          :features="workflowObj.features"
-                                                          :target="workflowObj.forms.$meta.value.target"
+                                                          v-model:features="workflowObj.features.forms.features.value"
                                                           :supervisioned="supervisioned"
-                                                          @update-target="handleUpdateTarget" 
-                                                          @update-value="(v) => workflowObj.features = v" />
+                                                          
+                                                          :target="workflowObj.forms.$meta.value.target"
+                                                          :attributes="attributes"
+                                                          xupdate-target="handleUpdateTarget" 
+                                                          xupdate-value="(v) => workflowObj.features = v" />
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
@@ -157,7 +156,7 @@
     </div>
 </template>
 <script>
-;
+
 import io from 'socket.io-client';
 import ModelBuilderSideBar from './ModelBuilderSideBar.vue';
 import ModelBuilderDataAndSampling from './ModelBuilderDataAndSampling.vue';
@@ -295,12 +294,12 @@ export default {
             this.operationsMap.get(task.operation.slug).categories.find(cat => cat.type === 'algorithm'))
             .forEach(task => task.enabled = false);
             */
-           this.taskType = v;
-           this.algorithmOperation.forEach(op => {
-               if (! this.workflowObj.tasks.find(t => t.operation.id === op.id)){
+            this.taskType = v;
+            this.algorithmOperation.forEach(op => {
+                if (!this.workflowObj.tasks.find(t => t.operation.id === op.id)) {
                     this.workflowObj.addTask(op, false, {});
                 }
-           });
+            });
         }
     },
     async created() {
@@ -484,6 +483,9 @@ export default {
 
                 this.loadClusters();
 
+                if (this.workflowObj.features.forms.features.value === null){
+                    this.workflowObj.features.forms.features.value = [];
+                }
                 this.loaded = true;
             } catch (e) {
                 this.error(e);
