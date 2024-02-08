@@ -1053,3 +1053,7 @@ a:hover {
 Vue-Toastification__toast {
     z-index: 10000000;
 }
+
+.modal-xxl {
+    --bs-modal-width: 1250px;
+}

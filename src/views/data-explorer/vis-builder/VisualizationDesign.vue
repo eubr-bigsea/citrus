@@ -93,12 +93,6 @@
             </div>
         </div>
         <div v-if="visualizationObj" class="options-main">
-            <div v-if="visualizationObj" class="clearfix ">
-                <div>{{visualizationObj.x}}</div>
-                <div>{{visualizationObj.y}}</div>
-                <div>{{visualizationObj.x_axis}}</div>
-                <div>{{visualizationObj.y_axis}}</div>
-            </div>
             <chart-builder-axis v-model="axis" v-model:xLabel="visualizationObj.x_axis.value.label" v-model:x="visualizationObj.x.value"
                                 v-model:y="visualizationObj.y.value" v-model:xLowerBound="visualizationObj.x_axis.value.lowerBound" v-model:xUpperBound="visualizationObj.x_axis.value.upperBound"
                                 v-model:xLogScale="visualizationObj.x_axis.value.logScale" v-model:xDisplay="visualizationObj.x_axis.value.display"
@@ -168,12 +162,11 @@ import ChartBuilderOptions from '@/components/chart-builder/ChartBuilderOptions.
 import { computed, getCurrentInstance, inject, nextTick, onBeforeMount, ref, shallowRef, toRaw } from "vue";
 import { useI18n } from 'vue-i18n';
 
-
 import Plotly from '@/components/visualization/Plotly.vue';
 import useDataSource from '@/composables/useDataSource.js';
 import Notifier from '@/notifier.js';
 import { debounce, deepToRaw } from "@/util.js";
-;
+
 
 import axios from 'axios';
 import VueSelect from 'vue-select';
@@ -219,7 +212,8 @@ const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } 
 const visualizationObj = ref(null);
 const chartOptions = ref({ responsive: true, height: 600 });
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+
 const notifier = new Notifier(inject('snotify'), t);
 
 // Elements refs
@@ -500,7 +494,7 @@ const loadData = async () => {
 
     try {
         const response = await axios.post(`${standUrl}/jobs`, body,
-            { headers: { 'Locale': i18n.locale, } });
+            { headers: { 'Locale': locale.value, } });
         job.value = response.data.data;
         connectWebSocket();
     } catch (ex) {

@@ -36,7 +36,7 @@
                     </td>
                     <td class="text-center">
                         <select v-model="row.op"
-                                class="form-control"
+                                class="form-control text-center"
                                 @change="(v) => attrUpdated(row, 'op', v)">
                             <option value="eq"
                                     selected>
@@ -160,4 +160,11 @@ export default {
         font-size: .8em;
         padding: 0 2px;
     }
+</style>
+<style scoped>
+>>> {
+    --vs-font-size: .8rem;
+    --vs-line-height: .8;
+    --vs-dropdown-option-padding: 2px 10px;
+}
 </style>

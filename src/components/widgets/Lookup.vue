@@ -143,7 +143,6 @@ export default {
                 url += `&id=${this.value}`; //FIXME
             }
             try {
-                debugger;
                 const resp = await axios.get(url);
                 self.selected = self.value;
                 let data = resp.data.data || resp.data;

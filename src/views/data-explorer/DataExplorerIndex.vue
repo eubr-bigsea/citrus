@@ -624,15 +624,15 @@ export default {
                 self.job = response.data.data;
                 self.page = 1;
                 self.connectWebSocket();
-                this.loadingData = false;
+                //this.loadingData = false;
                 if (success) {
                     success();
                 }
-                this.$nextTick(() => {
+                /*this.$nextTick(() => {
                     this.$nextTick(() => {
                         this.previewCompleted = true;
                     });
-                });
+                });*/
             } catch (ex) {
                 if (ex.data) {
                     self.error(ex.data.message);
@@ -1245,6 +1245,7 @@ export default {
                                         self.loadingData = false;
                                     }
                                 }
+                                self.previewCompleted = true;
                             });
                             //console.debug(new Date());
                         } else if (msg.meaning === 'schema') {
@@ -1320,12 +1321,12 @@ export default {
     height: 65vh
 }
 
-/*
+
 .step-list {
-    -ms-flex: 0 0 305px;
-    flex: 0 0 305px;
+    z-index: 2;
+    background-color: white;
 }
-*/
+
 
 .table-stats {
     font-size: 9pt;

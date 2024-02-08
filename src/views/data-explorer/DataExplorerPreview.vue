@@ -21,7 +21,7 @@
                     <div />
                 </div>
                 <div class="border scroll-area table-preview b-table-sticky-header table-responsive"
-                     style="max-height: 85vh;">
+                     style="max-height: 85vh;" @scroll="handleTableScroll">
                     <preview-table ref="table" :headers="headersWithLineNumber" :stick-header="true" :rows="items"
                                    table-class="table b-table table-preview table-hover table-bordered table-sm border"
                                    @row-contextmenu="tableContextMenu" @row-clicked="tableClick">
@@ -206,7 +206,7 @@ export default {
         },
         items() {
             if (!this.scrollEventSet) {
-                this.$nextTick(() => this.$refs.table.$el.addEventListener('scroll', this.handleTableScrollEvent));
+                this.$nextTick(() => this.$refs.table.$el.parentElement.addEventListener('scroll', this.handleTableScrollEvent));
                 this.scrollEventSet = true;
             }
             this.$nextTick(() => {
@@ -222,7 +222,7 @@ export default {
     beforeUnmount() {
         window.removeEventListener("resize", this.resize);
         this.$refs.table &&
-            this.$refs.table.$el.removeEventListener(
+            this.$refs.table.$el.parentElement.removeEventListener(
                 'scroll', this.handleTableScrollEvent);
     },
     methods: {
@@ -373,7 +373,7 @@ export default {
                 this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
                 this.$refs.colOverlay.style.width = `${clipRec.width}px`;
                 this.$refs.colOverlay.style.display = '';
-                this.$refs.colOverlay.style.height = `${this.$refs.table.$el.offsetHeight}px`;
+                this.$refs.colOverlay.style.height = `${this.$refs.table.$el.parentElement.offsetHeight}px`;
             }
         },
         tableClick(item, rowIndex, event) { // eslint-disable-line no-unused-vars
@@ -406,7 +406,7 @@ export default {
             }
 
             this.lastHeader && this.lastHeader.classList.remove('bg-secondary', 'text-white');
-            if (this.menuData.field !== data.field) {
+            if (this.menuData.field !== data.field &&  event.target.tagName !== 'TD') {
                 this.lastHeader = th;
                 this.moveSelectionOverlay(th);
                 this.lastHeader.classList.add('bg-secondary', 'text-white');
@@ -435,7 +435,7 @@ export default {
         },
         handleTableScrollEvent(ev) {
             this.moveSelectionOverlay(this.lastHeader);
-            this.$refs.ctxCellMenu.ctxVisible = false;
+            //FIXME this.$refs.ctxCellMenu.ctxVisible = false;
             //this.$refs.dataTypeCtxMenu.ctxVisible = false;
             this.$emit('scroll', ev);
         },
@@ -444,12 +444,13 @@ export default {
         },
 
         moveSelectionOverlay(th, showBorder) {
-            const scrollOffset = this.$refs.table.$el.scrollLeft;
+            const scrollOffset = this.$refs.table.$el.parentElement.scrollLeft;
             if (th) {
                 const clipRec = th.getBoundingClientRect();
                 if (scrollOffset) {
                     this.$refs.colOverlay.style.left = `${th.offsetLeft - scrollOffset}px`;
                 } else {
+                    
                     this.$refs.colOverlay.style.left = `${th.offsetLeft}px`;
                 }
                 this.$refs.colOverlay.style.width = `${clipRec.width}px`;
@@ -458,7 +459,7 @@ export default {
                 } else {
                     this.$refs.colOverlay.style.borderLeft = 'none';
                 }
-                this.$refs.colOverlay.style.height = `${this.$refs.table.$el.offsetHeight}px`;
+                this.$refs.colOverlay.style.height = `${this.$refs.table.$el.parentElement.offsetHeight}px`;
                 this.$refs.colOverlay.style.display = '';
             }
         },
@@ -674,9 +675,9 @@ div.data-type {
 }
 
 .col-overlay div {
-    opacity: .04;
+    opacity: .1;
     background-color: rgb(14, 101, 235);
-    height: 80vh;
+    height: 83vh;
     width: 100%;
 }
 
