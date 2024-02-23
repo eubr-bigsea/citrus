@@ -2,9 +2,17 @@
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{ $t('titles.sqlWorkflow') }}</h1>
-            <b-button variant="primary" size="sm" class="mt-2 pu" @click="saveWorkflow" data-test="save">
-                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
-            </b-button>
+            <div>
+                <b-button variant="primary" size="sm" class="mt-2 pu mr-1" @click="saveWorkflow" data-test="save">
+                    <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                </b-button>
+                <b-button variant="success" size="sm" class="mt-2 pu" @click="executeWorkflow" data-test="execute">
+                    <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
+                </b-button>
+                <b-button v-if="sample" variant="info" size="sm" class="ml-2 mt-2 pu" @click="showSample" data-test="sample">
+                    <font-awesome-icon icon="fa fa-eye" /> Ver dados
+                </b-button>
+            </div>
         </div>
         <div class="layout-container source-code-pro-font">
             <div class="layout">
@@ -117,13 +125,14 @@
                 <font-awesome-icon icon="lemon" spin class="text-success" />
                 {{ i18n.$t('common.wait') }}
             </div>
-            <modal-preview-data-source ref="previewWindow" />
         </div>
+        <modal-preview-data-source ref="previewWindow" />
+        <sql-sample v-show="sample" :sample="sample" ref="modalSample"/>
     </main>
 </template>
 
 <script setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref, nextTick } from "vue";
 
 import { debounce } from "@/util.js";
 import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
@@ -134,6 +143,7 @@ import VueSelect from 'vue-select';
 import SqlEditor from './SqlEditor.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
+import SqlSample from './SqlSample.vue';
 
 import { getCurrentInstance } from 'vue';
 
@@ -318,6 +328,54 @@ const loadClusters = async () => {
         error(ex);
     }
 };
+
+const executeWorkflow = async () => {
+
+    if (isDirty.value) {
+        saveWorkflow();
+    }
+    loadingData.value = true;
+
+    let cloned = structuredClone(workflowObj.value);
+
+    cloned.platform_id = META_PLATFORM_ID;
+
+    cloned.tasks.forEach((task) => {
+        task.operation = { id: task.operation.id };
+        delete task.version;
+        delete task.step;
+        delete task.status;
+    });
+    delete cloned._tasksLookup;
+    cloned.sqls = cloned.sqls.sort(c => c.display_order);
+    cloned.tasks = [...cloned.dataSources, ...cloned.sqls];
+    delete cloned.dataSources;
+    delete cloned.sqls;
+
+    const PAGE_SIZE = 20
+    const body = {
+        workflow: cloned,
+        cluster: { id: cloned.preferred_cluster_id },
+        name: `## sql workflow ${cloned.id} ##`,
+        persist: false, // do not save the job in db.
+        app_configs: {
+            verbosity: 0, sample_size: PAGE_SIZE, sample_page: 1,
+            //target_platform: 'scikit-learn',
+            //variant: 'polars',
+            sample_style: 'DATA_EXPLORER'
+        },
+    };
+
+    try {
+        const response = await axios.post(`${standUrl}/jobs`, body);
+        job.value = response.data.data;
+        connectWebSocket();
+    } catch (ex) {
+        error(ex);
+    }
+};
+
+
 const saveWorkflow = async () => {
     let cloned = structuredClone(workflowObj.value);
 
@@ -353,6 +411,12 @@ const disconnectWebSocket = () => {
     }
 };
 
+const sample = ref();
+const modalSample = ref(null);
+
+const showSample = () => {
+    modalSample.value.show();
+};
 const connectWebSocket = () => {
     if (socketIo.value === null) {
         const opts = { upgrade: true };
@@ -370,6 +434,11 @@ const connectWebSocket = () => {
                 plotlyData.value = messageJson;
                 plotVersion.value++;
             }
+            sample.value = msg.message;
+            nextTick(() => {
+                modalSample.value.show();
+            });
+            
         });
         socket.on('update job', msg => {
             jobStatus.value = '';
@@ -546,5 +615,15 @@ const handleCodeAppear = (el, done) => {
     background: white;
     width: 100%;
     overflow-x: hidden;
+}
+
+.bottom-fixed-component {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
 }
 </style>
