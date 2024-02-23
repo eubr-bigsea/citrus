@@ -965,3 +965,90 @@ ul.b-form-tags-list {
 .slide-leave-to {
     opacity: 0
 }
+
+/* Lemon */
+
+.lemonPage-status-ultima {
+    display: flex;
+    margin: 0;
+    width: 30%;
+    justify-content: center;
+    font-weight: 500;
+    padding: 5px 0px;
+    border-radius: 25px;
+    font-size: 0.8em;
+    color: white;
+
+    &.sucesso {
+        background-color: #2ecc40;
+    }
+
+    &.erro {
+        background-color: #ff4136;
+    }
+
+    &.pendente {
+        background-color: #ffdc00;
+        color: black;
+    }
+}
+
+.historyPage-status {
+    display: flex;
+    margin: 0;
+    width: 50%;
+    justify-content: center;
+    font-weight: 500;
+    padding: 5px 0px;
+    border-radius: 25px;
+    font-size: 0.8em;
+    color: white;
+
+    &.sucesso {
+        background-color: #2ecc40;
+    }
+
+    &.erro {
+        background-color: #ff4136;
+    }
+}
+
+.lemonPage-enabled {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin: 0 auto;
+
+    &.true {
+        background-color: #008a00;
+    }
+
+    &.false {
+        background-color: #ca024f;
+    }
+}
+
+.editPage-status {
+    display: flex;
+    width: 50%;
+    justify-content: center;
+    font-weight: 500;
+    padding: 5px 0px;
+    border-radius: 25px;
+    font-size: 0.8em;
+    color: white;
+    margin: 0;
+
+    &.sucesso {
+        background-color: #2ecc40
+    }
+
+    &.erro {
+        background-color: #ff4136;
+    }
+
+    &.em_execucao {
+        background-color: #ffdc00;
+        color: black;
+    }
+}

@@ -692,7 +692,16 @@ export default {
             warning: 'Aviso',
             welcome: 'Bem-vindo(a) ao Lemonade!',
             whatIfModel: 'What if model?',
-            workflow: 'Fluxo de trabalho | Fluxos de trabalho'
+            workflow: 'Fluxo de trabalho | Fluxos de trabalho',
+            lemon: 'Lemon',
+            add: 'Adicionar',
+            lemonTemplates: 'Templates para Pipeline',
+            lemonHistory: 'Histórico de Execuções',
+            metafluxo: 'Metafluxo',
+            landingZone: 'Landing Zone',
+            raw: 'Raw',
+            stage: 'Stage',
+            dataset: 'Dataset'
         },
         track: {
             status: 'Status',
@@ -1398,7 +1407,16 @@ export default {
             warning: 'Warning',
             welcome: 'Welcome to Lemonade!',
             whatIfModel: 'What if model?',
-            workflow: 'Workflow | Workflows'
+            workflow: 'Workflow | Workflows',
+            lemon: 'Lemon',
+            add: 'Add',
+            lemonTemplates: 'Pipeline Templates',
+            lemonHistory: 'Executions History',
+            metafluxo: 'Metafluxo',
+            landingZone: 'Landing Zone',
+            raw: 'Raw',
+            stage: 'Stage',
+            dataset: 'Dataset'
         },
         track: {
             status: 'Status',

@@ -90,6 +90,12 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
+const PipelineList = () => import('./views/PipelineList.vue');
+const PipelineEdit = () => import('./views/PipelineEdit.vue');
+const PipelineTemplates = () => import('./views/PipelineTemplates.vue');
+const PipelineHistory = () => import('./views/PipelineHistory.vue');
+
+
 /* Experiments */
 const Explorer = () => import('./views/data-explorer/Explorer.vue');
 const DataExplorerStart = () => import('./views/data-explorer/DataExplorerStart.vue');
@@ -848,6 +854,42 @@ let router = new VueRouter({
             }
         },
         {
+            path: '/pipelines',
+            name: 'pipelines',
+            component: PipelineList,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.lemon', 1]
+            }
+        },
+        {
+            path: '/pipelines/:id',
+            name: 'pipelineEdit',
+            component: PipelineEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.lemon', 1]
+            }
+        },
+        {
+            path: '/pipeline/templates',
+            name: 'pipelineTemplates',
+            component: PipelineTemplates,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.lemonTemplates', 1]
+            }
+        },
+        {
+            path: '/pipeline/history',
+            name: 'pipelinesHistory',
+            component: PipelineHistory,
+            meta: {
+                requiresAuth: false,
+                title: ['titles.lemonHistory', 1]
+            }
+        },
+        {
             path: '*',
             name: 'not-found',
             component: PageNotFound,
@@ -860,7 +902,7 @@ let router = new VueRouter({
 });
 router.onError(error => {
     if (/loading chunk \d* failed./i.test(error.message)) {
-        window.location.reload()
+        window.location.reload();
     }
 });
 export default router;
