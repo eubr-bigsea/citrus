@@ -101,6 +101,8 @@ const Explorer = () => import('./views/data-explorer/Explorer.vue');
 const DataExplorerStart = () => import('./views/data-explorer/DataExplorerStart.vue');
 const ExplorerIndex = () => import('./views/data-explorer/Index.vue');
 
+const SqlWorkflowDesign = () => import('./views/data-explorer/sql-workflow/SqlWorkflowDesign.vue');
+
 
 const ChooseTask = () => import('./views/data-explorer/model-builder/ChooseTask.vue');
 const ModelTraining = () => import('./views/data-explorer/model-builder/ModelTraining.vue');
@@ -779,6 +781,15 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path: '/experiments/sql-workflow/:id',
+            name: 'sql-workflow',
+            component: SqlWorkflowDesign,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.sqlWorkflow', 1]
             }
         },
         {

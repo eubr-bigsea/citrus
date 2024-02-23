@@ -249,6 +249,89 @@ class VisualizationBuilderWorkflow extends Workflow {
         return super.addTask(op, null, null);
     }
 }
+class SqlBuilderWorkflow extends Workflow {
+    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
+        version = null, user = null, forms = null } = {}, operations) {
+        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+        this.updateLists();
+        this.sqls.forEach(sql => {
+            sql.forms = {
+                save: { value: false },
+                new_name: { value: '' },
+                path: { value: '' },
+                description: { value: '' },
+                storage: { value: null },
+                tags: { value: [] },
+                ...sql.forms
+            }
+        });
+    }
+    updateLists() {
+        this.dataSources = this.tasks.filter(t => t.operation.slug === 'read-data');
+        this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
+    }
+    addSqlTask(taskId, command) {
+        const forms = {
+            query: { value: command },
+            save: { value: false },
+            new_name: { value: '' },
+            path: { value: '' },
+            description: { value: '' },
+            storage: { value: null },
+            tags: { value: [] }
+        };
+        const task = new Task({
+            id: Operation.generateTaskId(),
+            name: 'execute sql',
+            operation: new Operation({ id: 93, slug: 'execute-sql' }),
+            display_order: this.tasks.length,
+            forms
+        });
+        if (taskId) {
+            const inx = this.tasks.findIndex(t => t.id === taskId);
+            if (inx > -1) {
+                this.tasks.splice(inx + 1, 0, task);
+                this.updateLists();
+            }
+        } else {
+            this.tasks.push(task);
+            this.updateLists();
+        }
+    }
+    removeTask(taskId) {
+        const inx = this.tasks.findIndex(t => t.id === taskId);
+        if (inx > -1) {
+            this.tasks.splice(inx, 1);
+            this.updateLists();
+        }
+    }
+    addDataSourceTask(dataSourceId, labelValue) {
+        const forms = {
+            data_source: { value: dataSourceId, labelValue }
+        };
+        const task = new Task({
+            id: Operation.generateTaskId(),
+            name: labelValue.replaceAll(/\W/gi, '_').substring(0, 10),
+            operation: new Operation({ id: 2100, slug: 'read-data' }),
+            display_order: this.dataSources.length,
+            forms
+        });
+        this.tasks.push(task);
+        this.updateLists();
+    }
+    moveSqlTask(taskId, direction) {
+        const inx = this.tasks.findIndex(t => t.id === taskId);
+        if (inx > -1) {
+            const newPosition = direction === 'up' ? inx - 1 : inx + 1;
+            const arr = this.tasks;
+
+            const [movedElement] = arr.splice(inx, 1);
+            arr.splice(newPosition, 0, movedElement);
+
+            this.updateLists();
+        }
+    }
+}
 class Platform {
     constructor({ id = null, slug = null, name = null } = {}) {
         Object.assign(this, { id, name, slug });
@@ -263,7 +346,7 @@ class Operation {
             if (field.values) {
                 try {
                     field.values = JSON.parse(field.values);
-                }catch(e){
+                } catch (e) {
                     console.error(e, field);
                 }
             }
@@ -607,6 +690,7 @@ export {
     FormField,
     Constants,
     ModelBuilderWorkflow,
+    SqlBuilderWorkflow,
     Visualization,
     VisualizationBuilderWorkflow,
     YDimension, XDimension, Axis

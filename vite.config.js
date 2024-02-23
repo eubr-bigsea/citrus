@@ -2,6 +2,7 @@
 import vue from '@vitejs/plugin-vue2'
 import path from 'path';
 import { visualizer } from "rollup-plugin-visualizer";
+import { fileURLToPath } from 'url';
 import { manualChunksPlugin } from 'vite-plugin-webpackchunkname';
 
 export default {
@@ -13,15 +14,13 @@ export default {
     ],
     resolve: {
         alias: [
+            { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
+            //{ find: '@', replacement: path.resolve(__dirname, './src/') },
             {
                 // this is required for the SCSS modules
                 find: /^~(.*)$/,
                 replacement: '$1',
             },
-            {
-                find: /^\$SRC\/(.*)$/,
-                replacement: path.resolve(__dirname, './src/$1')
-            }
         ],
     },
     test: {
