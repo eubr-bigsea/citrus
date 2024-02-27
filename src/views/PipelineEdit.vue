@@ -34,7 +34,9 @@
                                 <span class="left">ID</span> | <span class="right">{{pipeline.id}}</span>
                             </div>
                             <div class="editPage-infos-body-column">
-                                <span class="left">Descrição</span> | <span class="right-identifier">{{pipeline.description === '' ? 'Pipeline sem descrição.' : pipeline.description}}</span>
+                                <span class="left">Descrição</span> | <div class="right-description">
+                                    <TextAreaCustom v-model="pipeline.description" :editable="allowPipelineEdit" />
+                                </div>
                             </div>
                             <div class="editPage-infos-body-column">
                                 <span class="left">Criado em</span> | <span class="right">{{pipeline.created | formatJsonDate}}</span>
@@ -42,9 +44,6 @@
                             <div class="editPage-infos-body-column">
                                 <span class="left">Atualizado em</span> | <span class="right">{{pipeline.updated | formatJsonDate}}</span>
                             </div>
-                            <!-- <div class="editPage-infos-body-column">
-                                <span class="left">Habilitado</span> | <span class="right">{{pipeline.enabled ? 'Sim' : 'Não'}}</span>
-                            </div> -->
                             <div class="editPage-infos-body-column">
                                 <span class="left">Versão</span> | <span class="right">{{pipeline.version}}</span>
                             </div>
@@ -218,6 +217,7 @@ import axios from 'axios';
 import draggable from 'vuedraggable';
 import { BModal } from 'bootstrap-vue';
 import InputHeader from '../components/InputHeader.vue';
+import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
@@ -227,6 +227,7 @@ export default {
         draggable,
         BModal,
         InputHeader,
+        TextAreaCustom,
         ModalEditPipelineStep,
         ModalAddPipelineStep,
         PipelineStepScheduler
@@ -586,11 +587,8 @@ function getData() {
         margin-left: 15px;
     }
 
-    span.right-identifier {
-        max-height: 100px;
-        overflow-y: auto;
+    div.right-description {
         margin-left: 15px;
-        max-width: 250px;
     }
 
     &.radios {
