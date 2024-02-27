@@ -10,7 +10,13 @@
                 </h1> 
             </div>
             <div>
-                <button class="btn btn-primary btn-lemonade-primary" @click="saveChanges">
+                <button v-if="!allowPipelineEdit" class="btn btn-primary btn-lemonade-primary" @click="allowPipelineEdit = true">
+                    <font-awesome-icon icon="fa fa-pen-to-square" class="mr-1" /> Editar
+                </button>
+                <button v-if="allowPipelineEdit" class="btn btn-secondary mr-2" @click="allowPipelineEdit = false">
+                    Cancelar
+                </button>
+                <button v-if="allowPipelineEdit" class="btn btn-primary btn-lemonade-primary" @click="saveChanges">
                     <font-awesome-icon icon="fa fa-save" class="mr-1" /> Salvar
                 </button>
             </div>
@@ -89,7 +95,11 @@
                                         <div v-for="(step, index) in orderedPipelineSteps"
                                              :key="step.id" 
                                              class="editPage-dragDiv" 
-                                             :class="selectedStep == step.name ? 'editPage-dragDiv-selected' : null">
+                                             :class="{
+                                                 'editPage-dragDiv-selected': selectedStep === step.name,
+                                                 'editPage-dragDiv-inative': !allowPipelineEdit
+                                             }"
+                                             @dragstart="onDragStart">
                                             <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
                                             <div class="editPage-drag-column">
                                                 # {{index + 1}}
@@ -135,7 +145,7 @@
                                                         <font-awesome-icon icon="clock" />
                                                     </button>
                                                     <button class="ml-1 btn btn-sm btn-secondary" title="Editar etapa" @click="openEditModal(step)">
-                                                        <font-awesome-icon icon="pen" />
+                                                        <font-awesome-icon icon="pen-to-square" />
                                                     </button>
                                                     <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa" @click="deleteStep(step.id, step.name)">
                                                         <font-awesome-icon icon="trash" />
@@ -225,6 +235,7 @@ export default {
     data() {
         return {
             pipeline: {},
+            allowPipelineEdit: false,
             deleteResponse: null,
             ident: 'ident',
             collapse1: 'collapse1',
@@ -238,7 +249,7 @@ export default {
                 animation: 200,
                 group: 'description',
                 disabled: false,
-                ghostClass: 'ghost'
+                ghostClass: 'ghost',
             },
             columns: [
                 'id',
@@ -314,6 +325,7 @@ export default {
         },
         saveChanges() {
             this.editPipeline('Pipeline editada com sucesso.');
+            this.allowPipelineEdit = false;
         },
         openAddStepModal(stepOrder) {
             this.$refs.addStepModal.show();
@@ -334,8 +346,11 @@ export default {
             this.$refs.logModal.show();
         },
         redirectToWorkflow(step) {
-            if(step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
+            if (step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
+        },
+        onDragStart(event) {
+            if (!this.allowPipelineEdit) event.preventDefault();
         },
         onDragEnd(event) {
             this.pipeline.steps.forEach((step, index) => {
@@ -632,6 +647,12 @@ function getData() {
 
     &:hover {
         cursor: grab;
+    }
+}
+
+.editPage-dragDiv-inative {
+    &:hover {
+        cursor: default;
     }
 }
 
