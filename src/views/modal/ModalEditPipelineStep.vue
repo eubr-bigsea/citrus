@@ -5,7 +5,7 @@
              ok-only 
              scrollable 
              @hidden="closeStepModal"
-             @ok="editStep">
+             @ok="editStep('Etapa editada com sucesso.')">
         <div class="configPage-card-modal">
             <div>
                 <label class="editPage-label" for="nome">Nome</label>
@@ -158,7 +158,7 @@ export default {
             this.showWorkflowOps = 0;
             this.selectedWorkflowType = null;
         },
-        editStep() {
+        editStep(msg) {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
 
@@ -166,8 +166,8 @@ export default {
                 .patch(`${tahitiUrl}/pipelines/steps/${this.editedStep.id}`, this.editedStep)
                 .then((resp) => {
                     const foundStep = this.pipeline.steps.find(step => step.id === resp.data.data[0].id);
-                    Object.assign(foundStep, resp.data.data[0]);
-                    this.success('Etapa editada com sucesso.');
+                    Object.assign(foundStep, resp.data.data[0]); 
+                    this.success(msg);
                 })
                 .catch(
                     function (e) {
@@ -191,8 +191,12 @@ export default {
 
             axios
                 .post(`${tahitiUrl}/workflows`, workflow)
-                .then(() => {
-                    this.success('Workflow criado com sucesso.');
+                .then((resp) => {
+                    // eslint-disable-next-line vue/no-mutating-props
+                    this.editedStep.workflow_id = resp.data.id;
+                    // eslint-disable-next-line vue/no-mutating-props
+                    this.editedStep.workflow = resp.data;
+                    this.editStep('Workflow criado e associado com sucesso à etapa.');
                 })
                 .catch(
                     function (e) {
