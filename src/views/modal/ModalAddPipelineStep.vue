@@ -164,6 +164,7 @@ export default {
                     const childData = resp.data.data[0];
                     this.$emit('onupdate-pipeline', childData);
                     this.success(msg);
+                    this.selectedWorkflow = null;
                 })
                 .catch(
                     function (e) {

@@ -3,7 +3,6 @@
         <textarea :value="value" 
                   :rows="textareaRows" 
                   maxlength="200" 
-                  :readonly="!editable"
                   @input="$emit('input', $event.target.value)" />
     </h2>
 </template>
@@ -13,7 +12,6 @@ export default {
     name: 'TextAreaCustom',
     props: {
         value: { type: String, default: '-' },
-        editable: { type: Boolean, default: false }
     },
     emits: ['input'],
     computed: {
@@ -33,7 +31,7 @@ export default {
 textarea {
     background-color: transparent;
     border: 1px solid transparent;
-    font-size: 18px;
+    font-size: 14px;
     font-weight: 400;
     display: block;
     width: 100%;

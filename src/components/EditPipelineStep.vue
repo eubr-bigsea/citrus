@@ -1,28 +1,22 @@
 <template>
-    <b-modal ref="editStepModal"
-             title="Editar etapa" 
-             size="lg" 
-             ok-only 
-             scrollable 
-             @hidden="closeStepModal"
-             @ok="editStep('Etapa editada com sucesso.')">
-        <div class="configPage-card-modal">
+    <div class="editPage-step-config-body">
+        <div>
             <div>
                 <label class="editPage-label" for="nome">Nome</label>
                 <input id="nome" v-model="editedStep.name" class="editPage-input" type="text"
-                       placeholder="Nome da etapa">
+                       placeholder="Nome da etapa" @input="handleInput">
             </div>
 
             <div>
                 <label class="editPage-label" for="descricao">Descrição</label>
                 <textarea id="descricao" v-model="editedStep.description" class="editPage-textarea" type="text"
-                          placeholder="Descrição da etapa" />
+                          placeholder="Descrição da etapa" @input="handleInput" />
             </div>
         </div>
         <hr class="mt-4 mb-3">
         <div v-if="editedStep.workflow !== undefined" class="d-flex flex-column">
             <label class="editPage-label">Etapa vinculada a um workflow:</label>
-            <b-card class="w-50 my-2 clickable d-flex justify-content-between" @click="redirectToWorkflow(editedStep)">
+            <b-card class="w-100 my-2 clickable d-flex justify-content-between" @click="redirectToWorkflow(editedStep)">
                 <font-awesome-icon icon="fa fa-flask" class="mr-1" size="lg" />
                 <span class="editPage-workflow-label">
                     {{editedStep.workflow.id}} - {{editedStep.workflow.name}}
@@ -51,7 +45,7 @@
             <div v-if="showWorkflowOps == 1" class="mb-3">
                 <label>Escolha um workflow existente para vincular a esta etapa:</label>
                 <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name" 
-                            class="w-100" @search="loadWorkflowList">
+                            class="w-100" @search="loadWorkflowList" @input="handleInput">
                     <template #no-options="{ }">
                         <small>Digite parte do nome para pesquisar...</small>
                     </template>
@@ -116,21 +110,19 @@
                 </b-container>
             </div>
         </div>
-    </b-modal>
+    </div>
 </template>
 
 <script>
 import axios from 'axios';
-import PipelineEditMixin from '../../mixins/PipelineEditMixin.js';
-import { BModal } from 'bootstrap-vue';
+import PipelineEditMixin from '../mixins/PipelineEditMixin.js';
 import vSelect from 'vue-select';
-import Notifier from '../../mixins/Notifier.js';
+import Notifier from '../mixins/Notifier.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        BModal,
         'vue-select': vSelect,
     },
     mixins: [PipelineEditMixin, Notifier],
@@ -138,6 +130,7 @@ export default {
         editedStep: { type: Object, default: () => {} },
         pipeline: { type: Object, default: () => {} },
     },
+    emits: ['send-step-changes'],
     data() {
         return {
             showWorkflowOps: 0,
@@ -152,28 +145,20 @@ export default {
             ],
         };
     },
-    methods: {
-        closeStepModal() {
-            this.selectedWorkflow = null;
-            this.showWorkflowOps = 0;
-            this.selectedWorkflowType = null;
+    watch: {
+        showWorkflowOps() {
+            this.editStep();
         },
-        editStep(msg) {
+    },
+    methods: {
+        editStep() {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
 
-            axios
-                .patch(`${tahitiUrl}/pipelines/steps/${this.editedStep.id}`, this.editedStep)
-                .then((resp) => {
-                    const foundStep = this.pipeline.steps.find(step => step.id === resp.data.data[0].id);
-                    Object.assign(foundStep, resp.data.data[0]); 
-                    this.success(msg);
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            this.$emit('send-step-changes', this.editedStep);
+        },
+        handleInput() {
+            this.editStep();
         },
         show() {
             this.$refs.editStepModal.show();
@@ -213,4 +198,4 @@ export default {
 };
 
 
-</script>
+</script>../mixins/PipelineEditMixin.js../mixins/Notifier.js./EditPipelineStep.vue/index.js
