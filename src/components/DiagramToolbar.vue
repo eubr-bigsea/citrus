@@ -135,7 +135,7 @@ export default {
     },
     watch: {
         zoom() {
-            this.$parent.$emit('onzoom', this.zoom);
+            this.$emit('onzoom', this.zoom);
         }
     },
     

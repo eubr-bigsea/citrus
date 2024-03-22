@@ -27,7 +27,7 @@
                         <div class="col-md-4">
                             <label>{{$t('titles.cluster')}}:</label>
                             <select v-model="clusterInfoCopy.id" class="form-select form-select-sm"
-                                    @change="changeCluster">
+                                    change="changeCluster">
                                 <option v-for="option in clusters" :key="option.id" :value="option.id">
                                     {{option.name}}
                                 </option>
@@ -53,7 +53,9 @@
             <div class="w-100 text-end">
                 <button v-if="clusters && clusters.length" id="mdl-execute-wf" ref="executeBtn"
                         class="btn btn-sm btn-outline-success" @click="execute($event)">
-                    <font-awesome-icon icon="fa fa-play" /> {{$t('actions.execute')}}
+                    <font-awesome-icon v-if="!triggered" icon="fa fa-play" /> 
+                    <font-awesome-icon v-else icon="fa fa-spinner fa-spin" /> 
+                    {{$t('actions.execute')}}
                 </button>
                 <button class="ms-1 btn btn-sm btn-outline-dark" @click="close">
                     {{$t('actions.cancel')}}
@@ -73,7 +75,8 @@ export default {
     emits: ['onexecute-workflow', 'onchange-cluster', 'update-value'],
     data() {
         return {
-            'clusterInfoCopy': {... this.clusterInfo}
+            'clusterInfoCopy': {... this.clusterInfo},
+            triggered: false
         };
     },
     watch: {
@@ -95,12 +98,14 @@ export default {
         changeCluster() {
             const cluster = this.clusters.find((c) => c.id === this.clusterInfoCopy.id);
             this.$emit("onchange-cluster", cluster);
+            return true;
         },
         close() {
             this.$refs.modal.hide();
         },
         execute(event) {
             event.target.disabled = true;
+            this.triggered = true;
             this.$emit('update-value', this.clusterInfoCopy);
             this.$emit("onexecute-workflow");
         },

@@ -50,7 +50,7 @@ import Treemap from "../visualization/Treemap.vue";
 import Html from '../visualization/Html.vue';
 import Plotly from '../visualization/Plotly.vue';
 
-const emit = defineEmits(['on-delete', 'on-save']);
+//const emit = defineEmits(['on-delete', 'on-save']);
 
 let highchartsDefaultLang = undefined;
 

@@ -62,7 +62,7 @@ export default {
     data() {
         const self = this;
         return {
-            label: '',
+            internalLabel: '',
             lookupOptions: [],
             selectedValue: null,
             finalUrl: null,
@@ -127,7 +127,7 @@ export default {
             }
         },
         displayLabel() {
-            return this.label ? (this.selected + ' - ' + this.label) : '';
+            return this.internalLabel ? (this.selected + ' - ' + this.internalLabel) : '';
         }
     },
     async mounted() {
@@ -156,9 +156,9 @@ export default {
                     const sel = this.lookupOptions.find((item) => {
                         return Number(item.key) === Number(self.value);
                     });
-                    this.label = sel ? sel.value : '';
+                    this.internalLabel = sel ? sel.value : '';
                 } else {
-                    this.label = '';
+                    this.internalLabel = '';
                 }
             } catch (e) {
                 this.error(e);
@@ -171,7 +171,7 @@ export default {
     },
     methods: {
         removeValue() {
-            this.label = '';
+            this.internalLabel = '';
             this.triggerUpdateEvent(this.message, this.field, null, null);
             this.closeModal();
         },
@@ -196,9 +196,9 @@ export default {
         },
         select(evt, newValue) {
             this.selected = newValue.id;
-            this.label = newValue.name;
+            this.internalLabel = newValue.name;
             this.triggerUpdateEvent(this.message, this.field, this.selected,
-                this.label);
+                this.internalLabel);
             this.closeModal();
         }
     },

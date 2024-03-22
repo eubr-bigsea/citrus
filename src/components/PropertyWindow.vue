@@ -331,11 +331,13 @@ export default {
                         console.debug(e);
                     }
                 });
+                /* legacy 
                 if (fieldsToCheck?.length) {
                     [...new Set(fieldsToCheck.map(item => item.name))].forEach(item => {
-                        self.toggleFields(self.allFields[item], self.allFields[item].internalValue);
+                        //self.toggleFields(self.allFields[item], self.allFields[item].internalValue);
                     });
                 }
+                */
             }
             this.$emit('update-form-field-value', field, value, labelValue);
         }

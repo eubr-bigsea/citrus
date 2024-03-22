@@ -33,7 +33,7 @@ export default {
     mixins: [Widget],
     props: {
         value: {
-            type: Number, default: 50,
+            default: 50,
         },
     },
     data() {

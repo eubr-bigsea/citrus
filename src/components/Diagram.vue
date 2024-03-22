@@ -3,7 +3,7 @@
         <diagram-toolbar v-if="showToolbar" class="diagram-toolbar" :selected="selectedElements" :copied-tasks="copiedTasks"
                          :use-data-source="useDataSource" @onclick-task="clickTask" @oncopy-tasks="_copy" @onpaste-tasks="_paste"
                          @ontoggle-tasks="toggleTasks" @ondistribute-tasks="distribute" @onalign-tasks="align"
-                         @onremove-tasks="removeSelectedTasks" />
+                         @onremove-tasks="removeSelectedTasks" @onzoom="(v) => $emit('onzoom', v)" />
         <div id="lemonade-container" :class="{'with-grid': showGrid, 'dark-mode': darkMode}"
              class="lemonade-container not-selectable" @click="diagramClick">
             <div class="scroll-area">
@@ -128,7 +128,8 @@ export default {
     emits: [
         'onclear-selection', 'addFlow', 'onclear-selection', 'add-task',
         'onkeyboard-keyup', 'onblur-selection', 'removeFlow', 'onshow-deploy',
-        'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task'
+        'onclick-task', 'onset-is-dirty', 'onshow-result', 'remove-task',
+        'onzoom'
     ],
 
     data() {

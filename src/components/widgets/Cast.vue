@@ -28,6 +28,13 @@
                 <tbody>
                     <tr v-for="(row, index) in valueList" :key="index">
                         <td style="width:50%">
+                            <select class="form-select form-select-sm" :value="row.attribute"
+                                    @change="updated($event, row, 'attribute')">
+                                <option v-for="v in suggestions" :key="v" :value="v">
+                                    {{v}}
+                                </option>
+                            </select>
+                            <!--
                             <v-select :options="suggestions" :multiple="false" :value="row.attribute" :taggable="true"
                                       :close-on-select="true" size="sm" class="vue-select-small"
                                       @input="(v) => attrUpdated(row, 'attribute', v)">
@@ -35,9 +42,10 @@
                                     {{$t('messages.noMatching')}}
                                 </slot>
                             </v-select>
+                            -->
                         </td>
-                        <td style="width:20%">
-                            <select class="form-control form-control-sm" :value="row.type" size="sm"
+                        <td style="width:30%">
+                            <select class="form-select form-select-sm" :value="row.type"
                                     @change="updated($event, row, 'type')">
                                 <option v-for="v in dataTypes" :key="v.key" :value="v.key">
                                     {{v.value}}
@@ -81,7 +89,7 @@
 <script>
 import vSelect from "vue-select";
 import LabelComponent from './Label.vue';
-import Widget from '../../mixins/Widget.js';
+import Widget from '@/mixins/Widget.js';
 export default {
     name: 'CastComponent',
     components: {
