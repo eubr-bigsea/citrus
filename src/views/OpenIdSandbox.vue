@@ -48,6 +48,7 @@
 import axios from 'axios';
 import { openIdService } from '../openid-auth.js';
 import { UserManager, WebStorageStateStore } from 'oidc-client';
+const thornUrl = import.meta.env.VITE_THORN_URL;
 const parseJwt = (token) => {
     try {
         return JSON.parse(atob(token.split('.')[1]));
@@ -97,7 +98,7 @@ export default {
         },
         callApi() {
             const headers = { 'Authorization': this.token };
-            axios.get('/api/v1/thorn/users/me', { headers }).then(resp => {
+            axios.get(`${thornUrl}/api/v1/thorn/users/me`, { headers }).then(resp => {
                 this.api = JSON.stringify(resp.data);
             }).catch(error => {
                 console.debug('Error', error);

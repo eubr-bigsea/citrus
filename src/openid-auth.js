@@ -39,6 +39,10 @@ class AuthService {
         this.enabled = resp?.data?.data?.enabled;
         //if (this.enabled){
         let merged = {...settings, ...resp['data']['data']};
+        
+        
+        merged.redirect_uri = window.location.origin; 
+        console.debug('Redirecting', merged.redirect_uri)
         //merged.scope = 'profile, email'
         /*
             merged.authority = "dummy"
@@ -55,8 +59,20 @@ class AuthService {
                 issuer: 'https://ssogsi.mpmg.mp.br/oauth2/token',
                 authorization_endpoint: 'https://sso.gsi.mpmg.mp.br/oauth2/authorize',
             }*/
-        this.userManager = new UserManager(merged);
-        //}
+            //}
+        const mgr = new UserManager(merged);
+        this.userManager = mgr;
+        mgr.events.addAccessTokenExpiring(function () {
+            console.log("token expiring");
+            // maybe do this code manually if automaticSilentRenew doesn't work for you
+            mgr.signinSilent().then(function(token) {
+                console.log("silent renew success", token);
+                localStorage.setItem('token', token.access_token);
+                //self.getThornProfile();
+            }).catch(function(e) {
+                console.log("silent renew error", e.message);
+            })
+        });
     }
     /**
      * Initate the login process.
@@ -69,6 +85,7 @@ class AuthService {
     logout() {
         this.userManager.removeUser();
         this.vueStore && this.vueStore.dispatch('logout');
+        
         this.userManager.signoutRedirect()
             .then(() => {
                 console.log('User logged out');
