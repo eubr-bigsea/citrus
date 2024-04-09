@@ -12,16 +12,21 @@ export default {
         const self = this;
         if (q?.code) {
             this.query = q;
-            new UserManager({
+            const mgr = new UserManager({
                 response_mode: 'query',
                 userStore: new WebStorageStateStore()
-            }).signinRedirectCallback().then(async function (user) { // eslint-disable-line no-unused-vars
+            })
+            mgr.readSigninResponseState().then(({state, response}) => {
+                    console.debug(state)
+            });
+            mgr.signinRedirectCallback().then(async function (user) { // eslint-disable-line no-unused-vars
                 await self.getThornProfile();
                 self.$router.push({ name: 'home' });
             }).catch(function (err) {
                 console.log(err);
                 self.$router.push({ name: 'home' });
             });
+           
         } else if (q?.sp && q?.error_description !== "End User denied the logout request") { //logout
             self.$store.dispatch('logout');
             self.$router.push({ name: 'home' });
@@ -32,9 +37,10 @@ export default {
     },
     methods: {
         async getThornProfile() {
-            const user = await this.$openIdService.getProfile(); // eslint-disable-line no-unused-vars
+            //const user = await this.$openIdService.getProfile(); // eslint-disable-line no-unused-vars
             const token = await this.$openIdService.getAccessToken();
-            const headers = { 'Authorization': token }
+            //const headers = { 'Authorization': token };
+            const headers = {};
             const resp = await axios.get('/api/v1/thorn/users/me', { headers });
             this.$store.dispatch('setUser', { user: resp.data.data[0], token })
         },
