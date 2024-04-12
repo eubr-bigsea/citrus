@@ -42,7 +42,8 @@ class AuthService {
         
         this.settings = merged;
         merged.redirect_uri = window.location.origin; 
-        console.debug('Redirecting', merged.redirect_uri)
+        merged.post_logout_redirect_uri = `${window.location.origin}/logout`;
+        //console.debug('Redirecting', merged.redirect_uri)
         //merged.scope = 'profile, email'
         /*
             merged.authority = "dummy"
@@ -83,20 +84,28 @@ class AuthService {
     }
 
     logout() {
-        this.userManager.removeUser();
-        this.vueStore && this.vueStore.dispatch('logout');
         
-        this.userManager.signoutRedirect({extraQueryParams: {
-            client_id: this.settings.client_id
-        }})
-            .then(() => {
-                console.log('User logged out');
-                this.vueStore && this.vueStore.dispatch('logout');
-            }).catch(error => {
-                console.log(error);
-                this.userManager.removeUser();
-                this.vueStore && this.vueStore.dispatch('logout');
-            })
+
+        this.userManager.getUser().then(async user => {
+            const signoutUrl = await this.userManager.createSignoutRequest(
+                {id_token_hint: user.id_token});
+
+            this.userManager.removeUser();
+            this.vueStore && this.vueStore.dispatch('logout');
+            window.location.replace(signoutUrl.url);
+            return ;
+            this.userManager.signoutRedirect({extraQueryParams: {
+                client_id: this.settings.client_id
+            }})
+                .then(() => {
+                    console.log('User logged out');
+                    this.vueStore && this.vueStore.dispatch('logout');
+                }).catch(error => {
+                    console.log(error);
+                    this.userManager.removeUser();
+                    this.vueStore && this.vueStore.dispatch('logout');
+                })
+        });
     }
 
     /**
