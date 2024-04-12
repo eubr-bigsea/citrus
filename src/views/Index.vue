@@ -4,7 +4,7 @@
 <script>
 import axios from 'axios';
 import { UserManager, WebStorageStateStore } from 'oidc-client';
-
+let thornUrl = import.meta.env.VITE_THORN_URL;
 export default {
     name: 'IndexView',
     mounted() {
@@ -41,7 +41,7 @@ export default {
             const token = await this.$openIdService.getAccessToken();
             //const headers = { 'Authorization': token };
             const headers = {};
-            const resp = await axios.get('/api/v1/thorn/users/me', { headers });
+            const resp = await axios.get(`${thornUrl}/users/me`, { headers });
             this.$store.dispatch('setUser', { user: resp.data.data[0], token })
         },
     },

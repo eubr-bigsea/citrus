@@ -40,7 +40,7 @@ class AuthService {
         //if (this.enabled){
         let merged = {...settings, ...resp['data']['data']};
         
-        
+        this.settings = merged;
         merged.redirect_uri = window.location.origin; 
         console.debug('Redirecting', merged.redirect_uri)
         //merged.scope = 'profile, email'
@@ -86,7 +86,9 @@ class AuthService {
         this.userManager.removeUser();
         this.vueStore && this.vueStore.dispatch('logout');
         
-        this.userManager.signoutRedirect()
+        this.userManager.signoutRedirect({extraQueryParams: {
+            client_id: this.settings.client_id
+        }})
             .then(() => {
                 console.log('User logged out');
                 this.vueStore && this.vueStore.dispatch('logout');
