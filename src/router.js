@@ -871,7 +871,7 @@ let router = new VueRouter({
             component: PipelineList,
             meta: {
                 requiresAuth: true,
-                title: ['titles.lemon', 1]
+                title: ['titles.pipeline', 2]
             }
         },
         {
