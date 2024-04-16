@@ -5,9 +5,9 @@
                 Pipelines
             </h1>
             <div>
-                <!-- <router-link :to="{name: 'pipelinesHistory'}" class="btn btn-outline-secondary float-left ml-2">
-                    <font-awesome-icon icon="fa fa-history" /> Histórico
-                </router-link> -->
+                <router-link :to="{name: 'pipelineRunsList'}" class="btn btn-outline-secondary float-left ml-2">
+                    <font-awesome-icon icon="fa fa-history" /> Execuções
+                </router-link>
                 <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
                     <font-awesome-icon icon="fa fa-plus" /> Adicionar
                 </button>

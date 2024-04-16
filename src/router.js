@@ -91,9 +91,9 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
 const PipelineList = () => import('./views/PipelineList.vue');
+const PipelineRunsList = () => import('./views/PipelineRunsList.vue');
 const PipelineEdit = () => import('./views/PipelineEdit.vue');
 const PipelineTemplates = () => import('./views/PipelineTemplates.vue');
-const PipelineHistory = () => import('./views/PipelineHistory.vue');
 
 
 /* Experiments */
@@ -892,12 +892,14 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/pipeline/history',
-            name: 'pipelinesHistory',
-            component: PipelineHistory,
+            path: '/pipeline/runs',
+            name: 'pipelineRunsList',
+            component: PipelineRunsList,
             meta: {
-                requiresAuth: false,
-                title: ['titles.lemonHistory', 1]
+                requiresAuth: true,
+                title: ['titles.pipelineRuns', 2]
+            }
+        },
             }
         },
         {

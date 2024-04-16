@@ -23,7 +23,7 @@
                 <button class="btn btn-sm btn-outline-secondary float-left border-right-0" @click="$bvToast.show('example-toast')"> 
                     <font-awesome-icon icon="fa fa-calendar-alt" class="mr-1" /> Periodicidade
                 </button>
-                <button class="btn btn-sm btn-outline-secondary float-left">
+                <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </button>
                 <button class="btn btn-sm btn-outline-success" :disabled="!isDirty" @click="saveChanges">
