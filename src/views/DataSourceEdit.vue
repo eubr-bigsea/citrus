@@ -35,6 +35,10 @@
                                                         <input :value="dataSource.storage.name + ' (' + dataSource.storage.type + ')'"
                                                                disabled class="form-control">
                                                     </div>
+                                                    <div v-if="enable_url_edit && dataSource.format !== 'HIVE'" class="col-md-6">
+                                                        <label>{{$tc('dataSource.fileUrl')}}:</label>
+                                                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control"/>
+                                                    </div> 
                                                     <div class="col-md-6">
                                                         <label>{{$tc('common.description')}}:</label>
                                                         <textarea v-model="dataSource.description"
@@ -105,6 +109,11 @@
                                                 <div v-if="dataSource.format === 'CSV'">
                                                     <b-form-checkbox v-model="dataSource.is_first_line_header">
                                                         {{$t('dataSource.isFirstLineHeader')}}
+                                                    </b-form-checkbox>
+                                                </div>
+                                                <div>
+                                                    <b-form-checkbox v-model="enable_url_edit">
+                                                        {{$t('dataSource.enableUrlEdit')}}
                                                     </b-form-checkbox>
                                                 </div>
                                                 <div v-if="dataSource.storage.type !== 'HIVE' && dataSource.storage.type !== 'HIVE_WAREHOUSE'">
@@ -239,6 +248,25 @@
                                             <div class="alert alert-info">
                                                 {{$t("dataSource.noAttributes")}}
                                             </div>
+                                        </div>
+                                    </b-tab>
+
+                                    <b-tab v-if="enable_url_edit" title="Variáveis">
+                                        <div>
+                                            <b-tabs class="filter-field">
+                                                <b-tab :title="$tc('dataSource.userVariables', 2)">
+                                                    <UserVariables  :items="dataSource.variables"/>
+                                                    <p class="lead mark small bg-light p-3 m-2">
+                                                        {{$t("dataSource.variables.userVariablesDefinition")}}
+                                                    </p>
+                                                </b-tab>
+                                                <b-tab :title="$tc('titles.systemVariables', 2)">
+                                                    <SystemVariables />
+                                                    <p class="lead mark small bg-light p-3 m-2">
+                                                        {{$t("dataSource.variables.systemVariablesDefinition")}}
+                                                    </p>
+                                                </b-tab>
+                                            </b-tabs>
                                         </div>
                                     </b-tab>
                                     <b-tab v-if="loggedUserIsOwnerOrAdmin">
@@ -433,6 +461,8 @@ import axios from 'axios';
 import VueSelect from 'vue-select';
 import Notifier from '../mixins/Notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
+import UserVariables from './UserVariables.vue'
+import SystemVariables from './SystemVariables.vue'
 import DataSourceOptions from '../components/data-source/DataSourceOptions.vue';
 import { debounce } from '../util.js';
 
@@ -445,6 +475,8 @@ export default {
         'v-select': VueSelect,
         ModalPreviewDataSource,
         DataSourceOptions,
+        UserVariables,
+        SystemVariables,
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
@@ -464,6 +496,7 @@ export default {
             samples: [],
             localStorages: [],
             dataSource: {},
+            enable_url_edit:true,
             attributeGroups: {},
             anonymization: ['ENCRYPTION', 'GENERALIZATION', 'MASK',
                 'SUPPRESSION', 'NO_TECHNIQUE'],

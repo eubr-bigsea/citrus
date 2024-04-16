@@ -109,16 +109,7 @@
             </b-tab>
             <b-tab :title="$tc('titles.systemVariables', 2)">
                 <div class="col-md-12 mt-1">
-                    <table class="table table-sm table-bordered" style="font-size:.8em">
-                        <tr v-for="v in variables" :key="v">
-                            <td style="width:20%">
-                                <code v-html="'${' + v + '}'" />
-                            </td>
-                            <td>
-                                {{$tc('variables.names.' + v)}}
-                            </td>
-                        </tr>
-                    </table>
+                    <SystemVariables :other-variables="this.variables" />
                 </div>
                 <p class="lead mark small bg-light p-3 m-2">
                     Variáveis de sistema são definidas pelo Lemonade e podem ser usadas no fluxo como qualquer outra
@@ -142,15 +133,19 @@
     </b-modal>
 </template>
 <script>
+import SystemVariables from '../SystemVariables.vue'
+
 export default {
+    components: {
+        SystemVariables,
+    },
     props: {
         items: { type: Array, default: () => [], required: true }
     },
     data() {
         return {
             variables: [
-                'date', 'date_at_min', 'date_at_max', 'now', 'user_id',
-                'user_login', 'user_name', 'workflow_id', 'workflow_name'
+                'workflow_id', 'workflow_name'
             ],
             dataTypes: [
                 'DATE',

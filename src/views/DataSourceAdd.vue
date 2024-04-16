@@ -35,6 +35,11 @@
                                             @click="handleChoose(option.value)" :name="`btn-${option.prop}`">
                                         {{$t('actions.choose')}}
                                     </button>
+                                    
+                                    <button v-show="option.value=='fs'" class="btn btn-success" :disabled="storage[option.prop] === null"
+                                            @click="handleChoose(option.value+'-insertUrl');handleShowModal()" :name="`btn-insert-url-${option.prop}`">
+                                        {{$t('dataSource.insertViaUrl')}}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -168,6 +173,45 @@
                     {{$t('actions.back')}}
                 </button>
             </div>
+            <b-modal ref="modal" id="bv-modal" size="lg" title="Preencha os dados" hide-footer>
+                <div class="row">
+                    <div class="col-md-9">
+                        <label class="font-weight-bold">{{$tc('common.name')}}*:</label>
+                        <input v-model="dataSource.name" type="text"
+                                class="form-control">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="font-weight-bold">{{$tc('common.format')}}*:</label>
+                        <select v-model="dataSource.format" class="form-control">
+                            <option v-for="fmt in formats" :key="fmt" :value="fmt">
+                                {{fmt}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12" style="margin-top: 2%;">
+                        <label class="font-weight-bold">{{$tc('dataSource.fileUrl')}}*:</label>
+                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control"/>
+                    </div> 
+
+                    <div class="col-md-12" style="display: flex; justify-content: center; flex-direction: column; margin-top: 2%;">
+                        <label>Sistema de arquivos atualmente escolhido:</label>
+                            <select v-model="storage[options[0].prop]" class="form-control" :name="`storage-${options[0].prop}`">
+                                <option v-for="s in storages[options[0].items]" :key="s.id" :value="s.id">
+                                    {{s.name}}
+                                </option>
+                            </select>
+                    </div>
+                    <div class="footer"  style="margin: 10pt auto auto auto;display: flex">
+
+                        <b-button class="btn" style="margin: 5pt" block @click="$bvModal.hide('bv-modal')">Fechar</b-button>
+                        <button class="btn btn-success" style="margin: 5pt" @click="handleSave">
+                            {{$t('actions.save')}}
+                        </button>
+                    </div>
+                </div>
+            </b-modal>
         </div>
     </main>
 </template>
@@ -182,13 +226,24 @@ import Vue from 'vue';
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 import Resumable from 'resumablejs';
 export default {
+    computed: {
+        console: () => console,
+    },
+    methods: {
+        handleShowModal(){
+            this.$refs.modal.show();
+        },
+        handleCloseModal(){
+            this.$refs.modal.hide();
+        },
+    },
     setup() {
         const router = Vue.prototype.$legacyRouter; //FIXME
         const { t } = useI18n();
         const notifier = new Notifier(Vue.prototype.$snotify, t, router);
 
         const step = ref(1);
-        const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder' });
+        const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder', name:''});
         const storage = ref({
             fsStorage: null,
             sqlStorage: null,
@@ -216,7 +271,7 @@ export default {
                 dataSource.value.storage_id = storage.value.hiveStorage;
                 storageType.value = 'HIVE';
                 //this.retrieveTables()
-            } else {
+            } else if (method === 'fs'){
                 step.value = 2;
                 dataSource.value.format = 'UNKNOWN';
                 dataSource.value.storage_id = storage.value.fsStorage;
@@ -225,6 +280,11 @@ export default {
                 Vue.nextTick(() => {
                     setupResumable();
                 });
+            } else {
+                dataSource.value.format = 'UNKNOWN';
+                dataSource.value.storage_id = storage.value.fsStorage;
+                dataSource.value.url = '';
+                storageType.value = 'FS';
             }
         }
         /*
@@ -438,6 +498,12 @@ export default {
                     value: 'hive'
                 },
             ],
+            formats: [
+                'CSV', 'CUSTOM', 'GEO_JSON', 'HAR_IMAGE_FOLDER', 'HDF5',
+                'DATA_FOLDER', 'IMAGE_FOLDER', 'HIVE', 'JDBC', 'JSON',
+                'NPY', 'PARQUET', 'PICKLE', 'SAV', 'SHAPEFILE',
+                'TAR_IMAGE_FOLDER', 'TEXT', 'VIDEO_FOLDER', 'UNKNOWN',
+                'XML_FILE'].sort(),
         };
     }
 };
