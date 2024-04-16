@@ -92,6 +92,7 @@ const OperationList = () => import(/* webpackChunkName: "group-operation" */ './
 
 const PipelineList = () => import('./views/PipelineList.vue');
 const PipelineRunsList = () => import('./views/PipelineRunsList.vue');
+const PipelineRunDetail = () => import('./views/PipelineRunDetail.vue');
 const PipelineEdit = () => import('./views/PipelineEdit.vue');
 const PipelineTemplates = () => import('./views/PipelineTemplates.vue');
 
@@ -900,6 +901,13 @@ let router = new VueRouter({
                 title: ['titles.pipelineRuns', 2]
             }
         },
+        {
+            path: '/pipeline/runs/:id',
+            name: 'pipelineRunDetail',
+            component: PipelineRunDetail,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.pipelineRuns', 1]
             }
         },
         {

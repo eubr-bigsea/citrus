@@ -988,6 +988,8 @@ ul.b-form-tags-list {
 
     &.running {
         background-color: #0074d9;
+    }
+
     &.interrupted {
         background-color: #111;
     }
@@ -1011,60 +1013,44 @@ ul.b-form-tags-list {
     }
 }
 
+.runDetail-status {
     font-weight: 500;
-    padding: 5px 0px;
+    padding: 0px 10px;
     border-radius: 25px;
-    font-size: 0.8em;
     color: white;
 
-    &.sucesso {
+    &.completed {
         background-color: #2ecc40;
     }
 
-    &.erro {
-        background-color: #ff4136;
-    }
-}
-
-.lemonPage-enabled {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin: 0 auto;
-
-    &.true {
-        background-color: #008a00;
+    &.running {
+        background-color: #0074d9;
     }
 
-    &.false {
-        background-color: #ca024f;
-    }
-}
-
-.editPage-status {
-    display: flex;
-    width: 50%;
-    justify-content: center;
-    font-weight: 500;
-    padding: 5px 0px;
-    border-radius: 25px;
-    font-size: 0.8em;
-    color: white;
-    margin: 0;
-
-    &.sucesso {
-        background-color: #2ecc40
+    &.interrupted {
+        background-color: #111;
     }
 
-    &.erro {
-        background-color: #ff4136;
+    &.canceled {
+        background-color: #aaa;
     }
 
-    &.em_execucao {
+    &.waiting {
         background-color: #ffdc00;
         color: black;
     }
+
+    &.error {
+        background-color: #ff4136;
+    }
+
+    &.pending {
+        background-color: #ffa136;
+        color: black;
+    }
+
 }
+
 .table-smallest {
     font-size: 0.8em;
 }
