@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-6">
                 <b-form-checkbox v-model.integer="task.forms.save.value" value="1" unchecked-value="0">
-                    Salvar como nova fonte de dados
+                    Salvar dados
                 </b-form-checkbox>
                 <div v-if="task.forms.save.value == 1" class="row">
                     <div class="col-12">
