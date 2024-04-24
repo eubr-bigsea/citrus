@@ -2,7 +2,7 @@
     <div>
         <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
             <h1 class="templatePage-title">
-                Templates para Pipeline
+                {{$t('titles.pipelineTemplates')}}
             </h1>
             <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
                 <font-awesome-icon icon="fa fa-plus" /> Adicionar
@@ -106,8 +106,8 @@ export default {
                     steps: 'Etapas',
                     actions: 'Ações',
                 },
-                sortable: ['id', 'name', 'description'],
-                filterable: ['id', 'name', 'description'],
+                sortable: ['id', 'name'],
+                filterable: ['name'],
                 limitable: true,
                 sortIcon: {
                     base: 'sort-base',
