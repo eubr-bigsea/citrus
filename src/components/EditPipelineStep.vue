@@ -181,7 +181,8 @@ export default {
                     this.editedStep.workflow_id = resp.data.id;
                     // eslint-disable-next-line vue/no-mutating-props
                     this.editedStep.workflow = resp.data;
-                    this.editStep('Workflow criado e associado com sucesso à etapa.');
+                    this.editStep();
+                    this.success('Workflow criado e associado com sucesso à etapa.');
                 })
                 .catch(
                     function (e) {

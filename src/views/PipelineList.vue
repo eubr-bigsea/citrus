@@ -108,6 +108,8 @@ export default {
                     up: 'sort-up',
                     down: 'sort-down'
                 },
+                preserveState: true,
+                saveState: true,
                 texts: {
                     filter: this.$tc('common.filter'),
                     count: this.$t('common.pagerShowing'),
