@@ -29,7 +29,7 @@ export default {
 
 <style scoped>
 textarea {
-    background-color: transparent;
+    background-color: #ffffffd1;
     border: 1px solid transparent;
     font-size: 14px;
     font-weight: 400;

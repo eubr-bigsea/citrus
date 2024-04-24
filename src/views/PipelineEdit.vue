@@ -20,7 +20,7 @@
                         Habilitado
                     </b-form-checkbox>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary float-left border-right-0" @click="$bvToast.show('example-toast')"> 
+                <button class="btn btn-sm btn-outline-secondary float-left border-right-0" @click="showPeriodicityDiv = !showPeriodicityDiv"> 
                     <font-awesome-icon icon="fa fa-calendar-alt" class="mr-1" /> Periodicidade
                 </button>
                 <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
@@ -32,30 +32,18 @@
             </div>
         </div>
 
-        <b-toast id="example-toast" 
-                 title="Periodicidade da Pipeline" 
-                 toaster="b-toaster-bottom-right"
-                 class="editPage-toast"
-                 no-auto-hide 
-                 solid>
-            <template #toast-title>
-                <div class="editPage-toast-title">
+        <div class="editPage-periodicity-div" :class="{'editPage-periodicity-div-hidden': !showPeriodicityDiv}">
+            <div class="mb-2 d-flex align-items-center justify-content-between">
+                <span class="font-weight-bold">
                     Periodicidade da Pipeline
-                </div>
-            </template>
+                </span>
+                <font-awesome-icon icon="fa fa-x" size="sm" class="editPage-periodicity-x" @click="showPeriodicityDiv = false" />
+            </div>
             <div class="">
                 <p>Defina a periodicidade da execução da pipeline:</p>
-                <div class="d-flex flex-row w-100 justify-content-between align-items-center">
-                    <b-form-checkbox v-model="pipelinePeriodicity" value="daily">
-                        Diário
-                    </b-form-checkbox>
-                    <b-form-checkbox v-model="pipelinePeriodicity" value="weekly">
-                        Semanal
-                    </b-form-checkbox>
-                    <b-form-checkbox v-model="pipelinePeriodicity" value="monthly">
-                        Mensal
-                    </b-form-checkbox>
-                </div>
+                <b-form-select v-model="pipelinePeriodicity" 
+                               class="mt-0" 
+                               :options="periodicityOptions" />
             </div>
             <div v-if="pipelinePeriodicity === 'daily'">
                 <hr>
@@ -108,14 +96,7 @@
                            type="number" min="0">
                 </div>
             </div>
-        </b-toast>
-
-        <b-modal ref="userStepModal" size="lg" centered title="Etapas com disparo pelo usuário" 
-                 hide-footer>
-            <b-card>
-                Teste
-            </b-card>
-        </b-modal>
+        </div>
 
         <div class="editPage-body">
             <div class="editPage-container">
@@ -254,7 +235,6 @@ import ModalAddPipelineStep from './modal/ModalAddPipelineStep.vue';
 import PipelineStepScheduler from '../components/PipelineStepScheduler.vue';
 import axios from 'axios';
 import draggable from 'vuedraggable';
-import { BModal, BToast } from 'bootstrap-vue';
 import InputHeader from '../components/InputHeader.vue';
 import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
@@ -264,8 +244,6 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 export default {
     components: {
         draggable,
-        BModal,
-        BToast,
         InputHeader,
         TextAreaCustom,
         EditPipelineStep,
@@ -286,8 +264,8 @@ export default {
         return {
             pipeline: {},
             pipelineCopy: {},
-            pipelinePeriodicity: "",
-            allowPipelineEdit: false,
+            pipelinePeriodicity: null,
+            showPeriodicityDiv: false,
             deleteResponse: null,
             isDirty: false,
             ident: 'ident',
@@ -308,6 +286,12 @@ export default {
                 disabled: false,
                 ghostClass: 'ghost',
             },
+            periodicityOptions: [
+                { value: null, text: 'Selecione a periodicidade' },
+                { value: 'daily', text: 'Diário' },
+                { value: 'weekly', text: 'Semanal' },
+                { value: 'monthly', text: 'Mensal' },
+            ]
         };
     },
     computed: {
@@ -323,6 +307,11 @@ export default {
             currentDate.setDate(currentDate.getDate() - 1);
             const currentDateFormatted = currentDate.toISOString().split('T')[0];
             return currentDateFormatted;
+        }
+    },
+    watch: {
+        pipelinePeriodicity() {
+            this.isDirty = true;
         }
     },
     created() {
@@ -987,4 +976,28 @@ export default {
     font-size: 16px;
 }
 
-</style>./modal/EditPipelineStep.vue/index.js../components/EditPipelineStep.vue/index.js../components/PipelineStepScheduler.vue/index.js
+.editPage-periodicity-div {
+    position: fixed;
+    width: 369px;
+    background-color: #fff;
+    left: 15px;
+    bottom: 28px;
+    padding: 10px;
+    z-index: 1;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, .1);
+    transition: 0.3s;
+}
+
+.editPage-periodicity-div-hidden {
+    left: -375px;
+}
+
+.editPage-periodicity-x {
+    :hover {
+        cursor: pointer;
+    }
+}
+
+</style>
