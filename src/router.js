@@ -880,7 +880,7 @@ let router = new VueRouter({
             component: PipelineEdit,
             meta: {
                 requiresAuth: true,
-                title: ['titles.lemon', 1]
+                title: ['titles.pipeline', 1]
             }
         },
         {
@@ -889,7 +889,7 @@ let router = new VueRouter({
             component: PipelineTemplates,
             meta: {
                 requiresAuth: true,
-                title: ['titles.lemonTemplates', 1]
+                title: ['titles.pipelineTemplates', 1]
             }
         },
         {

@@ -101,27 +101,22 @@
         <div class="editPage-body">
             <div class="editPage-container">
                 <div class="w-25">
-                    <div class="editPage-collapse-trigger">
+                    <div class="editPage-collapse-title">
                         Informações da Pipeline
                     </div>
                     <b-card class="editPage-infos">
                         <div class="editPage-infos-container">
                             <div class="d-flex flex-row">
                                 <div class="editPage-infos-left">
-                                    <div>ID</div>
-                                    <div>Versão</div>
                                     <div>Criado em</div>
                                     <div>Atualizado em</div>
                                 </div>
                                 <div class="editPage-infos-right">
-                                    <div>{{pipeline.id}}</div>
-                                    <div>{{pipeline.version}}</div>
                                     <div>{{pipeline.created | formatJsonDate}}</div>
                                     <div>{{pipeline.updated | formatJsonDate}}</div>
                                 </div>
                             </div>
-                            <hr>
-                            <div class="editPage-infos-bottom">
+                            <div class="editPage-infos-bottom mt-2">
                                 Descrição
                                 <TextAreaCustom v-model="pipeline.description" @input="isDirty = true" />
                             </div>
@@ -129,7 +124,7 @@
                     </b-card>
                 </div>
                 <div class="w-75">
-                    <div class="editPage-collapse-trigger">
+                    <div class="editPage-collapse-title">
                         Etapas da Pipeline
                     </div>
                     <b-card class="editPage-stepsDiv scroll-area">
@@ -198,7 +193,7 @@
                                     </b-card>
                                 </div>
                                 <b-tabs v-if="selectedStepIndex !== null" class="w-100" justified>
-                                    <b-tab :title-item-class="'editPage-tabs-title'" active>
+                                    <b-tab active>
                                         <template #title>
                                             <span class="editPage-tabs-title-text">
                                                 Agendador
@@ -342,32 +337,18 @@ export default {
                 );
         },
         saveChanges() {
-            this.editedStep = { id: null, name: '', description: '', workflow: {} };
             this.editPipeline('Pipeline editada com sucesso.');
-            this.allowPipelineEdit = false;
-            this.pipelineCopy = {};
-            this.selectedStep = {};
-            this.selectedStepIndex = null;
             this.isDirty = false;
         },
         openAddStepModal(stepOrder) {
             this.$refs.addStepModal.show();
             this.stepOrder = stepOrder;
         },
-        openEditModal(step) {
-            this.editedStep.id = step.id;
-            this.editedStep.name = step.name;
-            this.editedStep.description = step.description;
-            this.editedStep.workflow = step.workflow;
-            // this.$refs.editStepModal.show();
-        },
         setSelectedStep(step, index) {
-            // this.openEditModal(step);
             this.editedStep.id = step.id;
             this.editedStep.name = step.name;
             this.editedStep.description = step.description;
             this.editedStep.workflow = step.workflow;
-
             this.selectedStep = step;
             this.selectedStepIndex = index;
         },
@@ -389,7 +370,6 @@ export default {
         },
         updatePipeline(childData) {
             this.pipeline = childData;
-            console.log(this.pipeline);
         },
         schedulerUpdate(childData) {
             this.isDirty = true;
@@ -405,6 +385,9 @@ export default {
                 event.preventDefault();
                 event.returnValue = false;
             }
+        },
+        redirectToRuns() {
+            this.$router.push({ name: 'pipelineRunsList', params: { id: this.pipeline.id, name: this.pipeline.name, from: 'PipelineEdit' } });
         },
         editPipeline(msg) {
             axios
@@ -464,11 +447,11 @@ export default {
 .editPage-container {
     display: flex;
     flex-direction: row;
-    gap: 30px;
+    gap: 16px;
     width: 100%;
 }
 
-.editPage-collapse-trigger {
+.editPage-collapse-title {
     padding: 12px 16px;
     border-bottom: 1px solid #9c9c9c;
     background-color: #f8f9f9;
@@ -548,54 +531,6 @@ export default {
     text-transform: uppercase;
 }
 
-.editPage-infos-title {
-    font-weight: 400;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.editPage-infos-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
-    font-size: 18px;
-}
-
-.editPage-infos-body-column {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    span.left {
-        color: black;
-        font-family: sans-serif;
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: 0.6px;
-        margin-bottom: 0;
-        padding: 0px 4px;
-        text-transform: uppercase;
-        margin-right: 15px;
-    }
-
-    span.right {
-        margin-left: 15px;
-    }
-
-    div.right-description {
-        margin-left: 15px;
-    }
-
-    &.radios {
-        justify-content: start;
-        margin-top: 10px;
-        width: 450px;
-        text-align: justify;
-    }
-}
-
-
 .editPage-left-container {
     display: flex;
     flex-direction: column;
@@ -652,12 +587,6 @@ export default {
 
     &:hover {
         cursor: grab;
-    }
-}
-
-.editPage-dragDiv-inative {
-    &:hover {
-        cursor: default;
     }
 }
 
@@ -925,13 +854,6 @@ export default {
     background-color: #FFF;
 }
 
-.editPage-tabs-title {
-    /* border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-    border: 1px solid #dee2e6; */
-    
-}
-
 .editPage-tabs-title-text {
     font-weight: 700;
     letter-spacing: 0.6px;
@@ -975,7 +897,6 @@ export default {
     width: 100%;
     display: flex;
     align-items: center;
-    /* margin: auto; */
     font-size: 16px;
 }
 
