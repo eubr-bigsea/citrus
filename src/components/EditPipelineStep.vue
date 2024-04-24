@@ -72,9 +72,14 @@
                         </div>
                     </template>
                 </vue-select>
-                <b-button class="mt-3" @click="showWorkflowOps = 0">
-                    Cancelar
-                </b-button>
+                <div>
+                    <b-button class="float-right mt-3" style="right: 15px; bottom: 0;" variant="success" @click="editStepWorkflow">
+                        Confirmar
+                    </b-button>
+                    <b-button class="mt-3" @click="showWorkflowOps = 0">
+                        Cancelar
+                    </b-button>
+                </div>
             </div>
             <div v-if="showWorkflowOps == 2" class="d-flex flex-column">
                 <b-container class="editPage-workflow-box p-3">
@@ -128,6 +133,7 @@ export default {
     mixins: [PipelineEditMixin, Notifier],
     props: {
         editedStep: { type: Object, default: () => {} },
+        selectedStepIndex: { type: Number, default: null },
         pipeline: { type: Object, default: () => {} },
     },
     emits: ['send-step-changes'],
@@ -149,23 +155,56 @@ export default {
         showWorkflowOps() {
             this.editStep();
         },
+        selectedStepIndex() {
+            if(this.editedStep.workflow === undefined) this.showWorkflowOps = 0;
+            console.log(this.selectedWorkflow);
+            
+        }
     },
     methods: {
         editStep() {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
-
+            
             this.$emit('send-step-changes', this.editedStep);
         },
         handleInput() {
             this.editStep();
         },
-        show() {
-            this.$refs.editStepModal.show();
-        },
         redirectToWorkflow(step) {
             if(step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
+        },
+        editStepWorkflow() {
+
+            const stepWorkflow = {
+                id: this.selectedWorkflow.id,
+                name: this.selectedWorkflow.name,
+                type: this.selectedWorkflow.type,
+                platform_id: this.workflowPlatform,
+            };
+
+            // eslint-disable-next-line vue/no-mutating-props
+            this.editedStep.workflow = stepWorkflow;
+
+            const foundStep = this.pipeline.steps.find(step => step.id === this.editedStep.id);
+            Object.assign(foundStep, this.editedStep);
+
+            axios
+                .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
+                .then((resp) => {
+                    // eslint-disable-next-line vue/no-mutating-props
+                    // this.pipeline = resp.data.data[0];
+                    // eslint-disable-next-line vue/no-mutating-props
+                    this.editedStep.workflow = this.pipeline.steps.find(step => step.id === this.editedStep.id).workflow;
+                    this.editStep();
+                    this.success("Workflow associado com sucesso à etapa.");
+                })
+                .catch(
+                    function (e) {
+                        this.error(e);
+                    }.bind(this)
+                );
         },
         createWorkflow() {
             const workflow = {

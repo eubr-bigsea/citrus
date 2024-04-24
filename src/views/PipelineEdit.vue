@@ -211,7 +211,10 @@
                                                 Configurações
                                             </span>
                                         </template>
-                                        <EditPipelineStep ref="editStepModal" :edited-step="editedStep" :pipeline="pipeline" @send-step-changes="schedulerUpdate" />
+                                        <EditPipelineStep ref="editStepModal" 
+                                                          :edited-step="editedStep" 
+                                                          :pipeline="pipeline" 
+                                                          :selected-step-index="selectedStepIndex" @send-step-changes="schedulerUpdate" />
                                     </b-tab>
                                 </b-tabs>
                             </div>
@@ -352,9 +355,6 @@ export default {
             this.selectedStep = step;
             this.selectedStepIndex = index;
         },
-        openLogModal() {
-            this.$refs.logModal.show();
-        },
         redirectToWorkflow(step) {
             if (step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
@@ -377,10 +377,6 @@ export default {
             this.isDirty = true;
             const foundStep = this.pipeline.steps.find(step => step.id === childData.id);
             Object.assign(foundStep, childData);
-        },
-        openModalTest(step) {
-            this.$refs.testModal.show();
-            this.editedStep = step;
         },
         leaving(event) {
             if (this.isDirty) {
