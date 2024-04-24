@@ -153,7 +153,7 @@
                                     </div>
                                 </div>
                                 <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
-                                    Adicione etapas a sua pipeline
+                                    Adicione etapas à sua pipeline
                                     <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa" @click="openAddStepModal(0)">
                                         <font-awesome-icon icon="plus" />
                                     </button>
@@ -190,13 +190,13 @@
                             </div>
 
                             <div class="editPage-right-container">
-                                <!-- <div v-if="selectedStepIndex === null" class="w-100 h-100 d-flex justify-content-center"> 
+                                <div v-if="pipelineWithoutSteps" class="w-100 h-100 d-flex justify-content-center"> 
                                     <b-card class="w-100 h-25 text-center p-5">
                                         <div class="editPage-empty-step ">
-                                            Selecione uma das etapas para acessar suas informações de agendamento e configurações.
+                                            Adicione etapas à sua pipeline para acessar suas informações de agendamento e configurações.
                                         </div>
                                     </b-card>
-                                </div> -->
+                                </div>
                                 <b-tabs v-if="selectedStepIndex !== null" class="w-100" justified>
                                     <b-tab :title-item-class="'editPage-tabs-title'" active>
                                         <template #title>
@@ -264,6 +264,7 @@ export default {
         return {
             pipeline: {},
             pipelineCopy: {},
+            pipelineWithoutSteps: false,
             pipelinePeriodicity: null,
             showPeriodicityDiv: false,
             deleteResponse: null,
@@ -328,6 +329,8 @@ export default {
                 .then(resp => {
                     this.$Progress.finish();
                     this.pipeline = resp.data.data[0];
+                    if(this.pipeline.steps.length !== 0) this.setSelectedStep(this.pipeline.steps[0], 0);
+                    else this.pipelineWithoutSteps = true;
                     this.pipelineCopy = JSON.parse(JSON.stringify(this.pipeline));
                     console.log(this.pipeline);
                 })
