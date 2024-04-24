@@ -157,8 +157,6 @@ export default {
         },
         selectedStepIndex() {
             if(this.editedStep.workflow === undefined) this.showWorkflowOps = 0;
-            console.log(this.selectedWorkflow);
-            
         }
     },
     methods: {
@@ -199,6 +197,7 @@ export default {
                     this.editedStep.workflow = this.pipeline.steps.find(step => step.id === this.editedStep.id).workflow;
                     this.editStep();
                     this.success("Workflow associado com sucesso à etapa.");
+                    this.selectedWorkflow = null;
                 })
                 .catch(
                     function (e) {
