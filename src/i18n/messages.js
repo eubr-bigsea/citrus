@@ -419,7 +419,7 @@ export default {
                 'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
             userVariables: 'Variáveis de usuário',
             variables: {
-                userVariablesDefinition: "Variáveis podem ser usadas como parâmetros na construção do caminho do arquivo do da Fonte de dados. Para usar uma variável, use a representação ${nome-variável} no campo de caminho do arquivo.",
+                userVariablesDefinition: "Variáveis podem ser usadas como parâmetros na construção do caminho do arquivo do da Fonte de dados. Para usar uma variável, use a representação {'${'}nome-variável{'}'} no campo de caminho do arquivo.",
                 systemVariablesDefinition: "Variáveis de sistema são definidas pelo Lemonade e podem ser usadas também na definição do caminho do arquivo da Fonte de dados. Os valores são atribuídos às variáveis pelo Lemonade de forma dinâmica, durante a execução dos processos internos, não podendo o usuário alterá-los diretamente.",
             },
             whatTypeOfDataSourceToAdd:
@@ -617,7 +617,7 @@ export default {
                 Exemplos:`,
                 title: 'Expressão',
                 validExpressions: `Expressões válidas incluem expressões matemáticas
-                (ex. {ex1}) e chamadas a funções (ex. {ex2}). Para mais informações, 
+                (ex. {ex1}) e chamadas a funções (ex. {ex2}). Para mais informações,
                 consulte o Guia de referência do Lemonade ou as funções existentes na plataforma Apache Spark. `
             },
             function: 'Função | Funções',
@@ -1259,7 +1259,7 @@ export default {
                 'Each file will create a new data source with name equals to the file and other parameters with default values (you will be able to change them later).',
             userVariables: 'User variables',
             variables: {
-                userVariablesDefinition: "Variables can be used as parameters in constructing the Data Source file path. To use a variable, use the ${variable-name} representation in the file path field.",
+                userVariablesDefinition: "Variables can be used as parameters in constructing the Data Source file path. To use a variable, use the {'${'}variable-name{'}'} representation in the file path field.",
                 systemVariablesDefinition: "System variables are defined by Lemonade and can also be used to define the Data Source file path. Values are assigned to variables by Lemonade dynamically, during the execution of internal processes, and the user cannot change them directly.",
             },
             whatTypeOfDataSourceToAdd: 'What type of data source do you want to add?',
