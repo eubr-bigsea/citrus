@@ -161,8 +161,8 @@ export default {
                 .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, changedPipeline)
                 .then((resp) => {
                     // eslint-disable-next-line vue/no-mutating-props
-                    const childData = resp.data.data[0];
-                    this.$emit('onupdate-pipeline', childData);
+                    const pipelineData = resp.data.data[0];
+                    this.$emit('onupdate-pipeline', pipelineData);
                     this.success(msg);
                     this.selectedWorkflow = null;
                 })

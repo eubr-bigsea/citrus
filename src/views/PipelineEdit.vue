@@ -368,8 +368,10 @@ export default {
             });
             this.isDirty = true;
         },
-        updatePipeline(childData) {
-            this.pipeline = childData;
+        updatePipeline(pipelineData) {
+            this.pipeline = pipelineData;
+            this.pipelineWithoutSteps = false;
+            this.setSelectedStep(this.pipeline.steps[this.pipeline.steps.length - 1], this.pipeline.steps.length - 1);
         },
         schedulerUpdate(childData) {
             this.isDirty = true;
@@ -394,6 +396,7 @@ export default {
                 .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
                 .then((resp) => {
                     this.pipeline = resp.data.data[0];
+                    if(this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
                     this.success(msg);
                 })
                 .catch(
@@ -407,6 +410,7 @@ export default {
                 this.$t('actions.delete') + " '" + stepName + "'",
                 'Tem certeza que deseja excluir esta etapa?',
                 () => {
+                    if(!this.pipelineWithoutSteps) this.setSelectedStep(this.pipeline.steps[0], 0);
                     this.pipeline.steps = this.pipeline.steps.filter(step => step.id !== stepId);
                     this.selectedStepIndex = null;
                     this.editPipeline('Etapa excluída com sucesso.');
