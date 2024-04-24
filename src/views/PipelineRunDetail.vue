@@ -9,13 +9,18 @@
                     Pipeline Teste 
                 </h1> 
             </div>
-            <router-link v-if="$route.params.id"
-                         :to="{name: 'pipelineRunsList'}"
-                         class="btn btn-outline-primary d-print-none float-right btn-sm">
-                <font-awesome-icon icon="fa-chevron-left" />
-                &nbsp; {{$t('actions.back')}} -
-                Execuções das Pipelines
-            </router-link>
+            <div>
+                <router-link v-if="$route.params.id"
+                             :to="{name: 'pipelineRunsList'}"
+                             class="btn btn-outline-primary d-print-none float-left btn-sm">
+                    <font-awesome-icon icon="fa-chevron-left" />
+                    &nbsp; {{$t('actions.back')}} -
+                    {{$t('titles.pipelineRuns', 2)}}
+                </router-link>
+                <button class="btn btn-sm btn-outline-danger ml-2" @click="cancelRun">
+                    <font-awesome-icon icon="fa fa-ban" class="" /> {{$t('actions.cancel')}}
+                </button>
+            </div>
         </div>
 
         <div class="body">
@@ -65,6 +70,12 @@
                         <b-card class="steps-div scroll-area">
                             <div class="steps-div-container">
                                 <div class="steps-header">
+                                    <button id="popover-trigger" class="tab-button">
+                                        <font-awesome-icon icon="info-circle" />
+                                    </button>
+                                    <b-popover target="popover-trigger" triggers="hover">
+                                        Selecione uma das etapas abaixo para mostrar seus detalhes da execução.
+                                    </b-popover>
                                     <div class="steps-header-column">
                                         Ordem
                                     </div>
@@ -336,6 +347,9 @@ export default {
     methods: {
         setSelectedStep(step) {
             this.selectedStep = step;
+        },
+        cancelRun() {
+            console.log("Cancel Run.");
         }
     }
 };
@@ -395,6 +409,7 @@ export default {
     text-transform: uppercase;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+    position: relative;
 }
 
 .steps-div {
@@ -558,6 +573,15 @@ export default {
         cursor: pointer;
         background-color: #b6b6b6;
     }
+}
+
+.tab-button {
+    background-color: transparent;
+    border: 0px;
+    color: black;
+    position: absolute;
+    left: 5px;
+    top: 8px;
 }
 
 </style>
