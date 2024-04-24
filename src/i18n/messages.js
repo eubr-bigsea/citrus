@@ -371,6 +371,7 @@ export default {
             features: 'Atributos',
             featureGeneration: 'Geração de atributos',
             file: 'Arquivo',
+            fileUrl: 'Caminho do arquivo',
             format: 'Formato',
             hive: 'Hive',
             inconsistentFormat:
@@ -380,7 +381,9 @@ export default {
             inferSupported:
                 'Lemonade suporta inferir atributos para o formato {what}.',
             isFirstLineHeader: 'Usar a primeira linha como cabeçalho',
+            enableUrlEdit: 'Habilitar edição do caminho do arquivo',
             isMultiline: 'Multilinhas (atributo com quebra de linha)',
+            insertViaUrl: 'Inserir via URL',
             lookup: 'Usar como tabela de referência',
             message: 'Mensagem',
             missingRepresentation: 'Representação para dados ausentes',
@@ -414,7 +417,11 @@ export default {
             uploadingLog: 'Registro de envio',
             uploadExplanation:
                 'Cada arquivo criará uma nova base de dados com nome igual ao nome do arquivo e demais parâmetros com os valores padrão (você poderá alterá-los posteriormente).',
-
+            userVariables: 'Variáveis de usuário',
+            variables: {
+                userVariablesDefinition: "Variáveis podem ser usadas como parâmetros na construção do caminho do arquivo do da Fonte de dados. Para usar uma variável, use a representação ${nome-variável} no campo de caminho do arquivo.",
+                systemVariablesDefinition: "Variáveis de sistema são definidas pelo Lemonade e podem ser usadas também na definição do caminho do arquivo da Fonte de dados. Os valores são atribuídos às variáveis pelo Lemonade de forma dinâmica, durante a execução dos processos internos, não podendo o usuário alterá-los diretamente.",
+            },
             whatTypeOfDataSourceToAdd:
                 'Que tipo de fonte de dados você quer adicionar?',
             youCanUploadYourFiles:
@@ -784,6 +791,7 @@ export default {
         },
         variables: {
             addOrEdit: 'Adicione um ou mais itens ou clique um dos filtros à direita para editá-lo.',
+            addOrSelect: 'Adicione ou clique em um dos itens na listagem para editá-lo',
             attribute: 'Atributo',
             associateTo: 'Associar a variável',
             associateToLookup: 'Associar a tabela de referência',
@@ -1203,6 +1211,7 @@ export default {
             features: 'Features',
             featureGeneration: 'Feature generation',
             file: 'File',
+            fileUrl: 'File path',
             format: 'Format',
             hive: 'Hive',
             inconsistentFormat:
@@ -1212,7 +1221,9 @@ export default {
             inferSupported:
                 'Lemonade supports infering attributes for the format {what}.',
             isFirstLineHeader: 'Use first line as header',
+            enableUrlEdit: 'Enable edition of filepath',
             isMultiline: 'Is multiline',
+            insertViaUrl: 'Insert via URL',
             lookup: 'Only use as reference table',
             message: 'Message',
             missingRepresentation: 'Missing representation',
@@ -1246,6 +1257,11 @@ export default {
             uploadingLog: 'Uploading log',
             uploadExplanation:
                 'Each file will create a new data source with name equals to the file and other parameters with default values (you will be able to change them later).',
+            userVariables: 'User variables',
+            variables: {
+                userVariablesDefinition: "Variables can be used as parameters in constructing the Data Source file path. To use a variable, use the ${variable-name} representation in the file path field.",
+                systemVariablesDefinition: "System variables are defined by Lemonade and can also be used to define the Data Source file path. Values are assigned to variables by Lemonade dynamically, during the execution of internal processes, and the user cannot change them directly.",
+            },
             whatTypeOfDataSourceToAdd: 'What type of data source do you want to add?',
             youCanUploadYourFiles: 'You can upload your own files',
             youCanUseSQL: 'You can use SQL to query data'
@@ -1589,6 +1605,7 @@ export default {
         },
         variables: {
             addOrEdit: 'Add one or more items or click one of them at the right side to edit it.',
+            addOrSelect: 'Add or click on one of the items in the listing to edit it',
             attribute: 'Attribute',
             associateTo: 'Associate to variable',
             associateToLookup: 'Associate to lookup table',
