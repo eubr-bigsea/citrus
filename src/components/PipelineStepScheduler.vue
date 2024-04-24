@@ -260,18 +260,16 @@ export default {
     mixins: [Notifier],
     props: {
         selectedStep: { type: Object, default: () => {} },
-        selectedStepIndex: { type: Number, default: null },
+        selectedStepIndex: { type: Number, default: 0 },
         pipelineId: { type: Number, default: 0 },
     },
     emits: ['send-scheduler-changes'],
     data() {
         return {
-            testVal: [1,2,3,4,5],
             radios: 'radios',
             dias: 'dias',
             diasSemana: 'diasSemana',
             meses: 'meses',
-            steps: [],
             stepCopy: {},
             intervalDays: null,
             intervalWeeks: null,
@@ -302,7 +300,6 @@ export default {
             selectedDays: [],
             selectAllDays: false,
             executeImmediately: false,
-            dataToEmit: {}
         };
     },
     computed: {
@@ -328,10 +325,11 @@ export default {
                 this.resetSelect();
             }
 
-            console.log("Cheguei aqui");
-
             this.stepCopy = JSON.parse(JSON.stringify(this.selectedStep));
         }
+    },
+    mounted() {
+        if (this.selectedStep.scheduling !== undefined) this.loadStepInfo();
     },
     methods: {
         toggleAllMonths() {
@@ -347,31 +345,6 @@ export default {
             } else {
                 this.selectedDays = [];
             }
-        },
-        testfunc() {
-
-            
-            let dateTime = this.startDate + 'T' + this.startTime + ':00';
-            if (this.startDate === null || this.startTime === null) {
-                dateTime = null;
-            }
-
-            this.dataToEmit = {
-                "stepSchedule": {
-                    "executeImmediately": this.selectedFreqOpt === 'immediately' ? true : false,
-                    "frequency": this.selectedFreqOpt,
-                    "startDateTime": dateTime,
-                    "intervalDays": this.intervalDays,
-                    "intervalWeeks": this.intervalWeeks,
-                    "weekDays": this.selectedWeekDays,
-                    "months": this.selectedMonths,
-                    "days": this.selectedDays
-                },
-            };
-
-            // eslint-disable-next-line vue/no-mutating-props
-            this.selectedStep.scheduling = JSON.stringify(this.dataToEmit);
-
         },
         loadStepInfo() {
             const scheduling = JSON.parse(this.selectedStep.scheduling);
@@ -427,12 +400,9 @@ export default {
 
             this.stepCopy.scheduling = JSON.stringify(data);
 
-            console.log(this.stepCopy);
-            console.log(this.selectedStep);
-
             this.$emit('send-scheduler-changes', this.stepCopy);
         }
     },
 };
 
-</script>./PipelineStepScheduler.vue/index.js
+</script>
