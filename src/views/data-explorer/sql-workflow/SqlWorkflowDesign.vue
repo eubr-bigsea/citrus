@@ -99,6 +99,9 @@
                 <div>
                     <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{ jobStatus.status }}</span>
                     {{ jobStatus.message }}
+                    <div v-if="jobStatus.exception_stack" style="overflow:auto; width: 240px">
+                        <pre class="exception mt-4">{{jobStatus.exception_stack}}</pre>
+                    </div>
                 </div>
             </div>
             <div class="layout-center pt-2">
@@ -405,9 +408,8 @@ const executeWorkflow = async () => {
                 jobStatus.value = '';
                 if (msg.status === 'ERROR') {
                     error(msg);
-                } else {
-                    jobStatus.value = msg;
                 }
+                jobStatus.value = msg;
                 loadingData.value = false;
             },
         };

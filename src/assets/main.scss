@@ -18,6 +18,10 @@ $snotify-width: 600px !default;
     padding-right: 40px;
 }
 
+pre.exception {
+    color: #ff4136;
+    font-size: .7em;
+}
 label {
     /*margin-top: .75rem;*/
     margin-bottom: 0 !important;
@@ -196,7 +200,7 @@ main {
     .nav-link:hover {
         background-color: #777;
         border-radius: 50px;
-        
+
     }
 } */
 
