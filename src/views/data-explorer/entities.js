@@ -282,9 +282,10 @@ class SqlBuilderWorkflow extends Workflow {
         };
         const task = new Task({
             id: Operation.generateTaskId(),
-            name: 'execute sql',
+            name: `sql${this.tasks.length}`,
             operation: new Operation({ id: 93, slug: 'execute-sql' }),
             display_order: this.tasks.length,
+            environment: 'DESIGN',
             forms
         });
         if (taskId) {

@@ -65,7 +65,7 @@
                         <div class="col mt-2" @click="navigate('data-explorer', {sql: true})">
                             <h5>Usar SQL para analisar, tratar e transformar dados</h5>
                             <small>
-                                Utilize o poder da SQL para tratar os dados. Você terá liberdade para escrever 
+                                Utilize o poder da SQL para tratar os dados. Você terá liberdade para escrever
                                 comandos SQL que consultam ou mesmo alteram dados.
                             </small>
                         </div>
@@ -329,6 +329,7 @@ export default {
                 'DATA_EXPLORER': 'fa-table',
                 'MODEL_BUILDER': 'fa-robot',
                 'VIS_BUILDER': 'fa-chart-bar',
+                'SQL': 'fa-database',
             }[row.type];
         }
     },

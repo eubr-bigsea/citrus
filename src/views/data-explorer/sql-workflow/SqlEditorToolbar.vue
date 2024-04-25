@@ -1,9 +1,10 @@
 <template>
     <div class="w-100">
         <div class="float-left">
-            <button class="btn btn-sm btn-light" :title="$t('actions.save')" @click="handleShowModal"><font-awesome-icon
-                    icon="fa fa-save" />
-                {{ $t('actions.saveAs') }}
+            <button class="btn btn-sm btn-outline-  secondary" :title="$t('actions.save')" @click="handleShowModal">
+                <font-awesome-icon v-if="task.forms.save.value" icon="fa fa-check" />
+                    <span v-if="task.forms.save.value"> Salvar dados</span>
+                    <span v-else> Habilitar salvar dados ...</span>
             </button>
         </div>
         <div class="float-right" role="group">
