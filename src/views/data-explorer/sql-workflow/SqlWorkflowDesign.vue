@@ -9,7 +9,8 @@
                 <b-button variant="success" size="sm" class="mt-2 pu" @click="executeWorkflow" data-test="execute">
                     <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
                 </b-button>
-                <b-button v-if="sample" variant="info" size="sm" class="ml-2 mt-2 pu" @click="showSample" data-test="sample">
+                <b-button v-if="sample" variant="info" size="sm" class="ml-2 mt-2 pu" @click="showSample"
+                    data-test="sample">
                     <font-awesome-icon icon="fa fa-eye" /> Ver dados
                 </b-button>
             </div>
@@ -23,8 +24,8 @@
                             <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
                                 :placeholder="$tc('common.name')" maxlength="100">
 
-                            <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc" class="mt-3"
-                                value="true" unchecked-value="false">
+                            <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
+                                class="mt-3" value="true" unchecked-value="false">
                                 Usar o Hive Warehouse Connector
                             </b-form-checkbox>
                             <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
@@ -35,8 +36,9 @@
                                     <small><em>{{ description }}</em></small>
                                 </template>
                             </v-select>
-                            <label for="" class="mt-3">{{ $tc('titles.dataSource', 2) }} ({{ workflowObj.dataSources?.length
-                            }}):</label> &nbsp;
+                            <label for="" class="mt-3">{{ $tc('titles.dataSource', 2) }} ({{
+                workflowObj.dataSources?.length
+            }}):</label> &nbsp;
                             <button class="btn btn-sm btn-secondary mt-2 float-right" :title="$t('actions.add')"
                                 @click.prevent="handleAddDataSource" :disabled="addingDataSource">
                                 <font-awesome-icon icon="fa fa-plus" /> {{ $tc('titles.dataSource', 1) }}</button>
@@ -66,7 +68,7 @@
                             <ul class="list-group data-sources mt-2 scroll-area">
                                 <li v-for="dataSource in workflowObj.dataSources" class="list-group-item p-2 pb-1 pt-1">
                                     <div class="mb-2 truncate" :title="dataSource.forms.data_source.labelValue">{{
-                                        dataSource.forms.data_source.labelValue }}</div>
+                dataSource.forms.data_source.labelValue }}</div>
                                     <small>Apelido:</small>
                                     <input type="text" class="form-control form-control-sm w-75 float-right mb-1"
                                         v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
@@ -82,7 +84,8 @@
                                             @click.prevent="handleAddSqlFromDataSource('select', dataSource.forms.data_source.value)">
                                             SELECT
                                         </button>
-                                        <button title="Criar INSERT para fonte de dados" class="btn btn-sm btn-light ml-1"
+                                        <button title="Criar INSERT para fonte de dados"
+                                            class="btn btn-sm btn-light ml-1"
                                             @click.prevent="handleAddSqlFromDataSource('insert', dataSource.forms.data_source.value)">
                                             INSERT
                                         </button>
@@ -93,6 +96,10 @@
                         </div>
                     </form>
                 </div>
+                <div>
+                    <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{ jobStatus.status }}</span>
+                    {{ jobStatus.message }}
+                </div>
             </div>
             <div class="layout-center pt-2">
                 <h4>Comandos ({{ workflowObj.sqls?.length }})</h4>
@@ -100,12 +107,14 @@
                     <transition-group name="fade" @after-enter="handleCodeAppear">
                         <div v-for="sql, i in workflowObj.sqls" class="mb-1 editors" :key="sql.id">
                             <div>
-                                Nome: <input class="form-control form-control-sm mb-1" maxlength="50" v-model="sql.name" />
+                                Nome: <input class="form-control form-control-sm mb-1" maxlength="50"
+                                    v-model="sql.name" />
                             </div>
                             <div class="button-toolbar">
                                 <sql-editor-toolbar ref="toolbar" :task="sql" :show-move-up="i > 0" :data-task="sql.id"
                                     :show-move-down="i < workflowObj.sqls.length - 1" @on-move="handleMoveSql"
-                                    @on-remove="handleRemoveSql" @on-add="handleAddSql" @on-indent="handleIndent(sql.id)" />
+                                    @on-remove="handleRemoveSql" @on-add="handleAddSql"
+                                    @on-indent="handleIndent(sql.id)" @on-execute="execute(i)" />
                             </div>
                             <div class="editor">
                                 <sql-editor :query="sql.forms.query.value" @update="(v) => sql.forms.query.value = v"
@@ -127,17 +136,17 @@
             </div>
         </div>
         <modal-preview-data-source ref="previewWindow" />
-        <sql-sample v-show="sample" :sample="sample" ref="modalSample"/>
+        <sql-sample v-show="sample" :sample="sample" ref="modalSample" />
     </main>
 </template>
 
 <script setup>
-import { onBeforeMount, ref, nextTick } from "vue";
+import { onBeforeMount, ref, nextTick, onUnmounted, onMounted } from "vue";
 
+import { useWebSocket } from '@/services/websocket.js';
 import { debounce } from "@/util.js";
 import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
 import axios from 'axios';
-import io from 'socket.io-client';
 import Vue from 'vue';
 import VueSelect from 'vue-select';
 import SqlEditor from './SqlEditor.vue';
@@ -180,10 +189,10 @@ const cachedDataSources = ref([]);
 const clusterId = ref(null);
 const internalWorkflowId = ref(null);
 const job = ref(null);
-const jobStatus = ref(null);
+const jobStatus = ref({ status: '' });
 const loaded = ref(false);
 const loadingData = ref(false);
-const socketIo = ref(null); // used by socketio (web sockets)
+
 const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 
@@ -254,12 +263,20 @@ const cluster = ref(null);
 const codeEditor = ref();
 const previewWindow = ref();
 
+/** Web socket  */
+const { connectWebSocket, disconnectWebSocket, socketEmit, joinRoom } = useWebSocket();
+
 onBeforeMount(async () => {
-    disconnectWebSocket();
     internalWorkflowId.value = (route) ? route.params.id : 0;
     await load();
 });
+onUnmounted(() => {
+    disconnectWebSocket();
+});
+onMounted(() => {
 
+});
+disconnectWebSocket();
 const updateDataSources = async (useCached) => {
     dataSources.value = [];
     if (useCached) {
@@ -369,7 +386,33 @@ const executeWorkflow = async () => {
     try {
         const response = await axios.post(`${standUrl}/jobs`, body);
         job.value = response.data.data;
-        connectWebSocket();
+
+        const eventHandlers = {
+            'connect': () => {
+                joinRoom(job.value.id);
+            },
+            'response': (msg) => {
+                console.debug(msg)
+            },
+            'update task': (msg) => {
+                sample.value = msg.message;
+                nextTick(() => {
+                    modalSample.value.show();
+                });
+
+            },
+            'update job': (msg) => {
+                jobStatus.value = '';
+                if (msg.status === 'ERROR') {
+                    error(msg);
+                } else {
+                    jobStatus.value = msg;
+                }
+                loadingData.value = false;
+            },
+        };
+        connectWebSocket(standSocketServer, standNamespace, standSocketIoPath,
+            eventHandlers);
     } catch (ex) {
         error(ex);
     }
@@ -403,58 +446,13 @@ const saveWorkflow = async () => {
     }
 };
 
-/* WebSocket Handling */
-const disconnectWebSocket = () => {
-    if (socketIo.value) {
-        socketIo.value.emit('leave', { room: job.value.id });
-        socketIo.value.close();
-    }
-};
-
 const sample = ref();
 const modalSample = ref(null);
 
 const showSample = () => {
     modalSample.value.show();
 };
-const connectWebSocket = () => {
-    if (socketIo.value === null) {
-        const opts = { upgrade: true };
-        if (standSocketIoPath !== '') {
-            opts['path'] = standSocketIoPath;
-        }
-        const socket = io(
-            `${standSocketServer}${standNamespace}`, opts);
 
-        socketIo.value = socket;
-        socket.on('connect', () => { socket.emit('join', { cached: false, room: job.value.id }); });
-        socket.on('update task', (msg, callback) => {// eslint-disable-line no-unused-vars
-            if (msg.type === 'PLOTLY') {
-                const messageJson = msg.message;
-                plotlyData.value = messageJson;
-                plotVersion.value++;
-            }
-            sample.value = msg.message;
-            nextTick(() => {
-                modalSample.value.show();
-            });
-            
-        });
-        socket.on('update job', msg => {
-            jobStatus.value = '';
-            if (msg.status === 'ERROR') {
-                error(msg);
-                loadingData.value = false;
-            }
-            if (msg.status === 'COMPLETED') {
-                jobStatus.value = msg.message;
-                loadingData.value = false;
-            }
-        });
-    } else {
-        //self.socket.emit('join', { room: self.job.id });
-    }
-};
 /**Events */
 const handleAddSql = (taskId, command) => {
     workflowObj.value.addSqlTask(taskId, command);
@@ -618,12 +616,12 @@ const handleCodeAppear = (el, done) => {
 }
 
 .bottom-fixed-component {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #ffffff;
-  padding: 20px;
-  box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
 }
 </style>
