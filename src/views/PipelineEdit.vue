@@ -6,193 +6,220 @@
                     Pipeline #{{pipeline.id}}
                 </h6>
                 <h1 class="editPage-title">
-                    <InputHeader v-model="pipeline.name" />
+                    <InputHeader v-model="pipeline.name" @input="isDirty = true" />
                 </h1> 
             </div>
-            <div>
-                <button class="btn btn-primary btn-lemonade-primary" @click="saveChanges">
+            <div class="btn-group">
+                <div class="editPage-enabled-checkbox-div" :class="{'editPage-disabled-checkbox-div': !pipeline.enabled}">
+                    <b-form-checkbox v-model="pipeline.enabled" 
+                                     class="d-flex align-items-center" 
+                                     name="check-button" 
+                                     size="sm"
+                                     switch 
+                                     @change="isDirty = true">
+                        Habilitado
+                    </b-form-checkbox>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary float-left border-right-0" @click="showPeriodicityDiv = !showPeriodicityDiv"> 
+                    <font-awesome-icon icon="fa fa-calendar-alt" class="mr-1" /> Periodicidade
+                </button>
+                <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
+                    <font-awesome-icon icon="fa fa-history" /> Histórico
+                </button>
+                <button class="btn btn-sm btn-outline-success" :disabled="!isDirty" @click="saveChanges">
                     <font-awesome-icon icon="fa fa-save" class="mr-1" /> Salvar
                 </button>
             </div>
         </div>
 
+        <div class="editPage-periodicity-div" :class="{'editPage-periodicity-div-hidden': !showPeriodicityDiv}">
+            <div class="mb-2 d-flex align-items-center justify-content-between">
+                <span class="font-weight-bold">
+                    Periodicidade da Pipeline
+                </span>
+                <font-awesome-icon icon="fa fa-x" size="sm" class="editPage-periodicity-x" @click="showPeriodicityDiv = false" />
+            </div>
+            <div class="">
+                <p>Defina a periodicidade da execução da pipeline:</p>
+                <b-form-select v-model="pipelinePeriodicity" 
+                               class="mt-0" 
+                               :options="periodicityOptions" />
+            </div>
+            <div v-if="pipelinePeriodicity === 'daily'">
+                <hr>
+                <div class="d-flex flex-row">
+                    <p class="font-weight-bold mr-2">
+                        Iniciar:
+                    </p>
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                           :min="minDate">
+                </div>
+                <div class="d-flex flex-row">
+                    <p class="font-weight-bold mr-2">
+                        Intervalo de dias:
+                    </p>
+                    <input id="repetir-dias" v-model="intervalDays" class="editPage-input" 
+                           type="number" min="0">
+                </div>
+            </div>
+            <div v-if="pipelinePeriodicity === 'weekly'">
+                <hr>
+                <div class="d-flex flex-row">
+                    <p class="font-weight-bold mr-2">
+                        Iniciar:
+                    </p>
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                           :min="minDate">
+                </div>
+                <div class="d-flex flex-row">
+                    <p class="font-weight-bold">
+                        Intervalo de semanas:
+                    </p>
+                    <input id="repetir-dias" v-model="intervalWeeks" class="editPage-input" 
+                           type="number" min="0">
+                </div>
+            </div>
+            <div v-if="pipelinePeriodicity === 'monthly'">
+                <hr>
+                <div class="d-flex flex-row">
+                    <p class="font-weight-bold mr-2">
+                        Iniciar:
+                    </p>
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                           :min="minDate">
+                </div>
+                <div class="d-flex flex-row">
+                    <p class="font-weight-bold">
+                        Intervalo de meses:
+                    </p>
+                    <input id="repetir-dias" v-model="intervalMonths" class="editPage-input" 
+                           type="number" min="0">
+                </div>
+            </div>
+        </div>
+
         <div class="editPage-body">
             <div class="editPage-container">
-                <div>
-                    <div v-b-toggle.collapse-1 class="editPage-collapse-trigger" :class="collapse1">
+                <div class="w-25">
+                    <div class="editPage-collapse-title">
                         Informações da Pipeline
                     </div>
                     <b-card class="editPage-infos">
-                        <div class="editPage-infos-body">
-                            <div class="editPage-infos-body-column">
-                                <span class="left">ID</span> | <span class="right">{{pipeline.id}}</span>
+                        <div class="editPage-infos-container">
+                            <div class="d-flex flex-row">
+                                <div class="editPage-infos-left">
+                                    <div>Criado em</div>
+                                    <div>Atualizado em</div>
+                                </div>
+                                <div class="editPage-infos-right">
+                                    <div>{{pipeline.created | formatJsonDate}}</div>
+                                    <div>{{pipeline.updated | formatJsonDate}}</div>
+                                </div>
                             </div>
-                            <div class="editPage-infos-body-column">
-                                <span class="left">Descrição</span> | <span class="right-identifier">{{pipeline.description === '' ? 'Pipeline sem descrição.' : pipeline.description}}</span>
-                            </div>
-                            <div class="editPage-infos-body-column">
-                                <span class="left">Criado em</span> | <span class="right">{{pipeline.created | formatJsonDate}}</span>
-                            </div>
-                            <div class="editPage-infos-body-column">
-                                <span class="left">Atualizado em</span> | <span class="right">{{pipeline.updated | formatJsonDate}}</span>
-                            </div>
-                            <!-- <div class="editPage-infos-body-column">
-                                <span class="left">Habilitado</span> | <span class="right">{{pipeline.enabled ? 'Sim' : 'Não'}}</span>
-                            </div> -->
-                            <div class="editPage-infos-body-column">
-                                <span class="left">Versão</span> | <span class="right">{{pipeline.version}}</span>
+                            <div class="editPage-infos-bottom mt-2">
+                                Descrição
+                                <TextAreaCustom v-model="pipeline.description" @input="isDirty = true" />
                             </div>
                         </div>
                     </b-card>
                 </div>
-                <div>
-                    <div aria-controls="collapse-2"
-                         :class="collapseVisible2 ? null : 'collapsed'" 
-                         :aria-expanded="collapseVisible2 ? 'true' : 'false'" 
-                         class="editPage-collapse-trigger" 
-                         @click="collapseVisible2 = !collapseVisible2">
+                <div class="w-75">
+                    <div class="editPage-collapse-title">
                         Etapas da Pipeline
-                        <font-awesome-icon v-if="collapseVisible2" icon="fa fa-chevron-up" />
-                        <font-awesome-icon v-else icon="fa fa-chevron-down" />
                     </div>
-                    <b-collapse id="collapse-2" v-model="collapseVisible2" visible>
-                        <b-card class="editPage-stepsDiv">
-                            <div class="editPage-collapse-div">
-                                <div class="editPage-tabs">
-                                    <div class="editPage-etapas-header">
-                                        <button id="popover-trigger" class="editPage-tab-button">
-                                            <font-awesome-icon icon="info-circle" />
-                                        </button>
-                                        <b-popover target="popover-trigger" triggers="hover">
-                                            Segure e arraste as etapas abaixo para reordená-las.
-                                        </b-popover>
-                                        <div class="editPage-etapas-header-column">
-                                            Ordem da Etapa
-                                        </div>
-                                        <div class="editPage-etapas-header-column">
-                                            Nome
-                                        </div>
-                                        <div class="editPage-etapas-header-column">
-                                            Status
-                                        </div>
-                                        <div class="editPage-etapas-header-column">
-                                            Ações
-                                        </div>
+                    <b-card class="editPage-stepsDiv scroll-area">
+                        <div class="editPage-collapse-div">
+                            <div class="editPage-left-container">
+                                <div class="editPage-etapas-header">
+                                    <button id="popover-trigger" class="editPage-tab-button">
+                                        <font-awesome-icon icon="info-circle" />
+                                    </button>
+                                    <b-popover target="popover-trigger" triggers="hover">
+                                        Segure e arraste as etapas abaixo para reordená-las.
+                                    </b-popover>
+                                    <div class="editPage-etapas-header-column">
+                                        Ordem
                                     </div>
-                                    <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
-                                        Adicione etapas a sua pipeline
-                                        <button class="ml-1 btn btn-sm btn-warning" title="Adicionar etapa" @click="openAddStepModal(0)">
-                                            <font-awesome-icon icon="plus" />
-                                        </button>
+                                    <div class="editPage-etapas-header-column">
+                                        Nome
                                     </div>
-                                    <draggable v-model="pipeline.steps" :options="dragOptions" @end="onDragEnd">
-                                        <div v-for="(step, index) in orderedPipelineSteps"
-                                             :key="step.id" 
-                                             class="editPage-dragDiv" 
-                                             :class="selectedStep == step.name ? 'editPage-dragDiv-selected' : null">
-                                            <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
-                                            <div class="editPage-drag-column">
-                                                # {{index + 1}}
-                                            </div>
-                                            <div class="editPage-drag-column" :class="ident">
-                                                <span class="editPage-stepButton" @click="redirectToWorkflow(step)">
-                                                    {{step.name}}
-                                                </span>
-                                            </div>
-                                            <div class="editPage-drag-column">
-                                                <font-awesome-icon v-if="step.status == 'concluido'" 
-                                                                   icon="check-circle"
-                                                                   class="text-success" 
-                                                                   title="Concluído" 
-                                                                   size="lg" />
-                                                <font-awesome-icon v-if="step.status == 'erro'" 
-                                                                   icon="xmark-circle" 
-                                                                   class="text-danger" 
-                                                                   title="Erro" 
-                                                                   size="lg" />
-                                                <font-awesome-icon v-if="step.status == 'executando'" 
-                                                                   icon="spinner" 
-                                                                   spin 
-                                                                   class="text-secondary" 
-                                                                   title="Executando" 
-                                                                   size="lg" />
-                                                <font-awesome-icon v-if="step.status == 'pendente'" 
-                                                                   icon="exclamation-circle" 
-                                                                   class="text-warning" 
-                                                                   title="Pendente" 
-                                                                   size="lg" />
-                                                <font-awesome-icon icon="exclamation-circle" 
-                                                                   class="text-warning" 
-                                                                   title="Pendente" 
-                                                                   size="lg" />
-                                            </div>
-                                            <div class="editPage-drag-column">
-                                                <div>
-                                                    <button class="ml-1 btn btn-sm btn-primary" title="Executar etapa">
-                                                        <font-awesome-icon icon="play" />
-                                                    </button>
-                                                    <button class="ml-1 btn btn-sm btn-info" title="Agendar execução" @click="setSelectedStep(step.name, index)">
-                                                        <font-awesome-icon icon="clock" />
-                                                    </button>
-                                                    <button class="ml-1 btn btn-sm btn-secondary" title="Editar etapa" @click="openEditModal(step)">
-                                                        <font-awesome-icon icon="pen" />
-                                                    </button>
-                                                    <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa" @click="deleteStep(step.id, step.name)">
-                                                        <font-awesome-icon icon="trash" />
-                                                    </button>
-                                                    <button class="ml-1 btn btn-sm btn-warning" title="Adicionar etapa" @click="openAddStepModal(step.order)">
-                                                        <font-awesome-icon icon="plus" />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </draggable>
-                                    <ModalEditPipelineStep ref="editStepModal" :edited-step="editedStep" :pipeline="pipeline" />
-                                    <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline" @onupdate-pipeline="updatePipeline" />
+                                    <div class="editPage-etapas-header-column">
+                                        Ações
+                                    </div>
                                 </div>
-
-                                <PipelineStepScheduler :selected-step="selectedStep" :selected-step-index="selectedStepIndex" />
+                                <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
+                                    Adicione etapas à sua pipeline
+                                    <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa" @click="openAddStepModal(0)">
+                                        <font-awesome-icon icon="plus" />
+                                    </button>
+                                </div>
+                                <draggable v-model="pipeline.steps" :options="dragOptions" @end="onDragEnd">
+                                    <div v-for="(step, index) in orderedPipelineSteps"
+                                         :key="step.id" 
+                                         class="editPage-dragDiv" 
+                                         :class="{'editPage-dragDiv-selected': selectedStep.id === step.id}"
+                                         @dragstart="onDragStart"
+                                         @click="setSelectedStep(step, index)">
+                                        <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
+                                        <div class="editPage-drag-column">
+                                            # {{index + 1}}
+                                        </div>
+                                        <div class="editPage-drag-column" :class="ident">
+                                            <span class="editPage-stepButton" @click="redirectToWorkflow(step)">
+                                                {{step.name}}
+                                            </span>
+                                        </div>
+                                        <div class="editPage-drag-column">
+                                            <div>
+                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa" @click="deleteStep(step.id, step.name)">
+                                                    <font-awesome-icon icon="trash" />
+                                                </button>
+                                                <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa" @click="openAddStepModal(step.order)">
+                                                    <font-awesome-icon icon="plus" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </draggable>
+                                <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline" @onupdate-pipeline="updatePipeline" />
                             </div>
-                        </b-card>
-                    </b-collapse>
-                </div>
-                <div>
-                    <div v-b-toggle.collapse-3 class="editPage-collapse-trigger" @click="collapseVisible3 = !collapseVisible3">
-                        Histórico de Execuções
-                        <font-awesome-icon v-if="collapseVisible3" icon="fa fa-chevron-up" />
-                        <font-awesome-icon v-else icon="fa fa-chevron-down" />
-                    </div>
-                    <b-collapse id="collapse-3">
-                        <b-card class="editPage-historico-body">
-                            <v-client-table v-model="data" class="editPage-historico-table" :columns="columns" :options="options">
-                                <template #id="props">
-                                    {{props.row.id}}
-                                </template>
-                                <template #status="props">
-                                    <div class="editPage-status" :class="props.row.status.toLowerCase()">
-                                        {{props.row.status}}
-                                    </div>
-                                </template>
-                                <template #log>
-                                    <div class="btn-group" role="group">
-                                        <button class="btn btn-spinner btn-primary btn-sm" title="Exibir log" @click="openLogModal">
-                                            <font-awesome-icon icon="fa-eye" />
-                                        </button>
-                                    </div>
-                                    <b-modal ref="logModal" size="lg" title="Log de execução da etapa" hide-footer>
-                                        <b-card class="editPage-logCard">
-                                            <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
-                                            <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
-                                            <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
-                                            <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
-                                            <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
-                                            <p>2023-01-01 00:00:00 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Qui at aliquam optio? Obcaecati, odit?.</p>
-                                        </b-card>
-                                    </b-modal>
-                                </template>
-                            </v-client-table>
-                        </b-card>
-                    </b-collapse>
+
+                            <div class="editPage-right-container">
+                                <div v-if="pipelineWithoutSteps" class="w-100 h-100 d-flex justify-content-center"> 
+                                    <b-card class="w-100 h-25 text-center p-5">
+                                        <div class="editPage-empty-step ">
+                                            Adicione etapas à sua pipeline para acessar suas informações de agendamento e configurações.
+                                        </div>
+                                    </b-card>
+                                </div>
+                                <b-tabs v-if="selectedStepIndex !== null" class="w-100" justified>
+                                    <b-tab active>
+                                        <template #title>
+                                            <span class="editPage-tabs-title-text">
+                                                Agendador
+                                            </span>
+                                        </template>
+                                        <PipelineStepScheduler ref="stepScheduler" 
+                                                               :selected-step="selectedStep" 
+                                                               :selected-step-index="selectedStepIndex" 
+                                                               :pipeline-id="pipeline.id" 
+                                                               @send-scheduler-changes="schedulerUpdate" />
+                                    </b-tab>
+                                    <b-tab>
+                                        <template #title>
+                                            <span class="editPage-tabs-title-text">
+                                                Configurações
+                                            </span>
+                                        </template>
+                                        <EditPipelineStep ref="editStepModal" 
+                                                          :edited-step="editedStep" 
+                                                          :pipeline="pipeline" 
+                                                          :selected-step-index="selectedStepIndex" @send-step-changes="schedulerUpdate" />
+                                    </b-tab>
+                                </b-tabs>
+                            </div>
+                        </div>
+                    </b-card>
                 </div>
             </div>
         </div>
@@ -201,13 +228,13 @@
 
 <script>
 import PipelineEditMixin from '../mixins/PipelineEditMixin.js';
-import ModalEditPipelineStep from './modal/ModalEditPipelineStep.vue';
+import EditPipelineStep from '../components/EditPipelineStep.vue'; 
 import ModalAddPipelineStep from './modal/ModalAddPipelineStep.vue';
-import PipelineStepScheduler from './PipelineStepScheduler.vue';
+import PipelineStepScheduler from '../components/PipelineStepScheduler.vue';
 import axios from 'axios';
 import draggable from 'vuedraggable';
-import { BModal } from 'bootstrap-vue';
 import InputHeader from '../components/InputHeader.vue';
+import TextAreaCustom from '../components/TextAreaCustom.vue';
 import Notifier from '../mixins/Notifier.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
@@ -215,73 +242,55 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 export default {
     components: {
         draggable,
-        BModal,
         InputHeader,
-        ModalEditPipelineStep,
+        TextAreaCustom,
+        EditPipelineStep,
         ModalAddPipelineStep,
-        PipelineStepScheduler
+        PipelineStepScheduler,
     },
     mixins: [PipelineEditMixin, Notifier],
+    beforeRouteLeave(to, from, next) {
+        if (this.isDirty) {
+            if (confirm(this.$t('warnings.dirtyCheck'))) {
+                next();
+            }
+        } else {
+            next();
+        }
+    },
     data() {
         return {
             pipeline: {},
+            pipelineCopy: {},
+            pipelineWithoutSteps: false,
+            pipelinePeriodicity: null,
+            showPeriodicityDiv: false,
             deleteResponse: null,
+            isDirty: false,
             ident: 'ident',
             collapse1: 'collapse1',
-            selectedStep: '',
-            selectedStepIndex: 0,
+            selectedStep: {},
+            selectedStepIndex: null,
             collapseVisible2: true,
             collapseVisible3: false,
             editedStep: { id: null, name: '', description: '', workflow: {} },
             stepOrder: null,
+            startDate: "",
+            intervalDays: null,
+            intervalWeeks: null,
+            intervalMonths: null,
             dragOptions: {
                 animation: 200,
                 group: 'description',
                 disabled: false,
-                ghostClass: 'ghost'
+                ghostClass: 'ghost',
             },
-            columns: [
-                'id',
-                'etapa',
-                'data_exec',
-                'status',
-                'log',
-            ],
-            data: getData(),
-            options: {
-                skin: 'table-sm table table-hover',
-                columnsClasses: {
-                    id: 'text-start',
-                    etapa: '',
-                    data_exec: 'text-start',
-                    status: ' text-start',
-                    log: 'text-start'
-                },
-                dateColumns: ['data_exec'],
-                headings: {
-                    id: 'ID',
-                    etapa: 'Etapa',
-                    data_exec: 'Data da execução',
-                    status: 'Status',
-                    log: 'Log de execução',
-                },
-                sortable: ['id','etapa','data_exec'],
-                filterable: ['id','etapa','data_exec'],
-                sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
-                },
-                texts: {
-                    filter: this.$tc('common.filter'),
-                    count: this.$t('common.pagerShowing'),
-                    limit: this.$t('common.limit'),
-                    noResults: this.$t('common.noData'),
-                    loading: this.$t('common.loading'),
-                    filterPlaceholder: this.$t('common.filterPlaceholder')
-                }
-            }
+            periodicityOptions: [
+                { value: null, text: 'Selecione a periodicidade' },
+                { value: 'daily', text: 'Diário' },
+                { value: 'weekly', text: 'Semanal' },
+                { value: 'monthly', text: 'Mensal' },
+            ]
         };
     },
     computed: {
@@ -292,6 +301,20 @@ export default {
                 return [];
             }
         },
+        minDate() {
+            const currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() - 1);
+            const currentDateFormatted = currentDate.toISOString().split('T')[0];
+            return currentDateFormatted;
+        }
+    },
+    watch: {
+        pipelinePeriodicity() {
+            this.isDirty = true;
+        }
+    },
+    created() {
+        window.addEventListener('beforeunload', this.leaving);
     },
     mounted() {
         this.load();
@@ -304,6 +327,10 @@ export default {
                 .then(resp => {
                     this.$Progress.finish();
                     this.pipeline = resp.data.data[0];
+                    if(this.pipeline.steps.length !== 0) this.setSelectedStep(this.pipeline.steps[0], 0);
+                    else this.pipelineWithoutSteps = true;
+                    this.pipelineCopy = JSON.parse(JSON.stringify(this.pipeline));
+                    console.log(this.pipeline);
                 })
                 .catch(
                     function (e) {
@@ -314,42 +341,58 @@ export default {
         },
         saveChanges() {
             this.editPipeline('Pipeline editada com sucesso.');
+            this.isDirty = false;
         },
         openAddStepModal(stepOrder) {
             this.$refs.addStepModal.show();
             this.stepOrder = stepOrder;
         },
-        openEditModal(step) {
+        setSelectedStep(step, index) {
             this.editedStep.id = step.id;
             this.editedStep.name = step.name;
             this.editedStep.description = step.description;
             this.editedStep.workflow = step.workflow;
-            this.$refs.editStepModal.show();
-        },
-        setSelectedStep(stepName, index) {
-            this.selectedStep = stepName;
+            this.selectedStep = step;
             this.selectedStepIndex = index;
         },
-        openLogModal() {
-            this.$refs.logModal.show();
-        },
         redirectToWorkflow(step) {
-            if(step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
+            if (step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
+        },
+        onDragStart() {
+            this.isDirty = true;
         },
         onDragEnd(event) {
             this.pipeline.steps.forEach((step, index) => {
                 step.order = index + 1;
             });
+            this.isDirty = true;
         },
-        updatePipeline(childData) {
-            this.pipeline = childData;
+        updatePipeline(pipelineData) {
+            this.pipeline = pipelineData;
+            this.pipelineWithoutSteps = false;
+            this.setSelectedStep(this.pipeline.steps[this.pipeline.steps.length - 1], this.pipeline.steps.length - 1);
+        },
+        schedulerUpdate(childData) {
+            this.isDirty = true;
+            const foundStep = this.pipeline.steps.find(step => step.id === childData.id);
+            Object.assign(foundStep, childData);
+        },
+        leaving(event) {
+            if (this.isDirty) {
+                event.preventDefault();
+                event.returnValue = false;
+            }
+        },
+        redirectToRuns() {
+            this.$router.push({ name: 'pipelineRunsList', params: { id: this.pipeline.id, name: this.pipeline.name, from: 'PipelineEdit' } });
         },
         editPipeline(msg) {
             axios
                 .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
                 .then((resp) => {
                     this.pipeline = resp.data.data[0];
+                    if(this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
                     this.success(msg);
                 })
                 .catch(
@@ -363,8 +406,9 @@ export default {
                 this.$t('actions.delete') + " '" + stepName + "'",
                 'Tem certeza que deseja excluir esta etapa?',
                 () => {
+                    if(!this.pipelineWithoutSteps) this.setSelectedStep(this.pipeline.steps[0], 0);
                     this.pipeline.steps = this.pipeline.steps.filter(step => step.id !== stepId);
-
+                    this.selectedStepIndex = null;
                     this.editPipeline('Etapa excluída com sucesso.');
                 }
             );
@@ -372,94 +416,6 @@ export default {
     },
 };
 
-function getData() {
-    return [
-        { 
-            id: 1, 
-            etapa: 'Landing', 
-            data_exec: '10/08/2023',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-        { 
-            id: 2, 
-            etapa: 'Raw', 
-            data_exec: '07/05/2023',   
-            status: 'Erro',   
-            log: "" 
-        },
-        { 
-            id: 3, 
-            etapa: 'Raw', 
-            data_exec: '15/10/2022',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-        { 
-            id: 4, 
-            etapa: 'Landing', 
-            data_exec: '24/10/2023',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-        { 
-            id: 5, 
-            etapa: 'Stage_1', 
-            data_exec: '10/08/2023',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-        { 
-            id: 6, 
-            etapa: 'MDM', 
-            data_exec: '07/05/2023',   
-            status: 'Erro',   
-            log: "" 
-        },
-        { 
-            id: 7, 
-            etapa: 'MDM', 
-            data_exec: '15/10/2022',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-        { 
-            id: 8, 
-            etapa: 'Stage_1', 
-            data_exec: '24/10/2023',   
-            status: 'Erro',   
-            log: "" 
-        },
-        { 
-            id: 9, 
-            etapa: 'Landing', 
-            data_exec: '10/08/2023',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-        { 
-            id: 10,
-            etapa: 'Landing',  
-            data_exec: '07/05/2023',   
-            status: 'Erro',   
-            log: "" 
-        },
-        { 
-            id: 11,
-            etapa: 'Raw',  
-            data_exec: '15/10/2022',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-        { 
-            id: 12,
-            etapa: 'Raw',  
-            data_exec: '24/10/2023',   
-            status: 'Sucesso',   
-            log: "" 
-        },
-    ];
-}
 </script>
 
 <style lang="scss">
@@ -490,106 +446,99 @@ function getData() {
 
 .editPage-container {
     display: flex;
-    flex-direction: column;
-    gap: 30px;
+    flex-direction: row;
+    gap: 16px;
     width: 100%;
 }
 
-.editPage-collapse-trigger {
-    display: flex;
-    position: relative;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 5px;
-    font-size: 24px;
+.editPage-collapse-title {
+    padding: 12px 16px;
     border-bottom: 1px solid #9c9c9c;
-
-    &:hover {
-        background-color: #f8f9f9;
-        cursor: pointer;
-    }
-
-    &.collapse1 {
-        cursor: default;
-    }
+    background-color: #f8f9f9;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .editPage-collapse-div {
     display: flex;
     flex-direction: row;
-    width: 100%;
-    gap: 40px;
+    gap: 20px;
     background-color: #f8f9f9;
+    padding-bottom: 20px;
+    min-height: 500px;
 }
 
 .editPage-stepsDiv {
     border: 0px solid #dfdfdf;
     background-color: #f8f9f9;
     border-radius: 0px;
+    height: 70vh;
+    overflow: auto;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
 .editPage-infos {
-    display: flex;
-    width: 100%;
-    border: 0px solid #dfdfdf;
+    border: 0px;
     background-color: #f8f9f9;
     border-radius: 0px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 }
 
-.editPage-infos-title {
-    font-weight: 400;
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.editPage-infos-body {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 10px;
-    font-size: 18px;
-}
-
-.editPage-infos-body-column {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    span.left {
-        color: black;
-        font-family: sans-serif;
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: 0.6px;
-        margin-bottom: 0;
-        padding: 0px 4px;
-        text-transform: uppercase;
-        margin-right: 15px;
-    }
-
-    span.right {
-        margin-left: 15px;
-    }
-
-    span.right-identifier {
-        max-height: 100px;
-        overflow-y: auto;
-        margin-left: 15px;
-        max-width: 250px;
-    }
-
-    &.radios {
-        justify-content: start;
-        margin-top: 10px;
-        width: 450px;
-        text-align: justify;
-    }
-}
-
-
-.editPage-tabs {
+.editPage-infos-container {
     display: flex;
     flex-direction: column;
+    font-size: 14px;
+}
+
+.editPage-infos-left {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 50%;
+    color: black;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 0;
+    text-transform: uppercase;
+    border-right: 1px solid #9c9c9c;
+}
+
+.editPage-infos-right {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding-left: 10px;
+}
+
+.editPage-infos-bottom {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    color: black;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+
+.editPage-left-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.editPage-right-container {
+    display: flex;
     width: 100%;
 }
 
@@ -598,6 +547,7 @@ function getData() {
     border: 0px;
     color: black;
     position: absolute;
+    left: 10px;
 }
 
 .editPage-etapas-header {
@@ -605,16 +555,21 @@ function getData() {
     position: relative;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: -2px;
     border: 2px solid #dfdfdf;
     padding: 3px 0px;
     font-weight: 700;
     background-color: #FFF;
+    height: 42px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    font-size: 14px;
 }
 
 .editPage-etapas-header-column {
     display: flex;
-    width: 25%;
+    width: 33%;
     justify-content: center;
 }
 
@@ -651,7 +606,7 @@ function getData() {
 
 .editPage-drag-column {
     display: flex;
-    width: 25%;
+    width: 33%;
     justify-content: center;
     align-items: center;
 
@@ -677,7 +632,7 @@ function getData() {
 
 .editPage-dragIcon {
     position: absolute;
-    left: 8px;
+    left: 17px;
     top: 50%;
     transform: translateY(-50%);
     color: #212529;
@@ -688,7 +643,7 @@ function getData() {
     display: flex;
     flex-direction: column;
     height: fit-content;
-    width: 50%;
+    width: 100%;
     margin-top: 0px;
 }
 
@@ -712,7 +667,8 @@ function getData() {
     padding-bottom: 10px;
     align-items: start;
     gap: 10px;
-    border: 1px solid #cccccc;
+    border: 1px solid #dee2e6;
+    border-top: none;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     background-color: #FFF;
@@ -795,7 +751,8 @@ function getData() {
 
 .editPage-label-badge {
     padding: 5px 10px;
-    background-color: #17a2b8;
+    background-color: #007bff;
+    text-transform: none;
     border-radius: 0.25rem;
     font-weight: 700;
     font-size: 15px;
@@ -820,10 +777,11 @@ function getData() {
     width: 100%;
     max-height: 150px;
     height: fit-content;
-    padding: 12px 20px;
+    padding: 12px 10px;
     border-radius: 4px;
     border: none;
     background-color: #eff0f6;
+    font-size: 14px;
 }
 
 .editPage-inputHeader {
@@ -869,6 +827,101 @@ function getData() {
     display: flex;
     justify-content: end;
     width: 100%;
+}
+
+.editPage-scheduler-save {
+    position: absolute;
+    top: -4px;
+    right: 0px;
+    background-color: #86B94B;
+    border: none;
+}
+
+.warn-Button {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+.editPage-step-config-body {
+    padding: 20px;
+    align-items: start;
+    gap: 10px;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: #FFF;
+}
+
+.editPage-tabs-title-text {
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.editPage-enabled-checkbox-div {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+    border: 1px solid #007bff;
+    color: #007bff;
+    border-right: none;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.editPage-disabled-checkbox-div {
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    border-right: none;
+}
+
+.editPage-toast {
+    width: 500px;
+}
+
+.editPage-toast-title {
+    font-size: 16px;
+    color: #6c757d;
+    font-weight: bolder;
+    width: 500px;
+}
+
+.editPage-empty-step {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.editPage-periodicity-div {
+    position: fixed;
+    width: 369px;
+    background-color: #fff;
+    left: 15px;
+    bottom: 28px;
+    padding: 10px;
+    z-index: 1;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, .1);
+    transition: 0.3s;
+}
+
+.editPage-periodicity-div-hidden {
+    left: -375px;
+}
+
+.editPage-periodicity-x {
+    :hover {
+        cursor: pointer;
+    }
 }
 
 </style>

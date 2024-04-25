@@ -969,92 +969,88 @@ ul.b-form-tags-list {
     opacity: 0
 }
 
-/* Lemon */
+/* Pipelines */
 
-.lemonPage-status-ultima {
+.runsList-status {
     display: flex;
-    margin: 0;
-    width: 30%;
-    justify-content: center;
-    font-weight: 500;
-    padding: 5px 0px;
-    border-radius: 25px;
-    font-size: 0.8em;
-    color: white;
-
-    &.sucesso {
-        background-color: #2ecc40;
-    }
-
-    &.erro {
-        background-color: #ff4136;
-    }
-
-    &.pendente {
-        background-color: #ffdc00;
-        color: black;
-    }
-}
-
-.historyPage-status {
-    display: flex;
-    margin: 0;
-    width: 50%;
-    justify-content: center;
-    font-weight: 500;
-    padding: 5px 0px;
-    border-radius: 25px;
-    font-size: 0.8em;
-    color: white;
-
-    &.sucesso {
-        background-color: #2ecc40;
-    }
-
-    &.erro {
-        background-color: #ff4136;
-    }
-}
-
-.lemonPage-enabled {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
     margin: 0 auto;
-
-    &.true {
-        background-color: #008a00;
-    }
-
-    &.false {
-        background-color: #ca024f;
-    }
-}
-
-.editPage-status {
-    display: flex;
-    width: 50%;
+    width: 60%;
     justify-content: center;
     font-weight: 500;
     padding: 5px 0px;
     border-radius: 25px;
     font-size: 0.8em;
     color: white;
-    margin: 0;
 
-    &.sucesso {
-        background-color: #2ecc40
+    &.completed {
+        background-color: #2ecc40;
     }
 
-    &.erro {
-        background-color: #ff4136;
+    &.running {
+        background-color: #0074d9;
     }
 
-    &.em_execucao {
+    &.interrupted {
+        background-color: #111;
+    }
+
+    &.canceled {
+        background-color: #aaa;
+    }
+
+    &.waiting {
         background-color: #ffdc00;
         color: black;
     }
+
+    &.error {
+        background-color: #ff4136;
+    }
+
+    &.pending {
+        background-color: #ffa136;
+        color: black;
+    }
 }
+
+.runDetail-status {
+    font-weight: 500;
+    padding: 0px 10px;
+    border-radius: 25px;
+    color: white;
+
+    &.completed {
+        background-color: #2ecc40;
+    }
+
+    &.running {
+        background-color: #0074d9;
+    }
+
+    &.interrupted {
+        background-color: #111;
+    }
+
+    &.canceled {
+        background-color: #aaa;
+    }
+
+    &.waiting {
+        background-color: #ffdc00;
+        color: black;
+    }
+
+    &.error {
+        background-color: #ff4136;
+    }
+
+    &.pending {
+        background-color: #ffa136;
+        color: black;
+    }
+
+}
+
 .table-smallest {
     font-size: 0.8em;
 }

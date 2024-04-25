@@ -91,9 +91,10 @@ const DeploymentEdit = () => import(/* webpackChunkName: "group-deployment" */ '
 const OperationList = () => import(/* webpackChunkName: "group-operation" */ './views/OperationList.vue');
 
 const PipelineList = () => import('./views/PipelineList.vue');
+const PipelineRunsList = () => import('./views/PipelineRunsList.vue');
+const PipelineRunDetail = () => import('./views/PipelineRunDetail.vue');
 const PipelineEdit = () => import('./views/PipelineEdit.vue');
 const PipelineTemplates = () => import('./views/PipelineTemplates.vue');
-const PipelineHistory = () => import('./views/PipelineHistory.vue');
 
 
 /* Experiments */
@@ -870,7 +871,7 @@ let router = new VueRouter({
             component: PipelineList,
             meta: {
                 requiresAuth: true,
-                title: ['titles.lemon', 1]
+                title: ['titles.pipeline', 2]
             }
         },
         {
@@ -879,7 +880,7 @@ let router = new VueRouter({
             component: PipelineEdit,
             meta: {
                 requiresAuth: true,
-                title: ['titles.lemon', 1]
+                title: ['titles.pipeline', 1]
             }
         },
         {
@@ -888,16 +889,25 @@ let router = new VueRouter({
             component: PipelineTemplates,
             meta: {
                 requiresAuth: true,
-                title: ['titles.lemonTemplates', 1]
+                title: ['titles.pipelineTemplates', 1]
             }
         },
         {
-            path: '/pipeline/history',
-            name: 'pipelinesHistory',
-            component: PipelineHistory,
+            path: '/pipeline/runs',
+            name: 'pipelineRunsList',
+            component: PipelineRunsList,
             meta: {
-                requiresAuth: false,
-                title: ['titles.lemonHistory', 1]
+                requiresAuth: true,
+                title: ['titles.pipelineRuns', 2]
+            }
+        },
+        {
+            path: '/pipeline/runs/:id',
+            name: 'pipelineRunDetail',
+            component: PipelineRunDetail,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.pipelineRuns', 1]
             }
         },
         {

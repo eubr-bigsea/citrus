@@ -1,22 +1,6 @@
 <template>
-    <div class="editPage-agendador">
-        <div class="editPage-agendador-title">
-            <font-awesome-icon icon="fa fa-calendar-alt" />
-            <span class="ml-2">Agendador de etapa</span>
-        </div>
-        <div v-if="selectedStep === ''" class="editPage-agendador-body">
-            <p class="font-weight-bold">
-                Clique no ícone do relógio <button class="btn btn-sm btn-info">
-                    <font-awesome-icon icon="clock" />
-                </button> em uma das etapas para utilizar o agendador.
-            </p>
-        </div>
-        <div v-else class="editPage-agendador-body">
-            <div class="editPage-agendador-box">
-                <div class="editPage-label">
-                    Etapa: <span class="editPage-label-badge">{{selectedStep}}</span>
-                </div>
-            </div>
+    <div class="editPage-agendador" @change="saveSchedulerChanges">
+        <div class="editPage-agendador-body">
             <div class="editPage-agendador-box">
                 <p class="font-weight-bold">
                     Quando deseja que sua etapa seja inicializada?
@@ -25,49 +9,53 @@
                                class="mb-2" 
                                :options="selectedStepIndex === 0 ? 
                                    filteredSelectFreqOpt.slice(0, 1).concat(filteredSelectFreqOpt.slice(2)) : 
-                                   filteredSelectFreqOpt" />
+                                   filteredSelectFreqOpt" 
+                               @change="resetSelect" />
             </div>
-            <div v-if="selectedFreqOpt === 'uma-vez'">
+            <div v-if="selectedFreqOpt === 'once'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
                         Iniciar:
                     </p>
-                    <input id="iniciar-data" class="editPage-input" type="date">
-                    <input id="iniciar-hora" class="editPage-input" type="time">
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                           :min="minDate">
+                    <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
                 </div>
             </div>
             
-            <div v-if="selectedFreqOpt === 'diariamente'">
+            <div v-if="selectedFreqOpt === 'daily'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
                         Iniciar:
                     </p>
-                    <input id="iniciar-data" class="editPage-input" type="date">
-                    <input id="iniciar-hora" class="editPage-input" type="time">
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                           :min="minDate">
+                    <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
                 </div>
                 <div class="editPage-agendador-box" :class="dias">
                     <p class="font-weight-bold">
                         Intervalo de repetição (dias):
                     </p>
-                    <input id="repetir-dias" class="editPage-input" :class="dias" type="number"
-                           min="0">
+                    <input id="repetir-dias" v-model="intervalDays" class="editPage-input" :class="dias" 
+                           type="number" min="0">
                 </div>
             </div>
 
-            <div v-if="selectedFreqOpt === 'semanalmente'">
+            <div v-if="selectedFreqOpt === 'weekly'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
                         Iniciar:
                     </p>
-                    <input id="iniciar-data" class="editPage-input" type="date">
-                    <input id="iniciar-hora" class="editPage-input" type="time">
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                           :min="minDate">
+                    <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
                 </div>
                 <div class="editPage-agendador-box" :class="dias">
                     <p class="font-weight-bold">
                         Intervalo de repetição (semanas):
                     </p>
-                    <input id="repetir-semanas" class="editPage-input" :class="dias" type="number"
-                           min="0">
+                    <input id="repetir-semanas" v-model="intervalWeeks" class="editPage-input" :class="dias" 
+                           type="number" min="0">
                 </div>
                 <b-form-group>
                     <div class="editPage-chackbox-div" :class="diasSemana">
@@ -81,13 +69,14 @@
                 </b-form-group>
             </div>
 
-            <div v-if="selectedFreqOpt === 'mensalmente'">
+            <div v-if="selectedFreqOpt === 'monthly'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
                         Iniciar:
                     </p>
-                    <input id="iniciar-data" class="editPage-input" type="date">
-                    <input id="iniciar-hora" class="editPage-input" type="time">
+                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
+                           :min="minDate">
+                    <input id="iniciar-hora" v-model="startTime" class="editPage-input" type="time">
                 </div>
                 <b-form-group>
                     <p class="font-weight-bold mb-2">
@@ -98,44 +87,44 @@
                     </b-form-checkbox>
                     <div class="editPage-chackbox-div" :class="meses">
                         <div>
-                            <b-form-checkbox v-model="selectedMonths" value="janeiro">
+                            <b-form-checkbox v-model="selectedMonths" value="1">
                                 Janeiro
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="fevereiro">
+                            <b-form-checkbox v-model="selectedMonths" value="2">
                                 Fevereiro
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="marco">
+                            <b-form-checkbox v-model="selectedMonths" value="3">
                                 Março
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="abril">
+                            <b-form-checkbox v-model="selectedMonths" value="4">
                                 Abril
                             </b-form-checkbox>
                         </div>
                         <div>
-                            <b-form-checkbox v-model="selectedMonths" value="maio">
+                            <b-form-checkbox v-model="selectedMonths" value="5">
                                 Maio
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="junho">
+                            <b-form-checkbox v-model="selectedMonths" value="6">
                                 Junho
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="julho">
+                            <b-form-checkbox v-model="selectedMonths" value="7">
                                 Julho
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="agosto">
+                            <b-form-checkbox v-model="selectedMonths" value="8">
                                 Agosto
                             </b-form-checkbox>
                         </div>
                         <div>
-                            <b-form-checkbox v-model="selectedMonths" value="setembro">
+                            <b-form-checkbox v-model="selectedMonths" value="9">
                                 Setembro
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="outubro">
+                            <b-form-checkbox v-model="selectedMonths" value="10">
                                 Outubro
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="novembro">
+                            <b-form-checkbox v-model="selectedMonths" value="11">
                                 Novembro
                             </b-form-checkbox>
-                            <b-form-checkbox v-model="selectedMonths" value="dezembro">
+                            <b-form-checkbox v-model="selectedMonths" value="12">
                                 Dezembro
                             </b-form-checkbox>
                         </div>
@@ -265,37 +254,46 @@
 </template>
 
 <script>
+import Notifier from '../mixins/Notifier.js';
 
 export default {
+    mixins: [Notifier],
     props: {
-        selectedStep: { type: String, default: null },
+        selectedStep: { type: Object, default: () => {} },
         selectedStepIndex: { type: Number, default: 0 },
+        pipelineId: { type: Number, default: 0 },
     },
+    emits: ['send-scheduler-changes'],
     data() {
         return {
             radios: 'radios',
             dias: 'dias',
             diasSemana: 'diasSemana',
             meses: 'meses',
+            stepCopy: {},
+            intervalDays: null,
+            intervalWeeks: null,
+            startDate: null,
+            startTime: null,
             selectedWeekDays: [],
             selectedFreqOpt: null,
             selectFreqOpt: [
                 { value: null, text: 'Selecione a frequência' },
-                { value: 'imediatamente', text: 'Imediatamente após a etapa anterior' },
-                { value: 'uma-vez', text: 'Uma vez' },
-                { value: 'diariamente', text: 'Diariamente' },
-                { value: 'semanalmente', text: 'Semanalmente' },
-                { value: 'mensalmente', text: 'Mensalmente' },
-                { value: 'usuario', text: 'Disparo pelo usuário' },
+                { value: 'immediately', text: 'Imediatamente após a etapa anterior' },
+                { value: 'once', text: 'Uma vez' },
+                { value: 'daily', text: 'Diariamente' },
+                { value: 'weekly', text: 'Semanalmente' },
+                { value: 'monthly', text: 'Mensalmente' },
+                { value: 'user', text: 'Disparo pelo usuário' },
             ],
             weekDays: [
-                { value: 'domingo', label: 'Domingo' },
-                { value: 'segunda', label: 'Segunda-feira' },
-                { value: 'terca', label: 'Terça-feira' },
-                { value: 'quarta', label: 'Quarta-feira' },
-                { value: 'quinta', label: 'Quinta-feira' },
-                { value: 'sexta', label: 'Sexta-feira' },
-                { value: 'sabado', label: 'Sábado' }
+                { value: '1', label: 'Domingo' },
+                { value: '2', label: 'Segunda-feira' },
+                { value: '3', label: 'Terça-feira' },
+                { value: '4', label: 'Quarta-feira' },
+                { value: '5', label: 'Quinta-feira' },
+                { value: '6', label: 'Sexta-feira' },
+                { value: '7', label: 'Sábado' }
             ],
             selectedMonths: [],
             selectAllMonths: false,
@@ -307,20 +305,36 @@ export default {
     computed: {
         filteredSelectFreqOpt(index) {
             if (index === 0) {
-                return this.selectFreqOpt.filter(option => option.value !== 'imediatamente');
+                return this.selectFreqOpt.filter(option => option.value !== 'immediately');
             }
             return this.selectFreqOpt;
         },
+        minDate() {
+            const currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() - 1);
+            const currentDateFormatted = currentDate.toISOString().split('T')[0];
+            return currentDateFormatted;
+        }
     },
     watch: {
-        selectedStep() {
-            this.selectedFreqOpt = null;
+        selectedStep(newStep, oldStep) {
+            if (this.selectedStep.scheduling !== undefined) {
+                this.loadStepInfo();
+            } else {
+                this.selectedFreqOpt = null;
+                this.resetSelect();
+            }
+
+            this.stepCopy = JSON.parse(JSON.stringify(this.selectedStep));
         }
+    },
+    mounted() {
+        if (this.selectedStep.scheduling !== undefined) this.loadStepInfo();
     },
     methods: {
         toggleAllMonths() {
             if (this.selectAllMonths) {
-                this.selectedMonths = ['janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+                this.selectedMonths = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
             } else {
                 this.selectedMonths = [];
             }
@@ -332,7 +346,63 @@ export default {
                 this.selectedDays = [];
             }
         },
-    }
+        loadStepInfo() {
+            const scheduling = JSON.parse(this.selectedStep.scheduling);
+
+            this.selectedFreqOpt = scheduling.stepSchedule.frequency;
+            this.intervalDays = scheduling.stepSchedule.intervalDays;
+            this.intervalWeeks = scheduling.stepSchedule.intervalWeeks;
+            this.selectedWeekDays = scheduling.stepSchedule.weekDays;
+            this.selectedMonths = scheduling.stepSchedule.months;
+            this.selectedDays = scheduling.stepSchedule.days;
+            this.executeImmediately = scheduling.stepSchedule.executeImmediately;
+
+            if (scheduling.stepSchedule.startDateTime === null) {
+                this.startDate = null;
+                this.startTime = null;
+            } else {
+                this.startDate = scheduling.stepSchedule.startDateTime.split('T')[0];
+                this.startTime = scheduling.stepSchedule.startDateTime.split('T')[1];
+            }
+        },
+        resetSelect() {
+            this.intervalDays = null;
+            this.intervalWeeks = null;
+            this.startDate = null;
+            this.startTime = null;
+            this.selectedWeekDays = [];
+            this.selectedMonths = [];
+            this.selectedDays = [];
+            this.selectAllMonths = false;
+            this.selectAllDays = false;
+            this.executeImmediately = false;
+        },
+        saveSchedulerChanges() {
+            let dateTime = this.startDate + 'T' + this.startTime + ':00';
+            if (this.startDate === null || this.startTime === null) {
+                dateTime = null;
+            }
+            
+            const data = {
+                // "pipelineId": this.pipelineId,
+                // "stepId": this.selectedStep.id,
+                "stepSchedule": {
+                    "executeImmediately": this.selectedFreqOpt === 'immediately' ? true : false,
+                    "frequency": this.selectedFreqOpt,
+                    "startDateTime": dateTime,
+                    "intervalDays": this.intervalDays,
+                    "intervalWeeks": this.intervalWeeks,
+                    "weekDays": this.selectedWeekDays,
+                    "months": this.selectedMonths,
+                    "days": this.selectedDays
+                },
+            };
+
+            this.stepCopy.scheduling = JSON.stringify(data);
+
+            this.$emit('send-scheduler-changes', this.stepCopy);
+        }
+    },
 };
 
 </script>
