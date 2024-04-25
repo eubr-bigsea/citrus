@@ -1,7 +1,7 @@
 <template>
     <b-modal title="Amostra dos últimos resultados" ref="modal" size="lg" ok-only button-size="sm">
         <div class="scroll-area">
-            <table v-if="sample" class="table table-sm table-smallest">
+            <table v-if="sample" class=" table-smallest table-sm table table-striped mt-1">
                 <thead>
                     <tr>
                         <th v-for="attr in sample.attributes" :key="attr.label">{{ attr.label }}</th>

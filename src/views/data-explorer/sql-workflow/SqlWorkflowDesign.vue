@@ -408,9 +408,12 @@ const executeWorkflow = async () => {
                 jobStatus.value = '';
                 if (msg.status === 'ERROR') {
                     error(msg);
+                    loadingData.value = false;
+                }
+                if (msg.status === 'COMPLETED') {
+                    loadingData.value = false;
                 }
                 jobStatus.value = msg;
-                loadingData.value = false;
             },
         };
         connectWebSocket(standSocketServer, standNamespace, standSocketIoPath,
