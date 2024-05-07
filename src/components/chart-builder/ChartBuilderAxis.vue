@@ -408,7 +408,7 @@
                                                     </template>
                                                 </v-select>
                                             </b-form-group>
-                                            <!-- FIXME 
+                                            <!-- FIXME
                                                     <b-form-group label="Exibir eixo:">
                                                         <select class="form-control form-control-sm">
                                                             <option label="LEFT" value="LEFT">Esquerda</option>
@@ -656,7 +656,7 @@
                                                         debounce="500" />
                                                 </b-form-group>
                                             </template>
-                                            <!-- FIXME 
+                                            <!-- FIXME
                                                             <b-form-group label="Exibir eixo:">
                                                                 <select class="form-control form-control-sm">
                                                                     <option label="LEFT" value="LEFT">Esquerda</option>
@@ -758,8 +758,8 @@ const mapFamily = computed(() =>
 const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
 );
-const hasAxis = computed(() => 
-    !['pie', 'donut', 'indicator'].includes(props.chartType)
+const hasAxis = computed(() =>
+    !['pie', 'donut', 'indicator', 'treemap', 'sunburst'].includes(props.chartType)
 );
 const xSeries = computed(() =>
     editableVisualization.value.x.value.slice(0, limitXDimension.value)
@@ -918,8 +918,10 @@ watch(
     zoom: .8
 }
 .axis-label {
+    text-align: right;
     float: left;
     width: 60px;
-    margin-top: 8px;
+    margin: 12px 5px 0 0 ;
+    font-size: 10pt;
 }
 </style>
