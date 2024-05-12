@@ -690,6 +690,7 @@ export default {
             register: 'Registrar',
             resetPassword: 'Redefinir senha',
             role: 'Grupo | Grupos',
+            runs: 'Execução | Execuções',
             start: 'Início',
             step: 'Etapa | Etapas',
             storage: 'Armazenamento | Armazenamentos',
@@ -790,8 +791,20 @@ export default {
         },
         pipeline: {
             alerts: {
+                pipelineCreationSuccess: 'Pipeline criada com sucesso',
                 templateCreationSuccess: 'Modelo criado com sucesso',
                 templateEditionSuccess: 'Modelo editado com sucesso',
+            },
+            list: {
+                doNotUseTemplate: 'Não utilizar modelo',
+                generalInfo: 'Informações Gerais',
+                pipelineCreation: 'Criação de Pipeline',
+                closeCreationModal: 'Ao fechar este modal, você será redirecionado para a página da pipeline criada.',
+                creationProcessCompleted: 'Processo de criação da pipeline finalizada.',
+                pipelineDescription: 'Descrição da Pipeline',
+                pipelineName: 'Nome da Pipeline',
+                pipelineNameMinLength: 'Nome da pipeline deve ter pelo menos 3 caracteres.',
+                wantToUseTemplate: 'Deseja utilizar algum modelo de pipeline?'
             },
             template: {
                 holdAndDragSteps: 'Segure e arraste as etapas abaixo para reordená-las.',
@@ -1432,6 +1445,7 @@ export default {
             register: 'Sign up',
             resetPassword: 'Reset password',
             role: 'Role | Roles',
+            runs: 'Run | Runs',
             start: 'Start',
             step: 'Step | Steps',
             storage: 'Storage | Storages',
@@ -1621,8 +1635,20 @@ export default {
         },
         pipeline: {
             alerts: {
+                pipelineCreationSuccess: 'Pipeline successfully created',
                 templateCreationSuccess: 'Template successfully created',
                 templateEditionSuccess: 'Template successfully edited',
+            },
+            list: {
+                doNotUseTemplate: 'Do not use template',
+                generalInfo: 'General information',
+                pipelineCreation: 'Pipeline Creation',
+                closeCreationModal: 'Closing this modal, you will be redirected to the pipeline page you created.',
+                creationProcessCompleted: 'Pipeline creation process completed.',
+                pipelineDescription: 'Pipeline Description',
+                pipelineName: 'Pipeline Name',
+                pipelineNameMinLength: 'Pipeline name must have at least 3 characters.',
+                wantToUseTemplate: 'Would you like to use a pipeline template?'
             },
             template: {
                 holdAndDragSteps: 'Hold and drag the steps below to reorder them.',

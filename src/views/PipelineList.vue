@@ -6,10 +6,10 @@
             </h1>
             <div>
                 <router-link :to="{name: 'pipelineRunsList'}" class="btn btn-outline-secondary float-left ml-2">
-                    <font-awesome-icon icon="fa fa-history" /> Execuções
+                    <font-awesome-icon icon="fa fa-history" /> {{$t('titles.runs', 2)}}
                 </router-link>
                 <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
-                    <font-awesome-icon icon="fa fa-plus" /> Adicionar
+                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </button>
             </div>
         </div> 
@@ -40,7 +40,9 @@
                     </template>
                     <template #actions="props">
                         <div>
-                            <button class="btn btn-sm btn-danger" title="Excluir pipeline" @click="deletePipeline(props.row.id, props.row.name)">
+                            <button class="btn btn-sm btn-danger" 
+                                    :title="$t('actions.delete') + ' Pipeline'" 
+                                    @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
@@ -68,7 +70,7 @@ export default {
             first: 'first',
             pipelineTemplates: [],
             templateOptions: [
-                { value: null, text: 'Não utilizar template' },
+                { value: null, text: this.$t('pipeline.list.doNotUseTemplate') },
             ],
             columns: [
                 'id',
@@ -93,12 +95,12 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    name: 'Nome',
-                    created: 'Criado em',
-                    updated: 'Atualizado em',
-                    version: 'Versão',
-                    user_name: 'Nome do usuário',
-                    actions: 'Ações',
+                    name: this.$tc('common.name'),
+                    created: this.$tc('common.created'),
+                    updated: this.$tc('common.updated'),
+                    version: this.$tc('common.version'),
+                    user_name: this.$tc('common.user.name'),
+                    actions: this.$tc('common.action', 2)
                 },
                 sortable: ['id','name','created','updated'],
                 filterable: ['name'],

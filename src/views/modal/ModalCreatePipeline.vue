@@ -1,6 +1,6 @@
 <template>
     <b-modal ref="addModal" 
-             title="Criação de pipeline" 
+             :title="$t('pipeline.list.pipelineCreation')" 
              size="lg" 
              hide-footer
              scrollable 
@@ -10,37 +10,37 @@
                 <div class="wizard-header">
                     <div class="wizard-title">
                         <font-awesome-icon class="mr-1" icon="fa fa-file" />
-                        Informações gerais
+                        {{$t('pipeline.list.generalInfo')}}
                     </div>
                     <div>
-                        Etapa 1 de 2
+                        {{$t('titles.step', 1)}} 1 {{$t('titles.of', 1)}} 2
                     </div>
                 </div>
                 <div class="position-relative">
-                    <label class="wizard-label" for="identificador">Nome</label>
+                    <label class="wizard-label" for="identificador">{{$t('common.name')}}</label>
                     <input id="identificador" 
                            v-model="pipelineName" 
                            class="wizard-input"
                            type="text"
                            maxlength="100" 
-                           placeholder="Nome da pipeline" 
+                           :placeholder="$t('pipeline.list.pipelineName')" 
                            @input="handleInput">
                     <div v-if="invalidInputLength" class="wizard-invalid-length">
-                        - Nome da pipeline deve ter pelo menos 3 caracteres.
+                        - {{$t('pipeline.list.pipelineNameMinLength')}}
                     </div>
                 </div>
 
-                <label class="wizard-label" for="descricao">Descrição</label>
+                <label class="wizard-label" for="descricao">{{$t('common.description')}}</label>
                 <textarea id="descricao" 
                           v-model="pipelineDescription"
                           class="wizard-textarea" 
                           type="text"
                           maxlength="200" 
-                          placeholder="Descrição da pipeline" />
+                          :placeholder="$t('pipeline.list.pipelineDescription')" />
 
                 <div class="wizard-stepBox-buttons" :class="first">
                     <b-button size="sm" variant="secondary" @click="firstWizardStep">
-                        Avançar
+                        {{$t('actions.next')}}
                     </b-button>
                 </div>
             </div>
@@ -48,37 +48,37 @@
                 <div class="wizard-header">
                     <div class="wizard-title">
                         <font-awesome-icon class="mr-1" icon="fa fa-folder" />
-                        Template
+                        {{$t('titles.template')}}
                     </div>
                     <div>
-                        Etapa 2 de 2
+                        {{$t('titles.step', 1)}} 2 {{$t('titles.of', 1)}} 2
                     </div>
                 </div>
                 
-                Deseja utilizar algum template de pipeline?
+                {{$t('pipeline.list.wantToUseTemplate')}}
                 <b-form-select v-model="selectedTemplate" :options="templateOptions" class="mt-1 mb-1" />
 
                 <div v-if="selectedTemplate !== null">
                     <b-card class="wizard-infos">
                         <div class="wizard-infos-body">
                             <div class="wizard-infos-body-column">
-                                <span class="left">Nome:</span><span class="right">{{findTemplate().name}}</span>
+                                <span class="left">{{$t('common.name')}}:</span><span class="right">{{findTemplate().name}}</span>
                             </div>
                             <div class="wizard-infos-body-column">
-                                <span class="left">Descrição:</span><span class="right-description">{{findTemplate().description}}</span>
+                                <span class="left">{{$t('common.description')}}:</span><span class="right-description">{{findTemplate().description}}</span>
                             </div>
                             <div class="wizard-infos-body-column">
-                                <span class="left">Etapas:</span> 
+                                <span class="left">{{$t('titles.step', 2)}}:</span> 
                                 <b-container class="wizard-steps-table">
                                     <b-row class="wizard-steps-header">
                                         <b-col>
-                                            Ordem
+                                            {{$t('titles.order', 2)}}
                                         </b-col>
                                         <b-col>
-                                            Nome
+                                            {{$t('common.name')}}
                                         </b-col>
                                         <b-col>
-                                            Descrição
+                                            {{$t('common.description')}}
                                         </b-col>
                                     </b-row>
                                     <b-row v-for="(etapa, index) in findTemplate().steps" :key="etapa.id" class="wizard-dragDiv">
@@ -100,10 +100,10 @@
 
                 <div class="wizard-stepBox-buttons">
                     <b-button size="sm" variant="secondary" @click="wizardStep = 1">
-                        Voltar
+                        {{$t('actions.back')}}
                     </b-button>
                     <b-button size="sm" variant="secondary" @click="secondWizardStep">
-                        Finalizar
+                        {{$t('actions.finalize')}}
                     </b-button>
                 </div>
             </div>
@@ -111,17 +111,17 @@
                 <div class="wizard-header">
                     <div class="wizard-title">
                         <font-awesome-icon class="mr-1" icon="fa fa-square-check" />
-                        Processo de criação da pipeline finalizada.
+                        {{$t('pipeline.list.creationProcessCompleted')}}
                     </div>
                 </div>
 
                 <div>
-                    Ao fechar este modal, você será redirecionado para a página da pipeline criada.
+                    {{$t('pipeline.list.closeCreationModal')}}
                 </div>
 
                 <div class="wizard-stepBox-buttons">
                     <b-button size="sm" variant="primary" @click="closeAddModal">
-                        Fechar
+                        {{$t('actions.close')}}
                     </b-button>
                 </div>
             </div>
@@ -199,7 +199,7 @@ export default {
                 .post(`${tahitiUrl}/pipelines`, this.pipelineData)
                 .then((resp) => {
                     this.createdPipelineId = resp.data.id;
-                    this.success('Pipeline criada com sucesso');})
+                    this.success(this.$t('pipeline.alerts.pipelineCreationSuccess'));})
                 .catch(
                     function (e) {
                         this.error(e);

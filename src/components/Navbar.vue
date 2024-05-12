@@ -74,7 +74,7 @@
                     </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
-                        Template Pipeline
+                        {{$tc('pipeline.template.pipelineTemplates')}}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
