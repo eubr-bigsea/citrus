@@ -1,42 +1,42 @@
 <template>
     <b-modal ref="addTemplateModal" 
-             title="Criação de template" 
+             :title="$t('pipeline.template.templateCreation')" 
              size="lg" 
              scrollable 
              @ok="createTemplate">
         <div class="templatePage-card-modal">
             <div class="position-relative">
-                <label class="templatePage-label" for="nome">Nome</label>
+                <label class="templatePage-label" for="nome">{{$t('common.name')}}</label>
                 <input id="nome"
                        v-model="createTemplateName" 
                        class="templatePage-input" 
                        type="text"
                        maxlength="50"
-                       placeholder="Nome do template"
+                       :placeholder="$t('pipeline.template.templateName')"
                        @input="handleInput">
                 <div v-if="invalidInputLength" class="templatePage-invalid-length">
-                    - Nome do template deve ter pelo menos 3 caracteres.
+                    - {{$t('pipeline.template.templateNameMinLength')}}
                 </div>
             </div>
 
             <div>
-                <label class="templatePage-label" for="descricao">Descrição</label>
+                <label class="templatePage-label" for="descricao">{{$t('common.description')}}</label>
                 <textarea id="descricao" 
                           v-model="createTemplateDescription" 
                           class="templatePage-textarea" 
                           type="text"
                           maxlength="200" 
                           required
-                          placeholder="Descrição do template" />
+                          :placeholder="$t('pipeline.template.templateDescription')" />
             </div>
             <div class="position-relative">
                 <label class="templatePage-label" for="descricao">
-                    Etapas
+                    {{$t('titles.step', 2)}}
                     <button id="popover-trigger" class="templatePage-tab-button">
                         <font-awesome-icon icon="info-circle" />
                     </button>
                     <b-popover target="popover-trigger" triggers="hover">
-                        Segure e arraste as etapas abaixo para reordená-las.
+                        {{$t('pipeline.template.holdAndDragSteps')}}
                     </b-popover>
                 </label>
                 <div class="templatePage-input-container">
@@ -46,12 +46,12 @@
                             {{setOrder(input, index)}}
                             #{{index + 1}}
                             <input v-model="input.name" 
-                                   placeholder="Nome da etapa" 
+                                   :placeholder="$t('pipeline.template.stepName')" 
                                    class="templatePage-input" 
                                    maxlength="50"
                                    :class="stepInput">
                             <textarea v-model="input.description" 
-                                      placeholder="Descrição da etapa" 
+                                      :placeholder="$t('pipeline.template.stepDescription')" 
                                       class="templatePage-textarea" 
                                       maxlength="200"
                                       :class="stepTextarea" />
@@ -141,7 +141,7 @@ export default {
                 .post(`${tahitiUrl}/pipeline-templates`, data)
                 .then(() => {
                     this.$emit('onupdate-template-list');
-                    this.success('Template criado com sucesso');
+                    this.success(this.$t('pipeline.alerts.templateCreationSuccess'));
                 })
                 .catch(
                     function (e) {
