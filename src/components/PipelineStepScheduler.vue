@@ -3,7 +3,7 @@
         <div class="editPage-agendador-body">
             <div class="editPage-agendador-box">
                 <p class="font-weight-bold">
-                    Quando deseja que sua etapa seja inicializada?
+                    {{$t('pipeline.edit.scheduler.chooseSchedulerFrequency')}}
                 </p>
                 <b-form-select v-model="selectedFreqOpt"
                                class="mb-2" 
@@ -15,7 +15,7 @@
             <div v-if="selectedFreqOpt === 'once'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        Iniciar:
+                        {{$t('titles.start')}}:
                     </p>
                     <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
                            :min="minDate">
@@ -26,7 +26,7 @@
             <div v-if="selectedFreqOpt === 'daily'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        Iniciar:
+                        {{$t('titles.start')}}:
                     </p>
                     <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
                            :min="minDate">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="editPage-agendador-box" :class="dias">
                     <p class="font-weight-bold">
-                        Intervalo de repetição (dias):
+                        {{$t('pipeline.edit.scheduler.repetitionInterval')}} ({{$t('common.periods.day', 2).toLowerCase()}}):
                     </p>
                     <input id="repetir-dias" v-model="intervalDays" class="editPage-input" :class="dias" 
                            type="number" min="0">
@@ -44,7 +44,7 @@
             <div v-if="selectedFreqOpt === 'weekly'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        Iniciar:
+                        {{$t('titles.start')}}:
                     </p>
                     <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
                            :min="minDate">
@@ -52,7 +52,7 @@
                 </div>
                 <div class="editPage-agendador-box" :class="dias">
                     <p class="font-weight-bold">
-                        Intervalo de repetição (semanas):
+                        {{$t('pipeline.edit.scheduler.repetitionInterval')}} ({{$t('common.periods.week', 2).toLowerCase()}}):
                     </p>
                     <input id="repetir-semanas" v-model="intervalWeeks" class="editPage-input" :class="dias" 
                            type="number" min="0">
@@ -60,7 +60,7 @@
                 <b-form-group>
                     <div class="editPage-chackbox-div" :class="diasSemana">
                         <p class="font-weight-bold mb-2">
-                            Selecione os dias da semana:
+                            {{$t('pipeline.edit.scheduler.selectWeekDays')}}:
                         </p>
                         <b-form-checkbox v-for="day in weekDays" :key="day.value" v-model="selectedWeekDays" :value="day.value">
                             {{day.label}}
@@ -72,7 +72,7 @@
             <div v-if="selectedFreqOpt === 'monthly'">
                 <div class="editPage-agendador-box" :class="radios">
                     <p class="font-weight-bold">
-                        Iniciar:
+                        {{$t('titles.start')}}:
                     </p>
                     <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
                            :min="minDate">
@@ -80,62 +80,62 @@
                 </div>
                 <b-form-group>
                     <p class="font-weight-bold mb-2">
-                        Selecione os meses:
+                        {{$t('pipeline.edit.scheduler.selectMonths')}}:
                     </p>
                     <b-form-checkbox v-model="selectAllMonths" class="mb-2" @change="toggleAllMonths">
-                        Selecionar todos
+                        {{$t('pipeline.edit.scheduler.selectAll')}}
                     </b-form-checkbox>
                     <div class="editPage-chackbox-div" :class="meses">
                         <div>
                             <b-form-checkbox v-model="selectedMonths" value="1">
-                                Janeiro
+                                {{$t('common.months.january')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="2">
-                                Fevereiro
+                                {{$t('common.months.february')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="3">
-                                Março
+                                {{$t('common.months.march')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="4">
-                                Abril
+                                {{$t('common.months.april')}}
                             </b-form-checkbox>
                         </div>
                         <div>
                             <b-form-checkbox v-model="selectedMonths" value="5">
-                                Maio
+                                {{$t('common.months.may')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="6">
-                                Junho
+                                {{$t('common.months.june')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="7">
-                                Julho
+                                {{$t('common.months.july')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="8">
-                                Agosto
+                                {{$t('common.months.august')}}
                             </b-form-checkbox>
                         </div>
                         <div>
                             <b-form-checkbox v-model="selectedMonths" value="9">
-                                Setembro
+                                {{$t('common.months.september')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="10">
-                                Outubro
+                                {{$t('common.months.october')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="11">
-                                Novembro
+                                {{$t('common.months.november')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="12">
-                                Dezembro
+                                {{$t('common.months.december')}}
                             </b-form-checkbox>
                         </div>
                     </div>
                 </b-form-group>
                 <b-form-group>
                     <p class="font-weight-bold mb-2">
-                        Selecione os dias:
+                        {{$t('pipeline.edit.scheduler.selectDays')}}:
                     </p>
                     <b-form-checkbox v-model="selectAllDays" class="mb-2" @change="toggleAllDays">
-                        Selecionar todos
+                        {{$t('pipeline.edit.scheduler.selectAll')}}
                     </b-form-checkbox>
                     <div class="editPage-chackbox-div" :class="meses">
                         <div>
@@ -254,10 +254,7 @@
 </template>
 
 <script>
-import Notifier from '../mixins/Notifier.js';
-
 export default {
-    mixins: [Notifier],
     props: {
         selectedStep: { type: Object, default: () => {} },
         selectedStepIndex: { type: Number, default: 0 },
@@ -278,22 +275,22 @@ export default {
             selectedWeekDays: [],
             selectedFreqOpt: null,
             selectFreqOpt: [
-                { value: null, text: 'Selecione a frequência' },
-                { value: 'immediately', text: 'Imediatamente após a etapa anterior' },
-                { value: 'once', text: 'Uma vez' },
-                { value: 'daily', text: 'Diariamente' },
-                { value: 'weekly', text: 'Semanalmente' },
-                { value: 'monthly', text: 'Mensalmente' },
-                { value: 'user', text: 'Disparo pelo usuário' },
+                { value: null, text: this.$t('pipeline.edit.scheduler.selectFrequency') },
+                { value: 'immediately', text: this.$t('pipeline.edit.scheduler.immediately') },
+                { value: 'once', text: this.$t('pipeline.edit.scheduler.once') },
+                { value: 'daily', text: this.$t('pipeline.edit.daily') },
+                { value: 'weekly', text: this.$t('pipeline.edit.weekly') },
+                { value: 'monthly', text: this.$t('pipeline.edit.monthly') },
+                { value: 'user', text: this.$t('pipeline.edit.scheduler.triggeredByUser') },
             ],
             weekDays: [
-                { value: '1', label: 'Domingo' },
-                { value: '2', label: 'Segunda-feira' },
-                { value: '3', label: 'Terça-feira' },
-                { value: '4', label: 'Quarta-feira' },
-                { value: '5', label: 'Quinta-feira' },
-                { value: '6', label: 'Sexta-feira' },
-                { value: '7', label: 'Sábado' }
+                { value: '1', label: this.$t('common.weekDays.sunday') },
+                { value: '2', label: this.$t('common.weekDays.monday') },
+                { value: '3', label: this.$t('common.weekDays.tuesday') },
+                { value: '4', label: this.$t('common.weekDays.wednesday') },
+                { value: '5', label: this.$t('common.weekDays.thursday') },
+                { value: '6', label: this.$t('common.weekDays.friday') },
+                { value: '7', label: this.$t('common.weekDays.saturday') }
             ],
             selectedMonths: [],
             selectAllMonths: false,

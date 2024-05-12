@@ -1,6 +1,6 @@
 <template>
     <b-modal ref="addStepModal" 
-             title="Adicionar etapa" 
+             :title="$t('pipeline.edit.addStep')"
              size="lg" 
              ok-only
              scrollable 
@@ -8,36 +8,42 @@
              @ok="addStep">
         <div class="configPage-card-modal">
             <div>
-                <label class="editPage-label" for="nome">Nome</label>
-                <input id="nome" v-model="newStep.name" class="editPage-input" type="text"
-                       placeholder="Nome da etapa">
+                <label class="editPage-label" for="nome">{{$t('common.name')}}</label>
+                <input id="nome" 
+                       v-model="newStep.name" 
+                       class="editPage-input" 
+                       type="text"
+                       :placeholder="$t('pipeline.template.stepName')">
             </div>
 
             <div>
-                <label class="editPage-label" for="descricao">Descrição</label>
-                <textarea id="descricao" v-model="newStep.description" class="editPage-textarea" type="text"
-                          placeholder="Descrição da etapa" />
+                <label class="editPage-label" for="descricao">{{$t('common.description')}}</label>
+                <textarea id="descricao" 
+                          v-model="newStep.description" 
+                          class="editPage-textarea" 
+                          type="text"
+                          :placeholder="$t('pipeline.template.stepDescription')" />
             </div>
         </div>
         <hr class="mt-4 mb-4">
-        <label class="editPage-label mb-2" for="descricao">Vincular etapa a um workflow</label>
+        <label class="editPage-label mb-2" for="descricao">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
         <div v-if="showWorkflowOps == 0" class="d-flex">
             <b-card class="w-50 mr-2 clickable" @click="showWorkflowOps = 1">
                 <span class="editPage-workflow-label">
                     <font-awesome-icon icon="fa fa-flask" class="mr-2" size="xl" />
-                    Workflow existente
+                    {{$t('pipeline.edit.settings.existingWorkflow')}}
                 </span>
             </b-card>
             <b-card class="w-50 ml-2 clickable" @click="showWorkflowOps = 2">
                 <span class="editPage-workflow-label">
                     <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
-                    Novo workflow
+                    {{$t('actions.new')}} {{$t('titles.workflow')}}
                 </span>
             </b-card>
         </div>
 
         <div v-if="showWorkflowOps == 1" class="mb-3">
-            <label>Escolha um workflow existente para vincular a esta etapa:</label>
+            <label>{{$t('pipeline.edit.settings.chooseExistingWorkflow')}}:</label>
             <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name" 
                         class="w-100" @search="loadWorkflowList">
                 <template #no-options="{ }">
@@ -67,21 +73,21 @@
                 </template>
             </vue-select>
             <b-button class="mt-3" @click="showWorkflowOps = 0">
-                Cancelar
+                {{$t('actions.cancel')}}
             </b-button>
         </div>
         <div v-if="showWorkflowOps == 2" class="d-flex flex-column">
             <b-container class="editPage-workflow-box p-3">
-                <label class="editPage-label mb-2" for="identificador">Criação do workflow</label>
+                <label class="editPage-label mb-2" for="identificador">{{$t('pipeline.edit.settings.workflowCreation')}}</label>
                 <b-row>
                     <b-col>
-                        <label class="" for="name">Nome:</label>
+                        <label class="" for="name">{{$t('common.name')}}:</label>
                         <input id="name" v-model="workflowName" v-focus type="text"
                                class="form-control w-100 form-control-sm mb-2"
                                maxlength="100">
                     </b-col>
                     <b-col>
-                        <label class="" for="platform">Plataforma:</label>
+                        <label class="" for="platform">{{$t('common.platform')}}:</label>
                         <input id="platform" v-focus value="SPARK" type="text"
                                class="form-control w-100 form-control-sm mb-2"
                                maxlength="100" disabled>
@@ -89,15 +95,15 @@
                 </b-row>
                 <b-row>
                     <b-col cols="6">
-                        <label>Tipo:</label>
+                        <label>{{$t('common.type', 1)}}:</label>
                         <b-form-select v-model="selectedWorkflowType" :options="workflowTypeOptions" class="w-100 mb-2" />
                     </b-col>
                     <b-col class="position-relative">
                         <b-button class="position-absolute" style="right: 15px; bottom: 0;" variant="success" @click="createWorkflow">
-                            Confirmar
+                            {{$t('actions.confirm')}}
                         </b-button>
                         <b-button class="position-absolute" style="right: 120px; bottom: 0;" @click="showWorkflowOps = 0">
-                            Cancelar
+                            {{$t('actions.cancel')}}
                         </b-button>
                     </b-col>
                 </b-row>
@@ -152,7 +158,7 @@ export default {
             this.$refs.addStepModal.show();
         },
         redirectToWorkflow(step) {
-            if(step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
+            if(step.workflow === undefined) this.warning(this.$t('pipeline.alerts.stepNotAssociated'));
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
         },
         editPipeline(msg) {
@@ -183,7 +189,7 @@ export default {
             // eslint-disable-next-line vue/no-mutating-props
             this.pipeline.steps.push(copy);
             
-            this.editPipeline('Etapa adicionada com sucesso.');
+            this.editPipeline(this.$t('pipeline.alerts.stepCreationSuccess'));
         },
         createWorkflow() {
             const workflow = {
@@ -195,7 +201,7 @@ export default {
             axios
                 .post(`${tahitiUrl}/workflows`, workflow)
                 .then(() => {
-                    this.success('Workflow criado com sucesso.');
+                    this.success(this.$t('pipeline.alerts.successfullyCreatedAssociated'));
                 })
                 .catch(
                     function (e) {
