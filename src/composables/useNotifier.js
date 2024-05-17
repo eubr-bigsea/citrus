@@ -55,7 +55,7 @@ export default (vm) => {
                     'fa-circle-xmark')
             } else if (e.response && e.response.data) {
                 const responseData = e.response.data;
-                if (responseData.message === 'Invalid data') {
+                if (responseData.message === 'Invalid data' | responseData.message == 'Validation error') {
                     const h = vm.$createElement;
                     const errorMessage = h('div', {},
                         [
@@ -92,6 +92,7 @@ export default (vm) => {
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
                 }
+
             } else {
                 display(e.message || e,
                     title || i18n.$t('titles.error', 2),

@@ -268,11 +268,16 @@ class SqlBuilderWorkflow extends Workflow {
     }
     updateLists() {
         this.dataSources = this.tasks.filter(t => t.operation.slug === 'read-data');
+        this.dataSources.forEach((ds, index) => ds.display_order = index);
+        const countDataSources = this.dataSources.length;
+
         this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
+        this.sqls.forEach((sql, index) => sql.display_order = index + countDataSources);
     }
     addSqlTask(taskId, command) {
         const forms = {
             query: { value: command },
+            comment: { value: '' },
             save: { value: false },
             new_name: { value: '' },
             path: { value: '' },
@@ -285,7 +290,7 @@ class SqlBuilderWorkflow extends Workflow {
             name: `sql${this.tasks.length}`,
             operation: new Operation({ id: 93, slug: 'execute-sql' }),
             display_order: this.tasks.length,
-            environment: 'DESIGN',
+            environment: 'DESIGN', // must be set!
             forms
         });
         if (taskId) {
@@ -310,12 +315,14 @@ class SqlBuilderWorkflow extends Workflow {
         const forms = {
             data_source: { value: dataSourceId, labelValue }
         };
+
         const task = new Task({
             id: Operation.generateTaskId(),
             name: labelValue.replaceAll(/\W/gi, '_').substring(0, 10),
             operation: new Operation({ id: 2100, slug: 'read-data' }),
             display_order: this.dataSources.length,
-            forms
+            forms,
+            environment: 'DESIGN', // must be set!
         });
         this.tasks.push(task);
         this.updateLists();

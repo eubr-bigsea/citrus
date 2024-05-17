@@ -130,8 +130,7 @@
                     <form class="form-inline">
                         <label class="sr-only" for="type">{{ $tc('common.type') }}</label>
                         <select v-model="typeFilter" class="form-control w-25 pt-0">
-                            <option selected disabled>
-                                {{ $tc('actions.choose') }}...
+                            <option selected value="">
                             </option>
                             <option value="DATA_EXPLORER">
                                 {{ $t('dataExplorer.experiments.DATA_EXPLORER') }}
@@ -269,10 +268,11 @@ export default {
                     self.$refs.searchBtn.classList.remove('btn-spinner');
                     data.sort = data.orderBy;
                     data.asc = data.ascending === 1 ? 'true' : 'false';
-                    data.size = 10;
+                    data.size = 5;
                     data.name = self.searchFilter //data.query;
                     data.platform = META_PLATFORM_SLUG;
-                    if (self.typeFilter) {
+
+                    if (self.typeFilter && self.typeFilter.length) {
                         data.types = self.typeFilter;
                     } else {
                         data.types = 'experiment';
@@ -313,8 +313,15 @@ export default {
             }
         };
     },
+    beforeMount(){
+        this.typeFilter = localStorage.getItem('experiments:list:type') || '';
+        this.searchFilter = localStorage.getItem('experiments:list:search') || '';
+    },
     methods: {
         search() {
+            localStorage.setItem('experiments:list:type', this.typeFilter);
+            localStorage.setItem('experiments:list:search', this.searchFilter);
+
             this.$refs.workflowList.refresh()
         },
         navigate(name, query) {

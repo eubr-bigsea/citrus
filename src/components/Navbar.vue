@@ -95,7 +95,7 @@
                         <div class="text-center">
                             <strong>{{ $tc('titles.role', 2) }}</strong><br>
                             <div class="mt-2">
-                                <span v-for="role in user.roles" :key="role.id" class="badge badge-info mr-1 p-1">
+                                <span v-for="role in userRoles" :key="role.id" class="badge badge-info mr-1 p-1">
                                     {{ role.label }}
                                 </span>
                             </div>
@@ -218,6 +218,12 @@ export default {
         ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user']),
         sampleNotifications() {
             return this.notifications.length > 5 ? this.notifications.slice(0, 5) : this.notifications;
+        },
+        userRoles() {
+            return Object.values(this.user.roles.reduce((acc, role) => {
+                acc[role.id] = role;
+                return acc;
+            }, {}));
         }
     },
     mounted() {

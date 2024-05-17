@@ -122,6 +122,7 @@ export default {
             address: 'Endereço',
             adminRole: 'Administrador',
             alias: 'Novo nome',
+            aliasSql: 'Apelido',
             author: 'Autor',
             attention: 'Atenção',
             alreadyHaveAccount: 'Já possui uma conta?',
