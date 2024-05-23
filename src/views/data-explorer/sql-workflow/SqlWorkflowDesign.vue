@@ -25,12 +25,10 @@
                                 :placeholder="$tc('common.aliasSql')" maxlength="100"
                                 title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
 
-                            <!--
                             <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
-                                class="mt-3" value="true" unchecked-value="false">
-                                Usar o Hive Warehouse Connector
+                                class="mt-3" value="true" unchecked-value="false" style="zoom:.9">
+                                Usar o Hive Warehouse Connector (HWC)
                             </b-form-checkbox>
-                            -->
                             <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
                             <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
                                 ref="clusterRef" :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true"
@@ -132,8 +130,10 @@
                                     <div class="button-toolbar">
                                         <sql-editor-toolbar ref="toolbar" :task="sql" :show-move-up="i > 0"
                                             :data-task="sql.id" :show-move-down="i < workflowObj.sqls.length - 1"
+                                            :useHWC="sql.forms.useHWC.value"
                                             @on-move="handleMoveSql" @on-remove="handleRemoveSql" @on-add="handleAddSql"
-                                            @on-indent="handleIndent(sql.id)" @on-execute="execute(i)" />
+                                            @on-indent="handleIndent(sql.id)" @on-execute="execute(i)"
+                                            @on-toggle-use-hwc="handleToggleHWC"/>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -573,6 +573,9 @@ const handleAddSqlFromDataSource = (type, dataSourceId) => {
 const handleChangeAlias = () => {
     isDirty.value = true;
     updateDataSources(true);
+}
+const handleToggleHWC = (task) => {
+    task.forms.useHWC.value = !task.forms.useHWC.value
 }
 const toolbar = ref();
 

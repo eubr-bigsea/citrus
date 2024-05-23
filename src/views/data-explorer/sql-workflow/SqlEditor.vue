@@ -2,7 +2,7 @@
     <div ref="container">
     </div>
 </template>
- 
+
 <script setup>
 
 import { debounce } from "@/util.js"
@@ -151,4 +151,3 @@ onMounted(() => {
 });
 defineExpose({ focus, indent })
 </script>
- 
