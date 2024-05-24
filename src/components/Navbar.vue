@@ -13,7 +13,7 @@
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
                     <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
+                <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
                             data-test="experiments-menu">
                     <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $tc('titles.dataExplorer', 2) }}
                 </b-nav-item>
