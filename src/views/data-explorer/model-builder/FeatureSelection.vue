@@ -9,7 +9,7 @@
                         <font-awesome-icon icon="fa-bullseye" class="text-primary" />
                         Alvo atual: {{ selectedTarget.name }}</label>
                 </div>
-                <div v-else-if="supervisioned" class="text-danger">
+                <div v-else-if="supervised" class="text-danger">
                     É necessário informar um atributo alvo!
                 </div>
                 <div class="mt-2 features-list scroll-area">
@@ -22,7 +22,7 @@
                                     {{ attr.name }}
                                 </b-form-checkbox>
                             </div>
-                            <div v-else-if="supervisioned" class="w-100 p-1" title="Alvo">
+                            <div v-else-if="supervised" class="w-100 p-1" title="Alvo">
                                 <font-awesome-icon icon="fa-bullseye" class="text-primary" /> {{ attr.name }}
                             </div>
                         </b-list-group-item>
@@ -46,7 +46,7 @@
                                     <b-form-radio name="usage" value="unused">
                                         <font-awesome-icon icon="fa fa-times" class="text-danger" /> Não usar
                                     </b-form-radio>
-                                    <b-form-radio v-if="supervisioned" name="usage" value="label">
+                                    <b-form-radio v-if="supervised" name="usage" value="label">
                                         <font-awesome-icon icon="fa fa-bullseye" class="text-primary" /> Alvo (rótulo)
                                     </b-form-radio>
                                     <b-form-radio name="usage" value="feature">
@@ -224,7 +224,7 @@ export default {
         attributes: { type: Array, required: true },
         features: { required: true, type: Object, default: () => { return { forms: {} } } },
         target: { type: String, default: () => null },
-        supervisioned: { type: Boolean },
+        supervised: { type: Boolean },
     },
     data() {
         return {

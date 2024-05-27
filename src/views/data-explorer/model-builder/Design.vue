@@ -49,7 +49,7 @@
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
                                     <SideBar :selected="selected"
-                                             :supervisioned="supervisioned"
+                                             :supervised="supervised"
                                              @edit="edit" />
                                 </div>
                             </div>
@@ -59,7 +59,7 @@
                                     <template v-if="selected === 'target'">
                                         <DesignData :attributes="attributes"
                                                     :data-source-list="dataSourceList"
-                                                    :supervisioned="supervisioned"
+                                                    :supervised="supervised"
                                                     :label="labelAttribute"
                                                     :data-source="dataSource"
                                                     :sample="workflowObj.sample"
@@ -77,7 +77,7 @@
                                         <FeatureSelection :attributes="attributes"
                                                           :features="workflowObj.features"
                                                           :target="workflowObj.forms.$meta.value.target"
-                                                          :supervisioned="supervisioned"
+                                                          :supervised="supervised"
                                                           @update-target="handleUpdateTarget" />
                                     </template>
                                     <template v-if="selected === 'generation'">
@@ -90,7 +90,7 @@
                                         <Algorithms ref="algorithms"
                                                     :operations="algorithmOperation"
                                                     :workflow="workflowObj"
-                                                    :operation-map="operationsMap" 
+                                                    :operation-map="operationsMap"
                                                     />
                                     </template>
                                     <template v-if="selected === 'grid'">
@@ -113,7 +113,7 @@
                         <Result ref="results"
                                 :jobs="jobs"
                                 :number-of-features="numberOfFeatures"
-                                @delete-job="handleDeleteJob" 
+                                @delete-job="handleDeleteJob"
                                 :features="features"/>
                     </b-tab>
                 </b-tabs>
@@ -194,7 +194,7 @@ export default {
             get() { return this.workflowObj.tasks[0].forms.data_source.value; },
             set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
         },
-        supervisioned() {
+        supervised() {
             return this.taskType === 'regression' || this.taskType === 'classification';
         },
         taskType: {
@@ -309,7 +309,7 @@ export default {
                 }
             });
 
-            if (!hasLabel) {
+            if (!hasLabel && this.supervised) {
                 errors.push('Nenhum atributo alvo (rótulo) foi especificado.');
             }
             if (!hasFeature) {
