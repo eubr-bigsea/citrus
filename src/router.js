@@ -106,6 +106,9 @@ const TestEntities = () => import('./views/data-explorer/TestEntities.vue');
 const ProjectsView = () => import('./views/project/ProjectsView.vue');
 const ProjectDetail = () => import('./views/project/ProjectDetail.vue');
 
+/* Graph Explorer */
+const screen1 = () => import('./views/graph-explorer/screen1.vue');
+
 
 Vue.use(VueRouter);
 
