@@ -1,16 +1,16 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-2" data-test="header">
             <div class="mt-2">
-                <h6 class="editPage-pretitle">
+                <h6 class="editPage-pretitle" data-test="pretitle">
                     Pipeline #{{pipeline.id}}
                 </h6>
                 <h1 class="editPage-title">
-                    <InputHeader v-model="pipeline.name" @input="isDirty = true" />
+                    <InputHeader v-model="pipeline.name" data-test="input-header" @input="isDirty = true" />
                 </h1> 
             </div>
             <div class="btn-group">
-                <div class="editPage-enabled-checkbox-div" :class="{'editPage-disabled-checkbox-div': !pipeline.enabled}">
+                <div class="editPage-enabled-checkbox-div" data-test="enabled-checkbox" :class="{'editPage-disabled-checkbox-div': !pipeline.enabled}">
                     <b-form-checkbox v-model="pipeline.enabled" 
                                      class="d-flex align-items-center" 
                                      name="check-button" 
@@ -20,19 +20,19 @@
                         {{$t('common.enabled')}}
                     </b-form-checkbox>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary float-left border-right-0" @click="showPeriodicityDiv = !showPeriodicityDiv"> 
+                <button class="btn btn-sm btn-outline-secondary float-left border-right-0" data-test="periodicity-button" @click="showPeriodicityDiv = !showPeriodicityDiv"> 
                     <font-awesome-icon icon="fa fa-calendar-alt" class="" /> {{$t('pipeline.edit.periodicity')}}
                 </button>
-                <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
+                <button class="btn btn-sm btn-outline-secondary float-left" data-test="history-button" @click="redirectToRuns">
                     <font-awesome-icon icon="fa fa-history" class="" /> {{$t('common.history')}}
                 </button>
-                <button class="btn btn-sm btn-outline-success" :disabled="!isDirty" @click="saveChanges">
+                <button class="btn btn-sm btn-outline-success" data-test="save-button" :disabled="!isDirty" @click="saveChanges">
                     <font-awesome-icon icon="fa fa-save" class="" /> {{$t('actions.save')}}
                 </button>
             </div>
         </div>
 
-        <div class="editPage-periodicity-div" :class="{'editPage-periodicity-div-hidden': !showPeriodicityDiv}">
+        <div class="editPage-periodicity-div" data-test="periodicity-div" :class="{'editPage-periodicity-div-hidden': !showPeriodicityDiv}">
             <div class="mb-2 d-flex align-items-center justify-content-between">
                 <span class="font-weight-bold">
                     {{$t('pipeline.edit.pipelinePeriodicity')}}
@@ -43,6 +43,7 @@
                 <p>{{$t('pipeline.edit.definePeriodicity')}}:</p>
                 <b-form-select v-model="pipelinePeriodicity" 
                                class="mt-0" 
+                               data-test="periodicity-select"
                                :options="periodicityOptions" />
             </div>
             <div v-if="pipelinePeriodicity === 'daily'">
@@ -52,7 +53,7 @@
                         {{$t('titles.start')}}:
                     </p>
                     <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
-                           :min="minDate">
+                           :min="minDate" data-test="daily-input">
                 </div>
                 <div class="d-flex flex-row">
                     <p class="font-weight-bold mr-2">
@@ -100,7 +101,7 @@
 
         <div class="editPage-body">
             <div class="editPage-container">
-                <div class="w-25">
+                <div class="w-25" data-test="left-container">
                     <div class="editPage-collapse-title">
                         {{$t('pipeline.edit.pipelineInfo')}}
                     </div>
@@ -118,12 +119,12 @@
                             </div>
                             <div class="editPage-infos-bottom mt-2">
                                 {{$t('common.description')}}
-                                <TextAreaCustom v-model="pipeline.description" @input="isDirty = true" />
+                                <TextAreaCustom v-model="pipeline.description" data-test="textarea-custom" @input="isDirty = true" />
                             </div>
                         </div>
                     </b-card>
                 </div>
-                <div class="w-75">
+                <div class="w-75" data-test="right-container">
                     <div class="editPage-collapse-title">
                         {{$t('pipeline.edit.pipelineSteps')}}
                     </div>
@@ -325,11 +326,11 @@ export default {
     },
     methods: {
         load() {
-            this.$Progress.start();
+            // this.$Progress.start();
             return axios
                 .get(`${tahitiUrl}/pipelines/${this.$route.params.id}`)
                 .then(resp => {
-                    this.$Progress.finish();
+                    // this.$Progress.finish();
                     this.pipeline = resp.data.data[0];
                     if(this.pipeline.steps.length !== 0) this.setSelectedStep(this.pipeline.steps[0], 0);
                     else this.pipelineWithoutSteps = true;
@@ -338,7 +339,7 @@ export default {
                 })
                 .catch(
                     function (e) {
-                        this.$Progress.finish();
+                        // this.$Progress.finish();
                         this.error(e);
                     }.bind(this)
                 );
