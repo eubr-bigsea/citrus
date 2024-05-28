@@ -35,7 +35,7 @@
                                             @click="handleChoose(option.value)" :name="`btn-${option.prop}`">
                                         {{$t('actions.choose')}}
                                     </button>
-                                    
+
                                     <button v-show="option.value=='fs'" class="btn btn-success" :disabled="storage[option.prop] === null"
                                             @click="handleChoose(option.value+'-insertUrl');handleShowModal()" :name="`btn-insert-url-${option.prop}`">
                                         {{$t('dataSource.insertViaUrl')}}
@@ -193,7 +193,7 @@
                     <div class="col-md-12" style="margin-top: 2%;">
                         <label class="font-weight-bold">{{$tc('dataSource.fileUrl')}}*:</label>
                         <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control"/>
-                    </div> 
+                    </div>
 
                     <div class="col-md-12" style="display: flex; justify-content: center; flex-direction: column; margin-top: 2%;">
                         <label>Sistema de arquivos atualmente escolhido:</label>
@@ -319,7 +319,19 @@ export default {
         const progressElem = ref(null);
         const isDirty = ref(false);
 
-        const setupResumable = () => {
+        const setupResumable = async () => {
+            const headers = {... axios.defaults.headers.common }; // < same auth headers
+            /*
+            const token = localStorage.getItem('token');
+            if (token) {
+                headers['Authorization'] = token
+                headers['X-THORN-ID'] = 'true'
+            } else {
+                let accessToken = await openIdService.getAccessToken();
+                accessToken && (headers['Authorization'] = accessToken);
+            }*/
+            console.table(headers)
+
             resumable = new Resumable({
                 target: `${limoneroUrl}/datasources/upload`,
                 chunkSize: 10 * 1024 * 1024,
@@ -330,8 +342,9 @@ export default {
                 query: { storage_id: storage.value.fsStorage },
                 permanentErrors: [400, 401, 404, 415, 500, 501],
                 chunkRetryInterval: 5000,
-                headers: axios.defaults.headers.common // < same auth headers
+                headers
             });
+
             if (resumable.support) {
                 resumable.assignDrop(dropElem.value);
                 resumable.assignBrowse(browseElem.value);
