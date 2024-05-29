@@ -321,7 +321,7 @@ export default {
 
         const setupResumable = async () => {
             const headers = {... axios.defaults.headers.common }; // < same auth headers
-            /*
+
             const token = localStorage.getItem('token');
             if (token) {
                 headers['Authorization'] = token
@@ -329,8 +329,7 @@ export default {
             } else {
                 let accessToken = await openIdService.getAccessToken();
                 accessToken && (headers['Authorization'] = accessToken);
-            }*/
-            console.table(headers)
+            }
 
             resumable = new Resumable({
                 target: `${limoneroUrl}/datasources/upload`,
