@@ -1,15 +1,15 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
-            <h1 class="templatePage-title">
+        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom" data-test="header">
+            <h1 class="templatePage-title" data-test="title">
                 {{$t('pipeline.template.pipelineTemplates')}}
             </h1>
-            <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
+            <button class="btn btn-primary btn-lemonade-primary float-left ml-2" data-test="addTemplateBtn" @click="openAddModal">
                 <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </button>
         </div>
 
-        <ModalCreateTemplate ref="addTemplateModal" @onupdate-template-list="updateTemplateList" />
+        <ModalCreateTemplate ref="addTemplateModal" data-test="addTemplateModal" @onupdate-template-list="updateTemplateList" />
 
         <div class="templatePage-body">
             <div class="templatePage-card-right">

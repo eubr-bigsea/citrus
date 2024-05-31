@@ -13,6 +13,7 @@
                        type="text"
                        maxlength="50"
                        :placeholder="$t('pipeline.template.templateName')"
+                       data-test="input"
                        @input="handleInput">
                 <div v-if="invalidInputLength" class="templatePage-invalid-length">
                     - {{$t('pipeline.template.templateNameMinLength')}}
@@ -27,7 +28,8 @@
                           type="text"
                           maxlength="200" 
                           required
-                          :placeholder="$t('pipeline.template.templateDescription')" />
+                          :placeholder="$t('pipeline.template.templateDescription')"
+                          data-test="textarea" />
             </div>
             <div class="position-relative">
                 <label class="templatePage-label" for="descricao">
@@ -49,18 +51,20 @@
                                    :placeholder="$t('pipeline.template.stepName')" 
                                    class="templatePage-input" 
                                    maxlength="50"
+                                   data-test="stepInput"
                                    :class="stepInput">
                             <textarea v-model="input.description" 
                                       :placeholder="$t('pipeline.template.stepDescription')" 
                                       class="templatePage-textarea" 
                                       maxlength="200"
+                                      data-test="stepTextarea"
                                       :class="stepTextarea" />
                             <button class="btn btn-sm btn-danger" @click="removeCreateTemplateInput(index)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
                     </draggable>
-                    <button class="btn btn-sm btn-primary mt-2" @click="addCreateTemplateInput">
+                    <button class="btn btn-sm btn-primary mt-2" data-test="addStepButton" @click="addCreateTemplateInput">
                         <font-awesome-icon icon="plus" />
                     </button>
                 </div>
