@@ -130,10 +130,11 @@
                                     <div class="button-toolbar">
                                         <sql-editor-toolbar ref="toolbar" :task="sql" :show-move-up="i > 0"
                                             :data-task="sql.id" :show-move-down="i < workflowObj.sqls.length - 1"
-                                            :useHWC="sql.forms.useHWC.value"
-                                            @on-move="handleMoveSql" @on-remove="handleRemoveSql" @on-add="handleAddSql"
-                                            @on-indent="handleIndent(sql.id)" @on-execute="execute(i)"
-                                            @on-toggle-use-hwc="handleToggleHWC"/>
+                                            :useHWC="sql.forms.useHWC.value" @on-move="handleMoveSql"
+                                            @on-remove="handleRemoveSql" @on-add="handleAddSql"
+                                            @on-indent="handleIndent(sql.id)"
+                                            @on-execute="(taskId, value) => executeWorkflow(sql.id, value)"
+                                            @on-toggle-use-hwc="handleToggleHWC" />
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -183,7 +184,7 @@ import { getCurrentInstance } from 'vue';
 import useDataSource from '@/composables/useDataSource.js';
 import useNotifier from '@/composables/useNotifier.js';
 
-import { SqlBuilderWorkflow } from '../entities.js';
+import { SqlBuilderWorkflow, EXECUTE_SQL } from '../entities.js';
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
@@ -263,7 +264,7 @@ const sparkFunctions = [
     'when', 'year', 'zip_with',];
 
 const customFunctions = ['trata_cnpj', 'remove_acento'];
-const functions = [...customFunctions, ...sparkFunctions]
+const functions = [...customFunctions, ...sparkFunctions];
 
 /* Control dirty state */
 const isDirty = ref(false);
@@ -330,7 +331,7 @@ onUnmounted(() => {
     disconnectWebSocket();
 });
 onMounted(() => {
-    job.value = {id: 800_000 + parseInt(internalWorkflowId.value)};
+    job.value = { id: 800_000 + parseInt(internalWorkflowId.value) };
     configureWebSocket();
 });
 //disconnectWebSocket();
@@ -403,7 +404,7 @@ const loadClusters = async () => {
     }
 };
 
-const executeWorkflow = async () => {
+const executeWorkflow = async (taskId, only) => {
 
     if (!workflowObj.value.preferred_cluster_id) {
         error('Por favor, selecione um cluster para execução.');
@@ -428,9 +429,29 @@ const executeWorkflow = async () => {
     delete cloned._tasksLookup;
     cloned.sqls = cloned.sqls.sort(c => c.display_order);
     cloned.tasks = [...cloned.dataSources, ...cloned.sqls];
+
+    if (taskId) {
+        if (only) {
+            cloned.tasks = cloned.tasks.filter(t => t.id === taskId || t.operation.id != EXECUTE_SQL);
+        } else {
+            let found = false;
+            cloned.tasks = cloned.tasks.filter(task => {
+                if (task.operation.id !== EXECUTE_SQL) {
+                    return true;
+                }
+                if (found) {
+                    return false;
+                }
+                if (task.id === taskId) {
+                    found = true;
+                    return true;
+                }
+                return true;
+            });
+        }
+    }
     delete cloned.dataSources;
     delete cloned.sqls;
-
     const PAGE_SIZE = 20
     const body = {
         workflow: cloned,
@@ -574,8 +595,8 @@ const handleChangeAlias = () => {
     isDirty.value = true;
     updateDataSources(true);
 }
-const handleToggleHWC = (task) => {
-    task.forms.useHWC.value = !task.forms.useHWC.value
+const handleToggleHWC = (task, value) => {
+    task.forms.useHWC.value = value
 }
 const toolbar = ref();
 

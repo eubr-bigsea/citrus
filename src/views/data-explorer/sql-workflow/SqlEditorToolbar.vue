@@ -8,7 +8,13 @@
             </button>
         </div>
         <div class="float-left ml-4">
-            <b-checkbox @change="emit('on-toggle-use-hwc', task)" v-model="useHWC">Usar HWC</b-checkbox>
+            <select class="form-control form-control-sm" @change="emit('on-toggle-use-hwc', task, useHWCVal)"
+                v-model="useHWCVal">
+                <option>Não usar HWC</option>
+                <option value="execute">Usar método execute() do HWC</option>
+                <option value="executeQuery">Usar método executeQuery() do HWC</option>
+                <option value="executeUpdate">Usar método executeUpdate() do HWC</option>
+            </select>
         </div>
         <div class="float-right" role="group">
             <button v-if="showMoveDown" class="btn btn-sm" :title="$t('actions.moveDown')"
@@ -22,8 +28,14 @@
             <button class="btn btn-sm" :title="$t('actions.indent')" @click="emit('on-indent', task.id)">
                 <font-awesome-icon icon="fa fa-indent" />
             </button>
-            <button class="btn btn-sm btn-success" :title="$t('actions.execute')" @click="emit('on-execute', task.id)">
-                <font-awesome-icon icon="fa fa-caret-right" /></button>
+            <b-dropdown id="dropdown-dropright" text="Drop-Right" variant="outline-success" class="m-2" size="sm">
+                <template #button-content>
+                    <font-awesome-icon icon="fa fa-caret-right" />
+                    Executar ...
+                </template>
+                <b-dropdown-item href="#" @click="emit('on-execute', task.id, false)">Até aqui</b-dropdown-item>
+                <b-dropdown-item href="#" @click="emit('on-execute', task.id, true)">Só este</b-dropdown-item>
+            </b-dropdown>
         </div>
         <div v-if="status" class="text-center text-info">
             <small>{{ status }}</small>
@@ -42,9 +54,9 @@ const props = defineProps({
     showMoveUp: { type: Boolean, default: true },
     showMoveDown: { type: Boolean, default: true },
     task: { type: Object, required: true },
-    useHWC: {type: Boolean, default: false},
+    useHWC: { type: String, default: null },
 });
-
+const useHWCVal = ref(props.useHWC)
 const modal = ref();
 const handleShowModal = () => {
     modal.value.show()

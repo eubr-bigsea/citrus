@@ -6,6 +6,7 @@ class Constants {
 }
 const META_PLATFORM_ID = 1000;
 const MODEL_BUILDER_CATEGORY = 2113;
+const EXECUTE_SQL = 93;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null, $meta = null } = {}) {
 
@@ -284,12 +285,13 @@ class SqlBuilderWorkflow extends Workflow {
             path: { value: '' },
             description: { value: '' },
             storage: { value: null },
-            tags: { value: [] }
+            tags: { value: [] },
+            useHWC: {value: ''},
         };
         const task = new Task({
             id: Operation.generateTaskId(),
             name: `sql${this.tasks.length}`,
-            operation: new Operation({ id: 93, slug: 'execute-sql' }),
+            operation: new Operation({ id: EXECUTE_SQL, slug: 'execute-sql' }),
             display_order: this.tasks.length,
             environment: 'DESIGN', // must be set!
             forms
@@ -702,5 +704,6 @@ export {
     SqlBuilderWorkflow,
     Visualization,
     VisualizationBuilderWorkflow,
-    YDimension, XDimension, Axis
+    YDimension, XDimension, Axis,
+    EXECUTE_SQL
 };
