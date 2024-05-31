@@ -1,24 +1,25 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
+        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom" data-test="header">
             <h1 class="pipelineList-title">
                 Pipelines
             </h1>
             <div>
-                <router-link :to="{name: 'pipelineRunsList'}" class="btn btn-outline-secondary float-left ml-2">
+                <router-link :to="{name: 'pipelineRunsList'}" data-test="runsButton" class="btn btn-outline-secondary float-left ml-2">
                     <font-awesome-icon icon="fa fa-history" /> {{$t('titles.runs', 2)}}
                 </router-link>
-                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
+                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" data-test="addButton" @click="openAddModal">
                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </button>
             </div>
         </div> 
 
-        <ModalCreatePipeline ref="addModal" :pipeline-templates="pipelineTemplates" :template-options="templateOptions" />
+        <ModalCreatePipeline ref="addModal" data-test="addModal" :pipeline-templates="pipelineTemplates" :template-options="templateOptions" />
 
         <div class="pipelineList-body">
             <div class="pipelineList-container">
-                <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList">
+                <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList"
+                                data-test="pipelines-table">
                     <template #id="props">
                         <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
                             {{props.row.id}}

@@ -23,7 +23,8 @@
                            class="wizard-input"
                            type="text"
                            maxlength="100" 
-                           :placeholder="$t('pipeline.list.pipelineName')" 
+                           :placeholder="$t('pipeline.list.pipelineName')"
+                           data-test="input" 
                            @input="handleInput">
                     <div v-if="invalidInputLength" class="wizard-invalid-length">
                         - {{$t('pipeline.list.pipelineNameMinLength')}}
@@ -35,11 +36,12 @@
                           v-model="pipelineDescription"
                           class="wizard-textarea" 
                           type="text"
-                          maxlength="200" 
+                          maxlength="200"
+                          data-test="textarea"
                           :placeholder="$t('pipeline.list.pipelineDescription')" />
 
                 <div class="wizard-stepBox-buttons" :class="first">
-                    <b-button size="sm" variant="secondary" @click="firstWizardStep">
+                    <b-button size="sm" variant="secondary" data-test="nextButton" @click="firstWizardStep">
                         {{$t('actions.next')}}
                     </b-button>
                 </div>
@@ -102,7 +104,7 @@
                     <b-button size="sm" variant="secondary" @click="wizardStep = 1">
                         {{$t('actions.back')}}
                     </b-button>
-                    <b-button size="sm" variant="secondary" @click="secondWizardStep">
+                    <b-button size="sm" variant="secondary" data-test="finalizeButton" @click="secondWizardStep">
                         {{$t('actions.finalize')}}
                     </b-button>
                 </div>
@@ -120,7 +122,7 @@
                 </div>
 
                 <div class="wizard-stepBox-buttons">
-                    <b-button size="sm" variant="primary" @click="closeAddModal">
+                    <b-button size="sm" variant="primary" data-test="closeButton" @click="closeAddModal">
                         {{$t('actions.close')}}
                     </b-button>
                 </div>
