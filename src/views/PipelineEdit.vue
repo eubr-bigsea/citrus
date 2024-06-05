@@ -177,7 +177,7 @@
                                                         @click="deleteStep(step.id, step.name)">
                                                     <font-awesome-icon icon="trash" />
                                                 </button>
-                                                <button class="ml-1 btn btn-sm btn-secondary" 
+                                                <button class="ml-1 btn btn-sm btn-secondary" data-test="add-step-button"
                                                         :title="$t('actions.addItem') + ' ' + $t('titles.step', 1)" 
                                                         @click="openAddStepModal(step.order)">
                                                     <font-awesome-icon icon="plus" />

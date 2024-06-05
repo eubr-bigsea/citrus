@@ -1,0 +1,71 @@
+{
+  "status": "OK",
+  "data": [
+    {
+      "id": 34,
+      "name": "Pipeline Anac",
+      "description": "Descri\u00e7\u00e3o Pipeline Anac.",
+      "enabled": true,
+      "user_id": 1,
+      "user_login": "waltersf@gmail.com",
+      "user_name": "Administrador Lemonade",
+      "created": "2024-01-23T13:25:05",
+      "updated": "2024-05-07T18:40:09",
+      "version": 163,
+      "steps": [
+        {
+          "id": 99,
+          "name": "Raw",
+          "order": 1,
+          "scheduling": "{\"stepSchedule\":{\"executeImmediately\":false,\"frequency\":\"daily\",\"startDateTime\":\"2024-03-01T09:23:00\",\"intervalDays\":\"4\",\"intervalWeeks\":null,\"weekDays\":[],\"months\":[],\"days\":[]}}",
+          "description": "Etapa 1 da pipeline.",
+          "enabled": true,
+          "workflow": {
+            "id": 469,
+            "name": "C\u00f3pia de Teste Walter 2",
+            "type": "WORKFLOW"
+          }
+        },
+        {
+          "id": 100,
+          "name": "Stage",
+          "order": 2,
+          "scheduling": "{\"stepSchedule\":{\"executeImmediately\":false,\"frequency\":\"weekly\",\"startDateTime\":\"2024-02-28T20:02:00\",\"intervalDays\":null,\"intervalWeeks\":\"3\",\"weekDays\":[\"2\",\"4\",\"5\"],\"months\":[],\"days\":[]}}",
+          "description": "Etapa 2 da pipeline.",
+          "enabled": true,
+          "workflow": {
+            "id": 79,
+            "name": "Histograma",
+            "type": "WORKFLOW"
+          }
+        },
+        {
+          "id": 102,
+          "name": "Dataset",
+          "order": 3,
+          "scheduling": "{\"stepSchedule\":{\"executeImmediately\":false,\"frequency\":\"once\",\"startDateTime\":\"2024-03-07T18:25:00\",\"intervalDays\":null,\"intervalWeeks\":null,\"weekDays\":[],\"months\":[],\"days\":[]}}",
+          "description": "Etapa 3 da pipeline.",
+          "enabled": true,
+          "workflow": {
+            "id": 709,
+            "name": "Novo workflow",
+            "type": "WORKFLOW"
+          }
+        },
+        {
+          "id": 103,
+          "name": "MDM",
+          "order": 4,
+          "scheduling": "{\"stepSchedule\":{\"executeImmediately\":false,\"frequency\":\"user\",\"startDateTime\":null,\"intervalDays\":null,\"intervalWeeks\":null,\"weekDays\":[],\"months\":[],\"days\":[]}}",
+          "description": "Etapa 4 da pipeline.",
+          "enabled": true,
+          "workflow": {
+            "id": 709,
+            "name": "Novo workflow",
+            "type": "WORKFLOW"
+          }
+        }
+      ]
+    }
+  ]
+}

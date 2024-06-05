@@ -1,8 +1,10 @@
 import PipelineEdit from "@/views/PipelineEdit.vue";
 import { createLocalVue } from '@vue/test-utils';
 import VueRouter from 'vue-router';
-import messages from '@/i18n/messages.js';
+import messages from '@/i18n/messages.js'; 
 import VueI18n from 'vue-i18n';
+import store from "../../../../src/store.js";
+import ModalAddPipelineStep from "@/views/modal/ModalAddPipelineStep.vue";
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
@@ -16,7 +18,7 @@ const i18n = new VueI18n({
 });
 
 const routes = [
-    { path: '/pipeline/:id', component: PipelineEdit },
+    { path: `/pipeline/:id`, component: PipelineEdit },
 ];
 
 const router = new VueRouter({ routes });
@@ -91,17 +93,84 @@ const pipeline = {
 describe('<PipelineEdit />', () => {
 
     beforeEach(() => {
+        cy.intercept(
+            "GET", 
+            `${tahitiUrl}/pipelines/34`, 
+            { 
+                fixture: "pipeline.json"
+            }
+        ).as("getPipeline");
+
         cy.mount(PipelineEdit, {
-            propsData: {
-                pipeline: { id: 34 },
+            global: {
+                plugins: [store],
             },
             localVue,
             router,
             i18n,
         });
+
     });
 
-    it('Checks if the header is rendered correctly', () => {
+    it('checks if the request response is correct', () => {
+
+        cy.wait("@getPipeline").then((interception) => {
+            assert.isNotNull(interception.response.body, 'Interceptação tem um corpo de resposta');
+        });
+
+    });
+
+    it('renders correctly', () => {
+
+        cy.get('[data-test="pretitle"]').should('contain', 'Pipeline #');
+        cy.get('[data-test="input-header"]').should('have.value', '');
+        
+    });
+
+    it('enables the save button when changes are made', () => {
+
+        cy.get('[data-test="input-header"]').type('New Pipeline Name');
+        cy.get('[data-test="save-button"]').should('not.be.disabled');
+
+    });
+
+    it('can toggle the enabled checkbox', () => {
+
+        cy.get('[data-test="enabled-checkbox"]').click();
+        cy.get('[data-test="enabled-checkbox"]').should('be.visible');
+        cy.get('[data-test="save-button"]').should('not.be.disabled');
+
+    });
+
+    it('allows adding a new step', () => {
+
+        cy.get('[data-test="add-step-button"]').click().then(() => {
+            cy.mount(ModalAddPipelineStep, {
+                global: {
+                    plugins: [store],
+                },
+                localVue,
+                router,
+                i18n,
+            });
+            cy.get('[data-test="step-name-input"]').type('New Step');
+            cy.get('[data-test="save-step-button"]').click();
+        });
+        cy.get('[data-test="steps-list"]').should('contain', 'New Step');
+        
+    });
+
+    it('updates periodicity settings', () => {
+
+        cy.get('[data-test="periodicity-button"]').click();
+        cy.get('[data-test="periodicity-select"]').select('weekly');
+        cy.get('#repetir-dias').type('2');
+        cy.get('[data-test="save-button"]').should('not.be.disabled');
+
+    });
+
+
+    it('checks if the header is rendered correctly', () => {
 
         cy.get('[data-test="header"]').should('be.visible');
         cy.get('[data-test="pretitle"]').should('be.visible');
@@ -114,7 +183,7 @@ describe('<PipelineEdit />', () => {
 
     });
 
-    it('Checks if each container is rendered correctly', () => {
+    it('checks if each container is rendered correctly', () => {
         
         cy.get('.editPage-body').should('be.visible');
         cy.get('.editPage-container').should('be.visible');
@@ -129,7 +198,7 @@ describe('<PipelineEdit />', () => {
 
     });
 
-    it('Checks some user actions', () => {
+    it('checks some general user actions', () => {
 
         const pipelineTitle = "Pipeline Teste";
         const pipelineDescription = "Descrição da Pipeline Teste.";
