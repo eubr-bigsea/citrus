@@ -13,5 +13,10 @@ module.exports = defineConfig({
             framework: "vue",
             bundler: "vite",
         },
+        specPattern: ["**/*.cy.js", "**/*.spec.js"],
+        viewportHeight: 700,
+        viewportWidth: 1200,
+        // chromeWebSecurity: false,
     },
+
 });
