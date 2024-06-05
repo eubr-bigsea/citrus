@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
+        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom" data-test="header">
             <h1 v-if="fromPipelineEdit" class="runsList-title">
                 Execuções - {{$route.params.name}}
             </h1>
@@ -21,7 +21,8 @@
                 <v-client-table ref="runsList" 
                                 :data="tableData" 
                                 :columns="columns" 
-                                :options="options" 
+                                :options="options"
+                                data-test="runsList" 
                                 name="runsList">
                     <template #id="props">
                         <router-link :to="{ name: 'pipelineRunDetail', params: { id: props.row.id } }">
