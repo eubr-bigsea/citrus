@@ -13,6 +13,7 @@
                        v-model="newStep.name" 
                        class="editPage-input" 
                        type="text"
+                       data-test="step-name-input"
                        :placeholder="$t('pipeline.template.stepName')">
             </div>
 
