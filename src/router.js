@@ -51,9 +51,8 @@ const UserList = () => import(/* webpackChunkName: "group-user" */ './views/Admi
 const UserAdd = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserAdd.vue');
 const UserEdit = () => import(/* webpackChunkName: "group-user" */ './views/Administration/UserEdit.vue');
 
-const CodeAdd = () => import('./views/Administration/CodeAdd.vue');
-const CodeEdit = () => import('./views/Administration/CodeEdit.vue');
-const CodeLibrary = () => import('./views/Administration/CodeLibrary.vue');
+const SourceCodeEdit = () => import('./views/Administration/SourceCodeEdit.vue');
+const SourceCodeList = () => import('./views/Administration/SourceCodeList.vue');
 
 const ClusterList = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterList.vue');
 const ClusterEdit = () => import(/* webpackChunkName: "group-cluster" */ './views/Administration/ClusterEdit.vue');
@@ -226,9 +225,9 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/administration/code',
-            name: 'codeLibrary',
-            component: CodeLibrary,
+            path: '/administration/source-code',
+            name: 'sourceCodeList',
+            component: SourceCodeList,
             meta: {
                 requiresAuth: true,
                 requiresRole: true,
@@ -236,19 +235,19 @@ let router = new VueRouter({
             }
         },
         {
-            path: '/administration/code/add',
-            name: 'codeAdd',
-            component: CodeAdd,
+            path: '/administration/source-code/add',
+            name: 'sourceCodeAdd',
+            props: { add: true },
+            component: SourceCodeEdit,
             meta: {
                 requiresAuth: true,
-                requiresRole: true,
-                title: ['titles.user', 1]
+                title: ['titles.storage', 1]
             }
         },
         {
-            path: '/administration/code/edit',
-            name: 'codeEdit',
-            component: CodeEdit,
+            path: '/administration/source-code/:id',
+            name: 'sourceCodeEdit',
+            component: SourceCodeEdit,
             meta: {
                 requiresAuth: true,
                 requiresRole: true,

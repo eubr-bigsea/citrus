@@ -61,6 +61,12 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
+                        Template Pipeline
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'sourceCodeList' }">
+                        Biblioteca de códigos
+                    </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'deployments' }">
                         {{ $tc('titles.deployment', 2) }}
@@ -73,9 +79,6 @@
                         Test Websocket
                     </b-dropdown-item>
                     <b-dropdown-divider />
-                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
-                        Template Pipeline
-                    </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">

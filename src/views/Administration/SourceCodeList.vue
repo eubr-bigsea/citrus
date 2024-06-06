@@ -4,9 +4,9 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ $t('titles.list', { elem: 'Arquivos' }) }}</h1>
-                        <router-link :to="{ name: 'codeAdd' }" class="btn btn-sm btn-success">
-                            {{ $t('actions.addSourceCode') }}
+                        <h1>Biblioteca de Códigos</h1>
+                        <router-link :to="{ name: 'sourceCodeAdd' }" class="btn btn-lemonade-primary btn-success">
+                            <font-awesome-icon icon="plus"/> {{ $t('actions.add') }}
                         </router-link>
                     </div>
                     <hr>
@@ -14,8 +14,8 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
-                                    {{ options }}
-                                    <v-server-table :columns="options.columns" :options="options.options" name="codeList">
+                                    <v-server-table :columns="options.columns" :options="options.options"
+                                        name="codeList">
                                         <template #id="props">
                                             <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
                                                 {{ props.row.id }}
@@ -63,21 +63,13 @@ const reqFn = async (data) => {
     data.asc = data.ascending === 1 ? 'true' : 'false';
     data.size = data.limit;
     try {
-        /*
         const resp = await axios
-            .get(`${tahitiUrl}/code?enabled=true&simple=true`, {
+            .get(`${tahitiUrl}/source-codes`, {
                 params: data
             });
-            */
         return {
-            data: [
-                { id: 1, name: "John", age: "20" },
-                { id: 2, name: "Jane", age: "24" },
-                { id: 3, name: "Susan", age: "16" },
-                { id: 4, name: "Chris", age: "55" },
-                { id: 5, name: "Dan", age: "40" }
-            ],
-            count: 5//resp.data.pagination.total
+            data: resp.data.data,
+            count: resp.data.pagination.total
         };
     } catch (e) {
         Vue.prototype.$snotify.error(e);
