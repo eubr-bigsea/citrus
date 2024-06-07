@@ -17,14 +17,18 @@
                                     <v-server-table :columns="options.columns" :options="options.options"
                                         name="codeList">
                                         <template #id="props">
-                                            <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                                            <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
                                                 {{ props.row.id }}
                                             </router-link>
                                         </template>
                                         <template #name="props">
-                                            <router-link :to="{ name: 'editDataSource', params: { id: props.row.id } }">
+                                            <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
                                                 {{ props.row.name }}
                                             </router-link>
+                                        </template>
+                                        <template #enabled="props">
+                                            <span v-if="props.row.enabled">{{ $t('common.yes') }}</span>
+                                            <span v-else>{{ $t('common.no') }}</span>
                                         </template>
                                         <template #actions="props">
                                             <button class="btn btn-sm btn-light" @click="remove(props.row.id)">
@@ -54,8 +58,7 @@ const { t } = useI18n();
 const columns = [
     "id",
     "name",
-    "status",
-    "created",
+    "enabled",
     "actions"
 ];
 const reqFn = async (data) => {
@@ -82,7 +85,7 @@ const dtBuilder = new DataTableBuilder(t)
         id: 'ID',
         name: t('common.name', 1),
         created: t('common.created'),
-        status: t('common.status'),
+        enabled: t('common.enabled'),
     })
     .sortable('name', 'id', 'created')
     .filterable('name')

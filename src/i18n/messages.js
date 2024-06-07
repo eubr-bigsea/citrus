@@ -645,6 +645,7 @@ export default {
             app: 'Aplicação (trilha) | Aplicações (trilhas)',
             allNotifications: 'Ver todas as notificações',
             changePassword: 'Nova senha',
+            code: 'Código | Códigos',
             color: 'Cor',
             comment: 'Comentário',
             cluster: 'Cluster | Clusters',
