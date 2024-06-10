@@ -176,6 +176,6 @@
   
   <script>
   export default {
-    name: 'App'
+    name: 'ExtraProperties'
   }
   </script>

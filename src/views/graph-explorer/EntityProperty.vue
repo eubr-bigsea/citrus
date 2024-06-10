@@ -27,33 +27,32 @@
             <div id="Creation">
               <div class="row">
                 <div class="col" id="stepsText">
-                  <a>Especifique os detalhes da sua nova entidade abaixo</a>
+                  <a>Especifique as propriedades principais da entidade</a>
                 </div>
               </div>
               <div class="row" id="stepsList">
                 <form id="fields">
-                  <div class="form-group">
-                    <input type="email" class="form-control" id="inputName" placeholder="Nome da Entidade">
+                  <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Usar Propriedades Herdadas</label>
                   </div>
                   <div class="form-group">
-                    <input class="form-control" id="inputDescription" placeholder="Descrição da Entidade">
+                    <input type="email" class="form-control" id="inputName" placeholder="Nome da Propriedade">
+                  </div>
+                  <div class="form-group">
+                    <input class="form-control" id="inputDescription" placeholder="Descrição da Propriedade">
+                  </div>
+                  <div class="form-group">
+                    <input type="email" class="form-control" id="inputRefValue" placeholder="Valor de Referência">
                   </div>
                   <div class="form-group">
                     <input type="email" class="form-control" id="inputUniqueName" placeholder="Nome Único">
                     <small id="emailHelp" class="form-text text-muted">Exemplo: lemonade.dev.dcc</small>
                   </div>
                   <select>
-                    <option value="" disabled selected hidden>Categoria</option>
-                    <option value="au">Pessoa</option>
+                    <option value="" disabled selected hidden>Tipo de Dado</option>
+                    <option value="au">String</option>
                   </select>
-                  <select id="currentStep">
-                    <option value="" disabled selected hidden>Herança</option>
-                    <option value="au">Pessoa</option>
-                  </select>
-                  <div class="form-group">
-                    <label for="exampleFormControlFile1">Ícone:</label>
-                    <input type="file" class="form-control-file" id="exampleFormControlFile1">
-                  </div>
                 </form>
                 <div class="col-12" id="buttons">
                   <button type="button" class="btn btn-outline" id="spaceButton">Voltar</button>
@@ -69,7 +68,6 @@
   </template>
   
   <style>
-  
   #fields {
     margin-left: 40px;
     width: 450px;
@@ -77,7 +75,7 @@
   
   #spaceButton {
     margin-right: 10px;
-    margin-top: -5px;
+    margin-top: -15px;
   }
   
   #buttons {
@@ -136,6 +134,6 @@
   
   <script>
   export default {
-    name: 'App'
+    name: 'EntityProperty'
   }
   </script>

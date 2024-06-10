@@ -107,7 +107,9 @@ const ProjectsView = () => import('./views/project/ProjectsView.vue');
 const ProjectDetail = () => import('./views/project/ProjectDetail.vue');
 
 /* Graph Explorer */
-const screen1 = () => import('./views/graph-explorer/screen1.vue');
+const entityCreation = () => import('./views/graph-explorer/EntityCreation.vue');
+const entityProperty = () => import('./views/graph-explorer/EntityProperty.vue');
+const extraProperties = () => import('./views/graph-explorer/EntityProperty.vue');
 
 
 Vue.use(VueRouter);
@@ -814,6 +816,33 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
+            }
+        },
+        {
+            path:'/graph-explorer/EntityCreation',
+            name: 'EntityCreation',
+            component: EntityCreation,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.graphExplorer']
+            }
+        },
+        {
+            path:'/graph-explorer/EntityProperty',
+            name: 'EntityProperty',
+            component: EntityProperty,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.graphExplorer']
+            }
+        },
+        {
+            path:'/graph-explorer/ExtraProperties',
+            name: 'ExtraProperties',
+            component: ExtraProperties,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.graphExplorer']
             }
         },
         {
