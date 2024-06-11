@@ -42,13 +42,15 @@
                                 <input type="email" class="form-control" id="inputUniqueName" placeholder="Nome Único">
                                 <small id="emailHelp" class="form-text text-muted">Exemplo: lemonade.dev.dcc</small>
                             </div>
-                            <select>
-                                <option value="" disabled selected hidden>Categoria</option>
-                                <option value="au">Pessoa</option>
+                            <select class="form-control" v-model="entityCategory">
+                                <option value="" disabled>Categoria</option>
+                                <option v-for="category in categories" :key="category.id" :value="category.id">
+                                    {{ category.name }}</option>
                             </select>
-                            <select id="currentStep">
-                                <option value="" disabled selected hidden>Herança</option>
-                                <option value="au">Pessoa</option>
+                            <select class="form-control" v-model="entityInheritance">
+                                <option value="" disabled>Herança</option>
+                                <option v-for="category in categories" :key="category.id" :value="category.id">{{
+                                category.name }}</option>
                             </select>
                             <div class="form-group">
                                 <label for="exampleFormControlFile1">Ícone:</label>
@@ -59,7 +61,8 @@
                             <button type="button" class="btn btn-outline" id="spaceButton">Voltar</button>
                             <button type="button" class="btn btn-outline" id="spaceButton"
                                 @click="goToNextStep">Próximo</button>
-                            <button type="button" class="btn btn-outline" id="spaceButton" @click="saveData">Concluído</button>
+                            <button type="button" class="btn btn-outline" id="spaceButton"
+                                @click="saveData">Concluído</button>
                         </div>
                     </div>
                 </div>
@@ -135,20 +138,54 @@
 </style>
 
 <script>
+
 import axios from 'axios';
+const thaitiUrl = import.meta.env.VITE_THAITI_URL;
 
 export default {
-  name: 'EntityCreation',
-  data() {
-    const self = this;
-    return {
-      entityName: '',
-      entityDescription: '',
-      entityUniqueName: '',
-      entityCategory: '',
-      entityInheritance: '',
-      entityIcon: null
-    };
-  },
+    name: 'EntityCreation',
+    data() {
+        return {
+            entityName: '',
+            entityDescription: '',
+            entityUniqueName: '',
+            entityCategory: '',
+            entityInheritance: '',
+            entityIcon: null,
+            categories: [],
+        };
+    },
+    methods: {
+        async createEntity() {
+            const entity = {
+                name: this.entityName,
+                description: this.entityDescription,
+                unique_name: this.entityUniqueName,
+                category: this.entityCategory,
+                inheritance: this.entityInheritance,
+            };
+
+            try {
+                const response = await axios.post(`${thaitiUrl}/vertice-types`, entity, {
+                    headers: {
+                        'x-auth-token': '123456',
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log('Entity created successfully:', response.data);
+                alert('Entidade criada com sucesso!');
+            } catch (error) {
+                console.error('Error creating entity:', error);
+                alert('Erro ao criar a entidade.');
+            }
+        },
+        async loadCategories() {
+            const response = await axios.get(`${thaitiUrl}/vertice-types`, {
+                headers: { 'x-auth-token': '123456' }
+            });
+            this.categories = response.data;
+        }
+    }
 };
+
 </script>
