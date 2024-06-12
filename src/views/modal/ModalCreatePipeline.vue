@@ -3,7 +3,8 @@
              :title="$t('pipeline.list.pipelineCreation')" 
              size="lg" 
              hide-footer
-             scrollable 
+             scrollable
+             data-test="addModal"
              @hidden="closeAddModal">
         <div class="wizard">
             <div v-if="wizardStep === 1" class="wizard-stepBox">
@@ -58,7 +59,7 @@
                 </div>
                 
                 {{$t('pipeline.list.wantToUseTemplate')}}
-                <b-form-select v-model="selectedTemplate" :options="templateOptions" class="mt-1 mb-1" />
+                <b-form-select v-model="selectedTemplate" :options="templateOptions" data-test="template-select" class="mt-1 mb-1" />
 
                 <div v-if="selectedTemplate !== null">
                     <b-card class="wizard-infos">
