@@ -262,6 +262,7 @@ class SqlBuilderWorkflow extends Workflow {
                 path: { value: '' },
                 description: { value: '' },
                 storage: { value: null },
+                mode: { value: 'error' },
                 tags: { value: [] },
                 useHWC: {value: false},
                 ...sql.forms

@@ -38,6 +38,16 @@
                     <b-form-tags input-id="tags-basic" v-model="task.forms.tags.value" :add-button-text="$t('actions.add')"
                         duplicate-tag-text="tag já existe" placeholder=""></b-form-tags>
                 </div>
+                <div class="col-12 mt-2">
+                    <label>Opção de sobrescrita (se existir):</label>
+                    <select class="form-control form-control-sm" name="mode"
+                        v-model.number="task.forms.mode.value">
+                        <option value="error">Gerar erro (não salvar)</option>
+                        <option value="ignore">Ignorar (não salvar)</option>
+                        <option value="append">Acrescentar (append)</option>
+                        <option value="overwrite">Sobrescrever (overwrite)</option>
+                    </select>
+                </div>
             </div>
         </div>
     </b-modal>
