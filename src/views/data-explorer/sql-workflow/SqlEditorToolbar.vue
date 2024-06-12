@@ -10,7 +10,7 @@
         <div class="float-left ml-4">
             <select class="form-control form-control-sm" @change="emit('on-toggle-use-hwc', task, useHWCVal)"
                 v-model="useHWCVal">
-                <option>Não usar HWC</option>
+                <option>Usar o Apache Spark (SQLContext)</option>
                 <option value="execute">Usar método execute() do HWC</option>
                 <option value="executeQuery">Usar método executeQuery() do HWC</option>
                 <option value="executeUpdate">Usar método executeUpdate() do HWC</option>
