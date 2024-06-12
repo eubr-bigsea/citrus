@@ -30,8 +30,11 @@ export default {
     data() {
         return {
             variables: [
-                'date', 'date_at_min', 'date_at_max', 'now', 'user_id',
-                'user_login', 'user_name'],
+                'second', 'minute', 'hour', 'day', 
+                'week_day', 'month', 'year', 'year2',
+                'date', 'date_at_min', 'date_at_max',
+                'now', 'user_id', 'user_login', 
+                'user_email', 'user_name'],
         };
     },
 }
