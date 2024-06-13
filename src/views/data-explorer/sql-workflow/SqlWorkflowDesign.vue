@@ -13,6 +13,10 @@
                     data-test="sample">
                     <font-awesome-icon icon="fa fa-eye" /> Ver dados
                 </b-button>
+                <b-button variant="danger" size="sm" class="ml-2 mt-2 pu" @click="stop" data-test="restart"
+                    title="Para os recursos alocados e reinicia os executores">
+                    <font-awesome-icon icon="fa fa-skull" /> {{ $t('actions.stop') }}
+                </b-button>
             </div>
         </div>
         <div class="layout-container source-code-pro-font">
@@ -478,7 +482,14 @@ const executeWorkflow = async (taskId, only) => {
     }
 };
 
-
+const stop = async () => {
+    try {
+        const resp = await axios.post(`${standUrl}/jobs/${job.value.id}/stop?executor=true`)
+        success(i18n.$t('messages.successStop', { what: i18n.$t('titles.job') }));
+    } catch (e) {
+        error(e, null, null, 10000, false);
+    }
+};
 const saveWorkflow = async () => {
     let cloned = structuredClone(workflowObj.value);
 

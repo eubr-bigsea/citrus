@@ -46,7 +46,7 @@ export default (vm) => {
     const html = (msg, title, autoHideDelay = 5000) => {
         display(msg, title, 'secondary', autoHideDelay)
     };
-    const error = (e, msg, title, autoHideDelay = 10000) => {
+    const error = (e, msg, title, autoHideDelay = 10000, redirect=true) => {
         if (e) {
             if (e.name === 'NetworkError' || e.message == 'Network Error') {
                 display(i18n.$t('errors.disconnected'),
@@ -72,20 +72,20 @@ export default (vm) => {
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
 
-                    router.push({ name: 'home' });
+                    redirect && router.push({ name: 'home' });
                 } else if (e.response.status === 401) {
                     display(i18n.$t('errors.accessDenied'),
                         title || i18n.$t('titles.error', 2),
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
 
-                    router.push({ name: 'login' });
+                    redirect && router.push({ name: 'login' });
                 } else if (e.response.status === 502) {
                     display(i18n.$t('errors.badGateway'),
                         title || i18n.$t('titles.error', 2),
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
-                    router.push({ name: 'home' });
+                    redirect && router.push({ name: 'home' });
                 } else {
                     display(e.response.data.message,
                         title || i18n.$t('titles.error', 2),
