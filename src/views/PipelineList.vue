@@ -21,7 +21,7 @@
                 <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList"
                                 data-test="pipelines-table">
                     <template #id="props">
-                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
+                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}" data-test="pipeline-id">
                             {{props.row.id}}
                         </router-link>
                     </template>
@@ -42,7 +42,8 @@
                     <template #actions="props">
                         <div>
                             <button class="btn btn-sm btn-danger" 
-                                    :title="$t('actions.delete') + ' Pipeline'" 
+                                    :title="$t('actions.delete') + ' Pipeline'"
+                                    data-test="deleteButton" 
                                     @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>

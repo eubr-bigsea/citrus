@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between align-items-center mb-2" data-test="header">
             <div class="mt-2">
                 <h6 class="editPage-pretitle" data-test="pretitle">
-                    Pipeline #{{pipeline.id}}
+                    Pipeline #<span data-test="pipeline-id">{{pipeline.id}}</span>
                 </h6>
                 <h1 class="editPage-title">
                     <InputHeader v-model="pipeline.name" data-test="input-header" @input="isDirty = true" />
@@ -212,7 +212,7 @@
                                     </b-tab>
                                     <b-tab>
                                         <template #title>
-                                            <span class="editPage-tabs-title-text">
+                                            <span class="editPage-tabs-title-text" data-test="edit-step-tab">
                                                 {{$t('pipeline.edit.settingsLabel')}}
                                             </span>
                                         </template>

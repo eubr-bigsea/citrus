@@ -1,4 +1,5 @@
-describe('template spec', () => {
+describe('Create Template', () => {
+
     it('Pipeline Template creation process', () => {
 
         cy.visit('http://localhost:8081/auth/login');
@@ -21,7 +22,15 @@ describe('template spec', () => {
         cy.get('[data-test="stepInput"]').type('Passo Teste');
         cy.get('[data-test="stepTextarea"]').type('Descrição do Passo Teste.');
 
-        cy.get('.btn btn-primary').click();
+        cy.intercept('POST', 'https://dev.lemonade.org.br/api/v1/tahiti/pipeline-templates', {
+            statusCode: 201,
+            body: { message: 'Pipeline Template created successfully' }
+        }).as('createTemplate');
+
+        cy.get('.modal-footer .btn-primary').click();
+
+        cy.wait('@createTemplate').its('response.statusCode').should('eq', 201);
 
     });
+
 });
