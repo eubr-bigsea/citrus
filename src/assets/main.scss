@@ -1065,3 +1065,14 @@ ul.b-form-tags-list {
 .validation-error {
     font-size: .75em;
 }
+
+.xfa-spin {
+    -webkit-animation-name: fa-spin;
+    animation-name: fa-spin;
+    -webkit-animation-duration: var(--fa-animation-duration, 2s);
+    animation-duration: var(--fa-animation-duration, 2s);
+    -webkit-animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+    animation-iteration-count: var(--fa-animation-iteration-count, infinite);
+    -webkit-animation-timing-function: var(--fa-animation-timing, linear);
+    animation-timing-function: var(--fa-animation-timing, linear);
+}

@@ -6,6 +6,7 @@ class Constants {
 }
 const META_PLATFORM_ID = 1000;
 const MODEL_BUILDER_CATEGORY = 2113;
+const EXECUTE_PYTHON = 82;
 const EXECUTE_SQL = 93;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null, $meta = null } = {}) {
@@ -255,17 +256,30 @@ class SqlBuilderWorkflow extends Workflow {
         version = null, user = null, forms = null } = {}, operations) {
         super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
         this.updateLists();
-        this.sqls.forEach(sql => {
-            sql.forms = {
-                save: { value: false },
-                new_name: { value: '' },
-                path: { value: '' },
-                description: { value: '' },
-                storage: { value: null },
-                mode: { value: 'error' },
-                tags: { value: [] },
-                useHWC: {value: false},
-                ...sql.forms
+        this.cellMap = new Map();
+        this.cells.forEach(cell => {
+            this.cellMap.set(cell.id, cell);
+            cell.status = '';
+            cell.message = '';
+            if (cell.operation.slug === 'execute-sql') {
+                cell.forms = {
+                    save: { value: false },
+                    new_name: { value: '' },
+                    path: { value: '' },
+                    description: { value: '' },
+                    storage: { value: null },
+                    mode: { value: 'error' },
+                    tags: { value: [] },
+                    useHWC: {value: false},
+                    ...cell.forms
+                }
+            } else {
+                cell.forms = {
+                    code: { value: '' },
+                    comment: { value: '' },
+                    code_libraries: { value: [] },
+                    ... cell.forms
+                }
             }
         });
     }
@@ -274,8 +288,8 @@ class SqlBuilderWorkflow extends Workflow {
         this.dataSources.forEach((ds, index) => ds.display_order = index);
         const countDataSources = this.dataSources.length;
 
-        this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
-        this.sqls.forEach((sql, index) => sql.display_order = index + countDataSources);
+        this.cells = this.tasks.filter(t => t.operation.slug !== 'read-data');
+        this.cells.forEach((cell, index) => cell.display_order = index + countDataSources);
     }
     addSqlTask(taskId, command) {
         const forms = {
@@ -287,12 +301,37 @@ class SqlBuilderWorkflow extends Workflow {
             description: { value: '' },
             storage: { value: null },
             tags: { value: [] },
-            useHWC: {value: ''},
+            useHWC: {value: 'spark'},
         };
         const task = new Task({
             id: Operation.generateTaskId(),
             name: `sql${this.tasks.length}`,
             operation: new Operation({ id: EXECUTE_SQL, slug: 'execute-sql' }),
+            display_order: this.tasks.length,
+            environment: 'DESIGN', // must be set!
+            forms
+        });
+        if (taskId) {
+            const inx = this.tasks.findIndex(t => t.id === taskId);
+            if (inx > -1) {
+                this.tasks.splice(inx + 1, 0, task);
+                this.updateLists();
+            }
+        } else {
+            this.tasks.push(task);
+            this.updateLists();
+        }
+    }
+    addPythonTask(taskId, command) {
+        const forms = {
+            code: { value: command },
+            comment: { value: '' },
+            code_libraries: { value: [] },
+        };
+        const task = new Task({
+            id: Operation.generateTaskId(),
+            name: `python${this.tasks.length}`,
+            operation: new Operation({ id: EXECUTE_PYTHON, slug: 'execute-python' }),
             display_order: this.tasks.length,
             environment: 'DESIGN', // must be set!
             forms
@@ -331,7 +370,7 @@ class SqlBuilderWorkflow extends Workflow {
         this.tasks.push(task);
         this.updateLists();
     }
-    moveSqlTask(taskId, direction) {
+    moveTask(taskId, direction) {
         const inx = this.tasks.findIndex(t => t.id === taskId);
         if (inx > -1) {
             const newPosition = direction === 'up' ? inx - 1 : inx + 1;

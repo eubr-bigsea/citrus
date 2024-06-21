@@ -4,7 +4,8 @@
             <h1>{{ $t('titles.sqlWorkflow') }}</h1>
             <div>
                 <b-button variant="primary" size="sm" class="mt-2 pu mr-1" @click="saveWorkflow" data-test="save">
-                    <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                    <font-awesome-icon icon="fa fa-save" />
+                    {{ $t('actions.save') }}
                 </b-button>
                 <b-button variant="success" size="sm" class="mt-2 pu" @click="executeWorkflow" data-test="execute">
                     <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
@@ -72,8 +73,9 @@
                             </div>
                             <ul class="list-group data-sources mt-2 scroll-area">
                                 <li v-for="dataSource in workflowObj.dataSources" class="list-group-item p-2 pb-1 pt-1">
-                                    <div class="mb-2 truncate" :title="dataSource.forms.data_source.labelValue">{{
-                dataSource.forms.data_source.labelValue }}</div>
+                                    <div class="mb-2 truncate" :title="dataSource.forms.data_source.labelValue">
+                                        {{ dataSource.forms.data_source.labelValue }}
+                                    </div>
                                     <small>Apelido:</small>
                                     <input type="text" class="form-control form-control-sm w-75 float-right mb-1"
                                         v-model="dataSource.name" maxlength="50" @change="handleChangeAlias" />
@@ -105,49 +107,98 @@
                     <span class="px-3 lemonade-job" :class="jobStatus.status.toLowerCase()">{{ jobStatus.status
                         }}</span>
                     {{ jobStatus.message }}
-                    <div v-if="jobStatus.exception_stack" style="overflow:auto; width: 240px">
+                    <div v-if="jobStatus.exception_stack" class="exception-stack scroll-area">
                         <pre class="exception mt-4">{{ jobStatus.exception_stack }}</pre>
                     </div>
                 </div>
             </div>
             <div class="layout-center pt-2">
-                <h4>Comandos ({{ workflowObj.sqls?.length }})</h4>
-                <div v-if="workflowObj.sqls?.length === 0">
+                <h4>Comandos ({{ workflowObj.cells?.length }})</h4>
+                <div v-if="workflowObj.cells?.length === 0">
                     <button @click="handleAddSql(null, '\n')" class="btn btn-secondary btn-sm">
                         <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }}</button>
                 </div>
-                <div class="scroll-area commands">
+                <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="sql, i in workflowObj.sqls" class="mb-1 editors" :key="sql.id">
-                            <div class="row">
-                                <div class="col-4"
-                                    title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
-                                    {{ $t('common.aliasSql') }} (use no SQL): <input
-                                        class="form-control form-control-sm mb-1" maxlength="50" v-model="sql.name" />
-                                </div>
-
-                                <div class="col-8">
-                                    {{ $t('titles.comment') }}: <input class="form-control form-control-sm mb-1"
-                                        maxlength="100" v-model="sql.forms.comment.value" />
-                                </div>
-                                <div class="col">
+                        <div v-for="cell, i in workflowObj.cells" class="mb-3 editors" :key="cell.id">
+                            <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
+                                <div class="col-12">
                                     <div class="button-toolbar">
-                                        <sql-editor-toolbar ref="toolbar" :task="sql" :show-move-up="i > 0"
-                                            :data-task="sql.id" :show-move-down="i < workflowObj.sqls.length - 1"
-                                            :useHWC="sql.forms.useHWC.value" @on-move="handleMoveSql"
-                                            @on-remove="handleRemoveSql" @on-add="handleAddSql"
-                                            @on-indent="handleIndent(sql.id)"
-                                            @on-execute="(taskId, value) => executeWorkflow(sql.id, value)"
+                                        <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
+                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
+                                            :useHWC="cell.forms.useHWC.value" @on-move="handleMove"
+                                            @on-remove="handleRemoveSql" @on-add="handleAdd"
+                                            @on-indent="handleIndent(cell.id)"
+                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
                                             @on-toggle-use-hwc="handleToggleHWC" />
                                     </div>
                                 </div>
+                                <div class="col-4"
+                                    title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
+                                    <span class="form-text">{{ $t('common.aliasSql') }} (use no SQL):</span>
+                                    <input class="form-control form-control-sm mb-1" maxlength="50"
+                                        v-model="cell.name" />
+                                </div>
+
+                                <div class="col-6">
+                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
+                                        class="form-control form-control-sm mb-1" maxlength="100"
+                                        v-model="cell.forms.comment.value" />
+                                </div>
+                                <div class="col-2">
+                                    <span class="form-text">Tipo:</span>
+                                    <input type="text" readonly :value="cell.operation.slug.substring(8)"
+                                        class="form-control form-control-sm w-24" />
+                                </div>
+                            </div>
+                            <div class="row" v-else>
+                                <div class="col-12">
+                                    <div class="button-toolbar">
+                                        <sql-editor-toolbar ref="toolbar" :task="cell" :show-move-up="i > 0"
+                                            :data-task="cell.id" :show-move-down="i < workflowObj.cells.length - 1"
+                                            @on-move="handleMove" @on-remove="handleRemoveSql" @on-add="handleAdd"
+                                            @on-indent="handleIndent(cell.id)"
+                                            @on-execute="(taskId, value) => executeWorkflow(cell.id, value)"
+                                            @on-toggle-use-hwc="handleToggleHWC" />
+                                    </div>
+                                </div>
+                                <div class="col-10">
+                                    <span class="form-text">{{ $t('titles.comment') }}:</span> <input
+                                        class="form-control form-control-sm mb-1" maxlength="100"
+                                        v-model="cell.forms.comment.value" />
+                                </div>
+                                <div class="col-2">
+                                    <span class="form-text">Tipo:</span>
+                                    <input type="text" readonly :value="cell.operation.slug.substring(8)"
+                                        class="form-control form-control-sm w-24" />
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-12">
                                     <div class="editor">
-                                        <sql-editor :query="sql.forms.query.value"
-                                            @update="(v) => sql.forms.query.value = v" ref="codeEditor"
-                                            :tables="dataSources" :functions="functions" :data-task="sql.id"
+                                        <sql-editor v-if="cell.operation.slug === 'execute-sql'"
+                                            :query="cell.forms.query.value" @update="(v) => cell.forms.query.value = v"
+                                            ref="codeEditor" :tables="dataSources" :functions="functions"
+                                            :data-task="cell.id"
+                                            :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
+                                        <python-editor v-else :query="cell.forms.code.value"
+                                            @update="(v) => cell.forms.code.value = v" ref="codeEditor"
+                                            :tables="dataSources" :functions="functions" :data-task="cell.id"
                                             :format="{ language: 'spark', tabWidth: 2, keywordCase: 'upper', linesBetweenQueries: 2 }" />
                                     </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 cell-status-bar">
+                                    <!--
+                                        <font-awesome-icon v-if="taskStatuses[cell.id] === 'RUNNING'" icon="fas fa-sync" class="text-primary fa-spin" spin />
+                                        <font-awesome-icon v-if="taskStatuses[cell.id] === 'COMPLETED'" icon="fa-check-circle" class="text-success " />
+                                        <font-awesome-icon v-if="taskStatuses[cell.id] === 'ERROR'" icon="fa-stop" class="text-danger" />
+                                        -->
+                                        <span v-if="cell.status && cell.status != ''">
+                                            {{cell.message}}
+                                            <font-awesome-icon icon="fa" :icon="getCellIcon(cell)" :class="getCellClass(cell)" />
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -179,6 +230,7 @@ import axios from 'axios';
 import Vue from 'vue';
 import VueSelect from 'vue-select';
 import SqlEditor from './SqlEditor.vue';
+import PythonEditor from './PythonEditor.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
 import SqlSample from './SqlSample.vue';
@@ -212,10 +264,8 @@ const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
 
 const META_PLATFORM_ID = 1000;
 const clusters = ref([]);
-const storages = ref([]);
 const dataSources = ref([]);
 const cachedDataSources = ref([]);
-const clusterId = ref(null);
 const internalWorkflowId = ref(null);
 const job = ref(null);
 const jobStatus = ref({ status: '' });
@@ -302,14 +352,21 @@ const configureWebSocket = async () => {
             joinRoom(job.value.id);
         },
         'response': (msg) => {
-            console.debug(msg)
+
         },
         'update task': (msg) => {
-            sample.value = msg.message;
-            nextTick(() => {
-                modalSample.value.show();
-            });
-
+            if (msg.type === 'OBJECT') {
+                sample.value = msg.message;
+                nextTick(() => {
+                    modalSample.value.show();
+                });
+            } else {
+            const cell = workflowObj.value.cellMap.get(msg.id);
+                if (cell) {
+                    cell.status = msg.status;
+                    cell.message = msg.message;
+                }
+            }
         },
         'update job': (msg) => {
             jobStatus.value = '';
@@ -415,6 +472,7 @@ const executeWorkflow = async (taskId, only) => {
         clusterRef.value.open = true;
         return;
     }
+    workflowObj.value.tasks.forEach(t => t.status = null);
     if (isDirty.value) {
         saveWorkflow();
     }
@@ -431,8 +489,8 @@ const executeWorkflow = async (taskId, only) => {
         delete task.status;
     });
     delete cloned._tasksLookup;
-    cloned.sqls = cloned.sqls.sort(c => c.display_order);
-    cloned.tasks = [...cloned.dataSources, ...cloned.sqls];
+    cloned.cells = cloned.cells.sort(c => c.display_order);
+    cloned.tasks = [...cloned.dataSources, ...cloned.cells];
 
     if (taskId) {
         if (only) {
@@ -455,7 +513,7 @@ const executeWorkflow = async (taskId, only) => {
         }
     }
     delete cloned.dataSources;
-    delete cloned.sqls;
+    delete cloned.cells;
     const PAGE_SIZE = 20
     const body = {
         workflow: cloned,
@@ -504,9 +562,9 @@ const saveWorkflow = async () => {
         delete task.status;
     });
     delete cloned._tasksLookup;
-    cloned.tasks = [...cloned.dataSources, ...cloned.sqls];
+    cloned.tasks = [...cloned.dataSources, ...cloned.cells];
     delete cloned.dataSources;
-    delete cloned.sqls;
+    delete cloned.cells;
 
     try {
         await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
@@ -525,8 +583,12 @@ const showSample = () => {
 };
 
 /**Events */
-const handleAddSql = (taskId, command) => {
-    workflowObj.value.addSqlTask(taskId, command);
+const handleAdd = (taskId, type, command) => {
+    if (type === 'sql') {
+        workflowObj.value.addSqlTask(taskId, command);
+    } else {
+        workflowObj.value.addPythonTask(taskId, command);
+    }
     if (codeEditor.value) {
         Vue.nextTick(() => {
             codeEditor.value.slice(-1)[0].focus()
@@ -540,8 +602,8 @@ const handleRemoveSql = (taskId) => {
         isDirty.value = true;
     }
 }
-const handleMoveSql = (taskId, direction) => {
-    workflowObj.value.moveSqlTask(taskId, direction);
+const handleMove = (taskId, direction) => {
+    workflowObj.value.moveTask(taskId, direction);
 }
 /* Data source related */
 const addingDataSource = ref(false);
@@ -599,7 +661,7 @@ const handleAddSqlFromDataSource = (type, dataSourceId) => {
             cmd.push(')')
             cmd.push('VALUES()')
         }
-        handleAddSql(null, cmd.join('\n'));
+        handleAdd(null, 'sql', cmd.join('\n'));
     }
 }
 const handleChangeAlias = () => {
@@ -623,6 +685,28 @@ const handleCodeAppear = (el, done) => {
     el.scrollIntoView({ behavior: "smooth" });
 
 }
+const getCellIcon = (cell) => {
+    switch(cell.status){
+        case 'RUNNING':
+            return 'fa-sync';
+        case 'COMPLETED':
+            return 'fa-check-circle';
+        case 'ERROR':
+            return 'fa-stop';
+        default:
+            return 'fa-question';
+    }
+};
+const getCellClass = (cell) => {
+    switch(cell.status){
+        case 'RUNNING':
+            return 'text-primary';
+        case 'COMPLETED':
+            return 'text-success';
+        case 'ERROR':
+            return 'text-danger';
+    }
+};
 </script>
 
 <style scoped lang="scss">
@@ -701,5 +785,21 @@ const handleCodeAppear = (el, done) => {
     background-color: #ffffff;
     padding: 20px;
     box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-text {
+    font-size: 10pt;
+}
+.exception-stack {
+     overflow:auto;
+     width: 260px;
+     height: 300px;
+}
+.cell-status-bar {
+    padding: 4px 0 0 40px;
+    line-height: 15px;
+    margin-top: 2px;
+    min-height: 16px;
+    font-size: 9pt;
 }
 </style>
