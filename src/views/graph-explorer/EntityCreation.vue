@@ -166,12 +166,7 @@ export default {
             };
 
             try {
-                const response = await axios.post(`${thaitiUrl}/vertice-types`, entity, {
-                    headers: {
-                        'x-auth-token': '123456',
-                        'Content-Type': 'application/json',
-                    },
-                });
+                const response = await axios.post(`${thaitiUrl}/vertice-types`, entity);
                 console.log('Entity created successfully:', response.data);
                 alert('Entidade criada com sucesso!');
             } catch (error) {
@@ -180,9 +175,7 @@ export default {
             }
         },
         async loadCategories() {
-            const response = await axios.get(`${thaitiUrl}/vertice-types`, {
-                headers: { 'x-auth-token': '123456' }
-            });
+            const response = await axios.get(`${thaitiUrl}/vertice-types`);
             this.categories = response.data;
         }
     }

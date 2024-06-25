@@ -107,10 +107,11 @@ const ProjectsView = () => import('./views/project/ProjectsView.vue');
 const ProjectDetail = () => import('./views/project/ProjectDetail.vue');
 
 /* Graph Explorer */
-const entityCreation = () => import('./views/graph-explorer/EntityCreation.vue');
-const entityProperty = () => import('./views/graph-explorer/EntityProperty.vue');
-const extraProperties = () => import('./views/graph-explorer/EntityProperty.vue');
-
+const EntityCreation = () => import('./views/graph-explorer/EntityCreation.vue');
+const EntityProperty = () => import('./views/graph-explorer/EntityProperty.vue');
+const ExtraProperties = () => import('./views/graph-explorer/ExtraProperties.vue');
+const MainGraph = () => import('./views/graph-explorer/MainGraph.vue');
+const GraphEdit = () => import('./views/graph-explorer/GraphEdit.vue');
 
 Vue.use(VueRouter);
 
@@ -843,6 +844,24 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.graphExplorer']
+            }
+        },
+        {
+            path:'/graph-explorer/MainGraph/',
+            name: 'MainGraph',
+            component: MainGraph,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.graphExplorer', 2]
+            }
+        },
+        {
+            path: '/graph-explorer/GraphEdit/:id',
+            name: 'editGraph',
+            component: GraphEdit,
+            meta: {
+                requiresAuth: true,
+                title: ['titles.graphExplorer', 1]
             }
         },
         {

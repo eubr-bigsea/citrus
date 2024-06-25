@@ -88,7 +88,7 @@
     margin-top: 60px;
   }
   
-  #fields{
+  #fields-ep{
     margin-top: 10px;
   }
   
