@@ -415,6 +415,7 @@ export default {
                     this.pipeline.steps = this.pipeline.steps.filter(step => step.id !== stepId);
                     this.selectedStepIndex = null;
                     this.editPipeline(this.$t('pipeline.alerts.stepDeletionSuccess'));
+                    this.onDragEnd();
                 }
             );
         },
