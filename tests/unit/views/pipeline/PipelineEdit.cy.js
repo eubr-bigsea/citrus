@@ -18,7 +18,7 @@ const i18n = new VueI18n({
 });
 
 const routes = [
-    { path: `/pipeline/:id`, component: PipelineEdit },
+    { path: `/pipeline/34`, component: PipelineEdit },
 ];
 
 const router = new VueRouter({ routes });

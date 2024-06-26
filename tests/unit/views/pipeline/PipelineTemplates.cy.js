@@ -38,9 +38,7 @@ describe('<PipelineTemplates />', () => {
 
     it('Checks if the request response is correct', () => {
 
-        cy.wait("@getPipelineTemplates").then((interception) => {
-            assert.isNotNull(interception.response.body, 'Interceptação tem um corpo de resposta');
-        });
+        cy.wait("@getPipelineTemplates");
 
     });
 

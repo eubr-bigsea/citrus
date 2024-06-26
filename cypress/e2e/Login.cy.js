@@ -1,5 +1,5 @@
 describe('template spec', () => {
-    it('Login in Lemonade', () => {
+    it('Login to Lemonade', () => {
 
         cy.visit('http://localhost:8081/auth/login');
         cy.get('[data-test="email"]').type('waltersf@gmail.com').should('have.value', 'waltersf@gmail.com');

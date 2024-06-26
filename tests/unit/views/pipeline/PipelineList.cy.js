@@ -27,7 +27,7 @@ describe('<PipelineList />', () => {
     beforeEach(() => {
         cy.intercept(
             "GET",
-            `${tahitiUrl}/pipelines?query=&limit=10&ascending=0&page=1&byColumn=0&orderBy=created&sort=created&asc=false&size=10&name=&fields=id,name,version,created,updated,user_name`,
+            `${tahitiUrl}/pipelines`,
             { 
                 fixture: "pipelines.json" 
             }

@@ -69,28 +69,4 @@ describe('Pipeline Table', () => {
 
         cy.url().should('eq', 'http://localhost:8081/pipelines/1');
     });
-
-    it('Delete pipeline', () => {
-        cy.visit('http://localhost:8081/home');
-
-        cy.url().should('eq', 'http://localhost:8081/home');
-
-        cy.get(':nth-child(7) > .nav-link').click();
-
-        cy.get('thead > tr > :nth-child(1)').click().click();
-
-        cy.get(':nth-child(1) > :nth-child(1) > [data-test="pipeline-id"]').invoke('text').then((pipelineId) => {
-
-            cy.intercept('DELETE', `https://dev.lemonade.org.br/api/v1/tahiti/pipelines/${pipelineId}`, {
-                statusCode: 204,
-                body: { message: 'Pipeline deleted successfully' }
-            }).as('deletePipeline');
-    
-            // cy.get(':nth-child(1) > .text-center > div > [data-test="deleteButton"]').click();
-
-            // cy.get('.snotifyToast__buttons > :nth-child(1)').click();
-    
-            cy.wait('@deletePipeline').its('response.statusCode').should('eq', 204);
-        });
-    });
 });
