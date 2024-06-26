@@ -22,8 +22,8 @@ describe('Create Pipeline', () => {
         cy.get(':nth-child(7) > .nav-link').click();
         cy.get('[data-test="addButton"]').click();
 
-        cy.get('[data-test="input"]').type('Pipeline Teste');
-        cy.get('[data-test="textarea"]').type('Descrição da Pipeline Teste.');
+        cy.get('[data-test="input"]').type('Pipeline Teste').should('have.value', 'Pipeline Teste');
+        cy.get('[data-test="textarea"]').type('Descrição da Pipeline Teste.').should('have.value', 'Descrição da Pipeline Teste.');
 
         cy.get('[data-test="nextButton"]').click();
 
@@ -47,8 +47,8 @@ describe('Create Pipeline', () => {
         cy.get(':nth-child(7) > .nav-link').click();
         cy.get('[data-test="addButton"]').click();
 
-        cy.get('[data-test="input"]').type('Pipeline Teste');
-        cy.get('[data-test="textarea"]').type('Descrição da Pipeline Teste.');
+        cy.get('[data-test="input"]').type('Pipeline Teste').should('have.value', 'Pipeline Teste');
+        cy.get('[data-test="textarea"]').type('Descrição da Pipeline Teste.').should('have.value', 'Descrição da Pipeline Teste.');
 
         cy.get('[data-test="nextButton"]').click();
 
@@ -64,5 +64,19 @@ describe('Create Pipeline', () => {
         cy.wait('@createPipeline').its('response.statusCode').should('eq', 201);
 
         cy.get('[data-test="closeButton"]').click();
+    });
+
+    it('Try to create pipeline with name less than 3 characters', () => {
+        cy.visit('http://localhost:8081/home');
+
+        cy.url().should('eq', 'http://localhost:8081/home');
+
+        cy.get(':nth-child(7) > .nav-link').click();
+        cy.get('[data-test="addButton"]').click();
+
+        cy.get('[data-test="input"]').type('Aa').should('have.value', 'Aa');
+        cy.get('[data-test="textarea"]').type('Descrição da Pipeline Teste.');
+
+        cy.get('[data-test="invalidInputLength"]').should('be.visible');
     });
 });

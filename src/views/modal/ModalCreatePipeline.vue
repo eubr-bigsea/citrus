@@ -27,7 +27,7 @@
                            :placeholder="$t('pipeline.list.pipelineName')"
                            data-test="input" 
                            @input="handleInput">
-                    <div v-if="invalidInputLength" class="wizard-invalid-length">
+                    <div v-if="invalidInputLength" class="wizard-invalid-length" data-test="invalidInputLength">
                         - {{$t('pipeline.list.pipelineNameMinLength')}}
                     </div>
                 </div>

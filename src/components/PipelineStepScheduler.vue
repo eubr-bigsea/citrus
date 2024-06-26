@@ -10,6 +10,7 @@
                                :options="selectedStepIndex === 0 ? 
                                    filteredSelectFreqOpt.slice(0, 1).concat(filteredSelectFreqOpt.slice(2)) : 
                                    filteredSelectFreqOpt" 
+                               data-test="select-frequency"
                                @change="resetSelect" />
             </div>
             <div v-if="selectedFreqOpt === 'once'">
@@ -83,11 +84,13 @@
                         {{$t('pipeline.edit.scheduler.selectMonths')}}:
                     </p>
                     <b-form-checkbox v-model="selectAllMonths" class="mb-2" @change="toggleAllMonths">
-                        {{$t('pipeline.edit.scheduler.selectAll')}}
+                        <span data-test="select-all-months">
+                            {{$t('pipeline.edit.scheduler.selectAll')}}
+                        </span>
                     </b-form-checkbox>
                     <div class="editPage-chackbox-div" :class="meses">
                         <div>
-                            <b-form-checkbox v-model="selectedMonths" value="1">
+                            <b-form-checkbox v-model="selectedMonths" value="1" data-test="january">
                                 {{$t('common.months.january')}}
                             </b-form-checkbox>
                             <b-form-checkbox v-model="selectedMonths" value="2">
@@ -135,7 +138,9 @@
                         {{$t('pipeline.edit.scheduler.selectDays')}}:
                     </p>
                     <b-form-checkbox v-model="selectAllDays" class="mb-2" @change="toggleAllDays">
-                        {{$t('pipeline.edit.scheduler.selectAll')}}
+                        <span data-test="select-all-days">
+                            {{$t('pipeline.edit.scheduler.selectAll')}}
+                        </span>
                     </b-form-checkbox>
                     <div class="editPage-chackbox-div" :class="meses">
                         <div>

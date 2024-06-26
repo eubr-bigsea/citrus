@@ -34,7 +34,7 @@
             </b-navbar-nav>
 
             <b-navbar-nav class="pt-1">
-                <b-nav-item-dropdown v-if="isAdmin" right>
+                <b-nav-item-dropdown v-if="isAdmin" data-test="admin-menu" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-lock" class="text-success" />
                         {{ $tc('titles.administration', 2) }}

@@ -15,7 +15,7 @@
                        :placeholder="$t('pipeline.template.templateName')"
                        data-test="input"
                        @input="handleInput">
-                <div v-if="invalidInputLength" class="templatePage-invalid-length">
+                <div v-if="invalidInputLength" class="templatePage-invalid-length" data-test="invalidInputLength">
                     - {{$t('pipeline.template.templateNameMinLength')}}
                 </div>
             </div>
