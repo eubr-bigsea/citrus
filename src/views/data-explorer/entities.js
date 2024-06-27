@@ -256,7 +256,11 @@ class SqlBuilderWorkflow extends Workflow {
         version = null, user = null, forms = null } = {}, operations) {
         super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
         this.updateLists();
+        this.cellMap = new Map();
         this.cells.forEach(cell => {
+            this.cellMap.set(cell.id, cell);
+            cell.status = '';
+            cell.message = '';
             if (cell.operation.slug === 'execute-sql') {
                 cell.forms = {
                     save: { value: false },

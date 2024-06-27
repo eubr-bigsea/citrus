@@ -175,7 +175,7 @@ Vue.prototype.$filters = {
     formatTimestamp(v) {
         if (v) {
             return format(
-                utcToZonedTime(fromUnixTime(v * .000001)), 
+                utcToZonedTime(fromUnixTime(v * .000001)),
                 'dd/MM/yyyy HH:mm:ss');
         }
     },
