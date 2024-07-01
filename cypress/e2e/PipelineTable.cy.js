@@ -1,21 +1,12 @@
 describe('Pipeline Table', () => {
 
     beforeEach(() => {
-        cy.session('Login', () => {
-            cy.visit('http://localhost:8081/auth/login');
-
-            cy.get('[data-test="email"]').type('waltersf@gmail.com').should('have.value', 'waltersf@gmail.com');
-            cy.get('[data-test="password"]').type('zooropa').should('have.value', 'zooropa');
-            cy.get('[data-test="login"]').click();
-
-            cy.url().should('eq', 'http://localhost:8081/home');
-        });
+        cy.login();
+        cy.visit('/home');
+        cy.url().should('eq', Cypress.config().baseUrl + '/home');
     });
     
     it('Sort table columns', () => {
-        cy.visit('http://localhost:8081/home');
-
-        cy.url().should('eq', 'http://localhost:8081/home');
 
         cy.get(':nth-child(7) > .nav-link').click();
 
@@ -30,9 +21,6 @@ describe('Pipeline Table', () => {
     });
 
     it('Test pagination buttons', () => {
-        cy.visit('http://localhost:8081/home');
-        
-        cy.url().should('eq', 'http://localhost:8081/home');
 
         cy.get(':nth-child(7) > .nav-link').click();
 
@@ -47,9 +35,6 @@ describe('Pipeline Table', () => {
     });
 
     it('Test search', () => {
-        cy.visit('http://localhost:8081/home');
-
-        cy.url().should('eq', 'http://localhost:8081/home');
 
         cy.get(':nth-child(7) > .nav-link').click();
 
@@ -57,9 +42,6 @@ describe('Pipeline Table', () => {
     });
 
     it('Visit pipeline details page', () => {
-        cy.visit('http://localhost:8081/home');
-
-        cy.url().should('eq', 'http://localhost:8081/home');
 
         cy.get(':nth-child(7) > .nav-link').click();
 

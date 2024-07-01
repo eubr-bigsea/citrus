@@ -3,6 +3,8 @@ const { defineConfig } = require("cypress");
 module.exports = defineConfig({
     e2e: {
         baseUrl: "http://localhost:8081",
+        supportFile: 'cypress/support/e2e.js',
+        tahiti: "https://dev.lemonade.org.br/api/v1/tahiti",
         setupNodeEvents(on, config) {
             // implement node event listeners here
         },

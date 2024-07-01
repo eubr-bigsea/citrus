@@ -1,18 +1,9 @@
 describe('Pipeline Edit', () => {
 
     beforeEach(() => {
-        cy.session('Login', () => {
-            cy.visit('http://localhost:8081/auth/login');
-
-            cy.get('[data-test="email"]').type('waltersf@gmail.com').should('have.value', 'waltersf@gmail.com');
-            cy.get('[data-test="password"]').type('zooropa').should('have.value', 'zooropa');
-            cy.get('[data-test="login"]').click();
-
-            cy.url().should('eq', 'http://localhost:8081/home');
-        });
-
-        cy.visit('http://localhost:8081/home');
-        cy.url().should('eq', 'http://localhost:8081/home');
+        cy.login();
+        cy.visit('/home');
+        cy.url().should('eq', Cypress.config().baseUrl + '/home');
 
         cy.get(':nth-child(7) > .nav-link').click();
         cy.get('thead > tr > :nth-child(1)').click().click();
@@ -31,7 +22,7 @@ describe('Pipeline Edit', () => {
         cy.get('.editPage-periodicity-x').click();
 
         cy.get('[data-test="pipeline-id"]').invoke('text').then((pipelineId) => {
-            cy.intercept('PATCH', `https://dev.lemonade.org.br/api/v1/tahiti/pipelines/${pipelineId}`, {
+            cy.intercept('PATCH', Cypress.config().tahiti + `/pipelines/${pipelineId}`, {
                 statusCode: 200,
                 body: { message: 'Pipeline edited successfully' }
             }).as('editPipeline');
@@ -49,7 +40,7 @@ describe('Pipeline Edit', () => {
         cy.get('#descricao').clear().type('Descrição da Etapa editada').should('have.value', 'Descrição da Etapa editada');
 
         cy.get('[data-test="pipeline-id"]').invoke('text').then((pipelineId) => {
-            cy.intercept('PATCH', `https://dev.lemonade.org.br/api/v1/tahiti/pipelines/${pipelineId}`, {
+            cy.intercept('PATCH', Cypress.config().tahiti + `/pipelines/${pipelineId}`, {
                 statusCode: 200,
                 body: { message: 'Pipeline edited successfully' }
             }).as('editPipeline');
@@ -130,7 +121,7 @@ describe('Pipeline Edit', () => {
         cy.get('[data-test="select-all-days"]').click();
 
         cy.get('[data-test="pipeline-id"]').invoke('text').then((pipelineId) => {
-            cy.intercept('PATCH', `https://dev.lemonade.org.br/api/v1/tahiti/pipelines/${pipelineId}`, {
+            cy.intercept('PATCH', Cypress.config().tahiti + `/pipelines/${pipelineId}`, {
                 statusCode: 200,
                 body: { message: 'Pipeline edited successfully' }
             }).as('editPipeline');

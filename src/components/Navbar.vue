@@ -26,7 +26,8 @@
                 <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
                     <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'pipelines' }">
+                <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'pipelines' }"
+                            data-test="pipelines-menu">
                     <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" /> Pipelines
                 </b-nav-item>
 
@@ -73,7 +74,7 @@
                         Test Websocket
                     </b-dropdown-item>
                     <b-dropdown-divider />
-                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
+                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }" data-test="navbar-template">
                         {{$tc('pipeline.template.pipelineTemplates')}}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
