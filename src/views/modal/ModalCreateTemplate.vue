@@ -3,7 +3,8 @@
              :title="$t('pipeline.template.templateCreation')" 
              size="lg" 
              scrollable 
-             @ok="createTemplate">
+             @ok="createTemplate"
+             @hidden="closeModal">
         <div class="templatePage-card-modal">
             <div class="position-relative">
                 <label class="templatePage-label" for="nome">{{$t('common.name')}}</label>
@@ -48,11 +49,11 @@
                             {{setOrder(input, index)}}
                             #{{index + 1}}
                             <input v-model="input.name" 
-                                   :placeholder="$t('pipeline.template.stepName')" 
-                                   class="templatePage-input" 
-                                   maxlength="50"
-                                   data-test="stepInput"
-                                   :class="stepInput">
+                                :placeholder="$t('pipeline.template.stepName')" 
+                                class="templatePage-input" 
+                                maxlength="50"
+                                data-test="stepInput"
+                                :class="stepInput">
                             <textarea v-model="input.description" 
                                       :placeholder="$t('pipeline.template.stepDescription')" 
                                       class="templatePage-textarea" 
@@ -112,6 +113,9 @@ export default {
             this.stepsInputs = [];
             this.$refs.addTemplateModal.show();
         },
+        closeModal() {
+            this.invalidInputLength = true;
+        },
         onDragEnd(event) {
             this.stepsInputs.forEach((step, index) => {
                 step.order = index + 1;
@@ -124,7 +128,7 @@ export default {
             this.invalidInputLength = this.createTemplateName.length < 3;
         },
         addCreateTemplateInput() {
-            this.stepsInputs.push({ id: 0, enabled: true });
+            this.stepsInputs.push({ id: 0, enabled: true, name: '' });
         },
         removeCreateTemplateInput: function(index) {
             this.stepsInputs.splice(index, 1);
