@@ -47,5 +47,6 @@ export default {
         /*{name: "dots",label: "Pontos",
                 image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
             },*/
+        { name: "densitymapbox", label: "Mapa de Calor (Geo)", },
     ]
 }

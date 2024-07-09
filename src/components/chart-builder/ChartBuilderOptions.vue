@@ -2,7 +2,7 @@
     <div v-if="editableVisualization" class="chart-builder-options">
         <b-form class="chart-properties">
             <b-form-group id="title" label="Tipo da visualização:" label-for="title">
-                
+
                 <v-select v-model="editableVisualization.type.value" :options="chartTypes" label="label"
                     :reduce="(opt) => opt.name" :searchable="false" style="font-size:8pt" data-test="chart-type">
                     <template #option="{ label, name }">
@@ -49,23 +49,25 @@
                                     <option value="BOTTOM_CENTER">Na parte inferior, ao centro</option>
                                 </select>
                             </template>
-                            <label class="mt-2">Tema:</label>
-                            <select v-model="editableVisualization.template.value" class="form-control form-control-sm mb-2"
-                                data-test="template">
-                                <option value="none">Nenhum</option>
-                                <option value="ggplot2">Ggplot2</option>
-                                <option value="seaborn">Seaborn</option>
-                                <option value="simple_white">Branco simples</option>
-                                <option value="plotly">Plotly</option>
-                                <option value="plotly_white">Plotly (Branco)</option>
-                                <option value="plotly_dark">Plotly (Escuro)</option>
-                                <option value="presentation">Apresentação</option>
-                                <!--
-                                        <option value="xgridoff">Grade desabilitada eixo X</option>
-                                        <option value="ygridoff">Grade desabilitada eixo Y</option>
-                                        <option value="gridon">Grid habilitada</option>
-                                        -->
-                            </select>
+                            <template v-if="!mapFamily">
+                                <label class="mt-2">Tema:</label>
+                                <select v-model="editableVisualization.template.value" class="form-control form-control-sm mb-2"
+                                    data-test="template">
+                                    <option value="none">Nenhum</option>
+                                    <option value="ggplot2">Ggplot2</option>
+                                    <option value="seaborn">Seaborn</option>
+                                    <option value="simple_white">Branco simples</option>
+                                    <option value="plotly">Plotly</option>
+                                    <option value="plotly_white">Plotly (Branco)</option>
+                                    <option value="plotly_dark">Plotly (Escuro)</option>
+                                    <option value="presentation">Apresentação</option>
+                                    <!--
+                                            <option value="xgridoff">Grade desabilitada eixo X</option>
+                                            <option value="ygridoff">Grade desabilitada eixo Y</option>
+                                            <option value="gridon">Grid habilitada</option>
+                                            -->
+                                </select>
+                            </template>
                             <template v-if="['bubble', 'scatter', 'pointcloud'].includes(chartType)">
                                 <label>Atributo usado para cor:</label>
                                 <v-select v-model="editableVisualization.color_attribute.value" :options="attributes"
@@ -197,12 +199,14 @@
                                         <option value="carto-darkmatter">Carto Darkmatter</option>
                                         <option value="carto-positron">Carto Positron</option>
                                         <option value="open-street-map">Open Street Map</option>
+                                        <!-- Requires token
                                         <option value="stamen-terrain">Stamen Terrain</option>
                                         <option value="stamen-toner">Stamen Toner</option>
                                         <option value="stamen-watercolor">Stamen Watercolor</option>
+                                        -->
                                         <option value="white-bg">Fundo Branco (sem mapa)</option>
 
-                                        <!-- Requires MapBox token 
+                                        <!-- Requires MapBox token
                                         <option value="basic">Mapbox Básico</option>
                                         <option value="streets">Mapbox Streets</option>
                                         <option value="outdoors">Mapbox Outdoors</option>
@@ -238,7 +242,7 @@
                                     <b-form-text class="text-center mt-0">{{ editableVisualization.zoom.value
                                     }}</b-form-text>
                                 </b-form-group>
-                                <b-form-group label="Raio base (se atributo para tamanho):">
+                                <b-form-group label="Raio base (se atributo para tamanho ou magnitude):">
                                     <b-form-input type="number" class="form-control form-control-sm mb-0" min="0" step=".1"
                                         max="" v-model.number="editableVisualization.marker_size.value"
                                         data-test="marker_size" />
@@ -429,7 +433,7 @@
                         </b-card-body>
                     </b-collapse>
                 </b-card>
-                <b-card no-body class="mb-0">
+                <b-card v-if="!mapFamily" no-body class="mb-0">
                     <b-card-header header-tag="header" class="p-0" role="tab">
                         <b-button block v-b-toggle.accordion-5 variant="light" size="sm"
                             data-test="card-5">Subgráficos</b-button>
@@ -450,7 +454,7 @@
                         </b-card-body>
                     </b-collapse>
                 </b-card>
-                <b-card v-if="!pieFamily" no-body class="mb-0">
+                <b-card v-if="!pieFamily && !mapFamily" no-body class="mb-0">
                     <b-card-header header-tag="header" class="p-0" role="tab">
                         <b-button block v-b-toggle.accordion-6 variant="light" size="sm"
                             data-test="card-6">Animação</b-button>
@@ -469,7 +473,7 @@
                                             <label>Título:</label>
                                             <b-form-input maxlength="50" v-model="editableVisualization.title.value" class="form-control-sm"/>
                                         </b-form-group>
-                                        
+
                                         <b-dropdown size="sm" dropright ref="axis" class="mt-2 mr-1" variant="light small-dd-title">
                                             <template #button-content>
                                                 Margens
@@ -557,19 +561,20 @@ editableVisualization.value = structuredClone(props.value);
 
 /* Computed */
 const mapFamily = computed(() =>
-    ['scattermapbox'].includes(props.chartType)
+    ['scattermapbox', 'densitymapbox'].includes(props.chartType)
 );
 const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
 );
 const continuousColors = computed(() => {
-    return ['sunburst', 'treemap', 'histogram2dcontour', 'parcoords', 'scattergeo', 'histogram2d'].includes(props.chartType);
+    return ['sunburst', 'treemap', 'histogram2dcontour', 'parcoords', 'scattergeo', 'densitymapbox',
+        'histogram2d'].includes(props.chartType);
 });
 const discreteColors = computed(() => {
     return !continuousColors.value;
 });
 const supportsLegend = computed(() =>
-    !['treemap'].includes(props.chartType)
+    !['treemap', 'densitymapbox'].includes(props.chartType)
 );
 /* Watch */
 watch(

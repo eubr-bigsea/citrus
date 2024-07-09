@@ -604,7 +604,7 @@ class Visualization {
         color_aggregation = { value: null },
 
         tooltip_info = { value: null },
-        zoom = { value: null },
+        zoom = { value: 2 },
         center_latitude = { value: null },
         center_longitude = { value: null },
         latitude = { value: null },
@@ -613,6 +613,10 @@ class Visualization {
 
         limit = { value: null },
         filter = { value: null },
+        magnitude = { value: null },
+        hover_name = { value: null },
+        hover_data = { value: null },
+
 
     },
     ) {
@@ -664,6 +668,10 @@ class Visualization {
         this.opacity = opacity;
         this.scatter_color = scatter_color;
         this.scatter_size = scatter_size;
+
+        this.magnitude = magnitude;
+        this.hover_name = hover_name;
+        this.hover_data = hover_data;
 
     }
     /*

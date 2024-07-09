@@ -3,7 +3,7 @@
         <b-card class="mt-1">
             <template v-if="mapFamily">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-2">
                         <small class="form-text text-muted">Latitude:</small>
                         <v-select v-model="editableVisualization.latitude.value" :options="attributes" label="name"
                             :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
@@ -40,7 +40,62 @@
                             </template>
                         </v-select>
                     </div>
-                    <div class="col-6">
+                    <div v-if="chartType === 'densitymapbox'" class="col-4">
+                        <small class="form-text text-muted">Atributo com nome (exibido ao apontar com o mouse):</small>
+                        <v-select v-model="editableVisualization.hover_name.value" :options="attributes"
+                            label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                            <template #option="{ type, name }">
+                                <span v-if="name !== '*'"
+                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                {{ name }}
+                            </template>
+
+                            <template #selected-option="{ type, name }">
+                                <div>
+                                    <span v-if="name !== '*'"
+                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                    {{ name }}
+                                </div>
+                            </template>
+                        </v-select>
+                        <small class="form-text text-muted">Valor(es) (exibido(s) ao apontar com o mouse):</small>
+                        <v-select v-model="editableVisualization.hover_data.value" :options="attributes"
+                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small" multiple="true">
+                            <template #option="{ type, name }">
+                                <span v-if="name !== '*'"
+                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                {{ name }}
+                            </template>
+
+                            <template #selected-option="{ type, name }">
+                                <div>
+                                    <span v-if="name !== '*'"
+                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                    {{ name }}
+                                </div>
+                            </template>
+                        </v-select>
+                    </div>
+                    <div v-if="chartType === 'densitymapbox'" class="col-4">
+                        <small class="form-text text-muted">Magnitude (intensidade, opcional):</small>
+                        <v-select v-model="editableVisualization.magnitude.value" :options="attributes"
+                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                            <template #option="{ type, name }">
+                                <span v-if="name !== '*'"
+                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                {{ name }}
+                            </template>
+
+                            <template #selected-option="{ type, name }">
+                                <div>
+                                    <span v-if="name !== '*'"
+                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                    {{ name }}
+                                </div>
+                            </template>
+                        </v-select>
+                    </div>
+                    <div v-if="chartType === 'scattermapbox'" class="col-6">
                         <div class="row">
                             <div class="col-6">
                                 <small class="form-text text-muted">Cor (opcional):</small>
@@ -98,107 +153,6 @@
                                 </v-select>
                             </div>
                         </div>
-                        <!--
-                        <b-dropdown size="sm" ref="axis" class="mr-1" variant="outline-secondary small-dd-title"
-                            title="Cor">
-                            <template #button-content>
-                                <font-awesome-icon class="mr-2 text-success" prefix="fa" icon="droplet" /> Cor
-                            </template>
-                            <b-dropdown-form form-class="right-drop-form">
-                                <div class="row half-series-form">
-                                    <div class="col-12">
-                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
-                                            label-for="dropdown-form-email">
-
-                                            <v-select v-model="editableVisualization.color_attribute.value"
-                                                :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
-                                                :reduce="(opt) => opt.name" :searchable="false">
-                                                <template #option="{ type, name }">
-                                                    <span v-if="name !== '*'"
-                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                    {{ name }}
-                                                </template>
-
-                                                <template #selected-option="{ type, name }">
-                                                    <div>
-                                                        <span v-if="name !== '*'"
-                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                        {{ name }}
-                                                    </div>
-                                                </template>
-                                            </v-select>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </b-dropdown-form>
-                        </b-dropdown>
-                        <b-dropdown size="sm" ref="axis" class="mr-1" variant="outline-secondary small-dd-title"
-                            title="Tamanho">
-                            <template #button-content>
-                                <font-awesome-icon class="mr-2 text-primary" prefix="fa" icon="ruler-combined" /> Tamanho
-                            </template>
-                            <b-dropdown-form form-class="right-drop-form">
-                                <div class="row half-series-form">
-                                    <div class="col-12">
-                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
-                                            label-for="dropdown-form-email">
-
-                                            <v-select v-model="editableVisualization.size_attribute.value"
-                                                :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
-                                                :reduce="(opt) => opt.name" :searchable="false">
-                                                <template #option="{ type, name }">
-                                                    <span v-if="name !== '*'"
-                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                    {{ name }}
-                                                </template>
-
-                                                <template #selected-option="{ type, name }">
-                                                    <div>
-                                                        <span v-if="name !== '*'"
-                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                        {{ name }}
-                                                    </div>
-                                                </template>
-                                            </v-select>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </b-dropdown-form>
-                        </b-dropdown>
-                        <b-dropdown size="sm" ref="axis" class="mr-1" variant="outline-secondary small-dd-title"
-                            title="Texto">
-                            <template #button-content>
-                                <font-awesome-icon class="mr-2 text-warning" prefix="fa" icon="a" /> Texto
-                            </template>
-                            <b-dropdown-form form-class="right-drop-form">
-                                <div class="row half-series-form">
-                                    <div class="col-12">
-                                        <b-form-group :label="$tc('common.attribute', 1) + ':'"
-                                            label-for="dropdown-form-email">
-
-                                            <v-select v-model="editableVisualization.text_attribute.value"
-                                                :options="[{ name: '*', type: 'CHARACTER' }, ...attributes]" label="name"
-                                                :reduce="(opt) => opt.name" :searchable="false">
-                                                <template #option="{ type, name }">
-                                                    <span v-if="name !== '*'"
-                                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                    {{ name }}
-                                                </template>
-
-                                                <template #selected-option="{ type, name }">
-                                                    <div>
-                                                        <span v-if="name !== '*'"
-                                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                                        {{ name }}
-                                                    </div>
-                                                </template>
-                                            </v-select>
-                                        </b-form-group>
-                                    </div>
-                                </div>
-                            </b-dropdown-form>
-                        </b-dropdown>
-                    -->
                     </div>
                 </div>
             </template>
@@ -209,8 +163,7 @@
                         <template #button-content>
                             <font-awesome-icon class="mr-2" prefix="fa" icon="y" />
                         </template>
-                        <b-dropdown-form v-if="hasAxis"
-                            form-class="down-drop-form">
+                        <b-dropdown-form v-if="hasAxis" form-class="down-drop-form">
                             <div class="row axis-form">
                                 <div class="col-12">
                                     <b-form-group label="Título:">
@@ -315,7 +268,8 @@
                                             </b-form-group>
                                             <b-form-group v-if="!pieFamily" label="Rótulo para legenda:">
                                                 <b-form-input type="text" v-model="y.label"
-                                                    class="form-control form-control-sm" maxlength="100" debounce="500" />
+                                                    class="form-control form-control-sm" maxlength="100"
+                                                    debounce="500" />
                                             </b-form-group>
 
                                             <b-form-group label="Função de agregação:">
@@ -357,11 +311,13 @@
                                         <div class="col-6">
                                             <b-form-group v-if="!pieFamily" label="Prefixo:">
                                                 <b-form-input type="text" v-model="y.prefix"
-                                                    class="form-control form-control-sm" maxlength="20" debounce="500" />
+                                                    class="form-control form-control-sm" maxlength="20"
+                                                    debounce="500" />
                                             </b-form-group>
                                             <b-form-group v-if="!pieFamily" label="Sufixo:">
                                                 <b-form-input type="text" v-model="y.suffix"
-                                                    class="form-control form-control-sm" maxlength="20" debounce="500" />
+                                                    class="form-control form-control-sm" maxlength="20"
+                                                    debounce="500" />
                                             </b-form-group>
                                             <b-form-group v-if="!['donut', 'pie'].includes(chartType)">
                                                 <template #label>
@@ -381,7 +337,8 @@
                                             <b-form-group label="Espessura da linha:">
                                                 <select class="form-control form-control-sm w-50"
                                                     v-model.number="y.strokeSize">
-                                                    <option v-for="i in 11" :key="i - 1" :value="i - 1">{{ i - 1 }}</option>
+                                                    <option v-for="i in 11" :key="i - 1" :value="i - 1">{{ i - 1 }}
+                                                    </option>
                                                 </select>
                                             </b-form-group>
                                             <b-form-group label="Cor da Linha:" label-for="line-width">
@@ -391,9 +348,11 @@
                                             <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
                                                 label="Padrão de preenchimento:">
                                                 <v-select v-model="y.shape" :options="shapes" label="label"
-                                                    :reduce="(opt) => opt.name" :searchable="false" style="font-size:10pt">
+                                                    :reduce="(opt) => opt.name" :searchable="false"
+                                                    style="font-size:10pt">
                                                     <template #option="{ label, name, icon }">
-                                                        <img :src="getShapeIcon(icon)" style="width:20px; height: 20px" />
+                                                        <img :src="getShapeIcon(icon)"
+                                                            style="width:20px; height: 20px" />
                                                         {{ label }}
                                                         <!--<div class="bg-chart" :class="`bg-${name}`"></div>-->
                                                     </template>
@@ -448,8 +407,7 @@
                         <template #button-content>
                             <font-awesome-icon class="mr-2" prefix="fa" icon="x" />
                         </template>
-                        <b-dropdown-form v-if="hasAxis"
-                            form-class="down-drop-form">
+                        <b-dropdown-form v-if="hasAxis" form-class="down-drop-form">
                             <div class="row axis-form">
                                 <div class="col-12">
                                     <b-form-group label="Título:">
@@ -513,10 +471,10 @@
 
                         <div v-for="(x, i) in xSeries" :key="i" class="drag-handle">
                             <b-dropdown size="sm small-dd-title" ref="xDimensionDD" class="mt-2 mr-1 pull-right"
-                                :variant="x.attribute ? 'outline-secondary' : 'outline-danger'"
-                                :id="`x-series-${i}`">
+                                :variant="x.attribute ? 'outline-secondary' : 'outline-danger'" :id="`x-series-${i}`">
                                 <template #button-content>
-                                    {{ getDisplayXDimensionLabel(x, 'Selecione...', 'grupos', 'tamanho', 'Categórico') }}
+                                    {{ getDisplayXDimensionLabel(x, 'Selecione...', 'grupos', 'tamanho', 'Categórico')
+                                    }}
                                 </template>
                                 <b-dropdown-form form-class="right-drop-form">
                                     <div class="row series-form">
@@ -552,7 +510,8 @@
                                             </b-form-group>
                                             <b-form-group v-if="!pieFamily" label="Rótulo para legenda:">
                                                 <b-form-input type="text" v-model="x.displayLabel"
-                                                    class="form-control form-control-sm" maxlength="100" debounce="500" />
+                                                    class="form-control form-control-sm" maxlength="100"
+                                                    debounce="500" />
                                             </b-form-group>
                                             <div v-if="true && isNumeric(x.attribute)">
                                                 <b-form-group label="Agrupamento (bins):">
@@ -560,11 +519,13 @@
                                                         <option value="EQUAL_INTERVAL">Número fixo de
                                                             grupos com intervalos iguais
                                                         </option>
-                                                        <option value="FIXED_SIZE">Grupos com comprimento de intervalo fixo
+                                                        <option value="FIXED_SIZE">Grupos com comprimento de intervalo
+                                                            fixo
                                                         </option>
                                                         <option value="NONE">Nenhuma transformação</option>
                                                         <option value="QUANTILES">Quantis (em %)</option>
-                                                        <option value="CATEGORICAL">Tratar valores como categóricos</option>
+                                                        <option value="CATEGORICAL">Tratar valores como categóricos
+                                                        </option>
                                                     </select>
                                                 </b-form-group>
                                                 <b-form-group v-if="x.binning === 'EQUAL_INTERVAL'"
@@ -573,12 +534,14 @@
                                                         class="form-control form-control-sm w-25" max="1000" min="1"
                                                         debounce="500" />
                                                 </b-form-group>
-                                                <b-form-group v-if="x.binning === 'FIXED_SIZE'" label="Tamanho dos grupos:">
+                                                <b-form-group v-if="x.binning === 'FIXED_SIZE'"
+                                                    label="Tamanho dos grupos:">
                                                     <b-form-input type="number" v-model.number="x.bin_size"
                                                         class="form-control form-control-sm w-25" max="1000" min="1"
                                                         debounce="500" />
                                                 </b-form-group>
-                                                <b-form-group v-if="x.binning === 'QUANTILES'" label="Quantis (inteiros separados por vírgula):">
+                                                <b-form-group v-if="x.binning === 'QUANTILES'"
+                                                    label="Quantis (inteiros separados por vírgula):">
                                                     <b-form-input type="text" v-model="x.quantiles"
                                                         class="form-control form-control-sm w-100" max="1000" min="1"
                                                         debounce="500" />
@@ -587,11 +550,14 @@
                                                 <b-form-group v-if="false" label="Computação:">
                                                     <select class="form-control form-control-sm" v-model="x.compute">
                                                         <option label="NORMAL" value="NORMAL">NORMAL</option>
-                                                        <option label="PERCENTAGE SCALE" value="PERCENTAGE SCALE">PERCENTAGE
+                                                        <option label="PERCENTAGE SCALE" value="PERCENTAGE SCALE">
+                                                            PERCENTAGE
                                                             SCALE
                                                         </option>
-                                                        <option label="CUMULATIVE" value="CUMULATIVE">CUMULATIVE</option>
-                                                        <option label="CUMULATIVE_PERCENTAGE" value="CUMULATIVE_PERCENTAGE">
+                                                        <option label="CUMULATIVE" value="CUMULATIVE">CUMULATIVE
+                                                        </option>
+                                                        <option label="CUMULATIVE_PERCENTAGE"
+                                                            value="CUMULATIVE_PERCENTAGE">
                                                             CUMULATIVE
                                                             PERCENTAGE</option>
                                                     </select>
@@ -611,20 +577,26 @@
                                         <div class="col-6">
                                             <b-form-group v-if="!pieFamily" label="Tratar valores vazios:">
                                                 <select class="form-control-sm">
-                                                    <option label="Replace with zeros" value="ZEROS" selected="selected">
+                                                    <option label="Replace with zeros" value="ZEROS"
+                                                        selected="selected">
                                                         Replace with zeros</option>
-                                                    <option label="Link neighbors" value="AVERAGE">Link neighbors</option>
-                                                    <option label="Interrupt line" value="DASHED">Interrupt line</option>
+                                                    <option label="Link neighbors" value="AVERAGE">Link neighbors
+                                                    </option>
+                                                    <option label="Interrupt line" value="DASHED">Interrupt line
+                                                    </option>
                                                 </select>
                                             </b-form-group>
                                             <b-form-group label="Ordenação:">
                                                 <select class="form-control form-control-sm" v-model="x.sorting">
-                                                    <option label="Ordenação natural" value="NATURAL" selected="selected">
+                                                    <option label="Ordenação natural" value="NATURAL"
+                                                        selected="selected">
                                                         Ordenação natural</option>
-                                                    <option label="Valor do eixo Y (ascendente)" value="Y_ASC">Valor do eixo
+                                                    <option label="Valor do eixo Y (ascendente)" value="Y_ASC">Valor do
+                                                        eixo
                                                         Y
                                                         (ascendente)</option>
-                                                    <option label="Valor do eixo Y (descendente)" value="Y_DESC">Valor do
+                                                    <option label="Valor do eixo Y (descendente)" value="Y_DESC">Valor
+                                                        do
                                                         eixo Y
                                                         (descendente)</option>
                                                 </select>
@@ -723,7 +695,7 @@ const props = defineProps({
             x_axis: { value: {} }, y_axis: { value: {} },
             x: { value: {} }, y: { value: {} },
             color_attribute: { value: null }, text_attribute: { value: null }, size_attribute: { value: null },
-            latitude_attribute: { value: null }, longitude_attribute: { value: null }
+            latitude: { value: null }, longitude: { value: null },
         })
     },
     chartType: { type: String, required: false }
@@ -746,14 +718,10 @@ onBeforeMount(() =>
 const yDimensionDD = ref(null);
 const xDimensionDD = ref(null);
 
-
-editableVisualization.value = structuredClone(props.value);
-
-
 /* Computed */
 
 const mapFamily = computed(() =>
-    ['scattermapbox'].includes(props.chartType)
+    ['scattermapbox', 'densitymapbox'].includes(props.chartType)
 );
 const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
@@ -816,6 +784,7 @@ const handleSelectAttribute = (x) => {
     }
 };
 
+editableVisualization.value = structuredClone(props.value);
 
 const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
 const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
@@ -869,7 +838,7 @@ watch(
             }
         });
 
-        editableVisualization.value = structuredClone(value);
+        editableVisualization.value = structuredClone(props.value);
         toEmit.value = false;
     }, { deep: true, immediate: true });
 
@@ -917,11 +886,12 @@ watch(
 .select2-small {
     zoom: .8
 }
+
 .axis-label {
     text-align: right;
     float: left;
     width: 60px;
-    margin: 12px 5px 0 0 ;
+    margin: 12px 5px 0 0;
     font-size: 10pt;
 }
 </style>
