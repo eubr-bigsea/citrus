@@ -20,14 +20,14 @@
                 </b-button>
             </div>
         </div>
-        <div class="layout-container source-code-pro-font">
+        <div class="layout-container xsource-code-pro-font">
             <div class="layout">
                 <div>
                     <form class="clearfix">
                         <div data-test="basic-options-section">
-                            <label>{{ $tc('common.aliasSql') }}:</label>
+                            <label>{{ $tc('common.name') }}:</label>
                             <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                                :placeholder="$tc('common.aliasSql')" maxlength="100"
+                                :placeholder="$tc('common.name')" maxlength="100"
                                 title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
 
                             <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
@@ -126,7 +126,8 @@
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="cell, i in workflowObj.cells" class="mb-3 editors" :key="cell.id"  :class="{'disabled-cell': !cell.enabled}">
+                        <div v-for="cell, i in workflowObj.cells" class="mb-3 editors" :key="cell.id"
+                            :class="{ 'disabled-cell': !cell.enabled }">
                             <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
                                 <div class="col-12">
                                     <div class="button-toolbar">
@@ -151,9 +152,8 @@
                                         class="form-control form-control-sm mb-1" maxlength="100"
                                         v-model="cell.forms.comment.value" />
                                 </div>
-                                <div class="col-2">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true"
-                                        :unchecked-value="false">
+                                <div class="col-2 mt-4">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
                                         Habilitado
                                     </b-form-checkbox>
                                 </div>
@@ -174,14 +174,13 @@
                                             @on-toggle-use-hwc="handleToggleHWC" />
                                     </div>
                                 </div>
-                                <div class="col-10">
+                                <div class="col-8">
                                     <span class="form-text">{{ $t('titles.comment') }}:</span> <input
                                         class="form-control form-control-sm mb-1" maxlength="100"
                                         v-model="cell.forms.comment.value" />
                                 </div>
-                                <div class="col-2">
-                                    <b-form-checkbox v-model="cell.enabled" :value="true"
-                                        :unchecked-value="false">
+                                <div class="col-2 mt-4">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true" :unchecked-value="false">
                                         Habilitado
                                     </b-form-checkbox>
                                 </div>
@@ -218,6 +217,18 @@
                                         <font-awesome-icon icon="fa" :icon="getCellIcon(cell)"
                                             :class="getCellClass(cell)" />
                                     </span>
+                                </div>
+                                <div v-if="cell.userMessages && cell.userMessages != ''" class="col-12">
+                                    <div class=" ml-4 mt-3 border-top notifications px-4 py-2">
+                                        <div v-for="msg in cell.userMessages" class="mt-2 pt-2 border-top">
+                                            <div v-if="msg.type.toUpperCase() === 'HTML'">
+                                                <span v-html="msg.message"/>
+                                            </div>
+                                            <div v-else>
+                                                {{ msg.message }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -387,6 +398,13 @@ const configureWebSocket = async () => {
                 }
             }
         },
+        'user message': (msg) => {
+            const cell = workflowObj.value.cellMap.get(msg.id);
+            if (cell) {
+                cell.userMessages = (cell.userMessages || []);
+                cell.userMessages.push(msg);
+            }
+        },
         'update job': (msg) => {
             jobStatus.value = '';
             if (msg.status === 'ERROR') {
@@ -491,7 +509,10 @@ const executeWorkflow = async (taskId, only) => {
         clusterRef.value.open = true;
         return;
     }
-    workflowObj.value.tasks.forEach(t => t.status = null);
+    workflowObj.value.tasks.forEach(t => {
+        t.status = null;
+        t.userMessages = [];
+    });
     if (isDirty.value) {
         saveWorkflow();
     }
@@ -506,6 +527,7 @@ const executeWorkflow = async (taskId, only) => {
         delete task.version;
         delete task.step;
         delete task.status;
+        delete task.userMessages;
     });
     delete cloned._tasksLookup;
     cloned.cells = cloned.cells.sort(c => c.display_order);
@@ -729,8 +751,19 @@ const getCellClass = (cell) => {
 </script>
 
 <style>
-.disabled-cell .cm-content, .disabled-cell input {
+.disabled-cell .cm-content,
+.disabled-cell input {
     background: lightgray !important;
+}
+table.dataframe tr:nth-child(even) {
+    background-color: white;
+}
+table.dataframe td, table.dataframe th {
+    padding: 2px 5px;
+}
+table.dataframe td, table.dataframe th, table.dataframe {
+    border: 0;
+    text-align: center;
 }
 </style>
 <style scoped lang="scss">
@@ -738,6 +771,7 @@ const getCellClass = (cell) => {
     display: flex;
     gap: 10px;
     /*height: 85vh;*/
+    font-size: .8em;
 }
 
 .layout,
@@ -827,6 +861,13 @@ const getCellClass = (cell) => {
     margin-top: 2px;
     min-height: 16px;
     font-size: 9pt;
+}
+
+.notifications {
+    font-size: .9em;
+    background-color: #fafafa;
+    width: 100%;
+    overflow-x: auto;
 }
 
 </style>

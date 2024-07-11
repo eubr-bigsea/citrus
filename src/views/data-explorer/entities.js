@@ -118,7 +118,7 @@ class Workflow {
     }
     static buildSqlBuilder(name, ds, i18n) {
         const dataReader = new Task({
-            name: i18n.$tc('dataExplorer.readData'),
+            name: ds.labelValue.toLowerCase().replace(/[^A-Za-z0-9_]/g, "_"),
             operation: new Operation({ id: 2100 }),
             display_order: 0,
         });
@@ -272,8 +272,8 @@ class SqlBuilderWorkflow extends Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
         version = null, user = null, forms = null } = {}, operations) {
         super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
-        this.updateLists();
         this.cellMap = new Map();
+        this.updateLists();
         this.cells.forEach(cell => {
             this.cellMap.set(cell.id, cell);
             cell.status = '';
@@ -306,7 +306,10 @@ class SqlBuilderWorkflow extends Workflow {
         const countDataSources = this.dataSources.length;
 
         this.cells = this.tasks.filter(t => t.operation.slug !== 'read-data');
-        this.cells.forEach((cell, index) => cell.display_order = index + countDataSources);
+        this.cells.forEach((cell, index) => {
+            cell.display_order = index + countDataSources;
+            this.cellMap.set(cell.id, cell);
+        });
     }
     addSqlTask(taskId, command) {
         const forms = {
