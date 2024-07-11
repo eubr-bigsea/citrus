@@ -25,16 +25,12 @@ export default {
         },
         //{ name: "scatterplot", label: "Scatter Plot", },
 
-        {
-            name: "scattermapbox", label: 'Mapa de pontos',
-            dataTypes: ['contínuos'], objectives: ['comparação']
-        },
 
         {
             name: "treemap", label: "Mapa em Árvore (Treemap)",
             dataTypes: ['categóricos'], objectives: ['hierarquia', 'comparação']
         },
-        { name: "sunburst", label: "Gráfico de Hierarquias", dataTypes: ['categóricos'], objectives: ['hierarquia', 'comparação']},
+        { name: "sunburst", label: "Gráfico de Hierarquias", dataTypes: ['categóricos'], objectives: ['hierarquia', 'comparação'] },
         { name: "pointcloud", label: "Nuvem de Pontos", },
         //{ name: "scattergeo", label: "Bolhas em Mapa", },
         { name: "funnel", label: "Gráfico de Funil", },
@@ -42,11 +38,18 @@ export default {
         { name: "histogram2d", label: "Density Heatmap", },
         { name: "parcoords", label: "Coordenadas Paralelas", },
         { name: "histogram2dcontour", label: "2D Histogram Contour", },
-        { name: "heatmap", label: "Mapa de Calor (Heatmap)", objectives: ['comparação',
-            'correlação', 'distribuição', 'tendência']},
+        {
+            name: "heatmap", label: "Mapa de Calor (Heatmap)", objectives: ['comparação',
+                'correlação', 'distribuição', 'tendência']
+        },
         /*{name: "dots",label: "Pontos",
                 image: "https://images.plot.ly/plotly-documentation/thumbnail/dot-plot.jpg"
-            },*/
-        { name: "densitymapbox", label: "Mapa de Calor (Geo)", },
+                },*/
+        { name: "densitymapbox", label: "Mapa de Calor/Densidade (Geo)", },
+        {
+            name: "scattermapbox", label: '"Mapa de Dispersão: Pontos e Bolhas (Geo)',
+            dataTypes: ['contínuos'], objectives: ['comparação']
+        },
+        { name: "choropleth", label: "Mapa Coroplético (Geo)", },
     ]
 }

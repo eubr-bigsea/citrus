@@ -106,13 +106,30 @@ class Workflow {
         dataReader.setProperty('display_sample', '0');
 
         const sample = Workflow.createSampleTask(1, null, i18n);
-        dataReader.setProperty('display_sample', '1');
+        sample.setProperty('display_sample', '1');
 
         const workflow = new Workflow({
             name: name,
             type: 'DATA_EXPLORER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             tasks: [dataReader, sample]
+        });
+        return workflow;
+    }
+    static buildSqlBuilder(name, ds, i18n) {
+        const dataReader = new Task({
+            name: i18n.$tc('dataExplorer.readData'),
+            operation: new Operation({ id: 2100 }),
+            display_order: 0,
+        });
+        dataReader.setProperty('data_source', ds);
+        dataReader.setProperty('display_sample', '0');
+
+        const workflow = new Workflow({
+            name: name,
+            type: 'SQL',
+            platform: new Platform({ id: META_PLATFORM_ID }),
+            tasks: [dataReader]
         });
         return workflow;
     }
@@ -302,6 +319,7 @@ class SqlBuilderWorkflow extends Workflow {
             storage: { value: null },
             tags: { value: [] },
             useHWC: {value: 'spark'},
+            type: {value: 'sql'},
         };
         const task = new Task({
             id: Operation.generateTaskId(),
@@ -327,6 +345,7 @@ class SqlBuilderWorkflow extends Workflow {
             code: { value: command },
             comment: { value: '' },
             code_libraries: { value: [] },
+            type: {value: 'python'},
         };
         const task = new Task({
             id: Operation.generateTaskId(),

@@ -52,7 +52,7 @@
                                 <label>Escolha uma fonte de dados</label>
                                 <vue-select :filterable="false" :options="dataSourceList" :reduce="(opt) => opt.id"
                                     label="name" @search="loadDataSourceList" @input="handleAddDataSource">
-                                    <template #no-options="{ }">
+                                    <template #no-options="{}">
                                         <small>Digite parte do nome pesquisar ...</small>
                                     </template>
                                     <template #option="option">
@@ -115,8 +115,14 @@
             <div class="layout-center pt-2">
                 <h4>Comandos ({{ workflowObj.cells?.length }})</h4>
                 <div v-if="workflowObj.cells?.length === 0">
-                    <button @click="handleAddSql(null, '\n')" class="btn btn-secondary btn-sm">
-                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }}</button>
+                    <button @click="handleAdd(null, 'sql', '\n')" class="btn btn-secondary btn-sm">
+                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} SQL</button>
+                    <button @click="handleAdd(null, 'python', '\n')" class="btn btn-secondary btn-sm ml-3">
+                        <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add') }} Python</button>
+                    <blockquote class="blockquote">
+                        <p class="mb-0">Nenhum comando ainda.</p>
+                        Escolha uma das opções acima para iniciar.
+                    </blockquote>
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
@@ -195,9 +201,10 @@
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'COMPLETED'" icon="fa-check-circle" class="text-success " />
                                         <font-awesome-icon v-if="taskStatuses[cell.id] === 'ERROR'" icon="fa-stop" class="text-danger" />
                                         -->
-                                        <span v-if="cell.status && cell.status != ''">
-                                            {{cell.message}}
-                                            <font-awesome-icon icon="fa" :icon="getCellIcon(cell)" :class="getCellClass(cell)" />
+                                    <span v-if="cell.status && cell.status != ''">
+                                        {{ cell.message }}
+                                        <font-awesome-icon icon="fa" :icon="getCellIcon(cell)"
+                                            :class="getCellClass(cell)" />
                                     </span>
                                 </div>
                             </div>
@@ -361,7 +368,7 @@ const configureWebSocket = async () => {
                     modalSample.value.show();
                 });
             } else {
-            const cell = workflowObj.value.cellMap.get(msg.id);
+                const cell = workflowObj.value.cellMap.get(msg.id);
                 if (cell) {
                     cell.status = msg.status;
                     cell.message = msg.message;
@@ -584,8 +591,8 @@ const showSample = () => {
 
 /**Events */
 const handleAdd = (taskId, type, command) => {
-    if (type === 'sql') {
-        workflowObj.value.addSqlTask(taskId, command);
+    if (type === 'sql' || type === undefined) {
+        workflowObj.value.addSqlTask(taskId, command || '\n');
     } else {
         workflowObj.value.addPythonTask(taskId, command);
     }
@@ -686,7 +693,7 @@ const handleCodeAppear = (el, done) => {
 
 }
 const getCellIcon = (cell) => {
-    switch(cell.status){
+    switch (cell.status) {
         case 'RUNNING':
             return 'fa-sync';
         case 'COMPLETED':
@@ -698,7 +705,7 @@ const getCellIcon = (cell) => {
     }
 };
 const getCellClass = (cell) => {
-    switch(cell.status){
+    switch (cell.status) {
         case 'RUNNING':
             return 'text-primary';
         case 'COMPLETED':
@@ -790,11 +797,13 @@ const getCellClass = (cell) => {
 .form-text {
     font-size: 10pt;
 }
+
 .exception-stack {
-     overflow:auto;
-     width: 260px;
-     height: 300px;
+    overflow: auto;
+    width: 260px;
+    height: 300px;
 }
+
 .cell-status-bar {
     padding: 4px 0 0 40px;
     line-height: 15px;
