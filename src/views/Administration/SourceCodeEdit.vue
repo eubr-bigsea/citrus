@@ -129,7 +129,7 @@ const sourceCode = ref();
 
 const load = async () => {
     if (props.add) {
-        sourceCode.value = { id: null, suspicious: false, };
+        sourceCode.value = { id: null, suspicious: false, imports: '', code: ''};
     } else {
         const resp = await axios
             .get(`${tahitiUrl}/source-codes/${route.params.id}`);
@@ -177,7 +177,7 @@ const highlighter = () => {
 };
 const highlighterImport = () => {
     if (sourceCode.value !== '') {
-        return highlight(sourceCode.value.imports, languages.py, 'py');
+        return highlight(sourceCode.value.imports || '', languages.py, 'py');
     }
 };
 const focusTextarea = (event) => {
