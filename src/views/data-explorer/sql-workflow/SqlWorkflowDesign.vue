@@ -126,7 +126,7 @@
                 </div>
                 <div class="scroll-area commands pb-5 mb-4">
                     <transition-group name="fade" @after-enter="handleCodeAppear">
-                        <div v-for="cell, i in workflowObj.cells" class="mb-3 editors" :key="cell.id">
+                        <div v-for="cell, i in workflowObj.cells" class="mb-3 editors" :key="cell.id"  :class="{'disabled-cell': !cell.enabled}">
                             <div class="row" v-if="cell.operation.slug === 'execute-sql'" :data-cell="cell.id">
                                 <div class="col-12">
                                     <div class="button-toolbar">
@@ -146,10 +146,16 @@
                                         v-model="cell.name" />
                                 </div>
 
-                                <div class="col-6">
+                                <div class="col-4">
                                     <span class="form-text">{{ $t('titles.comment') }}:</span> <input
                                         class="form-control form-control-sm mb-1" maxlength="100"
                                         v-model="cell.forms.comment.value" />
+                                </div>
+                                <div class="col-2">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true"
+                                        :unchecked-value="false">
+                                        Habilitado
+                                    </b-form-checkbox>
                                 </div>
                                 <div class="col-2">
                                     <span class="form-text">Tipo:</span>
@@ -716,6 +722,11 @@ const getCellClass = (cell) => {
 };
 </script>
 
+<style>
+.disabled-cell .cm-content, .disabled-cell input {
+    background: lightgray !important;
+}
+</style>
 <style scoped lang="scss">
 .layout-container {
     display: flex;
@@ -811,4 +822,5 @@ const getCellClass = (cell) => {
     min-height: 16px;
     font-size: 9pt;
 }
+
 </style>
