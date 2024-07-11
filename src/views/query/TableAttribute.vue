@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <li ref="attribute">
         {{attribute.name}}
     </li>

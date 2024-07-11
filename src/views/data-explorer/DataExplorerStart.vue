@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <main role="main">
         <div>
             <div class="d-flex justify-content-between align-items-center">
@@ -13,51 +13,50 @@
 
                         <label class="" for="name">Nome do experimento:
                             <span v-if="errors.name" class="text-danger validation-error">
-                            {{errors.name}}
+                                {{ errors.name }}
                             </span>
                         </label>
                         <input id="name" v-model="name" v-focus type="text"
-                            class="form-control w-50 form-control-sm mb-2"
-                            maxlength="100" />
+                            class="form-control w-50 form-control-sm mb-2" maxlength="100" />
 
 
                         <label class="">
                             Escolha a fonte de dados:
                             <span v-if="errors.selectedDataSource" class="text-danger validation-error">
-                            {{errors.selectedDataSource}}
+                                {{ errors.selectedDataSource }}
                             </span>
                         </label>
-                        <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList" label="name"
-                                    class="w-50" @search="loadDataSourceList" @input="retrieveAttributes">
-                            <template #no-options="{ }">
+                        <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList"
+                            label="name" class="w-50" @search="loadDataSourceList" @input="retrieveAttributes">
+                            <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
-<template #option="option">
+                            <template #option="option">
                                 <div class="d-center">
                                     <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
                                 </div>
                             </template>
-<template #default="options">
-                                    {{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
+                            <template #default="options">
+                                {{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
                             </template>
-<template #selected-option="option">
+                            <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
+                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
                                 </div>
                             </template>
-</vue-select>
-<hr>
-<button type="submit" class="btn btn-sm btn-primary pr-4 pl-4">
-    {{$t('actions.create2')}}
-</button>
-<b-link :to="{ name: 'index-explorer'}" class="btn btn-secondary btn-sm ml-1">
-    {{$t('actions.cancel')}}
-</b-link>
-</form>
-</b-card>
-</div>
-</div>
-</main>
+                        </vue-select>
+                        <hr>
+                        <button type="submit" class="btn btn-sm btn-primary pr-4 pl-4">
+                            {{ $t('actions.create2') }}
+                        </button>
+                        <b-link :to="{ name: 'index-explorer' }" class="btn btn-secondary btn-sm ml-1">
+                            {{ $t('actions.cancel') }}
+                        </b-link>
+                    </form>
+                </b-card>
+            </div>
+        </div>
+    </main>
 </template>
 <script>
 import DataSourceMixin from './DataSourceMixin.js';
