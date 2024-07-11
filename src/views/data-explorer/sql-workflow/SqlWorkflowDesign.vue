@@ -180,6 +180,12 @@
                                         v-model="cell.forms.comment.value" />
                                 </div>
                                 <div class="col-2">
+                                    <b-form-checkbox v-model="cell.enabled" :value="true"
+                                        :unchecked-value="false">
+                                        Habilitado
+                                    </b-form-checkbox>
+                                </div>
+                                <div class="col-2">
                                     <span class="form-text">Tipo:</span>
                                     <input type="text" readonly :value="cell.operation.slug.substring(8)"
                                         class="form-control form-control-sm w-24" />
