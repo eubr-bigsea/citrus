@@ -2,23 +2,20 @@ export default (vm) => {
     const i18n = vm.$i18n.vm;
     // use the root in order to persist the toast between route transitions
     const toaster = vm.$root.$bvToast;
+    const modal = vm.$root.$bvModal;
     const router = vm.$router;
 
     const confirm = (title, question, callback) => {
-        snotify.confirm(
-            question, title,
+        modal.msgBoxConfirm(
+            question,
             {
-                position: 'centerTop',
-                xbuttons: {
-                    text: 'Yes', action: () => callback()
-                },
-                buttons: [
-                    { text: i18n.$t('common.yes'), action: (toast) => { callback(); snotify.remove(toast.id) }, },
-                    { text: i18n.$t('common.no'), action: (toast) => { console.log('Clicked: No'); snotify.remove(toast.id); }, bold: true },
-                ],
-                closeOnClick: true
+                title,
+                centered: true,
+                buttonSize: 'sm',
+                okTitle: i18n.$t('common.yes'),
+                cancelTitle: i18n.$t('common.no'),
             }
-        )
+        ).then(value => {callback(value)}).catch(err =>{callback(false)});
     };
 
     const display = (msg, title, variant, autoHideDelay, faIcon, position = 'b-toaster-bottom-right') => {

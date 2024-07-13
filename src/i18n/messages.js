@@ -145,6 +145,7 @@ export default {
             dontHaveAccount: 'Não possui uma conta?',
             email: 'E-mail',
             enabled: 'Habilitado',
+            end: 'Fim',
             false: 'Falso',
             filter: 'Filtro|Filtros',
             filterPlaceholder: 'Busca',
@@ -188,6 +189,7 @@ export default {
             parameters: 'Parâmetro | Parâmetros',
             password: 'Senha',
             path: 'Caminho|Caminhos',
+            period: 'Período | Períodos',
             periods: {
                 year: 'Ano | Anos',
                 month: 'Mês | Meses',
@@ -305,6 +307,9 @@ export default {
             truncateToNChars: 'Truncar para N caracteres',
             toLowerCase: 'Converter para minúsculas',
             toUpperCase: 'Converter para maiúsculas',
+        },
+        pipeline: {
+            step: 'Etapa | Etapas',
         },
         dataTypes: {
             BINARY: 'Verdadeiro ou falso',
@@ -1084,6 +1089,7 @@ export default {
             parameters: 'Parameter | Parameters',
             password: 'Password',
             path: 'Path | Paths',
+            period: 'Period | Periods',
             periods: {
                 year: 'Year | Years',
                 month: 'Month| Months',

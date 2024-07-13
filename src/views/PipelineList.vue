@@ -5,42 +5,44 @@
                 Pipelines
             </h1>
             <div>
-                <router-link :to="{name: 'pipelineRunsList'}" class="btn btn-outline-secondary float-left ml-2">
+                <router-link :to="{ name: 'pipelineRunsList' }" class="btn btn-outline-secondary float-left ml-2">
                     <font-awesome-icon icon="fa fa-history" /> Execuções
                 </router-link>
                 <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
                     <font-awesome-icon icon="fa fa-plus" /> Adicionar
                 </button>
             </div>
-        </div> 
+        </div>
 
-        <ModalCreatePipeline ref="addModal" :pipeline-templates="pipelineTemplates" :template-options="templateOptions" />
+        <ModalCreatePipeline ref="addModal" :pipeline-templates="pipelineTemplates"
+            :template-options="templateOptions" />
 
         <div class="pipelineList-body">
             <div class="pipelineList-container">
                 <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList">
                     <template #id="props">
-                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
-                            {{props.row.id}}
+                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
+                            {{ props.row.id }}
                         </router-link>
                     </template>
                     <template #name="props">
-                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
-                            {{props.row.name}}
+                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
+                            {{ props.row.name }}
                         </router-link>
                     </template>
                     <template #created="props">
-                        {{props.row.created | formatJsonDate}}
+                        {{ props.row.created | formatJsonDate }}
                     </template>
                     <template #updated="props">
-                        {{props.row.updated | formatJsonDate}}
+                        {{ props.row.updated | formatJsonDate }}
                     </template>
                     <template #version="props">
-                        {{props.row.version}}
+                        {{ props.row.version }}
                     </template>
                     <template #actions="props">
                         <div>
-                            <button class="btn btn-sm btn-danger" title="Excluir pipeline" @click="deletePipeline(props.row.id, props.row.name)">
+                            <button class="btn btn-sm btn-danger" title="Excluir pipeline"
+                                @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
@@ -93,14 +95,13 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    name: 'Nome',
-                    created: 'Criado em',
-                    updated: 'Atualizado em',
-                    version: 'Versão',
-                    user_name: 'Nome do usuário',
-                    actions: 'Ações',
+                    name: this.$tc('common.name'),
+                    created: this.$tc('common.created'),
+                    updated: this.$tc('common.updated'),
+                    user_name: this.$tc('common.userName'),
+                    actions: this.$tc('common.action', 2),
                 },
-                sortable: ['id','name','created','updated'],
+                sortable: ['id', 'name', 'created', 'updated'],
                 filterable: ['name'],
                 sortIcon: {
                     base: 'sort-base',
@@ -196,7 +197,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .pipelineList-title {
     color: #333;
     margin: 10px 0px;
@@ -213,5 +213,4 @@ export default {
     padding: 16px;
     border-radius: 3px;
 }
-
 </style>

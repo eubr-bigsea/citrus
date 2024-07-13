@@ -26,11 +26,19 @@
                 <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
                     <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'pipelines' }">
-                    <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" /> Pipelines
-                </b-nav-item>
 
-
+                <b-nav-item-dropdown v-if="isAdmin" right>
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
+                        {{ $tc('titles.pipeline', 2) }}
+                    </template>
+                    <b-dropdown-item :to="{ name: 'pipelines' }">
+                        {{ $tc('titles.pipeline', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'pipelineRunsList' }">
+                        {{ $tc('titles.pipelineRuns', 2) }}
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
             </b-navbar-nav>
 
             <b-navbar-nav class="pt-1">

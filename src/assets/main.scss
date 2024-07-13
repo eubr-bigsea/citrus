@@ -978,12 +978,11 @@ ul.b-form-tags-list {
 .runsList-status {
     display: flex;
     margin: 0 auto;
-    width: 60%;
     justify-content: center;
     font-weight: 500;
     padding: 5px 0px;
     border-radius: 25px;
-    font-size: 0.8em;
+    font-size: 0.7em;
     color: white;
 
     &.completed {
@@ -1075,4 +1074,9 @@ ul.b-form-tags-list {
     animation-iteration-count: var(--fa-animation-iteration-count, infinite);
     -webkit-animation-timing-function: var(--fa-animation-timing, linear);
     animation-timing-function: var(--fa-animation-timing, linear);
+}
+.custom-table .VueTables .row:first-child {
+    margin: initial !important;
+    background-color: white;
+    padding-top: 0;
 }
