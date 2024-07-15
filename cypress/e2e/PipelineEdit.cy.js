@@ -51,6 +51,21 @@ describe('Pipeline Edit', () => {
         });
     });
 
+    it('Create and delete new pipeline step', () => {
+        // add 'New Step'
+        cy.get('[data-test="add-step-button"]').first().click();
+        cy.get('[data-test="step-name-input"]').type('New Step');
+        cy.contains('button','OK').click();
+
+        // verifies existence of 'New Step' in steps list
+        cy.get('[data-test="steps-list"]').should('contain', 'New Step');
+
+        // deletes 'New Step' created
+        cy.get('[data-test="delete-step-button"]').last().click();
+        cy.get('.snotifyToast__buttons > button').first().click();
+        cy.get('[data-test="steps-list"]').should('not.contain', 'New Step');
+    });
+
     it('Sets the step schedule (once)', () => {
         cy.get('[data-test="select-frequency"]').select('once').should('have.value', 'once');
 

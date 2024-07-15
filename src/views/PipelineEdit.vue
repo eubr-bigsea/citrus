@@ -124,7 +124,7 @@
                         </div>
                     </b-card>
                 </div>
-                <div class="w-75" data-test="right-container">
+                <div class="w-75" data-test="steps-list">
                     <div class="editPage-collapse-title">
                         {{$t('pipeline.edit.pipelineSteps')}}
                     </div>
@@ -172,7 +172,7 @@
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
-                                                <button class="btn btn-sm btn-danger" 
+                                                <button class="btn btn-sm btn-danger" data-test="delete-step-button"
                                                         :title="$t('actions.delete') + ' ' + $t('titles.step', 1)" 
                                                         @click="deleteStep(step.id, step.name)">
                                                     <font-awesome-icon icon="trash" />

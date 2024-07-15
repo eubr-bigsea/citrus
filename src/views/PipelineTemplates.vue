@@ -15,7 +15,7 @@
             <div class="templatePage-card-right">
                 <div class="templatePage-card-body">
                     <v-server-table ref="templateList" :data="tableData" class="templatePage-table" :columns="columns"
-                                    :options="options" name="templateList">
+                                    :options="options" name="templateList" data-test="templatePipelineTable">
                         <template #id="props">
                             {{props.row.id}}
                         </template>
@@ -29,7 +29,7 @@
                             <div :id="`trigger-${props.row.id}`" class="ml-1 btn btn-sm btn-secondary">
                                 <font-awesome-icon icon="info-circle" />
                             </div>
-                            <b-popover :target="`trigger-${props.row.id}`" triggers="hover">
+                            <b-popover :target="`trigger-${props.row.id}`" triggers="hover" data-test="templatePipelineStepsInfo">
                                 <template #title>
                                     {{$t('titles.step', 2)}}
                                 </template>

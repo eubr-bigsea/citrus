@@ -6,7 +6,7 @@ Cypress.Commands.add('login', () => {
         cy.get('[data-test="password"]').type('zooropa');
         cy.get('[data-test="login"]').click();
         
-        cy.url().should('eq', Cypress.config().baseUrl + '/home'); // FIXME
+        cy.url().should('eq', Cypress.config().baseUrl + '/home');
         cy.getAllLocalStorage().then((result) => {
             const {token, user} = result[Cypress.config().baseUrl]
             expect(user).to.include('waltersf@gmail.com');
