@@ -1,186 +1,195 @@
-[
-  {
-    "id": 91,
-    "name": "Template atualizado",
-    "description": "Descri\u00e7\u00e3o do template atualizado.",
-    "steps": [
-      {
-        "id": 123,
-        "name": "Coleta",
-        "order": 1,
-        "description": "Coleta os dados",
-        "enabled": true
-      },
-      {
-        "id": 124,
-        "name": "Limpeza",
-        "order": 2,
-        "description": "Limpa os dados",
-        "enabled": true
-      },
-      {
-        "id": 125,
-        "name": "An\u00e1lise",
-        "order": 3,
-        "description": "Analisa os dados",
-        "enabled": true
-      }
-    ]
-  },
-  {
-    "id": 87,
-    "name": "Template para testes",
-    "description": "Descri\u00e7\u00e3o.",
-    "steps": [
-      {
-        "id": 118,
-        "name": "Etapa Inicial",
-        "order": 1,
-        "enabled": true
-      },
-      {
-        "id": 119,
-        "name": "Etapa Final",
-        "order": 2,
-        "enabled": true
-      }
-    ]
-  },
-  {
-    "id": 58,
-    "name": "Template Consumidor GOV #2",
-    "description": "Descri\u00e7\u00e3o do Template Consumidor GOV.",
-    "steps": [
-      {
-        "id": 82,
-        "name": "Raw",
-        "order": 1,
-        "description": "Etapa 1",
-        "enabled": true
-      },
-      {
-        "id": 83,
-        "name": "Stage",
-        "order": 2,
-        "description": "Etapa 2",
-        "enabled": true
-      },
-      {
-        "id": 84,
-        "name": "MDM",
-        "order": 3,
-        "description": "Etapa 3",
-        "enabled": true
-      }
-    ]
-  },
-  {
-    "id": 57,
-    "name": "Template Anac",
-    "description": "Um template para pipeline.",
-    "steps": [
-      {
-        "id": 80,
-        "name": "Etapa 1 da pipeline",
-        "order": 2,
-        "description": "Raw",
-        "enabled": true
-      },
-      {
-        "id": 81,
-        "name": "Etapa 2 da pipeline",
-        "order": 1,
-        "description": "Stage",
-        "enabled": true
-      }
-    ]
-  },
-  {
-    "id": 41,
-    "name": "Teste etapas",
-    "description": "Descri\u00e7\u00e3o template.",
-    "steps": [
-      {
-        "id": 63,
-        "name": "Etapa 1",
-        "order": 1,
-        "description": "",
-        "enabled": true
-      },
-      {
-        "id": 64,
-        "name": "Etapa 2",
-        "order": 2,
-        "enabled": true
-      },
-      {
-        "id": 65,
-        "name": "Etapa 3",
-        "order": 3,
-        "enabled": true
-      }
-    ]
-  },
-  {
-    "id": 14,
-    "name": "Template editado #2",
-    "description": "Descri\u00e7\u00e3o detalhada do template editado.",
-    "steps": [
-      {
-        "id": 24,
-        "name": "Etapa 1",
-        "order": 1,
-        "description": "Descri\u00e7\u00e3o etapa um",
-        "enabled": true
-      },
-      {
-        "id": 25,
-        "name": "Etapa 2",
-        "order": 2,
-        "description": "Descri\u00e7\u00e3o etapa dois",
-        "enabled": true
-      },
-      {
-        "id": 26,
-        "name": "Etapa 3",
-        "order": 3,
-        "description": "Descri\u00e7\u00e3o etapa tr\u00eas",
-        "enabled": true
-      },
-      {
-        "id": 32,
-        "name": "Etapa 4",
-        "order": 4,
-        "description": "Descri\u00e7\u00e3o etapa quatro",
-        "enabled": true
-      }
-    ]
-  },
-  {
-    "id": 6,
-    "name": "Lemon Template",
-    "description": "Lemon Template description.",
-    "steps": [
-      {
-        "id": 61,
-        "name": "Test step 1",
-        "order": 1,
-        "description": "Desc",
-        "enabled": true
-      },
-      {
-        "id": 62,
-        "name": "Test step 2",
-        "order": 2,
-        "description": "Desc",
-        "enabled": true
-      },
-      {
-        "id": 71,
-        "name": "Test step 3",
-        "order": 3,
-        "enabled": true
-      }
-    ]
-  }
-]
+{
+    "status": "OK",
+    "data": [
+    {
+        "id": 91,
+        "name": "Template atualizado",
+        "description": "Descri\u00e7\u00e3o do template atualizado.",
+        "steps": [
+        {
+            "id": 123,
+            "name": "Coleta",
+            "order": 1,
+            "description": "Coleta os dados",
+            "enabled": true
+        },
+        {
+            "id": 124,
+            "name": "Limpeza",
+            "order": 2,
+            "description": "Limpa os dados",
+            "enabled": true
+        },
+        {
+            "id": 125,
+            "name": "An\u00e1lise",
+            "order": 3,
+            "description": "Analisa os dados",
+            "enabled": true
+        }
+        ]
+    },
+    {
+        "id": 87,
+        "name": "Template para testes",
+        "description": "Descri\u00e7\u00e3o.",
+        "steps": [
+        {
+            "id": 118,
+            "name": "Etapa Inicial",
+            "order": 1,
+            "enabled": true
+        },
+        {
+            "id": 119,
+            "name": "Etapa Final",
+            "order": 2,
+            "enabled": true
+        }
+        ]
+    },
+    {
+        "id": 58,
+        "name": "Template Consumidor GOV #2",
+        "description": "Descri\u00e7\u00e3o do Template Consumidor GOV.",
+        "steps": [
+        {
+            "id": 82,
+            "name": "Raw",
+            "order": 1,
+            "description": "Etapa 1",
+            "enabled": true
+        },
+        {
+            "id": 83,
+            "name": "Stage",
+            "order": 2,
+            "description": "Etapa 2",
+            "enabled": true
+        },
+        {
+            "id": 84,
+            "name": "MDM",
+            "order": 3,
+            "description": "Etapa 3",
+            "enabled": true
+        }
+        ]
+    },
+    {
+        "id": 57,
+        "name": "Template Anac",
+        "description": "Um template para pipeline.",
+        "steps": [
+        {
+            "id": 80,
+            "name": "Etapa 1 da pipeline",
+            "order": 2,
+            "description": "Raw",
+            "enabled": true
+        },
+        {
+            "id": 81,
+            "name": "Etapa 2 da pipeline",
+            "order": 1,
+            "description": "Stage",
+            "enabled": true
+        }
+        ]
+    },
+    {
+        "id": 41,
+        "name": "Teste etapas",
+        "description": "Descri\u00e7\u00e3o template.",
+        "steps": [
+        {
+            "id": 63,
+            "name": "Etapa 1",
+            "order": 1,
+            "description": "",
+            "enabled": true
+        },
+        {
+            "id": 64,
+            "name": "Etapa 2",
+            "order": 2,
+            "enabled": true
+        },
+        {
+            "id": 65,
+            "name": "Etapa 3",
+            "order": 3,
+            "enabled": true
+        }
+        ]
+    },
+    {
+        "id": 14,
+        "name": "Template editado #2",
+        "description": "Descri\u00e7\u00e3o detalhada do template editado.",
+        "steps": [
+        {
+            "id": 24,
+            "name": "Etapa 1",
+            "order": 1,
+            "description": "Descri\u00e7\u00e3o etapa um",
+            "enabled": true
+        },
+        {
+            "id": 25,
+            "name": "Etapa 2",
+            "order": 2,
+            "description": "Descri\u00e7\u00e3o etapa dois",
+            "enabled": true
+        },
+        {
+            "id": 26,
+            "name": "Etapa 3",
+            "order": 3,
+            "description": "Descri\u00e7\u00e3o etapa tr\u00eas",
+            "enabled": true
+        },
+        {
+            "id": 32,
+            "name": "Etapa 4",
+            "order": 4,
+            "description": "Descri\u00e7\u00e3o etapa quatro",
+            "enabled": true
+        }
+        ]
+    },
+    {
+        "id": 6,
+        "name": "Lemon Template",
+        "description": "Lemon Template description.",
+        "steps": [
+        {
+            "id": 61,
+            "name": "Test step 1",
+            "order": 1,
+            "description": "Desc",
+            "enabled": true
+        },
+        {
+            "id": 62,
+            "name": "Test step 2",
+            "order": 2,
+            "description": "Desc",
+            "enabled": true
+        },
+        {
+            "id": 71,
+            "name": "Test step 3",
+            "order": 3,
+            "enabled": true
+        }
+        ]
+    }
+    ],
+    "pagination": {
+        "page": 1,
+        "size": 10,
+        "total": 7,
+        "pages": 1
+    }
+}

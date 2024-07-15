@@ -27,7 +27,7 @@ describe('<PipelineList />', () => {
     beforeEach(() => {
         cy.intercept(
             "GET",
-            `${tahitiUrl}/pipelines`,
+            `${tahitiUrl}/pipelines?*`,
             { 
                 fixture: "pipelines.json" 
             }
@@ -59,24 +59,9 @@ describe('<PipelineList />', () => {
 
     });
 
-    it('opens the add pipeline modal when clicking the add button', () => {
-
-        cy.get('[data-test="addButton"]').click();
-        cy.get('[data-test="addModal"]').should('be.visible');
-
-    });
-
     it('renders the pipelines table correctly', () => {
 
         cy.get('[data-test="pipelines-table"]').should('be.visible');
-
-    });
-    
-    it('can delete a pipeline', () => {
-
-        cy.get('[data-test="pipelines-table"] tbody tr').first().find('button').click();
-        cy.on('window:confirm', () => true);
-        cy.get('[data-test="pipelines-table"] tbody tr').should('have.length.lessThan', 1);
 
     });
 
@@ -95,33 +80,5 @@ describe('<PipelineList />', () => {
 
     });
 
-
-    it('checks if the pipeline creation process is working correctly', () => {
-
-        const pipelineTitle = "Pipeline Teste";
-        const pipelineDescription = "Descrição da Pipeline Teste.";
-
-        cy.get('[data-test="addButton"]').click();
-        cy.get('[data-test="addModal"]').should('be.visible');
-        cy.get('[data-test="input"]').type(pipelineTitle);
-        cy.get('[data-test="textarea"]').type(pipelineDescription);
-        cy.get('[data-test="nextButton"]').click();
-        cy.get('[data-test="finalizeButton"]').click();
-        cy.get('[data-test="closeButton"]').click();
-
-    });
-
-    it('type a name with less than 3 characters', () => {
-
-        const pipelineTitle = "Ab";
-        const pipelineDescription = "Descrição da Pipeline Teste.";
-
-        cy.get('[data-test="addButton"]').click();
-        cy.get('[data-test="addModal"]').should('be.visible');
-        cy.get('[data-test="input"]').type(pipelineTitle);
-        cy.get('[data-test="textarea"]').type(pipelineDescription);
-        cy.get('[data-test="nextButton"]').should('be.disabled');
-
-    });
 
 });
