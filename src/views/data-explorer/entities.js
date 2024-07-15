@@ -323,6 +323,7 @@ class SqlBuilderWorkflow extends Workflow {
             tags: { value: [] },
             useHWC: {value: 'spark'},
             type: {value: 'sql'},
+            mode: { value: 'error' },
         };
         const task = new Task({
             id: Operation.generateTaskId(),
