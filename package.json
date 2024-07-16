@@ -38,6 +38,7 @@
     "jsplumb": "^2.15.6",
     "leaflet": "^1.8.0",
     "leaflet.heat": "^0.2.0",
+    "mergician": "^2.0.2",
     "npm": "^10.2.5",
     "oidc-client": "^1.11.5",
     "plotly.js-dist-min": "^2.26.1",
