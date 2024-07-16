@@ -57,12 +57,12 @@
                                     {{ props.row.id }}
                                 </router-link>
                             </template>
-                            <template #pipeline_id="props">
-                                    {{ props.row.pipeline_id }}
-                            </template>
                             <template #pipeline_name="props">
-                                <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
                                     {{ props.row.pipeline_name }}
+                            </template>
+                            <template #pipeline_id="props">
+                                <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
+                                    {{ props.row.pipeline_id }}
                                 </router-link>
                             </template>
                             <template #period="props">
@@ -70,7 +70,7 @@
                                     formatJsonDate('dd/MM/yyyy') }}
                             </template>
                             <template #updated="props">
-                                {{ props.row.updated | formatJsonDate }}
+                                {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:MM:SS') }}
                             </template>
                             <template #status="props">
                                 <div class="runsList-status" :class="props.row.status.toLowerCase()">

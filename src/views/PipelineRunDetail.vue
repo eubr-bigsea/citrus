@@ -108,7 +108,8 @@
                                     </div>
                                     <div class="steps-column">
                                         <div class="d-flex align-items-center">
-                                            <div :class="step.status.toLowerCase()" class="runDetail-status status-small">
+                                            <div :class="step.status.toLowerCase()"
+                                                class="runDetail-status status-small">
                                                 {{ $tc(`status.${step.status}`).toUpperCase() }}
                                             </div>
                                         </div>
@@ -141,7 +142,8 @@
                                                 <div v-b-toggle="index.toString()" class="collapse-button">
                                                     Tentativa #{{ orderedJobs.length - index }}
                                                     <div class="d-flex align-items-center">
-                                                        <div :class="job.status.toLowerCase()" class="runDetail-status status-small">
+                                                        <div :class="job.status.toLowerCase()"
+                                                            class="runDetail-status status-small">
                                                             {{ $tc(`status.${job.status}`).toUpperCase() }}
                                                         </div>
                                                         <button class="advanced-info-button">
@@ -150,15 +152,15 @@
                                                     </div>
                                                 </div>
                                                 <div class="p-2">
-                                                    Início: {{ job.started|formatJsonDate }}
-                                                    Fim: {{ job.finished|formatJsonDate }}
+                                                    Início: {{ job.started | formatJsonDate }}
+                                                    Fim: {{ job.finished | formatJsonDate }}
                                                 </div>
                                             </div>
                                             <b-collapse :id="index.toString()" :visible="index === 0">
                                                 <b-card-body>
                                                     <div v-for="step in job.steps" class="border-bottom">
-                                                        {{step.status}}
-                                                        {{step.operation.name}}
+                                                        {{ step.status }}
+                                                        {{ step.operation.name }}
                                                         <div v-for="log in step.logs">
                                                             <span v-if="log.type === 'TEXT'">
                                                                 {{ log.message }}
@@ -166,7 +168,7 @@
                                                             <span v-else-if="log.type === 'HTML'" v-html="log.message">
                                                             </span>
                                                             <span v-else-if="log.type === 'OBJECT'">
-                                                                {{log.message}}
+                                                                {{ log.message }}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -194,6 +196,13 @@ import { ref, getCurrentInstance, computed, onBeforeMount, onMounted } from 'vue
 import useNotifier from '@/composables/useNotifier.js';
 
 import axios from 'axios';
+import io from 'socket.io-client';
+import { mergician } from 'mergician';
+
+const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
+const standSocketIoPath = import.meta.env.VITE_STAND_SOCKET_IO_PATH;
+const standNamespace = import.meta.env.VITE_STAND_NAMESPACE;
+
 const standUrl = import.meta.env.VITE_STAND_URL;
 
 const vm = getCurrentInstance();
@@ -224,14 +233,49 @@ const orderedJobs = computed(() => {
 );
 
 const pipelineRunId = ref(0);
+const room = ref();
+const socket = ref();
 onBeforeMount(async () => {
+    if (socket.value) {
+        socket.value.emit('leave', { room: root.value.id });
+    }
     pipelineRunId.value = (route) ? route.params.id : 0;
     await load();
+    await connectWebSocket();
 });
 
 const progress = vm.proxy.$Progress;
 const pipelineRun = ref({ status: '' });
 // Methods
+const connectWebSocket = async () => {
+    const opts = { upgrade: true, };
+    if (standSocketIoPath !== '') {
+        opts['path'] = standSocketIoPath;
+    }
+    socket.value = io(`${standSocketServer}${standNamespace}`, opts);
+
+    socket.value.on('disconnect', () => {
+        console.debug('You are not connected');
+    });
+    socket.value.on('response', msg => {
+        console.debug('response', msg);
+    });
+    socket.value.on('connect', () => {
+        const room = `run:${pipelineRunId.value}`;
+        console.debug('Connecting to room', room);
+        socket.value.emit('join', { room: room });
+    });
+    socket.value.on('connect_error', () => {
+        console.debug('Web socket server offline');
+    });
+    socket.value.on('update run', (msg) => {
+        const mergedObj = mergician({
+            appendArrays: true,
+        })(pipelineRun.value, msg.msg);
+        pipelineRun.value = mergedObj;
+        console.debug(mergedObj);
+    });
+}
 const load = async () => {
     progress.start();
     try {
@@ -489,6 +533,7 @@ const cancelRun = () => {
     left: 5px;
     top: 8px;
 }
+
 .status-small {
     font-size: 9pt;
     text-transform: lowercase
