@@ -1,5 +1,5 @@
 <template>
-    <div v-if="label || ! supervisioned">
+    <div v-if="label || ! supervised">
         <h5>Dados</h5>
         <hr>
         <label for="">Fonte de dados:</label> &nbsp;
@@ -32,7 +32,7 @@
         </small>
 
         <!--
-        <template v-if="supervisioned">
+        <template v-if="supervised">
             <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
             <vue-select :options="attributes" v-model="editableLabel" :searchable="true" class="w-25" label="name"
                 :reduce="(o) => o.id"/>
@@ -109,7 +109,7 @@ export default {
         dataSource: { type: Object, default: () => {} },
         dataSourceList: { type: Array, default: () => []},
         label: { type: String, default: () => null },
-        supervisioned: { type: Boolean },
+        supervised: { type: Boolean },
         sample: { type: Object, default: () => null }
     },
     data() {

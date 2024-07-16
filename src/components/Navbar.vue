@@ -13,7 +13,7 @@
                 <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'workflows' }">
                     <font-awesome-icon icon="fa fa-flask" class="text-success" /> {{ $tc('titles.workflow', 2) }}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(APP_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
+                <b-nav-item v-if="hasAnyPermission(WORKFLOW_PERMISSIONS) || isAdmin" :to="{ name: 'index-explorer' }"
                             data-test="experiments-menu">
                     <font-awesome-icon icon="fa fa-vial" class="text-success" /> {{ $tc('titles.dataExplorer', 2) }}
                 </b-nav-item>
@@ -26,12 +26,19 @@
                 <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'dashboards' }">
                     <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
-                <b-nav-item v-if="hasAnyPermission(DASHBOARD_PERMISSIONS) || isAdmin" :to="{ name: 'pipelines' }"
-                            data-test="pipelines-menu">
-                    <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" /> Pipelines
-                </b-nav-item>
 
-
+                <b-nav-item-dropdown v-if="isAdmin" right data-test="pipelines-menu">
+                    <template #button-content>
+                        <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
+                        {{ $tc('titles.pipeline', 2) }}
+                    </template>
+                    <b-dropdown-item :to="{ name: 'pipelines' }">
+                        {{ $tc('titles.pipeline', 2) }}
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'pipelineRunsList' }">
+                        {{ $tc('titles.pipelineRuns', 2) }}
+                    </b-dropdown-item>
+                </b-nav-item-dropdown>
             </b-navbar-nav>
 
             <b-navbar-nav class="pt-1">
@@ -62,6 +69,12 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
+                        Template Pipeline
+                    </b-dropdown-item>
+                    <b-dropdown-item :to="{ name: 'sourceCodeList' }">
+                        Biblioteca de códigos
+                    </b-dropdown-item>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'deployments' }">
                         {{ $tc('titles.deployment', 2) }}
@@ -74,9 +87,6 @@
                         Test Websocket
                     </b-dropdown-item>
                     <b-dropdown-divider />
-                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }" data-test="navbar-template">
-                        {{$tc('pipeline.template.pipelineTemplates')}}
-                    </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
             <b-navbar-nav class="ml-auto">
@@ -96,7 +106,7 @@
                         <div class="text-center">
                             <strong>{{ $tc('titles.role', 2) }}</strong><br>
                             <div class="mt-2">
-                                <span v-for="role in user.roles" :key="role.id" class="badge badge-info mr-1 p-1">
+                                <span v-for="role in userRoles" :key="role.id" class="badge badge-info mr-1 p-1">
                                     {{ role.label }}
                                 </span>
                             </div>
@@ -219,6 +229,12 @@ export default {
         ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user']),
         sampleNotifications() {
             return this.notifications.length > 5 ? this.notifications.slice(0, 5) : this.notifications;
+        },
+        userRoles() {
+            return Object.values(this.user.roles.reduce((acc, role) => {
+                acc[role.id] = role;
+                return acc;
+            }, {}));
         }
     },
     mounted() {

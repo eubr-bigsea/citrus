@@ -75,7 +75,7 @@
             <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
                 :chartType="visualizationObj.type.value" />
             <div class="chart">
-                <div class="chart-builder-visualization" style="height: 75vh">
+                <div class="chart-builder-visualization" ref="chartArea">
                     <div v-if="display && plotlyData" ref="chart">
                         <plotly :options="chartOptions" :data="plotlyData.data" :layout="plotlyData.layout"
                             :frames="plotlyData.frames" :key="plotVersion" ref="plotly" :watchShallow="true"
@@ -176,10 +176,11 @@ const targetPlatform = ref(4);
 const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
 const visualizationObj = ref(null);
 const chartOptions = ref({ responsive: true, height: 600 });
+const chartArea = ref(null)
 
 // Elements refs
 const cluster = ref(null)
-const visualizationDesigner = ref(ref)
+const visualizationDesigner = ref(null)
 
 
 const dataSourceId = computed({
@@ -189,11 +190,11 @@ const dataSourceId = computed({
 const axis = computed({
     get() {
         const { x_axis, y_axis, y, x, type, color_attribute, text_attribute, size_attribute,
-            latitude, longitude } = visualizationObj.value;
+            latitude, longitude, hover_name, hover_data, magnitude } = visualizationObj.value;
         return {
             x_axis, y_axis, y, x, type,
             color_attribute, text_attribute, size_attribute,
-            latitude, longitude
+            latitude, longitude, hover_name, hover_data, magnitude
         };
     },
     set(value) {
@@ -417,6 +418,11 @@ const loadData = async () => {
         return;
     }
     loadingData.value = true;
+
+
+    const bounds = chartArea.value.getBoundingClientRect();
+    visualizationObj.value['max_height'] = {value: bounds.height};
+    visualizationObj.value['max_width'] = {value: bounds.width};
     Object.assign(workflowObj.value.visualization.forms, visualizationObj.value);
     if (workflowObj.value.sort.forms.order_by.value === 'asc' ||
         workflowObj.value.sort.forms.order_by.value === null) {
@@ -590,7 +596,7 @@ const connectWebSocket = () => {
 
 .chart-builder-visualization {
     //height: 600px;
-    height: 100%;
+    height: 75vh;
     position: absolute;
     left: 0;
     top: 0;

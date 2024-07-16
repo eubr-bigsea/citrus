@@ -9,7 +9,7 @@
                         @click.prevent="edit('target')">
                 Dados
             </b-nav-item>
-            <b-nav-item v-if="supervisioned"
+            <b-nav-item v-if="supervised"
                         :class="{active: selected === 'data'}"
                         @click.prevent="edit('data')">
                 Divisão entre treino e
@@ -70,7 +70,7 @@ export default {
     name: 'ModelBuilderSideBar',
     props: {
         selected: { type: String, default: () => 'target' },
-        supervisioned: {type: Boolean}
+        supervised: {type: Boolean}
     },
     emits: ['edit'],
     methods: {

@@ -2,7 +2,8 @@
     <b-modal ref="modal" button-size="sm" size="lg" :title="$t('actions.save')" @ok="handleSubmit" :ok-disabled="!valid">
         <div class="row">
             <div class="col-6">
-                <b-form-checkbox v-model.integer="task.forms.save.value" value="1" unchecked-value="0">
+                <b-form-checkbox v-model="task.forms.save.value" value="1" unchecked-value="0"
+                        @input="doEmit('save', $event)">
                     Salvar dados
                 </b-form-checkbox>
                 <div v-if="task.forms.save.value == 1" class="row">
@@ -28,6 +29,7 @@
                     </div>
                 </div>
             </div>
+            <!--
             <div v-if="task.forms.save.value == 1" class="col-6">
                 <div class="col-12 mt-2">
                     <label>Descrição (opcional):</label>
@@ -38,7 +40,18 @@
                     <b-form-tags input-id="tags-basic" v-model="task.forms.tags.value" :add-button-text="$t('actions.add')"
                         duplicate-tag-text="tag já existe" placeholder=""></b-form-tags>
                 </div>
+                <div class="col-12 mt-2">
+                    <label>Opção de sobrescrita (se existir):</label>
+                    <select class="form-control form-control-sm" name="mode"
+                        v-model.number="task.forms.mode.value">
+                        <option value="error">Gerar erro (não salvar)</option>
+                        <option value="ignore">Ignorar (não salvar)</option>
+                        <option value="append">Acrescentar (append)</option>
+                        <option value="overwrite">Sobrescrever (overwrite)</option>
+                    </select>
+                </div>
             </div>
+            -->
         </div>
     </b-modal>
 </template>
@@ -51,7 +64,7 @@ const modal = ref({})
 const valid = ref(true);
 
 const props = defineProps({
-    task: { type: Object, required: true }
+    task: { type: Object, required: true },
 });
 
 const storages = ref([])
@@ -68,5 +81,9 @@ onBeforeMount(async () => {
 const show = () => {
     modal.value.show();
 }
+const emit = defineEmits(['update:save', 'update:value'])
+const doEmit = (name, value) => {
+    emit(`update:${name}`, value)
+};
 defineExpose({ show })
 </script>

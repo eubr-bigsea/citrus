@@ -2,23 +2,20 @@ export default (vm) => {
     const i18n = vm.$i18n.vm;
     // use the root in order to persist the toast between route transitions
     const toaster = vm.$root.$bvToast;
+    const modal = vm.$root.$bvModal;
     const router = vm.$router;
 
     const confirm = (title, question, callback) => {
-        snotify.confirm(
-            question, title,
+        modal.msgBoxConfirm(
+            question,
             {
-                position: 'centerTop',
-                xbuttons: {
-                    text: 'Yes', action: () => callback()
-                },
-                buttons: [
-                    { text: i18n.$t('common.yes'), action: (toast) => { callback(); snotify.remove(toast.id) }, },
-                    { text: i18n.$t('common.no'), action: (toast) => { console.log('Clicked: No'); snotify.remove(toast.id); }, bold: true },
-                ],
-                closeOnClick: true
+                title,
+                centered: true,
+                buttonSize: 'sm',
+                okTitle: i18n.$t('common.yes'),
+                cancelTitle: i18n.$t('common.no'),
             }
-        )
+        ).then(value => {callback(value)}).catch(err =>{callback(false)});
     };
 
     const display = (msg, title, variant, autoHideDelay, faIcon, position = 'b-toaster-bottom-right') => {
@@ -46,7 +43,7 @@ export default (vm) => {
     const html = (msg, title, autoHideDelay = 5000) => {
         display(msg, title, 'secondary', autoHideDelay)
     };
-    const error = (e, msg, title, autoHideDelay = 10000) => {
+    const error = (e, msg, title, autoHideDelay = 10000, redirect=true) => {
         if (e) {
             if (e.name === 'NetworkError' || e.message == 'Network Error') {
                 display(i18n.$t('errors.disconnected'),
@@ -55,7 +52,7 @@ export default (vm) => {
                     'fa-circle-xmark')
             } else if (e.response && e.response.data) {
                 const responseData = e.response.data;
-                if (responseData.message === 'Invalid data') {
+                if (responseData.message === 'Invalid data' | responseData.message == 'Validation error') {
                     const h = vm.$createElement;
                     const errorMessage = h('div', {},
                         [
@@ -72,26 +69,27 @@ export default (vm) => {
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
 
-                    router.push({ name: 'home' });
+                    redirect && router.push({ name: 'home' });
                 } else if (e.response.status === 401) {
                     display(i18n.$t('errors.accessDenied'),
                         title || i18n.$t('titles.error', 2),
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
 
-                    router.push({ name: 'login' });
+                    redirect && router.push({ name: 'login' });
                 } else if (e.response.status === 502) {
                     display(i18n.$t('errors.badGateway'),
                         title || i18n.$t('titles.error', 2),
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
-                    router.push({ name: 'home' });
+                    redirect && router.push({ name: 'home' });
                 } else {
                     display(e.response.data.message,
                         title || i18n.$t('titles.error', 2),
                         'danger', autoHideDelay,
                         'fa-circle-xmark')
                 }
+
             } else {
                 display(e.message || e,
                     title || i18n.$t('titles.error', 2),

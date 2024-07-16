@@ -11,7 +11,7 @@ import {
     defaultKeymap, history, historyKeymap,
     indentWithTab
 } from '@codemirror/commands'
-import { sql } from '@codemirror/lang-sql'
+import { python } from '@codemirror/lang-python'
 import {
     defaultHighlightStyle, foldKeymap, indentUnit,
     syntaxHighlighting
@@ -20,14 +20,12 @@ import { searchKeymap } from '@codemirror/search'
 import { EditorView, keymap, lineNumbers } from '@codemirror/view'
 import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue"
 
-import { format } from 'sql-formatter'
-
 const emit = defineEmits(['update']);
 const props = defineProps({
     query: { type: String, default: () => '' },
     tables: { type: Array, default: () => [] },
     functions: { type: Array, default: () => [] },
-    format: { type: Object, default: () => { language: 'sql' } },
+    format: { type: Object, default: () => { language: 'python' } },
 });
 
 const container = ref();
@@ -107,11 +105,10 @@ const sqlCompletion = (context) => {
     }
 }
 const indent = () => {
-    const formatted = format(props.query, props.format);
-    editor.value.dispatch({
-        changes: { from: 0, to: editor.value.state.doc.length, insert: formatted }
-    });
-
+    //const formatted = format(props.query, props.format);
+    //editor.value.dispatch({
+    //    changes: { from: 0, to: editor.value.state.doc.length, insert: formatted }
+    //});
 }
 
 /* Events */
@@ -140,8 +137,9 @@ onMounted(() => {
                 ...foldKeymap,
                 ...completionKeymap,
             ]),
-            autocompletion({ override: [sqlCompletion] }),
-            sql(),
+            //autocompletion({ override: [sqlCompletion] }),
+            autocompletion(),
+            python(),
             EditorView.updateListener.of(debounce((v) => {
                 emit('update', v.state.doc.text.join('\n'));
             }, 200))

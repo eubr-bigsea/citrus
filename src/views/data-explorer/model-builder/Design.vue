@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div style="overflow-x: hidden;">
         <div>
             <div class="d-flex justify-content-between align-items-center border-bottom">
@@ -6,30 +6,24 @@
                     <h1>Construção de Modelos</h1>
                 </div>
                 <form class="float-right form-inline w-50 d-flex justify-content-end">
-                    <label>{{$tc('common.name')}}:</label>
-                    <input v-model="workflowObj.name"
-                           type="text"
-                           class="form-control form-control-sm ml-1 w-50"
-                           :placeholder="$tc('common.name')"
-                           maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ml-1 float-right"
-                            @click.prevent="saveWorkflow">
+                    <label>{{ $tc('common.name') }}:</label>
+                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
+                        :placeholder="$tc('common.name')" maxlength="100">
+                    <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
-                        {{$t('actions.save')}}
+                        {{ $t('actions.save') }}
                     </button>
 
-                    <button v-if="notRunning"
-                            class="btn btn-sm btn-outline-primary ml-1 float-right"
-                            @click.prevent="handleTraining">
+                    <button v-if="notRunning" class="btn btn-sm btn-outline-primary ml-1 float-right"
+                        @click.prevent="handleTraining">
                         <font-awesome-icon icon="fa fa-play" />
-                        {{$t('actions.train')}}
+                        {{ $t('actions.train') }}
                     </button>
 
-                    <button v-else
-                            class="btn btn-sm btn-outline-danger ml-1 float-right"
-                            @click.prevent="handleStopTrain">
+                    <button v-else class="btn btn-sm btn-outline-danger ml-1 float-right"
+                        @click.prevent="handleStopTrain">
                         <font-awesome-icon icon="fa fa-stop" />
-                        {{$t('actions.stop')}}
+                        {{ $t('actions.stop') }}
                     </button>
 
                     <!--
@@ -40,45 +34,32 @@
                 </form>
             </div>
             <div class="custom-card">
-                <b-tabs v-if="loaded"
-                        class="p-2 custom-tab bg-white"
-                        align="center">
-                    <b-tab title="Parâmetros"
-                           class="m-1 parameters">
+                <b-tabs v-if="loaded" class="p-2 custom-tab bg-white" align="center">
+                    <b-tab title="Parâmetros" class="m-1 parameters">
                         <div class="row size-full">
                             <div class="col-md-3 col-lg-2 border-right">
                                 <div class="explorer-nav p-1">
-                                    <SideBar :selected="selected"
-                                             :supervisioned="supervisioned"
-                                             @edit="edit" />
+                                    <SideBar :selected="selected" :supervised="supervised" @edit="edit" />
                                 </div>
                             </div>
                             <div class="col-md-9 col-lg-10 pl-4 pr-4 bg-white expand">
-                                <form action=""
-                                      class="form p-2">
+                                <form action="" class="form p-2">
                                     <template v-if="selected === 'target'">
-                                        <DesignData :attributes="attributes"
-                                                    :data-source-list="dataSourceList"
-                                                    :supervisioned="supervisioned"
-                                                    :label="labelAttribute"
-                                                    :data-source="dataSource"
-                                                    :sample="workflowObj.sample"
-                                                    @search-data-source="loadDataSourceList"
-                                                    @retrieve-attributes="handleRetrieveAttributes" />
+                                        <DesignData :attributes="attributes" :data-source-list="dataSourceList"
+                                            :supervised="supervised" :label="labelAttribute" :data-source="dataSource"
+                                            :sample="workflowObj.sample" @search-data-source="loadDataSourceList"
+                                            @retrieve-attributes="handleRetrieveAttributes" />
                                     </template>
                                     <template v-if="selected === 'data'">
                                         <TrainTest :split="workflowObj.split" />
                                     </template>
                                     <template v-if="selected === 'metric'">
-                                        <Metric :evaluator="workflowObj.evaluator"
-                                                :attributes="attributes" />
+                                        <Metric :evaluator="workflowObj.evaluator" :attributes="attributes" />
                                     </template>
                                     <template v-if="selected === 'adjusts'">
-                                        <FeatureSelection :attributes="attributes"
-                                                          :features="workflowObj.features"
-                                                          :target="workflowObj.forms.$meta.value.target"
-                                                          :supervisioned="supervisioned"
-                                                          @update-target="handleUpdateTarget" />
+                                        <FeatureSelection :attributes="attributes" :features="workflowObj.features"
+                                            :target="workflowObj.forms.$meta.value.target" :supervised="supervised"
+                                            @update-target="handleUpdateTarget" />
                                     </template>
                                     <template v-if="selected === 'generation'">
                                         <FeatureGeneration />
@@ -87,11 +68,8 @@
                                         <FeatureReduction :reduction="workflowObj.reduction" />
                                     </template>
                                     <template v-if="selected === 'algorithms'">
-                                        <Algorithms ref="algorithms"
-                                                    :operations="algorithmOperation"
-                                                    :workflow="workflowObj"
-                                                    :operation-map="operationsMap" 
-                                                    />
+                                        <Algorithms ref="algorithms" :operations="algorithmOperation"
+                                            :workflow="workflowObj" :operation-map="operationsMap" />
                                     </template>
                                     <template v-if="selected === 'grid'">
                                         <Grid :grid="workflowObj.grid" />
@@ -100,21 +78,15 @@
                                         <Weighting />
                                     </template>
                                     <template v-if="selected === 'runtime'">
-                                        <Runtime :clusters="clusters"
-                                                 :workflow="workflowObj" />
+                                        <Runtime :clusters="clusters" :workflow="workflowObj" />
                                     </template>
                                 </form>
                             </div>
                         </div>
                     </b-tab>
-                    <b-tab ref="tabResults"
-                           title="Resultados"
-                           class="pt-2">
-                        <Result ref="results"
-                                :jobs="jobs"
-                                :number-of-features="numberOfFeatures"
-                                @delete-job="handleDeleteJob" 
-                                :features="features"/>
+                    <b-tab ref="tabResults" title="Resultados" class="pt-2">
+                        <Result ref="results" :jobs="jobs" :number-of-features="numberOfFeatures"
+                            @delete-job="handleDeleteJob" :features="features" />
                     </b-tab>
                 </b-tabs>
             </div>
@@ -194,7 +166,7 @@ export default {
             get() { return this.workflowObj.tasks[0].forms.data_source.value; },
             set(newValue) { this.workflowObj.tasks[0].forms.data_source.value = newValue }
         },
-        supervisioned() {
+        supervised() {
             return this.taskType === 'regression' || this.taskType === 'classification';
         },
         taskType: {
@@ -309,7 +281,7 @@ export default {
                 }
             });
 
-            if (!hasLabel) {
+            if (!hasLabel && this.supervised) {
                 errors.push('Nenhum atributo alvo (rótulo) foi especificado.');
             }
             if (!hasFeature) {

@@ -6,6 +6,8 @@ class Constants {
 }
 const META_PLATFORM_ID = 1000;
 const MODEL_BUILDER_CATEGORY = 2113;
+const EXECUTE_PYTHON = 82;
+const EXECUTE_SQL = 93;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null, $meta = null } = {}) {
 
@@ -104,13 +106,30 @@ class Workflow {
         dataReader.setProperty('display_sample', '0');
 
         const sample = Workflow.createSampleTask(1, null, i18n);
-        dataReader.setProperty('display_sample', '1');
+        sample.setProperty('display_sample', '1');
 
         const workflow = new Workflow({
             name: name,
             type: 'DATA_EXPLORER',
             platform: new Platform({ id: META_PLATFORM_ID }),
             tasks: [dataReader, sample]
+        });
+        return workflow;
+    }
+    static buildSqlBuilder(name, ds, i18n) {
+        const dataReader = new Task({
+            name: ds.labelValue.toLowerCase().replace(/[^A-Za-z0-9_]/g, "_"),
+            operation: new Operation({ id: 2100 }),
+            display_order: 0,
+        });
+        dataReader.setProperty('data_source', ds);
+        dataReader.setProperty('display_sample', '0');
+
+        const workflow = new Workflow({
+            name: name,
+            type: 'SQL',
+            platform: new Platform({ id: META_PLATFORM_ID }),
+            tasks: [dataReader]
         });
         return workflow;
     }
@@ -253,39 +272,90 @@ class SqlBuilderWorkflow extends Workflow {
     constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
         version = null, user = null, forms = null } = {}, operations) {
         super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+        this.cellMap = new Map();
         this.updateLists();
-        this.sqls.forEach(sql => {
-            sql.forms = {
-                save: { value: false },
-                new_name: { value: '' },
-                path: { value: '' },
-                description: { value: '' },
-                storage: { value: null },
-                tags: { value: [] },
-                ...sql.forms
+        this.cells.forEach(cell => {
+            this.cellMap.set(cell.id, cell);
+            cell.status = '';
+            cell.message = '';
+            if (cell.operation.slug === 'execute-sql') {
+                cell.forms = {
+                    save: { value: false },
+                    new_name: { value: '' },
+                    path: { value: '' },
+                    description: { value: '' },
+                    storage: { value: null },
+                    mode: { value: 'error' },
+                    tags: { value: [] },
+                    useHWC: {value: false},
+                    ...cell.forms
+                }
+            } else {
+                cell.forms = {
+                    code: { value: '' },
+                    comment: { value: '' },
+                    code_libraries: { value: [] },
+                    ... cell.forms
+                }
             }
         });
     }
     updateLists() {
         this.dataSources = this.tasks.filter(t => t.operation.slug === 'read-data');
-        this.sqls = this.tasks.filter(t => t.operation.slug === 'execute-sql');
+        this.dataSources.forEach((ds, index) => ds.display_order = index);
+        const countDataSources = this.dataSources.length;
+
+        this.cells = this.tasks.filter(t => t.operation.slug !== 'read-data');
+        this.cells.forEach((cell, index) => {
+            cell.display_order = index + countDataSources;
+            this.cellMap.set(cell.id, cell);
+        });
     }
     addSqlTask(taskId, command) {
         const forms = {
             query: { value: command },
+            comment: { value: '' },
             save: { value: false },
             new_name: { value: '' },
             path: { value: '' },
             description: { value: '' },
             storage: { value: null },
-            tags: { value: [] }
+            tags: { value: [] },
+            useHWC: {value: 'spark'},
+            type: {value: 'sql'},
         };
         const task = new Task({
             id: Operation.generateTaskId(),
             name: `sql${this.tasks.length}`,
-            operation: new Operation({ id: 93, slug: 'execute-sql' }),
+            operation: new Operation({ id: EXECUTE_SQL, slug: 'execute-sql' }),
             display_order: this.tasks.length,
-            environment: 'DESIGN',
+            environment: 'DESIGN', // must be set!
+            forms
+        });
+        if (taskId) {
+            const inx = this.tasks.findIndex(t => t.id === taskId);
+            if (inx > -1) {
+                this.tasks.splice(inx + 1, 0, task);
+                this.updateLists();
+            }
+        } else {
+            this.tasks.push(task);
+            this.updateLists();
+        }
+    }
+    addPythonTask(taskId, command) {
+        const forms = {
+            code: { value: command },
+            comment: { value: '' },
+            code_libraries: { value: [] },
+            type: {value: 'python'},
+        };
+        const task = new Task({
+            id: Operation.generateTaskId(),
+            name: `python${this.tasks.length}`,
+            operation: new Operation({ id: EXECUTE_PYTHON, slug: 'execute-python' }),
+            display_order: this.tasks.length,
+            environment: 'DESIGN', // must be set!
             forms
         });
         if (taskId) {
@@ -310,17 +380,19 @@ class SqlBuilderWorkflow extends Workflow {
         const forms = {
             data_source: { value: dataSourceId, labelValue }
         };
+
         const task = new Task({
             id: Operation.generateTaskId(),
             name: labelValue.replaceAll(/\W/gi, '_').substring(0, 10),
             operation: new Operation({ id: 2100, slug: 'read-data' }),
             display_order: this.dataSources.length,
-            forms
+            forms,
+            environment: 'DESIGN', // must be set!
         });
         this.tasks.push(task);
         this.updateLists();
     }
-    moveSqlTask(taskId, direction) {
+    moveTask(taskId, direction) {
         const inx = this.tasks.findIndex(t => t.id === taskId);
         if (inx > -1) {
             const newPosition = direction === 'up' ? inx - 1 : inx + 1;
@@ -554,7 +626,7 @@ class Visualization {
         color_aggregation = { value: null },
 
         tooltip_info = { value: null },
-        zoom = { value: null },
+        zoom = { value: 2 },
         center_latitude = { value: null },
         center_longitude = { value: null },
         latitude = { value: null },
@@ -563,6 +635,10 @@ class Visualization {
 
         limit = { value: null },
         filter = { value: null },
+        magnitude = { value: null },
+        hover_name = { value: null },
+        hover_data = { value: null },
+
 
     },
     ) {
@@ -614,6 +690,10 @@ class Visualization {
         this.opacity = opacity;
         this.scatter_color = scatter_color;
         this.scatter_size = scatter_size;
+
+        this.magnitude = magnitude;
+        this.hover_name = hover_name;
+        this.hover_data = hover_data;
 
     }
     /*
@@ -694,5 +774,6 @@ export {
     SqlBuilderWorkflow,
     Visualization,
     VisualizationBuilderWorkflow,
-    YDimension, XDimension, Axis
+    YDimension, XDimension, Axis,
+    EXECUTE_SQL
 };

@@ -3,22 +3,21 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="mt-2">
                 <h6 class="pretitle">
-                    Execução #{{$route.params.id}}
+                    Execução #{{ pipelineRunId }}
                 </h6>
                 <h1>
-                    Pipeline Teste 
-                </h1> 
+                    Pipeline Teste
+                </h1>
             </div>
             <div>
-                <router-link v-if="$route.params.id"
-                             :to="{name: 'pipelineRunsList'}"
-                             class="btn btn-outline-primary d-print-none float-left btn-sm">
+                <router-link v-if="true || pipelineRunId" :to="{ name: 'pipelineRunsList' }"
+                    class="btn btn-outline-primary d-print-none float-left btn-sm">
                     <font-awesome-icon icon="fa-chevron-left" />
-                    &nbsp; {{$t('actions.back')}} -
-                    {{$t('titles.pipelineRuns', 2)}}
+                    &nbsp; {{ $t('actions.back') }} -
+                    {{ $t('titles.pipelineRuns', 2) }}
                 </router-link>
                 <button class="btn btn-sm btn-outline-danger ml-2" @click="cancelRun">
-                    <font-awesome-icon icon="fa fa-ban" class="" /> {{$t('actions.cancel')}}
+                    <font-awesome-icon icon="fa fa-ban" class="" /> {{ $t('actions.cancel') }}
                 </button>
             </div>
         </div>
@@ -34,29 +33,32 @@
                             <div class="infos-container">
                                 <div class="d-flex flex-row">
                                     <div class="infos-left">
-                                        Período
+                                        {{ $tc('common.period') }}
                                     </div>
                                     <div class="infos-right">
-                                        01/04/2024 a <br> 08/04/2024
+                                        {{ pipelineRun.start | formatJsonDate('dd/MM/yyyy') }} a
+                                        <br />
+                                        {{ pipelineRun.finish | formatJsonDate('dd/MM/yyyy') }}
                                     </div>
                                 </div>
 
                                 <div class="d-flex flex-row">
                                     <div class="infos-left">
-                                        Atualizado Em
+                                        {{ $tc('common.updated') }}
                                     </div>
                                     <div class="infos-right">
-                                        08/02/2025 16:02
+                                        {{ pipelineRun.updated | formatJsonDate }}
                                     </div>
                                 </div>
 
                                 <div class="d-flex flex-row">
                                     <div class="infos-left">
-                                        Status
+                                        {{ $tc('common.status') }}
                                     </div>
                                     <div class="infos-right">
-                                        <div class="runDetail-status" :class="'completed'">
-                                            COMPLETED
+                                        <div v-if="pipelineRun.status" class="runDetail-status status-small"
+                                            :class="pipelineRun.status.toLowerCase()">
+                                            {{ $tc(`status.${pipelineRun.status}`).toUpperCase() }}
                                         </div>
                                     </div>
                                 </div>
@@ -65,7 +67,7 @@
                     </div>
                     <div>
                         <div class="collapse-title">
-                            Etapas da Execução
+                            {{ $tc('pipeline.step', 2) }}
                         </div>
                         <b-card class="steps-div scroll-area">
                             <div class="steps-div-container">
@@ -80,61 +82,39 @@
                                         Ordem
                                     </div>
                                     <div class="steps-header-column">
-                                        Nome
+                                        {{ $tc('common.name') }}
                                     </div>
                                     <div class="steps-header-column">
                                         Tentativas
                                     </div>
                                     <div class="steps-header-column">
-                                        Status
+                                        {{ $tc('common.status') }}
                                     </div>
                                     <div class="steps-header-column">
-                                        Ações
+                                        {{ $tc('common.action', 2) }}
                                     </div>
                                 </div>
-                                <div v-for="(step, index) in pipelineRunSteps" 
-                                     :key="step.id" 
-                                     class="steps-body" 
-                                     :class="{'steps-body-selected': selectedStep.id === step.id}" 
-                                     @click="setSelectedStep(step)">
+                                <div v-for="(step, index) in pipelineRun.steps" :key="step.id" class="steps-body"
+                                    :class="{ 'steps-body-selected': selectedStep.id === step.id }"
+                                    @click="setSelectedStep(step)">
                                     <div class="steps-column">
-                                        # {{index + 1}}
+                                        # {{ index + 1 }}
                                     </div>
                                     <div class="steps-column">
-                                        {{step.name}}
+                                        {{ step.name }}
                                     </div>
                                     <div class="steps-column">
-                                        {{step.retries}}
+                                        {{ step.retries }}
                                     </div>
                                     <div class="steps-column">
-                                        <font-awesome-icon v-if="step.status == 'COMPLETED'" 
-                                                           icon="check-circle"
-                                                           class="text-success" 
-                                                           title="Concluído" 
-                                                           size="lg" />
-                                        <font-awesome-icon v-if="step.status == 'ERROR'" 
-                                                           icon="xmark-circle" 
-                                                           class="text-danger" 
-                                                           title="Erro" 
-                                                           size="lg" />
-                                        <font-awesome-icon v-if="step.status == 'CANCELED'" 
-                                                           icon="ban" 
-                                                           class="text-danger" 
-                                                           title="Cancelado" 
-                                                           size="lg" />
-                                        <font-awesome-icon v-if="step.status == 'RUNNING'" 
-                                                           icon="spinner" 
-                                                           spin 
-                                                           class="text-secondary" 
-                                                           title="Executando" 
-                                                           size="lg" />
-                                        <font-awesome-icon v-if="step.status == 'PENDING'" 
-                                                           icon="exclamation-circle" 
-                                                           class="text-warning" 
-                                                           title="Pendente" 
-                                                           size="lg" />
+                                        <div class="d-flex align-items-center">
+                                            <div :class="step.status.toLowerCase()" class="runDetail-status status-small">
+                                                {{ $tc(`status.${step.status}`).toUpperCase() }}
+                                            </div>
+                                        </div>
+
                                     </div>
-                                    
+
                                     <div class="steps-column">
                                         <div>
                                             <button class="btn btn-sm btn-primary" title="Executar">
@@ -159,32 +139,42 @@
                                         <b-card no-body>
                                             <div header-tag="header" class="p-0 collapse-header">
                                                 <div v-b-toggle="index.toString()" class="collapse-button">
-                                                    #{{selectedStep.retries - index}} Tentativa
+                                                    Tentativa #{{ orderedJobs.length - index }}
                                                     <div class="d-flex align-items-center">
-                                                        <font-awesome-icon v-if="job.status == 'COMPLETED'"
-                                                                           icon="check-circle"
-                                                                           class="text-success mr-3" 
-                                                                           title="Concluído" 
-                                                                           size="lg" />
-                                                          
-                                                        <font-awesome-icon v-if="job.status == 'ERROR'" 
-                                                                           icon="xmark-circle" 
-                                                                           class="text-danger mr-3" 
-                                                                           title="Erro" 
-                                                                           size="lg" />
+                                                        <div :class="job.status.toLowerCase()" class="runDetail-status status-small">
+                                                            {{ $tc(`status.${job.status}`).toUpperCase() }}
+                                                        </div>
                                                         <button class="advanced-info-button">
-                                                            <font-awesome-icon icon="fa-info-circle" class="fa-sm" title="Mostrar Stack Trace" />
+                                                            <font-awesome-icon icon="fa-chevron-down" />
                                                         </button>
-                                                        <font-awesome-icon icon="fa-chevron-down" />
                                                     </div>
+                                                </div>
+                                                <div class="p-2">
+                                                    Início: {{ job.started|formatJsonDate }}
+                                                    Fim: {{ job.finished|formatJsonDate }}
                                                 </div>
                                             </div>
                                             <b-collapse :id="index.toString()" :visible="index === 0">
                                                 <b-card-body>
-                                                    <div>Mar 25 20:10:01 localhost CRON[579]: (root) INFO (file cron)</div>
-                                                    <div>Mar 25 20:10:02 localhost CRON[579]: Will run job 'cron.daily' in 5 min.</div>
-                                                    <div>Mar 25 20:10:03 localhost CRON[579]: Will run job 'cron.weekly' in 15 min.</div>
-                                                    <div>Mar 25 20:10:04 localhost CRON[579]: Will run job 'cron.monthly' in 25 min.</div>
+                                                    <div v-for="step in job.steps" class="border-bottom">
+                                                        {{step.status}}
+                                                        {{step.operation.name}}
+                                                        <div v-for="log in step.logs">
+                                                            <span v-if="log.type === 'TEXT'">
+                                                                {{ log.message }}
+                                                            </span>
+                                                            <span v-else-if="log.type === 'HTML'" v-html="log.message">
+                                                            </span>
+                                                            <span v-else-if="log.type === 'OBJECT'">
+                                                                {{log.message}}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <code v-if="job.exception_stack">
+                                                        <pre>
+                                                            {{ job.exception_stack }}
+                                                        </pre>
+                                                    </code>
                                                 </b-card-body>
                                             </b-collapse>
                                         </b-card>
@@ -199,165 +189,81 @@
     </div>
 </template>
 
-<script>
-export default {
-    data() {
-        return {
-            pipelineRunSteps: [
-                {
-                    "id": 1,
-                    "name": "Raw",
-                    "created": "23/04/2023 04:04",
-                    "updated": "18/04/2023 02:04",
-                    "workflow_id": 3,
-                    "comment": "dapibus quam quis diam. Pellentesque habitant morbi tristique senectus et",
-                    "status": "PENDING",
-                    "final_status": "INTERRUPTED",
-                    "retries": 8,
-                    "jobs": [
-                        {
-                            "id": 1,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 2,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 3,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 4,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 5,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 6,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 7,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 8,
-                            "status": "COMPLETED"
-                        },
-                    ]
-                },
-                {
-                    "id": 2,
-                    "name": "Stage",
-                    "created": "18/07/2023 00:07",
-                    "updated": "09/07/2024 19:07",
-                    "workflow_id": 7,
-                    "comment": "vel quam dignissim pharetra. Nam ac nulla. In tincidunt congue",
-                    "status": "CANCELED",
-                    "final_status": "WAITING",
-                    "retries": 2,
-                    "jobs": [
-                        {
-                            "id": 1,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 2,
-                            "status": "COMPLETED"
-                        }
-                    ]
-                },
-                {
-                    "id": 3,
-                    "name": "Dataset",
-                    "created": "30/05/2023 01:05",
-                    "updated": "30/09/2024 02:09",
-                    "workflow_id": 5,
-                    "comment": "ante lectus convallis est, vitae sodales nisi magna sed dui.",
-                    "status": "COMPLETED",
-                    "final_status": "WAITING",
-                    "retries": 3,
-                    "jobs": [
-                        {
-                            "id": 1,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 2,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 3,
-                            "status": "COMPLETED"
-                        }
-                    ]
-                },
-                {
-                    "id": 4,
-                    "name": "MDM",
-                    "created": "17/02/2025 10:02",
-                    "updated": "15/06/2024 00:06",
-                    "workflow_id": 8,
-                    "comment": "malesuada ut, sem. Nulla interdum. Curabitur dictum. Phasellus in felis.",
-                    "status": "RUNNING",
-                    "final_status": "INTERRUPTED",
-                    "retries": 5,
-                    "jobs": [
-                        {
-                            "id": 1,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 2,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 3,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 4,
-                            "status": "ERROR"
-                        },
-                        {
-                            "id": 5,
-                            "status": "COMPLETED"
-                        },
-                    ]
-                },
-            ],
-            selectedStep: null,
-        };
-    },
-    computed: {
-        orderedJobs() {
-            if (this.selectedStep) {
-                return this.selectedStep.jobs.slice().sort((a, b) => b.id - a.id);
-            } else {
-                return [];
-            }
-        },
-    },
-    mounted() {
-        this.selectedStep = this.pipelineRunSteps[this.pipelineRunSteps.length - 1];
-    },
-    methods: {
-        setSelectedStep(step) {
-            this.selectedStep = step;
-        },
-        cancelRun() {
-            console.log("Cancel Run.");
-        }
+<script setup>
+import { ref, getCurrentInstance, computed, onBeforeMount, onMounted } from 'vue';
+import useNotifier from '@/composables/useNotifier.js';
+
+import axios from 'axios';
+const standUrl = import.meta.env.VITE_STAND_URL;
+
+const vm = getCurrentInstance();
+
+const { confirm, success, error } = useNotifier(vm.proxy);
+const router = vm.proxy.$router;
+
+const route = vm.proxy.$route;
+
+router.beforeEach(function (to, from, next) {
+    if (!isDirty.value || (confirm(confirmMsg))) {
+        isDirty.value = false;
+        next();
+    } else {
+        next(false);
     }
+});
+const isDirty = ref(false);
+const selectedStep = ref({ jobs: [] });
+
+const orderedJobs = computed(() => {
+    if (selectedStep.value) {
+        return selectedStep.value.jobs.slice().sort((a, b) => b.id - a.id);
+    } else {
+        return [];
+    }
+}
+);
+
+const pipelineRunId = ref(0);
+onBeforeMount(async () => {
+    pipelineRunId.value = (route) ? route.params.id : 0;
+    await load();
+});
+
+const progress = vm.proxy.$Progress;
+const pipelineRun = ref({ status: '' });
+// Methods
+const load = async () => {
+    progress.start();
+    try {
+        const resp = await axios.get(`${standUrl}/pipeline-runs/${pipelineRunId.value}`);
+        pipelineRun.value = resp.data.data[0];
+        if (pipelineRun.value.steps.length) {
+            selectedStep.value = pipelineRun.value.steps[pipelineRun.value.steps.length - 1];
+        }
+    } catch (e) {
+        error(e);
+        router.push({ name: 'pipelineRunsList' });
+    } finally {
+        Vue.nextTick(() => {
+            progress.finish();
+            isDirty.value = false;
+        });
+    }
+};
+const setSelectedStep = (step) => {
+    selectedStep.value = step;
+};
+const cancelRun = () => {
+    const callback = (result) => {
+        console.debug('Cancelando....', result)
+    };
+    confirm('Cancelar execução', 'Você quer realmente cancelar esta execução?',
+        callback);
 };
 
 </script>
 
 <style lang="scss" scoped>
-
 .pretitle {
     color: black;
     font-family: sans-serif;
@@ -406,7 +312,7 @@ export default {
     font-size: 20px;
     font-weight: 500;
     letter-spacing: 0.6px;
-    text-transform: uppercase;
+    //text-transform: uppercase;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
     position: relative;
@@ -583,5 +489,8 @@ export default {
     left: 5px;
     top: 8px;
 }
-
+.status-small {
+    font-size: 9pt;
+    text-transform: lowercase
+}
 </style>

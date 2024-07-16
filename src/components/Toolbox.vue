@@ -1,6 +1,6 @@
 <template>
     <div class="lemonade-toolbox">
-       
+
             <div>
                 <ul class="list-group">
                     <li class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
@@ -183,7 +183,7 @@ export default {
     computed: {
         groupedOperations() {
             const ops = this.operations
-                .filter(op => op.enabled && op.type !== 'SHORTCUT')
+                .filter(op => op.enabled && op.type !== 'SHORTCUT' && op.name != null)
                 .map(op => {
                     const group = op.categories.find(cat => {
                         return cat.type === 'group';
@@ -248,7 +248,7 @@ export default {
         searcheableOperations() {
             let result = new Map();
             if (this.search) {
-                this.operations.forEach(op => {
+                this.operations.filter(op => op.name != null).forEach(op => {
                     result[op.id] = op.name
                         .replace('ı́', 'i')
                         .normalize('NFD')

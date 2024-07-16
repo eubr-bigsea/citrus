@@ -29,7 +29,7 @@
                             </template>
                         </vue-select>
 
-                        <template v-if="supervisioned">
+                        <template v-if="supervised">
                             <label class=" mt-2">Escolha o atributo alvo (rótulo):</label>
                             <vue-select v-model="selectedAttribute" :options="attributes" :searchable="true" />
                         </template>
@@ -43,7 +43,7 @@
                         </button>
                     </b-card>
                 </div>
-                <div v-if="supervisioned" class="col-md-9">
+                <div v-if="supervised" class="col-md-9">
                     <div class="card-deck1 text-center">
                         <div class="custom-card">
                             <div class="row">
@@ -261,7 +261,7 @@ export default {
         taskType() {
             return this.$route.params.task;
         },
-        supervisioned() {
+        supervised() {
             return this.taskType === 'regression' || this.taskType === 'classification';
         },
         clustering() {

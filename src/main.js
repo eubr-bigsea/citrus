@@ -167,15 +167,18 @@ const locales = {
 };
 */
 Vue.prototype.$filters = {
-    formatJsonDate(v) {
+    formatJsonDate(v, fmt) {
         if (v) {
-            return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
+            if (fmt === undefined) {
+                fmt = 'dd/MM/yyyy HH:mm';
+            }
+            return format(parseISO(v + '.000Z'), fmt);
         }
     },
     formatTimestamp(v) {
         if (v) {
             return format(
-                utcToZonedTime(fromUnixTime(v * .000001)), 
+                utcToZonedTime(fromUnixTime(v * .000001)),
                 'dd/MM/yyyy HH:mm:ss');
         }
     },
@@ -184,9 +187,12 @@ Vue.prototype.$filters = {
             { addSuffix: true, locale: locales[l] })
     },
 }
-Vue.filter('formatJsonDate', v => {
+Vue.filter('formatJsonDate', (v, fmt) => {
     if (v) {
-        return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
+        if (fmt === undefined) {
+            fmt = 'dd/MM/yyyy HH:mm';
+        }
+        return format(parseISO(v + '.000Z'), fmt);
     }
 });
 Vue.filter('timeFromNow', (v, l) => {

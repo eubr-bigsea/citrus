@@ -12,32 +12,33 @@
                     <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                 </button>
             </div>
-        </div> 
+        </div>
 
-        <ModalCreatePipeline ref="addModal" data-test="addModal" :pipeline-templates="pipelineTemplates" :template-options="templateOptions" />
+        <ModalCreatePipeline ref="addModal" data-test="addModal" :pipeline-templates="pipelineTemplates"
+            :template-options="templateOptions" />
 
         <div class="pipelineList-body">
             <div class="pipelineList-container">
                 <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList"
                                 data-test="pipelines-table">
                     <template #id="props">
-                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}" data-test="pipeline-id">
-                            {{props.row.id}}
+                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }" data-test="pipeline-id">
+                            {{ props.row.id }}
                         </router-link>
                     </template>
                     <template #name="props">
-                        <router-link :to="{name: 'pipelineEdit', params: {id: props.row.id}}">
-                            {{props.row.name}}
+                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
+                            {{ props.row.name }}
                         </router-link>
                     </template>
                     <template #created="props">
-                        {{props.row.created | formatJsonDate}}
+                        {{ props.row.created | formatJsonDate }}
                     </template>
                     <template #updated="props">
-                        {{props.row.updated | formatJsonDate}}
+                        {{ props.row.updated | formatJsonDate }}
                     </template>
                     <template #version="props">
-                        {{props.row.version}}
+                        {{ props.row.version }}
                     </template>
                     <template #actions="props">
                         <div>
@@ -100,11 +101,10 @@ export default {
                     name: this.$tc('common.name'),
                     created: this.$tc('common.created'),
                     updated: this.$tc('common.updated'),
-                    version: this.$tc('common.version'),
-                    user_name: this.$tc('common.user.name'),
-                    actions: this.$tc('common.action', 2)
+                    user_name: this.$tc('common.userName'),
+                    actions: this.$tc('common.action', 2),
                 },
-                sortable: ['id','name','created','updated'],
+                sortable: ['id', 'name', 'created', 'updated'],
                 filterable: ['name'],
                 sortIcon: {
                     base: 'sort-base',
@@ -200,7 +200,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .pipelineList-title {
     color: #333;
     margin: 10px 0px;
@@ -217,5 +216,4 @@ export default {
     padding: 16px;
     border-radius: 3px;
 }
-
 </style>
