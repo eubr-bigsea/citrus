@@ -47,7 +47,7 @@ export default {
                 },*/
         { name: "densitymapbox", label: "Mapa de Calor/Densidade (Geo)", },
         {
-            name: "scattermapbox", label: '"Mapa de Dispersão: Pontos e Bolhas (Geo)',
+            name: "scattermapbox", label: 'Dispersão: Pontos ou Bolhas (Geo)',
             dataTypes: ['contínuos'], objectives: ['comparação']
         },
         { name: "choropleth", label: "Mapa Coroplético (Geo)", },

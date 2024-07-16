@@ -41,9 +41,10 @@
                         </v-select>
                     </div>
                     <div v-if="chartType === 'densitymapbox'" class="col-4">
-                        <small class="form-text text-muted">Atributo com nome (exibido ao apontar com o mouse):</small>
-                        <v-select v-model="editableVisualization.hover_name.value" :options="attributes"
-                            label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                        <small class="form-text text-muted">Atributo com nome (exibido ao apontar com o mouse,
+                            opcional):</small>
+                        <v-select v-model="editableVisualization.hover_name.value" :options="attributes" label="name"
+                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
                             <template #option="{ type, name }">
                                 <span v-if="name !== '*'"
                                     :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
@@ -60,7 +61,7 @@
                         </v-select>
                         <small class="form-text text-muted">Valor(es) (exibido(s) ao apontar com o mouse):</small>
                         <v-select v-model="editableVisualization.hover_data.value" :options="attributes"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small" multiple="true">
+                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small" :multiple="true">
                             <template #option="{ type, name }">
                                 <span v-if="name !== '*'"
                                     :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
@@ -97,7 +98,7 @@
                     </div>
                     <div v-if="chartType === 'scattermapbox'" class="col-6">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-4">
                                 <small class="form-text text-muted">Cor (opcional):</small>
                                 <v-select v-model="editableVisualization.color_attribute.value" :options="attributes"
                                     label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
@@ -133,10 +134,30 @@
                                     </template>
                                 </v-select>
                             </div>
-                            <div class="col-6">
-                                <small class="form-text text-muted">Text (opcional):</small>
-                                <v-select v-model="editableVisualization.text_attribute.value" :options="attributes"
+                            <div class="col-8">
+                                <small class="form-text text-muted">Atributo com nome (exibido ao apontar com o mouse,
+                                    opcional):</small>
+                                <v-select v-model="editableVisualization.hover_name.value" :options="attributes"
                                     label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
+                                    <template #option="{ type, name }">
+                                        <span v-if="name !== '*'"
+                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                        {{ name }}
+                                    </template>
+
+                                    <template #selected-option="{ type, name }">
+                                        <div>
+                                            <span v-if="name !== '*'"
+                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
+                                            {{ name }}
+                                        </div>
+                                    </template>
+                                </v-select>
+                                <small class="form-text text-muted">Valor(es) (exibido(s) ao apontar com o
+                                    mouse):</small>
+                                <v-select v-model="editableVisualization.hover_data.value" :options="attributes"
+                                    :reduce="(opt) => opt.name" :searchable="true" class="select2-small"
+                                    :multiple="true">
                                     <template #option="{ type, name }">
                                         <span v-if="name !== '*'"
                                             :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
