@@ -13,7 +13,7 @@
                         <vue-select v-if="workflowObj && workflowObj.readData"
                             v-model="workflowObj.readData.forms.data_source.value" :filterable="false"
                             :options="dataSourceList" :reduce="(opt) => opt.id" label="name" @search="loadDataSourceList"
-                            @input="getAttributeList">
+                            @input="updateAttributeList">
                             <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
@@ -137,6 +137,7 @@ import VueSelect from 'vue-select';
 
 import io from 'socket.io-client';
 import { toPng } from 'html-to-image';
+import AttributeSelector from "@/components/widgets/AttributeSelector.vue";
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
@@ -262,7 +263,13 @@ const loadDataSourceList = debounce(async function (search, loading) {
     if (search) {
         dataSourceList.value = await asyncLoadDataSourceList(search, loading);
     }
+
 }, 800);
+
+const updateAttributeList = async (id, loading) => {
+    const result = await getAttributeList(id, loading);
+    attributes.value = result || [];
+}
 
 onBeforeMount(async () => {
     disconnectWebSocket();
