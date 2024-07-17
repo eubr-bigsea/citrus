@@ -2,6 +2,8 @@ const { defineConfig } = require("cypress");
 
 const baseUrl = "http://localhost:8081";
 const tahiti = "https://dev.lemonade.org.br/api/v1/tahiti";
+const stand = "https://dev.lemonade.org.br/api/v1/stand";
+
 module.exports = defineConfig({
     e2e: {
         baseUrl,
@@ -17,6 +19,7 @@ module.exports = defineConfig({
     chromeWebSecurity: false,
     component: {
         tahiti,
+        stand,
         devServer: {
             framework: "vue",
             bundler: "vite",

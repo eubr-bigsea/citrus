@@ -51,7 +51,7 @@
                                 </button>
                             </div>
                         </form>
-                        <v-server-table ref="runsList" :columns="columns" :options="options" name="runsList">
+                        <v-server-table ref="runsList" :columns="columns" :options="options" name="runsList" data-test="pipelineRunsList">
                             <template #id="props">
                                 <router-link :to="{ name: 'pipelineRunDetail', params: { id: props.row.id } }">
                                     {{ props.row.id }}

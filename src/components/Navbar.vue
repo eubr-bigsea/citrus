@@ -32,7 +32,7 @@
                         <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
                         {{ $tc('titles.pipeline', 2) }}
                     </template>
-                    <b-dropdown-item :to="{ name: 'pipelines' }">
+                    <b-dropdown-item :to="{ name: 'pipelines' }" data-test="pipelines-item">
                         {{ $tc('titles.pipeline', 2) }}
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'pipelineRunsList' }">
@@ -69,7 +69,7 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
+                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }" data-test="pipelineTemplates-item">
                         Template Pipeline
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'sourceCodeList' }">

@@ -1,0 +1,121 @@
+{
+    "status": "OK",
+    "data": [
+        {
+            "id": 1,
+            "start": "2024-07-01T03:00:00",
+            "finish": "2024-07-31T03:00:00",
+            "pipeline_id": 1,
+            "pipeline_name": "Processo de carga CAFINP",
+            "last_executed_step": 0,
+            "comment": "Test",
+            "updated": "2024-07-12T13:48:32",
+            "status": "PENDING"
+        },
+        {
+            "id": 2,
+            "start": "2024-08-01T03:00:00",
+            "finish": "2024-08-31T03:00:00",
+            "pipeline_id": 1,
+            "pipeline_name": "Processo de carga CAFINP",
+            "last_executed_step": 0,
+            "comment": "Test",
+            "updated": "2024-07-12T13:48:51",
+            "status": "PENDING"
+        },
+        {
+            "id": 3,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 1,
+            "pipeline_name": "Processo de carga CAFINP",
+            "last_executed_step": 4,
+            "updated": "2024-07-12T21:02:27",
+            "status": "ERROR",
+            "final_status": "ERROR"
+        },
+        {
+            "id": 4,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 3,
+            "pipeline_name": "Processo de carga Cartorios",
+            "last_executed_step": 7,
+            "updated": "2024-07-12T21:02:27",
+            "status": "RUNNING",
+            "final_status": "PENDING"
+        },
+        {
+            "id": 5,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 3,
+            "pipeline_name": "Processo de carga Cartorios",
+            "last_executed_step": 4,
+            "updated": "2024-07-12T21:02:27",
+            "status": "RUNNING",
+            "final_status": "INTERRUPTED"
+        },
+        {
+            "id": 6,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 4,
+            "pipeline_name": "Processo de carga PMMG",
+            "last_executed_step": 10,
+            "updated": "2024-07-12T21:02:27",
+            "status": "COMPLETED",
+            "final_status": "ERROR"
+        },
+        {
+            "id": 7,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 2,
+            "pipeline_name": "Processo de carga Receita Federal",
+            "last_executed_step": 7,
+            "updated": "2024-07-12T21:02:27",
+            "status": "INTERRUPTED",
+            "final_status": "WAITING"
+        },
+        {
+            "id": 8,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 2,
+            "pipeline_name": "Processo de carga Receita Federal",
+            "last_executed_step": 10,
+            "updated": "2024-07-12T21:02:27",
+            "status": "PENDING",
+            "final_status": "INTERRUPTED"
+        },
+        {
+            "id": 9,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 1,
+            "pipeline_name": "Processo de carga CAFINP",
+            "last_executed_step": 7,
+            "updated": "2024-07-12T21:02:27",
+            "status": "ERROR",
+            "final_status": "COMPLETED"
+        },
+        {
+            "id": 10,
+            "start": "2024-07-12T03:00:00",
+            "finish": "2024-07-12T03:00:00",
+            "pipeline_id": 3,
+            "pipeline_name": "Processo de carga Cartorios",
+            "last_executed_step": 10,
+            "updated": "2024-07-12T21:02:27",
+            "status": "CANCELED",
+            "final_status": "ERROR"
+        }
+    ],
+    "pagination": {
+        "page": 1,
+        "size": 10,
+        "total": 22,
+        "pages": 3
+    }
+}

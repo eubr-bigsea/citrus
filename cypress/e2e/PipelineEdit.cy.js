@@ -5,8 +5,15 @@ describe('Pipeline Edit', () => {
         cy.visit('/home');
         cy.url().should('eq', Cypress.config().baseUrl + '/home');
 
-        cy.get(':nth-child(7) > .nav-link').click();
-        cy.get('thead > tr > :nth-child(1)').click().click();
+        cy.intercept('GET', Cypress.config().tahiti + '/pipelines?query=Pipeline+de+teste*').as("getPipelineListFiltered");
+        cy.intercept('GET', Cypress.config().tahiti + '/pipelines/*').as("getPipeline");
+
+        cy.get('[data-test="pipelines-menu"]').click();
+        cy.get('[data-test="pipelines-item"]').click();
+        
+        cy.get('[data-test="pipelines-table"] input').type('Pipeline de teste');
+        cy.wait('@getPipelineListFiltered');
+        
         cy.get('tbody > :nth-child(1) > :nth-child(2) > a').click();
     });
     

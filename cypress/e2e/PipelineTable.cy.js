@@ -4,6 +4,9 @@ describe('Pipeline Table', () => {
         cy.login();
         cy.visit('/home');
         cy.url().should('eq', Cypress.config().baseUrl + '/home');
+
+        cy.get('[data-test="pipelines-menu"]').click();
+        cy.get('[data-test="pipelines-item"]').click();
     });
     
     it('Sort table columns', () => {

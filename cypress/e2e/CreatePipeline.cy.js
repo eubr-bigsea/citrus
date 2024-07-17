@@ -7,6 +7,7 @@ describe('Create Pipeline', () => {
 
         // all tests already start in the pipeline creation modal
         cy.get('[data-test="pipelines-menu"]').click();
+        cy.get('[data-test="pipelines-item"]').click();
         cy.get('[data-test="addButton"]').click();
     });
 

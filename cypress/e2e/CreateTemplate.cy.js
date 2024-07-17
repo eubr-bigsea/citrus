@@ -7,7 +7,7 @@ describe('Create Template', () => {
 
         // all tests already start in the template pipeline creation modal
         cy.get('[data-test="admin-menu"]').click();
-        cy.get('[data-test="navbar-template"]').click();
+        cy.get('[data-test="pipelineTemplates-item"]').click();
         cy.get('[data-test="addTemplateBtn"]').click();
 
     });
