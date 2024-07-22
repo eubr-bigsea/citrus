@@ -166,6 +166,7 @@ export default {
             jupyter: 'Jupyter Notebook',
             label: 'Título',
             language: 'Idioma',
+            last: 'Última',
             lastName: 'Sobrenome',
             limit: 'Limite',
             loading: 'Carregando',
@@ -260,6 +261,7 @@ export default {
             title: 'Título',
             true: 'Verdadeiro',
             type: 'Tipo | Tipos',
+            until: 'Até',
             updated: 'Atualizado',
             url: 'URL',
             userId: 'Id de usuário',
@@ -882,6 +884,8 @@ export default {
                 pipelineDescription: 'Descrição da Pipeline',
                 pipelineName: 'Nome da Pipeline',
                 pipelineNameMinLength: 'Nome da pipeline deve ter pelo menos 3 caracteres.',
+                periodStart: 'Início do período',
+                periodFinish: 'Fim do período',
                 wantToUseTemplate: 'Deseja utilizar algum modelo de pipeline?'
             },
             template: {
@@ -1171,6 +1175,7 @@ export default {
             jupyter: 'Jupyter Notebook',
             label: 'Label',
             language: 'Language',
+            last: 'Last',
             lastName: 'Last name',
             limit: 'Limit',
             loading: 'Loading',
@@ -1265,6 +1270,7 @@ export default {
             title: 'Title',
             true: 'True',
             type: 'Type | Types',
+            until: 'Until',
             updated: 'Updated',
             url: 'URL',
             userId: 'User id',
@@ -1798,6 +1804,8 @@ export default {
                 pipelineDescription: 'Pipeline Description',
                 pipelineName: 'Pipeline Name',
                 pipelineNameMinLength: 'Pipeline name must have at least 3 characters.',
+                periodStart: 'Period start',
+                periodFinish: 'Period finish',
                 wantToUseTemplate: 'Would you like to use a pipeline template?'
             },
             template: {
@@ -1919,6 +1927,7 @@ export default {
             INTERRUPTED: 'Interrupted',
             PENDING: 'Pending',
             RUNNING: 'Running',
+            WAITING: 'Waiting'
         }
 
     }

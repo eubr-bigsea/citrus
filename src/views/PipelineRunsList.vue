@@ -5,7 +5,7 @@
                 Execuções - {{ $route.params.name }}
             </h1>
             <h1 v-else class="runsList-title">
-                {{ $t('titles.pipelineRuns', 2) }}
+                {{ $tc('titles.pipelineRuns', 0) }}
             </h1>
             <router-link v-if="fromPipelineEdit" :to="{ name: 'pipelineEdit', params: { id: $route.params.id } }"
                 class="btn btn-outline-primary d-print-none float-right btn-sm">
@@ -18,19 +18,19 @@
             <div class="col-12">
                 <div class="runsList-body">
                     <div class="runsList-container custom-table">
-                        <form class="form-row list-filter">
+                        <form class="form-row list-filter" data-test="table-filters"    >
                             <div class="form-group col-4">
-                                <label for="search">{{ $tc('common.name') }} da pipeline:</label>
+                                <label for="search">{{ $t('pipeline.list.pipelineName') }}:</label>
                                 <input v-model="filters.name" type="text" class="form-control form-control-sm"
-                                    :placeholder="$tc('common.name')">
+                                    :placeholder="$tc('common.name', 1)">
                             </div>
                             <div class="form-group col-2">
-                                <label for="range">{{ $tc('titles.start') }} do período: </label>
+                                <label for="range">{{ $t('pipeline.list.periodStart') }}: </label>
                                 <input v-model="filters.start" type="date" class="form-control form-control-sm" />
                             </div>
 
                             <div class="form-group col-2">
-                                <label for="range">{{ $tc('common.end') }} do período: </label>
+                                <label for="range">{{ $t('pipeline.list.periodFinish') }}: </label>
                                 <input v-model="filters.end" type="date" class="form-control form-control-sm" />
                             </div>
 
@@ -66,7 +66,7 @@
                                 </router-link>
                             </template>
                             <template #period="props">
-                                {{ props.row.start | formatJsonDate('dd/MM/yyyy') }} até {{ props.row.finish |
+                                {{ props.row.start | formatJsonDate('dd/MM/yyyy') }} {{$t('common.until').toLowerCase()}} {{ props.row.finish |
                                     formatJsonDate('dd/MM/yyyy') }}
                             </template>
                             <template #updated="props">
@@ -132,10 +132,10 @@ export default {
                 headings: {
                     id: 'ID',
                     pipeline_name: this.$tc('titles.pipeline'),
-                    pipeline_id: `${this.$tc('titles.pipeline')} Id`,
+                    pipeline_id: `${this.$tc('titles.pipeline')} ID`,
                     period: this.$tc('common.period'),
                     updated: this.$tc('common.updated'),
-                    last_executed_step: 'Última Etapa',
+                    last_executed_step: this.$t('common.last') + ' ' + this.$tc('dataExplorer.step',1),
                     status: this.$tc('common.status'),
                     actions: this.$tc('titles.action', 2),
                     comment: this.$tc('titles.comment', 2)
