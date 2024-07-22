@@ -561,13 +561,14 @@ editableVisualization.value = structuredClone(props.value);
 
 /* Computed */
 const mapFamily = computed(() =>
-    ['scattermapbox', 'densitymapbox'].includes(props.chartType)
+    ['scattermapbox', 'densitymapbox', 'choropleth'].includes(props.chartType)
 );
 const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
 );
 const continuousColors = computed(() => {
-    return ['sunburst', 'treemap', 'histogram2dcontour', 'parcoords', 'scattergeo', 'densitymapbox',
+    return ['sunburst', 'treemap', 'histogram2dcontour', 'parcoords',
+        'scattergeo', 'densitymapbox', 'choropleth',
         'histogram2d'].includes(props.chartType);
 });
 const discreteColors = computed(() => {

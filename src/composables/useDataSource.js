@@ -48,6 +48,6 @@ export default () => {
             loading && loading(false);
         }
     };
-    return { getAttributeList, loadDataSources, loadDataSourceList, 
+    return { getAttributeList, loadDataSources, loadDataSourceList,
         asyncLoadDataSourceList };
 }

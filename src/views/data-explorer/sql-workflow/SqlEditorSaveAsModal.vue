@@ -29,17 +29,18 @@
                     </div>
                 </div>
             </div>
-            <!--
             <div v-if="task.forms.save.value == 1" class="col-6">
-                <div class="col-12 mt-2">
-                    <label>Descrição (opcional):</label>
-                    <textarea v-model="task.forms.description.value" class="form-control form-control-sm"></textarea>
-                </div>
-                <div class="col-12 mt-2">
-                    <label>Tags (opcional):</label>
-                    <b-form-tags input-id="tags-basic" v-model="task.forms.tags.value" :add-button-text="$t('actions.add')"
+                <!--
+                    <div class="col-12 mt-2">
+                        <label>Descrição (opcional):</label>
+                        <textarea v-model="task.forms.description.value" class="form-control form-control-sm"></textarea>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <label>Tags (opcional):</label>
+                        <b-form-tags input-id="tags-basic" v-model="task.forms.tags.value" :add-button-text="$t('actions.add')"
                         duplicate-tag-text="tag já existe" placeholder=""></b-form-tags>
-                </div>
+                    </div>
+                -->
                 <div class="col-12 mt-2">
                     <label>Opção de sobrescrita (se existir):</label>
                     <select class="form-control form-control-sm" name="mode"
@@ -51,7 +52,6 @@
                     </select>
                 </div>
             </div>
-            -->
         </div>
     </b-modal>
 </template>
