@@ -191,11 +191,13 @@ const dataSourceId = computed({
 const axis = computed({
     get() {
         const { x_axis, y_axis, y, x, type, color_attribute, text_attribute, size_attribute,
-            latitude, longitude, hover_name, hover_data, magnitude } = visualizationObj.value;
+            latitude, longitude, hover_name, hover_data, magnitude, locations,
+            geo_json_url, feature_id_key } = visualizationObj.value;
         return {
             x_axis, y_axis, y, x, type,
             color_attribute, text_attribute, size_attribute,
-            latitude, longitude, hover_name, hover_data, magnitude
+            latitude, longitude, hover_name, hover_data, magnitude, locations,
+            geo_json_url, feature_id_key
         };
     },
     set(value) {

@@ -3,175 +3,96 @@
         <b-card class="mt-1">
             <template v-if="mapFamily">
                 <div class="row">
-                    <div class="col-2">
-                        <small class="form-text text-muted">Latitude:</small>
-                        <v-select v-model="editableVisualization.latitude.value" :options="attributes" label="name"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
-                            <template #option="{ type, name }">
-                                <span v-if="name !== '*'"
-                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                {{ name }}
-                            </template>
+                    <template v-if="chartType === 'choropleth'">
+                        <div class="col-12">
+                            <div class="alert alert-warning">
+                                <font-awesome-icon icon="fa fa-info-circle" />
+                                Este tipo de gráfico pode consumir recursos computacionais tanto do servidor, quanto do
+                                navegador. Certifique-se de que o volume de dados seja da ordem de poucos megabytes.
+                                Também garanta que o valor do atributo especificado em
+                                <code>Atributo com identificador</code>
+                                seja igual ao valor do campo <code>Propriedade ID no GeoJSON</code>. O nome deste último
+                                campo está no arquivo GeoJSON e o você provavelmente terá que inspecionar o arquivo para
+                                saber seu nome.
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <small class="form-text text-muted">Aquivo GeoJSON (escolha ou informe o link/URL):</small>
+                            <b-input-group class="w-100">
+                                <b-form-input type="text" v-model="editableVisualization.geo_json_url.value"
+                                    class="form-control form-control-sm" maxlength="1000" />
+                                <b-input-group-append>
+                                    <b-button variant="" size="sm"
+                                        @click="openGeoJSONSuggestions">Selecionar...</b-button>
+                                </b-input-group-append>
+                            </b-input-group>
+                            <chart-builder-geo-json-select v-model="editableVisualization.geo_json_url.value"
+                                ref="geoJsonSelector" />
 
-                            <template #selected-option="{ type, name }">
-                                <div>
-                                    <span v-if="name !== '*'"
-                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                    {{ name }}
-                                </div>
-                            </template>
-                        </v-select>
-
-                        <small class="form-text text-muted">Longitude:</small>
-                        <v-select v-model="editableVisualization.longitude.value" :options="attributes" label="name"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
-                            <template #option="{ type, name }">
-                                <span v-if="name !== '*'"
-                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                {{ name }}
-                            </template>
-
-                            <template #selected-option="{ type, name }">
-                                <div>
-                                    <span v-if="name !== '*'"
-                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                    {{ name }}
-                                </div>
-                            </template>
-                        </v-select>
+                        </div>
+                    </template>
+                    <div v-if="chartType === 'choropleth'" class="col-3">
+                        <small class="form-text text-muted">Atributo com o identificador:</small>
+                        <chart-builder-attribute-selector v-model="editableVisualization.locations.value"
+                            :options="attributes" />
+                        <small class="form-text text-muted">Propriedade ID no GeoJSON:</small>
+                        <b-form-input type="text" v-model="editableVisualization.feature_id_key.value"
+                            class="form-control form-control-sm" maxlength="50" />
                     </div>
-                    <div v-if="chartType === 'densitymapbox'" class="col-4">
+                    <div v-if="chartType === 'choropleth'" class="col-3">
+                        <small class="form-text text-muted">Cor (opcional):</small>
+                        <chart-builder-attribute-selector v-model="editableVisualization.color_attribute.value"
+                            :options="attributes" />
+                    </div>
+                    <div v-if="chartType !== 'choropleth'" class="col-2">
+                        <small class="form-text text-muted">
+                            Latitude<span v-if="chartType == 'choropleth'">(opcional)</span>:</small>
+                        <chart-builder-attribute-selector v-model="editableVisualization.latitude.value"
+                            :options="attributes" />
+
+                        <small class="form-text text-muted">
+                            Longitude<span v-if="chartType == 'choropleth'">(opcional)</span>:</small>
+                        <chart-builder-attribute-selector v-model="editableVisualization.longitude.value"
+                            :options="attributes" />
+                    </div>
+                    <div v-if="chartType === 'densitymapbox' || chartType === 'choropleth'" class="col-6">
                         <small class="form-text text-muted">Atributo com nome (exibido ao apontar com o mouse,
                             opcional):</small>
-                        <v-select v-model="editableVisualization.hover_name.value" :options="attributes" label="name"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
-                            <template #option="{ type, name }">
-                                <span v-if="name !== '*'"
-                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                {{ name }}
-                            </template>
+                        <chart-builder-attribute-selector v-model="editableVisualization.hover_name.value"
+                            :options="attributes" />
 
-                            <template #selected-option="{ type, name }">
-                                <div>
-                                    <span v-if="name !== '*'"
-                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                    {{ name }}
-                                </div>
-                            </template>
-                        </v-select>
-                        <small class="form-text text-muted">Valor(es) (exibido(s) ao apontar com o mouse):</small>
-                        <v-select v-model="editableVisualization.hover_data.value" :options="attributes"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small" :multiple="true">
-                            <template #option="{ type, name }">
-                                <span v-if="name !== '*'"
-                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                {{ name }}
-                            </template>
+                        <small class="form-text text-muted">Valor(es) (exibido(s) ao apontar com o mouse,
+                            opcional):</small>
+                        <chart-builder-attribute-selector v-model="editableVisualization.hover_data.value"
+                            :options="attributes" :multiple="true" />
 
-                            <template #selected-option="{ type, name }">
-                                <div>
-                                    <span v-if="name !== '*'"
-                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                    {{ name }}
-                                </div>
-                            </template>
-                        </v-select>
                     </div>
                     <div v-if="chartType === 'densitymapbox'" class="col-4">
                         <small class="form-text text-muted">Magnitude (intensidade, opcional):</small>
-                        <v-select v-model="editableVisualization.magnitude.value" :options="attributes"
-                            :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
-                            <template #option="{ type, name }">
-                                <span v-if="name !== '*'"
-                                    :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                {{ name }}
-                            </template>
-
-                            <template #selected-option="{ type, name }">
-                                <div>
-                                    <span v-if="name !== '*'"
-                                        :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                    {{ name }}
-                                </div>
-                            </template>
-                        </v-select>
+                        <chart-builder-attribute-selector v-model="editableVisualization.magnitude.value"
+                            :options="attributes" />
                     </div>
                     <div v-if="chartType === 'scattermapbox'" class="col-6">
                         <div class="row">
                             <div class="col-4">
                                 <small class="form-text text-muted">Cor (opcional):</small>
-                                <v-select v-model="editableVisualization.color_attribute.value" :options="attributes"
-                                    label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
-                                    <template #option="{ type, name }">
-                                        <span v-if="name !== '*'"
-                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                        {{ name }}
-                                    </template>
+                                <chart-builder-attribute-selector v-model="editableVisualization.color_attribute.value"
+                                    :options="attributes" />
 
-                                    <template #selected-option="{ type, name }">
-                                        <div>
-                                            <span v-if="name !== '*'"
-                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                            {{ name }}
-                                        </div>
-                                    </template>
-                                </v-select>
                                 <small class="form-text text-muted">Tamanho (raio, opcional):</small>
-                                <v-select v-model="editableVisualization.size_attribute.value" :options="attributes"
-                                    label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
-                                    <template #option="{ type, name }">
-                                        <span v-if="name !== '*'"
-                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                        {{ name }}
-                                    </template>
-
-                                    <template #selected-option="{ type, name }">
-                                        <div>
-                                            <span v-if="name !== '*'"
-                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                            {{ name }}
-                                        </div>
-                                    </template>
-                                </v-select>
+                                <chart-builder-attribute-selector v-model="editableVisualization.size_attribute.value"
+                                    :options="attributes" />
                             </div>
                             <div class="col-8">
                                 <small class="form-text text-muted">Atributo com nome (exibido ao apontar com o mouse,
                                     opcional):</small>
-                                <v-select v-model="editableVisualization.hover_name.value" :options="attributes"
-                                    label="name" :reduce="(opt) => opt.name" :searchable="true" class="select2-small">
-                                    <template #option="{ type, name }">
-                                        <span v-if="name !== '*'"
-                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                        {{ name }}
-                                    </template>
+                                <chart-builder-attribute-selector v-model="editableVisualization.hover_name.value"
+                                    :options="attributes" />
 
-                                    <template #selected-option="{ type, name }">
-                                        <div>
-                                            <span v-if="name !== '*'"
-                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                            {{ name }}
-                                        </div>
-                                    </template>
-                                </v-select>
                                 <small class="form-text text-muted">Valor(es) (exibido(s) ao apontar com o
-                                    mouse):</small>
-                                <v-select v-model="editableVisualization.hover_data.value" :options="attributes"
-                                    :reduce="(opt) => opt.name" :searchable="true" class="select2-small"
-                                    :multiple="true">
-                                    <template #option="{ type, name }">
-                                        <span v-if="name !== '*'"
-                                            :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                        {{ name }}
-                                    </template>
-
-                                    <template #selected-option="{ type, name }">
-                                        <div>
-                                            <span v-if="name !== '*'"
-                                                :class="{ 'fa fa-font': type === 'CHARACTER', 'fa fa-hashtag': type !== 'CHARACTER' }"></span>
-                                            {{ name }}
-                                        </div>
-                                    </template>
-                                </v-select>
+                                    mouse, opcional):</small>
+                                <chart-builder-attribute-selector v-model="editableVisualization.hover_data.value"
+                                    :options="attributes" />
                             </div>
                         </div>
                     </div>
@@ -693,6 +614,8 @@
 import { ref, computed, watch, defineProps, defineEmits, onBeforeMount } from "vue";
 import { XDimension, YDimension } from '../../views/data-explorer/entities.js';
 import Draggable from 'vuedraggable';
+import ChartBuilderAttributeSelector from './ChartBuilderAttributeSelector.vue';
+import ChartBuilderGeoJsonSelect from './ChartBuilderGeoJsonSelect.vue';
 
 const shapes = [
     { name: '', label: 'Sólido', icon: 'solid' },
@@ -707,17 +630,13 @@ const shapes = [
 
 const emit = defineEmits(['input']);
 const editableVisualization = ref(null);
+
 const props = defineProps({
     workflow: { type: Object, required: true },
     attributes: { type: Array, required: true },
     value: {
         type: Object, required: true,
-        default: () => ({
-            x_axis: { value: {} }, y_axis: { value: {} },
-            x: { value: {} }, y: { value: {} },
-            color_attribute: { value: null }, text_attribute: { value: null }, size_attribute: { value: null },
-            latitude: { value: null }, longitude: { value: null },
-        })
+        default: () => { }
     },
     chartType: { type: String, required: false }
 });
@@ -742,7 +661,7 @@ const xDimensionDD = ref(null);
 /* Computed */
 
 const mapFamily = computed(() =>
-    ['scattermapbox', 'densitymapbox'].includes(props.chartType)
+    ['scattermapbox', 'densitymapbox', 'choropleth'].includes(props.chartType)
 );
 const pieFamily = computed(() =>
     ['donut', 'pie'].includes(props.chartType)
@@ -804,8 +723,14 @@ const handleSelectAttribute = (x) => {
         x.binning = null;
     }
 };
+const defaultValues = Object.fromEntries(
+    ['x_axis', 'y_axis', 'x', 'y',
+        'color_attribute', 'text_attribute', 'size_attribute',
+        'latitude', 'longitude',
+        'locations', 'geo_json_url', 'feature_id_key'
+    ].map((attr) => [attr, { value: null }]));
 
-editableVisualization.value = structuredClone(props.value);
+editableVisualization.value = structuredClone({ ...defaultValues, ...props.value });
 
 const handleAddY = () => editableVisualization.value.y.value.push(new YDimension({}));
 const handleAddX = () => editableVisualization.value.x.value.push(new XDimension({}));
@@ -839,6 +764,10 @@ const getDisplayXDimensionLabel = (obj, defaultValue, bins, size, categorical) =
             return obj.attribute;
     }
 };
+const geoJsonSelector = ref();
+const openGeoJSONSuggestions = () => {
+    geoJsonSelector.value.show();
+}
 /* Watch */
 watch(
     () => editableVisualization,
@@ -859,7 +788,10 @@ watch(
             }
         });
 
-        editableVisualization.value = structuredClone(props.value);
+        editableVisualization.value = structuredClone({
+            ...defaultValues,
+            ...props.value
+        });
         toEmit.value = false;
     }, { deep: true, immediate: true });
 
@@ -914,5 +846,9 @@ watch(
     width: 60px;
     margin: 12px 5px 0 0;
     font-size: 10pt;
+}
+
+.alert-warning {
+    font-size: .9em
 }
 </style>

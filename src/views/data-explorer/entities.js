@@ -634,6 +634,10 @@ class Visualization {
         longitude = { value: null },
         marker_size = { value: null },
 
+        locations = { value: null },
+        geo_json_url = { value: null },
+        feature_id_key = {value: null},
+
         limit = { value: null },
         filter = { value: null },
         magnitude = { value: null },
@@ -651,6 +655,11 @@ class Visualization {
         this.center_longitude = center_longitude;
         this.latitude = latitude;
         this.longitude = longitude;
+
+        this.locations = locations
+        this.geo_json_url = geo_json_url
+        this.feature_id_key = feature_id_key
+
         this.zoom = zoom;
         this.style = style;
         this.tooltip_info = tooltip_info;
