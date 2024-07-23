@@ -8,6 +8,7 @@ module.exports = defineConfig({
     e2e: {
         baseUrl,
         tahiti,
+        stand,
         supportFile: 'cypress/support/e2e.js',
         thorn: "https://dev.lemonade.org.br/api/v1/thorn",
         setupNodeEvents(on, config) {

@@ -35,7 +35,7 @@
                     <b-dropdown-item :to="{ name: 'pipelines' }" data-test="pipelines-item">
                         {{ $tc('titles.pipeline', 2) }}
                     </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'pipelineRunsList' }">
+                    <b-dropdown-item :to="{ name: 'pipelineRunsList' }" data-test="pipelineRuns-item">
                         {{ $tc('titles.pipelineRuns', 2) }}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
