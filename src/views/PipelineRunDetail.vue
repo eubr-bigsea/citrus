@@ -1,20 +1,19 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4" data-test="header">
             <div class="mt-2">
                 <h6 class="pretitle">
-                    Execução #{{ pipelineRunId }}
+                    {{$tc('titles.job', 1)}} #{{ pipelineRun.id }}
                 </h6>
                 <h1>
-                    Pipeline Teste
+                    {{pipelineRun.pipeline_name}}
                 </h1>
             </div>
             <div>
                 <router-link v-if="true || pipelineRunId" :to="{ name: 'pipelineRunsList' }"
                     class="btn btn-outline-primary d-print-none float-left btn-sm">
                     <font-awesome-icon icon="fa-chevron-left" />
-                    &nbsp; {{ $t('actions.back') }} -
-                    {{ $t('titles.pipelineRuns', 2) }}
+                    &nbsp; {{ $t('actions.back') }} - {{ $tc('titles.pipelineRuns', 2) }}
                 </router-link>
                 <button class="btn btn-sm btn-outline-danger ml-2" @click="cancelRun">
                     <font-awesome-icon icon="fa fa-ban" class="" /> {{ $t('actions.cancel') }}
@@ -25,9 +24,9 @@
         <div class="body">
             <div class="page-container">
                 <div class="left-container">
-                    <div class="mb-4">
+                    <div class="mb-4" data-test="executionInformations">
                         <div class="collapse-title">
-                            Informações da Execução
+                            {{ $t('pipeline.execution.informationTitle') }}
                         </div>
                         <b-card class="infos">
                             <div class="infos-container">
@@ -36,7 +35,7 @@
                                         {{ $tc('common.period') }}
                                     </div>
                                     <div class="infos-right">
-                                        {{ pipelineRun.start | formatJsonDate('dd/MM/yyyy') }} a
+                                        {{ pipelineRun.start | formatJsonDate('dd/MM/yyyy') }} {{ $t('common.until').toLowerCase() }}
                                         <br />
                                         {{ pipelineRun.finish | formatJsonDate('dd/MM/yyyy') }}
                                     </div>
@@ -58,16 +57,16 @@
                                     <div class="infos-right">
                                         <div v-if="pipelineRun.status" class="runDetail-status status-small"
                                             :class="pipelineRun.status.toLowerCase()">
-                                            {{ $tc(`status.${pipelineRun.status}`).toUpperCase() }}
+                                            {{ $t(`status.${pipelineRun.status}`).toUpperCase() }}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </b-card>
                     </div>
-                    <div>
+                    <div data-test="steps">
                         <div class="collapse-title">
-                            {{ $tc('pipeline.step', 2) }}
+                            {{ $tc('titles.step', 2) }}
                         </div>
                         <b-card class="steps-div scroll-area">
                             <div class="steps-div-container">
@@ -76,19 +75,19 @@
                                         <font-awesome-icon icon="info-circle" />
                                     </button>
                                     <b-popover target="popover-trigger" triggers="hover">
-                                        Selecione uma das etapas abaixo para mostrar seus detalhes da execução.
+                                        {{ $t('pipeline.execution.stepInfoPopup') }}
                                     </b-popover>
                                     <div class="steps-header-column">
-                                        Ordem
+                                        {{$t('titles.order')}}
                                     </div>
                                     <div class="steps-header-column">
                                         {{ $tc('common.name') }}
                                     </div>
                                     <div class="steps-header-column">
-                                        Tentativas
+                                        {{$tc('titles.attempts', 2)}}
                                     </div>
                                     <div class="steps-header-column">
-                                        {{ $tc('common.status') }}
+                                        {{ $t('common.status') }}
                                     </div>
                                     <div class="steps-header-column">
                                         {{ $tc('common.action', 2) }}
@@ -118,7 +117,7 @@
 
                                     <div class="steps-column">
                                         <div>
-                                            <button class="btn btn-sm btn-primary" title="Executar">
+                                            <button class="btn btn-sm btn-primary" :title="$t('actions.execute')">
                                                 <font-awesome-icon icon="fa-play" />
                                             </button>
                                         </div>
@@ -128,10 +127,10 @@
                         </b-card>
                     </div>
                 </div>
-                <div class="right-container">
+                <div class="right-container" data-test="executionReport">
                     <div class="right-container-body">
                         <div class="collapse-title">
-                            Relatório da Execução
+                            {{ $t('pipeline.execution.reportTitle') }}
                         </div>
                         <b-card class="log-div scroll-area">
                             <div class="log-div-container">
@@ -140,7 +139,7 @@
                                         <b-card no-body>
                                             <div header-tag="header" class="p-0 collapse-header">
                                                 <div v-b-toggle="index.toString()" class="collapse-button">
-                                                    Tentativa #{{ orderedJobs.length - index }}
+                                                    {{$tc('titles.attempts', 1)}} #{{ orderedJobs.length - index }}
                                                     <div class="d-flex align-items-center">
                                                         <div :class="job.status.toLowerCase()"
                                                             class="runDetail-status status-small">
@@ -152,8 +151,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="p-2">
-                                                    Início: {{ job.started | formatJsonDate }}
-                                                    Fim: {{ job.finished | formatJsonDate }}
+                                                    {{$tc('titles.start', 1)}}: {{ job.started | formatJsonDate }}
+                                                    {{$t('common.end')}}: {{ job.finished | formatJsonDate }}
                                                 </div>
                                             </div>
                                             <b-collapse :id="index.toString()" :visible="index === 0">
@@ -536,6 +535,6 @@ const cancelRun = () => {
 
 .status-small {
     font-size: 9pt;
-    text-transform: lowercase
+    text-transform: uppercase
 }
 </style>

@@ -46,7 +46,7 @@ export default {
             editValue: 'Editar valor...',
             enable: 'Habilitar',
             encodeDecode: '(De)codificar',
-            execute: 'Executar ...',
+            execute: 'Executar',
             export: 'Exportar',
             find: 'Localizar',
             findAndReplace: 'Localizar e substituir',
@@ -676,6 +676,7 @@ export default {
             apiToken: 'Tokens para API',
             analysis: 'Análise | Análises',
             app: 'Aplicação (trilha) | Aplicações (trilhas)',
+            attempts: 'Tentativa | Tentativas',
             allNotifications: 'Ver todas as notificações',
             changePassword: 'Nova senha',
             code: 'Código | Códigos',
@@ -875,6 +876,11 @@ export default {
                 },
                 wantToDeleteStep: 'Tem certeza que deseja excluir esta etapa?',
             },
+            execution: {
+                informationTitle: 'Informações da Execução',
+                stepInfoPopup: 'Selecione uma das etapas abaixo para mostrar seus detalhes da execução.',
+                reportTitle: 'Relatório de Execução'
+            },
             list: {
                 doNotUseTemplate: 'Não utilizar modelo',
                 generalInfo: 'Informações Gerais',
@@ -1059,7 +1065,7 @@ export default {
             editValue: 'Edit value...',
             enable: 'Enable',
             encodeDecode: 'Encode/Decode',
-            execute: 'Execute...',
+            execute: 'Execute',
             export: 'Export',
             find: 'Find',
             findAndReplace: 'Find and replace',
@@ -1509,6 +1515,7 @@ export default {
             analysis: 'Analysis | Analysis',
             apiToken: 'API Tokens',
             app: 'App | Apps',
+            attempts: 'Attempt | Attempts',
             allNotifications: 'See all notifications',
             changePassword: 'New password',
             cluster: 'Cluster | Clusters',
@@ -1794,6 +1801,12 @@ export default {
                     workflowCreation: 'Workflow Creation',
                 },
                 wantToDeleteStep: 'Are you sure you want to delete this step?',
+            },
+            execution: {
+                informationTitle: 'Execution Informations',
+                stepInfoPopup: 'Select one of the steps below to display its execution details.',
+                reportTitle: 'Execution Report'
+                
             },
             list: {
                 doNotUseTemplate: 'Do not use template',
