@@ -123,6 +123,7 @@ describe('<PipelineEdit />', () => {
 
     it('renders correctly', () => {
 
+        cy.wait("@getPipeline");
         cy.get('[data-test="pretitle"]').should('contain', 'Pipeline #');
         cy.get('[data-test="input-header"]').should('have.value', '');
         
@@ -130,6 +131,7 @@ describe('<PipelineEdit />', () => {
 
     it('enables the save button when changes are made', () => {
 
+        cy.wait("@getPipeline");
         cy.get('[data-test="input-header"]').type('New Pipeline Name');
         cy.get('[data-test="save-button"]').should('not.be.disabled');
 
@@ -137,6 +139,7 @@ describe('<PipelineEdit />', () => {
 
     it('can toggle the enabled checkbox', () => {
 
+        cy.wait("@getPipeline");
         cy.get('[data-test="enabled-checkbox"]').click();
         cy.get('[data-test="enabled-checkbox"]').should('be.visible');
         cy.get('[data-test="save-button"]').should('not.be.disabled');
@@ -145,6 +148,7 @@ describe('<PipelineEdit />', () => {
 
     it('updates periodicity settings', () => {
 
+        cy.wait("@getPipeline");
         cy.get('[data-test="periodicity-button"]').click();
         cy.get('[data-test="periodicity-select"]').select('weekly');
         cy.get('#repetir-dias').type('2');
@@ -155,6 +159,7 @@ describe('<PipelineEdit />', () => {
 
     it('checks if the header is rendered correctly', () => {
 
+        cy.wait("@getPipeline");
         cy.get('[data-test="header"]').should('be.visible');
         cy.get('[data-test="pretitle"]').should('contain', 'Pipeline #');
         cy.get('[data-test="input-header"]').should('have.value', '');
@@ -178,14 +183,13 @@ describe('<PipelineEdit />', () => {
             cy.get('svg').should('have.attr','data-icon').and('equal', 'floppy-disk');
             cy.wrap($button).should('contain.text',i18n.t('actions.save'));
         })
-
-        cy.wait('@getPipeline');
         
 
     });
 
     it('checks if each container is rendered correctly', () => {
         
+        cy.wait("@getPipeline");
         cy.get('.editPage-body').should('be.visible');
         cy.get('.editPage-container').should('be.visible');
 

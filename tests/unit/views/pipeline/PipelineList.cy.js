@@ -68,7 +68,7 @@ describe('<PipelineList />', () => {
     it('sorts the pipelines table', () => {
 
         cy.get('[data-test="pipelines-table"] th').contains('ID').click();
-        
+        cy.wait('@getPipelines');
     });
 
     it('checks if the header is rendered correctly', () => {
