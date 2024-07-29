@@ -901,6 +901,7 @@ export default {
             PENDING: 'Pendente',
             RUNNING: 'Executando',
             WAITING: 'Preparando',
+            WAITING_INTERVENTION: 'Esperando intervenção'
         }
     },
 

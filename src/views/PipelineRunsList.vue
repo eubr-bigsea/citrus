@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
-            <h1 v-if="fromPipelineEdit" class="runsList-title">
+    <main role="main">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1 v-if="fromPipelineEdit">
                 Execuções - {{ $route.params.name }}
             </h1>
             <h1 v-else class="runsList-title">
@@ -19,8 +19,8 @@
                 <div class="runsList-body">
                     <div class="runsList-container custom-table">
                         <form class="form-row list-filter">
-                            <div class="form-group col-4">
-                                <label for="search">{{ $tc('common.name') }} da pipeline:</label>
+                            <div class="form-group col-3">
+                                <label for="search">Id ou {{ $tc('common.name') }} da pipeline:</label>
                                 <input v-model="filters.name" type="text" class="form-control form-control-sm"
                                     :placeholder="$tc('common.name')">
                             </div>
@@ -36,11 +36,21 @@
 
                             <div class="form-group col-2">
                                 <label for="status">{{ $tc('common.status') }}: </label>
-                                <select v-model="filters.status" class="ml-2 form-control form-control-sm"
+                                <select v-model="filters.status" class="form-control form-control-sm"
                                     name="status">
                                     <option selected value=""></option>
                                     <option v-for="status in statuses" :value="status">{{ $tc(`status.${status}`) }}
                                     </option>
+                                </select>
+                            </div>
+                            <div class="form-group col-1">
+                                <label for="limit">{{ $tc('common.limit') }}: </label>
+                                <select v-model="filters.limit" class="form-control form-control-sm"
+                                    name="limit">
+                                    <option selected value="10">10</option>
+                                    <option selected value="25">25</option>
+                                    <option selected value="50">50</option>
+                                    <option selected value="100">100</option>
                                 </select>
                             </div>
                             <div class="col-12 mt-2">
@@ -58,10 +68,10 @@
                                 </router-link>
                             </template>
                             <template #pipeline_name="props">
-                                    {{ props.row.pipeline_name }}
+                                {{ props.row.pipeline_name }}
                             </template>
                             <template #pipeline_id="props">
-                                <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
+                                <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.pipeline_id } }">
                                     {{ props.row.pipeline_id }}
                                 </router-link>
                             </template>
@@ -70,7 +80,7 @@
                                     formatJsonDate('dd/MM/yyyy') }}
                             </template>
                             <template #updated="props">
-                                {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:MM:SS') }}
+                                {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:mm:SS') }}
                             </template>
                             <template #status="props">
                                 <div class="runsList-status" :class="props.row.status.toLowerCase()">
@@ -83,12 +93,11 @@
             </div>
 
         </div>
-    </div>
+    </main>
 </template>
 
 <script>
 import axios from 'axios';
-import Notifier from '../mixins/Notifier.js';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 
@@ -98,7 +107,7 @@ export default {
     data() {
         return {
             statuses: ['COMPLETED', 'CANCELED', 'ERROR', 'INTERRUPTED', 'PENDING',
-                'RUNNING', 'WAITING',],
+                'RUNNING', 'WAITING', 'WAITING_INTERVENTION'],
             filters: { // binding
                 status: null,
                 name: null,
@@ -109,6 +118,7 @@ export default {
                 orderBy: null,
                 ascending: null,
                 limit: 10,
+
             },
             fromPipelineEdit: false,
             columns: [
@@ -164,25 +174,31 @@ export default {
         if (this.$route.params.from === 'PipelineEdit') this.fromPipelineEdit = true;
         else this.fromPipelineEdit = false;
     },
-    beforeMount(){
+    beforeMount() {
         this.filters = JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}');
     },
     methods: {
         async search() {
+            const query = {};
+            this.$router.replace({ query });
             this.$refs.runsList.refresh();
         },
         async load(data) {
             localStorage.setItem('pipeline_run:list:filters', JSON.stringify(this.filters));
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
-            data.size = data.limit;
+            data.size = this.filters.limit;
             data.name = this.filters.name;
             data.status = this.filters.status;
-            data.pipeline = this.filters.pipeline;
+            data.pipelines = this.filters.pipeline;
             data.start = this.filters.start;
             data.end = this.filters.end;
             data.dateType = this.filters.dateType;
 
+            if (this.$route.query.id) {
+                data.name = this.$route.query.id;
+                this.filters.name = data.name;
+            }
             //data.fields = 'id,name,version,created,updated,user_name';
 
             this.$Progress.start();
@@ -201,34 +217,3 @@ export default {
 
 
 </script>
-
-<style lang="scss" scoped>
-.list-filter,
-.list-filter input,
-.list-filter select {
-    font-size: .9em
-}
-
-.form-group {
-    margin-bottom: 0rem;
-}
-
-.runsList-body {
-    width: 100%;
-    background-color: #fff;
-    border-radius: 3px;
-}
-
-.runsList-container {
-    border: 1px solid #dee2e6;
-    padding: 16px;
-    border-radius: 3px;
-}
-
-.runsList-title {
-    color: #333;
-    margin: 10px 0px;
-}
-
-
-</style>
