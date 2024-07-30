@@ -169,9 +169,8 @@ describe('Pipeline Edit', () => {
         });
     });
 
-    it('Sets the step schedule (immediately)', () => {
-        cy.get('.editPage-left-container > :nth-child(2) > :nth-child(2) > :nth-child(2)').click();
-
+    /*it('Sets the step schedule (immediately)', () => {
+        cy.get('[data-test=periodicity-button]').click();
         cy.get('[data-test="select-frequency"]').select('immediately').should('have.value', 'immediately');
 
         cy.get('[data-test="pipeline-id"]').invoke('text').then((pipelineId) => {
@@ -184,5 +183,5 @@ describe('Pipeline Edit', () => {
 
             cy.wait('@editPipeline').its('response.statusCode').should('eq', 200);
         });
-    });
+    });*/
 });

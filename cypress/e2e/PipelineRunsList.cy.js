@@ -1,4 +1,4 @@
-describe('Create Template', () => {
+describe('Pipeline Run List', () => {
 
     beforeEach(() => {
         cy.login();
