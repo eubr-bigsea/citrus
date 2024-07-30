@@ -24,6 +24,15 @@ const routes = [
 
 const router = new VueRouter({ routes });
 
+const formatJsonDate = (v, fmt) => {
+    if (v) {
+        if (fmt === undefined) {
+            fmt = 'dd/MM/yyyy HH:mm';
+        }
+        return format(parseISO(v + '.000Z'), fmt);
+    }
+};
+
 describe('<PipelineRunsList />', () => {
 
     beforeEach(() => {
@@ -66,15 +75,6 @@ describe('<PipelineRunsList />', () => {
     });
 
     it('execution informations box correctly rendered', () => {
-
-        const formatJsonDate = (v, fmt) => {
-            if (v) {
-                if (fmt === undefined) {
-                    fmt = 'dd/MM/yyyy HH:mm';
-                }
-                return format(parseISO(v + '.000Z'), fmt);
-            }
-        };
 
         cy.fixture('pipelineRunDetail.json').then((mockedData) => {
             const pipelineRunsDetail = mockedData['data'][0];
@@ -142,7 +142,40 @@ describe('<PipelineRunsList />', () => {
             cy.get('div').first().should('contain.text', t('pipeline.execution.reportTitle'));
             
             // write here the box output tests
-            
+            // 
+            cy.get('.log-div-container').children().should('have.length', 2);
+            cy.fixture('pipelineRunDetail.json').then((mockedData) => {
+                const lastStepJobs = mockedData['data'][0]['steps'][4]['jobs'];
+                const numberStepJobs = lastStepJobs.length;
+                const lastStepJob = lastStepJobs[numberStepJobs-1];
+                // access opened log details
+                cy.get('.log-div-container div div div').first().within(() => {
+                    cy.get('[header-tag=header]').first().should('have.class', 'collapse-header')
+                    .within(() => {
+                        cy.get('div').should('contain.text', `${tc('titles.attempts', 1)} #${numberStepJobs}`);
+                        cy.get('div div div').first().should('contain.text', t(`status.${lastStepJob['status']}`).toUpperCase());
+                        cy.get('div div button').first().should('exist');
+                        cy.get('.p-2').first().should('contain.text', `${tc('titles.start', 1)}: ${formatJsonDate(lastStepJob['started'])}`);
+                        cy.get('.p-2').first().should('contain.text', `${t('common.end')}: ${formatJsonDate(lastStepJob['finished'])}`);
+                        
+                    });
+                    // verify the messages log is printing is correct
+                    cy.get('.card-body').first().within(() => {
+                        lastStepJob['steps'].forEach((step, index)=>{
+                            const printedStatus = `${step['status']} ${step['operation']['name']}`;
+                            cy.get('.border-bottom').eq(index).should('contain.text', printedStatus);
+
+                            step['logs'].forEach((log, indexLog) => {
+                                if (log['type'] !== 'STATUS'){
+                                    cy.get('.border-bottom').eq(index).children().eq(indexLog).should('contain.html', log['message']);
+                                }
+
+                            });
+                        });
+                    });
+                });
+
+            });
         });
     });
 
