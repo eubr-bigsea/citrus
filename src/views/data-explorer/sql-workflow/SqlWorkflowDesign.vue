@@ -253,7 +253,7 @@
 <script setup>
 import { onBeforeMount, ref, nextTick, onUnmounted, onMounted } from "vue";
 
-import { useWebSocket } from '@/services/websocket.js';
+import { useWebSocket } from '@/composables/websocket.js';
 import { debounce } from "@/util.js";
 import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
 import axios from 'axios';

@@ -24,8 +24,8 @@ export const useWebSocket = () => {
   const socketEmit = (type, args) => {
     socketIo.value.emit(type, args);
   };
-  const joinRoom = (room) => {
-    socketIo.value.emit('join', { cached: false, room });
+  const joinRoom = (room, cached=false) => {
+    socketIo.value.emit('join', { cached, room });
   };
   return { connectWebSocket, disconnectWebSocket, socketEmit, joinRoom };
 };
