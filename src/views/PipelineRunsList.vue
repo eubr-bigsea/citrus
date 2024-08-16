@@ -208,11 +208,10 @@ export default {
                     : this.notifications.length;
                 if (!msg.cache) {
                     const run = msg.pipeline_run;
-                    //const elem = this.$refs.runsList.$el.querySelector(`[data-id="${run.id}"]`); // Not working
                     const elem = document.getElementById('runsList')
                         .querySelector(`[data-id="${run.id}"]`);
                     if (elem) {
-                        elem.className = 'runsList-status';
+                        elem.className = 'pipeline-runs-status';
                         elem.classList.add(run.status.toLowerCase());
                         elem.innerText = this.$tc(`status.${run.status}`).toUpperCase();
 
