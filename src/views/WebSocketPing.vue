@@ -123,12 +123,14 @@ export default {
         socket.on('response', (msg) => {
             this.responses.push(msg.message);
         });
+        /*
         this.$store.dispatch('registerEventListener',
             {
                 event: 'echo2', callback: (msg, a) => {
                     this.responsesFromStore.push(msg);
                 }
             });
+            */
     },
     beforeUnmount() {
         if (this.socket) {
@@ -138,12 +140,13 @@ export default {
     },
 
     methods: {
+        /*
         emitFromStore() {
             this.$store.commit('emitMessage', {
                 eventName: 'echo',
                 message: 'Hello, from the store!'
             });
-        },
+        },*/
         disconnect() {
             this.socket.disconnect();
         },

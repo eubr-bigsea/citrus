@@ -97,7 +97,7 @@
                             </div>
                             <div class="col-2 border-left">
                                 <h6>Notificações</h6>
-                                <pipeline-run-notifications :notifications="notifications"/>
+                                <pipeline-run-notifications :notifications="notifications" />
                             </div>
                         </div>
                     </div>
@@ -201,15 +201,18 @@ export default {
                 joinRoom('pipeline_runs', true);
             },
             'update pipeline run': (msg) => {
-                this.notifications.unshift({id: msg.pipeline_run.id,
+                this.notifications.unshift({
+                    id: msg.pipeline_run.id,
                     status: msg.pipeline_step_run.status, date: msg.date,
-                    order: msg.pipeline_step_run.order});
-                this.notifications.length = this.notifications.length > 100? 100
+                    order: msg.pipeline_step_run.order
+                });
+                this.notifications.length = this.notifications.length > 100 ? 100
                     : this.notifications.length;
                 if (!msg.cache) {
                     const run = msg.pipeline_run;
-                    const elem = document.getElementById('runsList')
-                        .querySelector(`[data-id="${run.id}"]`);
+                    let elem = document.getElementById('runsList');
+                    if (elem)
+                        elem = elem.querySelector(`[data-id="${run.id}"]`);
                     if (elem) {
                         elem.className = 'pipeline-runs-status';
                         elem.classList.add(run.status.toLowerCase());
@@ -237,11 +240,17 @@ export default {
         connectWebSocket(standSocketServer, standNamespace, standSocketIoPath,
             eventHandlers);
     },
-    unmounted() {
-        disconnectWebSocket();
-    },
     beforeMount() {
         this.filters = JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}');
+    },
+    unmounted(){
+        debugger
+    },
+    watch: {
+        '$route': function(to, from) {
+            debugger
+            disconnectWebSocket();
+        }
     },
     methods: {
         async search() {
@@ -302,5 +311,4 @@ export default {
 .highlight {
     animation: highlightRow 5s forwards;
 }
-
 </style>

@@ -5,7 +5,7 @@
                 <h6 class="pretitle">
                     Execução #{{ pipelineRunId }}
                 </h6>
-                <h1>
+                <h1 v-if="pipelineRun">
                     <span class="pipeline-runs-status" :class="pipelineRun.status.toLowerCase()">
                         <font-awesome-icon v-if="pipelineRun.status === 'RUNNING'" icon="fa fa-refresh" spin/>
                         {{ $tc(`status.${pipelineRun.status}`) }}
@@ -162,7 +162,7 @@
 </template>
 
 <script setup>
-import { ref, getCurrentInstance, computed, onBeforeMount, onUnmounted } from 'vue';
+import { ref, getCurrentInstance, computed, onBeforeMount, onUnmounted, onMounted } from 'vue';
 import useNotifier from '@/composables/useNotifier.js';
 import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
@@ -185,14 +185,15 @@ const route = vm.proxy.$route;
 
 const { connectWebSocket, disconnectWebSocket, joinRoom } = useWebSocket();
 const notifications = ref([]);
-onUnmounted(() => {
-    disconnectWebSocket();
-});
 let currentState = null;
 onBeforeMount(async () => {
     pipelineRunId.value = (route) ? route.params.id : 0;
     await load();
-
+});
+onUnmounted(() => {
+    disconnectWebSocket();
+});
+onMounted(()=> {
     const eventHandlers = {
         'connect': () => {
             joinRoom('pipeline_runs', true);
