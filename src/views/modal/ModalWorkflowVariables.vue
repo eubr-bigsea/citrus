@@ -6,95 +6,98 @@
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
                             <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
-                                 :class="{selected: selected && selected.index === row.index }"
-                                 @click.prevent="select(row, index)">
-                                <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
-                                    <span v-if="row.label">({{row.label}})</span></small>
+                                :class="{ selected: selected && selected.index === row.index }"
+                                @click.prevent="select(row, index)">
+                                <small>{{ row.name }} <em v-if="!row.name">&lt;variável sem nome&gt;</em>
+                                    <span v-if="row.label">({{ row.label }})</span></small>
                                 <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
-                                   :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
+                                    :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                                 </a>
                             </div>
                         </div>
                         <button class="btn btn-success btn-sm mt-2" @click.prevent="add">
-                            <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+                            <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
                         </button>
                     </div>
                     <div class="col-md-8">
                         <div v-if="selected" class="form-filter ">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label>{{$t('variables.name')}}:</label>
+                                    <label>{{ $t('variables.name') }}:</label>
                                     <input v-model="selected.name" v-focus maxlength="40" autocomplete="off"
-                                           class="form-control">
+                                        class="form-control">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>{{$t('variables.label')}}:</label>
-                                    <input v-model="selected.label" maxlength="40" autocomplete="off"
-                                           class="form-control">
+                                    <label>{{ $t('variables.defaultValue') }}:</label>
+                                    <input v-model="selected.default_value" maxlength="40" autocomplete="off"
+                                        class="form-control">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>{{$t('variables.type')}}:</label>
+                                    <label>{{ $t('variables.type') }}:</label>
                                     <select v-model="selected.type" class="form-control">
                                         <option />
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
-                                            {{$t('dataTypes.' + dt)}}
+                                            {{ $t('dataTypes.' + dt) }}
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-md-4">
-                                    <label>{{$t('variables.defaultValue')}}:</label>
-                                    <input v-model="selected.default_value" maxlength="40" autocomplete="off"
-                                           class="form-control">
-                                </div>
-                                <div class="col-md-4">
-                                    <label>{{$t('variables.multiplicity')}}:</label>
-                                    <select v-model="selected.multiplicity" class="form-control" tabindex="0">
-                                        <option value="0">
-                                            Opcional
-                                        </option>
-                                        <option value="2">
-                                            0 ou mais
-                                        </option>
-                                        <option value="1">
-                                            Exatamente 1
-                                        </option>
-                                        <option value="3">
-                                            1 ou mais
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label>{{$t('variables.index')}}:</label>
-                                    <input v-model="selected.parameters.display_index" maxlength="4" autocomplete="off"
-                                           class="form-control w-50" type="number" min="0" max="100">
-                                </div>
-                                <div class="col-md-12">
-                                    <label>{{$t('variables.description')}}:</label>
-                                    <textarea v-model="selected.description" autocomplete="off"
-                                              class="form-control form-control-sm" rows="3" />
-                                </div>
-                                <!--
+                                <template v-if="!simple">
+                                    <div class="col-md-4">
+                                        <label>{{ $t('variables.label') }}:</label>
+                                        <input v-model="selected.label" maxlength="40" autocomplete="off"
+                                            class="form-control">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{ $t('variables.multiplicity') }}:</label>
+                                        <select v-model="selected.multiplicity" class="form-control" tabindex="0">
+                                            <option value="0">
+                                                Opcional
+                                            </option>
+                                            <option value="2">
+                                                0 ou mais
+                                            </option>
+                                            <option value="1">
+                                                Exatamente 1
+                                            </option>
+                                            <option value="3">
+                                                1 ou mais
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>{{ $t('variables.index') }}:</label>
+                                        <input v-model="selected.parameters.display_index" maxlength="4"
+                                            autocomplete="off" class="form-control w-50" type="number" min="0"
+                                            max="100">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>{{ $t('variables.description') }}:</label>
+                                        <textarea v-model="selected.description" autocomplete="off"
+                                            class="form-control form-control-sm" rows="3" />
+                                    </div>
+                                    <!--
                                 <div class="col-md-12">
                                     <label>{{$t('variables.help')}}:</label>
                                     <textarea v-model="selected.help" maxlength="300" autocomplete="off"
                                         class="form-control" rows="1"></textarea>
                                 </div>
                                 -->
-                                <div class="col-md-12">
-                                    <label>Lista de valores personalizados (use JSON):</label>
-                                    <textarea v-model="selected.parameters.values" maxlength="300" autocomplete="off"
-                                              class="form-control form-control-sm" rows="3" />
-                                    <em>Exemplo:</em>
-                                    <br>
-                                    <code>[
+                                    <div class="col-md-12">
+                                        <label>Lista de valores personalizados (use JSON):</label>
+                                        <textarea v-model="selected.parameters.values" maxlength="300"
+                                            autocomplete="off" class="form-control form-control-sm" rows="3" />
+                                        <em>Exemplo:</em>
+                                        <br>
+                                        <code>[
                                         {"key": 1, "value": "Primeira escolha"},
                                         {"key": 2, "value": "Segunda escolha"}
                                         ]</code>
-                                    <br>
-                                    O valor de <code>key</code> será atribuído à variável e <code>value</code> é
-                                    exibido.
-                                </div>
+                                        <br>
+                                        O valor de <code>key</code> será atribuído à variável e <code>value</code> é
+                                        exibido.
+                                    </div>
+                                </template>
                             </div>
                         </div>
                         <div v-else>
@@ -107,7 +110,7 @@
                     </div>
                 </div>
             </b-tab>
-            <b-tab :title="$tc('titles.systemVariables', 2)">
+            <b-tab v-if="!simple" :title="$tc('titles.systemVariables', 2)">
                 <div class="col-md-12 mt-1">
                     <SystemVariables :other-variables="this.variables" />
                 </div>
@@ -121,13 +124,18 @@
                 </p>
             </b-tab>
         </b-tabs>
-        <p class="lead mark small bg-light p-3 m-2">
+        <p v-if="!simple" class="lead mark small bg-light p-3 m-2">
             Variáveis podem ser usadas como parâmetros na construção do fluxo de trabalho. Para usar uma variável,
             use a representação <code>${nome-variável}</code> por exemplo nas propriedades das tarefas.
         </p>
+        <p class="lead mark small bg-light p-3 m-2">
+            Ao informar o tipo da variável para algo diferente de "Texto curto", o Lemonade
+            tentará converter o "Valor-padrão" para o tipo especificado. Caso não seja
+            possível, ocorrerá um erro durante a execução.
+        </p>
         <div slot="modal-footer" class="w-100 text-right">
             <b-btn variant="primary" size="sm" class="mr-1 pl-5 pr-5" @click="okClicked">
-                {{$t('common.ok')}}
+                {{ $t('common.ok') }}
             </b-btn>
         </div>
     </b-modal>
@@ -140,7 +148,8 @@ export default {
         SystemVariables,
     },
     props: {
-        items: { type: Array, default: () => [], required: true }
+        items: { type: Array, default: () => [], required: true },
+        simple: { type: Boolean, default: false }
     },
     data() {
         return {
@@ -165,7 +174,7 @@ export default {
             }
             const value = {
                 name: '', description: '', help: '',
-                type: '', label: '', default_value: '',
+                type: 'CHARACTER', label: '', default_value: '',
                 parameters: { values: [], display_index: null }, index: 0,
             };
             this.selected = value;
@@ -197,48 +206,48 @@ export default {
 }
 </script>
 <style>
-    div.values {
-        height: 300px;
-        min-height: 300px;
-        overflow: auto;
-    }
+div.values {
+    height: 300px;
+    min-height: 300px;
+    overflow: auto;
+}
 
-    .form-filter,
-    .form-filter select,
-    .form-filter input {
-        font-size: .9em
-    }
+.form-filter,
+.form-filter select,
+.form-filter input {
+    font-size: .9em
+}
 
-    .user-filter .item-list {
-        border-bottom: 1px solid #ccc;
-        margin-top: 1px;
-        padding: 2px 5px;
-        cursor: pointer;
-    }
+.user-filter .item-list {
+    border-bottom: 1px solid #ccc;
+    margin-top: 1px;
+    padding: 2px 5px;
+    cursor: pointer;
+}
 
-    .user-filter .selected {
-        background: #007bff;
-        border: none;
-        color: white;
-    }
+.user-filter .selected {
+    background: #007bff;
+    border: none;
+    color: white;
+}
 
-    .filter-field .nav-tabs {
-        padding-left: 15px;
-        margin-bottom: 0;
-        border: none;
-    }
+.filter-field .nav-tabs {
+    padding-left: 15px;
+    margin-bottom: 0;
+    border: none;
+}
 
-    .filter-field .tab-content {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 15px;
-    }
+.filter-field .tab-content {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+}
 </style>
 <style lang="scss" scoped>
-    div.variables {
-        height: 200px;
-        min-height: 200px;
-        ;
-        overflow: auto;
-    }
+div.variables {
+    height: 200px;
+    min-height: 200px;
+    ;
+    overflow: auto;
+}
 </style>

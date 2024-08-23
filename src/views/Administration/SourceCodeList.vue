@@ -6,7 +6,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>Biblioteca de Códigos</h1>
                         <router-link :to="{ name: 'sourceCodeAdd' }" class="btn btn-lemonade-primary btn-success">
-                            <font-awesome-icon icon="plus"/> {{ $t('actions.add') }}
+                            <font-awesome-icon icon="plus" /> {{ $t('actions.add') }}
                         </router-link>
                     </div>
                     <hr>
@@ -15,7 +15,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <v-server-table :columns="options.columns" :options="options.options"
-                                        name="codeList">
+                                        name="codeList" ref="codeList">
                                         <template #id="props">
                                             <router-link :to="{ name: 'sourceCodeEdit', params: { id: props.row.id } }">
                                                 {{ props.row.id }}
@@ -51,10 +51,14 @@ import axios from 'axios';
 import { ref } from 'vue'
 import { useI18n } from 'vue-i18n-bridge';
 import DataTableBuilder from '../../data-table-builder.js';
+import useNotifier from '@/composables/useNotifier.js';
+import { getCurrentInstance } from 'vue';
 
+const vm = getCurrentInstance();
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const { t } = useI18n();
 
+const { confirm, success, error } = useNotifier(vm.proxy);
 const columns = [
     "id",
     "name",
@@ -75,7 +79,7 @@ const reqFn = async (data) => {
             count: resp.data.pagination.total
         };
     } catch (e) {
-        Vue.prototype.$snotify.error(e);
+        error(e);
     }
 }
 const dtBuilder = new DataTableBuilder(t)
@@ -92,6 +96,25 @@ const dtBuilder = new DataTableBuilder(t)
     .requestFunction(reqFn);
 
 const options = ref(dtBuilder.build());
+
+const codeList = ref();
+const remove = async (id) => {
+    try {
+        confirm(t('actions.delete'), t('messages.doYouWantToDelete'), async (result) => {
+            if (result) {
+                await axios
+                    .delete(`${tahitiUrl}/source-codes/${id}`, {});
+
+                codeList.value.refresh();
+                success(t('messages.successDeletion', {
+                    what: 'Biblioteca de código'
+                }), t('actions.delete'))
+            }
+        });
+    } catch (e) {
+        error(e);
+    }
+};
 </script>
 
 <style scoped></style>

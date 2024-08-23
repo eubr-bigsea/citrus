@@ -142,6 +142,7 @@ onMounted(() => {
             ]),
             autocompletion({ override: [sqlCompletion] }),
             sql(),
+            EditorView.lineWrapping,
             EditorView.updateListener.of(debounce((v) => {
                 emit('update', v.state.doc.text.join('\n'));
             }, 200))

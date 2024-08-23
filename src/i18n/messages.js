@@ -504,7 +504,7 @@ export default {
             confirmRemove: 'Tem certeza que você quer excluir esse registro?',
             confirmRemoveIt: 'Tem certeza que você quer excluir {what}?',
             exportWorkflow: 'Fluxo de trabalho exportado usando a versão atual.',
-            successDeletion: '{what} foi removido com sucesso',
+            successDeletion: '{what} foi removido(a) com sucesso',
             successStop: 'Execução parada com sucesso',
             successImport: 'Fluxo de trabalho foi importado com o id={what}.',
             resetPasswordInstructions: 'Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.' +

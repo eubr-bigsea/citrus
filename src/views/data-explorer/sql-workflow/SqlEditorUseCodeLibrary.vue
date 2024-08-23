@@ -21,7 +21,7 @@
 
 <script setup>
 import axios from 'axios';
-import { defineExpose, defineProps, onBeforeMount, ref, computed } from 'vue';
+import { defineExpose, defineProps, onBeforeMount, ref } from 'vue';
 
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const props = defineProps({
@@ -35,7 +35,7 @@ const selected = ref(props.modelValue);
 const codeLibraries = ref([])
 const loadCodeLibraries = async () => {
     const response = await axios.get(`${tahitiUrl}/source-codes`,
-        { params: { fields: 'id,name,help' } });
+        { params: { fields: 'id,name,help', enabled: 'true' } });
     codeLibraries.value = response.data.data;
 }
 onBeforeMount(async () => {
