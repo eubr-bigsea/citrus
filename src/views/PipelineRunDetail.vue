@@ -7,7 +7,7 @@
                 </h6>
                 <h1 v-if="pipelineRun">
                     <span class="pipeline-runs-status" :class="pipelineRun.status.toLowerCase()">
-                        <font-awesome-icon v-if="pipelineRun.status === 'RUNNING'" icon="fa fa-refresh" spin/>
+                        <font-awesome-icon v-if="pipelineRun.status === 'RUNNING'" icon="fa fa-refresh" spin />
                         {{ $tc(`status.${pipelineRun.status}`) }}
                     </span> <span class="ml-2">{{ pipelineRun.pipeline_name }}</span>
                 </h1>
@@ -44,7 +44,7 @@
                 </div>
                 <div class="border p-2 mt-2">
                     <h6>Notificações</h6>
-                    <pipeline-run-notifications :notifications="notifications" height="61vh"/>
+                    <pipeline-run-notifications :notifications="notifications" height="61vh" />
                 </div>
             </div>
             <div class="col-5">
@@ -82,7 +82,8 @@
                                     <td class="text-center">
                                         <div :class="step.status.toLowerCase()"
                                             class="pipeline-runs-status status-small">
-                                            <font-awesome-icon v-if="step.status === 'RUNNING'" icon="fa fa-refresh" spin/>
+                                            <font-awesome-icon v-if="step.status === 'RUNNING'" icon="fa fa-refresh"
+                                                spin />
                                             {{ $tc(`status.${step.status}`) }}
                                         </div>
                                     </td>
@@ -111,7 +112,7 @@
                                 <div class="flex-grow-1 d-flex justify-content-end" role="button">
                                     <div :class="job.status.toLowerCase()"
                                         class="pipeline-runs-status small text-right">
-                                        <font-awesome-icon v-if="job.status === 'RUNNING'" icon="fa fa-refresh" spin/>
+                                        <font-awesome-icon v-if="job.status === 'RUNNING'" icon="fa fa-refresh" spin />
                                         {{ $tc(`status.${job.status}`) }}
                                     </div>
                                     <div v-if="job.steps && job.steps.length">
@@ -123,17 +124,26 @@
                                 <div class="p-2 small">
                                     Início: {{ job.started | formatJsonDate('dd/MM/yyyy HH:mm:ss') }}
                                     <span v-if="job.finished">
-                                    | Fim: {{ job.finished | formatJsonDate('dd/MM/yyyy HH:mm:ss') }} |
-                                    Tempo:
-                                    {{ job.finished | elapsedMinutes(job.started) }}:{{ job.finished | elapsedSeconds(job.started) }}
+                                        | Fim: {{ job.finished | formatJsonDate('dd/MM/yyyy HH:mm:ss') }} |
+                                        Tempo:
+                                        {{ job.finished | elapsedMinutes(job.started) }}:{{ job.finished |
+                                            elapsedSeconds(job.started) }}
                                     </span>
                                 </div>
 
                                 <b-collapse v-if="job.steps && job.steps.length" :id="`collapse-${index.toString()}`"
                                     :visible="index === 0">
-                                    <div v-for="step in job.steps" class="border-bottom">
-                                        {{ step.status }}
-                                        {{ step.operation.name }}
+                                    <div v-for="step,counter_step in job.steps" class="border-bottom mb-3 pl-4 job-step">
+                                        <div class="flex-grow-1 d-flex justify-content-start">
+                                        <h6>Tarefa #{{counter_step + 1}}: <span class="font-weight-normal">{{ step.operation.name }}</span></h6>
+                                        <!--
+                                        <span class="pipeline-runs-status" :class="step.status.toLowerCase()">
+                                            <font-awesome-icon v-if="step.status === 'RUNNING'"
+                                                icon="fa fa-refresh" spin />
+                                            {{ $tc(`status.${step.status}`) }}
+                                        </span>
+                                    -->
+                                        </div>
                                         <div v-for="log in step.logs">
                                             <span v-if="log.type === 'TEXT'">
                                                 {{ log.message }}
@@ -141,6 +151,9 @@
                                             <span v-else-if="log.type === 'HTML'" v-html="log.message">
                                             </span>
                                             <span v-else-if="log.type === 'OBJECT'">
+                                                {{ log.message }}
+                                            </span>
+                                            <span v-else-if="log.type === 'USER'" class="text-info">
                                                 {{ log.message }}
                                             </span>
                                         </div>
@@ -193,7 +206,7 @@ onBeforeMount(async () => {
 onUnmounted(() => {
     disconnectWebSocket();
 });
-onMounted(()=> {
+onMounted(() => {
     const eventHandlers = {
         'connect': () => {
             joinRoom('pipeline_runs', true);
@@ -252,7 +265,7 @@ const execute = async (id, name) => {
         try {
             const resp = await axios.post(url, payload);
             success('Execução disparada com sucesso!');
-        }catch(e) {
+        } catch (e) {
             error(e);
             router.push({ name: 'pipelineRunsList' });
         }
@@ -300,13 +313,17 @@ const cancelRun = () => {
     height: 75vh;
     overflow-y: scroll;
 }
+
 .table-selected {
     background: #f9f9f9;
     font-weight: bold
 }
+
 .notifications {
     height: 66vh;
     overflow-y: scroll;
 }
-
+.job-step {
+    font-size: 9pt;
+}
 </style>

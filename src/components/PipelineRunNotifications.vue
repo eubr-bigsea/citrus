@@ -2,7 +2,7 @@
     <div class="small-notifications scroll-area" :style="{'height': props.height}">
         <template v-if="props.notifications.length">
             <div v-for="notification in props.notifications">
-                {{ notification.date.substring(0, 19) | formatJsonDate }} #{{ notification.id }}:
+                {{ notification.date.substring(0, 19) | formatJsonDate('dd/MM/yyyy HH:mm:ss') }} #{{ notification.id }}:
                 Etapa/passo {{ notification.order }}:
                 {{ $tc(`status.${notification.status}`) }}
             </div>

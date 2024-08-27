@@ -1,15 +1,15 @@
 <template>
     <div class="editPage-step-config-body">
-        <div>
+        <div class="mt-2">
             <div>
-                <label class="editPage-label" for="nome">Nome</label>
-                <input id="nome" v-model="editedStep.name" class="editPage-input" type="text"
+                <label for="nome">{{$tc('common.name')}}:</label>
+                <input id="nome" v-model="editedStep.name" class="form-control form-control-sm" type="text"
                        placeholder="Nome da etapa" @input="handleInput">
             </div>
 
-            <div>
-                <label class="editPage-label" for="descricao">Descrição</label>
-                <textarea id="descricao" v-model="editedStep.description" class="editPage-textarea" type="text"
+            <div class="mt-2">
+                <label for="descricao">{{$tc('common.description')}}:</label>
+                <textarea id="descricao" v-model="editedStep.description" class="form-control form-control-sm" type="text"
                           placeholder="Descrição da etapa" @input="handleInput" />
             </div>
         </div>
@@ -44,7 +44,7 @@
             </div>
             <div v-if="showWorkflowOps == 1" class="mb-3">
                 <label>Escolha um workflow existente para vincular a esta etapa:</label>
-                <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name" 
+                <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
                             class="w-100" @search="loadWorkflowList" @input="handleInput">
                     <template #no-options="{ }">
                         <small>Digite parte do nome para pesquisar...</small>
@@ -163,7 +163,7 @@ export default {
         editStep() {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
-            
+
             this.$emit('send-step-changes', this.editedStep);
         },
         handleInput() {
