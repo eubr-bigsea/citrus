@@ -155,7 +155,7 @@ Vue.use(VueI18n, { bridge: true });
 Vue.use(VueProgressBar, options);
 
 // Date-fns
-import { format, formatDistanceStrict, parseISO, fromUnixTime } from 'date-fns';
+import { format, formatDistanceStrict, parseISO, fromUnixTime, differenceInSeconds, differenceInMinutes } from 'date-fns';
 import {utcToZonedTime} from 'date-fns-tz';
 import { enUS, ptBR } from 'date-fns/locale'
 
@@ -175,6 +175,7 @@ Vue.prototype.$filters = {
             return format(parseISO(v + '.000Z'), fmt);
         }
     },
+
     formatTimestamp(v) {
         if (v) {
             return format(
@@ -194,6 +195,15 @@ Vue.filter('formatJsonDate', (v, fmt) => {
         }
         return format(parseISO(v + '.000Z'), fmt);
     }
+});
+Vue.filter('elapsedSeconds', (d1, d2) => {
+    const v = differenceInSeconds(parseISO(d1), parseISO(d2)) + '';
+    return v.padStart(2, '0');
+});
+Vue.filter('elapsedMinutes', (d1, d2) => {
+    const v = differenceInMinutes(parseISO(d1), parseISO(d2)) + '';
+    return v.padStart(2, '0');
+
 });
 Vue.filter('timeFromNow', (v, l) => {
     return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),

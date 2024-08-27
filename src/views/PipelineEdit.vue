@@ -1,133 +1,86 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2" data-test="header">
+        <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="mt-2">
-                <h6 class="editPage-pretitle" data-test="pretitle">
-                    Pipeline #<span data-test="pipeline-id">{{pipeline.id}}</span>
+                <h6 class="header-pretitle">
+                    Pipeline #{{ pipeline.id }}
                 </h6>
-                <h1 class="editPage-title">
-                    <InputHeader v-model="pipeline.name" data-test="input-header" @input="isDirty = true" />
-                </h1> 
+                <h1>
+                    <InputHeader v-model="pipeline.name" @input="isDirty = true"
+                        :maxlength="50"/>
+                </h1>
             </div>
             <div class="btn-group">
-                <div class="editPage-enabled-checkbox-div" data-test="enabled-checkbox" :class="{'editPage-disabled-checkbox-div': !pipeline.enabled}">
-                    <b-form-checkbox v-model="pipeline.enabled" 
-                                     class="d-flex align-items-center" 
-                                     name="check-button" 
-                                     size="sm"
-                                     switch 
-                                     @change="isDirty = true">
-                        {{$t('common.enabled')}}
-                    </b-form-checkbox>
-                </div>
-                <button class="btn btn-sm btn-outline-secondary float-left border-right-0" data-test="periodicity-button" @click="showPeriodicityDiv = !showPeriodicityDiv"> 
-                    <font-awesome-icon icon="fa fa-calendar-alt" class="" /> {{$t('pipeline.edit.periodicity')}}
+                <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
+                    <font-awesome-icon icon="fa fa-history" /> Histórico
                 </button>
-                <button class="btn btn-sm btn-outline-secondary float-left" data-test="history-button" @click="redirectToRuns">
-                    <font-awesome-icon icon="fa fa-history" class="" /> {{$t('common.history')}}
-                </button>
-                <button class="btn btn-sm btn-outline-success" data-test="save-button" :disabled="!isDirty" @click="saveChanges">
-                    <font-awesome-icon icon="fa fa-save" class="" /> {{$t('actions.save')}}
+                <button class="btn btn-sm btn-outline-success" :disabled="!isDirty" @click="saveChanges">
+                    <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $tc('actions.save') }}
                 </button>
             </div>
         </div>
 
-        <div class="editPage-periodicity-div" data-test="periodicity-div" :class="{'editPage-periodicity-div-hidden': !showPeriodicityDiv}">
-            <div class="mb-2 d-flex align-items-center justify-content-between">
-                <span class="font-weight-bold">
-                    {{$t('pipeline.edit.pipelinePeriodicity')}}
-                </span>
-                <font-awesome-icon icon="fa fa-x" size="sm" class="editPage-periodicity-x" @click="showPeriodicityDiv = false" />
-            </div>
-            <div class="">
-                <p>{{$t('pipeline.edit.definePeriodicity')}}:</p>
-                <b-form-select v-model="pipelinePeriodicity" 
-                               class="mt-0" 
-                               data-test="periodicity-select"
-                               :options="periodicityOptions" />
-            </div>
-            <div v-if="pipelinePeriodicity === 'daily'">
-                <hr>
-                <div class="d-flex flex-row">
-                    <p class="font-weight-bold mr-2">
-                        {{$t('titles.start')}}:
-                    </p>
-                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
-                           :min="minDate" data-test="daily-input">
-                </div>
-                <div class="d-flex flex-row">
-                    <p class="font-weight-bold mr-2">
-                        {{$t('pipeline.edit.intervalDays')}}:
-                    </p>
-                    <input id="repetir-dias" v-model="intervalDays" class="editPage-input" 
-                           type="number" min="0">
-                </div>
-            </div>
-            <div v-if="pipelinePeriodicity === 'weekly'">
-                <hr>
-                <div class="d-flex flex-row">
-                    <p class="font-weight-bold mr-2">
-                        {{$t('titles.start')}}:
-                    </p>
-                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
-                           :min="minDate">
-                </div>
-                <div class="d-flex flex-row">
-                    <p class="font-weight-bold">
-                        {{$t('pipeline.edit.intervalWeeks')}}:
-                    </p>
-                    <input id="repetir-dias" v-model="intervalWeeks" class="editPage-input" 
-                           type="number" min="0">
-                </div>
-            </div>
-            <div v-if="pipelinePeriodicity === 'monthly'">
-                <hr>
-                <div class="d-flex flex-row">
-                    <p class="font-weight-bold mr-2">
-                        {{$t('titles.start')}}:
-                    </p>
-                    <input id="iniciar-data" v-model="startDate" class="editPage-input" type="date" 
-                           :min="minDate">
-                </div>
-                <div class="d-flex flex-row">
-                    <p class="font-weight-bold">
-                        {{$t('pipeline.edit.intervalMonths')}}:
-                    </p>
-                    <input id="repetir-dias" v-model="intervalMonths" class="editPage-input" 
-                           type="number" min="0">
-                </div>
-            </div>
-        </div>
 
-        <div class="editPage-body">
+        <div>
             <div class="editPage-container">
-                <div class="w-25" data-test="left-container">
-                    <div class="editPage-collapse-title">
-                        {{$t('pipeline.edit.pipelineInfo')}}
-                    </div>
+                <div class="w-25">
+                    <h5>
+                        Informações básicas
+                    </h5>
                     <b-card class="editPage-infos">
-                        <div class="editPage-infos-container">
-                            <div class="d-flex flex-row">
-                                <div class="editPage-infos-left">
-                                    <div>{{$t('common.created')}}</div>
-                                    <div>{{$t('common.updated')}}</div>
-                                </div>
-                                <div class="editPage-infos-right">
-                                    <div>{{pipeline.created | formatJsonDate}}</div>
-                                    <div>{{pipeline.updated | formatJsonDate}}</div>
-                                </div>
+
+                        <div class="d-flex flex-row">
+                            <div class="font-weight-bold mr-2">
+                                <div>Criado em:</div>
+                                <div>Atualizado em:</div>
                             </div>
-                            <div class="editPage-infos-bottom mt-2">
-                                {{$t('common.description')}}
-                                <TextAreaCustom v-model="pipeline.description" data-test="textarea-custom" @input="isDirty = true" />
+                            <div>
+                                <div>{{ pipeline.created | formatJsonDate }}</div>
+                                <div>{{ pipeline.updated | formatJsonDate }}</div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="font-weight-bold">Descrição:</span>
+                            <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
+                                class="form-control form-control-sm" maxlength="200"/>
+                        </div>
+                        <div class="mt-4">
+                            <b-form-checkbox v-model="pipeline.enabled" class="d-flex align-items-center"
+                                name="check-button" size="sm" switch @change="isDirty = true">
+                                Habilitada
+                            </b-form-checkbox>
+                        </div>
+                        <div class="mt-4" v-if="pipeline.periodicity">
+                            <div>
+                                <label class="font-weight-bold">Periodicidade da execução:</label>
+                                <b-form-select v-model="pipeline.periodicity" class="mt-0" size="sm"
+                                    @input="isDirty = true" :options="periodicityOptions" />
+                            </div>
+                            <div class="mt-2">
+                                <div>
+                                    <label class="font-weight-bold mr-2">
+                                        Iniciar:
+                                    </label>
+                                    <input id="iniciar-data" v-model.number="pipeline.periodicity_start"
+                                        class="form-control mr-auto form-control-sm w-75" type="number" max="31"
+                                        min="1">
+                                </div>
+                                <div class="mt-2">
+                                    <label class="font-weight-bold mr-2">
+                                        Intervalo (opcional):
+                                    </label>
+                                    <input v-model.number="pipeline.periodicity_interval"
+                                        class="form-control form-control-sm mr-auto w-75" type="number" min="0"
+                                        max="30">
+                                </div>
                             </div>
                         </div>
                     </b-card>
                 </div>
-                <div class="w-75" data-test="steps-list">
-                    <div class="editPage-collapse-title">
-                        {{$t('pipeline.edit.pipelineSteps')}}
-                    </div>
+                <div class="w-75">
+                    <h5>
+                        Etapas
+                    </h5>
                     <b-card class="editPage-stepsDiv scroll-area">
                         <div class="editPage-collapse-div">
                             <div class="editPage-left-container">
@@ -136,64 +89,63 @@
                                         <font-awesome-icon icon="info-circle" />
                                     </button>
                                     <b-popover target="popover-trigger" triggers="hover">
-                                        {{$t('pipeline.template.holdAndDragSteps')}}
+                                        Segure e arraste as etapas abaixo para reordená-las.
                                     </b-popover>
                                     <div class="editPage-etapas-header-column">
-                                        {{$t('titles.order')}}
+                                        Ordem
                                     </div>
                                     <div class="editPage-etapas-header-column">
-                                        {{$t('common.name')}}
+                                        Nome
                                     </div>
                                     <div class="editPage-etapas-header-column">
-                                        {{$t('common.action', 2)}}
+                                        Ações
                                     </div>
                                 </div>
                                 <div v-if="pipeline.steps && pipeline.steps.length === 0" class="editPage-no-steps">
-                                    {{$t('pipeline.edit.addStepsToPipeline')}}
-                                    <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa" @click="openAddStepModal(0)">
+                                    Adicione etapas à sua pipeline
+                                    <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
+                                        @click="openAddStepModal(0)">
                                         <font-awesome-icon icon="plus" />
                                     </button>
                                 </div>
                                 <draggable v-model="pipeline.steps" :options="dragOptions" @end="onDragEnd">
-                                    <div v-for="(step, index) in orderedPipelineSteps"
-                                         :key="step.id" 
-                                         class="editPage-dragDiv" 
-                                         :class="{'editPage-dragDiv-selected': selectedStep.id === step.id}"
-                                         @dragstart="onDragStart"
-                                         @click="setSelectedStep(step, index)">
+                                    <div v-for="(step, index) in orderedPipelineSteps" :key="step.id"
+                                        class="editPage-dragDiv"
+                                        :class="{ 'editPage-dragDiv-selected': selectedStep.id === step.id }"
+                                        @dragstart="onDragStart" @click="setSelectedStep(step, index)">
                                         <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
                                         <div class="editPage-drag-column">
-                                            # {{index + 1}}
+                                            # {{ index + 1 }}
                                         </div>
                                         <div class="editPage-drag-column" :class="ident">
                                             <span class="editPage-stepButton" @click="redirectToWorkflow(step)">
-                                                {{step.name}}
+                                                {{ step.name }}
                                             </span>
                                         </div>
                                         <div class="editPage-drag-column">
                                             <div>
-                                                <button class="btn btn-sm btn-danger" data-test="delete-step-button"
-                                                        :title="$t('actions.delete') + ' ' + $t('titles.step', 1)" 
-                                                        @click="deleteStep(step.id, step.name)">
+                                                <button class="ml-1 btn btn-sm btn-danger" title="Excluir etapa"
+                                                    @click="deleteStep(step.id, step.name)">
                                                     <font-awesome-icon icon="trash" />
                                                 </button>
-                                                <button class="ml-1 btn btn-sm btn-secondary" data-test="add-step-button"
-                                                        :title="$t('actions.addItem') + ' ' + $t('titles.step', 1)" 
-                                                        @click="openAddStepModal(step.order)">
+                                                <button class="ml-1 btn btn-sm btn-secondary" title="Adicionar etapa"
+                                                    @click="openAddStepModal(step.order)">
                                                     <font-awesome-icon icon="plus" />
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
                                 </draggable>
-                                <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline" @onupdate-pipeline="updatePipeline" />
+                                <ModalAddPipelineStep ref="addStepModal" :pipeline="pipeline"
+                                    @onupdate-pipeline="updatePipeline" />
                             </div>
 
                             <div class="editPage-right-container">
-                                <div v-if="pipelineWithoutSteps" class="w-100 h-100 d-flex justify-content-center"> 
+                                <div v-if="pipelineWithoutSteps" class="w-100 h-100 d-flex justify-content-center">
                                     <b-card class="w-100 h-25 text-center p-5">
                                         <div class="editPage-empty-step ">
-                                            {{$t('pipeline.edit.addStepsToAccess')}}
+                                            Adicione etapas à sua pipeline para acessar suas informações de agendamento
+                                            e configurações.
                                         </div>
                                     </b-card>
                                 </div>
@@ -201,25 +153,22 @@
                                     <b-tab active>
                                         <template #title>
                                             <span class="editPage-tabs-title-text">
-                                                {{$t('pipeline.edit.schedulerLabel')}}
+                                                Agendador
                                             </span>
                                         </template>
-                                        <PipelineStepScheduler ref="stepScheduler" 
-                                                               :selected-step="selectedStep" 
-                                                               :selected-step-index="selectedStepIndex" 
-                                                               :pipeline-id="pipeline.id" 
-                                                               @send-scheduler-changes="schedulerUpdate" />
+                                        <PipelineStepScheduler ref="stepScheduler" :selected-step="selectedStep"
+                                            :selected-step-index="selectedStepIndex" :pipeline-id="pipeline.id"
+                                            @send-scheduler-changes="schedulerUpdate" />
                                     </b-tab>
                                     <b-tab>
                                         <template #title>
-                                            <span class="editPage-tabs-title-text" data-test="edit-step-tab">
-                                                {{$t('pipeline.edit.settingsLabel')}}
+                                            <span class="editPage-tabs-title-text">
+                                                Configurações
                                             </span>
                                         </template>
-                                        <EditPipelineStep ref="editStepModal" 
-                                                          :edited-step="editedStep" 
-                                                          :pipeline="pipeline" 
-                                                          :selected-step-index="selectedStepIndex" @send-step-changes="schedulerUpdate" />
+                                        <EditPipelineStep ref="editStepModal" :edited-step="editedStep"
+                                            :pipeline="pipeline" :selected-step-index="selectedStepIndex"
+                                            @send-step-changes="schedulerUpdate" />
                                     </b-tab>
                                 </b-tabs>
                             </div>
@@ -233,7 +182,7 @@
 
 <script>
 import PipelineEditMixin from '../mixins/PipelineEditMixin.js';
-import EditPipelineStep from '../components/EditPipelineStep.vue'; 
+import EditPipelineStep from '../components/EditPipelineStep.vue';
 import ModalAddPipelineStep from './modal/ModalAddPipelineStep.vue';
 import PipelineStepScheduler from '../components/PipelineStepScheduler.vue';
 import axios from 'axios';
@@ -266,10 +215,7 @@ export default {
     data() {
         return {
             pipeline: {},
-            pipelineCopy: {},
             pipelineWithoutSteps: false,
-            pipelinePeriodicity: null,
-            showPeriodicityDiv: false,
             deleteResponse: null,
             isDirty: false,
             ident: 'ident',
@@ -291,10 +237,10 @@ export default {
                 ghostClass: 'ghost',
             },
             periodicityOptions: [
-                { value: null, text: this.$t('pipeline.edit.selectPeriodicity') },
-                { value: 'daily', text: this.$t('pipeline.edit.daily') },
-                { value: 'weekly', text: this.$t('pipeline.edit.weekly') },
-                { value: 'monthly', text: this.$t('pipeline.edit.monthly') },
+                { value: null, text: 'Selecione a periodicidade' },
+                { value: 'daily', text: 'Diário' },
+                { value: 'weekly', text: 'Semanal' },
+                { value: 'monthly', text: 'Mensal' },
             ]
         };
     },
@@ -313,40 +259,32 @@ export default {
             return currentDateFormatted;
         }
     },
-    watch: {
-        pipelinePeriodicity() {
-            this.isDirty = true;
-        }
-    },
     created() {
         window.addEventListener('beforeunload', this.leaving);
     },
-    mounted() {
+    async mounted() {
         this.load();
     },
     methods: {
-        load() {
-            // this.$Progress.start();
-            return axios
-                .get(`${tahitiUrl}/pipelines/${this.$route.params.id}`)
-                .then(resp => {
-                    // this.$Progress.finish();
-                    this.pipeline = resp.data.data[0];
-                    if(this.pipeline.steps.length !== 0) this.setSelectedStep(this.pipeline.steps[0], 0);
-                    else this.pipelineWithoutSteps = true;
-                    this.pipelineCopy = JSON.parse(JSON.stringify(this.pipeline));
-                    console.log(this.pipeline);
-                })
-                .catch(
-                    function (e) {
-                        // this.$Progress.finish();
-                        this.error(e);
-                    }.bind(this)
-                );
+        async load() {
+            this.$Progress.start();
+            try {
+                const resp = await axios
+                    .get(`${tahitiUrl}/pipelines/${this.$route.params.id}`);
+                this.$Progress.finish();
+                this.pipeline = resp.data.data[0];
+                if (this.pipeline.steps.length !== 0) {
+                    this.setSelectedStep(this.pipeline.steps[0], 0);
+                } else {
+                    this.pipelineWithoutSteps = true;
+                }
+            } catch (e) {
+                this.$Progress.finish();
+                this.error(e);
+            }
         },
         saveChanges() {
-            this.editPipeline(this.$t('pipeline.alerts.pipelineEditionSuccess'));
-            this.isDirty = false;
+            this.editPipeline('Pipeline editada com sucesso.');
         },
         openAddStepModal(stepOrder) {
             this.$refs.addStepModal.show();
@@ -361,7 +299,7 @@ export default {
             this.selectedStepIndex = index;
         },
         redirectToWorkflow(step) {
-            if (step.workflow === undefined) this.warning(this.$t('pipeline.alerts.stepNotAssociated'));
+            if (step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
         },
         onDragStart() {
@@ -390,15 +328,21 @@ export default {
             }
         },
         redirectToRuns() {
-            this.$router.push({ name: 'pipelineRunsList', params: { id: this.pipeline.id, name: this.pipeline.name, from: 'PipelineEdit' } });
+            this.$router.push(
+                {
+                    name: 'pipelineRunsList', query: {
+                        id: this.pipeline.id, name: this.pipeline.name
+                    }
+                });
         },
         editPipeline(msg) {
             axios
                 .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
                 .then((resp) => {
                     this.pipeline = resp.data.data[0];
-                    if(this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
+                    if (this.pipeline.steps.length === 0) this.pipelineWithoutSteps = true;
                     this.success(msg);
+                    this.isDirty = false;
                 })
                 .catch(
                     function (e) {
@@ -409,13 +353,12 @@ export default {
         deleteStep(stepId, stepName) {
             this.confirm(
                 this.$t('actions.delete') + " '" + stepName + "'",
-                this.$t('pipeline.edit.wantToDeleteStep'),
+                'Tem certeza que deseja excluir esta etapa?',
                 () => {
-                    if(!this.pipelineWithoutSteps) this.setSelectedStep(this.pipeline.steps[0], 0);
+                    if (!this.pipelineWithoutSteps) this.setSelectedStep(this.pipeline.steps[0], 0);
                     this.pipeline.steps = this.pipeline.steps.filter(step => step.id !== stepId);
                     this.selectedStepIndex = null;
-                    this.editPipeline(this.$t('pipeline.alerts.stepDeletionSuccess'));
-                    this.onDragEnd();
+                    this.editPipeline('Etapa excluída com sucesso.');
                 }
             );
         },
@@ -425,31 +368,6 @@ export default {
 </script>
 
 <style lang="scss">
-
-.editPage-pretitle {
-    color: black;
-    font-family: sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.6px;
-    margin-bottom: 0;
-    padding: 0px 4px;
-    text-transform: uppercase;
-}
-
-.editPage-title {
-    color: #333;
-    margin: 0px 0px;
-}
-
-.editPage-body {
-    display: flex;
-    flex-direction: row;
-    gap: 40px;
-    height: fit-content;
-    padding-bottom: 20px;
-}
-
 .editPage-container {
     display: flex;
     flex-direction: row;
@@ -457,17 +375,6 @@ export default {
     width: 100%;
 }
 
-.editPage-collapse-title {
-    padding: 12px 16px;
-    border-bottom: 1px solid #9c9c9c;
-    background-color: #f8f9f9;
-    font-size: 20px;
-    font-weight: 500;
-    letter-spacing: 0.6px;
-    text-transform: uppercase;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
 
 .editPage-collapse-div {
     display: flex;
@@ -494,34 +401,6 @@ export default {
     border-radius: 0px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-}
-
-.editPage-infos-container {
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
-}
-
-.editPage-infos-left {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    width: 50%;
-    color: black;
-    font-family: sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin-bottom: 0;
-    text-transform: uppercase;
-    border-right: 1px solid #9c9c9c;
-}
-
-.editPage-infos-right {
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-    padding-left: 10px;
 }
 
 .editPage-infos-bottom {
@@ -765,140 +644,11 @@ export default {
     color: white;
 }
 
-.editPage-input {
-    width: 100%;
-    height: fit-content;
-    padding: 12px 10px;
-    margin-bottom: 25px;
-    border-radius: 4px;
-    border: none;
-    background-color: #eff0f6;
-
-    &.dias {
-        width: 5.625rem;
-    }
-}
-
-.editPage-textarea {
-    width: 100%;
-    max-height: 150px;
-    height: fit-content;
-    padding: 12px 10px;
-    border-radius: 4px;
-    border: none;
-    background-color: #eff0f6;
-    font-size: 14px;
-}
-
-.editPage-inputHeader {
-    input {
-        font-size: 18px;    
-    }
-    display: flex;
-    margin-bottom: 17px;
-}
-
-.editPage-logCard {
-    background-color: #f6f6f6;
-    text-transform: uppercase;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.6px;
-    color: #767676;
-    text-align: justify;
-}
-
-.editPage-workflow-box {
-    background-color: #eff0f6;
-    padding: 20px;
-    border-radius: 4px;
-}
-
-.editPage-workflow-label {
-    color: black;
-    font-family: sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.6px;
-    margin-bottom: 0;
-    padding: 0px 8px;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.editPage-invalid-length {
-    color: red;
-    font-size: 12px;
-    position: absolute;
-    top: 4px;
-    display: flex;
-    justify-content: end;
-    width: 100%;
-}
-
-.editPage-scheduler-save {
-    position: absolute;
-    top: -4px;
-    right: 0px;
-    background-color: #86B94B;
-    border: none;
-}
-
-.warn-Button {
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-}
-
-.editPage-step-config-body {
-    padding: 20px;
-    align-items: start;
-    gap: 10px;
-    border: 1px solid #dee2e6;
-    border-top: none;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    background-color: #FFF;
-}
-
 .editPage-tabs-title-text {
     font-weight: 700;
     letter-spacing: 0.6px;
     text-transform: uppercase;
     font-size: 14px;
-}
-
-.editPage-enabled-checkbox-div {
-    display: flex;
-    align-items: center;
-    padding: 0.25rem 0.5rem;
-    font-size: .875rem;
-    line-height: 1.5;
-    border-radius: 0.2rem;
-    border: 1px solid #007bff;
-    color: #007bff;
-    border-right: none;
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
-}
-
-.editPage-disabled-checkbox-div {
-    border: 1px solid #6c757d;
-    color: #6c757d;
-    border-right: none;
-}
-
-.editPage-toast {
-    width: 500px;
-}
-
-.editPage-toast-title {
-    font-size: 16px;
-    color: #6c757d;
-    font-weight: bolder;
-    width: 500px;
 }
 
 .editPage-empty-step {
@@ -908,29 +658,4 @@ export default {
     align-items: center;
     font-size: 16px;
 }
-
-.editPage-periodicity-div {
-    position: fixed;
-    width: 369px;
-    background-color: #fff;
-    left: 15px;
-    bottom: 28px;
-    padding: 10px;
-    z-index: 1;
-    border-radius: 5px;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, .1);
-    transition: 0.3s;
-}
-
-.editPage-periodicity-div-hidden {
-    left: -375px;
-}
-
-.editPage-periodicity-x {
-    :hover {
-        cursor: pointer;
-    }
-}
-
 </style>

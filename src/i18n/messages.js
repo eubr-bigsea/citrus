@@ -242,6 +242,7 @@ export default {
             precision: 'Precisão',
             preview: 'Pré-visualização',
             previewUntilHere: 'Pré-visualizar até aqui',
+            rawType: 'Tipo Bruto',
             records: 'Registro | Registros',
             rememberMe: 'Lembrar minha senha',
             resetPassword: 'Redefinir',
@@ -532,7 +533,7 @@ export default {
             confirmRemove: 'Tem certeza que você quer excluir esse registro?',
             confirmRemoveIt: 'Tem certeza que você quer excluir {what}?',
             exportWorkflow: 'Fluxo de trabalho exportado usando a versão atual.',
-            successDeletion: '{what} foi removido com sucesso',
+            successDeletion: '{what} foi removido(a) com sucesso',
             successStop: 'Execução parada com sucesso',
             successImport: 'Fluxo de trabalho foi importado com o id={what}.',
             resetPasswordInstructions: 'Um e-mail foi enviado para seu endereço. Siga as instruções para redefinir sua senha.' +
@@ -1015,6 +1016,7 @@ export default {
             PENDING: 'Pendente',
             RUNNING: 'Executando',
             WAITING: 'Preparando',
+            WAITING_INTERVENTION: 'Esperando intervenção'
         }
     },
 
@@ -1257,6 +1259,7 @@ export default {
             precision: 'Precision',
             preview: 'Preview',
             previewUntilHere: 'Preview until here',
+            rawType: 'Raw Type',
             records: 'Record | Records',
             rememberMe: 'Remember me',
             resetPassword: 'Reset',

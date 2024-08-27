@@ -152,6 +152,13 @@
                                             v-model="editableVisualization.y_axis.value.suffix" maxlength="20"
                                             debounce="500" />
                                     </b-form-group>
+                                    <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')" label="Normalizar:">
+                                        <select class="form-control form-control-sm" v-model="editableVisualization.y_axis.value.normalization">
+                                            <option value="">Sem normalização</option>
+                                            <option value="fraction">Fração (valor é dividido pela soma dos valores)</option>
+                                            <option value="percent">Percentual (igual à Fração, mas multiplicado por 100)</option>
+                                        </select>
+                                    </b-form-group>
                                 </div>
                             </div>
                         </b-dropdown-form>

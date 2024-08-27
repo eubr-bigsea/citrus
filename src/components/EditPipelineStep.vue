@@ -1,23 +1,24 @@
 <template>
     <div class="editPage-step-config-body">
-        <div>
+        <div class="mt-2">
             <div>
                 <label class="editPage-label" for="nome">{{$t('common.name')}}</label>
-                <input id="nome" 
-                       v-model="editedStep.name" 
-                       class="editPage-input" 
+                <input id="nome"
+                       v-model="editedStep.name"
+                       class="editPage-input"
                        type="text"
-                       :placeholder="$t('pipeline.template.stepName')" 
+                       :placeholder="$t('pipeline.template.stepName')"
+                       maxlength="50"
                        @input="handleInput">
             </div>
 
             <div>
                 <label class="editPage-label" for="descricao">{{$t('common.description')}}</label>
-                <textarea id="descricao" 
-                          v-model="editedStep.description" 
-                          class="editPage-textarea" 
-                          type="text"
-                          :placeholder="$t('pipeline.template.stepDescription')" 
+                <textarea id="descricao"
+                          v-model="editedStep.description"
+                          class="editPage-textarea"
+                          maxlength="200"
+                          :placeholder="$t('pipeline.template.stepDescription')"
                           @input="handleInput" />
             </div>
         </div>
@@ -35,7 +36,7 @@
                 {{$t('actions.change')}}
             </b-button>
         </div>
-        <div v-if="editedStep.workflow === undefined">
+        <div v-if="showWorkflowOps > -1">
             <label class="editPage-label mb-2">{{$t('pipeline.edit.settings.linkStepToWorkflow')}}</label>
             <div v-if="showWorkflowOps == 0" class="d-flex">
                 <b-card class="w-50 mr-2 clickable" @click="showWorkflowOps = 1">
@@ -50,10 +51,11 @@
                         {{$t('actions.new')}} {{$t('titles.workflow')}}
                     </span>
                 </b-card>
+                <b-button class="ml-2" variant="outline-secondary" @click="showWorkflowOps = -1">Cancelar</b-button>
             </div>
             <div v-if="showWorkflowOps == 1" class="mb-3">
                 <label>{{$t('pipeline.edit.settings.chooseExistingWorkflow')}}:</label>
-                <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name" 
+                <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
                             class="w-100" @search="loadWorkflowList" @input="handleInput">
                     <template #no-options="{ }">
                         <small>Digite parte do nome para pesquisar...</small>
@@ -172,7 +174,7 @@ export default {
         editStep() {
             // eslint-disable-next-line vue/no-mutating-props
             if (this.selectedWorkflow !== null) this.editedStep.workflow_id = this.selectedWorkflow.id;
-            
+
             this.$emit('send-step-changes', this.editedStep);
         },
         handleInput() {

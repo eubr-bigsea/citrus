@@ -3,6 +3,20 @@
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{ $t('titles.sqlWorkflow') }}</h1>
             <div>
+                <b-button variant="outline-secondary" size="sm" title="Usar biblioteca"
+                    @click="handleShowModalCodeLibrary" class="mt-2 mr-1">
+                    <font-awesome-icon icon="fa fa-file-code" />
+                   Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >=0"> ({{
+                        workflowObj.forms.code_libraries.value.length }})</span>
+                </b-button>
+
+                <b-button variant="outline-dark" size="sm" :title="$t('actions.showVariables')"
+                    @click.prevent="$refs.variablesModal.show()" class="mt-2 mr-1">
+                    <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
+                    <span v-if="workflowObj.variables?.length >=0"> ({{
+                        workflowObj.variables?.length }})</span>
+                </b-button>
+
                 <b-button variant="primary" size="sm" class="mt-2 pu mr-1" @click="saveWorkflow" data-test="save">
                     <font-awesome-icon icon="fa fa-save" />
                     {{ $t('actions.save') }}
@@ -31,7 +45,7 @@
                                 title="Apelido usado quando referenciar esta fonte de dados no comando SQL">
 
                             <b-form-checkbox v-if="workflowObj" v-model="workflowObj.forms.$meta.value.use_hwc"
-                                class="mt-3" value="true" unchecked-value="false" style="zoom:.9">
+                                class="mt-3 " value="true" unchecked-value="false" style="zoom:.9">
                                 Usar o Hive Warehouse Connector (HWC)
                             </b-form-checkbox>
                             <label class="mt-3">{{ $tc('titles.cluster') }}: </label>
@@ -222,7 +236,7 @@
                                     <div class=" ml-4 mt-3 border-top notifications px-4 py-2">
                                         <div v-for="msg in cell.userMessages" class="mt-2 pt-2 border-top">
                                             <div v-if="msg.type.toUpperCase() === 'HTML'">
-                                                <span v-html="msg.message"/>
+                                                <span v-html="msg.message" />
                                             </div>
                                             <div v-else>
                                                 {{ msg.message }}
@@ -247,13 +261,17 @@
         </div>
         <modal-preview-data-source ref="previewWindow" />
         <sql-sample v-show="sample" :sample="sample" ref="modalSample" />
+        <modal-workflow-variables ref="variablesModal" :simple="true" :workflow="workflowObj"
+            :items="workflowObj.variables" />
+        <sql-editor-use-code-library v-if="showUseCodeLibrary" ref="modalUseCodeLibrary" :task="workflowObj"/>
+
     </main>
 </template>
 
 <script setup>
 import { onBeforeMount, ref, nextTick, onUnmounted, onMounted } from "vue";
 
-import { useWebSocket } from '@/services/websocket.js';
+import { useWebSocket } from '@/composables/websocket.js';
 import { debounce } from "@/util.js";
 import ModalPreviewDataSource from '@/views/modal/ModalPreviewDataSource.vue';
 import axios from 'axios';
@@ -264,6 +282,8 @@ import PythonEditor from './PythonEditor.vue';
 import SqlEditorHelp from './SqlEditorHelp.vue';
 import SqlEditorToolbar from './SqlEditorToolbar.vue';
 import SqlSample from './SqlSample.vue';
+import ModalWorkflowVariables from "@/views/modal/ModalWorkflowVariables.vue";
+import SqlEditorUseCodeLibrary from './SqlEditorUseCodeLibrary.vue';
 
 import { getCurrentInstance } from 'vue';
 
@@ -277,7 +297,6 @@ const router = vm.proxy.$router;
 const route = vm.proxy.$route;
 
 const progress = vm.proxy.$Progress;
-//const store = vm.proxy.$store;
 const i18n = vm.proxy.$i18n.vm;
 
 const { success, error } = useNotifier(vm.proxy);
@@ -304,7 +323,7 @@ const loadingData = ref(false);
 const clusterRef = ref(null);
 
 const targetPlatform = ref(4);
-const workflowObj = ref({ forms: { $meta: { value: { target: '', taskType: '' } } } });
+const workflowObj = ref({ variables: [], forms: { $meta: { value: { target: '', taskType: '' } } } });
 
 const sparkFunctions = [
     'abs', 'add_months', 'approx_count_distinct', 'approx_percentile', 'bround',
@@ -748,6 +767,13 @@ const getCellClass = (cell) => {
             return 'text-danger';
     }
 };
+
+const showUseCodeLibrary = ref(false);
+const modalUseCodeLibrary = ref();
+const handleShowModalCodeLibrary = () => {
+    showUseCodeLibrary.value = true;
+    nextTick(() => modalUseCodeLibrary.value.show());
+}
 </script>
 
 <style>
@@ -755,13 +781,19 @@ const getCellClass = (cell) => {
 .disabled-cell input {
     background: lightgray !important;
 }
+
 table.dataframe tr:nth-child(even) {
     background-color: white;
 }
-table.dataframe td, table.dataframe th {
+
+table.dataframe td,
+table.dataframe th {
     padding: 2px 5px;
 }
-table.dataframe td, table.dataframe th, table.dataframe {
+
+table.dataframe td,
+table.dataframe th,
+table.dataframe {
     border: 0;
     text-align: center;
 }
@@ -870,4 +902,11 @@ table.dataframe td, table.dataframe th, table.dataframe {
     overflow-x: auto;
 }
 
+.editor {
+    display: block;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+}
 </style>

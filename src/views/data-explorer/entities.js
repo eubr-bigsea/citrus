@@ -9,11 +9,15 @@ const MODEL_BUILDER_CATEGORY = 2113;
 const EXECUTE_PYTHON = 82;
 const EXECUTE_SQL = 93;
 class Workflow {
-    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [], version = null, user = null, forms = null, $meta = null } = {}) {
+    constructor({ id = null, platform = null, name = null, type = null,
+        preferred_cluster_id = null, tasks = [], flows = [], version = null,
+        user = null, forms = null, $meta = null, variables = [] } = {}) {
 
         let _platform = platform instanceof Platform ? platform : new Platform(platform);
         let _tasks = tasks.map(task => (task instanceof Task) ? task : new Task(task));
         let _flows = flows.map(flow => (flow instanceof Flow) ? flow : new Flow(flow));
+        let _forms = (forms == null) ? {} : forms;
+
         this._tasksLookup = new Map();
         _tasks.forEach(task => this._tasksLookup.set(task.id, task));
 
@@ -21,13 +25,14 @@ class Workflow {
         Object.assign(this, {
             id, name, type, version,
             platform: _platform,
-            forms,
+            forms: _forms,
             preferred_cluster_id,
             tasks: _tasks,
             flows: _flows,
             enabled: true,
             user,
-            $meta
+            $meta,
+            variables,
         });
         this.history = 0;
     }
@@ -129,7 +134,8 @@ class Workflow {
             name: name,
             type: 'SQL',
             platform: new Platform({ id: META_PLATFORM_ID }),
-            tasks: [dataReader]
+            tasks: [dataReader],
+            forms: {"$meta": { "value": {} }, code_libraries: {value: []} }
         });
         return workflow;
     }
@@ -269,11 +275,15 @@ class VisualizationBuilderWorkflow extends Workflow {
     }
 }
 class SqlBuilderWorkflow extends Workflow {
-    constructor({ id = null, platform = null, name = null, type = null, preferred_cluster_id = null, tasks = [], flows = [],
-        version = null, user = null, forms = null } = {}, operations) {
-        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms });
+    constructor({ id = null, platform = null, name = null, type = null,
+        preferred_cluster_id = null, tasks = [], flows = [],
+        version = null, user = null, forms = null, variables = [] } = {}, operations) {
+        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms, variables });
         this.cellMap = new Map();
         this.updateLists();
+        if (! this.forms.code_libraries) {
+            this.forms.code_libraries = {value: []};
+        }
         this.cells.forEach(cell => {
             this.cellMap.set(cell.id, cell);
             cell.status = '';

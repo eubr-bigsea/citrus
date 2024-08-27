@@ -1,28 +1,26 @@
 <template>
-    <div>
-        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom" data-test="header">
-            <h1 class="pipelineList-title">
-                Pipelines
-            </h1>
+    <main role="main">
+        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
+            <h1>{{$tc('titles.pipeline', 2)}}</h1>
             <div>
-                <router-link :to="{name: 'pipelineRunsList'}" data-test="runsButton" class="btn btn-outline-secondary float-left ml-2">
-                    <font-awesome-icon icon="fa fa-history" /> {{$t('titles.runs', 2)}}
+                <router-link :to="{ name: 'pipelineRunsList' }" class="btn btn-outline-secondary float-left ml-2">
+                    <font-awesome-icon icon="fa fa-history" /> Execuções
                 </router-link>
-                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" data-test="addButton" @click="openAddModal">
-                    <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+                <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
+                    <font-awesome-icon icon="fa fa-plus" /> Adicionar
                 </button>
             </div>
         </div>
 
-        <ModalCreatePipeline ref="addModal" data-test="addModal" :pipeline-templates="pipelineTemplates"
+        <ModalCreatePipeline ref="addModal" :pipeline-templates="pipelineTemplates"
             :template-options="templateOptions" />
+        <ModalSchedulePipeline ref="scheduleModal" @on-schedule-pipeline="schedulePipeline"/>
 
         <div class="pipelineList-body">
             <div class="pipelineList-container">
-                <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList"
-                                data-test="pipelines-table">
+                <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList">
                     <template #id="props">
-                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }" data-test="pipeline-id">
+                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
                             {{ props.row.id }}
                         </router-link>
                     </template>
@@ -42,10 +40,13 @@
                     </template>
                     <template #actions="props">
                         <div>
-                            <button class="btn btn-sm btn-danger" 
-                                    :title="$t('actions.delete') + ' Pipeline'"
-                                    data-test="deleteButton" 
-                                    @click="deletePipeline(props.row.id, props.row.name)">
+                            <button class="btn btn-sm btn-success mr-1"
+                                @click="openScheduleModal(props.row.id, props.row.name)">
+                                Agendar
+                                <font-awesome-icon icon="calendar-alt" />
+                            </button>
+                            <button class="btn btn-sm btn-danger" :title="$tc('actions.delete')"
+                                @click="deletePipeline(props.row.id, props.row.name)">
                                 <font-awesome-icon icon="trash" />
                             </button>
                         </div>
@@ -53,19 +54,22 @@
                 </v-server-table>
             </div>
         </div>
-    </div>
+    </main>
 </template>
 
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
 import ModalCreatePipeline from './modal/ModalCreatePipeline.vue';
+import ModalSchedulePipeline from './modal/ModalSchedulePipeline.vue';
 
-let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
+const standUrl = import.meta.env.VITE_STAND_URL;
 
 export default {
     components: {
-        ModalCreatePipeline
+        ModalCreatePipeline,
+        ModalSchedulePipeline,
     },
     mixins: [Notifier],
     data() {
@@ -73,7 +77,7 @@ export default {
             first: 'first',
             pipelineTemplates: [],
             templateOptions: [
-                { value: null, text: this.$t('pipeline.list.doNotUseTemplate') },
+                { value: null, text: 'Não utilizar template' },
             ],
             columns: [
                 'id',
@@ -103,6 +107,7 @@ export default {
                     updated: this.$tc('common.updated'),
                     user_name: this.$tc('common.userName'),
                     actions: this.$tc('common.action', 2),
+                    version: this.$tc('common.version', 1),
                 },
                 sortable: ['id', 'name', 'created', 'updated'],
                 filterable: ['name'],
@@ -154,6 +159,21 @@ export default {
             this.loadTemplates();
             this.$refs.addModal.show();
         },
+        openScheduleModal(id, name){
+            this.$refs.scheduleModal.show(id, name);
+        },
+        async schedulePipeline(id, start, finish){
+            //console.debug(JSON.stringify({id, start, end}));
+            try {
+                const resp = await axios.post(`${standUrl}/pipeline-runs/create`,
+                    {id, start, finish});
+                this.success(
+                    `Agendamento de pipeline criado com sucesso, com id=${resp.data.id}`)
+            }catch(e) {
+                this.error(e);
+            }
+
+        },
         loadTemplates() {
             if (this.templateOptions.length >= 2) return;
             axios
@@ -199,21 +219,3 @@ export default {
 
 </script>
 
-<style lang="scss" scoped>
-.pipelineList-title {
-    color: #333;
-    margin: 10px 0px;
-}
-
-.pipelineList-body {
-    width: 100%;
-    background-color: #fff;
-    border-radius: 3px;
-}
-
-.pipelineList-container {
-    border: 1px solid #dee2e6;
-    padding: 16px;
-    border-radius: 3px;
-}
-</style>

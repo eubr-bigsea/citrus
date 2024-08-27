@@ -3,6 +3,7 @@
         <input :title="$t('actions.rename')"
                :value="value"
                :size="titleSize"
+               :maxlength="maxlength"
                @input="$emit('input', $event.target.value)">
     </h2>
 </template>
@@ -11,7 +12,8 @@
 export default {
     name: 'InputHeader',
     props: {
-        value: {type: String, default: null}
+        value: {type: String, default: null},
+        maxlength: {type: Number}
     },
     emits: ['input'],
     computed: {

@@ -10,7 +10,7 @@ export default (vm) => {
             question,
             {
                 title,
-                centered: true,
+                centered: false,
                 buttonSize: 'sm',
                 okTitle: i18n.$t('common.yes'),
                 cancelTitle: i18n.$t('common.no'),
