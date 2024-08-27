@@ -6,7 +6,8 @@
                     Pipeline #{{ pipeline.id }}
                 </h6>
                 <h1>
-                    <InputHeader v-model="pipeline.name" @input="isDirty = true" />
+                    <InputHeader v-model="pipeline.name" @input="isDirty = true"
+                        :maxlength="50"/>
                 </h1>
             </div>
             <div class="btn-group">
@@ -41,7 +42,7 @@
                         <div class="mt-4">
                             <span class="font-weight-bold">Descrição:</span>
                             <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
-                                class="form-control form-control-sm" />
+                                class="form-control form-control-sm" maxlength="200"/>
                         </div>
                         <div class="mt-4">
                             <b-form-checkbox v-model="pipeline.enabled" class="d-flex align-items-center"

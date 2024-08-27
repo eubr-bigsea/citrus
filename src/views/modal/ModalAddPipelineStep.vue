@@ -1,22 +1,22 @@
 <template>
-    <b-modal ref="addStepModal" 
-             title="Adicionar etapa" 
-             size="lg" 
-             ok-only
-             scrollable 
-             @hidden="closeStepModal" 
+    <b-modal ref="addStepModal"
+             title="Adicionar etapa"
+             size="lg"
+             :cancelTitle="$tc('actions.cancel')"
+             scrollable
+             @hidden="closeStepModal"
              @ok="addStep">
         <div class="configPage-card-modal">
             <div>
-                <label class="editPage-label" for="nome">Nome</label>
-                <input id="nome" v-model="newStep.name" class="editPage-input" type="text"
-                       placeholder="Nome da etapa">
+                <label for="nome">{{ $tc('common.name') }}:</label>
+                <input id="nome" v-model="newStep.name" class="form-control form-control-sm" type="text"
+                       placeholder="Nome da etapa" maxlength="50"/>
             </div>
 
-            <div>
-                <label class="editPage-label" for="descricao">Descrição</label>
-                <textarea id="descricao" v-model="newStep.description" class="editPage-textarea" type="text"
-                          placeholder="Descrição da etapa" />
+            <div class="mt-2">
+                <label for="descricao">{{ $tc('common.description') }}</label>
+                <textarea id="descricao" v-model="newStep.description" class="form-control form-control-sm" type="text"
+                          placeholder="Descrição da etapa" maxlength="200"/>
             </div>
         </div>
         <hr class="mt-4 mb-4">
@@ -38,7 +38,7 @@
 
         <div v-if="showWorkflowOps == 1" class="mb-3">
             <label>Escolha um workflow existente para vincular a esta etapa:</label>
-            <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name" 
+            <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
                         class="w-100" @search="loadWorkflowList">
                 <template #no-options="{ }">
                     <small>Digite parte do nome para pesquisar...</small>
@@ -182,7 +182,7 @@ export default {
 
             // eslint-disable-next-line vue/no-mutating-props
             this.pipeline.steps.push(copy);
-            
+
             this.editPipeline('Etapa adicionada com sucesso.');
         },
         createWorkflow() {

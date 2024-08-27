@@ -4,17 +4,17 @@
             <div>
                 <label for="nome">{{$tc('common.name')}}:</label>
                 <input id="nome" v-model="editedStep.name" class="form-control form-control-sm" type="text"
-                       placeholder="Nome da etapa" @input="handleInput">
+                       placeholder="Nome da etapa" @input="handleInput" maxlength="50">
             </div>
 
             <div class="mt-2">
                 <label for="descricao">{{$tc('common.description')}}:</label>
                 <textarea id="descricao" v-model="editedStep.description" class="form-control form-control-sm" type="text"
-                          placeholder="Descrição da etapa" @input="handleInput" />
+                          placeholder="Descrição da etapa" @input="handleInput" maxlength="200" />
             </div>
         </div>
         <hr class="mt-4 mb-3">
-        <div v-if="editedStep.workflow !== undefined" class="d-flex flex-column">
+        <div v-if="editedStep.workflow !== undefined && showWorkflowOps < 0 " class="d-flex flex-column">
             <label class="editPage-label">Etapa vinculada a um workflow:</label>
             <b-card class="w-100 my-2 clickable d-flex justify-content-between" @click="redirectToWorkflow(editedStep)">
                 <font-awesome-icon icon="fa fa-flask" class="mr-1" size="lg" />
@@ -22,11 +22,11 @@
                     {{editedStep.workflow.id}} - {{editedStep.workflow.name}}
                 </span>
             </b-card>
-            <b-button class="mr-auto" @click="editedStep.workflow = undefined">
+            <b-button class="mr-auto" @click="showWorkflowOps = 0">
                 Alterar
             </b-button>
         </div>
-        <div v-if="editedStep.workflow === undefined">
+        <div v-if="showWorkflowOps > -1">
             <label class="editPage-label mb-2">Vincular etapa a um workflow</label>
             <div v-if="showWorkflowOps == 0" class="d-flex">
                 <b-card class="w-50 mr-2 clickable" @click="showWorkflowOps = 1">
@@ -41,6 +41,7 @@
                         Novo workflow
                     </span>
                 </b-card>
+                <b-button class="ml-2" variant="outline-secondary" @click="showWorkflowOps = -1">Cancelar</b-button>
             </div>
             <div v-if="showWorkflowOps == 1" class="mb-3">
                 <label>Escolha um workflow existente para vincular a esta etapa:</label>
