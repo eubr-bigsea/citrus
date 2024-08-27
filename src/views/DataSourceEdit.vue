@@ -168,26 +168,33 @@
                                                :class="!loggedUserIsOwnerOrAdmin ? 'disabled-mouse': ''">
                                             <thead>
                                                 <tr>
+                                                    <th class="primary text-center" style="width:3%"/> <!-- drag icon column -->
                                                     <th class="primary text-center" style="width:3%">
                                                         #
                                                     </th>
-                                                    <th class="primary text-center" style="width:30%">
+                                                    <th class="primary text-center" style="width:12%">
                                                         {{$tc('common.name')}}
                                                     </th>
-                                                    <th class="primary text-center" style="width:12%">
+                                                    <th class="primary text-center" style="width:8%">
                                                         {{$tc('common.type')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:12%">
+                                                        {{$tc('common.rawType')}}
+                                                    </th>
+                                                    <th class="primary text-center" style="width:8%">
                                                         {{$tc('common.format')}}
                                                     </th>
-
-                                                    <th class="primary text-center" style="width:25%">
+                                                    <th class="primary text-center" style="width:15%">
                                                         {{$tc('dataSource.missingRepresentation')}}
                                                     </th>
                                                     <th v-if="dataSource.privacy_aware" class="primary text-center"
                                                         style="width:5%">
                                                         {{$tc('dataSource.privacy')}}
                                                     </th>
+                                                    <th class="primary text-center" style="width:20%">
+                                                        {{$tc('common.description')}}
+                                                    </th>
+                                                    <th class="primary text-center" style="width:3%"/>
                                                     <!--
                                                 <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
                                                 <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
@@ -196,9 +203,14 @@
                           -->
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <draggable v-model="dataSource.attributes" :options="dragOptions" tag="tbody">
                                                 <tr v-for="(attr, index) in dataSource.attributes" :key="attr.id"
-                                                    class="hover-action">
+                                                    :class="{'hovered-row':attr === selectedAttribute}"
+                                                    @mouseover="selectAttribute(attr)"
+                                                    @mouseleave="unSelectAttribute()">
+                                                    <td class="text-center">
+                                                        <font-awesome-icon class="editPage-dragIcon" icon="fa fa-grip-vertical" />
+                                                    </td>
                                                     <td class="text-center">
                                                         {{index + 1}}
                                                     </td>
@@ -212,6 +224,9 @@
                                                                 {{dt}}
                                                             </option>
                                                         </select>
+                                                    </td>
+                                                    <td>
+                                                        <input v-model="attr.raw_type" class="form-control-sm form-control">
                                                     </td>
                                                     <td class="text-center">
                                                         <input v-model="attr.format" type="text"
@@ -241,13 +256,31 @@
                                                             {{$tc('actions.edit')}}...
                                                         </button>
                                                     </td>
+                                                    <td>
+                                                        <input v-model="attr.description" class="form-control-sm form-control">
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button v-show="attr === selectedAttribute"
+                                                         class="ml-1 btn btn-sm btn-danger"
+                                                          :title="$tc('actions.delete')" 
+                                                          @click="deleteAttribute(index)">
+                                                            <font-awesome-icon icon="trash"/>
+                                                        </button>
+                                                    </td>
                                                 </tr>
-                                            </tbody>
+                                            </draggable>
                                         </table>
                                         <div v-else class="border-bottom mb-5 pt-3 pb-3">
                                             <div class="alert alert-info">
                                                 {{$t("dataSource.noAttributes")}}
                                             </div>
+                                        </div>
+                                        <div>
+                                            <b-button class= "ml-2" variant="outline-success" 
+                                             :title="$tc('actions.simpleAdd')" 
+                                            @click="addAttribute()">
+                                                <font-awesome-icon icon="plus" /> {{$tc('actions.simpleAdd')}}
+                                            </b-button>
                                         </div>
                                     </b-tab>
 
@@ -465,6 +498,7 @@ import UserVariables from './UserVariables.vue'
 import SystemVariables from './SystemVariables.vue'
 import DataSourceOptions from '../components/data-source/DataSourceOptions.vue';
 import { debounce } from '../util.js';
+import draggable from 'vuedraggable';
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const standUrl = import.meta.env.VITE_STAND_URL;
@@ -477,6 +511,7 @@ export default {
         DataSourceOptions,
         UserVariables,
         SystemVariables,
+        draggable,
     },
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
@@ -524,7 +559,14 @@ export default {
             userPermission: null,
             users: [],
             selectedTable: null,
+            selectedAttribute: null,
             tables: [],
+            dragOptions: {
+                animation: 200,
+                group: 'description',
+                disabled: false,
+                ghostClass: 'ghost',
+            },
         };
     },
 
@@ -591,6 +633,18 @@ export default {
     },
     /* Methods */
     methods: {
+        addAttribute(){
+            this.dataSource.attributes.push({});
+        },
+        deleteAttribute(attrId){
+            this.dataSource.attributes.splice(attrId,1);
+        },
+        selectAttribute(item) {
+            this.selectedAttribute = item;
+        },
+        unSelectAttribute() {
+            this.selectedAttribute = null;
+        },
         leaving() {
             if (this.isDirty) {
                 event.preventDefault();
@@ -738,6 +792,9 @@ export default {
                     attr.attribute_privacy = null;
                 }
             });
+            self.dataSource.attributes.forEach((attr,index) => {
+                attr.position = index+1;
+            });
             if (inconsistentFormat) {
                 self.error({ message: self.$t('dataSource.inconsistentFormat') });
                 return;
@@ -838,6 +895,10 @@ export default {
 };
 </script>
 <style>
+    .hovered-row {
+        background-color: #f1efef;
+    }
+
     .disabled-mouse {
         pointer-events: none;
         opacity: .9;
