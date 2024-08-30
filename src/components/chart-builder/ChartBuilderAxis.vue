@@ -462,7 +462,11 @@
                                                     class="form-control form-control-sm" maxlength="100"
                                                     debounce="500" />
                                             </b-form-group>
-                                            <div v-if="true && isNumeric(x.attribute)">
+                                            <div v-if="isNumeric(x.attribute)">
+                                                <b-form-checkbox  v-model.number="x.as_categorical" class="mb-2">
+                                                    Tratar número como categoria
+                                                </b-form-checkbox>
+
                                                 <b-form-group label="Agrupamento (bins):">
                                                     <select class="form-control form-control-sm" v-model="x.binning">
                                                         <option value="EQUAL_INTERVAL">Número fixo de
