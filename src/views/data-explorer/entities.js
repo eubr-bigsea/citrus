@@ -11,12 +11,16 @@ const EXECUTE_SQL = 93;
 class Workflow {
     constructor({ id = null, platform = null, name = null, type = null,
         preferred_cluster_id = null, tasks = [], flows = [], version = null,
-        user = null, forms = null, $meta = null, variables = [] } = {}) {
+        user = null, forms = null, $meta = null, variables = [], pipeline = null } = {}) {
 
         let _platform = platform instanceof Platform ? platform : new Platform(platform);
         let _tasks = tasks.map(task => (task instanceof Task) ? task : new Task(task));
         let _flows = flows.map(flow => (flow instanceof Flow) ? flow : new Flow(flow));
         let _forms = (forms == null) ? {} : forms;
+
+        if (!_forms.$meta){
+            _forms.$meta = {value: {}};
+        }
 
         this._tasksLookup = new Map();
         _tasks.forEach(task => this._tasksLookup.set(task.id, task));
@@ -33,6 +37,7 @@ class Workflow {
             user,
             $meta,
             variables,
+            pipeline
         });
         this.history = 0;
     }
@@ -277,8 +282,9 @@ class VisualizationBuilderWorkflow extends Workflow {
 class SqlBuilderWorkflow extends Workflow {
     constructor({ id = null, platform = null, name = null, type = null,
         preferred_cluster_id = null, tasks = [], flows = [],
-        version = null, user = null, forms = null, variables = [] } = {}, operations) {
-        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms, variables });
+        version = null, user = null, forms = null, variables = [], pipeline = null } = {}, operations) {
+        super({ id, platform, name, type, preferred_cluster_id, tasks, flows, version, user, forms, variables, pipeline });
+
         this.cellMap = new Map();
         this.updateLists();
         if (! this.forms.code_libraries) {

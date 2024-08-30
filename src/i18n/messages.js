@@ -869,10 +869,10 @@ export default {
                     triggeredByUser: 'Disparo pelo usuário',
                 },
                 settings: {
-                    chooseExistingWorkflow: 'Escolha um fluxo de trabalho existente para vincular a esta etapa',
+                    chooseExistingWorkflow: 'Escolha um fluxo de trabalho existente para associar a esta etapa',
                     existingWorkflow: 'Fluxo de trabalho existente',
-                    linkStepToWorkflow: 'Vincular etapa a um fluxo de trabalho',
-                    stepLinkedToWorkflow: 'Etapa vinculada a um fluxo de trabalho',
+                    linkStepToWorkflow: 'Associar etapa a um fluxo de trabalho',
+                    stepLinkedToWorkflow: 'Etapa associar a um fluxo de trabalho',
                     workflowCreation: 'Criação do fluxo de trabalho',
                 },
                 wantToDeleteStep: 'Tem certeza que deseja excluir esta etapa?',
@@ -1809,7 +1809,7 @@ export default {
                 informationTitle: 'Execution Informations',
                 stepInfoPopup: 'Select one of the steps below to display its execution details.',
                 reportTitle: 'Execution Report'
-                
+
             },
             list: {
                 doNotUseTemplate: 'Do not use template',

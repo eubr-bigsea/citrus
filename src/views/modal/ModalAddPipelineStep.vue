@@ -20,7 +20,7 @@
             </div>
         </div>
         <hr class="mt-4 mb-4">
-        <label class="editPage-label mb-2" for="descricao">Vincular etapa a um workflow</label>
+        <label class="editPage-label mb-2" for="descricao">Vincular etapa a um fluxo de trabalho</label>
         <div v-if="showWorkflowOps == 0" class="d-flex">
             <b-card class="w-50 mr-2 clickable" @click="showWorkflowOps = 1">
                 <span class="editPage-workflow-label">
@@ -31,13 +31,13 @@
             <b-card class="w-50 ml-2 clickable" @click="showWorkflowOps = 2">
                 <span class="editPage-workflow-label">
                     <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
-                    Novo workflow
+                    Novo fluxo de trabalho
                 </span>
             </b-card>
         </div>
 
         <div v-if="showWorkflowOps == 1" class="mb-3">
-            <label>Escolha um workflow existente para vincular a esta etapa:</label>
+            <label>Escolha um fluxo de trabalho existente para vincular a esta etapa:</label>
             <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
                         class="w-100" @search="loadWorkflowList">
                 <template #no-options="{ }">
@@ -72,7 +72,7 @@
         </div>
         <div v-if="showWorkflowOps == 2" class="d-flex flex-column">
             <b-container class="editPage-workflow-box p-3">
-                <label class="editPage-label mb-2" for="identificador">Criação do workflow</label>
+                <label class="editPage-label mb-2" for="identificador">Criação do fluxo de trabalho</label>
                 <b-row>
                     <b-col>
                         <label class="" for="name">Nome:</label>
@@ -152,7 +152,7 @@ export default {
             this.$refs.addStepModal.show();
         },
         redirectToWorkflow(step) {
-            if(step.workflow === undefined) this.warning('Etapa não associada a um workflow.');
+            if(step.workflow === undefined) this.warning('Etapa não associada a um fluxo de trabalho.');
             else this.$router.push({ name: 'editWorkflow', params: { id: step.workflow.id, platform: 1 } });
         },
         editPipeline(msg) {
@@ -195,7 +195,7 @@ export default {
             axios
                 .post(`${tahitiUrl}/workflows`, workflow)
                 .then(() => {
-                    this.success('Workflow criado com sucesso.');
+                    this.success('Fluxo de trabalho criado com sucesso.');
                 })
                 .catch(
                     function (e) {

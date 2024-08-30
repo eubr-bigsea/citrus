@@ -2,33 +2,38 @@
     <main role="main">
         <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{ $t('titles.sqlWorkflow') }}</h1>
-            <div>
+            <div class="mt-2">
+                <router-link v-if="workflowObj.pipeline" :to="{name: 'pipelineEdit', params: {id: workflowObj.pipeline.id}}"
+                    class="btn btn-outline-secondary btn-sm mr-1" :title="workflowObj.pipeline.name" tag="button">
+                    <font-awesome-icon icon="fa fa-circle-nodes" />
+                    Ir para pipeline #{{workflowObj.pipeline.id}}
+                </router-link>
                 <b-button variant="outline-secondary" size="sm" title="Usar biblioteca"
-                    @click="handleShowModalCodeLibrary" class="mt-2 mr-1">
+                    @click="handleShowModalCodeLibrary" class="mr-1">
                     <font-awesome-icon icon="fa fa-file-code" />
                    Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >=0"> ({{
                         workflowObj.forms.code_libraries.value.length }})</span>
                 </b-button>
 
                 <b-button variant="outline-dark" size="sm" :title="$t('actions.showVariables')"
-                    @click.prevent="$refs.variablesModal.show()" class="mt-2 mr-1">
+                    @click.prevent="$refs.variablesModal.show()" class="mr-1">
                     <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
                     <span v-if="workflowObj.variables?.length >=0"> ({{
                         workflowObj.variables?.length }})</span>
                 </b-button>
 
-                <b-button variant="primary" size="sm" class="mt-2 pu mr-1" @click="saveWorkflow" data-test="save">
+                <b-button variant="primary" size="sm" class="pu mr-1" @click="saveWorkflow" data-test="save">
                     <font-awesome-icon icon="fa fa-save" />
                     {{ $t('actions.save') }}
                 </b-button>
-                <b-button variant="success" size="sm" class="mt-2 pu" @click="executeWorkflow" data-test="execute">
+                <b-button variant="success" size="sm" class="pu" @click="executeWorkflow" data-test="execute">
                     <font-awesome-icon icon="fa fa-play" /> {{ $t('actions.execute') }}
                 </b-button>
-                <b-button v-if="sample" variant="info" size="sm" class="ml-2 mt-2 pu" @click="showSample"
+                <b-button v-if="sample" variant="info" size="sm" class="ml-2 pu" @click="showSample"
                     data-test="sample">
                     <font-awesome-icon icon="fa fa-eye" /> Ver dados
                 </b-button>
-                <b-button variant="danger" size="sm" class="ml-2 mt-2 pu" @click="stop" data-test="restart"
+                <b-button variant="danger" size="sm" class="ml-2 pu" @click="stop" data-test="restart"
                     title="Para os recursos alocados e reinicia os executores">
                     <font-awesome-icon icon="fa fa-skull" /> {{ $t('actions.stop') }}
                 </b-button>
