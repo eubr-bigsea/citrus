@@ -136,12 +136,12 @@
                                                 <b-form-input type="number" v-model.number="editableVisualization.y_axis.value.multiplier"
                                                     class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
                                             </b-form-group>
-                                            <b-form-group label="Casas decimais:">
-                                                <input type="number" class="form-control form-control-sm w-50"
-                                                    v-model.number="editableVisualization.y_axis.value.decimal_places" max="6" min="0"
-                                                    debounce="500" />
-                                            </b-form-group>
                                             -->
+                                    <b-form-group label="Casas decimais:">
+                                        <input type="number" class="form-control form-control-sm w-50"
+                                            v-model.number="editableVisualization.y_axis.value.decimal_places" max="6"
+                                            min="0" debounce="500" />
+                                    </b-form-group>
                                     <b-form-group label="Prefixo:">
                                         <input type="text" class="form-control form-control-sm"
                                             v-model="editableVisualization.y_axis.value.prefix" maxlength="20"
@@ -152,11 +152,15 @@
                                             v-model="editableVisualization.y_axis.value.suffix" maxlength="20"
                                             debounce="500" />
                                     </b-form-group>
-                                    <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')" label="Normalizar:">
-                                        <select class="form-control form-control-sm" v-model="editableVisualization.y_axis.value.normalization">
+                                    <b-form-group v-if="chartType.endsWith('bar') || chartType.endsWith('area')"
+                                        label="Normalizar:">
+                                        <select class="form-control form-control-sm"
+                                            v-model="editableVisualization.y_axis.value.normalization">
                                             <option value="">Sem normalização</option>
-                                            <option value="fraction">Fração (valor é dividido pela soma dos valores)</option>
-                                            <option value="percent">Percentual (igual à Fração, mas multiplicado por 100)</option>
+                                            <option value="fraction">Fração (valor é dividido pela soma dos valores)
+                                            </option>
+                                            <option value="percent">Percentual (igual à Fração, mas multiplicado por
+                                                100)</option>
                                         </select>
                                     </b-form-group>
                                 </div>
@@ -251,11 +255,13 @@
                                                     class="form-control form-control-sm" max="1000000000000" min="1"
                                                     debounce="500" />
                                             </b-form-group>
+                                            <!--
                                             <b-form-group label="Casas decimais:">
                                                 <b-form-input type="number" v-model.number="y.decimal_places"
                                                     class="form-control form-control-sm w-25" max="6" min="0"
                                                     debounce="500" />
                                             </b-form-group>
+                                        -->
                                         </div>
                                         <div class="col-6">
                                             <b-form-group v-if="!pieFamily" label="Prefixo:">
@@ -387,12 +393,12 @@
                                                 <b-form-input type="number" v-model.number="editableVisualization.x_axis.value.multiplier"
                                                     class="form-control form-control-sm" max="1000000000000" min="1" debounce="500" />
                                             </b-form-group>
-                                            <b-form-group v-if="editableVisualization.x_axis.value.attribute" label="Casas decimais:">
-                                                <input type="number" class="form-control form-control-sm w-50"
-                                                    v-model.number="editableVisualization.x_axis.value.decimal_places" max="6" min="0"
-                                                    debounce="500" />
-                                            </b-form-group>
-                                        -->
+                                            -->
+                                    <b-form-group label="Casas decimais:">
+                                        <input type="number" class="form-control form-control-sm w-50"
+                                            v-model.number="editableVisualization.x_axis.value.decimal_places" max="6"
+                                            min="0" debounce="500" />
+                                    </b-form-group>
                                     <template>
                                         <b-form-group label="Prefixo:">
                                             <input type="text" class="form-control form-control-sm"
@@ -463,7 +469,7 @@
                                                     debounce="500" />
                                             </b-form-group>
                                             <div v-if="isNumeric(x.attribute)">
-                                                <b-form-checkbox  v-model.number="x.as_categorical" class="mb-2">
+                                                <b-form-checkbox v-model.number="x.as_categorical" class="mb-2">
                                                     Tratar número como categoria
                                                 </b-form-checkbox>
 
@@ -520,11 +526,13 @@
                                                         class="form-control form-control-sm w-25" max="1000000000000"
                                                         min="1" debounce="500" />
                                                 </b-form-group>
+                                                <!--
                                                 <b-form-group label="Casas decimais:">
                                                     <b-form-input type="number" v-model.number="x.decimal_places"
                                                         class="form-control form-control-sm w-25" max="6" min="0"
                                                         debounce="500" />
                                                 </b-form-group>
+                                                -->
                                             </div>
                                         </div>
                                         <div class="col-6">
