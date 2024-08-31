@@ -6,10 +6,10 @@
                     O Lemonade oferece as seguintes funções que podem ser usadas em comandos SQL:
                 <dl>
                     <dt><code>validate_codes(texto): boolean</code></dt>
-                    <dd>Valida se um <code>texto</code> é CPF ou CNPN válido</dd>
+                    <dd>Valida se um <code>texto</code> é CPF ou CNPJ válido</dd>
                     <dt><code>physical_or_legal_person(texto): string</code></dt>
                     <dd>Identifica, a partir do <code>texto</code>, é uma pessoa física (<code>texto</code> é CPF) ou
-                        pessoa jurídica (<code>texto</code> é CNPN)</dd>
+                        pessoa jurídica (<code>texto</code> é CNPJ)</dd>
                     <dt><code>date_patterning(texto): string</code></dt>
                     <dd>Formata <code>texto</code> representando uma data para o formato dd/MM/yyyy</dd>
                     <dt><code>strip_accents(texto): string</code></dt>
