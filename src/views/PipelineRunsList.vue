@@ -201,6 +201,9 @@ export default {
                 joinRoom('pipeline_runs', true);
             },
             'update pipeline run': (msg) => {
+                if (! msg.pipeline_run) {
+                    return;
+                }
                 this.notifications.unshift({
                     id: msg.pipeline_run.id,
                     status: msg.pipeline_step_run.status, date: msg.date,

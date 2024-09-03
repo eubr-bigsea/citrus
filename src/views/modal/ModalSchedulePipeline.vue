@@ -90,8 +90,9 @@ export default {
         },
         confirm() {
             this.$emit('on-schedule-pipeline', this.id,
-                new Date(this.year, this.month, 1),
-                new Date(this.year, this.month + 1, 0));
+                // In JS, months start from 0 !!!
+                new Date(this.year, this.month - 1, 1),
+                new Date(this.year, this.month, 0));
         },
         dateDisabled(type) {
             function f(ymd, date) {
