@@ -11,12 +11,18 @@
                 </h1>
             </div>
             <div class="btn-group">
+                <router-link :to="{ name: 'pipelines' }"
+                    class="btn btn-outline-secondary d-print-none float-left btn-sm">
+                    <font-awesome-icon icon="fa-chevron-right" />
+                    {{ $t('actions.back') }}
+                </router-link>
                 <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </button>
-                <button class="btn btn-sm btn-outline-success" :disabled="!isDirty" @click="saveChanges">
+                <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
                     <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $tc('actions.save') }}
                 </button>
+
             </div>
         </div>
 

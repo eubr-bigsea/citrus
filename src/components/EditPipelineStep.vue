@@ -19,12 +19,19 @@
             <button class="btn text-center btn-outline-secondary my-2" @click="redirectToWorkflow(editedStep)">
                 <font-awesome-icon icon="fa fa-flask" class="mr-1" size="lg" />
                 <span class="editPage-workflow-label">
-                    {{ editedStep.workflow.id }} - {{ editedStep.workflow.name }}
+                    {{$tc('actions.edit')}} {{ editedStep.workflow.id }} - {{ editedStep.workflow.name }}
                 </span>
             </button>
-            <b-button class="mr-auto" @click="showWorkflowOps = 0" size="sm" variant="outline-secondary">
-                Alterar
-            </b-button>
+            <div>
+                <b-button class="w-25" @click="showWorkflowOps = 0" size="sm" variant="outline-primary">
+                    {{ $tc('actions.change') }}
+                </b-button>
+                <!--
+                    <b-button class="w-25 ml-2" @click="removeWorkflow(editStep)" size="sm" variant="outline-danger">
+                        {{ $tc('actions.delete') }}
+                    </b-button>
+                    -->
+            </div>
         </div>
         <div v-if="showWorkflowOps > -1">
             <label class="editPage-label mb-2">Associar etapa a um workflow</label>
@@ -39,7 +46,7 @@
                         Novo workflow
                     </span>
                 </b-button>
-                <b-button class="ml-2" variant="outline-secondary" @click="showWorkflowOps = -1" size="sm">
+                <b-button v-if="editedStep.workflow" class="ml-2" variant="outline-secondary" @click="showWorkflowOps = -1" size="sm">
                     {{ $tc('actions.cancel') }}
                 </b-button>
             </div>
@@ -74,11 +81,11 @@
                     </template>
                 </vue-select>
                 <div>
-                    <b-button class="float-right mt-3" style="right: 15px; bottom: 0;" variant="success"
+                    <b-button :disabled="!selectedWorkflow" class="float-right mt-3" style="right: 15px; bottom: 0;" variant="primary" size="sm"
                         @click="editStepWorkflow">
                         Confirmar
                     </b-button>
-                    <b-button class="mt-3" @click="showWorkflowOps = 0">
+                    <b-button class="mt-3" @click="showWorkflowOps = -1" size="sm" variant="outline-secondary">
                         Cancelar
                     </b-button>
                 </div>
@@ -175,22 +182,38 @@ export default {
             this.editStep();
         },
         redirectToWorkflow(step) {
-            if (confirm('Ir para edição do fluxo de trabalho?')) {
-                if (step.workflow === undefined) {
-                    this.warning('Etapa não associada a um fluxo de trabalho.');
-                } else {
+            this.confirm(
+                'Sair da edição da Pipeline',
+                'Ir para edição do fluxo de trabalho?',
+                () => {
                     this.$router.push({
                         name: 'sql-workflow', params: { id: step.workflow.id }
                     });
                 }
+            );
+        },
+        async removeWorkflow() {
+            this.showWorkflowOps = 0;
+            try {
+                const resp = await axios
+                    .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline);
+                this.editedStep.workflow = null;
+                this.success("Fluxo de trabalho desassociado.");
+                this.showWorkflowOps = -1;
+                this.selectedWorkflow = null;
+            } catch(e) {
+                this.error(e);
             }
         },
-        editStepWorkflow() {
-
+        async editStepWorkflow() {
+            if (! this.selectedWorkflow) {
+                this.warning('Selecione um fluxo de trabalho');
+                return
+            }
             const stepWorkflow = {
-                id: this.selectedWorkflow.id,
-                name: this.selectedWorkflow.name,
-                type: this.selectedWorkflow.type,
+                id: this.selectedWorkflow?.id, //may be null
+                name: this.selectedWorkflow?.name,
+                type: this.selectedWorkflow?.type,
                 platform_id: this.workflowPlatform,
             };
 
@@ -200,23 +223,20 @@ export default {
             const foundStep = this.pipeline.steps.find(step => step.id === this.editedStep.id);
             Object.assign(foundStep, this.editedStep);
 
-            axios
-                .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline)
-                .then((resp) => {
-                    // eslint-disable-next-line vue/no-mutating-props
-                    // this.pipeline = resp.data.data[0];
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.editedStep.workflow = this.pipeline.steps.find(step => step.id === this.editedStep.id).workflow;
-                    this.editStep();
-                    this.success("Workflow associado com sucesso à etapa.");
-                    this.showWorkflowOps = -1;
-                    this.selectedWorkflow = null;
-                })
-                .catch(
-                    function (e) {
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios
+                    .patch(`${tahitiUrl}/pipelines/${this.pipeline.id}`, this.pipeline);
+                // eslint-disable-next-line vue/no-mutating-props
+                // this.pipeline = resp.data.data[0];
+                // eslint-disable-next-line vue/no-mutating-props
+                this.editedStep.workflow = this.pipeline.steps.find(step => step.id === this.editedStep.id).workflow;
+                this.editStep();
+                this.success("Fluxo de trabalho associado com sucesso à etapa.");
+                this.showWorkflowOps = -1;
+                this.selectedWorkflow = null;
+            } catch(e) {
+                this.error(e);
+            }
         },
         createWorkflow() {
             const workflow = {

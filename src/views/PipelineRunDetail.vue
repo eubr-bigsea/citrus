@@ -14,11 +14,12 @@
             </div>
             <div>
                 <router-link v-if="true || pipelineRunId" :to="{ name: 'pipelineRunsList' }"
-                    class="btn btn-outline-primary d-print-none float-left btn-sm">
-                    <font-awesome-icon icon="fa-chevron-left" />
-                    {{ $t('titles.pipelineRuns', 2) }}
+                    class="btn btn-outline-secondary d-print-none float-left btn-sm">
+                    <font-awesome-icon icon="fa-chevron-right" />
+                    {{ $t('actions.back', 2) }}
                 </router-link>
-                <button class="btn btn-sm btn-outline-danger ml-2" @click="cancelRun">
+                <button v-if="pipelineRun.status !== 'CANCELED'" class="btn btn-sm btn-outline-danger ml-2"
+                    @click="cancelRun">
                     <font-awesome-icon icon="fa fa-ban" class="" /> {{ $t('actions.cancel') }}
                 </button>
             </div>
@@ -133,10 +134,12 @@
 
                                 <b-collapse v-if="job.steps && job.steps.length" :id="`collapse-${index.toString()}`"
                                     :visible="index === 0">
-                                    <div v-for="step,counter_step in job.steps" class="border-bottom mb-3 pl-4 job-step">
+                                    <div v-for="step, counter_step in job.steps"
+                                        class="border-bottom mb-3 pl-4 job-step">
                                         <div class="flex-grow-1 d-flex justify-content-start">
-                                        <h6>Tarefa #{{counter_step + 1}}: <span class="font-weight-normal">{{ step.operation.name }}</span></h6>
-                                        <!--
+                                            <h6>Tarefa #{{ counter_step + 1 }}: <span class="font-weight-normal">{{
+                                                    step.operation.name }}</span></h6>
+                                            <!--
                                         <span class="pipeline-runs-status" :class="step.status.toLowerCase()">
                                             <font-awesome-icon v-if="step.status === 'RUNNING'"
                                                 icon="fa fa-refresh" spin />
@@ -181,8 +184,6 @@ import { useWebSocket } from '@/composables/websocket.js';
 import PipelineRunNotifications from '@/components/PipelineRunNotifications.vue';
 
 import axios from 'axios';
-import io from 'socket.io-client';
-import { mergician } from 'mergician';
 
 const standUrl = import.meta.env.VITE_STAND_URL;
 const standSocketServer = import.meta.env.VITE_STAND_SOCKET_IO_SERVER;
@@ -212,18 +213,22 @@ onMounted(() => {
             joinRoom('pipeline_runs', true);
         },
         'update pipeline run': async (msg) => {
-            notifications.value.unshift({
-                id: msg.pipeline_run.id,
-                status: msg.pipeline_step_run.status, date: msg.date,
-                order: msg.pipeline_step_run.order
-            });
-            notifications.value.length = notifications.value.length > 100 ? 100
-                : notifications.value.length;
-            if (!msg.cache) {
-                if (currentState != msg.job.status) {
-                    await load();
+            if (msg.message === 'status') {
+                pipelineRun.value.status = msg.value;
+            } else {
+                notifications.value.unshift({
+                    id: msg.pipeline_run.id,
+                    status: msg.pipeline_step_run.status, date: msg.date,
+                    order: msg.pipeline_step_run.order
+                });
+                notifications.value.length = notifications.value.length > 100 ? 100
+                    : notifications.value.length;
+                if (!msg.cache) {
+                    if (currentState != msg.job.status) {
+                        await load();
+                    }
+                    currentState = msg.job.status;
                 }
-                currentState = msg.job.status;
             }
         },
     };
@@ -294,8 +299,15 @@ const setSelectedStep = (step) => {
     selectedStep.value = step;
 };
 const cancelRun = () => {
-    const callback = (result) => {
-        console.debug('Cancelando....', result)
+    const callback = async (result) => {
+        try {
+            pipelineRun.value.status = 'CANCELED';
+            const resp = await axios.patch(
+                `${standUrl}/pipeline-runs/${pipelineRunId.value}/status/CANCELED`);
+            success(resp.data.message);
+        } catch (e) {
+            error(e);
+        }
     };
     confirm('Cancelar execução', 'Você quer realmente cancelar esta execução?',
         callback);
@@ -323,6 +335,7 @@ const cancelRun = () => {
     height: 66vh;
     overflow-y: scroll;
 }
+
 .job-step {
     font-size: 9pt;
 }

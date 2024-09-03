@@ -1,6 +1,6 @@
 <template>
     <main role="main">
-        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
             <h1>{{$tc('titles.pipeline', 2)}}</h1>
             <div>
                 <router-link :to="{ name: 'pipelineRunsList' }" class="btn btn-outline-secondary float-left ml-2">
@@ -16,8 +16,8 @@
             :template-options="templateOptions" />
         <ModalSchedulePipeline ref="scheduleModal" @on-schedule-pipeline="schedulePipeline"/>
 
-        <div class="pipelineList-body">
-            <div class="pipelineList-container">
+        <div class="card pipelineList-body">
+            <div class="card-body pipelineList-container">
                 <v-server-table ref="pipelineList" :columns="columns" :options="options" name="pipelineList">
                     <template #id="props">
                         <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
