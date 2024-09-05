@@ -261,18 +261,20 @@ const progress = vm.proxy.$Progress;
 const pipelineRun = ref({ status: '' });
 // Methods
 const execute = async (id, name) => {
-    const callback = async () => {
-        const url = `${standUrl}/pipeline-runs/execute`;
-        const payload = {
-            id,
-            variables: '{}'
-        };
-        try {
-            const resp = await axios.post(url, payload);
-            success('Execução disparada com sucesso!');
-        } catch (e) {
-            error(e);
-            router.push({ name: 'pipelineRunsList' });
+    const callback = async (result) => {
+        if (result){
+            const url = `${standUrl}/pipeline-runs/execute`;
+            const payload = {
+                id,
+                variables: '{}'
+            };
+            try {
+                const resp = await axios.post(url, payload);
+                success('Execução disparada com sucesso!');
+            } catch (e) {
+                error(e);
+                router.push({ name: 'pipelineRunsList' });
+            }
         }
     };
     confirm('Executar', `Executar etapa "${name}"?`, callback)
