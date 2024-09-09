@@ -51,33 +51,65 @@
                                 </button>
                             </div>
                         </form>
-                        <v-server-table ref="runsList" :columns="columns" :options="options" name="runsList">
-                            <template #id="props">
-                                <router-link :to="{ name: 'pipelineRunDetail', params: { id: props.row.id } }">
-                                    {{ props.row.id }}
-                                </router-link>
-                            </template>
-                            <template #pipeline_name="props">
-                                    {{ props.row.pipeline_name }}
-                            </template>
-                            <template #pipeline_id="props">
-                                <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
-                                    {{ props.row.pipeline_id }}
-                                </router-link>
-                            </template>
-                            <template #period="props">
-                                {{ props.row.start | formatJsonDate('dd/MM/yyyy') }} até {{ props.row.finish |
-                                    formatJsonDate('dd/MM/yyyy') }}
-                            </template>
-                            <template #updated="props">
-                                {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:MM:SS') }}
-                            </template>
-                            <template #status="props">
-                                <div class="runsList-status" :class="props.row.status.toLowerCase()">
-                                    {{ $tc(`status.${props.row.status}`).toUpperCase() }}
+                        <b-tabs content-class="mt-3" v-model="activeTab">
+                            <b-tab title="Tabela">
+                                <v-server-table ref="runsList" :columns="columns" :options="options" name="runsList">
+                                    <template #id="props">
+                                        <router-link :to="{ name: 'pipelineRunDetail', params: { id: props.row.id } }">
+                                            {{ props.row.id }}
+                                        </router-link>
+                                    </template>
+                                    <template #pipeline_name="props">
+                                            {{ props.row.pipeline_name }}
+                                    </template>
+                                    <template #pipeline_id="props">
+                                        <router-link :to="{ name: 'pipelineEdit', params: { id: props.row.id } }">
+                                            {{ props.row.pipeline_id }}
+                                        </router-link>
+                                    </template>
+                                    <template #period="props">
+                                        {{ props.row.start | formatJsonDate('dd/MM/yyyy') }} até {{ props.row.finish |
+                                            formatJsonDate('dd/MM/yyyy') }}
+                                    </template>
+                                    <template #updated="props">
+                                        {{ props.row.updated | formatJsonDate('dd/MM/yyyy HH:MM:SS') }}
+                                    </template>
+                                    <template #status="props">
+                                        <div class="runsList-status" :class="props.row.status.toLowerCase()">
+                                            {{ $tc(`status.${props.row.status}`).toUpperCase() }}
+                                        </div>
+                                    </template>
+                                </v-server-table>
+                            </b-tab>
+                            <b-tab title="Gráficos">
+                                <div class="row mb-3 mt-3">
+                                    <div class="col-md-2 border-right">
+                                        <label>Tipo de Gráfico:</label>
+                                        <select @change="updateGraph" v-model="currentGraphic" class="form-control form-control-sm"
+                                            name="status">
+                                            <option selected value=""></option>
+                                            <option v-for="(graphicOption,key) in graphicOptions" :value="key">{{ graphicOption.layout.title }}
+                                            </option>
+                                        </select>
+                                        <div class="mt-3" v-if="currentGraphic=='steps-time-series'">
+                                            <div class="border-bottom mb-2"></div>
+                                            <label>Intervalo dos dados:</label>
+                                            <select v-model="graphicOptions['steps-time-series'].request.filters.timeInterval" @change="updateGraph" class="form-control form-control-sm">
+                                                <option selected value="hour">Hora a hora</option>
+                                                <option value="daily">Diário</option>
+                                                <option value="weekly">Semanal</option>
+                                                <option value="monthly">Mensal</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <div class="flex-grow-1 d-flex justify-content-center align-items-center w-100 h-100">
+                                            <plotly v-if="currentGraphic!==''&&newGraphicLoaded" :data="graphic.data" :layout="graphic.layout" class="w-100 h-100"/>
+                                        </div>
+                                    </div>
                                 </div>
-                            </template>
-                        </v-server-table>
+                            </b-tab>
+                        </b-tabs>
                     </div>
                 </div>
             </div>
@@ -89,16 +121,28 @@
 <script>
 import axios from 'axios';
 import Notifier from '../mixins/Notifier.js';
-
+import Plotly from '../components/visualization/Plotly.vue'
+import PieChart from '../components/visualization/PieChart.vue'
 const standUrl = import.meta.env.VITE_STAND_URL;
 
 export default {
     components: {
+        'plotly': Plotly,
+        'pie-chart': PieChart,
     },
     data() {
         return {
             statuses: ['COMPLETED', 'CANCELED', 'ERROR', 'INTERRUPTED', 'PENDING',
                 'RUNNING', 'WAITING',],
+            statusesColors: {
+                'COMPLETED': '#2ecc40',
+                'RUNNING': '#0074d9',
+                'INTERRUPTED': '#111',
+                'CANCELED': '#aaa',
+                'WAITING': '#ffdc00',
+                'ERROR': '#ff4136',
+                'PENDING': '#ffa136'
+            },
             filters: { // binding
                 status: null,
                 name: null,
@@ -121,6 +165,113 @@ export default {
                 'comment',
                 'status',
             ],
+            activeTab: 0,
+            graphic: {
+                data:   [],
+                layout: {
+                    height:'auto',
+                    title:""
+                }
+            },
+            graphicOptions: {
+                'steps-pie-chart': {
+                    type: "pie",
+                    request: {
+                        type: "pie",
+                        filters: {}
+                    },
+                    layout: {
+                        title: "Gráfico de Pizza das Etapas"
+                    },
+                    receiveData: (data) => {
+                        let labels = data.map(item => item[0]);
+                        const values = data.map(item => item[1]);
+                        const colors = labels.map(status => this.statusesColors[status]);
+                        labels = labels.map(status => this.$tc(`status.${status}`).toUpperCase());
+                        return [{
+                                type: "pie",
+                                labels:labels,
+                                values:values,
+                                marker: {
+                                    colors:colors
+                                },
+                                textinfo: "label+percent",
+                                insidetextorientation: "radial"
+                            }]
+                    }
+                },
+                'steps-time-series': {
+                    type: "bar",
+                    request: {
+                        type: "line",
+                        filters: {
+                            timeInterval: "hour"
+                        }
+                    },
+                    layout: {
+                        title: "Série Temporal das Etapas"
+                    },
+                    receiveData: (data) => {
+                        return [{...data,type:"bar"}]
+                    }
+                },
+                'steps-time-series-by-status': {
+                    type: "bar",
+                    request: {
+                        type: "histogram",
+                        filters: {
+                            timeInterval: "hour"
+                        }
+                    },
+                    layout: {
+                        title: "Histograma Acumulado das Etapas por Status",
+                        xaxis: {title: "Intervalo Temporal"}, 
+                        yaxis: {title: "Quantidade de Execuções"},
+                        barmode: 'stack'
+                    },
+                    data: [],
+                    receiveData: (data) => {
+                        let startDate = new Date("2024-09-01");
+                        let x = [];
+
+                        for (let i = 0; i < 10; i++) {
+                            let currentDate = new Date(startDate);
+                            currentDate.setDate(startDate.getDate() + i);
+                            let formattedDate = currentDate.toISOString().split('T')[0];
+                            x.push(formattedDate);
+                        }
+
+                        let update = [];
+                        let i = 0
+
+                        this.statuses.forEach(status => {
+                            let y = x.map(() => Math.floor(Math.random() * 6));
+                            i = i+1;
+                            let trace = {
+                                x: x,
+                                y: y,
+                                name: status,
+                                marker: {
+                                    color: this.statusesColors[status],
+                                    line: {
+                                        color: this.statusesColors[status],
+                                        width: 1
+                                    }
+                                },
+                                opacity: 0.8,
+                                type: "bar",
+                                histfunc: 'count',
+                                offsetgroup: i
+                            };
+                            
+                            update.push(trace);
+                        });
+                        return update;
+                    }
+                }
+            },
+            currentGraphic: "",
+            newGraphicLoaded: false,
             options: {
                 skin: 'table-sm table table-hover',
                 perPageValues: [],
@@ -168,8 +319,26 @@ export default {
         this.filters = JSON.parse(localStorage.getItem('pipeline_run:list:filters') || '{}');
     },
     methods: {
+        async updateGraph(event){
+            this.newGraphicLoaded = false;
+            if (this.currentGraphic == ""){
+                this.graphic.data= [],
+                this.graphic.layout= {height:'auto'}
+                return;
+            }
+            
+            let graphicOption = this.graphicOptions[this.currentGraphic];
+            let resp = await this.loadGraph(graphicOption.request.filters);
+            this.graphic.layout = {...this.graphic.layout,...graphicOption.layout};
+            this.graphic.data = graphicOption.receiveData(resp.data);
+            this.newGraphicLoaded = true;
+
+        },
         async search() {
             this.$refs.runsList.refresh();
+            if (this.currentGraphic != ""){
+                this.updateGraph();
+            }
         },
         async load(data) {
             localStorage.setItem('pipeline_run:list:filters', JSON.stringify(this.filters));
@@ -196,6 +365,25 @@ export default {
                 this.$Progress.finish();
             }
         },
+        async loadGraph(additionalFilters={}) {
+            
+            let filter = (({ status, name, start, end }) => ({ status, name, start, end }))(this.filters);
+            filter = {...filter, ...additionalFilters};
+
+            const type = this.graphicOptions[this.currentGraphic].request.type;
+            
+            this.$Progress.start();
+            try {
+                const resp = await axios.get(`${standUrl}/pipeline-runs/summary?type=${type}`,
+                    {params: filter}
+                );
+                return resp;
+            } catch (e) {
+                this.error(e);
+            } finally {
+                this.$Progress.finish();
+            }
+        }
     }
 };
 
