@@ -1,21 +1,21 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom">
-            <h1 class="templatePage-title">
-                {{$t('titles.pipelineTemplates')}}
+        <div class="d-flex justify-content-between align-items-center mb-2 border-bottom" data-test="header">
+            <h1 class="templatePage-title" data-test="title">
+                {{$t('pipeline.template.pipelineTemplates')}}
             </h1>
-            <button class="btn btn-primary btn-lemonade-primary float-left ml-2" @click="openAddModal">
-                <font-awesome-icon icon="fa fa-plus" /> Adicionar
+            <button class="btn btn-primary btn-lemonade-primary float-left ml-2" data-test="addTemplateBtn" @click="openAddModal">
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </button>
         </div>
 
-        <ModalCreateTemplate ref="addTemplateModal" @onupdate-template-list="updateTemplateList" />
+        <ModalCreateTemplate ref="addTemplateModal" data-test="addTemplateModal" @onupdate-template-list="updateTemplateList" />
 
         <div class="templatePage-body">
             <div class="templatePage-card-right">
                 <div class="templatePage-card-body">
                     <v-server-table ref="templateList" :data="tableData" class="templatePage-table" :columns="columns"
-                                    :options="options" name="templateList">
+                                    :options="options" name="templateList" data-test="templatePipelineTable">
                         <template #id="props">
                             {{props.row.id}}
                         </template>
@@ -23,18 +23,18 @@
                             {{props.row.name}}
                         </template>
                         <template #description="props">
-                            {{props.row.description === '' ? 'Template sem descrição.' : props.row.description}}
+                            {{props.row.description === '' ? '-' : props.row.description}}
                         </template>
                         <template #steps="props">
-                            <div :id="`trigger-${props.row.id}`" class="ml-2 btn btn-sm btn-secondary">
+                            <div :id="`trigger-${props.row.id}`" class="ml-1 btn btn-sm btn-secondary">
                                 <font-awesome-icon icon="info-circle" />
                             </div>
-                            <b-popover :target="`trigger-${props.row.id}`" triggers="hover">
+                            <b-popover :target="`trigger-${props.row.id}`" triggers="hover" data-test="templatePipelineStepsInfo">
                                 <template #title>
-                                    Etapas
+                                    {{$t('titles.step', 2)}}
                                 </template>
                                 <div v-if="props.row.steps.length === 0">
-                                    Template sem etapas.
+                                    {{$t('pipeline.noStepsTemplate')}}
                                 </div>
                                 <div v-for="(step, index) in props.row.steps" :key="step.name" class="templatePage-popover">
                                     <span class="font-weight-bold">#{{index + 1}} -</span> {{step.name}}
@@ -43,10 +43,15 @@
                         </template>
                         <template #actions="props">
                             <div>
-                                <button class="btn btn-sm btn-secondary" title="Editar template" @click.stop="openEditModal(props.row)">
+                                <button class="btn btn-sm btn-secondary" 
+                                        :title="$t('actions.edit') + ' ' + $t('titles.template')" 
+                                        @click.stop="openEditModal(props.row)">
                                     <font-awesome-icon icon="pen" />
                                 </button>
-                                <button v-b-modal.deleteModal class="ml-2 btn btn-sm btn-danger" title="Excluir template" @click="deleteTemplate(props.row.id, props.row.name)">
+                                <button v-b-modal.deleteModal 
+                                        class="ml-2 btn btn-sm btn-danger" 
+                                        :title="$t('actions.delete') + ' ' + $t('titles.template')" 
+                                        @click="deleteTemplate(props.row.id, props.row.name)">
                                     <font-awesome-icon icon="trash" />
                                 </button>
                             </div>
@@ -101,10 +106,10 @@ export default {
                 },
                 headings: {
                     id: 'ID',
-                    name: 'Nome',
-                    description: 'Descrição',
-                    steps: 'Etapas',
-                    actions: 'Ações',
+                    name: this.$tc('common.name'),
+                    description: this.$tc('common.description'),
+                    steps: this.$tc('titles.step', 2),
+                    actions: this.$tc('common.action', 2)
                 },
                 sortable: ['id', 'name'],
                 filterable: ['name'],
@@ -114,6 +119,16 @@ export default {
                     is: 'sort-is ml-10',
                     up: 'sort-up',
                     down: 'sort-down'
+                },
+                preserveState: true,
+                saveState: true,
+                texts: {
+                    filter: this.$tc('common.filter'),
+                    count: this.$t('common.pagerShowing'),
+                    limit: this.$t('common.limit'),
+                    noResults: this.$t('common.noData'),
+                    loading: this.$t('common.loading'),
+                    filterPlaceholder: this.$t('common.filterPlaceholder')
                 },
                 requestFunction: this.load
             },

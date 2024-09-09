@@ -58,7 +58,7 @@
                                                     <div v-for="step in job.steps" v-if="step.status!='PENDING'"
                                                          :key="step.id" class="job-step"
                                                          :class="{'disabled': selectedTask.id && selectedTask.id !== step.task.id}">
-                                                        <div class="label"
+                                                        <div v-if="step.logs.length" class="label"
                                                              :class="step.logs[step.logs.length-1].level.toLowerCase()">
                                                             {{$t(`juicer.log.${step.logs[step.logs.length-1].level.toLowerCase()}`)}}
                                                         </div>

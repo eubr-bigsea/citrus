@@ -171,7 +171,7 @@
                                 {{ props.row.id }}
                             </router-link>
                             <router-link v-if="props.row.type === 'SQL'"
-                                :to="{ name: 'visualization-design', params: { id: props.row.id } }">
+                                :to="{ name: 'sql-workflow', params: { id: props.row.id } }">
                                 {{ props.row.id }}
                             </router-link>
                         </template>

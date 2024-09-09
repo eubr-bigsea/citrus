@@ -20,13 +20,7 @@
                 </optgroup>
             </select>
         </div>
-        <div v-else class="float-left mt-1">
-            <button class="btn btn-sm btn-outline-secondary" title="Usar biblioteca" @click="handleShowModalCodeLibrary">
-                <font-awesome-icon icon="fa fa-file-code" />
-                <span v-if="task.forms.code_libraries.value.length"> Bibliotecas de código ({{ task.forms.code_libraries.value.length }})</span>
-                <span v-else> Usar bibliotecas de código ...</span>
-            </button>
-        </div>
+
         <b-button-group class="float-right mt-1">
             <button v-if="showMoveDown" class="btn btn-sm btn-outline-secondary" :title="$t('actions.moveDown')"
                 @click="emit('on-move', task.id, 'down')"><font-awesome-icon icon="fa fa-caret-down" /></button>
@@ -53,8 +47,6 @@
             </b-dropdown>
         </b-button-group>
         <sql-editor-save-as-modal v-if="showSaveAs" ref="modalSaveAs" :task="task"/>
-        <sql-editor-use-code-library v-if="showUseCodeLibrary" ref="modalUseCodeLibrary" :task="task"
-            />
         <div v-if="status" class="text-center text-info" style="line-height:15px">
             <small>{{ status }}</small>
         </div>
@@ -64,7 +56,7 @@
 import { ref, nextTick } from 'vue';
 
 import SqlEditorSaveAsModal from './SqlEditorSaveAsModal.vue';
-import SqlEditorUseCodeLibrary from './SqlEditorUseCodeLibrary.vue';
+
 const lixo = ref([1, 2])
 const status = ref(false);
 const emit = defineEmits(['on-add', 'on-remove', 'on-move', 'on-execute',
@@ -84,10 +76,6 @@ const handleShowModal = () => {
 }
 const modalUseCodeLibrary = ref();
 const showUseCodeLibrary = ref(false);
-const handleShowModalCodeLibrary = () => {
-    showUseCodeLibrary.value = true;
-    nextTick(() => modalUseCodeLibrary.value.show());
-}
 
 const showStatus = (state) => {
     status.value = state;

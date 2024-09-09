@@ -27,22 +27,22 @@
                     <font-awesome-icon icon="fa fa-chart-line" class="text-success" /> {{ $tc('titles.dashboard', 2) }}
                 </b-nav-item>
 
-                <b-nav-item-dropdown v-if="isAdmin" right>
+                <b-nav-item-dropdown v-if="isAdmin" right data-test="pipelines-menu">
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-circle-nodes" class="text-success" />
                         {{ $tc('titles.pipeline', 2) }}
                     </template>
-                    <b-dropdown-item :to="{ name: 'pipelines' }">
+                    <b-dropdown-item :to="{ name: 'pipelines' }" data-test="pipelines-item">
                         {{ $tc('titles.pipeline', 2) }}
                     </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'pipelineRunsList' }">
+                    <b-dropdown-item :to="{ name: 'pipelineRunsList' }" data-test="pipelineRuns-item">
                         {{ $tc('titles.pipelineRuns', 2) }}
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
 
             <b-navbar-nav class="pt-1">
-                <b-nav-item-dropdown v-if="isAdmin" right>
+                <b-nav-item-dropdown v-if="isAdmin" data-test="admin-menu" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-lock" class="text-success" />
                         {{ $tc('titles.administration', 2) }}
@@ -69,7 +69,7 @@
                     <b-dropdown-item :to="{ name: 'models' }">
                         {{ $tc('titles.model', 2) }}
                     </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }">
+                    <b-dropdown-item :to="{ name: 'pipelineTemplates' }" data-test="pipelineTemplates-item">
                         Template Pipeline
                     </b-dropdown-item>
                     <b-dropdown-item :to="{ name: 'sourceCodeList' }">

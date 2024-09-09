@@ -6,16 +6,23 @@
                     Pipeline #{{ pipeline.id }}
                 </h6>
                 <h1>
-                    <InputHeader v-model="pipeline.name" @input="isDirty = true" />
+                    <InputHeader v-model="pipeline.name" @input="isDirty = true"
+                        :maxlength="50"/>
                 </h1>
             </div>
             <div class="btn-group">
+                <router-link :to="{ name: 'pipelines' }"
+                    class="btn btn-outline-secondary d-print-none float-left btn-sm">
+                    <font-awesome-icon icon="fa-chevron-right" />
+                    {{ $t('actions.back') }}
+                </router-link>
                 <button class="btn btn-sm btn-outline-secondary float-left" @click="redirectToRuns">
                     <font-awesome-icon icon="fa fa-history" /> Histórico
                 </button>
-                <button class="btn btn-sm btn-outline-success" :disabled="!isDirty" @click="saveChanges">
+                <button class="btn btn-sm btn-success" :disabled="!isDirty" @click="saveChanges">
                     <font-awesome-icon icon="fa fa-save" class="mr-1" /> {{ $tc('actions.save') }}
                 </button>
+
             </div>
         </div>
 
@@ -41,7 +48,7 @@
                         <div class="mt-4">
                             <span class="font-weight-bold">Descrição:</span>
                             <textarea v-model="pipeline.description" @input="isDirty = true" rows="4"
-                                class="form-control form-control-sm" />
+                                class="form-control form-control-sm" maxlength="200"/>
                         </div>
                         <div class="mt-4">
                             <b-form-checkbox v-model="pipeline.enabled" class="d-flex align-items-center"

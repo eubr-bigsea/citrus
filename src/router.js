@@ -888,7 +888,7 @@ let router = new VueRouter({
             component: PipelineTemplates,
             meta: {
                 requiresAuth: true,
-                title: ['titles.pipelineTemplates', 1]
+                title: ['pipeline.template.pipelineTemplates', 1]
             }
         },
         {

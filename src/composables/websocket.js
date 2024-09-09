@@ -1,14 +1,14 @@
 import { ref } from 'vue';
 import io from 'socket.io-client';
 
-const socketIo = ref(null);
 
 export const useWebSocket = () => {
+  let socketIo = null;
   const connectWebSocket = (serverUrl, namespace, path, eventHandlers) => {
-    if (socketIo.value === null) {
+    if (socketIo === null) {
       const socket = io(`${serverUrl}${namespace}`, { upgrade: true, path });
 
-      socketIo.value = socket;
+      socketIo = socket;
       for (const eventName in eventHandlers) {
         socket.on(eventName, eventHandlers[eventName]);
       }
@@ -16,16 +16,16 @@ export const useWebSocket = () => {
   };
 
   const disconnectWebSocket = () => {
-    if (socketIo.value) {
-      socketIo.value.close();
-      socketIo.value = null;
+    if (socketIo) {
+        socketIo.close();
+        socketIo = null;
     }
   };
   const socketEmit = (type, args) => {
-    socketIo.value.emit(type, args);
+    socketIo.emit(type, args);
   };
-  const joinRoom = (room) => {
-    socketIo.value.emit('join', { cached: false, room });
+  const joinRoom = (room, cached=false) => {
+    socketIo.emit('join', { cached, room });
   };
   return { connectWebSocket, disconnectWebSocket, socketEmit, joinRoom };
 };

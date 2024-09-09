@@ -19,12 +19,14 @@ export default {
         async asyncLoadWorkflowList(search, loading) {
             this.$Progress.start();
             const params = {
-                sort: 'name', size: 20, name: search,
-                enabled: true, simple: true, fields: 'id,name,type,platform'
+                sort: 'name', size: 10, name: search,
+                types: 'SQL',
+                enabled: 1, simple: true, fields: 'id,name,type',
+                platform: 'META'
             };
             try {
                 const workflowList = await axios.get(
-                    `${tahitiUrl}/workflows?enabled=1&platform=SPARK`, { params });
+                    `${tahitiUrl}/workflows`, { params });
                 this.workflowList = workflowList.data.data;
             } catch (e) {
                 this.error(e);
