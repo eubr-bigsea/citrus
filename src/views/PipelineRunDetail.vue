@@ -118,7 +118,7 @@
 
                                     <div class="steps-column">
                                         <div>
-                                            <button class="btn btn-sm btn-primary" title="Executar">
+                                            <button class="btn btn-sm btn-primary" :title="$tc('actions.execute')" @click="execute(step.id, step.name)">
                                                 <font-awesome-icon icon="fa-play" />
                                             </button>
                                         </div>
@@ -247,6 +247,12 @@ onBeforeMount(async () => {
 const progress = vm.proxy.$Progress;
 const pipelineRun = ref({ status: '' });
 // Methods
+const execute = async(id, name) => {
+    const callback = async () => {
+        console.debug('id', id)
+    };
+    confirm('Executar', `Executar etapa "${name}"?`, callback)
+};
 const connectWebSocket = async () => {
     const opts = { upgrade: true, };
     if (standSocketIoPath !== '') {
