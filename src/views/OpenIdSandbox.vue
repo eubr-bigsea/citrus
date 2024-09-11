@@ -16,6 +16,10 @@
             <button class="btn btn-success btn-sm" @click="getUser">
                 2 - Get user info
             </button>
+            <div v-if="header">
+                Header: <br>
+                {{header}}
+            </div>
             <div v-if="user && user.sub">
                 User: <br>
                 {{user}}
@@ -51,7 +55,11 @@ import { UserManager, WebStorageStateStore } from 'oidc-client';
 const thornUrl = import.meta.env.VITE_THORN_URL;
 const parseJwt = (token) => {
     try {
-        return JSON.parse(atob(token.split('.')[1]));
+        const parts = token.split('.')
+        return [
+            JSON.parse(atob(parts[0])),
+            JSON.parse(atob(parts[1]))
+        ];
     } catch (e) {
         return null;
     }
@@ -63,6 +71,7 @@ export default {
             query: null,
             user: {},
             token: null,
+            header: null,
             parsedToken: null,
             api: null
         };
@@ -92,7 +101,7 @@ export default {
         getUser() {
             this.authService.getProfile().then((user) => this.user = user);
             this.authService.getAccessToken().then(token => {
-                this.parsedToken = parseJwt(token);
+                [this.header, this.parsedToken] = parseJwt(token);
                 this.token = token;
             });
         },

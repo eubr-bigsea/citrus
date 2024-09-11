@@ -439,6 +439,9 @@ openIdService.loadConfig(store).then(() => {
         } else {
             let accessToken = await openIdService.getAccessToken();
             accessToken && (config.headers['Authorization'] = accessToken);
+            if (! accessToken) {
+                console.debug('No access token');
+            }
         }
         requestCounter += 1;
         return config;

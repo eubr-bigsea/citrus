@@ -7,7 +7,7 @@ const thornUrl = import.meta.env.VITE_THORN_URL;
 */
 class AuthService {
     constructor() {
-
+        this.settings = {}
     }
     async loadConfig(vueStore){
         this.vueStore = vueStore;
@@ -40,8 +40,11 @@ class AuthService {
         //if (this.enabled){
         let merged = {...settings, ...resp['data']['data']};
         
-        
+        this.settings = merged;
         merged.redirect_uri = window.location.origin; 
+        merged.silent_redirect_uri = `${window.location.origin}/static/silent-renew.html`; 
+        merged.post_logout_redirect_uri = `${window.location.origin}/logout`; 
+
         console.debug('Redirecting', merged.redirect_uri)
         //merged.scope = 'profile, email'
         /*
@@ -86,8 +89,11 @@ class AuthService {
         this.userManager.removeUser();
         this.vueStore && this.vueStore.dispatch('logout');
         
-        this.userManager.signoutRedirect()
-            .then(() => {
+        this.userManager.signoutRedirect({
+            client_id: this.settings.client_id,
+            state: 'sign_out_success',
+            extraQueryParams: {client_id: this.settings.client_id}
+        }).then(() => {
                 console.log('User logged out');
                 this.vueStore && this.vueStore.dispatch('logout');
             }).catch(error => {
