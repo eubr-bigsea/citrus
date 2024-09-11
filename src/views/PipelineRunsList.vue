@@ -107,7 +107,8 @@
                                                     <option v-for="(graphicOption,key) in graphicOptions" :value="key">{{ graphicOption.layout.title }}
                                                     </option>
                                                 </select>
-                                                <div class="mt-3" v-if="currentGraphic=='steps-time-series'">
+                                                <!-- DESCOMENTAR QUANDO STAND OFERECER timeInterval DA SERIE TEMPORAL -->
+                                                <!-- <div class="mt-3" v-if="currentGraphic=='steps-time-series'"> 
                                                     <div class="border-bottom mb-2"></div>
                                                     <label>Intervalo dos dados:</label>
                                                     <select v-model="graphicOptions['steps-time-series'].request.filters.timeInterval" @change="updateGraph" class="form-control form-control-sm">
@@ -116,7 +117,7 @@
                                                         <option value="weekly">Semanal</option>
                                                         <option value="monthly">Mensal</option>
                                                     </select>
-                                                </div>
+                                                </div> -->
                                             </div>
                                             <div class="col-md-10">
                                                 <div class="flex-grow-1 d-flex justify-content-center align-items-center w-100 h-100">
@@ -245,7 +246,7 @@ export default {
                     receiveData: (data) => {
                         return [{...data,type:"bar"}]
                     }
-                },/* NEW BAR TYPE, STILL IN DEVELOP
+                },/* DESCOMENTAR QUANDO STAND OFERECER TIME SERIES POR STATUS
                 'steps-time-series-by-status': {
                     type: "bar",
                     request: {
