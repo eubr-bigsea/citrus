@@ -25,14 +25,14 @@
                                 </div>
                                 <div class="card-footer text-center">
                                     <p>
-                                        <select v-model="storage[option.prop]" class="form-control" :name="`storage-${option.prop}`">
+                                        <select v-model="storage[option.prop]" class="form-select" :name="`storage-${option.prop}`">
                                             <option v-for="s in storages[option.items]" :key="s.id" :value="s.id">
                                                 {{s.name}}
                                             </option>
                                         </select>
                                     </p>
                                     <button class="btn btn-success" :disabled="storage[option.prop] === null"
-                                            @click="handleChoose(option.value)" :name="`btn-${option.prop}`">
+                                            :name="`btn-${option.prop}`" @click="handleChoose(option.value)">
                                         {{$t('actions.choose')}}
                                     </button>
 
@@ -55,7 +55,7 @@
                                 <div class="resumable-drop"
                                      :class="{hide: storageType === 'JDBC' || storageType === '' || storageType === 'HBASE' }">
                                     {{$t('dataSource.dropFilesHere')}}
-                                    <a ref="browseElem" class="resumable-browse" id="select-from-computer">
+                                    <a id="select-from-computer" ref="browseElem" class="resumable-browse">
                                         <u>{{$t('dataSource.selectFromComputer')}}</u>
                                     </a>.
                                     <br>
@@ -70,18 +70,18 @@
                         <h4 class="card-title">
                             {{$t('dataSource.databaseStorage')}}
                         </h4>
-                        <label>{{$tc('common.name', 1)}}:</label>
+                        <label>{{$t('common.name', 1)}}:</label>
                         <input v-model="dataSource.name" v-focus type="text" class="form-control">
 
                         <label>{{$t('dataSource.selectCommand')}}:</label>
                         <textarea v-model="dataSource.command" class="form-control" rows="4" />
 
                         <div class="border-top mt-5 pt-4">
-                            <!-- <button class="btn mr-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
+                            <!-- <button class="btn me-1 btn-primary" @click="step=1">{{$t('actions.test')}}</button> -->
                             <button class="btn btn-success" @click="handleSave">
                                 {{$t('actions.save')}}
                             </button>
-                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                            <button class="btn ms-1 btn-outline-secondary" @click="step=1">
                                 {{$t('actions.back')}}
                             </button>
                         </div>
@@ -94,7 +94,7 @@
                         </h4>
                         <div class="row">
                             <div class="col-md-8">
-                                <label>{{$tc('common.name', 1)}}:</label>
+                                <label>{{$t('common.name', 1)}}:</label>
                                 <input v-model="dataSource.name" type="text" class="form-control">
 
                                 <label>{{$t('dataSource.selectCommand')}}:</label>
@@ -102,7 +102,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label>{{$t('dataSource.tablesReference')}}</label>
-                                <select v-model="selectedTable" class="form-control tables" size="10"
+                                <select v-model="selectedTable" class="form-select tables" size="10"
                                         @dblclick.stop="copyTableName">
                                     <option v-for="tb in tables" :key="tb">
                                         {{tb}}
@@ -115,7 +115,7 @@
                             <button class="btn btn-success" @click="handleSave">
                                 {{$t('actions.save')}}
                             </button>
-                            <button class="btn ml-1 btn-outline-secondary" @click="step=1">
+                            <button class="btn ms-1 btn-outline-secondary" @click="step=1">
                                 {{$t('actions.back')}}
                             </button>
                         </div>
@@ -169,7 +169,7 @@
                 </div>
             </div>
             <div v-if="step === 2 " class="col">
-                <button class="btn btn-outline-secondary mt-2 ml- float-right" @click="step=1">
+                <button class="btn btn-outline-secondary mt-2 ml- float-end" @click="step=1">
                     {{$t('actions.back')}}
                 </button>
             </div>
@@ -216,13 +216,14 @@
     </main>
 </template>
 <script>
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n-bridge';
+import { ref, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 import Notifier from '../notifier.js';
 import axios from 'axios';
-import Vue from 'vue';
+;
 let limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 import Resumable from 'resumablejs';
 export default {
@@ -238,10 +239,9 @@ export default {
         },
     },
     setup() {
-        const router = Vue.prototype.$legacyRouter; //FIXME
+        const router = useRouter();
         const { t } = useI18n();
-        const notifier = new Notifier(Vue.prototype.$snotify, t, router);
-
+        
         const step = ref(1);
         const dataSource = ref({ format: '', storage_id: null, command: null, url: 'placeholder', name:''});
         const storage = ref({
@@ -256,7 +256,7 @@ export default {
                     fileInfo.message.status.toLowerCase() === 'error'
                 ? 'danger'
                 : 'success';
-        }
+        };
 
         const handleChoose = (method) => {
             if (method === 'sql') {
@@ -275,9 +275,9 @@ export default {
                 step.value = 2;
                 dataSource.value.format = 'UNKNOWN';
                 dataSource.value.storage_id = storage.value.fsStorage;
-                storageType.value = 'FS'
+                storageType.value = 'FS';
                 /* Setup resumable */
-                Vue.nextTick(() => {
+                nextTick(() => {
                     setupResumable();
                 });
             } else {
@@ -286,7 +286,7 @@ export default {
                 dataSource.value.url = '';
                 storageType.value = 'FS';
             }
-        }
+        };
         /*
             const copyTableName = () => {
                 this.dataSource.command = (this.dataSource.command ? this.dataSource.command + ' ' : '') + this.selectedTable;
@@ -404,7 +404,7 @@ export default {
                 fileRef.message = JSON.parse(message);
                 showPause.value = false;
                 showProgress.value = false;
-            }
+            };
             resumable.on('error', handleError);
             resumable.on('fileError', handleError);
 
@@ -418,27 +418,27 @@ export default {
                             Math.floor(resumable.progress() * 100) + '%';
                 }
             });
-        }
+        };
         const handleSave = async (event) => {
-            const url = `${limoneroUrl}/datasources`
-            event.target.setAttribute('disabled', 'disabled')
-            event.target.classList.add('btn-spinner')
+            const url = `${limoneroUrl}/datasources`;
+            event.target.setAttribute('disabled', 'disabled');
+            event.target.classList.add('btn-spinner');
             try {
                 const resp = await axios.post(url, dataSource.value);
                 isDirty.value = false;
                 notifier.success(
                     t('messages.savedWithSuccess',
-                        { what: t('titles.dataSource', 1) }))
+                        { what: t('titles.dataSource', 1) }));
                 router.push({
                     name: 'editDataSource', params: { 'id': resp.data.data.id }
-                })
+                });
             } catch (e) {
                 notifier.error(e);
             } finally {
-                event.target.removeAttribute('disabled')
-                event.target.classList.remove('btn-spinner')
+                event.target.removeAttribute('disabled');
+                event.target.classList.remove('btn-spinner');
             }
-        }
+        };
 
         const storages = ref({
             fsStorages: [],

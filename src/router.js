@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+//import VueRouter from 'vue-router';
+import { createWebHistory, createRouter } from 'vue-router';
 
 // import ProjectList from './views/Administration/ProjectList.vue';
 // import ProjectAdd from './views/Administration/ProjectAdd.vue';
@@ -70,7 +70,6 @@ const DashboardBuilder = () => import(/* webpackChunkName: "group-dashboard" */ 
 const WebSocketPing = () => import(/* webpackChunkName: "group-util" */'./views/WebSocketPing.vue');
 const JsPlumbSandbox = () => import(/* webpackChunkName: "group-util" */'./views/JsPlumbSandbox.vue');
 const OpenIdSandbox = () => import(/* webpackChunkName: "group-util" */'./views/OpenIdSandbox.vue');
-const QueryEdit = () => import(/* webpackChunkName: "group-util" */ './views/query/QueryEdit.vue');
 
 const NotificationList = () => import(/* webpackChunkName: "group-notification" */ './views/NotificationList.vue');
 
@@ -97,7 +96,7 @@ const PipelineTemplates = () => import('./views/PipelineTemplates.vue');
 
 
 /* Experiments */
-const Explorer = () => import('./views/data-explorer/Explorer.vue');
+const DataExplorerIndex = () => import('./views/data-explorer/DataExplorerIndex.vue');
 const DataExplorerStart = () => import('./views/data-explorer/DataExplorerStart.vue');
 const ExplorerIndex = () => import('./views/data-explorer/Index.vue');
 
@@ -119,11 +118,12 @@ const ProjectsView = () => import('./views/project/ProjectsView.vue');
 const ProjectDetail = () => import('./views/project/ProjectDetail.vue');
 
 
-Vue.use(VueRouter);
+//Vue.use(VueRouter);
 
-let router = new VueRouter({
+let router = createRouter({
     //mode: 'hash',
     mode: 'history',
+    history: createWebHistory(),
     routes: [
         {
             path: '/',
@@ -141,15 +141,6 @@ let router = new VueRouter({
             meta: {
                 requiresAuth: true,
                 title: ['titles.home', 1]
-            }
-        },
-        {
-            path: '/query',
-            name: 'queryEdit',
-            component: QueryEdit,
-            meta: {
-                requiresAuth: true,
-                title: ['titles.query', 1]
             }
         },
         {
@@ -795,7 +786,7 @@ let router = new VueRouter({
         {
             path: '/experiments/data-explorer/:id',
             name: 'data-explorer-panel',
-            component: Explorer,
+            component: DataExplorerIndex,
             meta: {
                 requiresAuth: true,
                 title: ['titles.dataExplorer', 1]
@@ -910,7 +901,7 @@ let router = new VueRouter({
             }
         },
         {
-            path: '*',
+            path: '/:pathMatch(.*)*',
             name: 'not-found',
             component: PageNotFound,
             meta: {
@@ -922,6 +913,7 @@ let router = new VueRouter({
 });
 router.onError(error => {
     if (/loading chunk \d* failed./i.test(error.message)) {
+        window.location.reload();
         window.location.reload();
     }
 });

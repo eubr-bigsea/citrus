@@ -1,38 +1,35 @@
 <template>
     <div class="lemonade-toolbox">
-        <VuePerfectScrollbar class="scroll-area" :settings="settings">
-            <div>
-                <ul class="list-group">
-                    <!-- <li
+        <div>
+            <ul class="list-group">
+                <!-- <li
                         class="list-group-item truncate sidebar-separator-title text-muted d-flex align-items-center menu-collapsed">
-                        <input v-model="search" type="text" class="form-control" :placeholder="$tc('actions.search')"
+                        <input v-model="search" type="text" class="form-control" :placeholder="$t('actions.search')"
                             @input="searchOperation" />
                     </li> -->
-                    <div>
-                        <span v-for="item in items" :key="item.op.id + ':' + item.id">
-                            <b-link class="list-group-item truncate list-group-item-action flex-column align-items-start"
-                                    draggable="true"
-                                    :data-id="item.op.id"
-                                    :data-lookup-id="item.id"
-                                    :data-name="item.name"
-                                    :data-lookup-name="item.fieldName"
-                                    @dblclick="dbClickAddTask"
-                                    @dragstart="startDrag2"
-                                    @dragend="stopDrag">
-                                {{item.name}}
-                                <font-awesome-icon icon="fa fa-bars fa-1x"
-                                                   class="float-right" />
-                            </b-link>
-                        </span>
-                    </div>
-                </ul>
-            </div>
-        </VuePerfectScrollbar>
+                <div>
+                    <span v-for="item in items" :key="item.op.id + ':' + item.id">
+                        <b-link class="list-group-item truncate list-group-item-action flex-column align-items-start"
+                                draggable="true"
+                                :data-id="item.op.id"
+                                :data-lookup-id="item.id"
+                                :data-name="item.name"
+                                :data-lookup-name="item.fieldName"
+                                @dblclick="dbClickAddTask"
+                                @dragstart="startDrag2"
+                                @dragend="stopDrag">
+                            {{item.name}}
+                            <font-awesome-icon icon="fa fa-bars fa-1x"
+                                               class="float-end" />
+                        </b-link>
+                    </span>
+                </div>
+            </ul>
+        </div>
         <div ref="opDrag" />
     </div>
 </template>
 <script>
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
 import ToolboxMixin from '../mixins/Toolbox.js';
 import Notifier from '../mixins/Notifier.js';
 import { debounce } from '../util.js';
@@ -45,9 +42,7 @@ const standUrl = import.meta.env.VITE_STAND_URL;
 
 export default {
     name: 'CustomToolbox',
-    components: {
-        VuePerfectScrollbar
-    },
+
     mixins: [ToolboxMixin, Notifier],
     props: {
         operations: {
@@ -118,7 +113,7 @@ export default {
                                     STAND_URL: standUrl,
                                     THORN_URL: thornUrl,
                                 });
-                            console.debug(url);
+                            //console.debug(url);
                         }
                         axios.get(url).then((resp) => {
                             const values = resp.data;
@@ -152,7 +147,7 @@ export default {
             let match = null;
             while ((match = re.exec(tpl))) {
                 if (data[match[2]]) {
-                    tpl = tpl.replace(match[1], data[match[2]])
+                    tpl = tpl.replace(match[1], data[match[2]]);
                 }
                 re.lastIndex = 0;
             }

@@ -1,5 +1,5 @@
 
-import BubbleChart from '../../components/visualization/BubbleChart.vue';
+import BubbleChart from '@/components/visualization/BubbleChart.vue';
 
 const chart1 = {
     data: {
@@ -12,7 +12,7 @@ const chart1 = {
             'rgb(255, 65, 54)']
     },
     title: 'Bubble chart test'
-}
+};
 export default {
     title: 'Visualization/BubbleChart',
     component: BubbleChart,

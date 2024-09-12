@@ -41,5 +41,5 @@ export default {
             return this.visualizationData.data;
         },
     }
-}
+};
 </script>

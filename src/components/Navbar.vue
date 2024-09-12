@@ -45,17 +45,23 @@
                 <b-nav-item-dropdown v-if="isAdmin" data-test="admin-menu" right>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-lock" class="text-success" />
-                        {{ $tc('titles.administration', 2) }}
+                        {{$t('titles.administration', 2)}}
                     </template>
-                    <b-dropdown-item :to="{ name: 'AdministrationUserList' }">
-                        {{ $tc('titles.user', 2) }}
-                    </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'AdministrationRoleList' }">
-                        {{ $tc('titles.role', 2) }}
-                    </b-dropdown-item>
-                    <b-dropdown-item :to="{ name: 'configuration' }">
-                        {{ $tc('titles.configuration', 2) }}
-                    </b-dropdown-item>
+                    <li>
+                        <router-link :to="{ name: 'AdministrationUserList' }" class="dropdown-item">
+                            {{$t('titles.user', 2)}}
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :to="{ name: 'AdministrationRoleList' }" class="dropdown-item">
+                            {{$t('titles.role', 2)}}
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link :to="{ name: 'configuration' }" class="dropdown-item">
+                            {{$t('titles.configuration', 2)}}
+                        </router-link>
+                    </li>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'clusters' }">
                         {{ $tc('titles.cluster', 2) }}
@@ -76,9 +82,11 @@
                         Biblioteca de códigos
                     </b-dropdown-item>
                     <b-dropdown-divider />
-                    <b-dropdown-item :to="{ name: 'deployments' }">
-                        {{ $tc('titles.deployment', 2) }}
-                    </b-dropdown-item>
+                    <li>
+                        <router-link :to="{ name: 'deployments' }" class="dropdown-item">
+                            {{$t('titles.deployment', 2)}}
+                        </router-link>
+                    </li>
                     <b-dropdown-divider />
                     <b-dropdown-item :to="{ name: 'admin-openid' }">
                         OpenId Sandbox
@@ -89,22 +97,21 @@
                     <b-dropdown-divider />
                 </b-nav-item-dropdown>
             </b-navbar-nav>
-            <b-navbar-nav class="ml-auto">
-                <b-nav-item-dropdown ref="dropdown" right>
+            <b-navbar-nav class="ms-auto">
+                <b-nav-item-dropdown ref="dropdown" right no-caret>
                     <template #button-content>
                         <font-awesome-icon icon="fa fa-user" class="text-success" />
-                        {{ user.name ? user.name.split(' ')[0] : '' }}
                     </template>
 
-                    <b-dropdown-form style="width: 300px" class="text-center">
+                    <b-dropdown-item style="width: 400px" class="text-center" right no-caret>
                         <font-awesome-icon icon="fa fa-user" />
                         <p>
-                            <strong>{{ user.name }}</strong>
+                            <strong>{{user.name}}</strong>
                             <br>
-                            <small>{{ user.email }}</small>
+                            <small>{{user.email}}</small>
                         </p>
                         <div class="text-center">
-                            <strong>{{ $tc('titles.role', 2) }}</strong><br>
+                            <strong>{{$t('titles.role', 2)}}</strong><br>
                             <div class="mt-2">
                                 <span v-for="role in userRoles" :key="role.id" class="badge badge-info mr-1 p-1">
                                     {{ role.label }}
@@ -113,81 +120,39 @@
                         </div>
                         <p class="border-top pt-2">
                             <b-button variant="primary" size="sm" @click="profile">
-                                {{ $t('titles.profile') }}
+                                {{$t('titles.profile')}}
                             </b-button>
-                            <b-button variant="danger" size="sm" class="ml-2" @click="logout">
-                                {{ $t('common.logout') }}
+                            <b-button variant="danger" size="sm" class="ms-2" @click="logout">
+                                {{$t('common.logout')}}
                             </b-button>
                         </p>
-                    </b-dropdown-form>
+                    </b-dropdown-item>
                 </b-nav-item-dropdown>
-                <b-nav-item-dropdown right ref="dropdown" @show="loadNotifications" no-caret>
-                    <template slot="button-content">
+                <b-nav-item-dropdown ref="dropdown" right no-caret class="ms-auto"
+                                     @show="loadNotifications">
+                    <template #button-content>
                         <font-awesome-icon icon="fa fa-bell" />
-                        <span class="badge badge-pill" v-if="unreadNotifications > 0"
-                            :class="unreadNotifications > 0 ? 'badge-danger' : 'badge-success'">
-                            {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
+                        <span v-if="unreadNotifications > 0" class="badge badge-pill"
+                              :class="unreadNotifications > 0 ? 'bg-danger' : 'badge-success'">
+                            {{unreadNotifications > 99 ? '99+' : unreadNotifications}}
                         </span>
                     </template>
-                    <b-dropdown-item v-for="notification in sampleNotifications" :key="notification.id"
-                        style="width: 400px">
+                    <b-dropdown-item v-for=" notification in sampleNotifications " :key="notification.id"
+                                     style="width: 400px">
                         <div class="notification border-bottom pb-2">
                             <div><font-awesome-icon v-bind="getIcon(notification)" /></div>
                             <div :class="{ 'font-weight-bold': notification.status === 'UNREAD' }"
-                                v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&h e llip;' : '')">
-                            </div>
+                                 v-html="notification.text.substring(0, Math.min(notification.text.length, 200)) + (notification.text.length > 200 ? '&h e llip;' : '')" />
                         </div>
                     </b-dropdown-item>
-                    <b-dropdown-item
-                        @click.native.stop="$route.name === 'notifications' ? $router.go() : $router.push({ name: 'notifications' })">
-                        {{ $t('titles.allNotifications') }} {{ $route.name === 'notifications' }}
+                    <b-dropdown-item @click.stop="$route.name === 'notifications' ? $router.go() : $router.push({ name: 'notifications' })">
+                        {{$t('titles.allNotifications')}} {{$route.name === 'notifications'}}
                         <font-awesome-icon icon="fa fa-angle-right" />
                     </b-dropdown-item>
                 </b-nav-item-dropdown>
             </b-navbar-nav>
-            <!--
-            <b-navbar-nav class="pt-1">
-                <b-nav-item-dropdown ref="dropdown" right toggle-class>
-                    <template #button-content>
-                        <font-awesome-icon icon="fa fa-bars" size="1x" class="text-success" />
-                    </template>
-
-                    <b-dropdown-form style="width: 300px" class="text-center">
-                        <font-awesome-icon icon="fa fa-user" />
-                        <p>
-                            <strong>{{user.name}}</strong>
-                            <br>
-                            <small>{{user.email}}</small>
-                        </p>
-                        <div class="text-center">
-                            <strong>{{$tc('titles.role', 2)}}</strong><br>
-                            <div class="mt-2">
-                                <span v-for="role in user.roles"
-                                      :key="role.id"
-                                      class="badge badge-info mr-1 p-1">
-                                    {{role.label}}
-                                </span>
-                            </div>
-                        </div>
-                        <p class="border-top pt-2">
-                            <b-button variant="primary"
-                                      size="sm"
-                                      @click="profile">
-                                {{$t('titles.profile')}}
-                            </b-button>
-                            <b-button variant="danger"
-                                      size="sm"
-                                      class="ml-2"
-                                      @click="logout">
-                                {{$t('common.logout')}}
-                            </b-button>
-                        </p>
-                    </b-dropdown-form>
-                </b-nav-item-dropdown>
-            </b-navbar-nav>
-        -->
-        </b-collapse>
-    </b-navbar>
+        </BCollapse>
+    </BNavbar>
 </template>
 
 <script>
@@ -223,7 +188,7 @@ export default {
                 'WORKFLOW_VIEW', 'WORKFLOW_EDIT_ANY', 'WORKFLOW_VIEW_ANY',
                 'WORKFLOW_EXECUTE', 'WORKFLOW_EXECUTE_ANY'],
 
-        }
+        };
     },
     computed: {
         ...mapGetters(['hasAnyRole', 'hasAnyPermission', 'isAdmin', 'isManager', 'isMonitor', 'user']),
@@ -283,21 +248,21 @@ export default {
     methods: {
         getIcon(notification) {
             switch (notification.type) {
-                case 'INFO':
-                    return {
-                        icon: 'fa-info-circle',
-                        class: 'text-success'
-                    };
-                case 'WARNING':
-                    return {
-                        icon: 'fa-exclamation-triangle',
-                        class: 'text-warning'
-                    };
-                default:
-                    return {
-                        icon: 'fa-exclamation-circle',
-                        class: 'text-danger'
-                    };
+            case 'INFO':
+                return {
+                    icon: 'fa-info-circle',
+                    class: 'text-success'
+                };
+            case 'WARNING':
+                return {
+                    icon: 'fa-exclamation-triangle',
+                    class: 'text-warning'
+                };
+            default:
+                return {
+                    icon: 'fa-exclamation-circle',
+                    class: 'text-danger'
+                };
             }
         },
         logout() {
@@ -322,13 +287,14 @@ export default {
                 .then(resp => {
                     this.notifications = resp.data.data;
                 });
-        }
+        },
     },
 
 };
 </script>
 
 <style lang="scss">
+/*
 #l-navbar {
     background-color: #fff;
     box-shadow: 0 0 8px rgba(0, 0, 0, .16);
@@ -415,9 +381,7 @@ export default {
     }
 }
 
-.navbar .nav-item .nav-link:hover {
-    border-bottom-color: var(--secondary-color);
-}
+
 
 .badge {
     color: #FFF !important;
@@ -435,7 +399,7 @@ export default {
     }
     */
 
-
+/*
 @media (min-width: 768px) {
     .navbar-collapse {
         height: 60px;
@@ -473,6 +437,7 @@ export default {
 .dropdown-menu>li>a:active {
     color: white;
 }
+*/
 
 .unread {
     font-weight: bold;
@@ -497,5 +462,14 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 75ch;
+}
+
+.navbar-nav .nav-link:hover {
+    border-bottom: 2px solid var(--secondary-color);
+    border-radius: 0;
+}
+
+.navbar-nav .nav-link {
+    border-bottom: 2px solid transparent;
 }
 </style>

@@ -1,17 +1,17 @@
 <template>
     <b-modal ref="modal" size="xl" hide-header>
         <b-tabs class="filter-field">
-            <b-tab :title="$tc('workflow.variables', 2)">
+            <b-tab :title="$t('workflow.variables', 2)">
                 <div class="row user-filter">
                     <div class="col-md-4 mt-4">
                         <div class="values pb-1 border">
-                            <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
-                                :class="{ selected: selected && selected.index === row.index }"
-                                @click.prevent="select(row, index)">
-                                <small>{{ row.name }} <em v-if="!row.name">&lt;variável sem nome&gt;</em>
-                                    <span v-if="row.label">({{ row.label }})</span></small>
-                                <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
-                                    :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
+                            <div v-for="(row, index) in itemsCopy" :key="row.name" class="clear-fix item-list"
+                                 :class="{selected: selected && selected.index === row.index }"
+                                 @click.prevent="select(row, index)">
+                                <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
+                                    <span v-if="row.label">({{row.label}})</span></small>
+                                <a class="float-end ms-1 bn btn-sm py-0 btn-light text-danger" href="#"
+                                   :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                                     <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                                 </a>
                             </div>
@@ -34,8 +34,8 @@
                                         class="form-control">
                                 </div>
                                 <div class="col-md-4">
-                                    <label>{{ $t('variables.type') }}:</label>
-                                    <select v-model="selected.type" class="form-control">
+                                    <label>{{$t('variables.type')}}:</label>
+                                    <select v-model="selected.type" class="form-select">
                                         <option />
                                         <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                             {{ $t('dataTypes.' + dt) }}
@@ -151,6 +151,7 @@ export default {
         items: { type: Array, default: () => [], required: true },
         simple: { type: Boolean, default: false }
     },
+    emits: ['confirm'],
     data() {
         return {
             variables: [
@@ -164,13 +165,13 @@ export default {
                 'BINARY',
             ],
             selected: null,
-
+            itemsCopy: this.items
         };
     },
     methods: {
         add() {
-            if (this.items === null) {
-                this.items = [];
+            if (this.itemsCopy === null) {
+                this.itemsCopy = [];
             }
             const value = {
                 name: '', description: '', help: '',
@@ -178,11 +179,11 @@ export default {
                 parameters: { values: [], display_index: null }, index: 0,
             };
             this.selected = value;
-            value.index = this.items.length;
-            this.items.push(value);
+            value.index = this.itemsCopy.length;
+            this.itemsCopy.push(value);
         },
         remove(e, index) {
-            this.items.splice(index, 1);
+            this.itemsCopy.splice(index, 1);
         },
         select(row, index) {
             row.index = index;
@@ -200,10 +201,11 @@ export default {
             this.$refs.modal.show();
         },
         okClicked() {
+            this.$emit('confirm', this.itemsCopy);
             this.$refs.modal.hide();
         },
     }
-}
+};
 </script>
 <style>
 div.values {

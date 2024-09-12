@@ -1,5 +1,5 @@
 <template>
-    <b-modal ref="modal" size="lg" :title="$tc('workflow.setImage', 2)">
+    <b-modal ref="modal" size="lg" :title="$t('workflow.setImage', 2)">
         <b-form>
             <div class="card">
                 <div class="card-body">
@@ -19,12 +19,14 @@
                 </div>
             </div>
         </b-form>
-        <div slot="modal-footer">
-            <b-btn variant="primary btn-sm" class="float-right mr-1" :disabled="(workflow.name === '')"
-                   @click="okClicked">
-                {{$t('common.ok')}}
-            </b-btn>
-        </div>
+        <template #footer>
+            <div>
+                <b-button variant="primary btn-sm" class="float-end me-1" :disabled="(workflow.name === '')"
+                          @click="okClicked">
+                    {{$t('common.ok')}}
+                </b-button>
+            </div>
+        </template>
     </b-modal>
 </template>
 <script>
@@ -36,13 +38,12 @@ export default {
     props: {
         workflow: { type: Object, default: () => { } },
     },
+    emits: ['update-value'],
     data() {
         return {
             query: null,
             results: null,
         };
-    },
-    mounted() {
     },
     methods: {
         async search() {
@@ -60,18 +61,18 @@ export default {
                 this.$root.$emit('onupdate-workflow-properties');
                 this.$refs.modal.hide();
             } else {
-                this.warning(this.$tc('titles.validationErrors', 2));
+                this.warning(this.$t('titles.validationErrors', 2));
             }
         },
         show() {
             this.$refs.modal.show();
         },
         select(inx) {
-            this.workflow.image = this.results[inx].urls.small + '#'; //Add author details
+            this.$emit('update-value', this.results[inx].urls.small + '#'); //Add author details
             this.$refs.modal.hide();
         }
     }
-}
+};
 </script>
 <style scoped>
     .thumb {

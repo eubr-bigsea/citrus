@@ -1,5 +1,5 @@
 
-import BarChart from '../../components/visualization/BarChart.vue';
+import BarChart from '@/components/visualization/BarChart.vue';
 
 const chart1 = {
     "orientation": "v",
@@ -79,7 +79,7 @@ const chart1 = {
         "body": ["<span class='metric'>FIXME</span><span class='number'>{{name}}</span>"],
         "title": ["{ { name } } "]
     }
-}
+};
 
 
 export default {
@@ -106,7 +106,7 @@ horizontalChart1.data.forEach(d => {
         // v['x'] = v['y'];
         v['name'] = v['y'];
         v['y'] = tmp;
-    })
+    });
 });
 /*
 const chart2 = {

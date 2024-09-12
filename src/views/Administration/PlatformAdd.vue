@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{$t('actions.add', {type: $tc('titles.platform', 1).toLowerCase()})}}</h1>
+                        <h1>{{$t('actions.add', {type: $t('titles.platform', 1).toLowerCase()})}}</h1>
                     </div>
                     <hr>
                 </div>
@@ -15,14 +15,14 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <label class="font-weight-bold">{{$tc('platform.gitUrl')}}:</label>
+                        <label class="font-weight-bold">{{$t('platform.gitUrl')}}:</label>
                         <input v-model="url" type="text" class="form-control"
                                placeholder="https://github.com/dccspeed/demo-plugin">
                     </div>
                 </div>
                 <div class="row border-bottom pb-3 mt-3">
                     <div class="col-md-4">
-                        <label class="font-weight-bold">{{$tc('common.userLogin')}}:</label>
+                        <label class="font-weight-bold">{{$t('common.userLogin')}}:</label>
                         <input v-model="login" type="text" class="form-control">
                     </div>
                     <div class="col-md-2">
@@ -32,7 +32,7 @@
                     <div class="col-md-2">
                         <label>{{$t('common.password')}} (Git):</label>
                         <input v-model="password" type="password" class="form-control"
-                               :placeholder="$tc('common.optional')">
+                               :placeholder="$t('common.optional')">
                     </div>
                 </div>
                 <div class="row mt-2">

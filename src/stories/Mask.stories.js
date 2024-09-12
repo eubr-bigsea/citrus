@@ -1,5 +1,5 @@
 
-import MaskComponent from '../components/widgets/Mask.vue';
+import MaskComponent from '@/components/widgets/Mask.vue';
 const field1 = { label: 'CPF or CNPJ', order: 1, name: 'attribute', required: true };
 
 export default {

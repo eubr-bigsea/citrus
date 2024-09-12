@@ -2,10 +2,10 @@
     <main role="main">
         <div class="row header">
             <div class="title col-md">
-                <h1>{{ $tc('titles.dataSource', 1) }} {{ dataSource?.name }}</h1>
+                <h1>{{$t('titles.dataSource', 1)}} {{dataSource?.name}}</h1>
             </div>
             <b-button :disabled="loading" variant="success" class="btn btn-primary" @click="$bvModal.show('modal')">
-                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
             </b-button>
             <modal :attributes="attributes" @cards="addCard" />
         </div>
@@ -18,33 +18,33 @@
             <div class="col-md-10">
                 <b-card>
                     <div class="mb-4">
-                        <h4>{{ $t('dataSource.analysis.univariate') }}</h4>
+                        <h4>{{$t('dataSource.analysis.univariate')}}</h4>
                         <div v-if="univariateCards && univariateCards.length" class="analysisBox scroll-area">
                             <data-source-card v-for="[attr, value] in groupedUnivariate" :key="attr.name"
-                                :info="{ attr, value }" @action="deleteCard" />
+                                              :info="{ attr, value }" @action="deleteCard" />
                         </div>
                         <div v-else>
-                            <small>{{ $t('dataSource.analysis.noAnalysis') }}</small>
+                            <small>{{$t('dataSource.analysis.noAnalysis')}}</small>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <h4>{{ $t('dataSource.analysis.bivariate') }}</h4>
+                        <h4>{{$t('dataSource.analysis.bivariate')}}</h4>
                         <div v-if="bivariateCards && bivariateCards.length" class="analysisBox scroll-area">
                             <data-source-card v-for="card, inx in bivariateCards" :key="inx" :info="card"
-                                @action="deleteCard" />
+                                              @action="deleteCard" />
                         </div>
                         <div v-else>
-                            <small>{{ $t('dataSource.analysis.noAnalysis') }}</small>
+                            <small>{{$t('dataSource.analysis.noAnalysis')}}</small>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <h4>{{ $t('dataSource.analysis.multivariate') }}</h4>
+                        <h4>{{$t('dataSource.analysis.multivariate')}}</h4>
                         <div v-if="multivariateCards && multivariateCards.length" class="analysisBox scroll-area">
                             <data-source-card v-for="card, inx in multivariateCards" :key="inx" :info="card"
-                                @action="deleteCard" />
+                                              @action="deleteCard" />
                         </div>
                         <div v-else>
-                            <small>{{ $t('dataSource.analysis.noAnalysis') }}</small>
+                            <small>{{$t('dataSource.analysis.noAnalysis')}}</small>
                         </div>
                     </div>
                 </b-card>
@@ -73,12 +73,12 @@ function compare(a, b) {
 
 
 export default {
-    mixins: [Notifier],
     components: {
         DataSourceOptions,
         DataSourceCard,
         Modal
     },
+    mixins: [Notifier],
     data() {
         return {
             dataSource: null,
@@ -132,17 +132,17 @@ export default {
             this.confirm(this.$t('actions.delete'), 'Excluir esta análise?',
                 () => {
                     switch (card.type) {
-                        case 'univariate':
-                            this.univariateCards.splice(this.univariateCards.indexOf(card), 1);
-                            break;
-                        case 'bivariate':
-                            this.bivariateCards.splice(this.bivariateCards.indexOf(card), 1);
-                            break;
-                        case 'multivariate':
-                            this.multivariateCards.splice(this.multivariateCards.indexOf(card), 1);
-                            break;
-                        default:
-                            break;
+                    case 'univariate':
+                        this.univariateCards.splice(this.univariateCards.indexOf(card), 1);
+                        break;
+                    case 'bivariate':
+                        this.bivariateCards.splice(this.bivariateCards.indexOf(card), 1);
+                        break;
+                    case 'multivariate':
+                        this.multivariateCards.splice(this.multivariateCards.indexOf(card), 1);
+                        break;
+                    default:
+                        break;
                     }
                 }
             );

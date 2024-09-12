@@ -1,19 +1,20 @@
 <template>
     <main role="main">
         <div class="title">
-            <h1>{{ $t('home.recentlyUpdated') }}</h1>
+            <h1>{{$t('home.recentlyUpdated')}}</h1>
         </div>
 
         <div class="home-card-container">
             <home-card v-if="listings.has('dataSources')" :type="'dataSource'" :items="dataSources"
-                icon="fa fa-database" :total="total.dataSources" />
+                       icon="fa fa-database" :total="total.dataSources" />
             <home-card v-if="listings.has('workflows')" :type="'workflow'" :items="workflows" :total="total.workflows"
-                icon="fa fa-diagram-project" />
-            <home-card v-if="listings.has('jobs')" :type="'job'" :items="jobs" :total="total.jobs" icon="fa fa-tasks" />
+                       icon="fa fa-diagram-project" />
+            <home-card v-if="listings.has('jobs')" :type="'job'" :items="jobs" :total="total.jobs"
+                       icon="fa fa-tasks" />
             <home-card v-if="listings.has('apps')" :type="'app'" :items="apps" :total="total.apps"
-                icon="fa fa-microscope" />
+                       icon="fa fa-microscope" />
             <home-card v-if="listings.has('dashboards')" :type="'dashboard'" :items="dashboards"
-                :total="total.dashboards" icon="fa fa-chart-line" />
+                       :total="total.dashboards" icon="fa fa-chart-line" />
         </div>
     </main>
 </template>
@@ -73,7 +74,7 @@ export default {
             track: 1,
             published: 1,
             fields: 'id,name,user,updated,created,platform,description'
-        }
+        };
         const admin = this.isAdmin;
         this.listings = new Map([
             ['apps', [`${tahitiUrl}/workflows`, appFilters,

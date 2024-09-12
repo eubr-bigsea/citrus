@@ -625,7 +625,6 @@
                     </b-button>
                 </div>
             </template>
-
         </b-card>
     </div>
 </template>
@@ -636,16 +635,33 @@ import Draggable from 'vuedraggable';
 import ChartBuilderAttributeSelector from './ChartBuilderAttributeSelector.vue';
 import ChartBuilderGeoJsonSelect from './ChartBuilderGeoJsonSelect.vue';
 
-const shapes = [
-    { name: '', label: 'Sólido', icon: 'solid' },
-    { name: '/', label: 'Diagonal direita', icon: 'right-diag' },
-    { name: '\\\\', label: 'Diagonal esquerda', icon: 'left-diag' },
-    { name: 'x', label: 'Formato em X', icon: 'x-format' },
-    { name: '-', label: 'Linha horizontal', icon: 'horizontal' },
-    { name: '|', label: 'Linha vertical', icon: 'vertical' },
-    { name: '+', label: 'Cruz', icon: 'crosses' },
-    { name: '.', label: 'Ponto', icon: 'points' },
-];
+const yLabel = defineModel('yLabel');
+const yLowerBound = defineModel('yLowerBound');
+const yUpperBound = defineModel('yUpperBound');
+const yLogScale = defineModel('yLogScale');
+const yDisplay = defineModel('yDisplay');
+const yDisplayLabel = defineModel('yDisplayLabel');
+const yPrefix = defineModel('yPrefix');
+const ySuffix = defineModel('ySuffix');
+
+const xLabel = defineModel('xLabel');
+const xLowerBound = defineModel('xLowerBound');
+const xUpperBound = defineModel('xUpperBound');
+const xLogScale = defineModel('xLogScale');
+const xDisplay = defineModel('xDisplay');
+const xDisplayLabel = defineModel('xDisplayLabel');
+const xPrefix = defineModel('xPrefix');
+const xSuffix = defineModel('xSuffix');
+
+const x = defineModel('x');
+const y = defineModel('y');
+// Map
+const latitude = defineModel('latitude');
+const longitude = defineModel('longitude');
+
+const colorAttribute = defineModel('colorAttribute');
+const sizeAttribute = defineModel('sizeAttribute');
+const textAttribute = defineModel('textAttribute');
 
 const emit = defineEmits(['input']);
 const editableVisualization = ref(null);
@@ -689,16 +705,21 @@ const hasAxis = computed(() =>
     !['pie', 'donut', 'indicator', 'treemap', 'sunburst'].includes(props.chartType)
 );
 const xSeries = computed(() =>
-    editableVisualization.value.x.value.slice(0, limitXDimension.value)
+    //FIXME x.value.slice(0, limitXDimension.value)
+    x.value.slice(0, limitXDimension.value)
 );
-const ySeries = computed(() =>
-    editableVisualization.value.y.value.slice(0, limitYDimension.value)
-);
+const ySeries = computed({
+    get: () =>
+        y.value.slice(0, limitYDimension.value), //.map((item) => ({ ...item, id: item.id || generateId() }))
+    set: (newValue) => {
+        y.value = newValue;
+    }
+});
 const limitXDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
-    if (['pie', 'donut', 'scatter'].includes(props.chartType)) {
+    if (['pie', 'donut', 'scatter'].includes(props.type)) {
         result = 1;
-    } else if (editableVisualization.value.x.value.length >= 2 && props.chartType !== 'treemap') {
+    } else if (x.value.length >= 2 && props.type !== 'treemap') {
         result = 2;
     }
     return result;
@@ -706,8 +727,8 @@ const limitXDimension = computed(() => {
 const limitYDimension = computed(() => {
     let result = Number.MAX_SAFE_INTEGER;
     if (
-        (['pie', 'donut', 'scatter', 'treemap'].includes(props.chartType))
-        || (editableVisualization.value.x.value.length >= 2)
+        (['pie', 'donut', 'scatter', 'treemap'].includes(props.type))
+        || (x.value.length >= 2)
     ) {
         result = 1;
     }
@@ -715,12 +736,12 @@ const limitYDimension = computed(() => {
 });
 const canAddXDimension = computed(() => {
     let result = true;
-    result = (limitXDimension.value > editableVisualization.value.x.value.length);
+    result = (limitXDimension.value > x.value.length);
     return result;
 });
 const canAddYDimension = computed(() => {
     let result = true;
-    result = (limitYDimension.value > editableVisualization.value.y.value.length);
+    result = (limitYDimension.value > y.value.length);
     return result;
 });
 
@@ -821,8 +842,7 @@ watch(
     /* padding-top: 6px;
     padding-bottom: 7px; */
 }
-</style>
-<style scoped>
+
 .axis-form {
 
     zoom: .8;
@@ -833,7 +853,8 @@ watch(
     width: 640px;
     zoom: .8;
 }
-
+</style>
+<style scoped>
 .half-series-form {
     width: 260px;
     zoom: .8;

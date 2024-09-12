@@ -62,10 +62,10 @@ export default {
     data() {
         return {
             internalLayout: this.layout,
-            xinternalLayout: {
+            /*internalLayout: {
                 ...structuredClone(this.layout),
                 datarevision: 1
-            }
+            }*/
         };
     },
 
@@ -80,7 +80,7 @@ export default {
         */
 
         this.$watch('options', (a, b) => {
-            console.debug(a, b)
+            console.debug(a, b);
             //this.react()
         }, { deep: !this.watchShallow });
         this.$watch('layout', (a, newValue) => {
@@ -98,7 +98,7 @@ export default {
             if (this.autoResize) {
                 this.__resizeListener = debounce(() => {
                     this.internalLayout.datarevision++;
-                    console.debug(this, 'resize')
+                    console.debug(this, 'resize');
                     this.react();
                 }, 200);
                 window.addEventListener('resize', this.__resizeListener);

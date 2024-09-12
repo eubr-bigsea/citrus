@@ -1,38 +1,36 @@
 <template>
     <main role="main">
-        <div class="row">
-            <div class="col">
-                <div class="title">
-                    <h1>{{$tc('titles.dashboard', 2)}}</h1>
-                </div>
+        <div class="d-flex justify-content-between align-items-center pb-2 mb-2 border-bottom">
+            <h1>{{$t('titles.dashboard', 2)}}</h1>
+        </div>
+        <div class="card">
+            <div class="card-body">
                 <v-server-table ref="listTable" :columns="columns" :options="options" name="dashboardList">
                     <template #id="props">
-                        <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">
+                        <router-link :to="{ name: 'dashboardDetail', params: { id: props.row.id } }">
                             {{props.row.id}}
                         </router-link>
                     </template>
                     <template #is_public="props">
-                        <div v-if="props.row.is_public">
-                            <a :href="`${origin}/public/dashboard/${props.row.hash}`" target="_blank">
-                                {{$t('common.publicLink')}}
-                            </a>
-                        </div>
+                        <a v-if="props.row.is_public" :href="`${origin}/public/dashboard/${props.row.hash}`"
+                           target="_blank">
+                            {{$t('common.publicLink')}}
+                        </a>
+                        <span v-else>{{$t('common.no')}}</span>
                     </template>
                     <template #title="props">
-                        <router-link :to="{name: 'dashboardDetail', params: {id: props.row.id}}">
+                        <router-link :to="{ name: 'dashboardDetail', params: { id: props.row.id } }">
                             {{props.row.title}}
                         </router-link>
                     </template>
                     <template #updated="props">
-                        {{props.row.updated | formatJsonDate}}
+                        {{$filters.formatJsonDate(props.row.updated)}}
                     </template>
                     <template #actions="props">
-                        <div>
-                            <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ml-2 btn btn-sm btn-danger"
-                                    @click="remove(props.row.id, props.row.title)">
-                                <font-awesome-icon icon="trash" />
-                            </button>
-                        </div>
+                        <button v-if="loggedUserIsOwnerOrAdmin(props.row)" class="ms-2 btn btn-sm btn-danger"
+                                @click="remove(props.row.id, props.row.title)">
+                            <font-awesome-icon icon="trash" />
+                        </button>
                     </template>
                 </v-server-table>
             </div>
@@ -54,23 +52,23 @@ export default {
 
             showSideBar: false,
             options: {
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 dateColumns: ['updated'],
                 headings: {
                     id: 'ID',
-                    is_public: this.$tc('dashboard.public'),
-                    title: this.$tc('common.title'),
-                    'user.name': this.$tc('common.user.name'),
-                    updated: this.$tc('common.updated'),
-                    actions: this.$tc('common.action', 2)
+                    is_public: this.$t('dashboard.public'),
+                    title: this.$t('common.title'),
+                    'user.name': this.$t('common.user.name'),
+                    updated: this.$t('common.updated'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['id', 'title', 'updated', 'user.name'],
                 filterable: ['id', 'title', 'updated', 'user.name'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
@@ -85,14 +83,12 @@ export default {
 
                     let url = `${capirinhaUrl}/dashboards`;
 
-                    this.$Progress.start();
                     const self = this;
                     return axios
                         .get(url, {
                             params: data
                         })
                         .then(resp => {
-                            this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -100,13 +96,12 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.error(e);
                             }.bind(this)
                         );
                 }.bind(this),
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -143,7 +138,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: self.$tc('titles.dashboard', 1) }));
+                                { what: self.$t('titles.dashboard', 1) }));
                             self.$refs.listTable.getData();
                         })
                         .catch(e => self.error(e));

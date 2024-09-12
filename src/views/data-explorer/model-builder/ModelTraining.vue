@@ -2,29 +2,30 @@
     <main role="main">
         <div>
             <div class="d-flex justify-content-between align-items-center">
-                <h1>Escolha como parametrizar o modelo de {{ $t('dataExplorer.task.' + taskType).toLowerCase() }}</h1>
+                <h1>Escolha como parametrizar o modelo de {{$t('dataExplorer.task.' + taskType).toLowerCase()}}</h1>
             </div>
             <hr>
             <div class="row">
                 <div class="col-md-3">
                     <b-card>
                         <label class="" for="name">Nome do experimento:</label>
-                        <input id="name" v-model="name" v-focus type="text" class="form-control" maxlength="100">
+                        <input id="name" v-model="name" v-focus type="text"
+                               class="form-control" maxlength="100">
 
                         <label class="mt-2">Escolha a fonte de dados:</label>
                         <vue-select v-model="selectedDataSource" :filterable="false" :options="dataSourceList" label="name"
-                            @search="loadDataSourceList" @input="retrieveAttributes">
+                                    @search="loadDataSourceList" @input="retrieveAttributes">
                             <template #no-options="{}">
                                 <small>Digite parte do nome pesquisar ...</small>
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{ pad(option.id, 4, '&nbsp;') }}</span> - {{ option.name }}
+                                    <span class="span-id">{{pad(option.id, 4, '&nbsp;')}}</span> - {{option.name}}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
                                 </div>
                             </template>
                         </vue-select>
@@ -35,11 +36,11 @@
                         </template>
 
                         <hr>
-                        <router-link :to="{ name: 'choose-task' }" class="btn btn-sm btn-outline-secondary mr-2">
-                            {{ $t('actions.back') }}
+                        <router-link :to="{ name: 'choose-task' }" class="btn btn-sm btn-outline-secondary me-2">
+                            {{$t('actions.back')}}
                         </router-link>
                         <button v-if="valid" class="btn btn-primary btn-sm" @click="create">
-                            {{ $t('actions.create', { type: 'experimento' }) }}
+                            {{$t('actions.create', { type: 'experimento' })}}
                         </button>
                     </b-card>
                 </div>
@@ -70,7 +71,7 @@
                                     </div>
 
                                     <b-form-radio v-model="method" name="method" class="font-weight-bold"
-                                        value="performance">
+                                                  value="performance">
                                         Desempenho
                                     </b-form-radio>
                                     <div class="description">
@@ -79,7 +80,7 @@
                                     </div>
 
                                     <b-form-radio v-model="method" name="method" class="font-weight-bold"
-                                        value="interpretable">
+                                                  value="interpretable">
                                         Crie modelos interpretáveis
                                     </b-form-radio>
                                     <div class="description">
@@ -183,7 +184,7 @@
                                     </span>
                                     <h6>Especialista</h6>
                                     <small>
-                                        Você controla como o modelo será criado, podendo {{ $t('common.ok') }} os
+                                        Você controla como o modelo será criado, podendo {{$t('common.ok')}} os
                                         algoritmos,
                                         parâmetros, métricas e qual será
                                         o modelo a ser salvo.
@@ -293,7 +294,7 @@ export default {
             }
         },
     }
-}
+};
 </script>
 <style scoped>
 .custom-card {

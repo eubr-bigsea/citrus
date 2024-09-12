@@ -3,7 +3,7 @@
         <div>
             <div class="title">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h1>{{$tc('titles.deployment', 2)}}</h1>
+                    <h1>{{$t('titles.deployment', 2)}}</h1>
                     <router-link :to="{name: 'addDeployment'}" class="btn btn-primary btn-lemonade-primary">
                         <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                     </router-link>
@@ -29,26 +29,26 @@
                     {{$t(`model.status_${props.row.current_status}`)}}
                 </template>
                 <template #updated="props">
-                    {{props.row.updated | formatJsonDate}}
+                    {{$filters.formatJsonDate(props.row.updated)}}
                 </template>
                 <template #actions="props">
                     <div v-if="loggedUserIsOwnerOrAdmin(props.row)">
                         <button v-if="['PENDING', 'DEPLOYED_OLD', 'PENDING_UNDEPLOY', 'UNDEPLOYED', 'ERROR', 'SUSPENDED'].indexOf(props.row.current_status) > -1"
-                                class="ml-1 btn btn-sm btn-success" :title="$t('actions.deploy')"
+                                class="ms-1 btn btn-sm btn-success" :title="$t('actions.deploy')"
                                 @click="deployOrUndeploy(props.row.id, true)">
                             <font-awesome-icon icon="power-off" />
                         </button>
                         <button v-if="['PENDING', 'DEPLOYED', 'DEPLOYED_OLD'].indexOf(props.row.current_status) > -1"
-                                class="ml-1 btn btn-sm btn-danger" :title="$t('actions.undeploy')"
+                                class="ms-1 btn btn-sm btn-danger" :title="$t('actions.undeploy')"
                                 @click="deployOrUndeploy(props.row.id, false)">
                             <font-awesome-icon icon="power-off" />
                         </button>
-                        <button class="ml-1 btn btn-sm btn-outline-info" :title="$t('actions.info')"
+                        <button class="ms-1 btn btn-sm btn-outline-info" :title="$t('actions.info')"
                                 @click="showInfo(props.row)">
                             <font-awesome-icon icon="list-alt" />
-                            {{$tc('deployment.log', 2)}}
+                            {{$t('deployment.log', 2)}}
                         </button>
-                        <button class="ml-2 btn btn-sm btn-outline-danger" @click="remove(props.row.id)">
+                        <button class="ms-2 btn btn-sm btn-outline-danger" @click="remove(props.row.id)">
                             <font-awesome-icon icon="trash" />
                         </button>
                     </div>
@@ -58,10 +58,10 @@
                      :ok-only="true">
                 <div class="row">
                     <div class="col-12 small">
-                        <strong>{{$tc('common.description')}}: </strong> {{currentRow.description}} <br>
-                        <strong>{{$tc('deployment.model')}}:</strong> {{currentRow.model_name}} <br>
-                        <strong>{{$tc('common.created')}}:</strong> {{currentRow.created | formatJsonDate}}<br>
-                        <strong>{{$tc('common.updated')}}:</strong> {{currentRow.updated | formatJsonDate}}<br>
+                        <strong>{{$t('common.description')}}: </strong> {{currentRow.description}} <br>
+                        <strong>{{$t('deployment.model')}}:</strong> {{currentRow.model_name}} <br>
+                        <strong>{{$t('common.created')}}:</strong> {{$filters.formatJsonDate(currentRow.created)}}<br>
+                        <strong>{{$t('common.updated')}}:</strong> {{$filters.formatJsonDate(currentRow.updated)}}<br>
                     </div>
                 </div>
                 <div class="col-12 mt-4">
@@ -74,7 +74,7 @@
                         <tbody>
                             <tr v-for="log in logs" :key="log.id">
                                 <td class="text-nowrap">
-                                    {{log.date | formatJsonDate}}
+                                    {{$filters.formatJsonDate(log.date)}}
                                 </td>
                                 <td>{{log.status}}</td>
                                 <td>{{log.log}}</td>
@@ -107,28 +107,28 @@ export default {
             //showSideBar: false,
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 dateColumns: ['updated'],
                 columnsClasses: { 'actions': 'text-center' },
                 headings: {
                     id: 'ID',
-                    name: this.$tc('common.name'),
-                    current_status: this.$tc('deployment.deployment_status'),
-                    type: this.$tc('common.type'),
+                    name: this.$t('common.name'),
+                    current_status: this.$t('deployment.deployment_status'),
+                    type: this.$t('common.type'),
                     user_name: this.$t('common.user.name'),
-                    model_name: this.$tc('deployment.model'),
-                    address: this.$tc('deployment.address'),
-                    created: this.$tc('common.created'),
-                    updated: this.$tc('common.updated'),
-                    actions: this.$tc('common.action', 2)
+                    model_name: this.$t('deployment.model'),
+                    address: this.$t('deployment.address'),
+                    created: this.$t('common.created'),
+                    updated: this.$t('common.updated'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['id', 'name', 'type', 'created', 'updated', 'current_status'],
                 filterable: ['id', 'description', 'type', 'created'],
                 sortIcon: {
-                    base: 'fa fas',
-                    is: 'fa-sort ml-10',
-                    up: 'fa-sort-amount-up',
-                    down: 'fa-sort-amount-down'
+                    base: 'sort-base',
+                    is: 'sort-is ms-10',
+                    up: 'sort-up',
+                    down: 'sort-down'
                 },
                 preserveState: true,
                 saveState: true,
@@ -142,13 +142,11 @@ export default {
 
                     data.fields = 'id,current_status,user_name,user_id,description,created,updated,model_name,name,base_service_url,port';
 
-                    this.$Progress.start();
                     return axios
                         .get(`${seedUrl}/deployments?enabled=true`, {
                             params: data
                         })
                         .then(resp => {
-                            this.$Progress.finish();
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -156,13 +154,12 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.$parent.error(e);
                             }.bind(this)
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -198,9 +195,9 @@ export default {
             case 'DEPLOYED':
                 return 'text-success';
             case 'PENDING':
-                return 'text-warning'
+                return 'text-warning';
             case 'ERROR':
-                return 'text-danger'
+                return 'text-danger';
             }
         },
         loggedUserIsOwnerOrAdmin(deployment) {
@@ -217,7 +214,7 @@ export default {
                 confirmMsg = this.$t('deployment.confirmUndeploy');
             }
             this.confirm(
-                this.$tc('titles.deployment'),
+                this.$t('titles.deployment'),
                 confirmMsg,
                 () => {
                     const params = deploy ? { deploy: true } : { undeploy: true };
@@ -245,7 +242,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: this.$tc('titles.deployment', 1) }));
+                                { what: this.$t('titles.deployment', 1) }));
                             self.$refs.listTable.refresh();
                         })
                         .catch(e => self.error(e));

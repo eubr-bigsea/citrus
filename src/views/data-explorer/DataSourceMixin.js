@@ -19,7 +19,6 @@ export default {
         }, 800),
         async retrieveAttributes() {
             if (this.selectedDataSource) {
-                this.$Progress.start();
                 /*
                 const params = {
                     fields: 'id,name,attributes'
@@ -31,8 +30,6 @@ export default {
                     this.attributes = dataSourceList.data.attributes.map(attr => attr.name).sort();
                 } catch (e) {
                     this.error(e);
-                } finally {
-                    this.$Progress.finish();
                 }
             } else {
                 this.selectedAttribute = null;
@@ -40,7 +37,6 @@ export default {
             }
         },
         async asyncLoadDataSourceList(search, loading) {
-            this.$Progress.start();
             const params = {
                 sort: 'name', size: 20, name: search,
                 enabled: true, simple: true, fields: 'id,name'
@@ -52,9 +48,8 @@ export default {
             } catch (e) {
                 this.error(e);
             } finally {
-                this.$Progress.finish();
                 loading(false);
             }
         }
     }
-}
+};

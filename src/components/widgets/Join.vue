@@ -1,35 +1,20 @@
 <template>
     <div class="join-editor">
         <span>
-            <LabelComponent :field="field"
-                            :value="value" />
-            <textarea disabled
-                      :value="displayValue"
-                      class="form-control"
-                      rows="8" />
-            <b-link v-if="!readOnly"
-                    variant="sm"
-                    @click.prevent="openModal">
-                {{$t('actions.chooseOption')}}
+            <LabelComponent :field="field" :value="value" />
+            <textarea disabled :value="displayValue" class="form-control" rows="8" />
+            <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
+                {{ $t('actions.chooseOption') }}
             </b-link>
         </span>
-        <b-modal ref="modal"
-                 size="xl"
-                 :title="field.label"
-                 :hide-header="true"
-                 :cancel-title="$t('actions.cancel')"
-                 no-fade>
-            <form ref="form"
-                  onsubmit="return false"
-                  action=""
-                  class="zoom80"
-                  @submit.stop.prevent="submit">
+        <b-modal ref="modal" size="xxl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
+            no-fade>
+            <form ref="form" onsubmit="return false" action="" @submit.stop.prevent="submit">
                 <div class="row">
-                    <div class="col-md-6 col-sm-12 border-right">
-                        <h6>{{$t('widgets.join.type')}}:</h6>
+                    <div class="col-md-6 col-sm-12 border-right zoom80">
+                        <h6>{{ $t('widgets.join.type') }}:</h6>
 
-                        <select v-model="joinType"
-                                class="form-control mb-2">
+                        <select v-model="joinType" class="form-select mb-2">
                             <option value="inner">
                                 Inner
                             </option>
@@ -43,62 +28,52 @@
                                 Full outer
                             </option>
                         </select>
-                        <h6>{{$t('widgets.join.conditions')}}</h6>
-                        <div class="side">
-                            <JoinCondition ref="condition"
-                                           :suggestions1="suggestions1"
-                                           :suggestions2="suggestions2"
-                                           :conditions="valueObject.conditions" />
+                        <h6>{{ $t('widgets.join.conditions') }}</h6>
+                        <div class="side scroll-area">
+                            <JoinCondition ref="condition" :suggestions1="suggestions1" :suggestions2="suggestions2"
+                                :conditions="valueObject.conditions" />
                         </div>
                         <div class="mt-2 border-top pt-2">
-                            <button class="btn btn-success btn-sm"
-                                    @click.prevent="add">
-                                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
+                            <button class="btn btn-success btn-sm" @click.prevent="add">
+                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
                             </button>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-12">
                         <h6>Seleção de atributos</h6>
                         <div v-if="hasNameCollision">
-                            <font-awesome-icon icon="fa fa-exclamation-circle"
-                                               class="text-danger" />
-                            {{$t('widgets.join.nameCollision')}}
+                            <font-awesome-icon icon="fa fa-exclamation-circle" class="text-danger" />
+                            {{ $t('widgets.join.nameCollision') }}
                         </div>
                         <div ref="selection">
                             <div class="row">
-                                <JoinSelect ref="firstSelect"
-                                            class="col-md-6"
-                                            :selected="valueObject.firstSelect"
-                                            :suggestions="suggestions1"
-                                            :label="$tc('common.input') + ' 1'"
-                                            :selection-type="valueObject.firstSelectionType || 1"
-                                            :prefix="valueObject.firstPrefix" />
-                                <JoinSelect ref="secondSelect"
-                                            class="col-md-6"
-                                            :selected="valueObject.secondSelect"
-                                            :suggestions="suggestions2"
-                                            :label="$tc('common.input') +' 2'"
-                                            :selection-type="valueObject.secondSelectionType || 1"
-                                            :prefix="valueObject.secondPrefix" />
+                                <div class="col-6">
+                                    <JoinSelect ref="firstSelect" :selected="valueObject.firstSelect"
+                                        :suggestions="suggestions1" :label="$t('common.input') + ' 1'"
+                                        :selection-type="valueObject.firstSelectionType || 1"
+                                        :prefix="valueObject.firstPrefix" />
+                                </div>
+                                <div class="col-6">
+                                    <JoinSelect ref="secondSelect" :selected="valueObject.secondSelect"
+                                        :suggestions="suggestions2" :label="$t('common.input') + ' 2'"
+                                        :selection-type="valueObject.secondSelectionType || 1"
+                                        :prefix="valueObject.secondPrefix" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>
-            <div slot="modal-footer"
-                 class="w-100 text-right">
-                <b-button variant="primary"
-                          class="mr-1"
-                          size="sm"
-                          @click.prevent.stop="okClicked">
-                    {{$t('common.ok')}}
-                </b-button>
-                <b-btn variant="secondary"
-                       size="sm"
-                       @click="cancelClicked">
-                    {{$t('actions.cancel')}}
-                </b-btn>
-            </div>
+            <template #footer>
+                <div class="w-100 text-end">
+                    <b-button variant="primary" class="me-1" size="sm" @click.prevent.stop="okClicked">
+                        {{ $t('common.ok') }}
+                    </b-button>
+                    <b-button variant="secondary" size="sm" @click="cancelClicked">
+                        {{ $t('actions.cancel') }}
+                    </b-button>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
@@ -130,7 +105,7 @@ export default {
                     conditions: [], firstSelect: [], secondSelect: []
                 }
 
-        }
+        };
     },
     computed: {
         hasNameCollision() {
@@ -151,7 +126,7 @@ export default {
                     this.suggestions1 = inputs[0].attributes;
                 if (inputs[1])
                     this.suggestions2 = inputs[1].attributes;
-            } catch(e) {
+            } catch (e) {
                 this.suggestions1 = suggestions;
                 this.suggestions2 = suggestions;
             }
@@ -199,8 +174,8 @@ export default {
             }
         },
         updateDisplayValue(v) {
-            const firstName = this.$tc('common.input') + ' 1';
-            const secondName = this.$tc('common.input') + ' 2';
+            const firstName = this.$t('common.input') + ' 1';
+            const secondName = this.$t('common.input') + ' 2';
 
             let firstSelect;
             let secondSelect;
@@ -222,7 +197,7 @@ export default {
 
             let select = [firstSelect, secondSelect].filter(v => v).join(', \n\t');
             if (select === ', ') {
-                select = '?'
+                select = '?';
             }
             if (condition === '') {
                 condition = '?';
@@ -260,7 +235,7 @@ export default {
                 this.valueObject.secondSelect = this.$refs.secondSelect.getSelectList();
                 this.valueObject.secondPrefix = null;
             } else {
-                this.valueObject.secondSelect = null
+                this.valueObject.secondSelect = null;
                 this.valueObject.secondPrefix = this.$refs.secondSelect.getPrefix();
             }
             this.valueObject.conditions = this.$refs.condition.getConditions();
@@ -274,18 +249,19 @@ export default {
             this.$refs.modal.hide();
         }
     },
-}
+};
 </script>
 <style scoped>
-    .side {
-        height: 60vh;
-        overflow-y: scroll;
-        padding-bottom: 30px;
-        border-bottom: 1px solid #aaa;
-    }
+.side {
+    height: 60vh;
+    overflow-y: scroll;
+    padding-bottom: 30px;
+    /*border-bottom: 1px solid #aaa;*/
+    border-right: 1px solid #aaa;
+}
 
-    .zoom80 {
-        zoom: .9;
-        font-size: .9em;
-    }
+.zoom80 {
+    zoom: .9;
+    font-size: .9em;
+}
 </style>

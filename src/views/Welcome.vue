@@ -6,10 +6,10 @@
                 <div class="card fat">
                     <div class="card-body">
                         <div class="border-bottom clearfix mb-3 pb-3">
-                            <h4 class="card-title float-left">
+                            <h4 class="card-title float-start">
                                 {{$t('titles.welcome')}}
                             </h4>
-                            <div class="float-right navbar-brand logo" />
+                            <div class="float-end navbar-brand logo" />
                         </div>
                         <div>
                             <i18n path="messages.welcome" tag="span">
@@ -32,4 +32,5 @@
 <script>
 export default {
     name: 'WelcomeComponent'
-}
+};
+</script>

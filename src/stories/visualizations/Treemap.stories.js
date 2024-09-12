@@ -1,5 +1,5 @@
 
-import Treemap from '../../components/visualization/Treemap.vue';
+import Treemap from '@/components/visualization/Treemap.vue';
 
 const chart1 = {
     "data": {
@@ -11,7 +11,7 @@ const chart1 = {
         "colors": ["#506FBB", "#3054AD", "#113A9F", "#0C2D7F", "#072163", "#3FA8AD", "#1E969C", "#01898F", "#016D72", "#005559", "#71AD3F", "#579C1E", "#428F01", "#347201", "#285900", "#FFCA5C", "#FFBB30", "#ED9F00", "#BD7F00", "#936300", "#FFA75C", "#FF9030", "#ED6E00", "#BD5700", "#934400", "#AD443F", "#9C241E", "#8F0701", "#720601", "#590400"],
         "textinfo": "label+value"
     }
-}
+};
 
 export default {
     title: 'Visualization/Treemap',

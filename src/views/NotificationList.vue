@@ -4,7 +4,7 @@
             <div class="col">
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1>{{ $tc('titles.notification', 2) }}</h1>
+                        <h1>{{$t('titles.notification', 2)}}</h1>
                     </div>
                     <hr>
                     <div class="row">
@@ -12,19 +12,21 @@
                             <div class="card">
                                 <div class="card-body">
                                     <v-server-table ref="listTable" :columns="columns" :options="options"
-                                        name="notificationList">
+                                                    name="notificationList">
                                         <template #type="props">
                                             <span class="badge"
-                                                :class="{ 'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'badge-danger': props.row.type === 'ERROR' }">
-                                                &nbsp;{{ $t('titles.' + props.row.type.toLowerCase()).toUpperCase() }}
+                                                  :class="{ 'badge-success': props.row.type === 'INFO', 'badge-warning': props.row.type === 'WARNING', 'bg-danger': props.row.type === 'ERROR' }">
+                                                &nbsp;{{$t('titles.' + props.row.type.toLowerCase()).toUpperCase()}}
                                             </span>
                                         </template>
                                         <template #text="props">
                                             <span :class="{ 'font-weight-bold': props.row.status === 'UNREAD' }"
-                                                v-html="props.row.text" />
+                                                  v-html="props.row.text" />
                                         </template>
                                         <template #created="props">
-                                            <div style="width:100px">{{ props.row.created | timeFromNow(user.locale) }}</div>
+                                            <div style="width:100px">
+                                                {{$filters.timeFromNow(user.locale, props.row.created)}}
+                                            </div>
                                         </template>
                                         <template #actions="props">
                                             <div class="btn-group" role="group">
@@ -32,12 +34,12 @@
                                                     <font-awesome-icon icon="trash" />
                                                 </button>
                                                 <button v-if="props.row.status === 'UNREAD'"
-                                                    class="btn btn-secondary btn-sm btn-success "
-                                                    @click="markAsRead(props.row.id)">
+                                                        class="btn btn-secondary btn-sm btn-success "
+                                                        @click="markAsRead(props.row.id)">
                                                     <font-awesome-icon icon="check" />
                                                 </button>
                                                 <a v-if="props.row.link" :href="props.row.link"
-                                                    class="btn btn-sm btn-light btn-outline-secondary ">
+                                                   class="btn btn-sm btn-light btn-outline-secondary ">
                                                     <font-awesome-icon icon="fa fa-external-link-alt" />
                                                 </a>
                                             </div>
@@ -68,20 +70,20 @@ export default {
             showSideBar: false,
             options: {
                 debounce: 800,
-                skin: 'table-sm table table-hover',
+                skin: 'table table-hover',
                 dateColumns: ['created'],
                 headings: {
-                    text: this.$tc('common.text'),
-                    type: this.$tc('common.type'),
-                    created: this.$tc('common.created'),
-                    status: this.$tc('common.status'),
-                    actions: this.$tc('common.action', 2)
+                    text: this.$t('common.text'),
+                    type: this.$t('common.type'),
+                    created: this.$t('common.created'),
+                    status: this.$t('common.status'),
+                    actions: this.$t('common.action', 2)
                 },
                 sortable: ['created'],
                 filterable: ['text', 'type', 'status'],
                 sortIcon: {
                     base: 'sort-base',
-                    is: 'sort-is ml-10',
+                    is: 'sort-is ms-10',
                     up: 'sort-up',
                     down: 'sort-down'
                 },
@@ -97,14 +99,11 @@ export default {
 
                     data.fields = 'id,text,status,created,type,link';
 
-                    this.$Progress.start();
                     return axios
                         .get(`${thornUrl}/notifications`, {
                             params: data
                         })
                         .then(resp => {
-                            self.$Progress.finish();
-
                             return {
                                 data: resp.data.data,
                                 count: resp.data.pagination.total
@@ -112,13 +111,12 @@ export default {
                         })
                         .catch(
                             function (e) {
-                                self.$Progress.finish();
                                 self.$parent.error(e);
                             }.bind(this)
                         );
                 },
                 texts: {
-                    filter: this.$tc('common.filter'),
+                    filter: this.$t('common.filter'),
                     count: this.$t('common.pagerShowing'),
                     limit: this.$t('common.limit'),
                     noResults: this.$t('common.noData'),
@@ -155,7 +153,7 @@ export default {
                         .delete(url, {})
                         .then(() => {
                             self.success(self.$t('messages.successDeletion',
-                                { what: this.$tc('titles.notification', 1) }));
+                                { what: this.$t('titles.notification', 1) }));
                             self.$refs.listTable.refresh();
                         })
                         .catch(e => self.error(e));

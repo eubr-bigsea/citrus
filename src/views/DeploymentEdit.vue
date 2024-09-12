@@ -5,8 +5,8 @@
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>
-                            {{add ? $t('actions.add', {type: $tc('titles.deployment', 1).toLowerCase()}) :
-                                $t('actions.edit') + ' ' + $tc('titles.deployment', 1).toLowerCase()}}
+                            {{add ? $t('actions.add', {type: $t('titles.deployment', 1).toLowerCase()}) :
+                                $t('actions.edit') + ' ' + $t('titles.deployment', 1).toLowerCase()}}
                         </h1>
                     </div>
                     <hr>
@@ -17,17 +17,17 @@
                                     <form>
                                         <div class="row">
                                             <div class="col-4">
-                                                <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                 <input v-model="deployment.name" v-focus type="text"
                                                        class="form-control" maxlength="100" required>
                                             </div>
                                             <div class="col-1">
-                                                <label class="font-weight-bold">{{$tc('deployment.replica',2)}}:</label>
+                                                <label class="font-weight-bold">{{$t('deployment.replica',2)}}:</label>
                                                 <input v-model="deployment.replicas" type="number" class="form-control"
                                                        max="4" min="1" step="1">
                                             </div>
                                             <div class="col-3">
-                                                <label class="font-weight-bold">{{$tc('deployment.model')}}:</label>
+                                                <label class="font-weight-bold">{{$t('deployment.model')}}:</label>
                                                 <v-select v-model="deployment.model_id" :options="models"
                                                           :taggable="false" label="name" :reduce="(opt) => opt.id"
                                                           :close-on-select="true" :filterable="false" @search="fetchModels">
@@ -37,7 +37,7 @@
                                                 </v-select>
                                             </div>
                                             <div class="col-4">
-                                                <label class="font-weight-bold">{{$tc('deployment.target')}}:</label>
+                                                <label class="font-weight-bold">{{$t('deployment.target')}}:</label>
                                                 <v-select v-model="deployment.target" :options="targets" label="name">
                                                     <template #option="{ description, name, target_type }">
                                                         {{name}}<br>
@@ -48,7 +48,7 @@
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-4">
-                                                <label class="font-weight-bold">{{$tc('deployment.image')}}:</label>
+                                                <label class="font-weight-bold">{{$t('deployment.image')}}:</label>
                                                 <v-select v-model="deployment.image" :options="images"
                                                           label="description">
                                                     <template #option="{ description, name, tag }">
@@ -58,12 +58,12 @@
                                                 </v-select>
                                             </div>
                                             <div class="col-1">
-                                                <label>{{$tc('deployment.port',1)}}:</label>
+                                                <label>{{$t('deployment.port',1)}}:</label>
                                                 <input v-model="deployment.port" type="number" class="form-control"
                                                        max="99999" min="1025">
                                             </div>
                                             <div class="col-7">
-                                                <label>{{$tc('common.description')}}:</label>
+                                                <label>{{$t('common.description')}}:</label>
                                                 <input v-model="deployment.description" type="text" class="form-control"
                                                        maxlength="100">
                                             </div>
@@ -101,21 +101,21 @@
                                     </form>
                                     <div class="row">
                                         <div class="col-12 mt-4 border-top pt-2">
-                                            <button class="btn btn-primary mr-1 btn-spinner"
+                                            <button class="btn btn-primary me-1 btn-spinner"
                                                     @click.stop="save($event, false)">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-save" />
-                                                {{$tc('actions.save')}}
+                                                {{$t('actions.save')}}
                                             </button>
-                                            <button class="btn btn-outline-primary mr-1 btn-spinner"
+                                            <button class="btn btn-outline-primary me-1 btn-spinner"
                                                     @click.stop="save($event, true)">
                                                 <font-awesome-icon icon="spinner" pulse class="icon" />
                                                 <font-awesome-icon icon="fa fa-server" />
-                                                {{$tc('deployment.saveAndRedeploy')}}
+                                                {{$t('deployment.saveAndRedeploy')}}
                                             </button>
                                             <router-link :to="{name: 'deployments'}"
-                                                         class="btn btn-outline-secondary mr-1">
-                                                {{$tc('actions.cancel')}}
+                                                         class="btn btn-outline-secondary me-1">
+                                                {{$t('actions.cancel')}}
                                             </router-link>
                                         </div>
                                     </div>
@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import VueSelect from 'vue-select';
 import Notifier from '../mixins/Notifier.js';
@@ -172,7 +172,7 @@ export default {
     watch: {
         '$route.params.id': function () {
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -260,7 +260,7 @@ export default {
 
                 if (!this.deployment.id) {
                     url = `${seedUrl}/deployments`;
-                    axiosCall = axios.post
+                    axiosCall = axios.post;
                 }
                 event.target.setAttribute('disabled', 'disabled');
                 event.target.classList.remove('btn-spinner');
@@ -268,12 +268,12 @@ export default {
                 const resp = await axiosCall(url, data);
 
                 self.deployment = resp.data;
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     self.isDirty = false;
                 });
                 self.success(
                     this.$t('messages.savedWithSuccess', {
-                        what: this.$tc('titles.deployment', 1)
+                        what: this.$t('titles.deployment', 1)
                     })
                 );
                 this.$router.push({ name: 'deployments' });

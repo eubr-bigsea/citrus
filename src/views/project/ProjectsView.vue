@@ -36,9 +36,9 @@
     </main>
 </template>
 <script>
-import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 
-import Vue from 'vue';
+;
 import axios from 'axios';
 import DataTableBuilder from '../../data-table-builder.js';
 
@@ -65,7 +65,7 @@ export default {
             } catch (e) {
                 Vue.prototype.$snotify.error(e);
             }
-        }
+        };
         const dtBuilder = new DataTableBuilder(t)
             .headings({
                 id: 'ID',
@@ -81,7 +81,7 @@ export default {
         return {
             ...dtBuilder.build(),
             t
-        }
+        };
     }
 };
 </script>

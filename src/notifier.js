@@ -1,3 +1,25 @@
+import { useToast, POSITION } from 'vue-toastification';
+import { useModalController } from 'bootstrap-vue-next';
+
+const toastOptions = {
+    transition: "Vue-Toastification__bounce",
+    maxToasts: 7,
+    newestOnTop: true,
+    position: POSITION.BOTTOM_RIGHT,
+    filterToasts: toasts => {
+        // Keep track of existing types
+        const types = {};
+        return toasts.reduce((aggToasts, toast) => {
+            // Check if type was not seen before
+            if (!types[toast.type]) {
+                aggToasts.push(toast);
+                types[toast.type] = true;
+            }
+            return aggToasts;
+        }, []);
+    }
+};
+const toast = useToast();
 export default class {
 
     constructor($snotify, $t, $router) {
@@ -5,21 +27,23 @@ export default class {
         this.$t = $t;
         this.$router = $router;
     }
+
+    success2(msg, timeout) {
+        toast.success(msg, { ...toastOptions, timeout });
+    }
     confirm(title, question, callback) {
         this.$snotify.confirm(
             question, title,
             {
+                callback,
                 position: 'centerTop',
-                xbuttons: {
-                    text: 'Yes', action: () => callback()
-                },
                 buttons: [
-                    { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id) }, },
+                    { text: this.$t('common.yes'), action: (toast) => { callback(); this.$snotify.remove(toast.id); }, },
                     { text: this.$t('common.no'), action: (toast) => { console.log('Clicked: No'); this.$snotify.remove(toast.id); }, bold: true },
                 ],
                 closeOnClick: true
             }
-        )
+        );
     }
     success(msg, timeout, bodyMaxLength) {
         this.$snotify.success(
@@ -31,7 +55,7 @@ export default class {
     info(msg, timeout, bodyMaxLength) {
         this.$snotify.info(
             msg,
-            this.$tc('titles.info', 2),
+            this.$t('titles.info', 2),
             { timeout: timeout || 2000, bodyMaxLength: bodyMaxLength || 150 }
         );
     }

@@ -1,4 +1,4 @@
-import AttributeSelectorComponent from '../components/widgets/AttributeSelector2.vue';
+import AttributeSelectorComponent from '@/components/widgets/AttributeSelector2.vue';
 import { action } from '@storybook/addon-actions';
 import "vue-select/dist/vue-select.css";
 

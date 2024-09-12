@@ -5,8 +5,8 @@
                 <div>
                     <div class="d-flex justify-content-between align-items-center">
                         <h1>
-                            {{add ? $t('actions.add', {type: $tc('titles.role', 1).toLowerCase()}) : $t('actions.edit')
-                                + ' ' + $tc('titles.role', 1).toLowerCase()}}
+                            {{add ? $t('actions.add', {type: $t('titles.role', 1).toLowerCase()}) : $t('actions.edit')
+                                + ' ' + $t('titles.role', 1).toLowerCase()}}
                         </h1>
                     </div>
                     <hr>
@@ -18,17 +18,17 @@
                                         <fieldset>
                                             <div class="row">
                                                 <div class="col-md-2">
-                                                    <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                                    <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                     <input v-model="role.name" type="text" maxlength="50" required
                                                            class="form-control">
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <label class="font-weight-bold">{{$tc('common.title')}}:</label>
+                                                    <label class="font-weight-bold">{{$t('common.title')}}:</label>
                                                     <input v-model="role.label" type="text" maxlength="50" required
                                                            class="form-control">
                                                 </div>
                                                 <div class="col-md-5">
-                                                    <label class="font-weight-bold">{{$tc('common.description')}}:</label>
+                                                    <label class="font-weight-bold">{{$t('common.description')}}:</label>
                                                     <input v-model="role.description" type="text" maxlength="100"
                                                            class="form-control" required>
                                                 </div>
@@ -43,13 +43,13 @@
                                             <div class="col-md-6 pb-3 pt-4">
                                                 <fieldset>
                                                     <h6>
-                                                        {{$tc('common.permission', 2)}}:
+                                                        {{$t('common.permission', 2)}}:
                                                     </h6>
                                                     <div>
-                                                        <b-card no-body>
-                                                            <b-tabs pills card vertical>
+                                                        <b-card>
+                                                            <b-tabs pills vertical>
                                                                 <b-tab v-for="gp in groupedPermissions" :key="gp[0]"
-                                                                       :title="$tc('assets.' + gp[0], 2)">
+                                                                       :title="$t('assets.' + gp[0], 2)">
                                                                     <b-card-text>
                                                                         <div v-for="p in gp[1]" :key="p.id"
                                                                              class="col-md-12" :title="p.name">
@@ -67,7 +67,7 @@
                                             </div>
                                             <div v-if="!role.all_user" class="col-md-6 pb-3 pt-4">
                                                 <h6>
-                                                    {{$tc('titles.user', 2)}}:
+                                                    {{$t('titles.user', 2)}}:
                                                 </h6>
                                                 <v-select v-model="role.users" style="font-size: .9em" :multiple="true"
                                                           :options="users" :taggable="false" :get-option-label="getUserLabel"
@@ -89,14 +89,14 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12 mt-4 border-top pt-2">
-                                                <button class="btn btn-primary mr-1 btn-spinner" type="submit">
+                                                <button class="btn btn-primary me-1 btn-spinner" type="submit">
                                                     <font-awesome-icon icon="spinner" pulse class="icon" />
                                                     <font-awesome-icon icon="fa fa-save" />
-                                                    {{$tc('actions.save')}}
+                                                    {{$t('actions.save')}}
                                                 </button>
                                                 <router-link :to="{name: 'AdministrationRoleList'}"
-                                                             class="btn btn-secondary mr-1">
-                                                    {{$tc('actions.cancel')}}
+                                                             class="btn btn-secondary me-1">
+                                                    {{$t('actions.cancel')}}
                                                 </router-link>
                                             </div>
                                         </div>
@@ -111,7 +111,7 @@
     </main>
 </template>
 <script>
-import Vue from 'vue';
+;
 import axios from 'axios';
 import VueSelect from 'vue-select';
 import { debounce } from '../../util.js';
@@ -144,7 +144,7 @@ export default {
     watch: {
         '$route.params.id': function () {
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -161,7 +161,7 @@ export default {
     mounted() {
         let self = this;
         this.load().then(() => {
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 self.isDirty = false;
             });
             self.selectedPermissions = self.role.permissions.map(p => p.id);
@@ -247,15 +247,15 @@ export default {
                 })
                 .catch(() => {
                     vm.error(vm.data);
-                })
+                });
         }, 350),
         save(event) {
             let self = this;
             let url = `${thornUrl}/roles/${this.role.id}`;
-            let axiosCall = axios.patch
+            let axiosCall = axios.patch;
             if (self.add) {
                 url = `${thornUrl}/roles`;
-                axiosCall = axios.post
+                axiosCall = axios.post;
             }
 
             event.target.setAttribute('disabled', 'disabled');
@@ -264,12 +264,12 @@ export default {
             return axiosCall(url, this.role)
                 .then(resp => {
                     self.role = resp.data;
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.role', 1)
+                            what: this.$t('titles.role', 1)
                         })
                     );
                     this.$router.push({ name: 'AdministrationRoleList' });

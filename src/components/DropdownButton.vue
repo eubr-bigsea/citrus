@@ -1,0 +1,70 @@
+<template>
+    <button ref="button" class="btn dropdown-toggle" :class="buttonClass"
+            :aria-expanded="isDropdownOpen.toString()" v-bind="$attrs" @click="toggleDropdown($event)">
+        <slot name="button-content">
+            {{text}}
+        </slot>
+    </button>
+    <ul ref="content" class="dropdown-menu" role="menu" :class="{ show: isDropdownOpen }">
+        <slot name="content" />
+    </ul>
+</template>  
+<script setup>
+import { ref, computed, onBeforeUnmount, nextTick } from 'vue';
+import { createPopper } from '@popperjs/core';
+
+let popperInstance = null;
+let buttonInstance = null;
+
+const button = ref();
+const props = defineProps({
+    variant: { type: String, required: false, default: 'secondary' },
+    text: { type: String, required: false, default: 'Dropdown' },
+    size: { type: String, required: true, default: '' },
+    noCaret: { type: Boolean, required: false, default: false },
+    keepOpen: { type: Boolean, required: false, default: false }
+});
+const isDropdownOpen = ref(false);
+
+const buttonClass = computed(() => {
+    let result = (props.variant) ? `btn-${props.variant}` : '';
+    result += (props.size) ? ` btn-${props.size}` : '';
+    result += (props.noCaret) ? ' dropdown-toggle-no-caret' : '';
+    return result;
+});
+
+const content = ref();
+const toggleDropdown = (evt) => {
+    isDropdownOpen.value = !isDropdownOpen.value;
+    buttonInstance = evt.target;
+    if (isDropdownOpen.value) {
+        nextTick(()=> window.addEventListener('click', closeDropdown));
+        content.value.classList.add('show');
+        popperInstance = createPopper(button.value, content.value, {
+            placement: 'bottom-start',
+        });
+    } else {
+        window.removeEventListener('click', closeDropdown);
+    }
+    //evt.stopPropagation();
+};
+const closeDropdown = (evt) => {
+    
+    const toClose = !props.keepOpen || content.value !== evt.target.closest('.dropdown-menu');
+    if (toClose && evt.target !== buttonInstance) {
+        isDropdownOpen.value = false;
+        window.removeEventListener('click', closeDropdown);
+        if (popperInstance) {
+            popperInstance.destroy();
+            popperInstance = null;
+        }
+    }
+};
+
+onBeforeUnmount(() => {
+    window.removeEventListener('click', closeDropdown);
+});
+</script>
+  
+<style scoped></style>
+  

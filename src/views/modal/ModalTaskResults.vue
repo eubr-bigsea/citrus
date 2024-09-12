@@ -6,7 +6,7 @@
         <div>
             <div v-for="log in task.step.logs" :key="log.id" class="step-log">
                 <div class="step-date">
-                    {{log.date | formatJsonDate}}
+                    {{$filters.formatJsonDate(log.date)}}
                 </div>
                 <div v-if="log.type==='TEXT'">
                     <small>{{log.message}}</small>
@@ -32,5 +32,5 @@ export default {
             this.$refs.modal.show();
         }
     }
-}
+};
 </script>

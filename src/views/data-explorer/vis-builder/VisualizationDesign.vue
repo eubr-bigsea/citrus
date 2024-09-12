@@ -1,13 +1,13 @@
 <template>
-    <div class="options-container  source-code-pro-font" ref="visualizationDesigner">
+    <div ref="visualizationDesigner" class="options-container  source-code-pro-font">
         <div class="options-visualization mt-1">
             <div>
                 <h6>Construtor de visualizações</h6>
                 <form class="clearfix visualization-form">
                     <div data-test="basic-options-section">
-                        <label>{{ $tc('common.name') }}:</label>
+                        <label>{{$t('common.name')}}:</label>
                         <input v-model="workflowObj.name" type="text" class="form-control form-control-sm"
-                            :placeholder="$tc('common.name')" maxlength="100">
+                               :placeholder="$t('common.name')" maxlength="100">
 
                         <label for="">Fonte de dados:</label> &nbsp;
                         <vue-select v-if="workflowObj && workflowObj.readData"
@@ -19,67 +19,106 @@
                             </template>
                             <template #option="option">
                                 <div class="d-center">
-                                    <span class="span-id">{{ option.id }}</span> - {{ option.name }}
+                                    <span class="span-id">{{option.id}}</span> - {{option.name}}
                                 </div>
                             </template>
                             <template #selected-option="option">
                                 <div class="selected d-center">
-                                    {{ option.id }} - {{ option.name }}
+                                    {{option.id}} - {{option.name}}
                                 </div>
                             </template>
                         </vue-select>
 
-                        <label>{{ $tc('titles.cluster') }}: </label>
+                        <label>{{$t('titles.cluster')}}: </label>
                         <v-select v-model="workflowObj.preferred_cluster_id" :options="clusters" label="name"
-                            :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
+                                  :reduce="(opt) => opt.id" :taggable="false" :close-on-select="true" :filterable="false">
                             <template #option="{ description, name }">
-                                {{ name }}<br>
-                                <small><em>{{ description }}</em></small>
+                                {{name}}<br>
+                                <small><em>{{description}}</em></small>
                             </template>
                         </v-select>
                         <div class="mt-2 ">
-                            <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-right"
-                                size="sm" no-caret>
+                            <b-dropdown id="dropdown-left" text="Left align" variant="secondary" class="m-2 float-end"
+                                        size="sm" no-caret>
                                 <template #button-content>
-                                    <font-awesome-icon icon="ellipsis-h"></font-awesome-icon>
+                                    <font-awesome-icon icon="ellipsis-h" />
                                 </template>
-                                <b-dropdown-item href="#"><font-awesome-icon icon="chart-line" /> Adicionar ao
-                                    dashboard...</b-dropdown-item>
-                                <b-dropdown-item href="#"><font-awesome-icon icon="file-export" /> Exportar
-                                    ...</b-dropdown-item>
+                                <b-dropdown-item href="#">
+                                    <font-awesome-icon icon="chart-line" /> Adicionar ao
+                                    dashboard...
+                                </b-dropdown-item>
+                                <b-dropdown-item href="#">
+                                    <font-awesome-icon icon="file-export" /> Exportar
+                                    ...
+                                </b-dropdown-item>
                             </b-dropdown>
-                            <b-button variant="primary" size="sm" class="float-right mt-2" @click="saveWorkflow"
-                                data-test="save">
-                                <font-awesome-icon icon="fa fa-save" /> {{ $t('actions.save') }}
+                            <b-button variant="primary" size="sm" class="float-end mt-2" data-test="save"
+                                      @click="saveWorkflow">
+                                <font-awesome-icon icon="fa fa-save" /> {{$t('actions.save')}}
                             </b-button>
-                            <b-button size="sm" variant="outline-secondary" class="float-right mt-2 mr-1"
-                                @click.prevent="loadData" data-test="refresh">
-                                <font-awesome-icon icon="fa fa-redo" /> {{ $t('actions.refresh') }}
+                            <b-button size="sm" variant="outline-secondary" class="float-end mt-2 me-1" data-test="refresh"
+                                      @click.prevent="loadData">
+                                <font-awesome-icon icon="fa fa-redo" /> {{$t('actions.refresh')}}
                             </b-button>
                             <!--
-                        <router-link class="btn btn-sm btn-outline-secondary ml-1" :to="{ name: 'index-explorer' }"
-                            :title="i18n.$t('actions.back')">
-                            {{ i18n.$t('actions.back') }}
+                        <router-link class="btn btn-sm btn-outline-secondary ms-1" :to="{ name: 'index-explorer' }"
+                            :title="t('actions.back')">
+                            {{ t('actions.back') }}
                         </router-link>
                         -->
                         </div>
                     </div>
                     <div v-if="visualizationObj" class="pt-2 border-top scroll-area">
-                        <chart-builder-options v-model="options" :attributes="attributes" @update-chart="updateChart"
-                            :chartType="visualizationObj.type.value" data-test="options-section" />
+                        <chart-builder-options v-model="options" v-model:title="options.title.value"
+                                               v-model:type="options.type.value" v-model:displayLegend="options.display_legend.value"
+                                               v-model:template="options.template.value" v-model:palette="options.palette.value"
+                                               v-model:colorAttribute="options.color_attribute.value" v-model:sizeAttribute="options.size_attribute.value"
+                                               v-model:colorScale="options.color_scale.value" v-model:numberFormat="options.number_format.value"
+                                               v-model:opacity="options.opacity.value"
+                                               v-model:fillOpacity="options.fill_opacity.value"
+                                               v-model:hole="options.hole.value"
+                                               v-model:smoothing="options.smoothing.value" v-model:scatterColor="options.scatter_color.value"
+                                               v-model:scatterSize="options.scatter_size.value" v-model:width="options.width.value"
+                                               v-model:height="options.height.value" v-model:autoMargin="options.auto_margin.value"
+                                               v-model:topMargin="options.top_margin.value" v-model:leftMargin="options.left_margin.value"
+                                               v-model:bottomMargin="options.bottom_margin.value" v-model:limit="options.limit.value"
+                                               v-model:filter="options.filter.value" v-model:subgraph="options.subgraph.value"
+                                               v-model:subgraphOrientation="options.subgraph_orientation.value" v-model:animation="options.animation.value"
+                                               v-model:rightMargin="options.right_margin.value" v-model:textInfo="options.text_info.value"
+                                               v-model:textPosition="options.text_position.value"
+                                               :attributes="attributes" :chart-type="visualizationObj.type.value"
+                                               data-test="options-section" @update-chart="updateChart" />
                     </div>
                 </form>
             </div>
         </div>
         <div v-if="visualizationObj" class="options-main">
-            <chart-builder-axis v-model="axis" :attributes="attributes" :workflow="workflowObj"
-                :chartType="visualizationObj.type.value" />
+            <chart-builder-axis v-model="axis" v-model:xLabel="visualizationObj.x_axis.value.label" v-model:x="visualizationObj.x.value"
+                                v-model:y="visualizationObj.y.value" v-model:xLowerBound="visualizationObj.x_axis.value.lowerBound" v-model:xUpperBound="visualizationObj.x_axis.value.upperBound"
+                                v-model:xLogScale="visualizationObj.x_axis.value.logScale" v-model:xDisplay="visualizationObj.x_axis.value.display"
+                                v-model:xDisplayLabel="visualizationObj.x_axis.value.displayLabel"
+                                v-model:xPrefix="visualizationObj.x_axis.value.prefix"
+                                v-model:xSuffix="visualizationObj.x_axis.value.suffix"
+                                v-model:yLabel="visualizationObj.y_axis.value.label"
+                                v-model:yLowerBound="visualizationObj.y_axis.value.lowerBound"
+                                v-model:yUpperBound="visualizationObj.y_axis.value.upperBound"
+                                v-model:yLogScale="visualizationObj.y_axis.value.logScale" v-model:yDisplay="visualizationObj.y_axis.value.display"
+                                v-model:yDisplayLabel="visualizationObj.y_axis.value.displayLabel"
+                                v-model:yPrefix="visualizationObj.y_axis.value.prefix"
+                                v-model:ySuffix="visualizationObj.y_axis.value.suffix"
+                                v-model:latitude="visualizationObj.latitude"
+                                v-model:longitude="visualizationObj.longitude"
+                                v-model:colorAttribute="visualizationObj.color_attribute"
+                                v-model:sizeAttribute="visualizationObj.size_attribute" v-model:textAttribute="visualizationObj.text_attribute"
+                                :attributes="attributes" :workflow="workflowObj"
+                                :type="visualizationObj.type.value"
+                                :value="axis" />
             <div class="chart">
                 <div class="chart-builder-visualization" ref="chartArea">
                     <div v-if="display && plotlyData" ref="chart">
-                        <plotly :options="chartOptions" :data="plotlyData.data" :layout="plotlyData.layout"
-                            :frames="plotlyData.frames" :key="plotVersion" ref="plotly" :watchShallow="true"
-                            data-test="visualization" />
+                        <plotly :key="plotVersion" ref="plotly" :options="chartOptions" :data="plotlyData.data"
+                                :layout="plotlyData.layout" :frames="plotlyData.frames" :watch-shallow="true"
+                                data-test="visualization" />
                         <!--
                         <small v-if="!['xscattermapbox'].includes(visualizationObj.type.value)">{{ plotlyData.layout }}</small>
                             -->
@@ -111,44 +150,39 @@
                     -->
             <div v-show="loadingData" class="preview-loading">
                 <font-awesome-icon icon="lemon" spin class="text-success" />
-                {{ i18n.$t('common.wait') }}
+                {{$t('common.wait')}}
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, shallowRef, computed, onBeforeMount, onMounted, onUnmounted } from "vue";
-import { getCurrentInstance } from 'vue';
-import ChartBuilderOptions from '../../../components/chart-builder/ChartBuilderOptions.vue';
-import ChartBuilderAxis from '../../../components/chart-builder/ChartBuilderAxis.vue';
+import ChartBuilderAxis from '@/components/chart-builder/ChartBuilderAxis.vue';
+import ChartBuilderOptions from '@/components/chart-builder/ChartBuilderOptions.vue';
+import { computed, getCurrentInstance, inject, nextTick, onBeforeMount, ref, shallowRef, toRaw } from "vue";
+import { useI18n } from 'vue-i18n';
 
-import { debounce } from "../../../util.js";
-import Vue from 'vue';
-import ExpressionEditor from '../../../components/widgets/ExpressionEditor.vue';
+import Plotly from '@/components/visualization/Plotly.vue';
+import useDataSource from '@/composables/useDataSource.js';
+import Notifier from '@/notifier.js';
+import { debounce, deepToRaw } from "@/util.js";
 
-import Plotly from '../../../components/visualization/Plotly.vue';
-import useNotifier from '../../../composables/useNotifier.js';
-import useDataSource from '../../../composables/useDataSource.js';
 
-import { Operation, VisualizationBuilderWorkflow, Visualization } from '../entities.js';
 import axios from 'axios';
 import VueSelect from 'vue-select';
+import { Operation, Visualization, VisualizationBuilderWorkflow } from '../entities.js';
 
-import io from 'socket.io-client';
 import { toPng } from 'html-to-image';
 import AttributeSelector from "@/components/widgets/AttributeSelector.vue";
 
 const vm = getCurrentInstance();
 const router = vm.proxy.$router;
 const route = vm.proxy.$route;
-const progress = vm.proxy.$Progress;
+const progress = { start: () => { }, finish: () => { } }; //vm.proxy.$Progress;
 const store = vm.proxy.$store;
-const i18n = vm.proxy.$i18n.vm;
-const { success, error } = useNotifier(vm.proxy);
 
 const plotVersion = ref(0);
-const display = ref(true)
+const display = ref(true);
 
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
 const tahitiUrl = import.meta.env.VITE_TAHITI_URL;
@@ -205,11 +239,11 @@ const axis = computed({
     }
 });
 
-const plotly = ref()
+const plotly = ref();
 let changeCause = '';
 const options = computed({
     get() {
-        const { display_legend, smoothing, palette, color_scale, label, type, title, hole,
+        let { display_legend, smoothing, palette, color_scale, label, type, title, hole,
             text_position, text_info,
             top_margin, bottom_margin, left_margin, right_margin, auto_margin,
             template, blackWhite, subgraph, subgraph_orientation,
@@ -237,14 +271,14 @@ const options = computed({
     }
 });
 const handleChangeLayout = (changeCause, value) => {
-    console.debug('ok')
+    console.debug('ok');
     if (changeCause === 'title' && plotlyData.value?.layout?.title) {
         plotlyData.value.layout.title.text = value[changeCause].value;
         //plotly.value.react();
     }
 };
 const updateChart = debounce((value, propertyPath) => {
-    if (!plotlyData || !plotlyData?.value?.layout) {
+    if (!plotlyData.value || !plotlyData?.value?.layout) {
         return;
     }
     /*
@@ -257,7 +291,7 @@ const updateChart = debounce((value, propertyPath) => {
     propertyPath.slice(0, -1).forEach(p => current = current[p]);
     current[propertyPath.slice(-1)] = value;
     plotly.value.layout = plotlyData.value.layout;
-    plotly.value.react()
+    plotly.value.react();
 }, 800);
 
 const { getAttributeList, asyncLoadDataSourceList } = useDataSource();
@@ -295,13 +329,13 @@ const updateThumb = () => {
 };
 const getIcon = (attr) => {
     switch (attr.type) {
-        case 'DECIMAL':
-        case 'INTEGER':
-            return 'hashtag';
-        case 'CHARACTER':
-            return 'font';
-        case 'DATE':
-            return 'calendar';
+    case 'DECIMAL':
+    case 'INTEGER':
+        return 'hashtag';
+    case 'CHARACTER':
+        return 'font';
+    case 'DATE':
+        return 'calendar';
 
     }
 };
@@ -317,7 +351,7 @@ const load = async () => {
             plotlyData.value = resp.data.forms.$meta.plot;
         }
         if (workflowObj.value.type !== 'VIS_BUILDER') {
-            error(null, i18n.$t('modelBuilder.invalidType'));
+            notifier.error(null, t('modelBuilder.invalidType'));
             router.push({ name: 'index-explorer' });
             return;
         }
@@ -338,10 +372,10 @@ const load = async () => {
         loaded.value = true;
 
     } catch (e) {
-        error(e);
+        notifier.error(e);
         router.push({ name: 'index-explorer' });
     } finally {
-        Vue.nextTick(() => {
+        nextTick(() => {
             progress.finish();
             loadingData.value = false;
             isDirty.value = false;
@@ -376,19 +410,19 @@ const loadClusters = async () => {
         const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${targetPlatform.value}`);
         clusters.value = resp.data.data;
     } catch (ex) {
-        error(ex);
+        notifier.error(ex);
     }
 };
 const saveWorkflow = async () => {
     workflowObj.value.visualization.forms = visualizationObj.value;
-    let cloned = structuredClone(workflowObj.value);
+    let cloned = structuredClone(deepToRaw(workflowObj.value));
 
     if (!cloned.visualization.forms.filter || cloned.visualization.forms.filter.value === null
         || cloned.visualization.forms.filter.value.length === 0) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
     } else {
         // Copy filter from visualization to correct operation
-        cloned.filter.forms.formula = structuredClone(cloned.visualization.forms.filter);
+        cloned.filter.forms.formula = structuredClone(toRaw(cloned.visualization.forms.filter));
     }
     if (!cloned.sort.forms.order_by || !Array.isArray(cloned.sort.forms.order_by.value)) {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.sort);
@@ -413,9 +447,9 @@ const saveWorkflow = async () => {
     try {
         await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
         isDirty.value = false;
-        success(i18n.$t('messages.savedWithSuccess', { what: i18n.$t('titles.workflow') }));
+        notifier.success(t('messages.savedWithSuccess', { what: t('titles.workflow') }));
     } catch (e) {
-        error(e);
+        notifier.error(e);
     }
 };
 const handleUpdateFilter = (field, value) => {
@@ -423,7 +457,7 @@ const handleUpdateFilter = (field, value) => {
 };
 const loadData = async () => {
     if (!workflowObj.value.preferred_cluster_id) {
-        error(`${i18n.$t('errors.missingRequiredValue')}: ${i18n.$t('workflow.preferredCluster')}`);
+        notifier.error(`${t('errors.missingRequiredValue')}: ${t('workflow.preferredCluster')}`);
         return;
     }
     loadingData.value = true;
@@ -446,7 +480,7 @@ const loadData = async () => {
         cloned.tasks = cloned.tasks.filter(t => t !== cloned.filter);
     } else {
         // Copy filter from visualization to correct operation
-        filterTask.forms.formula = structuredClone(visualizationTask.forms.filter);
+        filterTask.forms.formula = structuredClone(toRaw(visualizationTask.forms.filter));
     }
 
     cloned.tasks.forEach((task) => {
@@ -470,16 +504,16 @@ const loadData = async () => {
 
     try {
         const response = await axios.post(`${standUrl}/jobs`, body,
-            { headers: { 'Locale': i18n.locale, } });
+            { headers: { 'Locale': locale.value, } });
         job.value = response.data.data;
         connectWebSocket();
     } catch (ex) {
         if (ex.data) {
-            error(ex.data.message);
+            notifier.error(ex.data.message);
         } else if (ex.status === 0) {
             this.$root.$refs.toastr.e(`Error connecting to the backend (connection refused).`);
         } else {
-            error(`Unhandled error: ${ex}`);
+            notifier.error(`Unhandled error: ${ex}`);
         }
     } finally {
         progress.finish();
@@ -514,7 +548,7 @@ const connectWebSocket = () => {
         socket.on('update job', msg => {
             jobStatus.value = '';
             if (msg.status === 'ERROR') {
-                error(msg);
+                notifier.error(msg);
                 loadingData.value = false;
             }
             if (msg.status === 'COMPLETED') {

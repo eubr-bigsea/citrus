@@ -99,6 +99,8 @@ export default {
             update: 'Atualizar',
             undeploy: 'Remover implantação',
             view: 'Ver',
+            zoomIn: 'Aumentar o zoom',
+            zoomOut: 'Diminuir o zoom'
         },
         assets: {
             APP: 'Aplicação (trilha) | Aplicações (trilhas)',

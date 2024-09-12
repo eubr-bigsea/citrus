@@ -17,19 +17,19 @@ export default {
             const logs = this.logs.filter(l => l.type === 'PROGRESS')
                 .map(l => JSON.parse(l.message))
                 .sort((a, b) => a.x - b.x);
-            const series = {}
+            const series = {};
             if (logs && logs.length) {
-                const keys = Object.keys(logs[0])
+                const keys = Object.keys(logs[0]);
                 logs.forEach((l) => {
                     keys.forEach((k) => {
                         if (!series[k])
-                            series[k] = []
-                        series[k].push(l[k])
+                            series[k] = [];
+                        series[k].push(l[k]);
                     });
-                })
+                });
             }
             if (series['x'])
-                delete series['x']
+                delete series['x'];
             return series;
         },
     },
@@ -128,10 +128,10 @@ export default {
                     name: k,
                     data: v
                 }]
-            }
+            };
         }
     }
-}
+};
 </script>
 <style>
     .sparkline {
