@@ -71,7 +71,7 @@ export default {
             return result;
         }
     },
-}
+};
 </script>
 <style>
     .main-div {

@@ -1,5 +1,5 @@
 
-import PieChart from '../../components/visualization/PieChart.vue';
+import PieChart from '@/components/visualization/PieChart.vue';
 
 const chart1 = {
     "title": "Pie Chart",
@@ -35,7 +35,7 @@ const chart1 = {
         "color": "#3FA8AD"
     }],
     "pie_type": "pie"
-}
+};
 
 export default {
     title: 'Visualization/PieChart',

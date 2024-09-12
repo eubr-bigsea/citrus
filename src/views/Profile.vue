@@ -32,7 +32,7 @@
                             <div class="form-group row">
                                 <label for="inputEmail3" class="col-sm-3 col-form-label">{{$t('common.language')}}:</label>
                                 <div class="col-sm-9">
-                                    <select v-model="user.locale" class="form-control">
+                                    <select v-model="user.locale" class="form-select">
                                         <option value="en">
                                             English/Inglês
                                         </option>
@@ -51,7 +51,7 @@
                             </div>
                             <div class="form-group row">
                                 <div v-if="isPasswordChangeable" class="col-md-12">
-                                    <b-link v-b-toggle.changePassword class="float-right">
+                                    <b-link v-b-toggle.changePassword class="float-end">
                                         {{$t('profile.alsoChangePassword')}}
                                     </b-link>
                                 </div>
@@ -80,7 +80,7 @@
                             </div>
                             <div class="form-group row border-top clearfix pt-3">
                                 <div class="col-sm-12 text-center">
-                                    <button type="submit" class="btn btn-primary mr-2 pr-5 pl-5">
+                                    <button type="submit" class="btn btn-primary me-2 pe-5 ps-5">
                                         {{$t('common.ok')}}
                                     </button>
                                     <router-link :to="{name: 'home'}" class="btn btn-secondary text-white">
@@ -97,7 +97,7 @@
 </template>
 <script>
 import axios from 'axios';
-import Notifier from '../mixins/Notifier.js'
+import Notifier from '../mixins/Notifier.js';
 
 export default {
     name: 'ProfileView',
@@ -106,12 +106,12 @@ export default {
         return {
             changePassword: false,
             user: {}
-        }
+        };
     },
     computed: {
         isPasswordChangeable() {
             return this.user.authentication_type !== 'LDAP'
-                    && this.user.authentication_type !== 'OPENID'
+                    && this.user.authentication_type !== 'OPENID';
         },
     },
     mounted() {
@@ -149,10 +149,9 @@ export default {
                 })
                 .catch(e => {
                     if (e.response) {
-                        self.$Progress.finish();
                         self.error({ message: e.response.data.message });
                     } else {
-                        self.error(e)
+                        self.error(e);
                     }
 
                 });

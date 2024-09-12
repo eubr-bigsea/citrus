@@ -5,9 +5,11 @@
                 <div>
                     <div class="title">
                         <h1>{{ $tc('titles.dataSource', 1) }}</h1>
+                        <h1>{{$t('titles.dataSource', 1)}}</h1>
                     </div>
                     <div class="row">
                         <div class="col-md-2">
+                            <data-source-options selected="editDataSource" />
                             <data-source-options selected="editDataSource" />
                         </div>
                         <div v-if="dataSource.id" class="col-md-10 col-xg-10 mx-auto">
@@ -19,6 +21,7 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <label class="font-weight-bold">{{ $tc('common.name') }}:</label>
+                                                        <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                                         <input v-model="dataSource.name" type="text"
                                                             class="form-control">
                                                     </div>
@@ -26,6 +29,8 @@
                                                         <label
                                                             class="font-weight-bold">{{ $tc('common.format') }}:</label>
                                                         <select v-model="dataSource.format" class="form-control">
+                                                        <label class="font-weight-bold">{{$t('common.format')}}:</label>
+                                                        <select v-model="dataSource.format" class="form-select">
                                                             <option v-for="fmt in formats" :key="fmt" :value="fmt">
                                                                 {{ fmt }}
                                                             </option>
@@ -44,8 +49,13 @@
                                                         <textarea ref="filepathTextArea" v-model="dataSource.url"
                                                             class="form-control" />
                                                     </div>
+                                                    <div v-if="enable_url_edit && dataSource.format !== 'HIVE'" class="col-md-6">
+                                                        <label>{{$tc('dataSource.fileUrl')}}:</label>
+                                                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control"/>
+                                                    </div>
                                                     <div class="col-md-6">
                                                         <label>{{ $tc('common.description') }}:</label>
+                                                        <label>{{$t('common.description')}}:</label>
                                                         <textarea v-model="dataSource.description"
                                                             class="form-control" />
                                                     </div>
@@ -54,17 +64,27 @@
                                                         <v-select v-model="customTags" multiple :close-on-select="false"
                                                             style="width: 100%" :taggable="true" class="custom">
                                                             <span slot="no-options" />
+                                                                  style="width: 100%" :taggable="true" class="custom">
+                                                            <template #no-options>
+&nbsp;
+                                                            </template>
                                                         </v-select>
                                                     </div>
                                                     <div v-if="usesCommand"
                                                         class="col-md-8 mt-3 pb-1">
                                                         <label>{{ $tc('common.command') }}:</label>
+                                                    <div v-if="dataSource.format === 'JDBC' || dataSource.storage.type === 'HIVE' || dataSource.storage.type === 'HIVE_WAREHOUSE'"
+                                                         class="col-md-8 mt-3 pb-1">
+                                                        <label>{{$t('common.command')}}:</label>
                                                         <textarea v-model="dataSource.command" class="form-control" />
                                                     </div>
                                                     <div v-if="dataSource.storage.type === 'HIVE'" class="col-md-4">
                                                         <label>{{ $t('dataSource.tablesReference') }}</label>
                                                         <select v-model="selectedTable" class="form-control" size="10"
                                                             style="font-size:.7em" @dblclick.stop="copyTableName">
+                                                        <label>{{$t('dataSource.tablesReference')}}</label>
+                                                        <select v-model="selectedTable" class="form-select" size="10"
+                                                                style="font-size:.7em" @dblclick.stop="copyTableName">
                                                             <option v-for="tb in tables" :key="tb">
                                                                 {{ tb }}
                                                             </option>
@@ -81,6 +101,11 @@
                                                                     :taggable="true">
                                                                     <span
                                                                         slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                          style="width: 100%" :options="delimiters"
+                                                                          :taggable="true">
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -90,6 +115,11 @@
                                                                     :taggable="true">
                                                                     <span
                                                                         slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                          style="width: 100%" :options="delimiters"
+                                                                          :taggable="true">
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -99,6 +129,11 @@
                                                                     :taggable="true">
                                                                     <span
                                                                         slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                          style="width: 100%" :options="textDelimiters"
+                                                                          :taggable="true">
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -108,6 +143,11 @@
                                                                     :taggable="true">
                                                                     <span
                                                                         slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                                          style="width: 100%" :options="encodings"
+                                                                          :taggable="true">
+                                                                    <template #no-options>
+                                                                        {{$t('messages.noMatching')}}.
+                                                                    </template>
                                                                 </v-select>
                                                             </div>
                                                         </div>
@@ -159,18 +199,25 @@
                                                 </div>
                                                 <div>
                                                     <label>{{ $tc('dataSource.treatAsNull') }}:</label>
+                                                    <label>{{$t('dataSource.treatAsNull')}}:</label>
                                                     <v-select v-model="customTreatAsMissing" multiple
                                                         :close-on-select="false" style="width: 100%" :taggable="true"
                                                         class="custom">
                                                         <span slot="no-options">{{ $t('messages.noMatching') }}.</span>
+                                                              :close-on-select="false" style="width: 100%" :taggable="true"
+                                                              class="custom">
+                                                        <template #no-options>
+                                                            &nbsp;
+                                                        </template>
                                                     </v-select>
                                                 </div>
                                             </div>
                                         </div>
                                     </b-tab>
-                                    <b-tab :title="$tc('dataSource.attribute', 2)">
+                                    <b-tab :title="$t('dataSource.attribute', 2)">
                                         <h5 class="card-title">
                                             {{ $tc('common.attribute', 2) }}
+                                            {{$t('common.attribute', 2)}}
                                         </h5>
 
                                         <table v-if="dataSource.attributes && dataSource.attributes.length > 0"
@@ -201,16 +248,17 @@
                                                     <th v-if="dataSource.privacy_aware" class="primary text-center"
                                                         style="width:5%">
                                                         {{ $tc('dataSource.privacy') }}
+                                                        {{$t('dataSource.privacy')}}
                                                     </th>
                                                     <th class="primary text-center" style="width:20%">
                                                         {{ $tc('common.description') }}
                                                     </th>
                                                     <th class="primary text-center" style="width:3%" />
                                                     <!--
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.nullable')}}</th>
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.size')}}</th>
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.precision')}}</th>
-                                                <th class="primary text-center" style="width:5%">{{$tc('common.scale')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.nullable')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.size')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.precision')}}</th>
+                                                <th class="primary text-center" style="width:5%">{{$t('common.scale')}}</th>
                           -->
                                                 </tr>
                                             </thead>
@@ -233,6 +281,7 @@
                                                     <td>
                                                         <select v-model="attr.type"
                                                             class="form-control-sm form-control">
+                                                                class="form-select-sm form-select">
                                                             <option v-for="dt in dataTypes" :key="dt" :value="dt">
                                                                 {{ dt }}
                                                             </option>
@@ -280,6 +329,10 @@
                                                             :title="$tc('actions.delete')"
                                                             @click="deleteAttribute(index)">
                                                             <font-awesome-icon icon="trash" />
+                                                         class="ml-1 btn btn-sm btn-danger"
+                                                          :title="$tc('actions.delete')"
+                                                          @click="deleteAttribute(index)">
+                                                            <font-awesome-icon icon="trash"/>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -294,6 +347,10 @@
                                             <b-button class="ml-2" variant="outline-success"
                                                 :title="$tc('actions.simpleAdd')" @click="addAttribute()">
                                                 <font-awesome-icon icon="plus" /> {{ $tc('actions.simpleAdd') }}
+                                            <b-button class= "ml-2" variant="outline-success"
+                                             :title="$tc('actions.simpleAdd')"
+                                            @click="addAttribute()">
+                                                <font-awesome-icon icon="plus" /> {{$tc('actions.simpleAdd')}}
                                             </b-button>
                                         </div>
                                     </b-tab>
@@ -322,23 +379,27 @@
                                         <template #title>
                                             <font-awesome-icon icon="fa fa-link" /> {{ $tc('dataSource.relationship',
                                             2)}}
+                                            <font-awesome-icon icon="fa fa-link" /> {{$t('dataSource.relationship', 2)}}
                                         </template>
-                                        <p class="pb-1 border-bottom text-right">
+                                        <p class="pb-1 border-bottom text-end">
                                             <button :disabled="userPermission === null || permission === null"
                                                 class="btn btn-sm btn-primary" @click="addPermission">
                                                 <font-awesome-icon icon="fa fa-link" />
                                                 {{ $t('actions.add', { type: $tc('common.sharing', 1) }) }}
+                                                {{$t('actions.add', {type: $t('common.sharing', 1)})}}
                                             </button>
                                         </p>
                                     </b-tab>
                                     <b-tab v-if="false && loggedUserIsOwnerOrAdmin">
                                         <template #title>
                                             <font-awesome-icon icon="fa fa-share-alt" /> {{ $tc('common.sharing', 2) }}
+                                            <font-awesome-icon icon="fa fa-share-alt" /> {{$t('common.sharing', 2)}}
                                         </template>
                                         <div class="row mb-3 mt-3">
                                             <div v-if="loggedUserIsOwnerOrAdmin" class="col-md-4 border-right">
                                                 <div>
                                                     <label>{{ $tc('titles.user', 1) }}:</label>
+                                                    <label>{{$t('titles.user', 1)}}:</label>
                                                     <v-select v-model="userPermission" style="font-size: .9em"
                                                         :options="users" :taggable="false"
                                                         :get-option-label="getUserLabel" :close-on-select="true"
@@ -359,6 +420,8 @@
                                                 <div>
                                                     <label>{{ $tc('common.permission', 1) }}:</label>
                                                     <select v-model="permission" class="form-control">
+                                                    <label>{{$t('common.permission', 1)}}:</label>
+                                                    <select v-model="permission" class="form-select">
                                                         <option value="MANAGE">
                                                             {{ $t('permissions.MANAGE') }}
                                                         </option>
@@ -389,12 +452,16 @@
                                                                         :title="$t('permissions.' + p.permission)">
                                                                         {{ $t('permissions.'
                                                                             + p.permission).toUpperCase() }}
+                                                                    <div class="badge bg-secondary mt-2 pt-1 pb-1 pe-2 ps-2"
+                                                                         :title="$t('permissions.' + p.permission)">
+                                                                        {{$t('permissions.'
+                                                                            +p.permission).toUpperCase()}}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     {{ p.user_name }} ({{ p.user_login }})
                                                                 </td>
-                                                                <td v-if="loggedUserIsOwnerOrAdmin" class="text-right">
+                                                                <td v-if="loggedUserIsOwnerOrAdmin" class="text-end">
                                                                     <button class="btn btn-sm btn-light"
                                                                         @click="removePermission(p)">
                                                                         <font-awesome-icon icon="trash" />
@@ -415,21 +482,29 @@
                                             </div>
                                         </div>
                                     </b-tab>
+                                    -->
                                 </b-tabs>
                                 <div class="card-footer">
                                     <button v-if="loggedUserIsOwnerOrAdmin" class="btn btn-success btn-spinner"
                                         @click.stop="save">
+                                            :title="$t('actions.save')" @click.stop="save">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <font-awesome-icon icon="fa fa-save" />
                                         {{ $tc('actions.save') }}
+                                        {{$t('actions.save')}}
                                     </button>
                                     <button v-if="canInfer && loggedUserIsOwnerOrAdmin" :disabled="isDirty"
                                         class="btn btn-primary btn-spinner" @click.stop="infer">
+                                    <button v-if="canInfer && loggedUserIsOwnerOrAdmin"
+                                            class="btn btn-primary btn-spinner" :title="$t('dataSource.inferSchema')" @click.stop="infer">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         {{ $tc('dataSource.inferSchema') }}
+                                        {{$t('dataSource.inferSchema')}}
                                     </button>
                                     <button class="btn btn-spinner ml-1 btn-outline-info" :disabled="isDirty"
                                         @click.stop="preview">
+                                    <button class="btn btn-spinner ms-1 btn-outline-info" :disabled="isDirty"
+                                            @click.stop="preview">
                                         <font-awesome-icon icon="spinner" pulse class="icon" />
                                         <font-awesome-icon icon="fa fa-eye" />
                                         &nbsp;
@@ -437,6 +512,8 @@
                                     </button>
                                     <router-link :to="{ name: 'dataSources' }" class="btn btn-secondary">
                                         {{ $tc('actions.cancel') }}
+                                    <router-link :to="{name: 'dataSources'}" class="btn btn-secondary">
+                                        {{$t('actions.cancel')}}
                                     </router-link>
                                     <div v-if="isDirty" class="mt-2 pl-2">
                                         <small>Para inferir o esquema ou pré-visualizar os dados, salve primeiro a fonte
@@ -454,9 +531,11 @@
                                 <div class="col-md-4">
                                     <label>
                                         {{ $tc('privacy.privacyType') }}:
+                                        {{$t('privacy.privacyType')}}:
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                         v-model="currentAttribute.attribute_privacy.privacy_type" class="form-control">
+                                            v-model="currentAttribute.attribute_privacy.privacy_type" class="form-select">
                                         <option />
                                         <option v-for="t in privacy_types" :key="t" :value="t">
                                             {{ t }}
@@ -466,10 +545,13 @@
                                 <div class="col-md-4">
                                     <label>
                                         {{ $tc('privacy.anonymizationTechnique') }}:
+                                        {{$t('privacy.anonymizationTechnique')}}:
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                         v-model="currentAttribute.attribute_privacy.anonymization_technique"
                                         class="form-control">
+                                            v-model="currentAttribute.attribute_privacy.anonymization_technique"
+                                            class="form-select">
                                         <option />
                                         <option v-for="t in anonymization" :key="t" :value="t">
                                             {{ t }}
@@ -479,10 +561,13 @@
                                 <div class="col-md-4">
                                     <label>
                                         {{ $tc('privacy.attributePrivacyGroup') }}:
+                                        {{$t('privacy.attributePrivacyGroup')}}:
                                     </label>
                                     <select v-if="currentAttribute.attribute_privacy"
                                         v-model="currentAttribute.attribute_privacy.attribute_privacy_group_id"
                                         class="form-control">
+                                            v-model="currentAttribute.attribute_privacy.attribute_privacy_group_id"
+                                            class="form-select">
                                         <option />
                                         <option v-for="t in attributeGroups" :key="t.id" :value="t.id">
                                             {{ t.name }}
@@ -492,6 +577,7 @@
                             </div>
                             <label>
                                 {{ $tc('privacy.hierarchy') }}:
+                                {{$t('privacy.hierarchy')}}:
                             </label>
                             <textarea v-if="currentAttribute.attribute_privacy"
                                 v-model="currentAttribute.attribute_privacy.hierarchy" class="form-control" type="text"
@@ -501,6 +587,15 @@
                                     {{ $t('actions.close') }}
                                 </b-btn>
                             </div>
+                                      v-model="currentAttribute.attribute_privacy.hierarchy" class="form-control" type="text"
+                                      rows="5" />
+                            <template #footer>
+                                <div class="w-100">
+                                    <b-button variant="primary" class="float-end me-2" @click="okPrivacy">
+                                        {{$t('actions.close')}}
+                                    </b-button>
+                                </div>
+                            </template>
                         </b-modal>
                     </div>
                 </div>
@@ -511,10 +606,10 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import axios from 'axios';
 import VueSelect from 'vue-select';
 import Notifier from '@/mixins/Notifier.js';
+import Notifier from '../mixins/Notifier.js';
 import ModalPreviewDataSource from './modal/ModalPreviewDataSource.vue';
 import UserVariables from './UserVariables.vue'
 import SystemVariables from './SystemVariables.vue'
@@ -528,7 +623,6 @@ const thornUrl = import.meta.env.VITE_THORN_URL;
 
 export default {
     components: {
-        'v-select': VueSelect,
         ModalPreviewDataSource,
         DataSourceOptions,
         UserVariables,
@@ -538,8 +632,8 @@ export default {
     mixins: [Notifier],
     beforeRouteLeave(to, from, next) {
         if (this.isDirty) {
-            if (confirm(this.$tc('warnings.dirtyCheck'))) {
-                next()
+            if (confirm(this.$t('warnings.dirtyCheck'))) {
+                next();
             }
         } else {
             next();
@@ -602,6 +696,7 @@ export default {
         inferableDataSource() {
             return ['CSV', 'JDBC', 'PARQUET'].includes(this.dataSource.format);
         },
+
         customTreatAsMissing: {
             get() {
                 return this.dataSource.treat_as_missing
@@ -627,7 +722,7 @@ export default {
         },
         '$route.params.id': function () {
             this.load().then(() => {
-                Vue.nextTick(() => {
+                this.$nextTick(() => {
                     this.isDirty = false;
                 });
             });
@@ -637,20 +732,26 @@ export default {
                 this.isDirty = true;
             },
             deep: true
-        }
+        },
+        customTags: {
+            handler(value) {
+                this.dataSource.tags = value? value.join(',') : null;
+            }
+        },
     },
     created() {
         window.addEventListener('beforeunload', this.leaving);
     },
     beforeUnmount() {
-        window.removeEventListener('beforeunload', this.leaving)
+        window.removeEventListener('beforeunload', this.leaving);
     },
     mounted() {
         let self = this;
         this.load().then(() => {
-            Vue.nextTick(() => {
+            this.$nextTick(() => {
                 self.isDirty = false;
                 self.retrieveTables();
+                this.customTags = this.dataSource.tags?.split(',');
             });
         });
     },
@@ -680,7 +781,7 @@ export default {
             ~removeIndex && this.dataSource.permissions.splice(removeIndex, 1);
         },
         editPermission(p) {
-            const user = p.user_name.split(' ')
+            const user = p.user_name.split(' ');
             this.permission = p.permission;
             this.userPermission = {
                 login: p.user_login,
@@ -740,7 +841,7 @@ export default {
                         if (this.timeoutHandler) {
                             window.clearTimeout(this.timeoutHandler);
                         }
-                        this.error({ name: '' }, `Copying process reported an error. Try again: ${response.data.result.message}`)
+                        this.error({ name: '' }, `Copying process reported an error. Try again: ${response.data.result.message}`);
                         this.estimatingStep = 0;
                     } else if (response.data.status === 'PROCESSING') {
                         this.timeoutHandler = window.setTimeout(this.checkSchedule, 500);
@@ -832,12 +933,12 @@ export default {
                     event.target.removeAttribute('disabled');
                     event.target.classList.add('btn-spinner');
                     self.dataSource = resp.data.data;
-                    Vue.nextTick(() => {
+                    this.$nextTick(() => {
                         self.isDirty = false;
                     });
                     self.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.dataSource', 1)
+                            what: this.$t('titles.dataSource', 1)
                         })
                     );
                 })
@@ -861,7 +962,7 @@ export default {
                 })
                 .catch(() => {
                     vm.error(vm.data);
-                })
+                });
         }, 350),
         getUserLabel(opt) {
             return `${opt.first_name}|${opt.last_name}|${opt.email}`;

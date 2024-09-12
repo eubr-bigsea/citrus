@@ -39,13 +39,13 @@ export default {
         this.__resizeListener();
     },
     beforeUnmount() {
-        window.removeEventListener('resize', this.__resizeListener)
+        window.removeEventListener('resize', this.__resizeListener);
     },
     methods: {
         getData() {
             const result = this.visualizationData.data;
-            result['marker'] = { colors: result['colors'] }
-            result['texttemplate'] = '%{label}<br>%{value}'
+            result['marker'] = { colors: result['colors'] };
+            result['texttemplate'] = '%{label}<br>%{value}';
             if (result.textinfo && result.textinfo.indexOf('percent entry') > -1) {
                 result['texttemplate'] += '<br>%{percentEntry} ' + this.$t('visualization.ofEntry');
             }
@@ -55,5 +55,5 @@ export default {
             return [result];
         }
     },
-}
+};
 </script>

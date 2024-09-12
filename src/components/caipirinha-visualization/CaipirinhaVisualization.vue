@@ -1,38 +1,41 @@
 <template>
     <div class="xmyview" style="margin-top: 15px;">
         <p v-if="loading">
-            <font-awesome-icon icon="spinner" pulse class="icon" /> {{ $t('common.loading') }}
+            <font-awesome-icon icon="spinner" pulse class="icon" /> {{$t('common.loading')}}
         </p>
 
         <div v-if="error">
             <div class="alert alert-danger" role="alert">
-                {{ errorMessage }}
+                {{errorMessage}}
             </div>
-            {{ $t('visualization.tryRefresh') }}
+            {{$t('visualization.tryRefresh')}}
         </div>
 
-        <component v-if="visualizationComponent !== 'plotly'" :is="visualizationComponent"
-            :visualization-data="visualizationData" :public-route="publicRoute" :height="height" />
+        <component :is="visualizationComponent" v-if="visualizationComponent !== 'plotly'"
+                   :visualization-data="visualizationData" :public-route="publicRoute" :height="height" 
+                   @update-value="(v) => visualizationData = v" 
+                   @on-save="(id, data, callback) => emit('on-save', id, data, callback)"
+                   @on-delete="(id) => emit('on-delete', id)" />
         <div v-else>
             <plotly :data="visualizationData.data.data" :display-mode-bar="true" :auto-resize="true"
-                :layout="{ ...visualizationData.data.layout, autosize: true, height: height }" />
+                    :layout="{ ...visualizationData.data.layout, autosize: true, height: height }" />
         </div>
     </div>
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
 //import Highcharts from 'highcharts'
 
-import CaipirinhaVisualizationHtml from "./CaipirinhaVisualizationHtml.vue"
-import CaipirinhaVisualizationMarkdown from "./CaipirinhaVisualizationMarkdown.vue"
-import CaipirinhaVisualizationTable from "./CaipirinhaVisualizationTable.vue"
-import CaipirinhaVisualizationBoxPlot from "./CaipirinhaVisualizationBoxPlot.vue"
-import CaipirinhaVisualizationHistogram from "./CaipirinhaVisualizationHistogram.vue"
-import CaipirinhaVisualizationArea from "./CaipirinhaVisualizationArea.vue"
-import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter.vue"
-import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap.vue"
-import CaipirinhaVisualizationDonut from "./CaipirinhaVisualizationDonut.vue"
+import CaipirinhaVisualizationHtml from "./CaipirinhaVisualizationHtml.vue";
+import CaipirinhaVisualizationMarkdown from "./CaipirinhaVisualizationMarkdown.vue";
+import CaipirinhaVisualizationTable from "./CaipirinhaVisualizationTable.vue";
+import CaipirinhaVisualizationBoxPlot from "./CaipirinhaVisualizationBoxPlot.vue";
+import CaipirinhaVisualizationHistogram from "./CaipirinhaVisualizationHistogram.vue";
+import CaipirinhaVisualizationArea from "./CaipirinhaVisualizationArea.vue";
+import CaipirinhaVisualizationScatter from "./CaipirinhaVisualizationScatter.vue";
+import CaipirinhaVisualizationMap from "./CaipirinhaVisualizationMap.vue";
+import CaipirinhaVisualizationDonut from "./CaipirinhaVisualizationDonut.vue";
 
 import BarChart from "../visualization/BarChart.vue";
 import BubbleChart from "../visualization/BubbleChart.vue";
@@ -47,6 +50,7 @@ import Treemap from "../visualization/Treemap.vue";
 import Html from '../visualization/Html.vue';
 import Plotly from '../visualization/Plotly.vue';
 
+//const emit = defineEmits(['on-delete', 'on-save']);
 
 let highchartsDefaultLang = undefined;
 
@@ -82,10 +86,10 @@ const getVisualizationData = function (responseData) {
                 ...value,
                 x: Date.parse(value.x)
             }))
-        }))
+        }));
     }
     return responseData;
-}
+};
 
 export default {
     name: "CaipirinhaVisualization",
@@ -160,52 +164,52 @@ export default {
     methods: {
         getVisualizationComponent(typeId) {
             switch (typeId) {
-                case 1:
-                    return "html-display";
-                case 35:
-                    return "caipirinha-visualization-table";
-                case 68:
-                    return "caipirinha-visualization-line";
-                case 69:
-                    return "caipirinha-visualization-bar";
-                case 70:
-                    return "caipirinha-visualization-pie";
-                case 71:
-                    return "caipirinha-visualization-area";
-                case 72:
-                    return "caipirinha-visualization-markdown";
-                case 87:
-                    return "caipirinha-visualization-scatter";
-                case 88:
-                    return "caipirinha-visualization-map";
-                case 89:
-                    return "caipirinha-visualization-donut";
-                case 123:
-                    return "caipirinha-visualization-boxplot";
-                case 124:
-                    return "caipirinha-visualization-histogram";
-                case 130:
-                    return "indicator";
-                case 131:
-                    return "markdown";
-                case 133:
-                    return "heatmap";
-                case 134:
-                    return "bubble-chart";
-                case 1350:
-                    return "force-direct";
-                case 136:
-                    return "iframe-panel";
-                case 137:
-                    return "treemap";
-                case 145:
-                    return "plotly";
-                default:
-                    throw new TypeError(this.$t("errors.invalidVisualizationId"));
+            case 1:
+                return "html-display";
+            case 35:
+                return "caipirinha-visualization-table";
+            case 68:
+                return "caipirinha-visualization-line";
+            case 69:
+                return "caipirinha-visualization-bar";
+            case 70:
+                return "caipirinha-visualization-pie";
+            case 71:
+                return "caipirinha-visualization-area";
+            case 72:
+                return "caipirinha-visualization-markdown";
+            case 87:
+                return "caipirinha-visualization-scatter";
+            case 88:
+                return "caipirinha-visualization-map";
+            case 89:
+                return "caipirinha-visualization-donut";
+            case 123:
+                return "caipirinha-visualization-boxplot";
+            case 124:
+                return "caipirinha-visualization-histogram";
+            case 130:
+                return "indicator";
+            case 131:
+                return "markdown";
+            case 133:
+                return "heatmap";
+            case 134:
+                return "bubble-chart";
+            case 1350:
+                return "force-direct";
+            case 136:
+                return "iframe-panel";
+            case 137:
+                return "treemap";
+            case 145:
+                return "plotly";
+            default:
+                throw new TypeError(this.$t("errors.invalidVisualizationId"));
             }
         },
         setLang() {
-            return      
+            return;      
             if (highchartsDefaultLang === undefined)
                 highchartsDefaultLang = {
                     ...Highcharts.getOptions().lang

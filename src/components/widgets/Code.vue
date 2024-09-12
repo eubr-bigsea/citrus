@@ -11,7 +11,7 @@
                               v-model="code"
                               :highlight="highlighter"
                               class="prism-editor-wrapper-disabled code2"
-                              :readonly="false" />
+                              :readonly="false" @input="handleInput" />
             </div>
             <b-link variant="sm"
                     @click.prevent="showModal">
@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="col-md-4">
-                        {{$tc('common.attribute', 2)}}:
+                        {{$t('common.attribute', 2)}}:
                         <select class="form-control mt-2"
                                 size="10">
                             <option v-for="suggestion in suggestions"
@@ -49,31 +49,30 @@
                     </div>
                 </div>
             </template>
-            <template #modal-footer>
-                <b-btn variant=""
-                       size="sm"
-                       class="float-right"
-                       @click="cancelModal">
+            <template #footer>
+                <b-button variant="secondary"
+                          size="sm"
+                          class="float-end"
+                          @click="cancelModal">
                     {{$t('actions.cancel')}}
-                </b-btn>
-                <b-btn variant="success mr-1"
-                       size="sm"
-                       class="float-right"
-                       @click="okModal">
+                </b-button>
+                <b-button variant="success me-1"
+                          size="sm"
+                          class="float-end"
+                          @click="okModal">
                     {{$t('common.ok')}}
-                </b-btn>
+                </b-button>
             </template>
         </b-modal>
     </div>
 </template>
 <script>
-import Vue from 'vue';
 //import "prismjs/themes/prism.min.css";
 import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 
-import 'vue-prism-editor/dist/prismeditor.min.css'
-import { PrismEditor } from 'vue-prism-editor'
+import 'vue-prism-editor/dist/prismeditor.min.css';
+import { PrismEditor } from 'vue-prism-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-sql';
@@ -122,20 +121,25 @@ export default {
         }
     },
     methods: {
+
+        // handleInput() {
+        //     const prismEditor = this.$refs.prismEditor;
+        //     if (prismEditor.history.offset > 0) {
+        //         const { selectionStart, selectionEnd } = prismEditor.history.stack.slice(-1)[0];
+        //         /* hack to move cursor to correct position when using modal */
+        //         this.$nextTick(() => {
+        //             window.setTimeout(() => {
+        //                 prismEditor.$refs.textarea.setSelectionRange(
+        //                     selectionStart, selectionEnd);
+        //             }, 1);
+        //         });
+        //     }
+        // },
         handleInput() {
-            const prismEditor = this.$refs.prismEditor;
-            if (prismEditor.history.offset > 0) {
-                const { selectionStart, selectionEnd } = prismEditor.history.stack.slice(-1)[0];
-                /* hack to move cursor to correct position when using modal */
-                Vue.nextTick(() => {
-                    window.setTimeout(() => {
-                        prismEditor.$refs.textarea.setSelectionRange(
-                            selectionStart, selectionEnd);
-                    }, 1);
-                });
-            }
+            this.triggerUpdateEvent(this.message, this.field, this.code);
         },
         okModal() {
+            this.triggerUpdateEvent(this.message, this.field, this.code);
             this.triggerUpdateEvent(this.message, this.field, this.code);
             this.$refs.modal.hide();
         },
@@ -150,7 +154,7 @@ export default {
         highlighter() {
             if (this.code !== '') {
                 const lang = this.computedProgrammingLanguage;
-                
+
                 if (lang === 'sql') {
                     return highlight(this.code || '', languages.sql, 'sql');
                 } else if (lang === 'python') {

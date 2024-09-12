@@ -1,17 +1,16 @@
 <template>
     <div class="toolbar">
         <div class="toolbar-group">
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleTasksPanel">
-                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add', {type: $tc('titles.operation').toLowerCase()})
-                }}
+            <button type="button" @click.prevent="toggleTasksPanel">
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {type: $t('titles.operation').toLowerCase()})}}
             </button>
         </div>
         <div v-if="useDataSource" class="toolbar-group">
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="toggleDataSourcesPanel">
-                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.add', {
+            <button type="button" @click.prevent="toggleDataSourcesPanel">
+                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.add', {
                     type:
-                        $tc('titles.dataSource2').toLowerCase()
-                }) }}
+                        $t('titles.dataSource2').toLowerCase()
+                })}}
             </button>
         </div>
         <div class="toolbar-group" :class="{invisible2: !taskSelected}">
@@ -25,11 +24,11 @@
 
         <div class="toolbar-group">
             <button variant="secondary" :title="$t('actions.copy')" :class="{invisible2: !taskSelected}"
-                @click.prevent="copy">
+                    @click.prevent="copy">
                 <font-awesome-icon icon="fa fa-copy" />
             </button>
             <button variant="secondary" :title="$t('actions.paste')" :class="{invisible2: !thereIsCopiedTask}"
-                @click.prevent="paste">
+                    @click.prevent="paste">
                 <font-awesome-icon icon="fa fa-paste" />
             </button>
         </div>
@@ -45,7 +44,7 @@
                 <span class="object-align-right" />
             </button>
             <button type="button" :title="$t('actions.distributeHorizontally')"
-                @click.prevent="distribute('horizontal', 'left')">
+                    @click.prevent="distribute('horizontal', 'left')">
                 <span class="object-align-distribute" />
             </button>
         </div>
@@ -61,14 +60,14 @@
                 <span class="object-align-bottom" />
             </button>
             <button type="button" :title="$t('actions.distributeVertically')"
-                @click.prevent="distribute('vertical', 'top')">
+                    @click.prevent="distribute('vertical', 'top')">
                 <span class="object-align-distribute-v" />
             </button>
         </div>
 
         <div class="toolbar-group">
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(-.1)">
-                <font-awesome-icon icon="fa fa-search" />
+            <button type="button" :title="$t('actions.zoomOut')" @click.prevent="changeZoom(-.1)">
+                <font-awesome-icon icon="fa fa-magnifying-glass-minus" />
             </button>
 
             <b-input-group size="sm" class="mx-1 zoom">
@@ -85,8 +84,8 @@
                 ]" />
             </b-input-group>
 
-            <button type="button" :title="$t('actions.toggleTasks')" @click.prevent="changeZoom(.1)">
-                <font-awesome-icon icon="fa fa-search" />
+            <button type="button" :title="$t('actions.zoomIn')" @click.prevent="changeZoom(.1)">
+                <font-awesome-icon icon="fa fa-magnifying-glass-plus" />
             </button>
         </div>
 
@@ -111,12 +110,17 @@ export default {
             default: false
         }
     },
+    emits: ['onalign-tasks', 'oncopy-tasks', 'ondistribute-tasks',
+        'onpaste-tasks', 'onremove-tasks', 'ontoggle-dark-mode',
+        'ontoggle-dataSources-panel', 'ontoggle-tasks',
+        'ontoggle-tasks-panel', 'onzoom',
+    ],
     data() {
         return {
             zoomPercent: '100%',
             zoom: 1,
             darkMode: localStorage.getItem('darkMode') ? localStorage.getItem('darkMode') : false,
-        }
+        };
     },
     computed: {
         taskSelected() {
@@ -131,14 +135,9 @@ export default {
     },
     watch: {
         zoom() {
-            this.$parent.$emit('onzoom', this.zoom);
+            this.$emit('onzoom', this.zoom);
         }
     },
-    emit: ['onalign-tasks', 'oncopy-tasks', 'ondistribute-tasks',
-        'onpaste-tasks', 'onremove-tasks', 'ontoggle-darkMode',
-        'ontoggle-dataSourcesPanel', 'ontoggle-tasks',
-        'ontoggle-tasksPanel', 'onzoom',
-    ],
     
     methods: {
         copy() {
@@ -151,33 +150,33 @@ export default {
             this.$emit('onremove-tasks');
         },
         toggleTasks() {
-            this.$emit('ontoggle-tasks')
+            this.$emit('ontoggle-tasks');
         },
         toggleTasksPanel() {
-            this.$parent.$emit('ontoggle-tasksPanel')
+            this.$parent.$emit('ontoggle-tasks-panel');
         },
         toggleDataSourcesPanel() {
-            this.$parent.$emit('ontoggle-dataSourcesPanel')
+            this.$parent.$emit('ontoggle-data-sources-panel');
         },
         toggleDarkMode() {
             localStorage.setItem('darkMode', this.darkMode);
-            this.$parent.$emit('ontoggle-darkMode')
+            this.$parent.$emit('ontoggle-dark-mode');
         },
         addGroup() {
 
         },
         distribute(mode, prop) {
-            this.$emit('ondistribute-tasks', mode, prop)
+            this.$emit('ondistribute-tasks', mode, prop);
         },
         align(prop, fn) {
-            this.$emit('onalign-tasks', prop, fn)
+            this.$emit('onalign-tasks', prop, fn);
         },
         changeZoom(value) {
             this.zoom += value;
             this.zoomPercent = this.zoom * 100 + "%";
         },
     }
-}
+};
 </script>
 
 <style>
@@ -223,7 +222,7 @@ export default {
     }
 
     .zoom {
-        width: 75px !important;
+        width:90px !important;
         display: inline-block;
 
         select {

@@ -13,18 +13,18 @@
                @input="updated($event)"
                @mousedown="mouseDown"
                @mouseup="mouseUp">
-        <div class="float-left">
+        <div class="float-start">
             {{values[language] ? values[language][0] : ''}}:
             {{split || 0}}%
         </div>
-        <div class="float-right text-right">
+        <div class="float-end text-end">
             {{values[language] ? values[language][1] : ''}}:
             {{100-split}}%
         </div>
     </div>
 </template>
 <script>
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 import { debounce } from '../../util.js';
 export default {
@@ -33,7 +33,7 @@ export default {
     mixins: [Widget],
     props: {
         value: {
-            type: Number, default: 50,
+            default: 50,
         },
     },
     data() {
@@ -41,15 +41,15 @@ export default {
             split: 50,
             isDragging: false,
             values: {}
-        }
+        };
     },
     mounted() {
         this.values = this.field.values ? JSON.parse(this.field.values) : {};
-        const sliderValue = 100*(this.field['default'] ? parseFloat(this.field['default']): 0.5)
+        const sliderValue = 100*(this.field['default'] ? parseFloat(this.field['default']): 0.5);
         this.$root.$emit(this.message,
             this.field, parseInt(this.value || sliderValue));
         if (this.value){
-            this.split = parseInt(this.value)
+            this.split = parseInt(this.value);
         } else {
             this.split = sliderValue;
         }
@@ -74,7 +74,7 @@ export default {
             }
         }
     },
-}
+};
 </script>
 <style scoped>
     .slider {

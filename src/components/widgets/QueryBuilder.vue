@@ -23,18 +23,19 @@
                       class="form-control"
                       rows="10" />
 
-            <div slot="modal-footer"
-                 class="w-100 text-right">
-                <b-btn variant="primary"
-                       class="mr-1"
-                       @click.prevent="okClicked">
-                    {{$t('common.ok')}}
-                </b-btn>
-                <b-btn variant="secondary"
-                       @click.prevent="cancelClicked">
-                    {{$t('actions.cancel')}}
-                </b-btn>
-            </div>
+            <template #footer>
+                <div class="w-100 text-end">
+                    <b-button variant="primary"
+                              class="me-1"
+                              @click.prevent="okClicked">
+                        {{$t('common.ok')}}
+                    </b-button>
+                    <b-button variant="secondary"
+                              @click.prevent="cancelClicked">
+                        {{$t('actions.cancel')}}
+                    </b-button>
+                </div>
+            </template>
         </b-modal>
     </div>
 </template>
@@ -49,7 +50,7 @@ export default {
     data() {
         return {
             sql: ''
-        }
+        };
     },
     mounted() {
         this.sql = this.field.value;
@@ -64,5 +65,5 @@ export default {
             this.$refs.modal.hide();
         },
     },
-}
+};
 </script>

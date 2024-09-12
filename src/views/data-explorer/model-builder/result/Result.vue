@@ -261,7 +261,7 @@
                             <img src="https://topepo.github.io/caret/basic/train_plot1-1.svg" alt="">
                             Gráfico métrica por tempo
                             <b-list-group>
-                                <b-list-group-item v-for="run in sessions[0].runs" :key="run.id" class="p-0 pl-2">
+                                <b-list-group-item v-for="run in sessions[0].runs" :key="run.id" class="p-0 ps-2">
                                     <div class="d-flex w-100 justify-content-between bg-light p-1">
                                         <b class="mb-1">{{run.name}}</b>
                                         <small>
@@ -296,7 +296,7 @@
                 </b-card>
 
                 <!--
-                    <b-tab :title="$tc('titles.model', 2)">
+                    <b-tab :title="$t('titles.model', 2)">
 
                     </b-tab>
                     -->
@@ -348,6 +348,7 @@ export default {
     props: {
         jobs: { required: true, type: Array, default: () => [] },
         numberOfFeatures: { type: Number, default: () => 0 },
+        features: { type: Array, default: () => [] }
         features: { type: Array, default: () => [] }
     },
     emits: ['delete-job'],
@@ -421,7 +422,7 @@ export default {
                 },
 
             }
-        }
+        };
     },
     computed: {
 
@@ -432,7 +433,7 @@ export default {
                     labels: ['Treino', 'Teste'],
                     type: 'pie',
                     hole: .5, textposition: 'inside',
-                }] : [{}]
+                }] : [{}];
         },
         chartData() {
             const series = []
@@ -475,6 +476,9 @@ export default {
                 return [];
             }
         },
+        selectedGroupedResultsNotOther() {
+            return selectedGroupedResults.filter((results) => results[1][0].type !== 'OTHER');
+        }
     },
     watch: {
         selectedJob(newValue) {
@@ -523,31 +527,31 @@ export default {
         getClassesForDecor(value) {
             let result = [];
             switch (value) {
-                case 'ERROR':
-                    result.push("fa fa-times-circle text-danger");
-                    break;
-                case 'PENDING':
-                    result.push("fa fa-pause-circle text-warning");
-                    break;
-                case 'CANCELED':
-                    result.push("fa fa-stop-circle text-secondary");
-                    break;
-                case 'RUNNING':
-                    result.push("fa fa-sync fa-spin text-primary");
-                    break;
-                case 'COMPLETED':
-                    result.push("fa fa-check-circle text-success");
-                    break;
-                case 'INTERRUPTED':
-                    result.push("fa fa-stop text-danger");
-                    break;
-                default:
+            case 'ERROR':
+                result.push("fa fa-times-circle text-danger");
+                break;
+            case 'PENDING':
+                result.push("fa fa-pause-circle text-warning");
+                break;
+            case 'CANCELED':
+                result.push("fa fa-stop-circle text-secondary");
+                break;
+            case 'RUNNING':
+                result.push("fa fa-sync fa-spin text-primary");
+                break;
+            case 'COMPLETED':
+                result.push("fa fa-check-circle text-success");
+                break;
+            case 'INTERRUPTED':
+                result.push("fa fa-stop text-danger");
+                break;
+            default:
             }
             result.push(value.toLowerCase());
             return result.join(' ');
         },
     }
-}
+};
 </script>
 <style scoped>
 .result {

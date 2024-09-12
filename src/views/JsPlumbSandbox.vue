@@ -1,13 +1,13 @@
 <template>
     <div class="row">
         <div class="col-md-12">
-            <button class="btn btn-secondary btn-sm mr-1" @click="addElement">
+            <button class="btn btn-secondary btn-sm me-1" @click="addElement">
                 Add element
             </button>
-            <button class="btn btn-secondary btn-sm mr-1" @click="addGroup">
+            <button class="btn btn-secondary btn-sm me-1" @click="addGroup">
                 Add group
             </button>
-            <button class="btn btn-secondary btn-sm mr-1" @click="addSample">
+            <button class="btn btn-secondary btn-sm me-1" @click="addSample">
                 Add sample
             </button>
         </div>
@@ -42,7 +42,7 @@ export default {
         return {
             instance: null,
             sequential: 1
-        }
+        };
     },
     mounted() {
         this.instance = jsPlumb.getInstance(
@@ -87,14 +87,14 @@ export default {
                 if (i === 2 || i === 3) {
                     this.instance.addToGroup(groupId, task);
                 }
-                task.style.left = posX[i] + 'px'
-                task.style.top = posY[i] + 'px'
+                task.style.left = posX[i] + 'px';
+                task.style.top = posY[i] + 'px';
             }
-            this.instance.connect({ uuids: ['seq_2_out', 'seq_4_in'] })
-            this.instance.connect({ uuids: ['seq_3_out', 'seq_5_in'] })
-            this.instance.connect({ uuids: ['seq_4_out', 'seq_6_in'] })
-            this.instance.connect({ uuids: ['seq_5_out', 'seq_7_in'] })
-            this.instance.repaintEverything()
+            this.instance.connect({ uuids: ['seq_2_out', 'seq_4_in'] });
+            this.instance.connect({ uuids: ['seq_3_out', 'seq_5_in'] });
+            this.instance.connect({ uuids: ['seq_4_out', 'seq_6_in'] });
+            this.instance.connect({ uuids: ['seq_5_out', 'seq_7_in'] });
+            this.instance.repaintEverything();
         },
         addElement() {
             const elem = document.createElement('div');
@@ -140,7 +140,7 @@ export default {
         }
     }
 
-}
+};
 </script>
 <style>
     #diagram {

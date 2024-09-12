@@ -26,7 +26,7 @@ export default {
             url: `${protocol}//{s}.tile.osm.org/{z}/{x}/{y}.png`,
             points: [],
             mode: null,
-        }
+        };
     },
     mounted() {
         const self = this;
@@ -60,7 +60,7 @@ export default {
                             fill: true,
                             fillColor: '#fff',
                             fillOpacity: 1
-                        }
+                        };
                         const idProperty = self.visualizationData.geojson.idProperty;
                         const distinctValues = Array.from(
                             new Set(this.visualizationData.data.map(v => v.value))).sort();
@@ -100,14 +100,14 @@ export default {
                         this.errorMessage = response.message;
                     });
             }
-        })
+        });
     },
     methods: {
         _addGeoJsonLegend(colors, values) {
             const legend = L.control({ position: 'bottomright' });
             legend.onAdd = function () {
                 const div = L.DomUtil.create('div', 'info legend');
-                div.classList.add("legend-geoj")
+                div.classList.add("legend-geoj");
                 // loop through our density intervals and generate a label with a colored square for each interval
                 for (let i = 0; i < values.length; i++) {
                     div.innerHTML +=
@@ -131,7 +131,7 @@ export default {
                     cornerUpperRight[0] = point.lat;
                 if (point.lon > cornerUpperRight[1])
                     cornerUpperRight[1] = point.lon;
-            })
+            });
 
             return [
                 cornerBottomLeft,

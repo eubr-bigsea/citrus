@@ -9,7 +9,10 @@
     </h2>
 </template>
 
-<script>
+<script setup>
+const props = defineProps({modelValue: {type: String, default: ''}});
+const emit = defineEmits(['update:modelValue']);
+/*
 export default {
     name: 'InputHeader',
     props: {
@@ -23,19 +26,27 @@ export default {
             return (this.value || '').length;
         }
     }
-}
+};
+*/
 </script>
 
 <style scoped>
-    input {
-        background-color: transparent;
-        border: 1px solid transparent;
-        font-size: 30px;
-        font-weight: 300;
-        display: inline-block;
-    }
+.input-header>>>h2 {
+    display: inline
+}
+input:placeholder-shown {
+   font-style: italic;
+}
+input {
+    background-color: transparent;
+    border: 1px solid transparent;
+    font-size: 30px;
+    font-weight: 300;
+    display: inline-block;
+    width: 90%;
+}
 
-    input:hover {
-        border-color: #CCC;
-    }
+input:hover {
+    border-color: #CCC;
+}
 </style>

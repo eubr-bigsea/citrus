@@ -18,7 +18,7 @@
 </template>
 <script>
 import vSelect from "vue-select";
-import LabelComponent from './Label.vue'
+import LabelComponent from './Label.vue';
 import Widget from '../../mixins/Widget.js';
 export default {
     components: {
@@ -50,7 +50,7 @@ export default {
 
                 'EEE, d MMM yyyy HH:mm:ss Z',
             ]
-        }
+        };
     },
     mounted() {
         this.values = this.value;
@@ -61,7 +61,7 @@ export default {
             this.$emit('updated', this.field, val);
         }
     },
-}
+};
 </script>
 <style>
     .v-select ul.dropdown-menu {

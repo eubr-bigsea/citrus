@@ -113,7 +113,7 @@
                         </div>
                     </div>
                 </b-card>
-                <!-- 
+                <!--
                 <b-card class="clickable m-1" role="button" @click="navigate('new-visualization')">
                     <div class="row">
                         <div class="rounded-option bg-dark">
@@ -126,9 +126,9 @@
                             </small>
                         </div>
                     </div>
-                </b-card> 
+                </b-card>
                 -->
-                
+
                 <!--
                 <b-card class="clickable m-1">
                     <div class="row">
@@ -152,6 +152,7 @@
             </div>
         </div>
         <div class="row mt-3">
+            <h5>Ou você quer editar algo existente?</h5>
             <div class="col-md-12 custom-table">
                 <b-card>
                     <h5>Ou você quer editar algo existente?</h5>
@@ -250,7 +251,8 @@
 </template>
 <script>
 import axios from 'axios';
-import Notifier from '../../mixins/Notifier.js';
+import Notifier from '@/mixins/Notifier.js';
+import DataTableBuilder from '@/data-table-builder.js';
 
 let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 const META_PLATFORM_SLUG = 'meta';
@@ -259,7 +261,59 @@ export default {
     mixins: [Notifier],
     data() {
         const self = this;
+        const dtBuilder = new DataTableBuilder(this.$t)
+            .columns(['id',
+                'name',
+                'user',
+                'type',
+                'updated',
+                'version',
+                'actionsx'])
+            .headings({
+                id: 'ID',
+                name: this.$t('common.name'),
+                user: this.$t('common.user.name'),
+                type: this.$t('common.type'),
+                updated: this.$t('common.updated'),
+                version: this.$t('common.version'),
+                actions: this.$t('common.action', 2)
+            })
+            .sortable('name', 'id', 'updated')
+            .filterable('name')
+            .saveState(true)
+            .perPageValues([])
+            .requestFunction(async function (data) {
+                self.typeFilter = data.customQueries?.typeFilter;
+                data.sort = data.orderBy;
+                data.asc = data.ascending === 1 ? 'true' : 'false';
+                data.size = 5;
+                data.name = data.query;
+                data.platform = META_PLATFORM_SLUG;
+                data.types = self.typeFilter;
+
+                data.fields = 'id,name,platform,updated,user,version,description,type';
+                data.enabled = 1;
+
+                let url = `${tahitiUrl}/workflows`;
+                try {
+                    const resp = await axios.get(url, { params: data });
+                    self.totalRecords = resp.data.pagination.total;
+                    return {
+                        data: resp.data.data,
+                        count: resp.data.pagination.total,
+                        customQueries: { typeFilter: self.typeFilter }
+                    };
+                } catch (e) {
+                    self.error(e);
+                    return {
+                        data: [], count: 0
+                    };
+                }
+            }
+            );
+
         return {
+            ...dtBuilder.build(),
             totalRecords: 0,
             searchFilter: null,
             typeFilter: null,
@@ -399,8 +453,8 @@ export default {
                 }
             );
         }
-    },
-}
+    }
+};
 </script>
 <style scoped>
 .custom-table>>>.VueTables .row:first-child {
@@ -408,7 +462,21 @@ export default {
     background-color: white;
     padding-top: 0;
 }
+.custom-table>>>.VueTables .row:first-child {
+    margin: initial !important;
+    background-color: white;
+    padding-top: 0;
+}
 
+.rounded-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    width: 80px;
+    height: 80px;
+    border-radius: 40px;
+}
 .rounded-option {
     display: flex;
     align-items: center;

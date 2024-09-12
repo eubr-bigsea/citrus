@@ -6,7 +6,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h1> {{workflow.name}} </h1>
                     <div>
-                        <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-left mr-1">
+                        <router-link :to="{name: 'tracks'}" class="d-print-none btn btn-sm btn-outline-primary float-start me-1">
                             {{$t('actions.back')}}</router-link>
                     </div>
                 </div>
@@ -20,19 +20,15 @@
                     <p class="border-bottom">
                         {{workflow.name}}
                     </p>
-                    <!--
-                    <VuePerfectScrollbar v-if="loaded" ref="scrollBar" useBothWheelAxes="true" class="scroll-area"
-                        style="margin-right:-15px">
-                        -->
-                    <form v-if="loaded" ref="form" class="pr-3 zoom-90">
+                    <form v-if="loaded" ref="form" class="pe-3 zoom-90">
                         <div v-for="field in sortedEditFields" :key="field.key" class="lemonade-widgets"
-                             :data-name="field.name" :data-type="field.sourceType"
-                             :data-component="field.suggested_widget" :data-index="field.display_index">
+                             :data-name="field.name" :data-type="field.sourceType" :data-component="field.suggested_widget"
+                             :data-index="field.display_index">
                             <markdown-component v-if="field.textBefore" :text="field.textBefore" />
                             <template v-if="!!!field.hidden">
-                                <component :is="`${field.suggested_widget}-component`" :field="field"
-                                           :value="field.value" :language="$root.$i18n.locale" :show-help="false"
-                                           :type="field.type" xlookups-method="getLookups" xlookups="lookups" class="mt-2"
+                                <component :is="`${field.suggested_widget}-component`" :field="field" :value="field.value"
+                                           :language="$root.$i18n.locale" :show-help="false" :type="field.type"
+                                           xlookups-method="getLookups" xlookups="lookups" class="mt-2"
                                            :data-component="field.suggested_widget" :data-index="field.display_index"
                                            compatibility="2.1.0" @update-form-field-value="updateFieldValue" />
                                 <!--
@@ -56,13 +52,11 @@
                         </div>
                     </form>
                     <!--
-                    </VuePerfectScrollbar>
-                    -->
                     <div v-else class="text-bold-normal">
-                        <label>{{$tc('common.filter')}}:</label>
+                        <label>{{$t('common.filter')}}:</label>
                         <b-skeleton type="input" width="65%" />
 
-                        <label>{{$tc('common.filter')}}:</label>
+                        <label>{{$t('common.filter')}}:</label>
                         <b-skeleton type="input" width="85%" height="100px" />
                         <br>
                         <b-skeleton type="avatar" width="30px" height="30px" />
@@ -73,16 +67,16 @@
                         <b-skeleton animation="wave" width="55%" height="30px" />
                         <b-skeleton animation="wave" width="70%" height="60px" />
                     </div>
+                -->
                     <div class="buttons mt-5 pt-2 text-center border-top">
-                        <button class="btn btn-sm btn-outline-secondary float-right ml-1 mb-2"
-                                @click="showWorkflowInfo">
+                        <button class="btn btn-sm btn-outline-secondary float-end ms-1 mb-2" @click="showWorkflowInfo">
                             <font-awesome-icon icon="fas fa-info-circle" />
                         </button>
-                        <button class="btn btn-sm btn-primary float-right ml-1 mb-2" type="submit" :disabled="running"
+                        <button class="btn btn-sm btn-primary float-end ms-1 mb-2" type="submit" :disabled="running"
                                 @click="execute">
                             <font-awesome-icon icon="fa fa-search" /> {{$t('actions.execute')}}
                         </button>
-                        <button class="btn btn-sm btn-outline-info float-right" type="button" :disabled="running"
+                        <button class="btn btn-sm btn-outline-info float-end" type="button" :disabled="running"
                                 @click="showHelp">
                             <font-awesome-icon icon="fa fa-question-circle" /> {{$t('variables.help')}}
                         </button>
@@ -103,8 +97,7 @@
                         depois clique o botão "Pesquisar".
                     </p>
                 </div>
-                <div v-else-if="statusError && !running"
-                     class="empty-state text-center justify-content-between mt-4 pt-4">
+                <div v-else-if="statusError && !running" class="empty-state text-center justify-content-between mt-4 pt-4">
                     <h4>
                         <font-awesome-icon icon="fa fa-flask fa-3x" />
                     </h4>
@@ -128,8 +121,8 @@
                                 <grid-item v-for="item in layout" :key="item.i" :x="item.x" :y="item.y"
                                            :w="item.w"
                                            :h="item.h" :i="item.i" class="grid-item">
-                                    <caipirinha-visualization v-if="!running" class="pl-2 pr-2"
-                                                              :url="getCaipirinhaLink(job.id, item.task.id, 0)" :height="100*item.h" />
+                                    <caipirinha-visualization v-if="!running" class="ps-2 pe-2"
+                                                              :url="getCaipirinhaLink(job.id, item.task.id, 0)" :height="100 * item.h" />
                                     <div v-else class="p-5 text-center mt-5">
                                         <b-spinner variant="success" type="grow" />
                                         <p>{{$t('common.wait')}}</p>
@@ -145,34 +138,34 @@
                 -->
             </div>
         </div>
-        <b-modal ref="modalWorkflowInfo" :title="$tc('titles.info', 2)" ok-only size="lg"
+        <b-modal ref="modalWorkflowInfo" :title="$t('titles.info', 2)" ok-only size="lg"
                  button-size="sm">
             <table class="table table-sm small">
                 <tbody>
                     <tr>
-                        <td>{{$tc('titles.workflow', 1)}}:</td>
+                        <td>{{$t('titles.workflow', 1)}}:</td>
                         <td>{{workflow.id}} - {{workflow.name}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('common.author', 1)}}:</td>
-                        <td>{{workflow.user? workflow.user.name: ''}}</td>
+                        <td>{{$t('common.author', 1)}}:</td>
+                        <td>{{workflow.user ? workflow.user.name : ''}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('common.created', 1)}}:</td>
-                        <td>{{workflow.created|formatJsonDate}}</td>
+                        <td>{{$t('common.created', 1)}}:</td>
+                        <td>{{$filters.formatJsonDate(workflow.created)}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('common.updated', 1)}}:</td>
-                        <td>{{workflow.updated|formatJsonDate}}</td>
+                        <td>{{$t('common.updated', 1)}}:</td>
+                        <td>{{$filters.formatJsonDate(workflow.updated)}}</td>
                     </tr>
                     <tr>
-                        <td>{{$tc('workflow.preferredCluster', 1)}}:</td>
+                        <td>{{$t('workflow.preferredCluster', 1)}}:</td>
                         <td>{{preferredCluster.name}}</td>
                     </tr>
                 </tbody>
             </table>
         </b-modal>
-        <b-modal ref="modalHelp" :title="$tc('variables.help')" ok-only size="lg"
+        <b-modal ref="modalHelp" :title="$t('variables.help')" ok-only size="lg"
                  button-size="sm">
             <small>
                 Você deve necessariamente informar todos os campos obrigatórios do formulário.
@@ -193,7 +186,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="h in sortedEditFields" v-if="h.help" :key="h.key">
+                    <tr v-for="h in sortedEditFieldsWithHelp" :key="h.key">
                         <td>{{h.label}}</td>
                         <td>{{h.help}}</td>
                     </tr>
@@ -205,11 +198,11 @@
 
 <script>
 import axios from 'axios';
-import Notifier from '../mixins/Notifier.js';
-import DateComponent from '../components/widgets/Date.vue';
-import VuePerfectScrollbar from 'vue-perfect-scrollbar';
+import Notifier from '@/mixins/Notifier.js';
+import { GridLayout, GridItem } from "vue3-grid-layout-next";
+import DateComponent from '@/components/widgets/Date.vue';
 import io from 'socket.io-client';
-import CapirinhaVisualization from '../components/caipirinha-visualization/CaipirinhaVisualization.vue';
+import CapirinhaVisualization from '@/components/caipirinha-visualization/CaipirinhaVisualization.vue';
 
 
 const caipirinhaUrl = import.meta.env.VITE_CAIPIRINHA_URL;
@@ -266,7 +259,7 @@ class EditField {
             this.name = obj.name;
             this.key = obj.key;
             this.required = obj.multiplicity !== 'OPTIONAL'
-                    && obj.multiplicity !== 'ZERO_OR_MORE'; // FIXME
+                && obj.multiplicity !== 'ZERO_OR_MORE'; // FIXME
             this.suggested_widget = obj.suggested_widget;
             this.type = obj.type;
             this.textBefore = obj.textBefore;
@@ -283,8 +276,7 @@ export default {
     name: 'TrackView',
     components: {
         'date-component': DateComponent,
-        'caipirinha-visualization': CapirinhaVisualization,
-        VuePerfectScrollbar
+        'caipirinha-visualization': CapirinhaVisualization, GridItem, GridLayout
     },
     mixins: [Notifier],
     data() {
@@ -309,16 +301,19 @@ export default {
             statusError: null,
             visualizations: [],
             workflow: {},
-        }
+        };
     },
 
     computed: {
         sortedEditFields() {
             return [...this.editFields].sort((a, b) => a.display_index - b.display_index);
+        },
+        sortedEditFieldsWithHelp() {
+            return this.sortedEditFields.filter(f => f.help);
         }
     },
     beforeUnmount() {
-        this.$root.$off('update-form-field-value');
+
         if (this.socket) {
             this.socket.emit('leave', { room: this.job.id });
             this.socket.close();
@@ -326,7 +321,7 @@ export default {
     },
     mounted() {
         this.load();
-        this.$root.$on('update-form-field-value', this.updateFieldValue)
+
     },
     methods: {
         updateFieldValue(field, value, labelValue) { // eslint-disable-line no-unused-vars
@@ -471,7 +466,7 @@ export default {
                             login: user.login,
                             name: user.name
                         },
-                    }
+                    };
                     const headers = {
                         'Locale': self.$root.$i18n.locale,
                     };
@@ -482,7 +477,7 @@ export default {
                     self.$refs.form.reportValidity();
                 }
             } catch (ex) {
-                console.debug(ex)
+                console.debug(ex);
                 if (ex.data) {
                     self.error(ex.data.message);
                 } else if (ex.status === 0) {
@@ -498,7 +493,6 @@ export default {
         },
         async load() {
             let self = this;
-            self.$Progress.start()
             try {
                 let workflow = (await axios.get(`${tahitiUrl}/workflows/${this.$route.params.id}`)).data;
                 //const query = self.$route.query;
@@ -510,12 +504,12 @@ export default {
                     lang: this.$root.$i18n.locale,
                     workflow: workflow.id,
                     _ts: new Date().getTime(),
-                }
+                };
 
                 const resp = await axios.get(`${tahitiUrl}/operations`, { params });
                 const operations = resp.data.data;
 
-                operations.forEach((op) => { self.operationsLookup[op.id] = op });
+                operations.forEach((op) => { self.operationsLookup[op.id] = op; });
                 workflow.platform_id = workflow.platform.id;
 
                 // Load preferred cluster info
@@ -540,7 +534,7 @@ export default {
                     }
                     if (variable?.parameters?.values?.length > 0) {
                         if (Array.isArray(variable?.parameters?.values)) {
-                            variable.values = variable.parameters.values
+                            variable.values = variable.parameters.values;
                         } else {
                             variable.values = JSON.parse(variable.parameters.values);
                             variable.suggested_widget = 'dropdown';
@@ -553,16 +547,16 @@ export default {
                         }
                     } else if (['INTEGER', 'DECIMAL'].indexOf(variable.type) > -1) {
                         variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : variable.type.toLowerCase();
-                        variable.data_type = 'number'
+                        variable.data_type = 'number';
                     } else if (variable.type === 'DATE') {
                         variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : variable.type.toLowerCase();
-                        variable.data_type = 'date'
+                        variable.data_type = 'date';
                     } else if (variable.type === 'BINARY') {
                         variable.suggested_widget = 'checkbox';
-                        variable.data_type = 'number'
+                        variable.data_type = 'number';
                     } else if (variable.type === 'CHARACTER') {
                         variable.suggested_widget = variable.multiplicity > 1 ? 'tag2' : 'text';
-                        variable.data_type = 'text'
+                        variable.data_type = 'text';
                     } else if (variable.type == 'STATIC_TEXT') {
                         variable.hidden = true;
                     } else {
@@ -572,7 +566,7 @@ export default {
                     variable.value = variable.default_value;
                     const field = new EditField(variable, 'variable');
                     field.variable = variable;
-                    this.editFields.push(field)
+                    this.editFields.push(field);
                 });
 
                 self.savedFiltersName = `savedFilters_${self.$route.params.id}`;
@@ -668,7 +662,7 @@ export default {
                                         break;
                                     }
                                 }
-                                this.editFields.push(new EditField(f, 'filter'))
+                                this.editFields.push(new EditField(f, 'filter'));
                             });
                         }
                     }
@@ -682,10 +676,8 @@ export default {
                     //this.execute();
                 }
             } catch (ex) {
-                console.debug(ex)
+                console.debug(ex);
                 self.error(ex);
-            } finally {
-                self.$Progress.finish();
             }
         },
         testar() {
@@ -695,38 +687,37 @@ export default {
                     _ts: new Date().getTime(),
 
                 }
-            })
+            });
         },
     },
-}
+};
 </script>
-<style>
-</style>
+<style></style>
 <style scoped>
-    .scroll-area {
-        max-height: 85vh;
-    }
+.scroll-area {
+    max-height: 85vh;
+}
 
-    .zoom-90 {
-        zoom: 90%;
-    }
+.zoom-90 {
+    zoom: 90%;
+}
 
-    .lemonade-widgets>>>.label .required {
-        font-weight: bold !important;
-    }
+.lemonade-widgets>>>.label .required {
+    font-weight: bold !important;
+}
 
-    .lemonade-widgets {
-        width: 100%;
-        margin-top: 20px;
-    }
+.lemonade-widgets {
+    width: 100%;
+    margin-top: 20px;
+}
 
-    /* .visualization {
+/* .visualization {
         border: 1px solid #eee;
         margin-top: 10px;
         width: 100%;
         min-height: 200px;
     } */
-    .grid-item {
-        overflow: auto;
-    }
+.grid-item {
+    overflow: auto;
+}
 </style>

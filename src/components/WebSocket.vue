@@ -1,4 +1,6 @@
-<template></template>
+<template>
+    <div />
+</template>
 
 <script>
 
@@ -16,7 +18,7 @@ export default {
             namespace: standNamespace,
             socket: null,
             room: null,
-        }
+        };
     },
     computed: {
         ...mapGetters(['user']),

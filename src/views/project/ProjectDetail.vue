@@ -3,7 +3,7 @@
         <div class="border-bottom">
             <b-nav>
                 <b-nav-item active>
-                    {{$t('titles.list', {what: $tc('titles.project', 2)})}}
+                    {{$t('titles.list', {what: $t('titles.project', 2)})}}
                 </b-nav-item>
                 <b-nav-item>Link</b-nav-item>
                 <b-nav-item>Another Link</b-nav-item>
@@ -14,14 +14,14 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-            <h1>{{$tc('titles.project', 1)}}</h1>
+            <h1>{{$t('titles.project', 1)}}</h1>
         </div>
         <div class="row">
             <div class="col-10">
                 <div class="diagram-limit">
                     <div id="query-diagram-lemonade" class="query-diagram">
-                        <template v-for="table in tables">
-                            <project-item :key="`${table.type}-${table.id}`" :item="table"
+                        <template v-for="table in tables" :key="`${table.type}-${table.id}`">
+                            <project-item :item="table"
                                           :jsplumb-instance="jsplumbInstance" @click="handleItemClick" />
                         </template>
                     </div>
@@ -156,7 +156,7 @@ export default {
 
                 },
             ]
-        )
+        );
         const links = computed(() => {
             return [
                 ['lemonade-data-source-1', 'lemonade-workflow-1', 'queried by'],
@@ -178,7 +178,7 @@ export default {
 
                 ['lemonade-workflow-4', 'lemonade-app-1', 'defines'],
                 ['lemonade-data-source-2', 'lemonade-python-1', 'queried by'],
-            ]
+            ];
         });
             // Layout graph
         const g = new dagre.graphlib.Graph();
@@ -199,7 +199,7 @@ export default {
             //this.tables.log("Node " + v + ": " + JSON.stringify(g.node(v)));
             const node = g.node(v);
             if (node) {
-                const table = node.table
+                const table = node.table;
                 table.top = node.y;
                 table.left = node.x;
             }
@@ -209,7 +209,7 @@ export default {
                 jsplumbInstance.reset();
                 jsplumbInstance = null;
             }
-        })
+        });
         onMounted(() => {
             jsplumbInstance = jsPlumb.getInstance({
                 PaintStyle: {
@@ -251,15 +251,15 @@ export default {
             }
             activeItem.value = item;
             item.addClass('active');
-        }
+        };
         return {
             activeItem,
             jsplumbInstance,
             tables, links,
             handleItemClick
-        }
+        };
     },
-}
+};
 </script>
 <style scoped>
     #query-diagram-lemonade>>>.connectorLabel {

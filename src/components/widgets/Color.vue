@@ -3,11 +3,11 @@
         <LabelComponent :field="field" :value="value" />
         <div v-if="pairOptionValueList" class="color-items">
             <div v-for="(opt, index) in pairOptionValueList" :key="index" class="color-item"
-                :class="{ active: value && opt && opt.background === value.background && opt.foreground == value.foreground && opt.foreground == value.foreground }"
-                :style="{ background: opt.background }" :title="opt.background" @click="doUpdate(opt)" />
+                 :class="{ active: value && opt && opt.background === value.background && opt.foreground == value.foreground && opt.foreground == value.foreground }"
+                 :style="{ background: opt.background }" :title="opt.background" @click="doUpdate(opt)" />
         </div>
         <div v-else>
-            <b-form-input type="color"  class="w-10" @input="doUpdate" :value="value"/>
+            <b-form-input type="color" class="w-10" :value="value" @input="doUpdate" />
         </div>
     </div>
 </template>
@@ -37,10 +37,10 @@ export default {
     },
     methods: {
         doUpdate(value) {
-            this.triggerUpdateEvent(this.message, this.field, value)
+            this.triggerUpdateEvent(this.message, this.field, value);
         }
     },
-}
+};
 </script>
 <style scoped>
 .color-items {

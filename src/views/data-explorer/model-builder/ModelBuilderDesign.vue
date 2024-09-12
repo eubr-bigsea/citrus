@@ -3,13 +3,13 @@
         <div>
             <div class="d-flex justify-content-between align-items-center border-bottom">
                 <div class="title">
-                    <h1>Construção de Modelos</h1>
+                    <h1 class="pt-2">Construção de Modelos</h1>
                 </div>
-                <form class="float-right form-inline w-50 d-flex justify-content-end">
-                    <label>{{ $tc('common.name') }}:</label>
-                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ml-1 w-50"
-                        :placeholder="$tc('common.name')" maxlength="100">
-                    <button class="btn btn-sm btn-outline-success ml-1 float-right" @click.prevent="saveWorkflow">
+                <form class="float-end form-inline w-50 d-flex justify-content-end">
+                    <label>{{ $t('common.name') }}:</label>
+                    <input v-model="workflowObj.name" type="text" class="form-control form-control-sm ms-1 w-50"
+                        :placeholder="$t('common.name')" maxlength="100">
+                    <button class="btn btn-sm btn-outline-success ms-1 float-end" @click.prevent="saveWorkflow">
                         <font-awesome-icon icon="fa fa-save" />
                         {{ $t('actions.save') }}
                     </button>
@@ -27,7 +27,7 @@
                     </button>
 
                     <!--
-                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ml-1 float-right">
+                    <button @click.prevent="loadJobs" class="btn btn-sm btn-outline-secondary ms-1 float-end">
                         <font-awesome-icon icon="fa fa-sync" />
                         Reload jobs</button>
                         -->
@@ -37,7 +37,7 @@
                 <b-tabs v-if="loaded" class="p-2 custom-tab bg-white" align="center">
                     <b-tab title="Parâmetros" class="m-1 parameters">
                         <div class="row size-full">
-                            <div class="col-md-3 col-lg-2 border-right">
+                            <div class="col-md-3 col-lg-2 border-right border-end">
                                 <div class="explorer-nav p-1">
                                     <SideBar :selected="selected" :supervised="supervised" @edit="edit" />
                                 </div>
@@ -51,7 +51,12 @@
                                             @retrieve-attributes="handleRetrieveAttributes" />
                                     </template>
                                     <template v-if="selected === 'data'">
-                                        <TrainTest :split="workflowObj.split" />
+                                        <ModelBuilderTrainTest
+                                                   v-model:strategy="workflowObj.split.forms.strategy.value"
+                                                   v-model:ratio="workflowObj.split.forms.ratio.value"
+                                                   v-model:folds="workflowObj.split.forms.folds.value"
+                                                   v-model:seed="workflowObj.split.forms.seed.value"
+                                                   :split="workflowObj.split"/>
                                     </template>
                                     <template v-if="selected === 'metric'">
                                         <Metric :evaluator="workflowObj.evaluator" :attributes="attributes" />
@@ -65,14 +70,23 @@
                                         <FeatureGeneration />
                                     </template>
                                     <template v-if="selected === 'reduction'">
-                                        <FeatureReduction :reduction="workflowObj.reduction" />
+                                        <ModelBuilderFeatureReduction :reduction="workflowObj.reduction"
+                                            v-model:method="workflowObj.reduction.forms.method.value"
+                                            v-model:k="workflowObj.reduction.forms.k.value"/>
                                     </template>
                                     <template v-if="selected === 'algorithms'">
                                         <Algorithms ref="algorithms" :operations="algorithmOperation"
                                             :workflow="workflowObj" :operation-map="operationsMap" :task-type="taskType"/>
                                     </template>
                                     <template v-if="selected === 'grid'">
-                                        <Grid :grid="workflowObj.grid" />
+                                        <ModelBuilderGrid
+                                            :grid="workflowObj.grid"
+                                            v-model:random_grid="workflowObj.grid.forms.random_grid.value"
+                                            v-model:max_iterations="workflowObj.grid.forms.max_iterations.value"
+                                            v-model:max_search_time="workflowObj.grid.forms.max_search_time.value"
+                                            v-model:parallelism="workflowObj.grid.forms.parallelism.value"
+                                            v-model:strategy="workflowObj.grid.forms.strategy.value"
+                                            v-model:seed="workflowObj.grid.forms.seed.value"/>
                                     </template>
                                     <template v-if="selected === 'weighting'">
                                         <Weighting />
@@ -99,13 +113,13 @@
     </div>
 </template>
 <script>
-import Vue from 'vue';
+
 import io from 'socket.io-client';
-import SideBar from './SideBar.vue';
-import DesignData from './DesignData.vue';
-import TrainTest from './TrainTest.vue';
-import Metric from './Metric.vue';
-import FeatureSelection from './FeatureSelection.vue';
+import ModelBuilderSideBar from './ModelBuilderSideBar.vue';
+import ModelBuilderDataAndSampling from './ModelBuilderDataAndSampling.vue';
+import ModelBuilderTrainTest from './ModelBuilderTrainTest.vue';
+import ModelBuilderMetric from './ModelBuilderMetric.vue';
+import ModelBuilderFeatureSelection from './ModelBuilderFeatureSelection.vue';
 import FeatureGeneration from './FeatureGeneration.vue';
 import FeatureReduction from './FeatureReduction.vue';
 import ModelBuilderSaveResults from './ModelBuilderSaveResults.vue';
@@ -118,7 +132,7 @@ import Weighting from './Weighting.vue';
 import DataSourceMixin from '../DataSourceMixin.js';
 import Notifier from '@/mixins/Notifier.js';
 
-import { ModelBuilderWorkflow, Operation } from '../entities.js';
+import { ModelBuilderWorkflow, Operation, Task } from '../entities.js';
 
 import axios from 'axios';
 const limoneroUrl = import.meta.env.VITE_LIMONERO_URL;
@@ -155,19 +169,40 @@ export default {
             notRunning: true,
             operationsMap: new Map(),
             selectedAlgorithm: { forms: [] },
+            selectedOperation: {},
             selected: 'target',
             socket: null, // used by socketio (web sockets)
             targetPlatform: 1,
-            workflowObj: { forms: { $meta: { value: { target: '', taskType: '' } } } },
+            workflowObj: {
+                readData: { forms: {} }, sample: { forms: { type: {}, value: {}, fraction: {}, seed: {} } },
+                forms: { $meta: { value: { target: '', taskType: '' } } }
+            },
 
             //FIXME: hard-coded. It'd be best defined in Tahiti
             unsupportedParameters: new Set(['perform_cross_validation', 'cross_validation', 'one_vs_rest'])
-        }
+        };
     },
     computed: {
         algorithmOperation() {
-            const taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+            let taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+            if (taskType.endsWith('classification')) {
+                taskType = 'classification';
+            }
             return Array.from(this.operationsMap.values()).filter((op) => op.categories.find(cat => cat.subtype === taskType));
+        },
+        algorithmTasks: {
+            get: function () {
+                let taskType = this.workflowObj.forms.$meta.value.taskType || 'classification';
+                if (taskType.endsWith('classification')) {
+                    taskType = 'classification';
+                }
+                return this.workflowObj.tasks.filter(task =>
+                    this.operationsMap.has(task.operation.slug)
+                    && this.operationsMap.get(task.operation.slug).categories.find(
+                        cat => cat.subtype === taskType)
+                );
+            },
+            set: (v) => { }
         },
         dataSourceId: {
             get() { return this.workflowObj.tasks[0].forms?.data_source?.value; },
@@ -179,7 +214,8 @@ export default {
         taskType: {
             get() { return this.workflowObj.forms.$meta.value.taskType; },
             set(newValue) {
-                return this.$store.dispatch('dataExplorer/setTaskName', newValue)
+                this.workflowObj.forms.$meta.value.taskType = newValue;
+                //return this.$store.dispatch('dataExplorer/setTaskName', newValue);
             }
         },
         numberOfFeatures() {
@@ -197,17 +233,35 @@ export default {
                     platform: 1, //FIXME
                     category: this.taskType,
                     lang: this.$locale || 'pt',
-                }
+                };
                 await axios.get(
                     `${tahitiUrl}/operations`, { params });
                 //this.algorithms = resp.data;
                 //this.selectedAlgorithm = this.algorithms[0];
             }
+        },
+        'workflowObj.evaluator.forms.task_type.value': function (v) {
+            console.debug('Changing type')
+            /*
+            // Disable all tasks. They could be removed, but user may lose
+            // all previous configurations.
+
+            this.workflowObj.tasks.filter(task =>
+            this.operationsMap.get(task.operation.slug).categories.find(cat => cat.type === 'algorithm'))
+            .forEach(task => task.enabled = false);
+            */
+            this.taskType = v;
+            this.algorithmOperation.forEach(op => {
+                if (!this.workflowObj.tasks.find(t => t.operation.id === op.id)) {
+                    this.workflowObj.addTask(op, false, {});
+                }
+            });
         }
     },
     async created() {
         this.internalWorkflowId = (this.$route) ? this.$route.params.id : 0;
         await this.load();
+        this.taskType = this.workflowObj.evaluator.forms.task_type.value;
     },
     beforeUnmount() {
         this.disconnectWebSocket();
@@ -299,19 +353,19 @@ export default {
             const atLeastOneAlgorithm = self.workflowObj.tasks.find(a => {
                 return a.enabled
                     && self.operationsMap.has(a.operation.slug)
-                    && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm')
+                    && self.operationsMap.get(a.operation.slug).categories.find(c => c.type === 'algorithm');
             });
             if (!atLeastOneAlgorithm) {
                 errors.push('É necessário habilitar pelo menos um algoritmo.');
             }
             if (self.workflowObj.preferred_cluster_id === null) {
-                errors.push("Você deve escolher um ambiente de processamento para a execução.")
+                errors.push("Você deve escolher um ambiente de processamento para a execução.");
             }
             if (errors.length > 0) {
                 this.html(
                     'Existe ao menos uma  inconsistência no fluxo que precisa ser resolvida antes de iniciar o treino: <br/><ul>' +
                     errors.map(e => `<li>${e}</li>`).join("") + '</ul>',
-                    'Inconsistência(s) detectada(s)', 10000)
+                    'Inconsistência(s) detectada(s)', 10000);
                 return false;
             }
             return true;
@@ -344,10 +398,10 @@ export default {
                 persist: true,
                 type: 'MODEL_BUILDER',
                 app_configs: { verbosity: 0 },
-            }
+            };
             try {
                 const response = await axios.post(`${standUrl}/jobs`, body,
-                    { headers: { 'Locale': self.$root.$i18n.locale, } })
+                    { headers: { 'Locale': self.$root.$i18n.locale, } });
                 self.jobs.splice(0, 0, response.data.data);
                 self.job = response.data.data;
                 self.success('Construção dos modelos foi iniciada.');
@@ -362,23 +416,22 @@ export default {
                 } else {
                     self.error(`Unhandled error: ${JSON.stringify(ex)}`);
                 }
-            } finally {
-                self.$Progress.finish();
             }
         },
         async load() {
             this.loadingData = true;
-            this.$Progress.start()
             try {
                 await this.loadOperations();
-                let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`)
+                let resp = await axios.get(`${tahitiUrl}/workflows/${this.internalWorkflowId}`);
                 this.workflowObj = new ModelBuilderWorkflow(resp.data, this.operationsMap);
                 if (this.workflowObj.type !== 'MODEL_BUILDER') {
-                    this.error(null, this.$tc('modelBuilder.invalidType'));
-                    this.$router.push({ name: 'index-explorer' })
+                    this.error(null, this.$t('modelBuilder.invalidType'));
+                    this.$router.push({ name: 'index-explorer' });
                     return;
                 }
-                await this.loadDataSource(this.dataSourceId);
+                if (this.dataSourceId) {
+                    await this.loadDataSource(this.dataSourceId);
+                }
                 this.labelAttribute = this.workflowObj.forms.$meta.value.label;
                 const evaluator = this.workflowObj.tasks.find(t => t.operation.slug === 'evaluator');
                 if (evaluator && !evaluator?.forms?.task_type?.value) {
@@ -389,13 +442,15 @@ export default {
 
                 this.loadClusters();
 
+                if (this.workflowObj.features.forms.features.value === null){
+                    this.workflowObj.features.forms.features.value = [];
+                }
                 this.loaded = true;
             } catch (e) {
                 this.error(e);
-                this.$router.push({ name: 'index-explorer' })
+                this.$router.push({ name: 'index-explorer' });
             } finally {
-                Vue.nextTick(() => {
-                    this.$Progress.finish();
+                this.$nextTick(() => {
                     this.loadingData = false;
                     this.isDirty = false;
                 });
@@ -469,7 +524,7 @@ export default {
         },
         async loadClusters() {
             try {
-                const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${this.targetPlatform}`)
+                const resp = await axios.get(`${standUrl}/clusters?enabled=true&platform=${this.targetPlatform}`);
                 this.clusters = resp.data.data;
             } catch (ex) {
                 this.error(ex);
@@ -490,7 +545,6 @@ export default {
             let cloned = JSON.parse(JSON.stringify(this.workflowObj));
             let url = `${tahitiUrl}/workflows/${cloned.id}`;
 
-            cloned.preferred_cluster_id = 1; //FIXME!
             cloned.platform_id = META_PLATFORM_ID;
 
             cloned.tasks.forEach((task) => {
@@ -505,12 +559,12 @@ export default {
                     strategy: this.workflowObj.grid.forms.strategy?.value,
                     max_iterations: this.workflowObj.grid.forms.max_iterations?.value,
                 }
-            }
+            };
 
             try {
                 await axios.patch(url, cloned, { headers: { 'Content-Type': 'application/json' } });
                 this.isDirty = false;
-                this.success(this.$t('messages.savedWithSuccess', { what: this.$tc('titles.workflow') }));
+                this.success(this.$t('messages.savedWithSuccess', { what: this.$t('titles.workflow') }));
             } catch (e) {
                 this.error(e);
             }
@@ -521,6 +575,7 @@ export default {
         },
         selectAlgorithm(algo) {
             this.selectedAlgorithm = algo;
+            this.selectedOperation = this.operationsMap.get(algo.operation.slug);
         },
         handleRetrieveAttributes(ds) {
             if (ds) {
@@ -556,7 +611,7 @@ export default {
             );
         },
     }
-}
+};
 </script>
 
 <style scoped>
@@ -587,7 +642,6 @@ form {
 }
 
 .scroll-area {
-    xborder: 1px solid #ccc;
     max-height: calc(100vh - 320px);
     padding: 10px 15px 10px 10px;
 }

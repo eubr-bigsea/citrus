@@ -7,15 +7,15 @@
                         <div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <h1>
-                                    {{add ? $t('actions.add', {type: $tc('titles.storage', 1).toLowerCase()}) :
-                                        $t('actions.edit') + ' ' + $tc('titles.storage', 1).toLowerCase()}}
+                                    {{add ? $t('actions.add', {type: $t('titles.storage', 1).toLowerCase()}) :
+                                        $t('actions.edit') + ' ' + $t('titles.storage', 1).toLowerCase()}}
                                 </h1>
                             </div>
                             <hr>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                <label class="font-weight-bold">{{$tc('common.name')}}:</label>
+                                <label class="font-weight-bold">{{$t('common.name')}}:</label>
                                 <input v-model="storage.name"
                                        type="text"
                                        class="form-control"
@@ -23,7 +23,7 @@
                                        maxlength="100">
                             </div>
                             <div class="col-md-2">
-                                <label class="font-weight-bold">{{$tc('common.type')}}:</label>
+                                <label class="font-weight-bold">{{$t('common.type')}}:</label>
                                 <select v-model="storage.type"
                                         class="form-control"
                                         required>
@@ -51,23 +51,23 @@
                                           class="form-control" />
                             </div>
                             <div class="col-md-12">
-                                <label>{{$tc('storage.extraParameters')}}:</label>
+                                <label>{{$t('storage.extraParameters')}}:</label>
                                 <textarea v-model="storage.extra_params"
                                           class="form-control" />
                             </div>
                         </div>
                         <div class="col-md-12 mb-4 border-top pt-2 mt-2">
-                            <button class="btn btn-primary mr-1 btn-spinner"
+                            <button class="btn btn-primary me-1 btn-spinner"
                                     @click.stop="save">
                                 <font-awesome-icon icon="spinner"
                                                    pulse
                                                    class="icon" />
                                 <font-awesome-icon icon="fa fa-save" />
-                                {{$tc('actions.save')}}
+                                {{$t('actions.save')}}
                             </button>
                             <router-link :to="{name: 'storages'}"
-                                         class="btn btn-secondary mr-1">
-                                {{$tc('actions.cancel')}}
+                                         class="btn btn-secondary me-1">
+                                {{$t('actions.cancel')}}
                             </router-link>
                         </div>
                     </div>
@@ -111,7 +111,7 @@ export default {
                 axios
                     .get(url)
                     .then(resp => {
-                        this.storage = resp.data.data[0]
+                        this.storage = resp.data.data[0];
                     })
                     .catch(
                         function (e){
@@ -130,7 +130,7 @@ export default {
 
             if (self.add){
                 url = `${limoneroUrl}/storages`;
-                axiosCall = axios.post
+                axiosCall = axios.post;
             }
             event.target.setAttribute('disabled', 'disabled');
             event.target.classList.remove('btn-spinner');
@@ -139,7 +139,7 @@ export default {
                 .then(()=> {
                     this.success(
                         this.$t('messages.savedWithSuccess', {
-                            what: this.$tc('titles.storage', 1)
+                            what: this.$t('titles.storage', 1)
                         })
                     );
                     this.$router.push({

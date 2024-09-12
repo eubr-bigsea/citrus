@@ -1,68 +1,110 @@
-import Vue from 'vue';
-import VueProgressBar from 'vue-progressbar';
-import BootstrapVue from 'bootstrap-vue';
+//import Vue from 'vue';
+/*
+import { configureCompat } from "vue";
+configureCompat({
+    MODE: 2,
+    WATCH_ARRAY: 'suppress-warning',
+    //RENDER_FUNCTION: 'suppress-warning',
+    INSTANCE_LISTENERS: 'suppress-warning',
+    COMPONENT_FUNCTIONAL: 'suppress-warning',
+    OPTIONS_BEFORE_DESTROY: 'suppress-warning',
+    INSTANCE_SCOPED_SLOTS: 'suppress-warning',
+    OPTIONS_DATA_MERGE: 'suppress-warning',
+    COMPONENT_V_MODEL: 'suppress-warning',
+    CUSTOM_DIR: 'suppress-warning',
+    INSTANCE_EVENT_EMITTER: 'suppress-warning',
+    ATTR_FALSE_VALUE: 'suppress-warning',
+    INSTANCE_ATTRS_CLASS_STYLE: 'suppress-warning',
+    GLOBAL_PROTOTYPE: 'suppress-warning',
+    GLOBAL_EXTEND: 'suppress-warning',
+    GLOBAL_MOUNT: 'suppress-warning',
+    OPTIONS_DESTROYED: 'suppress-warning',
+    INSTANCE_DESTROY: 'suppress-warning',
+    COMPONENT_ASYNC: 'suppress-warning'
+    //RENDER_FUNCTION: true,
+});
+
+import Vue, { createApp, h } from '@vue/compat';
+*/
+
+import './assets/main.scss';
+import { createApp, h } from 'vue';
+//import VueProgressBar from "@aacassandra/vue3-progressbar";
+//import BootstrapVue from 'bootstrap-vue';
 import App from './App.vue';
 import router from './router.js';
 import store from './store.js';
 import { openIdService } from './openid-auth.js';
 
 import 'vue-select/dist/vue-select.css';
-import VueI18n from 'vue-i18n';
-import { createI18n } from 'vue-i18n-bridge'
+import { createI18n } from 'vue-i18n';
 
 import messages from './i18n/messages.js';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
+//import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap-vue/dist/bootstrap-vue.css';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css';
+
 import axios from 'axios';
 //import VueAxios from 'vue-axios';
-import VueTheMask from 'vue-the-mask'
+import VueTheMask from 'vue-the-mask';
 
-import { ClientTable, ServerTable } from 'vue-tables-2';
+import VServerTable from '@/components/VServerTable.vue';
+import VModal from '@/components/VModal.vue';
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+//import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome';
 import './fa-icons.js';
+
+import Toast, { useToast } from "vue-toastification";
+// Import the CSS or use your own!
+import "vue-toastification/dist/index.css";
 
 /* Widgets */
 
-import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue'
-import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue'
-import AttributeAliasSelectorComponent from './components/widgets/AttributeAliasSelector.vue'
-import CheckboxComponent from './components/widgets/Checkbox.vue'
-import CastComponent from './components/widgets/Cast.vue'
-import CodeComponent from './components/widgets/Code.vue'
-import ColorComponent from './components/widgets/Color.vue'
-import ColorPaletteComponent from './components/widgets/ColorPalette.vue'
-import ColorScaleComponent from './components/widgets/ColorScale.vue'
-import DateComponent from './components/widgets/Date.vue'
-import DecimalComponent from './components/widgets/Decimal.vue'
-import DropDownComponent from './components/widgets/DropDown.vue'
-import ExpressionComponent from './components/widgets/ExpressionEditor.vue'
-import FilterComponent from './components/widgets/FilterEditor.vue'
-import GridCoordinatesComponent from './components/widgets/GridCoordinates.vue'
-import IntegerComponent from './components/widgets/Integer.vue'
-import JoinComponent from './components/widgets/Join.vue'
-import LookupComponent from './components/widgets/Lookup.vue'
-import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue'
-import MarkdownComponent from './components/widgets/Markdown.vue'
-import PercentageComponent from './components/widgets/Percentage.vue'
-import RadioComponent from './components/widgets/Radio.vue'
-import RangeComponent from './components/widgets/Range.vue'
-import SampleLookupComponent from './components/widgets/SampleLookup.vue'
-import Select2Component from './components/widgets/Select2.vue'
-import TagComponent from './components/widgets/Tag.vue'
-import TextComponent from './components/widgets/Text.vue'
-import TextAreaComponent from './components/widgets/TextArea.vue'
-import UrlComponent from './components/widgets/Url.vue'
+import AttributeFunctionComponent from './components/widgets/AttributeFunction.vue';
+import AttributeSelector2Component from './components/widgets/AttributeSelector2.vue';
+import AttributeAliasSelectorComponent from './components/widgets/AttributeAliasSelector.vue';
+import CheckboxComponent from './components/widgets/Checkbox.vue';
+import CastComponent from './components/widgets/Cast.vue';
+import CodeComponent from './components/widgets/Code.vue';
+import ColorComponent from './components/widgets/Color.vue';
+import ColorPaletteComponent from './components/widgets/ColorPalette.vue';
+import ColorScaleComponent from './components/widgets/ColorScale.vue';
+import DateComponent from './components/widgets/Date.vue';
+import DecimalComponent from './components/widgets/Decimal.vue';
+import DropDownComponent from './components/widgets/DropDown.vue';
+import ExpressionComponent from './components/widgets/ExpressionEditor.vue';
+import FilterComponent from './components/widgets/FilterEditor.vue';
+import GridCoordinatesComponent from './components/widgets/GridCoordinates.vue';
+import IntegerComponent from './components/widgets/Integer.vue';
+import JoinComponent from './components/widgets/Join.vue';
+import LookupComponent from './components/widgets/Lookup.vue';
+import MarkdownEditorComponent from './components/widgets/MarkdownEditor.vue';
+import MarkdownComponent from './components/widgets/MarkdownComponent.vue';
+import PercentageComponent from './components/widgets/Percentage.vue';
+import RadioComponent from './components/widgets/Radio.vue';
+import RangeComponent from './components/widgets/Range.vue';
+import SampleLookupComponent from './components/widgets/SampleLookup.vue';
+import Select2Component from './components/widgets/Select2.vue';
+import TagComponent from './components/widgets/Tag.vue';
+import TextComponent from './components/widgets/Text.vue';
+import TextAreaComponent from './components/widgets/TextArea.vue';
+import UrlComponent from './components/widgets/Url.vue';
 import Plotly from './components/visualization/Plotly.vue';
+import ConfirmComponenent from './components/ConfirmComponent.vue';
+import VueSelect from "vue-select";
+import VueGridLayout from 'vue3-grid-layout-next';
+import InputTagComponent from '@/components/widgets/InputTag.vue';
+import NumericRangeOrSetComponent from '@/components/widgets/NumericRangeOrSet.vue';
 
+import * as ConfirmDialog from 'vuejs-confirm-dialog';
+import { createConfirmDialog } from 'vuejs-confirm-dialog';
 
-import vSelect from 'vue-select'
-import VueGridLayout from 'vue-grid-layout';
-
-
-Vue.component('VSelect', vSelect)
-Vue.component('GridItem', VueGridLayout.GridItem);
-Vue.component('GridLayout', VueGridLayout.GridLayout);
+//Vue.use(BootstrapVue);
+import { BButton } from "bootstrap-vue-next";
 
 const widgets = new Map([
     ['attribute-function-component', AttributeFunctionComponent],
@@ -97,29 +139,15 @@ const widgets = new Map([
     ['text-component', TextComponent],
     ['textarea-component', TextAreaComponent],
     ['url-component', UrlComponent],
-])
+    ['input-tag-component', InputTagComponent],
+    ['numeric-range-or-set-component', NumericRangeOrSetComponent],
+]);
 
-widgets.forEach((v, k) => Vue.component(k, v.default || v));
 
 //Vue.component('Plotly', Plotly.default || Plotly);
-import './assets/main.scss';
-import '~vue-snotify/styles/dark.scss'; //dark or material.css or simple.css
 
-// Snotify
-import Snotify from 'vue-snotify';
-window.Vue = Vue; // Force Snotify to be installed in window
-Vue.use(Snotify, {
-    toast: {
-        titleMaxLength: 100,
-        timeout: 5000,
-        xposition: 'centerTop'
-    }
-});
-Vue.directive('focus', {
-    inserted: function (el) {
-        el.focus()
-    }
-})
+
+
 /**
  * Setting this config so that Vue-tables-2 will be able to replace sort icons with chevrons
  * https://fontawesome.com/how-to-use/with-the-api/setup/configuration
@@ -127,32 +155,10 @@ Vue.directive('focus', {
 import { config } from '@fortawesome/fontawesome-svg-core';
 config.autoReplaceSvg = 'nest';
 
-Vue.use(ClientTable, {}, false, 'bootstrap4', 'default');
-Vue.use(ServerTable, {}, true, 'bootstrap4', 'default');
 //Vue.use(VueTheMask)
 
 //Vue.use(VueAxios, axios);
-Vue.use(BootstrapVue);
-Vue.component('FontAwesomeIcon', FontAwesomeIcon);
-Vue.component('FontAwesomeLayers', FontAwesomeLayers);
-
-Vue.config.productionTip = false;
-
-const options = {
-    color: '#568f32',
-    failedColor: '#874b4b',
-    thickness: '5px',
-    transition: {
-        speed: '0.5s',
-        opacity: '0.2s',
-        termination: 300
-    },
-    autoRevert: true,
-    location: 'top',
-    inverse: false
-};
-Vue.use(VueI18n, { bridge: true });
-Vue.use(VueProgressBar, options);
+//Vue.use(BootstrapVue);
 
 // Date-fns
 import { format, formatDistanceStrict, parseISO, fromUnixTime, differenceInSeconds, differenceInMinutes } from 'date-fns';
@@ -166,29 +172,9 @@ const locales = {
     pt: require('date-fns/locale/pt')
 };
 */
-Vue.prototype.$filters = {
-    formatJsonDate(v, fmt) {
-        if (v) {
-            if (fmt === undefined) {
-                fmt = 'dd/MM/yyyy HH:mm';
-            }
-            return format(parseISO(v + '.000Z'), fmt);
-        }
-    },
 
-    formatTimestamp(v) {
-        if (v) {
-            return format(
-                utcToZonedTime(fromUnixTime(v * .000001)),
-                'dd/MM/yyyy HH:mm:ss');
-        }
-    },
-    timeFromNow(v, l) {
-        return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
-            { addSuffix: true, locale: locales[l] })
-    },
-}
-Vue.filter('formatJsonDate', (v, fmt) => {
+/*
+Vue.filter('formatJsonDate', v => {
     if (v) {
         if (fmt === undefined) {
             fmt = 'dd/MM/yyyy HH:mm';
@@ -207,7 +193,7 @@ Vue.filter('elapsedMinutes', (d1, d2) => {
 });
 Vue.filter('timeFromNow', (v, l) => {
     return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
-        { addSuffix: true, locale: locales[l] })
+        { addSuffix: true, locale: locales[l] });
 }
 );
 Vue.filter('formatJsonHourMinute', v => {
@@ -215,33 +201,11 @@ Vue.filter('formatJsonHourMinute', v => {
         return format(parseISO(v + '.000Z'), 'HH:mm:ss');
     }
 });
-Vue.component('VStyle', {
-    render: function (createElement) {
-        return createElement('style', this.$slots.default)
-    }
-});
-
-// Highcharts
-/*
-import Highcharts from 'highcharts';
-import HighchartsVue from 'highcharts-vue';
-import exporting from 'highcharts/modules/exporting';
-import offlineExporting from 'highcharts/modules/offline-exporting';
-import exportdata from 'highcharts/modules/export-data';
-import highchartsMore from 'highcharts/highcharts-more';
-
-
-exporting(Highcharts);
-exportdata(Highcharts);
-offlineExporting(Highcharts);
-highchartsMore(Highcharts);
-
-Vue.use(HighchartsVue);
 */
-
 // Leaflet
 //import { L, LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
+/*
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.heat';
@@ -249,9 +213,10 @@ import 'leaflet.heat';
 Vue.component('LMap', LMap);
 Vue.component('LTileLayer', LTileLayer);
 Vue.component('LMarker', LMarker);
+*/
 
 
-delete L.Icon.Default.prototype._getIconUrl;
+//delete L.Icon.Default.prototype._getIconUrl;
 /*
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -259,9 +224,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 */
-Vue.prototype.$openIdService = openIdService;
-Vue.prototype.$legacyStore = store;
-Vue.prototype.$legacyRouter = router;
+
 openIdService.loadConfig(store).then(() => {
     // Auth
     const token = localStorage.getItem('token');
@@ -280,12 +243,7 @@ openIdService.loadConfig(store).then(() => {
     }
 
     // i18n
-    const i18n = new VueI18n({
-        locale: user ? user.locale : 'pt',
-        fallbackLocale: 'en',
-        messages
-    });
-    const i18nComposition = createI18n({
+    const i18n = createI18n({
         allowComposition: true,
         globalInjection: true,
         global: true,
@@ -293,28 +251,18 @@ openIdService.loadConfig(store).then(() => {
         locale: user ? user.locale : 'pt',
         fallbackLocale: 'en',
         messages
-    }, VueI18n);
-    Vue.use(i18nComposition);
-
-    Object.defineProperty(Vue.prototype, '$locale', {
-        get: function () {
-            return i18n.locale;
-        },
-        set: function (locale) {
-            i18n.locale = locale;
-        }
     });
 
     router.beforeEach((to, from, next) => {
         if (to.meta.title) {
-            let title = i18n.tc('titles.lemonade') + ' :: ' +
-                i18n.tc(to.meta.title[0], to.meta.title[1]);
+            let title = i18n.global.t('titles.lemonade') + ' :: ' +
+                i18n.global.t(to.meta.title[0], to.meta.title[1]);
             if (to.params.id) {
                 title += ' #' + to.params.id;
             }
             document.title = title;
         } else {
-            document.title = i18n.tc('titles.lemonade', 2)
+            document.title = i18n.global.t('titles.lemonade', 2);
         }
         if (to.matched.some(record => record.meta.requiresAuth || record.meta.requiresAuth === undefined)) {
             // If OpenId support is enabled in Thorn, use it.
@@ -323,13 +271,13 @@ openIdService.loadConfig(store).then(() => {
             if (openIdService.enabled) {
                 openIdService.isUserLoggedIn().then(isLoggedIn => {
                     //store.setters.isLoggedIn = isLoggedIn;
-                    console.debug('Using OpenID. Status: ', isLoggedIn)
+                    console.debug('Using OpenID. Status: ', isLoggedIn);
                     if (!isLoggedIn) {
                         openIdService.login();
                     } else {
                         next();
                     }
-                })
+                });
                 return;
             } else if (store.getters.isLoggedIn) {
                 if (to.matched.some(record => record.meta.requiresRole)) {
@@ -349,6 +297,7 @@ openIdService.loadConfig(store).then(() => {
         }
     });
 
+    /*
     let newVue = new Vue({
         el: '#app',
         i18n,
@@ -357,32 +306,168 @@ openIdService.loadConfig(store).then(() => {
         store,
         render: h => h(App)
     });
+    */
+    const app = createApp(App);
+    /*
+    app.provide('$Progress', {
+        start: () => { },
+        finish: () => { },
+    });
+    app.config.globalProperties.$Progress = {
+        start: () => { },
+        finish: () => { },
+    };
+    Vue.use(VueProgressBar, {
+        color: '#568f32',
+        failedColor: '#874b4b',
+        thickness: '5px',
+        transition: {
+            speed: '0.5s',
+            opacity: '0.2s',
+            termination: 300
+        },
+        autoRevert: true,
+        location: 'top',
+        inverse: false
+    });
+    */
+
+    app.directive('focus', {
+        inserted: function (el) {
+            el.focus();
+        }
+    });
+    app.config.globalProperties.$openIdService = openIdService;
+    app.config.globalProperties.$legacyStore = store;
+    app.config.globalProperties.$legacyRouter = router;
+
+    app.config.globalProperties.$locale = {
+        get: function () {
+            return i18n.locale;
+        },
+        set: function (locale) {
+            i18n.locale = locale;
+        }
+    };
+
+    app.config.globalProperties.$filters = {
+        formatJsonDate(v) {
+            if (v) {
+                return format(parseISO(v + '.000Z'), 'dd/MM/yyyy HH:mm');
+            }
+        },
+        formatTimestamp(v) {
+            if (v) {
+                return format(
+                    utcToZonedTime(fromUnixTime(v * .000001)),
+                    'dd/MM/yyyy HH:mm:ss');
+            }
+        },
+        timeFromNow(v, l) {
+            return formatDistanceStrict(parseISO(v + '.000Z'), new Date(),
+                { addSuffix: true, locale: locales[l] });
+        },
+        formatJsonHourMinute(v) {
+            if (v) {
+                return format(parseISO(v + '.000Z'), 'HH:mm:ss');
+            }
+        }
+    };
+    const toastOptions = {
+        transition: "Vue-Toastification__bounce",
+        maxToasts: 7,
+        newestOnTop: true,
+        position: "bottom-right",
+        filterBeforeCreate: (toast, toasts) => {
+            if (toasts.filter(
+                t => t.type === toast.type
+            ).length !== 0) {
+                // Returning false discards the toast
+                return false;
+            }
+            // You can modify the toast if you want
+            return toast;
+        }
+    };
+    app.use(Toast, toastOptions);
+
+    app.use(ConfirmDialog);
+
+    app.use(store);
+    app.use(i18n);
+    app.use(router);
+
+    const toast = useToast();
+    app.config.globalProperties.$snotify = {
+        error: (text, title, opts) => {
+            toast.error(text, { ...toastOptions, opts });
+        },
+        success: (text, title, opts) => {
+            toast.success(text, { ...toastOptions, ...opts });
+        },
+        info: (text, title, opts) => {
+            toast.info(text, { ...toastOptions, ...opts });
+        },
+        alert: (text, title, opts) => {
+            toast.alert(text, { ...toastOptions, ...opts });
+        },
+        warning: (text, title, opts) => {
+            toast.warning(text, { ...toastOptions, ...opts });
+        },
+        confirm: (question, title, opts) => {
+            const dialog = createConfirmDialog(ConfirmComponenent,
+                {question, title},
+                { chore: true, keepInitial: true });
+            dialog.onConfirm(() => {
+                opts.callback();
+            });
+
+            dialog.reveal();
+        }
+    };
+    app.provide('snotify', app.config.globalProperties.$snotify);
+    app.component("VSelect", VueSelect);
+    app.component('VServerTable', VServerTable);
+    app.component('VClientTable', VServerTable);
+    app.component('BButton', BButton);
+    app.component('GridItem', VueGridLayout.GridItem);
+    app.component('GridLayout', VueGridLayout.GridLayout);
+    app.component('FontAwesomeIcon', FontAwesomeIcon);
+    app.component('FontAwesomeLayers', FontAwesomeLayers);
+    app.component('VModal', VModal);
+    widgets.forEach((v, k) => app.component(k, v.default || v));
+
+    app.mount('#app');
 
     let requestCounter = 0;
     axios.interceptors.request.use(async config => {
         if (requestCounter === 0) {
-            newVue.$Progress.start()
+            //newVue.$Progress.start();
         }
         const token = localStorage.getItem('token');
         if (token) {
-            config.headers['Authorization'] = token
-            config.headers['X-THORN-ID'] = 'true'
+            config.headers['Authorization'] = token;
+            config.headers['X-THORN-ID'] = 'true';
         } else {
             let accessToken = await openIdService.getAccessToken();
             accessToken && (config.headers['Authorization'] = accessToken);
+            if (! accessToken) {
+                console.debug('No access token');
+            }
         }
-        requestCounter += 1
-        return config
-    })
+        requestCounter += 1;
+        return config;
+    });
     axios.interceptors.response.use(response => {
-        requestCounter -= 1
+        requestCounter -= 1;
         if (requestCounter === 0) {
-            newVue.$Progress.finish()
+            //newVue.$Progress.finish();
         }
-        return response
+        return response;
     }, (error) => {
         if (error.response.status === 401) {
-            newVue.$snotify.error(i18n.tc('errors.accessDenied'));
+            //newVue.$snotify.error(i18n.global.t('errors.accessDenied'));
+            alert(i18n.global.t('errors.accessDenied'));
             if (openIdService.enabled) {
                 openIdService.logout();
             } else {
@@ -390,9 +475,10 @@ openIdService.loadConfig(store).then(() => {
             }
             router.push({ name: 'logout' });
         }
-        newVue.$Progress.finish()
+        //newVue.$Progress.finish();
         throw error;
-    })
+    });
 }).catch((e) => {
+    console.debug(e);
     alert(e);
 });

@@ -5,16 +5,16 @@
         </div>
         <div>
             <b-form-group>
-                <b-radio v-model.number="innerSelectionType" value="1">
+                <b-form-radio v-model.number="innerSelectionType" value="1">
                     {{ $t('widgets.join.allAttributesWithPrefix') }}
-                </b-radio>
+                </b-form-radio>
                 <input v-if="innerSelectionType === 1" v-model="selectionPrefix" type="text" class="form-control">
-                <b-radio v-model.number="innerSelectionType" class="mt-2" value="3">
+                <b-form-radio v-model.number="innerSelectionType" class="mt-2" value="3">
                     {{ $t('widgets.join.noAttributes') }}
-                </b-radio>
-                <b-radio v-model.number="innerSelectionType" class="mt-2" value="2">
+                </b-form-radio>
+                <b-form-radio v-model.number="innerSelectionType" class="mt-2" value="2">
                     {{ $t('widgets.join.selectAttributes') }}
-                </b-radio>
+                </b-form-radio>
             </b-form-group>
             <div v-if="innerSelectionType === 2" class="text-center">
                 <small>
@@ -24,6 +24,7 @@
             </div>
         </div>
         <div class="selection scroll-area">
+           
             <table v-if="innerSelectionType === 2" class="table table-sm table-borderless">
                 <thead>
                     <tr class="table-secondary">
@@ -33,10 +34,10 @@
                         </th>
                         <th style="width: 100%">
                             <input ref="prefix" type="text" maxlength="20" class="form-control"
-                                :placeholder="$t('actions.renameSelected')" :disabled="checked.length === 0"
+                                :placeholder="$t('actions.renameSelected')"
                                 @keyup="changePrefix($event)">
                         </th>
-                        <th style="max-width: 20px">
+                        <th style="width: 20px">
                             <small>Use</small>
                         </th>
                     </tr>
@@ -58,6 +59,7 @@
                     </tr>
                 </tbody>
             </table>
+            {{ suggestions }}
         </div>
     </div>
 </template>
@@ -65,10 +67,10 @@
 import { debounce } from '../../util.js';
 export default {
     props: {
-        suggestions: { type: Array, default: function () { return [] } },
+        suggestions: { type: Array, default: function () { return []; } },
         label: { type: String, default: () => null },
         prefix: { type: String, default: () => null },
-        selected: { type: Array, default: function () { return [] } },
+        selected: { type: Array, default: function () { return []; } },
         selectionType: { type: Number, default: () => 1 },
     },
     data() {
@@ -78,37 +80,40 @@ export default {
             selectList: [],
             selectionPrefix: null,
             innerSelectionType: 1,
-        }
+        };
     },
     mounted() {
-        if (this.selected && this.selected.length > 0) {
-            let counter = 0;
-            const attributesFound = new Set();
-            this.selected.forEach(item => {
-                if (this.suggestions.includes(item.attribute)) {
-                    attributesFound.add(item.attribute);
-                    this.selectList.push(Object.assign({}, item));
-                    if (item.select) {
-                        this.checked.push(counter);
-                    }
-                    counter++;
-                }
-            });
-            this.suggestions.forEach(item => {
-                if (!attributesFound.has(item)) {
-                    this.selectList.push({ attribute: item, alias: item, select: false });
-                }
-            });
-        } else {
-            this.selectList = this.suggestions.map(item => {
-                return { attribute: item, alias: item, select: true };
-            });
-            this.checked = [...Array(this.suggestions.length).keys()];
-        }
-        this.selectionPrefix = this.prefix;
-        this.innerSelectionType = this.selectionType;
+        this.updateSelectList();
     },
     methods: {
+        updateSelectList() {
+            if (this.selected && this.selected.length > 0) {
+                let counter = 0;
+                const attributesFound = new Set();
+                this.selected.forEach(item => {
+                    if (this.suggestions.includes(item.attribute)) {
+                        attributesFound.add(item.attribute);
+                        this.selectList.push(Object.assign({}, item));
+                        if (item.select) {
+                            this.checked.push(counter);
+                        }
+                        counter++;
+                    }
+                });
+                this.suggestions.forEach(item => {
+                    if (!attributesFound.has(item)) {
+                        this.selectList.push({ attribute: item, alias: item, select: false });
+                    }
+                });
+            } else {
+                this.selectList = this.suggestions.map(item => {
+                    return { attribute: item, alias: item, select: true };
+                });
+                this.checked = [...Array(this.suggestions.length).keys()];
+            }
+            this.selectionPrefix = this.prefix;
+            this.innerSelectionType = this.selectionType;
+        },
         changePrefix: debounce(function (ev) {
             const prefix = ev.target.value.trim();
             if (prefix.length) {
@@ -150,13 +155,18 @@ export default {
             return this.innerSelectionType;
         }
     },
-}
+    watch: {
+        suggestions(v) {
+            console.debug(v)
+            this.updateSelectList();
+        }
+    }
+};
 </script>
 <style scoped>
 .inputs select,
 input {
-    font-size: .7em;
-    padding: 0 2px;
+    font-size: .8em;
 }
 
 .selection {
@@ -173,7 +183,8 @@ input {
 }
 
 .selection>>>small {
-    font-size: 7pt;
+    font-size: 8pt;
+    color: #888
 }
 
 .custom-checkbox {

@@ -52,4 +52,4 @@ export default {
         },
         { name: "choropleth", label: "Mapa Coroplético (Geo)", },
     ]
-}
+};

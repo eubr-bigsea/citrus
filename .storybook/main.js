@@ -1,18 +1,17 @@
-module.exports = {
-  "stories": [
-    "../src/**/*.stories.mdx",
-    "../src/**/*.stories.@(js|jsx|ts|tsx)"
+/** @type { import('@storybook/vue3-vite').StorybookConfig } */
+const config = {
+  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-essentials',
+    '@storybook/addon-interactions',
   ],
-  "addons": [
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions"
-  ],
-  "framework": "@storybook/vue",
-  "core": {
-    "builder": "@storybook/builder-vite"
+  framework: {
+    name: '@storybook/vue3-vite',
+    options: {},
   },
-  "features": {
-    "storyStoreV7": true
-  }
-}
+  docs: {
+    autodocs: 'tag',
+  },
+};
+export default config;

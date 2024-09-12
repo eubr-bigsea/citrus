@@ -14,7 +14,7 @@ export default {
         attribute: {
             type: Object,
             default: () => {
-                return { count: 1, missing_count: 0, invalid_count: 0 }
+                return { count: 1, missing_count: 0, invalid_count: 0 };
             }
         }
     },
@@ -33,7 +33,7 @@ export default {
                 ? this.attribute.invalid_count / this.attribute.count : 0;
         }
     },
-}
+};
 </script>
 <style>
     .bar {

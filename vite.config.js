@@ -1,26 +1,62 @@
 //import { createVuePlugin } from 'vite-plugin-vue2';
-import vue from '@vitejs/plugin-vue2'
+import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import { visualizer } from "rollup-plugin-visualizer";
 import { fileURLToPath } from 'url';
 import { manualChunksPlugin } from 'vite-plugin-webpackchunkname';
+import { defineConfig } from 'vite';
+import { fileURLToPath } from 'url';
 
-export default {
+import Components from 'unplugin-vue-components/vite'
+import {BootstrapVueNextResolver} from 'unplugin-vue-components/resolvers'
+
+
+export default defineConfig({
+    define: {
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true'
+    },
     plugins: [
         //createVuePlugin(/* options */)
-        vue(),
+        vue({
+            template: {
+                /*compilerOptions: {
+                    compatConfig: {
+                        MODE: 2,
+                        ATTR_FALSE_VALUE: false,
+                        WATCH_ARRAY: false,
+                        RENDER_FUNCTION: true,
+                        INSTANCE_SCOPED_SLOTS: true,
+
+                    }
+                }*/
+            }
+        }),
         visualizer(),
         manualChunksPlugin(),
+        /* for boostrap-vue-next */
+        Components({
+            resolvers: [BootstrapVueNextResolver()],
+          }),
     ],
     resolve: {
         alias: [
-            { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
-            //{ find: '@', replacement: path.resolve(__dirname, './src/') },
+            /*
+            {
+                find: 'vue',
+                replacement: '@vue/compat'
+            },
+            */
             {
                 // this is required for the SCSS modules
                 find: /^~(.*)$/,
                 replacement: '$1',
             },
+            /*
+            {
+                find: /^\/(.*)$/,
+                replacement: path.resolve(__dirname, './src/$1')
+            },*/
+            { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
         ],
     },
     test: {
@@ -40,7 +76,7 @@ export default {
             output: {
                 manualChunks:  (id) => {
                     if (id.includes('node_modules')) {
-                        if (id.includes('bootstrap-vue') || 
+                        if (id.includes('bootstrap-vue') ||
                                 id.includes('jsplumb')){
                             return id.toString().split('node_modules/')[1].split('/')[0].toString();
                         }
@@ -55,4 +91,5 @@ export default {
             }
         }
     }
-};
+})
+;

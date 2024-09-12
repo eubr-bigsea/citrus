@@ -39,7 +39,7 @@ export default {
         this.__resizeListener();
     },
     beforeUnmount() {
-        window.removeEventListener('resize', this.__resizeListener)
+        window.removeEventListener('resize', this.__resizeListener);
     },
     methods: {
         getData() {
@@ -55,5 +55,5 @@ export default {
             return result;
         }
     },
-}
+};
 </script>

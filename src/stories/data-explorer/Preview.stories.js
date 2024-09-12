@@ -1,4 +1,4 @@
-import PreviewComponent from '../../views/data-explorer/Preview.vue';
+import PreviewComponent from '@/views/data-explorer/DataExplorerPreview.vue';
 export default {
     title: 'DataExplorer/Preview'
 };

@@ -26,7 +26,7 @@ export default {
                 console.log(err);
                 self.$router.push({ name: 'home' });
             });
-           
+
         } else if (q?.sp && q?.error_description !== "End User denied the logout request") { //logout
             self.$store.dispatch('logout');
             self.$router.push({ name: 'home' });
@@ -45,5 +45,5 @@ export default {
             this.$store.dispatch('setUser', { user: resp.data.data[0], token })
         },
     },
-}
+};
 </script>
