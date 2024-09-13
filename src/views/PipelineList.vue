@@ -132,28 +132,20 @@ export default {
         };
     },
     methods: {
-        load(data) {
+        async load(data) {
             data.sort = data.orderBy;
             data.asc = data.ascending === 1 ? 'true' : 'false';
             data.size = data.limit;
             data.name = data.query;
             data.fields = 'id,name,version,created,updated,user_name';
 
-            this.$Progress.start();
-            return axios
-                .get(`${tahitiUrl}/pipelines`, {
-                    params: data
-                })
-                .then(resp => {
-                    this.$Progress.finish();
-                    return { data: resp.data.data, count: resp.data.pagination.total };
-                })
-                .catch(
-                    function (e) {
-                        this.$Progress.finish();
-                        this.error(e);
-                    }.bind(this)
-                );
+            try {
+                const resp = await axios.get(`${tahitiUrl}/pipelines`, { params: data });
+                return { data: resp.data.data, count: resp.data.pagination.total };
+            } catch (e) {
+                this.error(e);
+            }
+
         },
         openAddModal() {
             this.loadTemplates();
