@@ -37,7 +37,7 @@
         </table>
         <section v-show="!firstLoad">
             <div class="table-area scroll-area">
-                <table v-if="tableData?.length" ref="table" :class="options.skin">
+                <table v-if="tableData?.length" ref="table" class="server-table" :class="options.skin">
                     <thead>
                         <tr>
                             <th v-for="(heading, index) in columns" :key="index" class="header"
@@ -76,7 +76,7 @@
         </div>
     </div>
 </template>
-  
+
 <script setup>
 import { debounce } from '@/util.js';
 import SpinnerDisplay from '@/components/SpinnerDisplay.vue';
@@ -260,17 +260,17 @@ defineExpose({
     setFilter, getData, setCustomQuery, refresh, setCurrentPage, setFirstLoad, setLoading
 });
 </script>
-  
+
 <style scoped>
+
 div.table-area {
     width: 100%;
     height: 100%;
     overflow: auto;
 }
-
 .server-table>>>td,
 .server-table>>>th {
-    padding: 8px 5px;
+    padding: 10px 5px 0 2px;
     font-size: .9em;
 }
 
@@ -307,4 +307,3 @@ div.table-area {
 }
 
 </style>
-  

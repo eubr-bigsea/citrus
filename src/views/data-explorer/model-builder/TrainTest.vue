@@ -60,7 +60,7 @@
                     </template>
                 </div>
                 <div class="mt-3">
-                    <div class="badge p-1 mt-2 mr-1 badge-light border text-dark">
+                    <div class="badge p-1 mt-2 me-1 badge-light border text-dark">
                         treino
                     </div>
                     <div class="badge p-1 mt-2 badge-success border">

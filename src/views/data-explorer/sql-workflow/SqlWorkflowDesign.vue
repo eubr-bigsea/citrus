@@ -4,25 +4,25 @@
             <h1>{{$t('titles.sqlWorkflow')}}</h1>
             <div class="mt-2">
                 <router-link v-if="workflowObj.pipeline" :to="{name: 'pipelineEdit', params: {id: workflowObj.pipeline.id}}"
-                             class="btn btn-outline-secondary btn-sm mr-1" :title="workflowObj.pipeline.name">
+                             class="btn btn-outline-secondary btn-sm me-1" :title="workflowObj.pipeline.name">
                     <button class="btn btn-secondary btn-sm">
                         <font-awesome-icon icon="fa fa-circle-nodes" />
                         Ir para pipeline #{{workflowObj.pipeline.id}}
                     </button>
                 </router-link>
                 <b-button variant="outline-secondary" size="sm" title="Usar biblioteca"
-                          class="mr-1" @click="handleShowModalCodeLibrary">
+                          class="me-1" @click="handleShowModalCodeLibrary">
                     <font-awesome-icon icon="fa fa-file-code" />
                     Bibliotecas de código <span v-if="workflowObj.forms.code_libraries?.value.length >=0"> ({{workflowObj.forms.code_libraries.value.length}})</span>
                 </b-button>
 
                 <b-button variant="outline-dark" size="sm" :title="$t('actions.showVariables')"
-                          class="mr-1" @click.prevent="$refs.variablesModal.show()">
+                          class="me-1" @click.prevent="$refs.variablesModal.show()">
                     <font-awesome-icon icon="fa fa-dollar-sign" /> Variáveis
                     <span v-if="workflowObj.variables?.length >=0"> ({{workflowObj.variables?.length}})</span>
                 </b-button>
 
-                <b-button variant="primary" size="sm" class="pu mr-1" data-test="save"
+                <b-button variant="primary" size="sm" class="pu me-1" data-test="save"
                           @click="saveWorkflow">
                     <font-awesome-icon icon="fa fa-save" />
                     {{$t('actions.save')}}

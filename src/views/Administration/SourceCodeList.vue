@@ -49,7 +49,7 @@
 <script setup>
 import axios from 'axios';
 import { ref } from 'vue';
-//import { useI18n } from 'vue-i18n-bridge';
+import { useI18n } from 'vue-i18n';
 import DataTableBuilder from '../../data-table-builder.js';
 import useNotifier from '@/composables/useNotifier.js';
 import { getCurrentInstance } from 'vue';

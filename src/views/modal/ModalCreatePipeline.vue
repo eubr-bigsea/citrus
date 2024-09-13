@@ -10,7 +10,7 @@
             <div v-if="wizardStep === 1" class="wizard-stepBox">
                 <div class="wizard-header">
                     <div class="wizard-title">
-                        <font-awesome-icon class="mr-1" icon="fa fa-file" />
+                        <font-awesome-icon class="me-1" icon="fa fa-file" />
                         {{$t('pipeline.list.generalInfo')}}
                     </div>
                     <div>
@@ -50,7 +50,7 @@
             <div v-if="wizardStep === 2" class="wizard-stepBox">
                 <div class="wizard-header">
                     <div class="wizard-title">
-                        <font-awesome-icon class="mr-1" icon="fa fa-folder" />
+                        <font-awesome-icon class="me-1" icon="fa fa-folder" />
                         {{$t('titles.template')}}
                     </div>
                     <div>
@@ -113,7 +113,7 @@
             <div v-if="wizardStep === 3" class="wizard-stepBox">
                 <div class="wizard-header">
                     <div class="wizard-title">
-                        <font-awesome-icon class="mr-1" icon="fa fa-square-check" />
+                        <font-awesome-icon class="me-1" icon="fa fa-square-check" />
                         {{$t('pipeline.list.creationProcessCompleted')}}
                     </div>
                 </div>
