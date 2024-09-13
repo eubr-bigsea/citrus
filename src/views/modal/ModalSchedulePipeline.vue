@@ -8,22 +8,21 @@
             Atualmente, você deve usar esta função apenas se a periodicidade
             da pipline é mensal. Desta forma, informe como data inicial e a
             data final como o primeiro e último dias do mês, respectivamente.
-
         </p>
         <div class="row">
             <div class="col-6">
-                <select class="form-control form-control-sm" v-model.number="month">
-                    <option></option>
-                    <option v-for="m, i in getMonthNames" :value="i + 1">
-                        {{ m }}
+                <select v-model.number="month" class="form-control form-control-sm">
+                    <option />
+                    <option v-for="m, i in getMonthNames" :key="m" :value="i + 1">
+                        {{m}}
                     </option>
                 </select>
             </div>
             <div class="col-3">
-                <select class="form-control form-control-sm" v-model.number="year">
-                    <option></option>
-                    <option v-for="year in getYears" :value="year">
-                        {{ year }}
+                <select v-model.number="year" class="form-control form-control-sm">
+                    <option />
+                    <option v-for="y in getYears" :key="y" :value="y">
+                        {{y}}
                     </option>
                 </select>
 

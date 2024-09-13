@@ -1,8 +1,6 @@
 //import { createVuePlugin } from 'vite-plugin-vue2';
 import vue from '@vitejs/plugin-vue';
-import path from 'path';
 import { visualizer } from "rollup-plugin-visualizer";
-import { fileURLToPath } from 'url';
 import { manualChunksPlugin } from 'vite-plugin-webpackchunkname';
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'url';

@@ -4,12 +4,12 @@
             <div class="col-md-4 mt-4">
                 <div class="values pb-1 border">
                     <div v-for="(row, index) in items" :key="row.name" class="clear-fix item-list"
-                            :class="{selected: selected && selected.index === row.index }"
-                            @click.prevent="select(row, index)">
+                         :class="{selected: selected && selected.index === row.index }"
+                         @click.prevent="select(row, index)">
                         <small>{{row.name}} <em v-if="! row.name">&lt;variável sem nome&gt;</em>
                             <span v-if="row.label">({{row.label}})</span></small>
                         <a class="float-right ml-1 bn btn-sm py-0 btn-light text-danger" href="#"
-                            :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
+                           :title="$t('actions.delete')" @click.prevent.stop="remove($event, index)">
                             <font-awesome-icon icon="fa fa-minus-circle text-danger" />
                         </a>
                     </div>
@@ -24,22 +24,22 @@
                         <div class="col-md-4">
                             <label>{{$t('variables.name')}}:</label>
                             <input v-model="selected.name" v-focus maxlength="40" autocomplete="off"
-                                    class="form-control">
+                                   class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label>{{$t('variables.label')}}:</label>
                             <input v-model="selected.label" maxlength="40" autocomplete="off"
-                                    class="form-control">
+                                   class="form-control">
                         </div>
                         <div class="col-md-4">
                             <label>{{$t('variables.defaultValue')}}:</label>
                             <input v-model="selected.default_value" maxlength="40" autocomplete="off"
-                                    class="form-control">
+                                   class="form-control">
                         </div>
                         <div class="col-md-12">
                             <label>{{$t('variables.description')}}:</label>
                             <textarea v-model="selected.description" autocomplete="off"
-                                        class="form-control form-control-sm" rows="3" />
+                                      class="form-control form-control-sm" rows="3" />
                         </div>
                     </div>
                 </div>
@@ -94,7 +94,7 @@ export default {
             this.selected = row;
         },
     }
-}
+};
 </script>
 <style>
     div.values {

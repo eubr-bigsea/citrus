@@ -50,8 +50,8 @@
                                                             class="form-control" />
                                                     </div>
                                                     <div v-if="enable_url_edit && dataSource.format !== 'HIVE'" class="col-md-6">
-                                                        <label>{{$tc('dataSource.fileUrl')}}:</label>
-                                                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control"/>
+                                                        <label>{{$t('dataSource.fileUrl')}}:</label>
+                                                        <textarea ref="filepathTextArea" v-model="dataSource.url" class="form-control" />
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label>{{ $tc('common.description') }}:</label>

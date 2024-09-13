@@ -4,11 +4,12 @@
             <div class="col-md-4 col-lg-3 pl-4">
                 <b-list-group v-if="jobs.length > 0">
                     <b-list-group-item v-for="job in jobs" :key="job.id" class="flex-column align-items-start p-0"
-                        @click="handleClick(job)" role="button">
-                        <div class="d-flex w-100 justify-content-between p-1" :class="getResultClass(job)">
-                            <span class="mb-1 job-title">{{ $tc('titles.job') }} #{{ job.id }}</span>
+                                       role="button" @click="handleClick(job)">
+                        <div class="d-flex w-100 justify-content-between p-1"
+                             :class="(selectedJob && (selectedJob.id === job.id)) ? 'bg-secondary text-white' : 'bg-light'">
+                            <span class="mb-1 job-title">{{$t('titles.job')}} #{{job.id}}</span>
                             <small>
-                                {{ $t('status.' + job.status) }}
+                                {{$t('status.' + job.status)}}
                                 <span :class="getClassesForDecor(job.status)" />
                                 <b-dropdown variant="link" size="sm" no-caret class="text-white">
                                     <template #button-content>
@@ -20,12 +21,10 @@
                             </small>
                         </div>
                         <div class="result">
-                            <div v-for="(result, inx) in groupedResults(job)" v-if="result[0].type == 'METRIC'"
-                                :key="inx" role="button">
-                                {{ result[0].title }}
+                            <div v-for="(result, inx) in groupedResults(job)" :key="inx" role="button">
+                                {{result[0].title}}
                                 <div v-if="result[0] && result[0].best" class="float-right">
-                                    {{ result[0].content.metric.name }}
-                                    {{ result[0].best.toFixed(4) }}
+                                    {{result[0].best.toFixed(4)}}
                                 </div>
                                 <!--
                                 {{result.title}}
@@ -38,85 +37,61 @@
                     </b-list-group-item>
                 </b-list-group>
                 <div v-else>
-                    {{ $t('common.noResults') }}
+                    {{$t('common.noResults')}}
                 </div>
             </div>
-            <div class="col-md-8 col-lg-9" style="margin-left: -2px">
+            <div class="col-md-8 col-lg-9">
                 <b-card v-if="selectedJob" variant="primary">
-                    <template #header>
-                        <b>{{ $tc('titles.job') }} #{{ selectedJob.id }}</b>
-                        <span class="pull-right float-right">
-                            <small>Iniciada em {{ selectedJob.started | formatJsonDate }}</small>
-                            <small v-if="selectedJob.finished"> / Terminada em {{ selectedJob.finished |
-                                formatJsonDate }}</small>
-                        </span>
-                    </template>
-                    <div v-if="!finalReport" class="row pt-1 pb-4">
-                        <div class="col-12 loading">
-                            <font-awesome-icon icon="spinner" pulse class="icon" />
-                            Aguardando resultados ...
-                        </div>
-                    </div>
-                    <div v-else class="d-flex align-items-stretch">
-                        <div class="text-center px-1 flex-grow-1 border border-primary rounded px-2 py-1 mr-1 small">
-                            <strong><font-awesome-icon icon="fa fa-trophy" /> Melhor modelo: </strong>
-                            {{ finalReport.content.task_name }}<br>
-                            {{ finalReport.content.metric_name }} =
-                            {{ finalReport.content.metric_value.toFixed(4) }}
+                    <b-card v-if="selectedJob" variant="primary">
+                        <template #header>
+                            <b>{{$t('titles.job')}} #{{selectedJob.id}}</b>
+                            <span class="pull-right float-right">
+                                <small>Iniciada em {{$filters.formatJsonDate(selectedJob.started)}}</small>
+                                <small v-if="selectedJob.finished"> / Terminada em {{$filters.formatJsonDate(selectedJob.finished)}}</small>
+                            </span>
+                        </template>
+                        <div class="row pt-1 pb-4">
+                            <div v-if="finalReport" class="col-4 text-center">
+                                <b-card border-variant="primary">
+                                    <strong>Resultado: </strong>
+                                    {{finalReport.content.task_name}}<br>
+                                    {{finalReport.content.metric_name}} =
+                                    {{finalReport.content.metric_value.toFixed(4)}}
 
-                            <small v-if="finalReport.content.larger_better">(maior é melhor)</small>
-                            <small v-else>(menor é melhor)</small>
-                        </div>
-                        <div class="text-center px-1 flex-grow-1 border border-primary rounded px-2 py-1 mr-1 small">
-                            <strong>Parâmetros</strong><br>
-                            <small v-for="(v, k) in finalReport.content.best" :key="k">
-                                <span>{{ k }} = {{ v }}</span><br>
-                            </small>
-                        </div>
-                        <div class="px-1 flex-grow-1 border border-primary rounded px-2 py-1 small text-center">
-                            <strong>Registros de entrada, treino e teste:</strong>
-                            {{ finalReport.content.data_size }}
-                            (100%) |
-                            {{ finalReport.content.train_size }}
-                            ({{ Number(100.0 * finalReport.content.train_size /
-                                (finalReport.content.train_size + finalReport.content.test_size)).toLocaleString()
-                            }}%) |
-                            {{ finalReport.content.test_size }}
-                            ({{ Number(100.0 * finalReport.content.test_size /
-                                (finalReport.content.train_size + finalReport.content.test_size)).toLocaleString()
-                            }}%)
-                            <p class="small text-muted">({{finalReport.content.data_size - finalReport.content.train_size - finalReport.content.test_size}}
-                                    registro(s) descartado(s) pelo preprocessamento)</p>
-                        </div>
-                    </div>
-                    <div class="row mb-4">
-                        <!-- Chart -->
-                        <div v-if="finalReport" class="col-12 mt-2">
-                            <b-card border-variant="primary">
-                                <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED'"
-                                    style="height: 250px; width: 100%">
-                                    <Plotly ref="plotly" :data="chartData" :layout="chartLayout"
-                                        :display-mode-bar="true" :auto-resize="true"
-                                        :options="{ displayModeBar: false }" />
-                                </div>
-                                <div v-else>
-                                    {{ selectedJob.status_text }}
-                                    <pre><code>{{ selectedJob.exception_stack }}</code></pre>
-                                </div>
-                            </b-card>
-                        </div>
-                        <!--
-                        <div v-if="finalReport" class="col-3 mt-2 text-center">
-                            <b-card border-variant="primary">
-                                <small>Treino/teste</small>
-                                <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED'"
-                                    style="height: 250px; width: 100%">
-                                    <Plotly ref="plotlyPie" :data="pieData" :layout="pieLayout" :display-mode-bar="true"
-                                        :auto-resize="true" :options="{ displayModeBar: false }" />
-                                </div>
-                            </b-card>
-                        </div>
-                    -->
+                                    <small v-if="finalReport.content.larger_better">(maior é melhor)</small>
+                                    <small v-else>(menor é melhor)</small>
+                                </b-card>
+                            </div>
+                            <div v-if="finalReport" class="col-8 text-center">
+                                <b-card border-variant="primary">
+                                    <strong>Parâmetros</strong><br>
+                                    <small v-for="(v, k) in finalReport.content.best" :key="k">
+                                        <span>{{k}} = {{v}}</span><br>
+                                    </small>
+                                </b-card>
+                            </div>
+                            <!-- Chart -->
+                            <div class="col-9 mt-2">
+                                <b-card border-variant="primary">
+                                    <div v-if="selectedJob.status !== 'ERROR' && selectedJob.status !== 'CANCELED'"
+                                         style="height: 250px">
+                                        <Plotly ref="plotly" :data="scatterData" :layout="scatterLayout"
+                                                :display-mode-bar="true" :auto-resize="true"
+                                                :options="{ displayModeBar: false }" />
+                                    </div>
+                                    <div v-else>
+                                        {{selectedJob.status_text}}
+                                        <pre><code>{{selectedJob.exception_stack}}</code></pre>
+                                    </div>
+                                </b-card>
+                            </div>
+                            <div v-if="finalReport" class="col-3 mt-2 text-center">
+                                <b-card border-variant="primary">
+                                    <small>Treino/teste</small>
+                                    <Plotly ref="plotly" :data="pieData" :layout="pieLayout" :display-mode-bar="true"
+                                            :auto-resize="true" :options="{ displayModeBar: false }" />
+                                </b-card>
+                            </div>
                         <!--
                             <div class="row">
                                 <div class="col-3">Métrica <font-awesome-icon icon="fa fa-trophy text-secondary" /> R2</div>
@@ -125,138 +100,87 @@
                                 <div class="col-3">Link para parte de transparency e fairness?</div>
                             </div>
                             -->
-                    </div>
-                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type === 'METRIC'"
-                        :key="key" class="row">
-                        <div v-if="results && results.length > 0" class="col-12">
-                            <h6 class="result">
-                                <font-awesome-icon v-if="results.find(r => r.winner)" icon="trophy" class="best"
-                                    title="Este é o melhor modelo segundo a métrica escolhida" />
-                                {{ results[1][0].title }}
-                            </h6>
                         </div>
-                        <table class="table table-condensed table-striped table-sm table-training">
-                            <thead>
-                                <th class="col-1">
-                                    #
-                                </th>
-                                <th class="col-3">
-                                    Parâmetros
-                                </th>
-                                <th class="col-3">
-                                    Resultado da métrica
-                                </th>
-                                <th class="col-2">
-                                    Mais informações/Saída
-                                </th>
-                                <th class="col-1">
-                                    Duração (s)
-                                </th>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(result, counter) in results[1]" :key="counter">
-                                    <td :data-index="result.content.index" class="text-center">
-                                        {{ counter + 1 }}
-                                        <div class="text-warning"><font-awesome-icon v-if="result.winner"
-                                                icon="fa fa-trophy best" size="3x" /></div>
-                                    </td>
-                                    <td>
-                                        <span v-for="(value, param) in result.content.params" :key="param">
-                                            {{ param }} = {{ value }}<br>
-                                        </span>
-                                    </td>
-                                    <td class="pt-4">
-                                        <span v-if="result.content.metric">
-                                            {{ result.content.metric.name }} =
-                                            <span :class="{ 'bg-warning text-dark': result.winner }"
-                                                class="rounded bg-info p-1 text-white">{{
-                                                    parseFloat(result.content.metric.value).toFixed(4) }}</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <template v-if="result.content.feature_importance">
-                                            <!--
+                        <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type !== 'OTHER'"
+                             :key="key" class="row">
+                            <div v-if="results && results.length > 0" class="col-12">
+                                <h6 class="result">
+                                    <font-awesome-icon v-if="results.find(r => r.winner)" icon="trophy" class="best"
+                                                       title="Este é o melhor modelo segundo a métrica escolhida" />
+                                    {{results[1][0].title}}
+                                </h6>
+                            </div>
+                            <table class="table table-condensed table-striped table-sm table-training">
+                                <thead>
+                                    <th class="col-1">
+                                        #
+                                    </th>
+                                    <th class="col-3">
+                                        Parâmetros
+                                    </th>
+                                    <th class="col-3">
+                                        Resultado da métrica
+                                    </th>
+                                    <th class="col-2">
+                                        Mais informações
+                                    </th>
+                                    <th class="col-6">
+                                        Saída
+                                    </th>
+                                    <th class="col-1">
+                                        Duração (s)
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(result, counter) in results[1]" :key="counter">
+                                        <td :data-index="result.content.index">
+                                            {{counter + 1}}
+                                        </td>
+                                        <td>
+                                            <font-awesome-icon v-if="result.winner" icon="fa fa-trophy best" />
+                                            <span v-for="(value, param) in result.content.params" :key="param">
+                                                {{param}} = {{value}}<br>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span v-if="result.content.metric">
+                                                {{result.content.metric.name}} =
+                                                {{parseFloat(result.content.metric.value).toFixed(4)}}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <template v-if="result.content.feature_importance">
+                                                <!--
                                             <b-link :id="`popover-${counter}`" href="#" size="sm" variant="info">
                                                 <font-awesome-icon icon="info-circle"/>
                                             </b-link>
                                             <b-popover :target="`popover-${counter}`" variant="" triggers="focus">
                                             -->
-                                            <div v-for="fi, inx in result.content.feature_importance">
-                                                <strong>{{ inx }}</strong>
-                                                <template v-if="isObject(fi)">
-                                                    <template v-if="Array.isArray(fi)">
-                                                        <table>
-                                                            <tr v-for="(elem, k) in [fi[0]]" :key="k">
-                                                                <template v-for="(value, key) in elem">
-                                                                    <td :key="key">{{ key }}</td>
-                                                                </template>
-                                                            </tr>
-                                                            <tr v-for="(elem, k) in fi" :key="k">
-                                                                <template v-for="(value, key) in elem">
-                                                                    <td :key="`${elem.class}${key}`">{{
-                                                                        (!parseFloat(value)) ?
-                                                                            value : parseFloat(value).toFixed(2) }}</td>
-                                                                </template>
-                                                            </tr>
-                                                        </table>
+                                                <b>Importância dos atributos</b>
+                                                <div v-for="fi, inx in result.content.feature_importance" :key="inx">
+                                                    <template v-if="features[inx]">
+                                                        {{features[inx].name}}: {{parseFloat(fi).toFixed(4)}}
                                                     </template>
-                                                    <table v-else class="table table-sm table-smallest m-0">
-                                                        <tr>
-                                                            <template v-for="(value, key) in fi">
-                                                                <th :key="key">{{ key }}</th>
-                                                            </template>
-                                                        </tr>
-                                                        <tr>
-                                                            <template v-for="(value, key) in fi">
-                                                                <td :key="`row-${key}`">{{ parseFloat(value).toFixed(2)
-                                                                    }}</td>
-                                                            </template>
-                                                        </tr>
-                                                    </table>
-                                                </template>
-                                                <template v-else>
-                                                    {{ parseFloat(fi).toFixed(2) }}
-                                                </template>
-                                            </div>
+                                                    <template v-else>
+                                                        {{inx}}: {{parseFloat(fi).toFixed(2)}}
+                                                    </template>
+                                                </div>
                                             <!--
                                             </b-popover>
                                         -->
-                                        </template>
-                                        {{ result.content.error || result.content.message }}
-                                    </td>
-                                    <td>{{ parseFloat(result.content.t).toFixed(4) }}</td>
+                                            </template>
+                                        </td>
+                                        <td>
+                                            {{result.content.error || result.content.message}}
+                                        </td>
+                                        <td>{{parseFloat(result.content.t).toFixed(4)}}</td>
                                     <!--
                                     <div class="col-3">Atributos mais importantes</div>
                                     -->
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type === 'VISUALIZATION'"
-                        :key="`visualization${key}`" class="row">
-                        <div class="col-12">
-                            <h6 class="result">
-                                {{ results[1][0].title }}
-                            </h6>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="col-12">
-                            <Plotly :ref="key" :data="results[1][0].content.data" :layout="results[1][0].content.layout"
-                                :css-style="{ width: '100%', height: '450px' }" :display-mode-bar="true"
-                                :auto-resize="true" :options="{ displayModeBar: false }" />
-                        </div>
-                    </div>
-                    <div v-for="(results, key) in selectedGroupedResults" v-if="results[1][0].type === 'HTML'"
-                        :key="`html-${key}`" class="row">
-                        <div class="col-12">
-                            <h6 class="result">
-                                {{ results[1][0].title }}
-                            </h6>
-                        </div>
-                        <div class="col-12" style="overflow: auto">
-                            <span v-html="results[1][0].content" />
-                        </div>
-                    </div>
-
                     <!--
                             <img src="https://topepo.github.io/caret/basic/train_plot1-1.svg" alt="">
                             Gráfico métrica por tempo
@@ -293,14 +217,14 @@
                                 </b-list-group-item>
                             </b-list-group>
                             -->
-                </b-card>
+                    </b-card>
 
-                <!--
+                    <!--
                     <b-tab :title="$t('titles.model', 2)">
 
                     </b-tab>
                     -->
-                <!--
+                    <!--
                     <b-tab title="Tabela">
                         <table class="table table-condensed table-sm table-result">
                             <thead>
@@ -328,6 +252,7 @@
                         </table>
                     </b-tab>
                     -->
+                </b-card>
             </div>
         </div>
         <div v-else class="row text-center">
@@ -348,7 +273,6 @@ export default {
     props: {
         jobs: { required: true, type: Array, default: () => [] },
         numberOfFeatures: { type: Number, default: () => 0 },
-        features: { type: Array, default: () => [] }
         features: { type: Array, default: () => [] }
     },
     emits: ['delete-job'],

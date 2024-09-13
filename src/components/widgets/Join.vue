@@ -4,15 +4,16 @@
             <LabelComponent :field="field" :value="value" />
             <textarea disabled :value="displayValue" class="form-control" rows="8" />
             <b-link v-if="!readOnly" variant="sm" @click.prevent="openModal">
-                {{ $t('actions.chooseOption') }}
+                {{$t('actions.chooseOption')}}
             </b-link>
         </span>
-        <b-modal ref="modal" size="xxl" :title="field.label" :hide-header="true" :cancel-title="$t('actions.cancel')"
-            no-fade>
+        <b-modal ref="modal" size="xxl" :title="field.label" :hide-header="true"
+                 :cancel-title="$t('actions.cancel')"
+                 no-fade>
             <form ref="form" onsubmit="return false" action="" @submit.stop.prevent="submit">
                 <div class="row">
                     <div class="col-md-6 col-sm-12 border-right zoom80">
-                        <h6>{{ $t('widgets.join.type') }}:</h6>
+                        <h6>{{$t('widgets.join.type')}}:</h6>
 
                         <select v-model="joinType" class="form-select mb-2">
                             <option value="inner">
@@ -28,14 +29,14 @@
                                 Full outer
                             </option>
                         </select>
-                        <h6>{{ $t('widgets.join.conditions') }}</h6>
+                        <h6>{{$t('widgets.join.conditions')}}</h6>
                         <div class="side scroll-area">
                             <JoinCondition ref="condition" :suggestions1="suggestions1" :suggestions2="suggestions2"
-                                :conditions="valueObject.conditions" />
+                                           :conditions="valueObject.conditions" />
                         </div>
                         <div class="mt-2 border-top pt-2">
                             <button class="btn btn-success btn-sm" @click.prevent="add">
-                                <font-awesome-icon icon="fa fa-plus" /> {{ $t('actions.addItem') }}
+                                <font-awesome-icon icon="fa fa-plus" /> {{$t('actions.addItem')}}
                             </button>
                         </div>
                     </div>
@@ -43,21 +44,21 @@
                         <h6>Seleção de atributos</h6>
                         <div v-if="hasNameCollision">
                             <font-awesome-icon icon="fa fa-exclamation-circle" class="text-danger" />
-                            {{ $t('widgets.join.nameCollision') }}
+                            {{$t('widgets.join.nameCollision')}}
                         </div>
                         <div ref="selection">
                             <div class="row">
                                 <div class="col-6">
                                     <JoinSelect ref="firstSelect" :selected="valueObject.firstSelect"
-                                        :suggestions="suggestions1" :label="$t('common.input') + ' 1'"
-                                        :selection-type="valueObject.firstSelectionType || 1"
-                                        :prefix="valueObject.firstPrefix" />
+                                                :suggestions="suggestions1" :label="$t('common.input') + ' 1'"
+                                                :selection-type="valueObject.firstSelectionType || 1"
+                                                :prefix="valueObject.firstPrefix" />
                                 </div>
                                 <div class="col-6">
                                     <JoinSelect ref="secondSelect" :selected="valueObject.secondSelect"
-                                        :suggestions="suggestions2" :label="$t('common.input') + ' 2'"
-                                        :selection-type="valueObject.secondSelectionType || 1"
-                                        :prefix="valueObject.secondPrefix" />
+                                                :suggestions="suggestions2" :label="$t('common.input') + ' 2'"
+                                                :selection-type="valueObject.secondSelectionType || 1"
+                                                :prefix="valueObject.secondPrefix" />
                                 </div>
                             </div>
                         </div>
@@ -67,10 +68,10 @@
             <template #footer>
                 <div class="w-100 text-end">
                     <b-button variant="primary" class="me-1" size="sm" @click.prevent.stop="okClicked">
-                        {{ $t('common.ok') }}
+                        {{$t('common.ok')}}
                     </b-button>
                     <b-button variant="secondary" size="sm" @click="cancelClicked">
-                        {{ $t('actions.cancel') }}
+                        {{$t('actions.cancel')}}
                     </b-button>
                 </div>
             </template>

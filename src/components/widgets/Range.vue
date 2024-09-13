@@ -34,6 +34,7 @@ export default {
     props: {
         value: {
             default: 50,
+            type: Number
         },
     },
     data() {

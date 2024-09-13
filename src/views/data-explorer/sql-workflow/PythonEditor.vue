@@ -1,31 +1,30 @@
 <template>
-    <div ref="container">
-    </div>
+    <div ref="container" />
 </template>
 
 <script setup>
 
-import { debounce } from "@/util.js"
-import { autocompletion, completionKeymap } from '@codemirror/autocomplete'
+import { debounce } from "@/util.js";
+import { autocompletion, completionKeymap } from '@codemirror/autocomplete';
 import {
     defaultKeymap, history, historyKeymap,
     indentWithTab
-} from '@codemirror/commands'
-import { python } from '@codemirror/lang-python'
+} from '@codemirror/commands';
+import { python } from '@codemirror/lang-python';
 import {
     defaultHighlightStyle, foldKeymap, indentUnit,
     syntaxHighlighting
-} from '@codemirror/language'
-import { searchKeymap } from '@codemirror/search'
-import { EditorView, keymap, lineNumbers } from '@codemirror/view'
-import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue"
+} from '@codemirror/language';
+import { searchKeymap } from '@codemirror/search';
+import { EditorView, keymap, lineNumbers } from '@codemirror/view';
+import { defineEmits, defineExpose, defineProps, onMounted, ref } from "vue";
 
 const emit = defineEmits(['update']);
 const props = defineProps({
     query: { type: String, default: () => '' },
     tables: { type: Array, default: () => [] },
     functions: { type: Array, default: () => [] },
-    format: { type: Object, default: () => { language: 'python' } },
+    format: { type: Object, default: () => { language: 'python'; } },
 });
 
 const container = ref();
@@ -51,7 +50,7 @@ const indent = () => {
     //editor.value.dispatch({
     //    changes: { from: 0, to: editor.value.state.doc.length, insert: formatted }
     //});
-}
+};
 
 /* Events */
 onMounted(() => {
@@ -100,5 +99,5 @@ onMounted(() => {
         parent: container.value
     });
 });
-defineExpose({ focus, indent })
+defineExpose({ focus, indent });
 </script>

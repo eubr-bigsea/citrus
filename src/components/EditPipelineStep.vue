@@ -2,15 +2,15 @@
     <div class="editPage-step-config-body">
         <div class="mt-2">
             <div>
-                <label for="nome">{{ $tc('common.name') }}:</label>
+                <label for="nome">{{$t('common.name')}}:</label>
                 <input id="nome" v-model="editedStep.name" class="form-control form-control-sm" type="text"
-                    placeholder="Nome da etapa" @input="handleInput" maxlength="50">
+                       placeholder="Nome da etapa" maxlength="50" @input="handleInput">
             </div>
 
             <div class="mt-2">
-                <label for="descricao">{{ $tc('common.description') }}:</label>
+                <label for="descricao">{{$t('common.description')}}:</label>
                 <textarea id="descricao" v-model="editedStep.description" class="form-control form-control-sm"
-                    type="text" placeholder="Descrição da etapa" @input="handleInput" maxlength="200" />
+                          type="text" placeholder="Descrição da etapa" maxlength="200" @input="handleInput" />
             </div>
         </div>
         <hr class="mt-4 mb-3">
@@ -19,16 +19,16 @@
             <button class="btn text-center btn-outline-secondary my-2" @click="redirectToWorkflow(editedStep)">
                 <font-awesome-icon icon="fa fa-flask" class="mr-1" size="lg" />
                 <span class="editPage-workflow-label">
-                    {{$tc('actions.edit')}} {{ editedStep.workflow.id }} - {{ editedStep.workflow.name }}
+                    {{$t('actions.edit')}} {{editedStep.workflow.id}} - {{editedStep.workflow.name}}
                 </span>
             </button>
             <div>
-                <b-button class="w-25" @click="showWorkflowOps = 0" size="sm" variant="outline-primary">
-                    {{ $tc('actions.change') }}
+                <b-button class="w-25" size="sm" variant="outline-primary" @click="showWorkflowOps = 0">
+                    {{$t('actions.change')}}
                 </b-button>
                 <!--
                     <b-button class="w-25 ml-2" @click="removeWorkflow(editStep)" size="sm" variant="outline-danger">
-                        {{ $tc('actions.delete') }}
+                        {{ $t('actions.delete') }}
                     </b-button>
                     -->
             </div>
@@ -36,24 +36,25 @@
         <div v-if="showWorkflowOps > -1">
             <label class="editPage-label mb-2">Associar etapa a um workflow</label>
             <div v-if="showWorkflowOps == 0" class="d-flex">
-                <b-button class="w-50 mr-2" @click="showWorkflowOps = 1" variant="outline-primary" size="sm">
+                <b-button class="w-50 mr-2" variant="outline-primary" size="sm" @click="showWorkflowOps = 1">
                     <font-awesome-icon icon="fa fa-flask" class="mr-2" size="xl" />
                     Workflow existente
                 </b-button>
-                <b-button class="50 ml-2 clickable" @click="showWorkflowOps = 2" variant="outline-success" size="sm">
+                <b-button class="50 ml-2 clickable" variant="outline-success" size="sm" @click="showWorkflowOps = 2">
                     <span class="editPage-workflow-label">
                         <font-awesome-icon icon="fa fa-plus" class="mr-2" size="xl" />
                         Novo workflow
                     </span>
                 </b-button>
-                <b-button v-if="editedStep.workflow" class="ml-2" variant="outline-secondary" @click="showWorkflowOps = -1" size="sm">
-                    {{ $tc('actions.cancel') }}
+                <b-button v-if="editedStep.workflow" class="ml-2" variant="outline-secondary" size="sm"
+                          @click="showWorkflowOps = -1">
+                    {{$t('actions.cancel')}}
                 </b-button>
             </div>
             <div v-if="showWorkflowOps == 1" class="mb-3">
                 <label>Escolha um fluxo existente para associar a esta etapa:</label>
                 <vue-select v-model="selectedWorkflow" :filterable="false" :options="workflowList" label="name"
-                    class="w-100" @search="loadWorkflowList" @input="handleInput">
+                            class="w-100" @search="loadWorkflowList" @input="handleInput">
                     <template #no-options="{}">
                         <small>Digite parte do nome para pesquisar...</small>
                     </template>
@@ -62,30 +63,31 @@
                             <div class="row align-items-center">
                                 <font-awesome-icon icon="fa fa-flask" />
                                 <div class="col-9">
-                                    {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }}
+                                    {{pad(option.id, 4, '&nbsp;')}} - {{option.name}}
                                 </div>
                                 <div class="col-2">
-                                    {{ option.type }}
+                                    {{option.type}}
                                 </div>
                             </div>
                         </div>
                     </template>
                     <template #default="option">
-                        {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }} - {{ option.type }}
+                        {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} - {{option.type}}
                     </template>
                     <template #selected-option="option">
                         <div class="selected d-center">
                             <font-awesome-icon icon="fa fa-flask" class="mr-2" />
-                            {{ pad(option.id, 4, '&nbsp;') }} - {{ option.name }} | {{ option.type }}
+                            {{pad(option.id, 4, '&nbsp;')}} - {{option.name}} | {{option.type}}
                         </div>
                     </template>
                 </vue-select>
                 <div>
-                    <b-button :disabled="!selectedWorkflow" class="float-right mt-3" style="right: 15px; bottom: 0;" variant="primary" size="sm"
-                        @click="editStepWorkflow">
+                    <b-button :disabled="!selectedWorkflow" class="float-right mt-3" style="right: 15px; bottom: 0;" variant="primary"
+                              size="sm"
+                              @click="editStepWorkflow">
                         Confirmar
                     </b-button>
-                    <b-button class="mt-3" @click="showWorkflowOps = -1" size="sm" variant="outline-secondary">
+                    <b-button class="mt-3" size="sm" variant="outline-secondary" @click="showWorkflowOps = -1">
                         Cancelar
                     </b-button>
                 </div>
@@ -97,29 +99,29 @@
                         <b-col>
                             <label class="" for="name">Nome:</label>
                             <input id="name" v-model="workflowName" v-focus type="text"
-                                class="form-control w-100 form-control-sm mb-2" maxlength="100">
+                                   class="form-control w-100 form-control-sm mb-2" maxlength="100">
                         </b-col>
-                        <input type="hidden" id="platform" value="META" />
+                        <input id="platform" type="hidden" value="META">
                         <b-col class="d-none">
                             <label class="" for="platform">Plataforma:</label>
                             <input id="platform" v-focus value="META" type="text"
-                                class="form-control w-100 form-control-sm mb-2" maxlength="100" disabled>
+                                   class="form-control w-100 form-control-sm mb-2" maxlength="100" disabled>
                         </b-col>
                     </b-row>
                     <b-row>
                         <b-col cols="6">
                             <label>Tipo:</label>
-                            <input type="text" v-model="selectedWorkflowType" value="SQL" disabled
-                                class="form-control " />
+                            <input v-model="selectedWorkflowType" type="text" value="SQL" disabled
+                                   class="form-control ">
                             <!-- b-form-select v-model="selectedWorkflowType" :options="workflowTypeOptions" class="w-100 mb-2" /-->
                         </b-col>
                         <b-col class="position-relative">
                             <b-button class="position-absolute" style="right: 15px; bottom: 0;" variant="success"
-                                @click="createWorkflow">
+                                      @click="createWorkflow">
                                 Confirmar
                             </b-button>
                             <b-button class="position-absolute" style="right: 120px; bottom: 0;"
-                                @click="showWorkflowOps = 0">
+                                      @click="showWorkflowOps = 0">
                                 Cancelar
                             </b-button>
                         </b-col>
@@ -208,7 +210,7 @@ export default {
         async editStepWorkflow() {
             if (! this.selectedWorkflow) {
                 this.warning('Selecione um fluxo de trabalho');
-                return
+                return;
             }
             const stepWorkflow = {
                 id: this.selectedWorkflow?.id, //may be null

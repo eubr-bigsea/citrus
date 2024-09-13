@@ -20,13 +20,11 @@
             </div>
             <div class="col-md-9 p-3 algorithm scroll-area">
                 <div v-if="selectedAlgorithm && selectedAlgorithm.operation && selectedAlgorithm.enabled">
-                    <ModelBuilderAlgorithm
-                        :key="selectedAlgorithm.operation.slug"
-                        :operation="selectedOperation"
-                        :name="selectedAlgorithm.name"
-                        :grid-strategy="'grid'"
-                        v-model:form="selectedAlgorithm.forms"
-                        />
+                    <ModelBuilderAlgorithm :key="selectedAlgorithm.operation.slug"
+                                           v-model:form="selectedAlgorithm.forms"
+                                           :operation="selectedOperation"
+                                           :name="selectedAlgorithm.name"
+                                           :grid-strategy="'grid'" />
                 </div>
                 <div v-else class="text-center text-secondary mt-5 pt-5">
                     <h4>Selecione e habilite um algoritmo à esquerda para editar seus parâmetros.</h4>
@@ -52,7 +50,7 @@ const props = defineProps({
 const conditionalFields = new Map();
 const selectedAlgorithm = ref({});
 const selectedOperation = computed(()=> {
-    return props.operations.find(op => op.id === selectedAlgorithm.value?.operation?.id)
+    return props.operations.find(op => op.id === selectedAlgorithm.value?.operation?.id);
 });
 
 const emit = defineEmits(['update:tasks']);

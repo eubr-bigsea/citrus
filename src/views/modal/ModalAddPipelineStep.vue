@@ -2,21 +2,21 @@
     <b-modal ref="addStepModal"
              title="Adicionar etapa"
              size="lg"
-             :cancelTitle="$tc('actions.cancel')"
+             :cancel-title="$t('actions.cancel')"
              scrollable
              @hidden="closeStepModal"
              @ok="addStep">
         <div class="configPage-card-modal">
             <div>
-                <label for="nome">{{ $tc('common.name') }}:</label>
+                <label for="nome">{{$t('common.name')}}:</label>
                 <input id="nome" v-model="newStep.name" class="form-control form-control-sm" type="text"
-                       placeholder="Nome da etapa" maxlength="50"/>
+                       placeholder="Nome da etapa" maxlength="50">
             </div>
 
             <div class="mt-2">
-                <label for="descricao">{{ $tc('common.description') }}</label>
+                <label for="descricao">{{$t('common.description')}}</label>
                 <textarea id="descricao" v-model="newStep.description" class="form-control form-control-sm" type="text"
-                          placeholder="Descrição da etapa" maxlength="200"/>
+                          placeholder="Descrição da etapa" maxlength="200" />
             </div>
         </div>
         <hr class="mt-4 mb-4">
@@ -109,7 +109,6 @@
 <script>
 import axios from 'axios';
 import PipelineEditMixin from '../../mixins/PipelineEditMixin.js';
-import { BModal } from 'bootstrap-vue';
 import vSelect from 'vue-select';
 import Notifier from '../../mixins/Notifier.js';
 
@@ -117,7 +116,6 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        BModal,
         'vue-select': vSelect,
     },
     mixins: [PipelineEditMixin, Notifier],

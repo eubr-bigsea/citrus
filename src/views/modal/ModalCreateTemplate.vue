@@ -1,16 +1,16 @@
 <template>
-    <b-modal ref="addTemplateModal" 
-             :title="$t('pipeline.template.templateCreation')" 
-             size="lg" 
-             scrollable 
+    <b-modal ref="addTemplateModal"
+             :title="$t('pipeline.template.templateCreation')"
+             size="lg"
+             scrollable
              @ok="createTemplate"
              @hidden="closeModal">
         <div class="templatePage-card-modal">
             <div class="position-relative">
                 <label class="templatePage-label" for="nome">{{$t('common.name')}}</label>
                 <input id="nome"
-                       v-model="createTemplateName" 
-                       class="templatePage-input" 
+                       v-model="createTemplateName"
+                       class="templatePage-input"
                        type="text"
                        maxlength="50"
                        :placeholder="$t('pipeline.template.templateName')"
@@ -23,11 +23,11 @@
 
             <div>
                 <label class="templatePage-label" for="descricao">{{$t('common.description')}}</label>
-                <textarea id="descricao" 
-                          v-model="createTemplateDescription" 
-                          class="templatePage-textarea" 
+                <textarea id="descricao"
+                          v-model="createTemplateDescription"
+                          class="templatePage-textarea"
                           type="text"
-                          maxlength="200" 
+                          maxlength="200"
                           required
                           :placeholder="$t('pipeline.template.templateDescription')"
                           data-test="textarea" />
@@ -48,15 +48,15 @@
                             <font-awesome-icon class="templatePage-dragIcon" icon="fa fa-grip-vertical" />
                             {{setOrder(input, index)}}
                             #{{index + 1}}
-                            <input v-model="input.name" 
-                                :placeholder="$t('pipeline.template.stepName')" 
-                                class="templatePage-input" 
-                                maxlength="50"
-                                data-test="stepInput"
-                                :class="stepInput">
-                            <textarea v-model="input.description" 
-                                      :placeholder="$t('pipeline.template.stepDescription')" 
-                                      class="templatePage-textarea" 
+                            <input v-model="input.name"
+                                   :placeholder="$t('pipeline.template.stepName')"
+                                   class="templatePage-input"
+                                   maxlength="50"
+                                   data-test="stepInput"
+                                   :class="stepInput">
+                            <textarea v-model="input.description"
+                                      :placeholder="$t('pipeline.template.stepDescription')"
+                                      class="templatePage-textarea"
                                       maxlength="200"
                                       data-test="stepTextarea"
                                       :class="stepTextarea" />
@@ -76,7 +76,6 @@
 
 <script>
 import axios from 'axios';
-import { BModal } from 'bootstrap-vue';
 import draggable from 'vuedraggable';
 import Notifier from '../../mixins/Notifier.js';
 
@@ -84,7 +83,6 @@ let tahitiUrl = import.meta.env.VITE_TAHITI_URL;
 
 export default {
     components: {
-        BModal,
         draggable
     },
     mixins: [Notifier],

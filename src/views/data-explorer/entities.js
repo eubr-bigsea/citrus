@@ -306,14 +306,14 @@ class SqlBuilderWorkflow extends Workflow {
                     tags: { value: [] },
                     useHWC: {value: false},
                     ...cell.forms
-                }
+                };
             } else {
                 cell.forms = {
                     code: { value: '' },
                     comment: { value: '' },
                     code_libraries: { value: [] },
                     ... cell.forms
-                }
+                };
             }
         });
     }
@@ -678,9 +678,9 @@ class Visualization {
         this.latitude = latitude;
         this.longitude = longitude;
 
-        this.locations = locations
-        this.geo_json_url = geo_json_url
-        this.feature_id_key = feature_id_key
+        this.locations = locations;
+        this.geo_json_url = geo_json_url;
+        this.feature_id_key = feature_id_key;
 
         this.zoom = zoom;
         this.style = style;

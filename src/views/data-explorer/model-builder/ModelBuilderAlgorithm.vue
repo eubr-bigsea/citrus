@@ -23,7 +23,7 @@
                                :show-quantity="gridStrategy === 'grid'" @update="handleUpdateField" @input="handleUpdateField"
                                @update-form-field="handleUpdateField" />
                     <div v-else>
-                        Tipo de campo de formulário não suportado: {{ field.suggested_widget }} para campo {{ field.name }}
+                        Tipo de campo de formulário não suportado: {{field.suggested_widget}} para campo {{field.name}}
                     </div>
                 </keep-alive>
             </div>
@@ -117,7 +117,7 @@ const getFieldValue = (name, checkboxes) => {
         return null;
     }
 
-}
+};
 const handleCleanAll = () => {
     form.value = {};
     counter.value++;

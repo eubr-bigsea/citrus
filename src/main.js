@@ -163,7 +163,7 @@ config.autoReplaceSvg = 'nest';
 // Date-fns
 import { format, formatDistanceStrict, parseISO, fromUnixTime, differenceInSeconds, differenceInMinutes } from 'date-fns';
 import {utcToZonedTime} from 'date-fns-tz';
-import { enUS, ptBR } from 'date-fns/locale'
+import { enUS, ptBR } from 'date-fns/locale';
 
 const locales = { en: enUS, pt: ptBR };
 /*

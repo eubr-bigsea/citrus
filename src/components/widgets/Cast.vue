@@ -87,13 +87,12 @@
     </div>
 </template>
 <script>
-import vSelect from "vue-select";
 import LabelComponent from './Label.vue';
 import Widget from '@/mixins/Widget.js';
 export default {
     name: 'CastComponent',
     components: {
-        LabelComponent, 'v-select': vSelect
+        LabelComponent,
     },
     mixins: [Widget],
     props: {
